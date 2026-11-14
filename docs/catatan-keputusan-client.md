@@ -1,0 +1,179 @@
+# Catatan Keputusan Client — RanahMenulis
+
+Tanggal catatan: 2026-11-08 (diperbarui dengan hasil diskusi lanjutan di hari yang sama)
+Sumber: percakapan WhatsApp dengan client (Mas Wafiy), audit repo, PRD v0.1, dan hasil diskusi lanjutan.
+
+## 1. Konteks singkat
+
+- Repo yang ada (`ibnulwafiy/ranahmenulis`, commit `ce2be12`) adalah **Penulis+ Workspace**, alat bantu menulis untuk penulis antologi. Bukan implementasi PRD RanahMenulis.
+- Cakupan PRD: dari 52 ID fitur, 0 Implemented, 6 Partial, 1 Mocked, 1 UI Only, 44 Missing.
+- Rekomendasi audit: **bangun fondasi baru** (repo baru, Next.js, skema database baru, redesign UI/UX), lalu ambil sebagian komponen dan konten dari repo lama.
+- Aplikasi lama tetap berjalan sampai penggantinya siap.
+
+## 2. Keputusan dan konfirmasi dari client
+
+| No | Hal | Status | Sumber |
+| --- | --- | --- | --- |
+| 1 | Konsep Penulis+ berbeda dari konsep RanahMenulis di PRD | Dikonfirmasi client ("beda konsep") | Chat WA |
+| 2 | Bagian yang sama dan cocok untuk dibawa: **Editor Menulis** di Workspace | Dikonfirmasi client | Chat WA |
+| 3 | Fitur utama: Studio, Projects (Antologi, Solo, Kelas Menulis, Lomba), dan Community. **Ranah Streak menyatu dengan Ranah Studio** (satu tempat), karena streak dihitung dari aktivitas menulis di Studio. Ini menggantikan butir "empat fitur terpisah" sebelumnya | Diputuskan dalam diskusi | Diskusi lanjutan |
+| 4 | Streak, Studio, dan Projects "pasti harus ada" | Dikonfirmasi client | Chat WA |
+| 5 | Studio isinya seperti tools menulis | Dikonfirmasi client | Chat WA |
+| 6 | Community tetap menjadi modul: bagikan karya, baca, apresiasi, komentar, jaringan. Client masih bingung isinya (contoh yang ia sebut: seperti Threads) | Terkonfirmasi sebagai modul; **isi detail belum diputuskan** | Chat WA dan teks yang ditempel |
+| 7 | **Tidak ada fitur AI di dalam aplikasi.** Client menyiapkan prompt yang dipakai penulis di ChatGPT atau Claude | Dikonfirmasi client | Chat WA |
+| 8 | **Arsitektur MVP:** frontend dan backend dalam satu proyek Next.js (monolith), database **Supabase**. Dibangun dari awal, desain dan skema baru, mengikuti PRD | Diputuskan dalam diskusi | Diskusi lanjutan |
+| 9 | **Rencana migrasi:** bila aplikasi sudah penuh dipakai, database dipindah ke VPS. Rencananya disiapkan sejak MVP (lihat bagian 5) | Diputuskan dalam diskusi | Diskusi lanjutan |
+| 10 | **Hak akses (RBAC):** peran platform (Penulis, Organizer, Editor, Juri, Admin) ditambah **Grup Penulis**: anggota grup saling melihat tulisan, dan ada admin grup | Diputuskan dalam diskusi; **aturan visibilitas belum diputuskan** (butir 7 di bagian 4) | Diskusi lanjutan |
+| 11 | **Marketplace** ditambahkan di samping Community, **setelah MVP**. Isinya belum ditentukan. PRD v0.1 menetapkan tepat empat modul tanpa tambahan tanpa persetujuan, jadi perlu dicatat sebagai perubahan resmi | Disampaikan dalam diskusi; isi **belum diputuskan** | Diskusi lanjutan |
+| 12 | Perpustakaan prompt dari repo lama ikut dibawa (tombol salin untuk ChatGPT/Claude) | **Asumsi**, perlu dikonfirmasi | Penyimpulan dari butir 7 |
+| 13 | Client ingin aplikasi ada di Play Store dan App Store. Alasannya: "goalsnya ke sana", tanpa pertimbangan khusus | Tujuan dikonfirmasi; **cara dan waktunya belum diputuskan** (butir 9 di bagian 4) | Chat WA |
+
+Catatan: "tidak mau AI" berarti tanpa fitur AI di dalam aplikasi. Pengembangan aplikasinya tetap boleh berbantuan AI.
+
+## 3. Dampak ke dokumen
+
+- **PRD:** Disarankan naik ke v0.2 dengan perubahan berikut:
+  - Baris "AI Writing Assistant" di bagian 24.2 diubah dari "ditunda" menjadi "tidak dibangun (keputusan client)".
+  - Perpustakaan prompt menjadi konten pendukung di dalam Studio.
+  - Ranah Streak digabung ke Ranah Studio. Struktur empat modul di PRD perlu ditulis ulang (tiga modul inti ditambah Marketplace setelah MVP).
+  - Matriks izin (bagian 15) menambah Grup Penulis dan admin grup.
+  - Marketplace dimasukkan sebagai fase setelah MVP, dengan isi yang masih dibuka.
+- **Audit dan roadmap:** Struktur enam fase tetap berlaku. Yang berubah: stack ditetapkan (Next.js monolith dan Supabase, bukan lagi pilihan terbuka D2/D5), Fase 3 mencakup grup penulis, dan ada rencana migrasi ke VPS di luar enam fase (bagian 5).
+- **Jadwal:** Estimasi roadmap sekitar 33–47 minggu kerja satu developer berbantuan AI (sekitar 8–11 bulan). Angka itu **sudah mengasumsikan bantuan AI**. Atas arahan, presentasi ke client tidak lagi menyebut angka pasti: disampaikan "lebih cepat dengan bantuan AI, jadwal pasti setelah Fase 1". Angka internal tetap perlu divalidasi setelah Fase 1. Di chat client sempat disebut "sampai 6 bulan lebih", jadi ekspektasi perlu diluruskan.
+
+## 4. Pertanyaan yang masih terbuka untuk client
+
+Prioritas: butir 1 sampai 3 paling menentukan.
+
+1. Dari Workspace sekarang, mana lagi yang dibawa? (✅ atau ❌): Word Counter, Writing Session, Blueprint 10 Hari, Workbook Harian, Template Outline dan Naskah, Ebook Panduan, Story/Character/Plot/Scene Builder, Conflict Generator, Emotion Mapper, Synopsis Builder, Writing Checklist.
+2. Editor Menulis: tetap sederhana seperti sekarang, atau ditambah format dasar (tebal, miring, judul, kutipan, daftar)? PRD (STD-01) meminta format dasar.
+3. Community di awal: tulisan pendek dulu (seperti Threads, sekitar 500 kata), atau pendek dan panjang sekaligus?
+4. "Tanpa AI" termasuk fitur kecil seperti cek ejaan atau saran kata otomatis?
+5. Penulis+ yang sekarang masih dipakai penulis antologi? Kira-kira berapa orang?
+6. Ada batas waktu atau acara yang aplikasi baru harus sudah dipakai?
+7. **Grup Penulis:** anggota grup melihat semua tulisan sesama anggota, atau hanya yang dibagikan ke grup?
+8. **Marketplace:** isinya apa (karya digital, buku, jasa seperti editor dan desain cover, atau lainnya)? Perlu persetujuan resmi sebagai tambahan di luar empat modul PRD.
+9. **Play Store dan App Store:** harus ada sejak rilis pertama, atau boleh web dulu lalu menyusul ke store? Pilihan yang ditawarkan: (a) aplikasi native langsung, (b) web dulu lalu dibungkus jadi aplikasi (saran).
+
+Pertanyaan yang ditahan sampai Fase 1: pembayaran (manual atau online), siapa pengelola proyek, hak cipta, format kelas, kebijakan Malaysia, usia, refund, dan referensi desain.
+
+### Alasan versi web tetap wajib (bahan jawaban bila client memilih native)
+
+- Link karya yang dibagikan akan dibuka orang yang belum punya aplikasinya. Tanpa web, mereka hanya disuruh install dulu, dan kebanyakan berhenti di situ.
+- Pratinjau link yang rapi di WA, IG, dan Threads dibaca dari halaman web.
+- Halaman karya, antologi, lomba, dan kelas bisa ditemukan lewat Google hanya bila ada versi web.
+- Pengelola, juri, dan editor bekerja di laptop; PRD juga meminta dukungan desktop, tablet, dan HP.
+
+### Hal yang perlu diketahui bila masuk store
+
+Berdasarkan aturan Apple dan Google sejauh yang diketahui, perlu dicek ulang ke aturan terbaru sebelum diumumkan ke client.
+
+- Pembayaran konten digital di dalam aplikasi iPhone umumnya lewat sistem Apple, dengan potongan 15–30%. Bisa berdampak ke Kelas Menulis; layanan penerbitan buku fisik biasanya tidak.
+- Aplikasi dengan konten buatan pengguna (Community) wajib punya fitur lapor, blokir, dan moderasi.
+- Pengguna harus bisa menghapus akun dari dalam aplikasi.
+- Apple dapat menolak aplikasi yang hanya membungkus web tanpa fitur khas aplikasi, misalnya notifikasi.
+- Biaya akun developer: Apple sekitar $99 per tahun, Google $25 sekali bayar.
+
+## 5. Rencana tindakan
+
+1. Kirim kesimpulan dan pertanyaan di atas ke client.
+2. Perbarui PRD ke v0.2 setelah jawaban masuk.
+3. **Fase 0:** tambal temuan F1 sampai F4 di aplikasi lama bila masih dipakai; siapkan repo baru (D4) dan proyek Supabase baru (D5). Framework (D2) sudah diputuskan: Next.js.
+4. **Fase 1:** model domain (entitas, status submission, matriks izin termasuk Grup Penulis) dan sistem desain.
+5. Lanjut sesuai roadmap: Fase 2 UI dengan data tiruan, Fase 3 backend fondasi (termasuk grup penulis), Fase 4 modul tersambung, Fase 5 pengerasan dan peluncuran.
+6. Marketplace dan pengemasan ke Play Store/App Store dijadwalkan setelah MVP, mengikuti jawaban client.
+
+### Rencana migrasi database ke VPS
+
+Dilakukan saat aplikasi sudah penuh dipakai. Waktunya ditentukan oleh pemicu, bukan tanggal. Pemicu belum diberi angka dan ditetapkan bersama setelah ada data pemakaian (contoh: biaya Supabase, batas performa, kebutuhan lokasi data atau kontrol penuh).
+
+**Disiapkan sejak MVP agar mudah pindah:**
+
+1. Skema database dikelola lewat berkas migrasi berurutan di repo.
+2. Semua akses data lewat satu lapisan di server (bukan langsung dari browser), sehingga mengganti sumber data tidak mengubah tampilan.
+3. Supabase Auth dan Storage dipakai lewat lapisan tipis, supaya bisa diganti tanpa menulis ulang fitur.
+4. Cadangan rutin dan latihan memulihkan data dilakukan sejak awal.
+
+**Langkah pindah:**
+
+1. Tetapkan pemicu.
+2. Siapkan VPS: Postgres, cadangan otomatis, pemantauan, pengamanan server.
+3. Uji coba: salin data ke VPS, jalankan aplikasi pada salinan, uji akses per peran.
+4. Pindah: mode baca-saja singkat, salin data terakhir, ganti sambungan database.
+5. Pantau dan siap mundur: Supabase tetap hidup beberapa minggu sebagai cadangan.
+
+**Yang perlu diganti saat pindah:** login (Supabase Auth), penyimpanan file (Storage), dan aturan keamanan data (RLS) yang memakai identitas dari login Supabase. Database Postgres-nya sendiri relatif mudah dipindah.
+
+**Dua jalur, dipilih saat pindah:** self-host Supabase di VPS (perubahan kode terkecil), atau Postgres biasa dengan login sendiri (lebih bebas, kerja lebih banyak).
+
+**Perlu ditinjau lagi bila** ada ketentuan lokasi data pribadi di Indonesia atau Malaysia (risiko R9 di audit).
+
+### Temuan teknis yang paling mendesak di aplikasi lama (jika masih dipakai)
+
+- F1 (High, Potential): service worker memakai cache-first untuk panggilan Supabase (`public/sw.js:58-75`).
+- F2 (High, Confirmed): error tulis Supabase tidak dicek, toast "Tersimpan otomatis" muncul walau gagal (`Workspace.tsx:101-116`, `150-173`, `349-447`).
+- F3 (High, Confirmed): pola hapus lalu sisipkan tanpa transaksi (`Workspace.tsx:391-459`).
+- F4 (High, Potential): error pemuatan awal tidak dicek, state kosong bisa menimpa data server (`Workspace.tsx:254-344`).
+
+## 6. Pesan siap kirim ke client
+
+Kesimpulan:
+
+```
+Mas, ini kesimpulan dari diskusi kita ya:
+
+1. RanahMenulis punya 3 modul inti: Studio (Streak menyatu di dalamnya, karena streak dihitung dari aktivitas menulis), Projects (Antologi, Solo, Kelas Menulis, Lomba), dan Community. Marketplace menyusul setelah versi pertama.
+
+2. Hak akses: ada peran Penulis, Organizer, Editor, Juri, dan Admin. Ditambah Grup Penulis, anggotanya bisa saling melihat tulisan, dengan admin grup sendiri.
+
+3. Dari aplikasi Penulis+ yang sekarang, yang dibawa ke aplikasi baru terutama Editor Menulis dan perpustakaan prompt. Sisanya menunggu keputusan Mas.
+
+4. Tidak ada fitur AI di dalam aplikasi. Penulis tetap bisa menyalin prompt dari aplikasi untuk dipakai di ChatGPT atau Claude.
+
+5. Teknologi: Next.js dalam satu proyek (tampilan dan server jadi satu) dengan database Supabase. Kalau nanti sudah penuh dipakai, database dipindah ke server sendiri (VPS), dan rencana pindahnya sudah disiapkan dari awal.
+
+6. Aplikasi baru dibuat dari nol, desain dan database baru. Penulis+ yang sekarang tetap dibiarkan jalan sampai yang baru siap.
+
+7. Urutan kerjanya: desain dulu, disetujui Mas, baru backend dibangun.
+
+Soal waktu, pengerjaan dibantu AI jadi lebih cepat. Angka pastinya saya kabari setelah tahap desain dan cakupan awal disepakati.
+
+Boleh dikoreksi kalau ada yang kurang pas ya Mas. Setelah itu saya kirim beberapa pertanyaan singkat untuk menentukan detailnya.
+```
+
+Pertanyaan:
+
+```
+Yang masih perlu Mas putuskan:
+
+1. Mana lagi dari Workspace yang sekarang yang mau dibawa? Balas ✅ atau ❌:
+   Word Counter, Writing Session, Blueprint 10 Hari, Workbook Harian, Template Outline dan Naskah, Ebook Panduan, Story/Character/Plot/Scene Builder, Conflict Generator, Emotion Mapper, Synopsis Builder, Writing Checklist
+
+2. Editor Menulis:
+   a. Tetap sederhana seperti sekarang
+   b. Ditambah format dasar (tebal, miring, judul, kutipan, daftar)
+
+3. Community di awal:
+   a. Tulisan pendek dulu (seperti Threads, maksimal sekitar 500 kata)
+   b. Pendek dan panjang (cerpen, esai) sekaligus
+
+4. Grup Penulis: anggota melihat semua tulisan sesama anggota, atau hanya yang dibagikan ke grup?
+
+5. Marketplace: isinya apa? Karya digital, buku, jasa (editor, desain cover), atau lainnya? Mulai setelah versi pertama.
+
+6. "Tanpa AI" itu termasuk fitur kecil seperti cek ejaan atau saran kata otomatis juga?
+
+7. Penulis+ yang sekarang masih dipakai penulis antologi? Kira-kira berapa orang?
+
+8. Ada batas waktu atau acara yang aplikasi barunya harus sudah dipakai?
+
+9. Play Store dan App Store: harus langsung ada sejak rilis pertama, atau boleh web dulu lalu menyusul ke store?
+```
+
+## 7. Rujukan
+
+- PRD RanahMenulis v0.2 (sumber yang dirawat): `PRD RanahMenulis v0.2.md` di folder proyek
+- PRD RanahMenulis v0.1 (arsip, kini ikut diperbarui jadi v0.2 di claude.ai): https://claude.ai/artifact/7peCWVDK2nhM2iTQGdu4cq
+- Audit dan Roadmap RanahMenulis: https://claude.ai/artifact/9XQYbgvLmodhruWvRS3XJp
+- Presentasi ke client: `RanahMenulis - Kondisi dan Rencana.pptx` (17 slide, sudah memuat keputusan di atas)
+- Repo yang diaudit: `ranahmenulis/` di workspace (commit `ce2be12`, tidak diubah selama audit).

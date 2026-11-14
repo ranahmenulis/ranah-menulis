@@ -1,0 +1,723 @@
+Ranah Menulis
+
+INSTRUKSI PENYUSUNAN PRODUCT REQUIREMENTS DOCUMENT (PRD)
+
+RANAHMENULIS
+
+Saya ingin membangun sebuah aplikasi web bernama RanahMenulis. Saya membutuhkan bantuan Anda untuk menyusun Product Requirements Document (PRD) yang lengkap, terstruktur, profesional, dan mudah dipahami oleh programmer, UI/UX designer, system analyst, serta tim pengembang aplikasi.
+
+Bertindaklah sebagai Senior Product Manager, Product Strategist, UX Researcher, dan System Analyst yang berpengalaman membangun platform digital berskala besar.
+
+Tugas Anda bukan sekadar membuat daftar fitur. Anda harus menerjemahkan visi bisnis dan ide produk saya menjadi kebutuhan produk yang konkret, alur kerja yang jelas, serta spesifikasi fungsional yang dapat dijadikan pedoman pembangunan aplikasi.
+
+Seluruh penjelasan harus menggunakan bahasa Indonesia, termasuk nama fitur dan penjelasan teknis. Istilah teknis berbahasa Inggris boleh digunakan jika memang lebih tepat.
+
+Jangan membuat asumsi yang tidak saya berikan. Jika ada keputusan produk yang belum jelas, tandai sebagai pertanyaan atau keputusan yang perlu dikonfirmasi.
+
+⸻
+
+1. IDENTITAS PRODUK
+
+Nama Produk: RanahMenulis
+
+Jenis Produk: Ekosistem digital untuk menulis, komunitas literasi, pendidikan menulis, dan penerbitan buku.
+
+Platform: Aplikasi web responsif yang dapat digunakan melalui desktop, tablet, dan smartphone.
+
+Target Pasar: Indonesia dan Malaysia.
+
+Visi Produk
+
+RanahMenulis adalah platform digital yang membantu setiap orang menemukan suara mereka melalui tulisan, mengembangkan kemampuan menulis, membangun kebiasaan menulis, terhubung dengan pembaca dan penulis lainnya, serta mengubah karya mereka menjadi buku yang diterbitkan.
+
+Misi Produk
+
+“Membantu setiap orang menemukan suaranya, mengembangkan kemampuan menulis, terhubung dengan pembaca, dan mengubah kata-kata menjadi buku yang diterbitkan.”
+
+Filosofi Produk
+
+RanahMenulis bukan sekadar aplikasi untuk mengetik dokumen.
+
+RanahMenulis ingin menjadi tempat seseorang memulai perjalanan sebagai penulis.
+
+Seseorang dapat memulai dari menulis satu paragraf, membangun kebiasaan, membagikan karya, menemukan pembaca, mengikuti proyek penerbitan, belajar dari mentor, hingga menerbitkan buku sendiri.
+
+⸻
+
+2. EMPAT MODUL UTAMA RANAHMENULIS
+
+RanahMenulis memiliki tepat empat modul utama.
+
+Jangan menambahkan modul utama kelima tanpa persetujuan saya.
+
+Keempat modul tersebut adalah:
+
+1. Ranah Streak
+2. Projects
+3. Ranah Studio
+4. Ranah Community
+
+Keempatnya harus terintegrasi dalam satu ekosistem.
+
+A. RANAH STREAK
+
+Tujuan
+
+Membantu pengguna membangun kebiasaan menulis secara konsisten dan mengetahui perkembangan produktivitas menulis mereka.
+
+Fitur yang diharapkan
+
+1. Target menulis harian.
+2. Pelacakan jumlah kata.
+3. Kalender aktivitas menulis.
+4. Penghitungan streak atau hari berturut-turut menulis.
+5. Statistik harian, mingguan, dan bulanan.
+6. Pencapaian atau milestones.
+7. Kartu pencapaian yang dapat dibagikan ke media sosial.
+
+Contoh pengalaman pengguna
+
+Pengguna menentukan target 300 kata per hari.
+
+Kemudian pengguna menulis melalui Ranah Studio.
+
+Sistem mencatat jumlah kata baru yang ditulis, memperbarui progres harian, dan menghitung apakah target telah tercapai.
+
+Pengguna dapat melihat perkembangan melalui kalender dan statistik.
+
+Jika berhasil mencapai pencapaian tertentu, pengguna dapat membagikan kartu pencapaiannya.
+
+Hal yang harus diperhatikan
+
+* Aktivitas menulis harus tercatat secara akurat.
+* Sistem tidak boleh menghitung keseluruhan isi dokumen berulang kali.
+* Streak mengikuti zona waktu pengguna.
+* Perubahan kata harus dibedakan dari jumlah kata yang sudah ada.
+* Tentukan aturan yang jelas mengenai aktivitas yang memenuhi syarat streak.
+
+⸻
+
+B. PROJECTS
+
+Tujuan
+
+Projects merupakan pusat program, kesempatan, dan kegiatan yang membantu pengguna mengembangkan kemampuan menulis, berkolaborasi, mengikuti kompetisi, serta menerbitkan buku.
+
+Projects hanya memiliki empat kategori:
+
+1. ANTOLOGI
+
+Antologi merupakan program penerbitan buku yang melibatkan beberapa penulis dalam satu buku dengan tema tertentu.
+
+Contoh:
+
+“Antologi: Surat yang Tidak Pernah Terkirim”
+
+Fitur yang dibutuhkan:
+
+* Daftar proyek antologi.
+* Halaman detail proyek.
+* Tema dan persyaratan penulisan.
+* Informasi biaya.
+* Jumlah kuota peserta.
+* Deadline.
+* Pendaftaran peserta.
+* Pengiriman karya.
+* Status submission.
+* Proses seleksi.
+* Feedback editor.
+* Permintaan revisi.
+* Persetujuan karya.
+* Proses penyuntingan.
+* Desain dan layout buku.
+* Informasi pemesanan buku.
+* Status produksi dan penerbitan.
+
+Alur peserta:
+
+Melihat proyek → Membaca ketentuan → Mendaftar → Mengirim karya → Menunggu seleksi → Revisi jika diperlukan → Karya diterima → Mengikuti proses penerbitan.
+
+Hak cipta penulis harus dilindungi. Ketentuan penggunaan dan publikasi karya harus dijelaskan sebelum peserta mendaftar.
+
+2. SOLO
+
+Solo merupakan program penerbitan buku individual.
+
+Program ini ditujukan kepada pengguna yang ingin menerbitkan buku sendiri.
+
+Contoh:
+
+* Novel.
+* Kumpulan puisi.
+* Memoar.
+* Esai.
+* Buku nonfiksi.
+* Kumpulan cerpen.
+
+Fitur yang dibutuhkan:
+
+* Daftar paket penerbitan.
+* Detail layanan.
+* Informasi harga.
+* Persyaratan naskah.
+* Pengajuan penerbitan.
+* Pengelolaan manuskrip.
+* Proses editing.
+* Proofreading.
+* Desain cover.
+* Layout buku.
+* Persetujuan final.
+* Produksi buku.
+* Pemesanan buku.
+* Pelacakan status penerbitan.
+
+Pengguna harus dapat melihat perkembangan proses penerbitan bukunya melalui dashboard.
+
+3. KELAS MENULIS
+
+Merupakan pusat kelas, workshop, pelatihan, dan mentoring menulis.
+
+Contoh:
+
+* Creative Writing.
+* Poetry Writing.
+* Novel Writing.
+* Academic Writing.
+* Copywriting.
+* Storytelling.
+* Essay Writing.
+
+Fitur yang dibutuhkan:
+
+* Daftar kelas.
+* Detail kelas.
+* Profil pengajar.
+* Kurikulum.
+* Materi pembelajaran.
+* Jadwal kelas.
+* Informasi biaya.
+* Pendaftaran peserta.
+* Dashboard peserta.
+* Tugas.
+* Pengumpulan tugas.
+* Feedback mentor.
+* Progress pembelajaran.
+* Sertifikat.
+
+4. LOMBA
+
+Merupakan pusat kompetisi menulis.
+
+Contoh:
+
+* Lomba puisi.
+* Lomba cerpen.
+* Lomba esai.
+* Lomba artikel.
+* Lomba microfiction.
+* Lomba storytelling.
+
+Fitur yang dibutuhkan:
+
+* Daftar lomba.
+* Detail lomba.
+* Tema.
+* Persyaratan.
+* Deadline.
+* Hadiah.
+* Pendaftaran.
+* Pengiriman karya.
+* Sistem penilaian juri.
+* Kriteria penilaian.
+* Pengumuman pemenang.
+* Finalis.
+* Sertifikat.
+
+Penilaian harus dapat dilakukan oleh juri yang ditugaskan.
+
+Jika lomba menggunakan penilaian anonim, identitas peserta harus disembunyikan dari juri.
+
+⸻
+
+C. RANAH STUDIO
+
+Tujuan
+
+Ranah Studio adalah ruang kerja utama pengguna untuk menulis, menyimpan, mengedit, dan mengelola seluruh karya mereka.
+
+Ranah Studio harus memiliki pengalaman menulis yang nyaman, bersih, dan profesional.
+
+Jangan membuatnya menjadi tiruan Microsoft Word yang terlalu kompleks.
+
+Fokuskan pada kebutuhan utama penulis.
+
+Fitur yang dibutuhkan
+
+1. Editor tulisan
+
+* Membuat dokumen.
+* Mengedit tulisan.
+* Bold.
+* Italic.
+* Heading.
+* Paragraph.
+* Blockquote.
+* Bullet list.
+* Numbered list.
+
+2. Penyimpanan otomatis
+
+* Dokumen tersimpan otomatis.
+* Status penyimpanan terlihat.
+* Data tidak hilang ketika berpindah halaman.
+* Menangani koneksi internet terputus.
+* Menangani konflik perubahan dokumen.
+
+3. Pengelolaan dokumen
+
+* Membuat dokumen.
+* Membuat folder.
+* Mengubah nama.
+* Memindahkan dokumen.
+* Menghapus dokumen.
+* Mencari dokumen.
+* Mengurutkan dokumen.
+
+4. Penghitungan kata
+
+* Jumlah kata.
+* Jumlah karakter.
+* Jumlah paragraf.
+
+5. Template menulis
+
+Contoh:
+
+* Puisi.
+* Cerpen.
+* Novel.
+* Esai.
+* Artikel.
+* Jurnal.
+* Memoar.
+
+6. Pengelolaan manuskrip
+
+Pengguna dapat menggabungkan beberapa dokumen menjadi satu proyek buku.
+
+Contoh:
+
+Judul: Arutala
+
+* Bab 1.
+* Bab 2.
+* Bab 3.
+* Catatan.
+* Riset.
+
+7. Ekspor dokumen
+
+Format yang direncanakan:
+
+* PDF.
+* DOCX.
+* TXT.
+
+Integrasi dengan modul lain
+
+Ranah Studio harus terhubung dengan:
+
+* Ranah Streak untuk mencatat aktivitas menulis.
+* Ranah Community untuk membagikan karya.
+* Projects untuk menggunakan dokumen sebagai sumber pengiriman karya.
+
+Dokumen pribadi tidak boleh otomatis menjadi publik ketika digunakan untuk fitur lain.
+
+Pengiriman karya ke proyek harus menyimpan versi submission yang tidak berubah ketika dokumen asli diedit kembali.
+
+⸻
+
+D. RANAH COMMUNITY
+
+Tujuan
+
+Ranah Community adalah jaringan sosial khusus bagi para penulis.
+
+Pengguna dapat membagikan tulisan, membaca karya orang lain, menemukan penulis baru, mendapatkan apresiasi, serta membangun audiens.
+
+Community bukan media sosial umum yang hanya mengganti foto dengan teks.
+
+Community harus memiliki identitas sebagai komunitas literasi digital.
+
+Jenis konten
+
+1. Tulisan pendek
+
+Contoh:
+
+* Refleksi.
+* Kutipan.
+* Microfiction.
+* Puisi pendek.
+* Cerita singkat.
+
+Batas awal yang dapat dipertimbangkan: maksimal 500 kata.
+
+2. Tulisan panjang
+
+Contoh:
+
+* Artikel.
+* Esai.
+* Cerpen.
+* Puisi.
+* Opini.
+* Cerita pengalaman.
+
+3. Cerita berseri
+
+Penulis dapat membagikan cerita dalam beberapa bab yang terhubung menjadi satu karya.
+
+Fitur utama
+
+1. Feed
+
+Menampilkan tulisan dari penulis lain.
+
+Setiap konten memiliki:
+
+* Nama penulis.
+* Username.
+* Foto profil.
+* Jenis karya.
+* Isi tulisan.
+* Tanggal publikasi.
+* Jumlah apresiasi.
+* Jumlah komentar.
+* Jumlah bookmark.
+
+2. Apresiasi
+
+Pengguna dapat memberikan apresiasi terhadap karya.
+
+Gunakan istilah “Apresiasi” sebagai identitas interaksi RanahMenulis.
+
+3. Komentar
+
+Pengguna dapat:
+
+* Memberikan komentar.
+* Membalas komentar.
+* Menghapus komentar sendiri.
+* Melaporkan komentar.
+
+4. Bookmark
+
+Pengguna dapat menyimpan tulisan untuk dibaca kembali.
+
+5. Highlight
+
+Pengguna dapat menandai bagian tulisan yang dianggap paling menarik atau menyentuh.
+
+Contoh konsep:
+
+“This Line Hit Me.”
+
+Fitur ini berpotensi menjadi salah satu identitas khas RanahMenulis.
+
+6. Follow penulis
+
+Pengguna dapat mengikuti penulis lain.
+
+7. Discover
+
+Halaman penemuan karya dan penulis baru.
+
+Kategori yang diinginkan:
+
+* Trending Today.
+* New Writers.
+* Editor’s Picks.
+* Most Appreciated.
+* Most Saved.
+* Hidden Gems.
+* Indonesia Writers.
+* Malaysia Writers.
+
+8. Profil penulis
+
+Setiap pengguna memiliki profil yang berisi:
+
+* Nama.
+* Username.
+* Foto profil.
+* Bio.
+* Negara.
+* Genre tulisan.
+* Portofolio.
+* Karya yang dipublikasikan.
+* Followers.
+* Following.
+
+9. Kartu tulisan yang dapat dibagikan
+
+Pengguna dapat membuat kartu visual dari kutipan atau bagian tulisannya untuk dibagikan ke Instagram, Threads, dan WhatsApp.
+
+Kartu mencantumkan nama penulis dan tautan menuju karya asli.
+
+Pengguna harus dapat menentukan bagian mana yang ingin dibagikan.
+
+⸻
+
+3. HUBUNGAN ANTAR MODUL
+
+Keempat modul harus membentuk satu perjalanan pengguna.
+
+Contoh:
+
+1. Pengguna mendaftar di RanahMenulis.
+2. Pengguna mulai menulis melalui Studio.
+3. Aktivitas menulis masuk ke Streak.
+4. Pengguna membagikan karya ke Community.
+5. Karya mendapatkan apresiasi dan pembaca.
+6. Pengguna menemukan proyek antologi melalui Projects.
+7. Pengguna mengirimkan karyanya.
+8. Karya diterima dan diproses untuk penerbitan buku.
+
+Saya ingin programmer memahami bahwa integrasi antarmodul merupakan bagian penting dari produk.
+
+Jangan membangun keempat modul sebagai sistem yang berdiri sendiri tanpa hubungan data dan alur kerja.
+
+⸻
+
+4. JENIS PENGGUNA DAN HAK AKSES
+
+Sistem harus mendukung:
+
+1. Guest.
+2. Registered User.
+3. Writer.
+4. Premium Member.
+5. Project Organizer.
+6. Editor.
+7. Judge/Mentor.
+8. Administrator.
+
+Setiap role harus memiliki batas kewenangan.
+
+Contoh:
+
+* Guest hanya dapat melihat konten publik.
+* Registered User dapat menulis dan berinteraksi.
+* Writer dapat mengelola karya dan portofolionya.
+* Project Organizer hanya mengelola proyek yang menjadi tanggung jawabnya.
+* Editor hanya mengakses submission yang ditugaskan.
+* Judge hanya dapat menilai karya yang ditugaskan.
+* Administrator memiliki akses pengelolaan platform sesuai kewenangannya.
+
+Gunakan sistem Role-Based Access Control.
+
+Jangan memberikan hak administratif kepada pengguna biasa.
+
+⸻
+
+5. ARAH DESAIN DAN PENGALAMAN PENGGUNA
+
+Saya menginginkan desain yang merupakan perpaduan dua pendekatan.
+
+A. Premium Editorial
+
+* Tipografi elegan.
+* Tata letak editorial.
+* Ruang kosong yang cukup.
+* Pengalaman membaca yang nyaman.
+* Nuansa dunia buku dan penerbitan.
+* Tampilan profesional dan berkelas.
+
+B. Modern Social Platform
+
+* Feed bersih.
+* Kartu konten interaktif.
+* Navigasi intuitif.
+* Halaman penemuan yang menarik.
+* Interaksi sederhana.
+* Pengalaman mobile yang baik.
+
+Hasil akhirnya harus terasa seperti platform literasi modern yang memiliki identitas visual kuat.
+
+Hindari tampilan dashboard SaaS generik.
+
+Aplikasi harus responsif untuk desktop, tablet, dan smartphone.
+
+⸻
+
+6. MODEL BISNIS
+
+RanahMenulis memiliki potensi sumber pendapatan berikut:
+
+1. Penerbitan buku individu melalui Solo.
+2. Penerbitan buku bersama melalui Antologi.
+3. Kelas dan workshop menulis.
+4. Kompetisi menulis.
+5. Langganan Premium.
+6. Penjualan produk pendukung menulis, seperti writing kit, jurnal, buku, dan template.
+
+Jangan menganggap seluruh model monetisasi harus diluncurkan bersamaan.
+
+Tentukan prioritas berdasarkan kebutuhan MVP.
+
+Sistem harus dirancang agar nantinya mendukung pembayaran dalam Rupiah dan Ringgit Malaysia.
+
+⸻
+
+7. TEKNOLOGI YANG DIRENCANAKAN
+
+Teknologi pilihan:
+
+Frontend:
+
+* Next.js.
+* TypeScript.
+* Tailwind CSS.
+* shadcn/ui.
+
+Backend dan database:
+
+* Supabase.
+* PostgreSQL.
+* Supabase Auth.
+* Supabase Storage.
+
+Arsitektur harus modular, mudah dipelihara, dan memungkinkan pengembangan jangka panjang.
+
+Namun, jangan langsung membuat aplikasi atau menulis kode.
+
+Fokus saat ini adalah mendefinisikan kebutuhan produk.
+
+⸻
+
+8. PRIORITAS MVP
+
+Saya tidak ingin membangun seluruh fitur kompleks sekaligus.
+
+Buat pembagian:
+
+MVP — Fitur wajib untuk peluncuran pertama.
+
+Fase 2 — Fitur pengembangan setelah MVP.
+
+Fase 3 — Fitur lanjutan.
+
+Prioritas awal:
+
+* Registrasi dan login.
+* Profil pengguna.
+* Ranah Studio dasar.
+* Ranah Streak dasar.
+* Ranah Community dasar.
+* Empat kategori Projects.
+* Pendaftaran dan pengiriman karya.
+* Pengelolaan proyek.
+* Sistem administrasi dasar.
+* Keamanan dan privasi.
+* Desain responsif.
+
+Fitur AI Writing Assistant, algoritma rekomendasi kompleks, sistem monetisasi lanjutan, dan aplikasi mobile native dapat ditunda.
+
+Pastikan empat modul utama tetap menjadi bagian dari MVP, meskipun beberapa workflow lanjutan baru dikembangkan pada fase berikutnya.
+
+⸻
+
+9. TUGAS UTAMA ANDA: BUAT PRD LENGKAP
+
+Berdasarkan seluruh informasi di atas, buat dokumen PRD profesional dengan struktur berikut:
+
+1. Ringkasan produk.
+2. Visi dan misi.
+3. Tujuan bisnis.
+4. Target pengguna.
+5. Permasalahan yang ingin diselesaikan.
+6. Solusi produk.
+7. Struktur keseluruhan aplikasi.
+8. Penjelasan detail empat modul.
+9. Daftar fitur setiap modul.
+10. Kebutuhan fungsional setiap fitur.
+11. Kebutuhan nonfungsional.
+12. User stories.
+13. User flows.
+14. Business rules.
+15. Sistem role dan permission.
+16. Struktur navigasi.
+17. Spesifikasi halaman.
+18. Hubungan antar modul.
+19. Kebutuhan integrasi.
+20. Sistem notifikasi.
+21. Sistem keamanan dan privasi.
+22. Sistem monetisasi.
+23. Ruang lingkup MVP.
+24. Fitur fase kedua dan ketiga.
+25. Kriteria keberhasilan produk.
+26. Acceptance criteria.
+27. Risiko dan ketergantungan teknis.
+28. Pertanyaan dan keputusan yang masih membutuhkan persetujuan founder.
+
+⸻
+
+10. STANDAR KUALITAS DOKUMEN
+
+Saya ingin dokumen ini dapat dipahami oleh programmer yang belum pernah mendengar RanahMenulis sebelumnya.
+
+Karena itu:
+
+* Jangan hanya menjelaskan nama fitur.
+* Jelaskan tujuan setiap fitur.
+* Jelaskan siapa yang menggunakannya.
+* Jelaskan bagaimana fitur bekerja.
+* Jelaskan data apa yang dibutuhkan.
+* Jelaskan apa yang terjadi ketika pengguna melakukan suatu tindakan.
+* Jelaskan kondisi berhasil dan gagal.
+* Jelaskan hubungan fitur dengan modul lain.
+* Jelaskan batasan akses pengguna.
+* Berikan contoh penggunaan nyata.
+
+Jika menjelaskan fitur pengiriman karya, misalnya, jangan hanya menulis “pengguna dapat mengirim karya”.
+
+Jelaskan proses lengkap mulai dari memilih proyek, mengisi informasi, mengirim karya, validasi, status submission, peninjauan editor, revisi, hingga keputusan akhir.
+
+Gunakan tabel jika dapat memperjelas informasi.
+
+Jangan membuat spesifikasi teknis yang terlalu abstrak.
+
+Jangan menambahkan fitur yang tidak memiliki hubungan jelas dengan visi produk.
+
+Jangan mengubah empat modul utama yang sudah ditentukan.
+
+⸻
+
+11. HASIL AKHIR
+
+Buat PRD dalam bahasa Indonesia yang profesional dan sistematis.
+
+Dokumen harus cukup detail untuk dijadikan acuan awal bagi:
+
+* Founder.
+* Product Manager.
+* UI/UX Designer.
+* Frontend Developer.
+* Backend Developer.
+* Database Engineer.
+* QA Tester.
+
+Sebelum menyelesaikan dokumen, lakukan evaluasi terhadap konsistensi seluruh spesifikasi.
+
+Identifikasi bagian yang masih ambigu dan jangan mengambil keputusan sepihak atas nama founder.
+
+PENTING:
+
+Jangan mulai menulis kode.
+
+Jangan membuat implementasi aplikasi.
+
+Jangan mengubah teknologi yang telah dipilih tanpa alasan kuat.
+
+Fokus sepenuhnya pada penyusunan PRD yang menjelaskan secara akurat aplikasi RanahMenulis yang ingin saya bangun.
