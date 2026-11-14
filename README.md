@@ -28,4 +28,4 @@ Super Admin pertama dibuat lewat SQL setelah akunnya terdaftar; petunjuk ada di 
 - `supabase/migrations/` skema dan kebijakan RLS
 - `docs/` PRD dan dokumen desain
 
-Aturan: data sensitif diakses lewat server, RLS aktif di setiap tabel, kunci `SUPABASE_SERVICE_ROLE_KEY` tidak pernah dikirim ke browser.
+Aturan: data sensitif diakses lewat server, RLS aktif di setiap tabel, kunci `SUPABASE_SECRET_KEY` tidak pernah dikirim ke browser.
