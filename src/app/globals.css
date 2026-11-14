@@ -1,26 +1,387 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* Token RanahMenulis. Sumber: DESIGN.md bagian 4 dan 10, ditambah ink-read dan opacity-*
+   dari docs/desain/sistem-desain/tokens.json. Mode gelap mengikuti sistem dan bisa
+   dipaksa lewat data-theme di <html> atau di elemen mana pun (dipakai papan pratinjau). */
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+:root {
+  --canvas: #ffffff;
+  --surface: #ffffff;
+  --subtle: #f3f3f3;
+  --ink: #191919;
+  --ink-read: #191919;
+  --ink-muted: #5e5e5e;
+  --ink-faint: #767676;
+  --line: #e6e6e6;
+  --line-strong: #191919;
+  --on-ink: #ffffff;
+  --danger: #b3261e;
+  --danger-subtle: #fbeeed;
+  --float-shadow: 0 2px 12px rgb(0 0 0 / 0.08);
+  --logo-light: inline-block;
+  --logo-dark: none;
+  --cover-edge: transparent;
+  color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  :root:not([data-theme="light"]) {
+    --canvas: #121212;
+    --surface: #1a1a1a;
+    --subtle: #232323;
+    --ink: #ededed;
+    --ink-read: #d2d2d2;
+    --ink-muted: #a3a3a3;
+    --ink-faint: #8c8c8c;
+    --line: #2e2e2e;
+    --line-strong: #ededed;
+    --on-ink: #121212;
+    --danger: #ff8f87;
+    --danger-subtle: #2a1716;
+    --float-shadow: none;
+    --logo-light: none;
+    --logo-dark: inline-block;
+    --cover-edge: #2e2e2e;
+    color-scheme: dark;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+[data-theme="dark"] {
+  --canvas: #121212;
+  --surface: #1a1a1a;
+  --subtle: #232323;
+  --ink: #ededed;
+  --ink-read: #d2d2d2;
+  --ink-muted: #a3a3a3;
+  --ink-faint: #8c8c8c;
+  --line: #2e2e2e;
+  --line-strong: #ededed;
+  --on-ink: #121212;
+  --danger: #ff8f87;
+  --danger-subtle: #2a1716;
+  --float-shadow: none;
+  --logo-light: none;
+  --logo-dark: inline-block;
+  --cover-edge: #2e2e2e;
+  color-scheme: dark;
+}
+
+[data-theme="light"] {
+  --canvas: #ffffff;
+  --surface: #ffffff;
+  --subtle: #f3f3f3;
+  --ink: #191919;
+  --ink-read: #191919;
+  --ink-muted: #5e5e5e;
+  --ink-faint: #767676;
+  --line: #e6e6e6;
+  --line-strong: #191919;
+  --on-ink: #ffffff;
+  --danger: #b3261e;
+  --danger-subtle: #fbeeed;
+  --float-shadow: 0 2px 12px rgb(0 0 0 / 0.08);
+  --logo-light: inline-block;
+  --logo-dark: none;
+  --cover-edge: transparent;
+  color-scheme: light;
+}
+
+/* Bagian yang dibalik (daftar tunggu di landing): memakai set token tema lawan, sehingga
+   input, chip, fokus, galat, dan logo tetap terbaca. Ikut tema yang sedang berlaku. */
+.theme-invert {
+  --canvas: #121212; --surface: #1a1a1a; --subtle: #232323; --ink: #ededed; --ink-read: #d2d2d2;
+  --ink-muted: #a3a3a3; --ink-faint: #8c8c8c; --line: #2e2e2e; --line-strong: #ededed;
+  --on-ink: #121212; --danger: #ff8f87; --danger-subtle: #2a1716; --float-shadow: none;
+  --logo-light: none; --logo-dark: inline-block; --cover-edge: #2e2e2e;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .theme-invert {
+    --canvas: #ffffff; --surface: #ffffff; --subtle: #f3f3f3; --ink: #191919; --ink-read: #191919;
+    --ink-muted: #5e5e5e; --ink-faint: #767676; --line: #e6e6e6; --line-strong: #191919;
+    --on-ink: #ffffff; --danger: #b3261e; --danger-subtle: #fbeeed; --float-shadow: 0 2px 12px rgb(0 0 0 / 0.08);
+    --logo-light: inline-block; --logo-dark: none; --cover-edge: transparent;
+    color-scheme: light;
+  }
+}
+[data-theme="dark"] .theme-invert {
+  --canvas: #ffffff; --surface: #ffffff; --subtle: #f3f3f3; --ink: #191919; --ink-read: #191919;
+  --ink-muted: #5e5e5e; --ink-faint: #767676; --line: #e6e6e6; --line-strong: #191919;
+  --on-ink: #ffffff; --danger: #b3261e; --danger-subtle: #fbeeed; --float-shadow: 0 2px 12px rgb(0 0 0 / 0.08);
+  --logo-light: inline-block; --logo-dark: none; --cover-edge: transparent;
+  color-scheme: light;
+}
+[data-theme="light"] .theme-invert {
+  --canvas: #121212; --surface: #1a1a1a; --subtle: #232323; --ink: #ededed; --ink-read: #d2d2d2;
+  --ink-muted: #a3a3a3; --ink-faint: #8c8c8c; --line: #2e2e2e; --line-strong: #ededed;
+  --on-ink: #121212; --danger: #ff8f87; --danger-subtle: #2a1716; --float-shadow: none;
+  --logo-light: none; --logo-dark: inline-block; --cover-edge: #2e2e2e;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-subtle: var(--subtle);
+  --color-ink: var(--ink);
+  --color-ink-read: var(--ink-read);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-faint: var(--ink-faint);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-on-ink: var(--on-ink);
+  --color-danger: var(--danger);
+  --color-danger-subtle: var(--danger-subtle);
+
+  --font-sans: var(--font-schibsted), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-source-serif), Charter, Georgia, serif;
+
+  /* Skala sans antarmuka (DESIGN.md 4.2). Menimpa skala Tailwind. */
+  --text-xs: 0.8125rem;
+  --text-xs--line-height: 1.125rem;
+  --text-sm: 0.875rem;
+  --text-sm--line-height: 1.25rem;
+  --text-base: 1rem;
+  --text-base--line-height: 1.5rem;
+
+  /* Hanya dua radius: rounded-full dan tanpa radius. */
+  --radius-*: initial;
+  --radius-full: 9999px;
+
+  --shadow-*: initial;
+  --shadow-float: var(--float-shadow);
+
+  --ease-out: cubic-bezier(0.2, 0, 0, 1);
+
+  --breakpoint-*: initial;
+  --breakpoint-sm: 40rem;
+  --breakpoint-md: 48rem;
+  --breakpoint-lg: 64rem;
+  --breakpoint-xl: 80rem;
+}
+
+/* Opasitas keadaan tombol (DESIGN.md 7.1, usulan press 0.72). */
+:root {
+  --opacity-hover: 0.85;
+  --opacity-press: 0.72;
+  --opacity-disabled: 0.4;
+  --opacity-dot-empty: 0.3;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 72px;
+  }
+
+  body {
+    background: var(--canvas);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.5rem;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Fokus keyboard: 2px ink, offset 2px, tidak pernah dihilangkan. */
+  :focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 2px;
+  }
+
+  ::placeholder {
+    color: var(--ink-faint);
+    opacity: 1;
+  }
+
+  ::selection {
+    background: var(--line);
+  }
+
+  h1, h2, h3 {
+    text-wrap: balance;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 1ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 1ms !important;
+    }
+  }
+}
+
+/* Skala tulisan. Sans untuk antarmuka, serif untuk bacaan (DESIGN.md 4.2). */
+
+@utility heading-sm {
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 600;
+}
+
+@utility heading-md {
+  font-family: var(--font-sans);
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  font-weight: 600;
+}
+
+@utility heading-lg {
+  font-family: var(--font-sans);
+  font-size: 1.5rem;
+  line-height: 1.875rem;
+  font-weight: 600;
+  @media (width >= 48rem) {
+    font-size: 1.75rem;
+    line-height: 2.125rem;
+  }
+}
+
+@utility read-body {
+  font-family: var(--font-serif);
+  font-size: 1.125rem;
+  line-height: 1.8125rem;
+  font-weight: 400;
+  letter-spacing: -0.003em;
+  @media (width >= 48rem) {
+    font-size: 1.25rem;
+    line-height: 2rem;
+  }
+}
+
+@utility read-title {
+  font-family: var(--font-serif);
+  font-size: 2rem;
+  line-height: 2.5rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+  @media (width >= 48rem) {
+    font-size: 2.625rem;
+    line-height: 3.25rem;
+  }
+}
+
+@utility read-subtitle {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  font-weight: 400;
+  color: var(--ink-muted);
+  @media (width >= 48rem) {
+    font-size: 1.375rem;
+    line-height: 2rem;
+  }
+}
+
+@utility read-h2 {
+  font-family: var(--font-serif);
+  font-size: 1.375rem;
+  line-height: 1.875rem;
+  font-weight: 600;
+  @media (width >= 48rem) {
+    font-size: 1.625rem;
+    line-height: 2.125rem;
+  }
+}
+
+@utility feed-title {
+  font-family: var(--font-serif);
+  font-size: 1.125rem;
+  line-height: 1.5rem;
+  font-weight: 600;
+  text-wrap: balance;
+  @media (width >= 48rem) {
+    font-size: 1.375rem;
+    line-height: 1.75rem;
+  }
+}
+
+@utility feed-excerpt {
+  font-family: var(--font-serif);
+  font-size: 0.9375rem;
+  line-height: 1.5rem;
+  font-weight: 400;
+  color: var(--ink-muted);
+  @media (width >= 48rem) {
+    font-size: 1rem;
+    line-height: 1.625rem;
+  }
+}
+
+@utility display {
+  font-family: var(--font-serif);
+  font-size: clamp(44px, 9vw, 96px);
+  line-height: 1;
+  font-weight: 400;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+
+@utility figure {
+  font-family: var(--font-serif);
+  font-size: 2.75rem;
+  line-height: 1;
+  font-weight: 400;
+  font-variant-numeric: lining-nums tabular-nums;
+  @media (width >= 48rem) {
+    font-size: 3.5rem;
+  }
+}
+
+@utility opacity-press {
+  opacity: var(--opacity-press);
+}
+
+/* Logo: dua berkas PNG, yang tampil mengikuti tema terdekat. */
+@utility logo-on-light {
+  display: var(--logo-light);
+}
+
+@utility logo-on-dark {
+  display: var(--logo-dark);
+}
+
+/* Denyut skeleton dan titik memuat. Tidak bergerak bila reduced-motion. */
+@keyframes rm-pulse {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 1; }
+}
+
+@keyframes rm-skel {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+/* Landing */
+
+@utility landing-h2 {
+  font-family: var(--font-serif);
+  font-size: 2rem;
+  line-height: 2.5rem;
+  font-weight: 400;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+  @media (width >= 48rem) {
+    font-size: 2.625rem;
+    line-height: 3.25rem;
+  }
+}
+
+@keyframes lp-blink {
+  50% { opacity: 0; }
+}
+
+/* Hero bergerak: skrip kecil di halaman memasang is-animating pada <html> sebelum tampilan pertama.
+   Tanpa kelas itu (JS mati, reduced motion) HTML dari server sudah berisi keadaan akhir. */
+html.is-animating [data-hero]:not([data-started]) :is([data-hero-hide], [data-hero-stage]) {
+  visibility: hidden;
+}
+html.is-animating [data-hero]:not([data-started]) [data-hero-stage] > * {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: none;
 }
