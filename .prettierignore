@@ -1,0 +1,18 @@
+# Generated or third-party
+.next
+node_modules
+package-lock.json
+next-env.d.ts
+
+# Not part of this repo (see .gitignore)
+ranahmenulis
+.agents
+.claude
+
+# Design archive, PRD, and prose documents are written by hand
+docs
+*.md
+
+# Assets and SQL
+public
+supabase
