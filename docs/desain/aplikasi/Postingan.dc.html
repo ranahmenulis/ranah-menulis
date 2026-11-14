@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Halaman postingan</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/ranahmenulis/components/variabel.css">
+<link rel="stylesheet" href="ds/ranahmenulis/components/bundle.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600&amp;family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&amp;display=swap">
+<style>
+body{margin:0}
+.ps{position:relative;min-height:2400px;background:var(--canvas);color:var(--ink);font-family:var(--font-sans);-webkit-font-smoothing:antialiased}
+.ps.is-m{height:844px;min-height:0;display:flex;flex-direction:column;overflow:hidden}
+.ps-shell{display:flex;align-items:stretch}
+.ps-main{flex:1;min-width:0;display:flex;justify-content:center;gap:64px;padding:56px 48px 120px}
+.ps-col{width:100%;max-width:680px;min-width:0}
+.ps-right{flex:0 0 320px;display:grid;gap:24px;align-content:start;position:sticky;top:80px;align-self:flex-start}
+.ps-right .rm-search{width:100%}
+.ps-guest{display:grid;gap:12px;padding-top:24px;border-top:1px solid var(--line)}
+.ps-guest h2{margin:0;font:600 18px/26px var(--font-sans)}
+.ps-guest p{margin:0;font:400 14px/22px var(--font-sans);color:var(--ink-muted)}
+.rm-read .ps-mark,.ps-mark{margin:0 0 16px;font:400 13px/18px var(--font-sans);color:var(--ink-muted)}
+.ps-mark b{font-weight:500;color:var(--ink)}
+.ps-by{display:flex;align-items:center;gap:12px;padding:20px 0;margin:0 0 32px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.ps-by-text{display:grid;gap:2px;min-width:0}
+.ps-by-name{display:flex;align-items:center;gap:4px;font:500 15px/22px var(--font-sans)}
+.ps-by .rm-btn--text{color:var(--ink);height:32px}
+.rm-read .ps-scope,.ps-scope{display:flex;gap:10px;align-items:flex-start;padding:12px 0;margin:0 0 32px;border-bottom:1px solid var(--line);font:400 14px/20px var(--font-sans);color:var(--ink-muted)}
+.ps-scope b{font-weight:500;color:var(--ink)}
+.rm-read .ps-end,.ps-end{margin:8px 0 0;font:400 13px/18px var(--font-sans);color:var(--ink-muted)}
+.ps-act{position:relative;display:flex;align-items:center;gap:4px;margin:32px 0 0;padding:8px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.ps-act .rm-btn--text{height:40px;padding:0 10px;gap:6px;font-weight:400;font-variant-numeric:lining-nums}
+.ps-act .ps-push{margin-left:auto}
+.ps-menu{position:absolute;right:0;top:calc(100% + 4px);z-index:6}
+.ps-sec{margin-top:56px}
+.ps-h2{margin:0 0 16px;font:600 20px/28px var(--font-sans)}
+.ps-compose{display:grid;grid-template-columns:32px minmax(0,1fr) auto;gap:12px;align-items:center;padding:0 0 24px;border-bottom:1px solid var(--line)}
+.ps-c{display:grid;grid-template-columns:32px minmax(0,1fr);gap:12px;padding:20px 0;border-bottom:1px solid var(--line);position:relative}
+.ps-c.is-reply{margin-left:24px;grid-template-columns:28px minmax(0,1fr)}
+.ps-c.is-reply .rm-avatar{--s:28px}
+.ps-c-head{display:flex;align-items:center;gap:8px;font:400 13px/18px var(--font-sans);color:var(--ink-muted)}
+.ps-c-head b{font-weight:500;color:var(--ink);font-size:14px}
+.ps-c-text{margin:4px 0 0;font:400 15px/24px var(--font-sans);color:var(--ink);text-wrap:pretty}
+.ps-c-act{display:flex;align-items:center;gap:16px;margin-top:6px}
+.ps-c-act .rm-btn--text{height:28px;font-size:13px}
+.ps-c-more{position:absolute;right:-8px;top:12px}
+.ps-c-menu{position:absolute;right:0;top:52px;z-index:6}
+.ps-c-quiet{display:flex;gap:12px;align-items:center;padding:16px 0;border-bottom:1px solid var(--line);font:400 14px/20px var(--font-sans);color:var(--ink-muted)}
+.ps-c-quiet .rm-btn--text{margin-left:auto;color:var(--ink);height:32px}
+.ps-wide{width:100%;height:48px;border-bottom:1px solid var(--line);border-radius:0;justify-content:center;color:var(--ink)}
+.ps-gate{display:grid;gap:12px;justify-items:start;padding:24px 0;border-top:1px solid var(--line-strong);border-bottom:1px solid var(--line)}
+.ps-gate p{margin:0;font:600 18px/26px var(--font-serif)}
+.ps-gate span{font:400 14px/20px var(--font-sans);color:var(--ink-muted)}
+.ps-rel .rm-feed-item{gap:6px;padding:20px 0}
+.ps-rel .rm-feed-title{font-size:20px;line-height:26px}
+.ps-overlay{position:absolute;inset:0;z-index:8;display:grid;place-items:center;padding:24px}
+.ps-overlay .rm-scrim{position:absolute;inset:0}
+.ps-overlay .rm-dialog{position:relative;z-index:1}
+.ps-state{display:grid;gap:16px;justify-items:start;padding:48px 0}
+.ps-skel{display:grid;gap:14px}
+/* ponsel */
+.ps-mbar{flex:none;height:52px;display:flex;align-items:center;gap:4px;padding:0 4px;background:var(--canvas);border-bottom:1px solid var(--line)}
+.is-m .ps-shell{flex:1;min-height:0;overflow:auto;scrollbar-width:none}
+.is-m .ps-shell::-webkit-scrollbar{display:none}
+.is-m .ps-main{padding:24px 16px 48px}
+.is-m .rm-read h2{font-size:30px;line-height:38px}
+.is-m .rm-read p,.is-m .rm-read blockquote{font-size:18px;line-height:29px}
+.is-m .ps-by{margin-bottom:24px}
+.is-m .ps-act{display:none}
+.ps-mact{flex:none;height:56px;display:flex;align-items:center;gap:2px;padding:0 8px;border-top:1px solid var(--line);background:var(--canvas)}
+.ps-mact .rm-btn--text{height:44px;padding:0 10px;gap:6px;font-weight:400}
+.ps-mact .ps-push{margin-left:auto}
+.is-m .ps-c-menu{right:0}
+.is-m .ps-overlay{place-items:end stretch;padding:0}
+.is-m .ps-overlay .rm-dialog{max-width:none}
+</style>
+</helmet>
+<div class="ps {{ rootCls }}" data-theme="{{ theme }}">
+
+<!-- ============ Bilah atas desktop ============ -->
+<sc-if value="{{ isDesk }}" hint-placeholder-val="{{ true }}">
+<header class="rm-topbar">
+  <sc-if value="{{ isUser }}" hint-placeholder-val="{{ true }}"><button class="rm-icon-btn" type="button" aria-label="Sembunyikan sidebar"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true"><line x1="40" y1="64" x2="216" y2="64"></line><line x1="40" y1="128" x2="216" y2="128"></line><line x1="40" y1="192" x2="216" y2="192"></line></svg></button></sc-if>
+  <a class="rm-logo rm-logo--28" href="#" aria-label="RanahMenulis, Beranda"><img src="/_blob/d29e1e89eab6f00efbe8181520ab70e5" alt="RanahMenulis"><img class="rm-on-dark" src="/_blob/785f553aa8906c11b9ee99c9ecba9cb4" alt="RanahMenulis"></a>
+  <sc-if value="{{ isUser }}" hint-placeholder-val="{{ true }}"><div class="rm-search" style="margin-left: 16px"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><circle cx="112" cy="112" r="80"></circle><line x1="168.6" y1="168.6" x2="224" y2="224"></line></svg>Cari penulis dan karya</div></sc-if>
+  <span style="margin-left: auto"></span>
+  <sc-if value="{{ isUser }}" hint-placeholder-val="{{ true }}">
+    <a class="rm-btn rm-btn--text" href="TulisPostingan.dc.html"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><path d="M92.7 216H48a8 8 0 0 1-8-8v-44.7a8 8 0 0 1 2.3-5.6l120-120a8 8 0 0 1 11.4 0l44.6 44.6a8 8 0 0 1 0 11.4z"></path><line x1="136" y1="64" x2="192" y2="120"></line></svg>Tulis</a>
+    <button class="rm-icon-btn" type="button" aria-label="Notifikasi"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true"><path d="M56 104a72 72 0 0 1 144 0c0 35.8 8.2 64.5 14.8 76A8 8 0 0 1 208 192H48a8 8 0 0 1-6.9-12c6.6-11.5 14.9-40.2 14.9-76z"></path><path d="M96 192a32 32 0 0 0 64 0"></path></svg></button>
+    <span class="rm-avatar" style="--s: 32px" aria-label="{{ meName }}">{{ meInit }}</span>
+  </sc-if>
+  <sc-if value="{{ isGuest }}" hint-placeholder-val="{{ false }}"><a class="rm-btn rm-btn--text" href="#" style="color: var(--ink)">Masuk</a><a class="rm-btn rm-btn--secondary rm-btn--sm" href="#">Daftar</a></sc-if>
+</header>
+</sc-if>
+
+<!-- ============ Bilah atas ponsel ============ -->
+<sc-if value="{{ isMob }}" hint-placeholder-val="{{ false }}">
+<header class="ps-mbar">
+  <a class="rm-icon-btn" href="Discover.dc.html" aria-label="Kembali" style="width: 44px; height: 44px; color: var(--ink)"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><line x1="216" y1="128" x2="40" y2="128"></line><polyline points="112 56 40 128 112 200"></polyline></svg></a>
+  <span style="margin-left: auto"></span>
+  <sc-if value="{{ isGuest }}" hint-placeholder-val="{{ false }}"><a class="rm-btn rm-btn--text" href="#" style="color: var(--ink); height: 44px">Masuk</a></sc-if>
+  <button class="rm-icon-btn" type="button" aria-label="Lainnya" aria-haspopup="menu" style="width: 44px; height: 44px"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><circle cx="60" cy="128" r="12" class="rm-i--fill"></circle><circle cx="128" cy="128" r="12" class="rm-i--fill"></circle><circle cx="196" cy="128" r="12" class="rm-i--fill"></circle></svg></button>
+</header>
+</sc-if>
+
+<div class="ps-shell">
+
+<sc-if value="{{ sideOn }}" hint-placeholder-val="{{ true }}">
+<nav class="rm-sidebar" aria-label="Utama" style="flex: 0 0 240px">
+  <a class="rm-nav-item" href="Beranda.dc.html"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true"><path d="M224 115.5V208a16 16 0 0 1-16 16h-40a8 8 0 0 1-8-8v-48a8 8 0 0 0-8-8h-48a8 8 0 0 0-8 8v48a8 8 0 0 1-8 8H48a16 16 0 0 1-16-16v-92.5a16 16 0 0 1 5.2-11.8l80-75.5a16 16 0 0 1 21.6 0l80 75.5a16 16 0 0 1 5.2 11.8z"></path></svg>Beranda</a>
+  <a class="rm-nav-item" href="Discover.dc.html"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true" style="stroke-width: 22"><circle cx="128" cy="128" r="96"></circle><polygon points="176 80 112 112 80 176 144 144 176 80"></polygon></svg>Jelajahi</a>
+  <a class="rm-nav-item" href="Studio.dc.html"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true"><rect x="48" y="32" width="160" height="192" rx="8"></rect><line x1="88" y1="32" x2="88" y2="224"></line><line x1="120" y1="80" x2="168" y2="80"></line><line x1="120" y1="112" x2="168" y2="112"></line></svg>Studio</a>
+  <a class="rm-nav-item rm-nav-item--sub" href="Streak.dc.html">Streak</a>
+  <a class="rm-nav-item" href="#"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true"><rect x="40" y="40" width="48" height="176" rx="8"></rect><rect x="88" y="40" width="48" height="176" rx="8"></rect><path d="M168 46l40 10-34 160-40-10z"></path></svg>Projects</a>
+  <a class="rm-nav-item" href="#"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true"><path d="M192 224l-64-40-64 40V48a8 8 0 0 1 8-8h112a8 8 0 0 1 8 8z"></path></svg>Tersimpan</a>
+  <a class="rm-nav-item" href="#"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true"><circle cx="128" cy="96" r="64"></circle><path d="M32 216c19.4-33.5 54.6-56 96-56s76.6 22.5 96 56"></path></svg>Profil</a>
+</nav>
+</sc-if>
+
+<main class="ps-main" style="margin-top: {{ mOff }}">
+<div class="ps-col">
+
+  <!-- ===== Memuat ===== -->
+  <sc-if value="{{ isLoading }}" hint-placeholder-val="{{ false }}">
+  <div class="ps-skel" aria-busy="true" aria-label="Memuat tulisan">
+    <span class="rm-skel" style="width: 180px; height: 12px"></span>
+    <span class="rm-skel" style="width: 86%; height: 40px"></span>
+    <span class="rm-skel" style="width: 52%; height: 40px; margin-bottom: 12px"></span>
+    <div style="display: flex; gap: 12px; align-items: center; padding: 20px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); margin-bottom: 24px"><span class="rm-skel" style="width: 40px; height: 40px; border-radius: 9999px"></span><span class="rm-skel" style="width: 200px; height: 14px"></span></div>
+    <span class="rm-skel" style="width: 100%; height: 16px"></span><span class="rm-skel" style="width: 96%; height: 16px"></span><span class="rm-skel" style="width: 90%; height: 16px"></span><span class="rm-skel" style="width: 64%; height: 16px; margin-bottom: 16px"></span>
+    <span class="rm-skel" style="width: 100%; height: 16px"></span><span class="rm-skel" style="width: 94%; height: 16px"></span><span class="rm-skel" style="width: 72%; height: 16px"></span>
+  </div>
+  </sc-if>
+
+  <!-- ===== Galat ===== -->
+  <sc-if value="{{ isError }}" hint-placeholder-val="{{ false }}">
+  <div class="ps-state">
+    <div class="rm-banner" role="alert" style="width: 100%"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><circle cx="128" cy="128" r="96"></circle><line x1="128" y1="80" x2="128" y2="136"></line><circle cx="128" cy="172" r="10" class="rm-i--fill"></circle></svg><p>Tulisan ini gagal dimuat. Periksa koneksimu, lalu coba lagi.</p><button class="rm-btn rm-btn--secondary rm-btn--sm" type="button">Coba lagi</button></div>
+    <a class="rm-btn rm-btn--text" href="Discover.dc.html" style="padding: 0">Kembali ke Jelajahi</a>
+  </div>
+  </sc-if>
+
+  <!-- ===== Ditarik atau dihapus ===== -->
+  <sc-if value="{{ isGone }}" hint-placeholder-val="{{ false }}">
+  <div class="ps-state">
+    <div class="rm-empty" style="padding: 0">
+      <p>Tulisan ini sudah ditarik penulisnya.</p>
+      <p class="rm-note">Isinya tidak lagi tampil di Community. Kalau kamu menyimpannya, tulisan ini tetap ada di Tersimpan dengan tanda tidak tersedia.</p>
+      <a class="rm-btn rm-btn--secondary" href="Discover.dc.html">Kembali ke Jelajahi</a>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ===== Isi postingan ===== -->
+  <sc-if value="{{ showPost }}" hint-placeholder-val="{{ true }}">
+  <article class="rm-read" style="max-width: none">
+    <p class="ps-mark">Prolog · Cerpen</p>
+    <h2>Hujan Pertama Bulan November</h2>
+    <div class="ps-by">
+      <span class="rm-avatar" style="--s: 40px">RP</span>
+      <div class="ps-by-text">
+        <span class="ps-by-name">Rinjani Putri<sc-if value="{{ followOn }}" hint-placeholder-val="{{ true }}"><span class="rm-meta"> · </span><button class="rm-btn rm-btn--text" type="button" onClick="{{ toggleFollow }}">{{ followLabel }}</button></sc-if></span>
+        <span class="rm-meta">@rinjaniputri · Diterbitkan 12 Nov · diperbarui 13 Nov</span>
+      </div>
+    </div>
+    <p class="ps-scope"><svg class="rm-i rm-i--16" viewBox="0 0 256 256" aria-hidden="true" style="margin-top: 2px"><circle cx="128" cy="128" r="96"></circle><line x1="32" y1="128" x2="224" y2="128"></line><path d="M128 32c-24 26-36 58-36 96s12 70 36 96c24-26 36-58 36-96s-12-70-36-96z"></path></svg><span>Prolog dari: <b>Yang Ditunggu Nenek di Bawah Jambu Air</b> · hanya bagian ini yang publik</span></p>
+    <p>Hujan pertama bulan November selalu datang sore hari, tepat ketika Nenek selesai menyapu halaman. Ia tidak pernah berlari masuk. Ia berdiri dulu di bawah jambu air, membiarkan beberapa tetes jatuh ke kerudungnya, seolah menunggu seseorang yang berjanji pulang bersama musim.</p>
+    <p>Waktu kecil aku mengira Nenek sedang menghitung. Bibirnya bergerak pelan, dan setiap kali petir lewat di atas sawah, ia berhenti sebentar lalu mulai lagi dari awal. Ibu bilang itu doa. Kakek, yang jarang bicara, bilang itu bukan urusan anak-anak.</p>
+    <p>Ada orang yang menunggu dengan duduk di beranda, memandangi ujung jalan sampai matanya perih. Nenek menunggu dengan basah. Ia pulang ke dapur dengan ujung kain yang menetes, menyalakan tungku, lalu menanak nasi lebih banyak dari yang sanggup kami habiskan.</p>
+    <blockquote>“Kalau dia pulang lapar, jangan sampai dia tahu kita lupa,” katanya suatu sore, kepada tungku, bukan kepadaku.</blockquote>
+    <p class="ps-end">Akhir prolog.</p>
+  </article>
+
+  <!-- Bilah aksi desktop -->
+  <div class="ps-act" role="toolbar" aria-label="Aksi tulisan">
+    <button class="rm-btn rm-btn--text" type="button" aria-pressed="{{ apPressed }}" onClick="{{ toggleAp }}" style="color: {{ apColor }}"><svg class="rm-i {{ apFill }}" viewBox="0 0 256 256" aria-hidden="true"><path d="M128 216S24 160 24 94a54 54 0 0 1 104-20 54 54 0 0 1 104 20c0 66-104 122-104 122z"></path></svg>Apresiasi {{ apCount }}</button>
+    <a class="rm-btn rm-btn--text" href="#komentar"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><path d="M45.4 177A95.9 95.9 0 1 1 79 210.6l-34.2 11.4a8 8 0 0 1-10.1-10.1z"></path></svg>Komentar {{ koCount }}</a>
+    <button class="rm-btn rm-btn--text" type="button"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><path d="M176 104h24a8 8 0 0 1 8 8v96a8 8 0 0 1-8 8H56a8 8 0 0 1-8-8v-96a8 8 0 0 1 8-8h24"></path><polyline points="88 64 128 24 168 64"></polyline><line x1="128" y1="24" x2="128" y2="136"></line></svg>Bagikan</button>
+    <button class="rm-btn rm-btn--text ps-push" type="button"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><path d="M192 224l-64-40-64 40V48a8 8 0 0 1 8-8h112a8 8 0 0 1 8 8z"></path></svg>Simpan</button>
+    <button class="rm-icon-btn" type="button" aria-label="Lainnya" aria-haspopup="menu" aria-expanded="{{ menuAria }}" onClick="{{ toggleMenu }}"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><circle cx="60" cy="128" r="12" class="rm-i--fill"></circle><circle cx="128" cy="128" r="12" class="rm-i--fill"></circle><circle cx="196" cy="128" r="12" class="rm-i--fill"></circle></svg></button>
+    <sc-if value="{{ menuOn }}" hint-placeholder-val="{{ false }}"><div class="rm-float rm-menu ps-menu" role="menu" aria-label="Lainnya"><button class="rm-menu-item" type="button" role="menuitem"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><path d="M136 120a40 40 0 0 0-56.6 0l-28 28a40 40 0 0 0 56.6 56.6l12-12"></path><path d="M120 136a40 40 0 0 0 56.6 0l28-28a40 40 0 0 0-56.6-56.6l-12 12"></path></svg>Salin tautan</button><div class="rm-menu-sep" role="separator"></div><button class="rm-menu-item" type="button" role="menuitem"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><line x1="48" y1="224" x2="48" y2="48"></line><path d="M48 168c64-48 96 48 160 0V48c-64 48-96-48-160 0"></path></svg>Laporkan tulisan</button></div></sc-if>
+  </div>
+
+  <!-- ===== Komentar ===== -->
+  <section class="ps-sec" id="komentar" aria-label="Komentar">
+    <h2 class="ps-h2">Komentar <span class="rm-meta" style="font-size: 16px">{{ koCount }}</span></h2>
+
+    <sc-if value="{{ composeOn }}" hint-placeholder-val="{{ true }}">
+    <div class="ps-compose"><span class="rm-avatar" style="--s: 32px">{{ meInit }}</span><label style="display: contents"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Tulis komentar</span><input class="rm-input" type="text" placeholder="Tulis komentar untuk Rinjani"></label><button class="rm-btn rm-btn--primary rm-btn--sm" type="button">Kirim</button></div>
+    </sc-if>
+    <sc-if value="{{ gateOn }}" hint-placeholder-val="{{ false }}">
+    <div class="ps-gate"><p>Masuk untuk ikut membalas.</p><span>Kamu bisa membaca semua komentar tanpa akun. Setelah masuk, kamu kembali ke tulisan ini.</span><div class="rm-row"><a class="rm-btn rm-btn--primary" href="#">Masuk</a><a class="rm-btn rm-btn--text" href="#" style="color: var(--ink)">Daftar</a></div></div>
+    </sc-if>
+
+    <sc-if value="{{ noComments }}" hint-placeholder-val="{{ false }}">
+      <p class="rm-meta" style="padding: 24px 0; margin: 0; font-size: 14px; border-bottom: 1px solid var(--line)">Belum ada komentar. Komentar pertama sering paling dibaca penulisnya.</p>
+    </sc-if>
+
+    <sc-if value="{{ hasComments }}" hint-placeholder-val="{{ true }}">
+    <div>
+      <!-- Komentar 1 dengan balasan -->
+      <div class="ps-c">
+        <span class="rm-avatar" style="--s: 32px">MA</span>
+        <div><div class="ps-c-head"><b>Maya Anindita</b> · 2 jam</div><p class="ps-c-text">Kalimat “Nenek menunggu dengan basah” membuatku berhenti lama. Tidak perlu dijelaskan lagi.</p><div class="ps-c-act"><button class="rm-btn rm-btn--text" type="button">Balas</button></div></div>
+        <button class="rm-icon-btn ps-c-more" type="button" aria-label="Lainnya untuk komentar Maya Anindita"><svg class="rm-i rm-i--16" viewBox="0 0 256 256" aria-hidden="true"><circle cx="60" cy="128" r="12" class="rm-i--fill"></circle><circle cx="128" cy="128" r="12" class="rm-i--fill"></circle><circle cx="196" cy="128" r="12" class="rm-i--fill"></circle></svg></button>
+      </div>
+      <div class="ps-c is-reply">
+        <span class="rm-avatar">RP</span>
+        <div><div class="ps-c-head"><b>Rinjani Putri</b><span class="rm-tag">Penulis</span> · 1 jam</div><p class="ps-c-text">Terima kasih, Maya. Kalimat itu yang paling lama kutulis ulang.</p><div class="ps-c-act"><button class="rm-btn rm-btn--text" type="button">Balas</button></div></div>
+      </div>
+      <div class="ps-c is-reply">
+        <span class="rm-avatar">HR</span>
+        <div><div class="ps-c-head"><b>Hafiz Rahman</b> · 40 menit</div><p class="ps-c-text">Bagian nasi di ambang jendela juga. Aku jadi ingin tahu siapa yang mengambilnya setiap pagi.</p><div class="ps-c-act"><button class="rm-btn rm-btn--text" type="button">Balas</button></div></div>
+      </div>
+      <button class="rm-btn rm-btn--text ps-wide" type="button" style="margin-left: 24px; width: calc(100% - 24px)">Lihat 2 balasan lainnya</button>
+
+      <!-- Komentar 2 -->
+      <div class="ps-c">
+        <span class="rm-avatar" style="--s: 32px">AS</span>
+        <div><div class="ps-c-head"><b>Aina Sofea</b> · 5 jam</div><p class="ps-c-text">Nenek saya pun begitu, cuma dia menunggu di tangga, bukan di bawah pokok. Rasa macam baca cerita keluarga sendiri.</p><div class="ps-c-act"><button class="rm-btn rm-btn--text" type="button">Balas</button></div></div>
+        <button class="rm-icon-btn ps-c-more" type="button" aria-label="Lainnya untuk komentar Aina Sofea" aria-haspopup="menu" aria-expanded="{{ cMenuAria }}" style="color: {{ cMenuColor }}"><svg class="rm-i rm-i--16" viewBox="0 0 256 256" aria-hidden="true"><circle cx="60" cy="128" r="12" class="rm-i--fill"></circle><circle cx="128" cy="128" r="12" class="rm-i--fill"></circle><circle cx="196" cy="128" r="12" class="rm-i--fill"></circle></svg></button>
+        <sc-if value="{{ authorMenu }}" hint-placeholder-val="{{ false }}"><div class="rm-float rm-menu ps-c-menu" role="menu" aria-label="Kelola komentar Aina Sofea"><button class="rm-menu-item" type="button" role="menuitem"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><line x1="48" y1="40" x2="208" y2="216"></line><path d="M74 68C33 90 16 128 16 128s40 80 112 80a118 118 0 0 0 54-13"></path><path d="M208.4 172.1C226.6 156.4 240 128 240 128s-40-80-112-80a128 128 0 0 0-20.6 1.7"></path></svg>Sembunyikan komentar</button><button class="rm-menu-item" type="button" role="menuitem"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><line x1="48" y1="224" x2="48" y2="48"></line><path d="M48 168c64-48 96 48 160 0V48c-64 48-96-48-160 0"></path></svg>Laporkan</button><div class="rm-menu-sep" role="separator"></div><button class="rm-menu-item rm-menu-item--danger" type="button" role="menuitem"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><line x1="216" y1="56" x2="40" y2="56"></line><line x1="104" y1="104" x2="104" y2="168"></line><line x1="152" y1="104" x2="152" y2="168"></line><path d="M200 56v152a8 8 0 0 1-8 8H64a8 8 0 0 1-8-8V56"></path><path d="M168 56V40a16 16 0 0 0-16-16h-48a16 16 0 0 0-16 16v16"></path></svg>Hapus komentar</button></div></sc-if>
+      </div>
+
+      <!-- Komentar 3: biasa, disembunyikan penulis, atau dilaporkan -->
+      <sc-if value="{{ c3Normal }}" hint-placeholder-val="{{ true }}">
+      <div class="ps-c">
+        <span class="rm-avatar" style="--s: 32px">FZ</span>
+        <div><div class="ps-c-head"><b>Farid Zulkifli</b> · kemarin</div><p class="ps-c-text">Prolog yang tidak tergesa-gesa. Paragraf kedua terasa seperti ingatan yang sengaja dibiarkan kabur.</p><div class="ps-c-act"><button class="rm-btn rm-btn--text" type="button">Balas</button></div></div>
+        <button class="rm-icon-btn ps-c-more" type="button" aria-label="Lainnya untuk komentar Farid Zulkifli"><svg class="rm-i rm-i--16" viewBox="0 0 256 256" aria-hidden="true"><circle cx="60" cy="128" r="12" class="rm-i--fill"></circle><circle cx="128" cy="128" r="12" class="rm-i--fill"></circle><circle cx="196" cy="128" r="12" class="rm-i--fill"></circle></svg></button>
+      </div>
+      </sc-if>
+      <sc-if value="{{ c3Reported }}" hint-placeholder-val="{{ false }}">
+      <div class="ps-c-quiet" role="status"><svg class="rm-i rm-i--16" viewBox="0 0 256 256" aria-hidden="true"><line x1="48" y1="224" x2="48" y2="48"></line><path d="M48 168c64-48 96 48 160 0V48c-64 48-96-48-160 0"></path></svg><span>Kamu melaporkan komentar ini. Komentar disembunyikan dari tampilanmu selama ditinjau.</span><button class="rm-btn rm-btn--text" type="button">Tampilkan</button></div>
+      </sc-if>
+      <sc-if value="{{ c4Hidden }}" hint-placeholder-val="{{ false }}">
+      <div class="ps-c-quiet" role="status"><svg class="rm-i rm-i--16" viewBox="0 0 256 256" aria-hidden="true"><line x1="48" y1="40" x2="208" y2="216"></line><path d="M74 68C33 90 16 128 16 128s40 80 112 80a118 118 0 0 0 54-13"></path><path d="M208.4 172.1C226.6 156.4 240 128 240 128s-40-80-112-80a128 128 0 0 0-20.6 1.7"></path></svg><span>Kamu menyembunyikan satu komentar. Pembaca lain tidak melihatnya.</span><button class="rm-btn rm-btn--text" type="button">Tampilkan lagi</button></div>
+      </sc-if>
+
+      <button class="rm-btn rm-btn--text ps-wide" type="button">Lihat komentar lainnya</button>
+    </div>
+    </sc-if>
+  </section>
+
+  <!-- ===== Tulisan terkait (maksimal 5) ===== -->
+  <section class="ps-sec ps-rel" aria-label="Tulisan terkait">
+    <h2 class="ps-h2">Tulisan terkait</h2>
+    <div>
+      <article class="rm-feed-item"><div class="rm-feed-by"><span class="rm-avatar" style="--s: 20px">AS</span><b>Aina Sofea</b> · Kuala Lumpur</div><p class="ps-end" style="margin: 0">Cuplikan · Cerpen</p><h3 class="rm-feed-title"><a class="rm-link" href="#">Pasar Malam Selepas Hujan</a></h3><p class="rm-feed-excerpt">Lampu-lampu gerai menyala satu per satu, dan bau air hujan bercampur asap sate. Mak Cik penjual kuih itu masih ingat namaku.</p></article>
+      <article class="rm-feed-item"><div class="rm-feed-by"><span class="rm-avatar" style="--s: 20px">SK</span><b>Siti Khadijah</b> · Johor Bahru</div><p class="ps-end" style="margin: 0">Cuplikan · Memoar</p><h3 class="rm-feed-title"><a class="rm-link" href="#">Anak Tangga Rumah Tok Wan</a></h3><p class="rm-feed-excerpt">Rumah Tok Wan punya tujuh anak tangga, dan setiap satu berbunyi lain.</p></article>
+      <article class="rm-feed-item"><div class="rm-feed-by"><span class="rm-avatar" style="--s: 20px">L</span><b>Laras</b></div><p class="ps-end" style="margin: 0">Cuplikan · Esai</p><h3 class="rm-feed-title"><a class="rm-link" href="#">Resep yang Tidak Pernah Ditulis</a></h3><p class="rm-feed-excerpt">Ibu tidak pernah menakar garam. Ia menakar dengan diam.</p></article>
+      <article class="rm-feed-item"><div class="rm-feed-by"><span class="rm-avatar" style="--s: 20px">DP</span><b>Dimas Pratama</b></div><p class="ps-end" style="margin: 0">Prolog · Cerpen</p><h3 class="rm-feed-title"><a class="rm-link" href="#">Surat dari Lantai Dua Puluh</a></h3><p class="rm-feed-excerpt">Dari jendela kantor, Jakarta tampak seperti maket yang lupa dibereskan.</p></article>
+    </div>
+  </section>
+  </sc-if>
+</div>
+
+<!-- ===== Kolom kanan tamu ===== -->
+<sc-if value="{{ rightOn }}" hint-placeholder-val="{{ false }}">
+<aside class="ps-right" aria-label="Untuk tamu">
+  <div class="rm-search"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><circle cx="112" cy="112" r="80"></circle><line x1="168.6" y1="168.6" x2="224" y2="224"></line></svg>Cari penulis dan karya</div>
+  <div class="ps-guest">
+    <h2>Baca, apresiasi, simpan.</h2>
+    <p>Dengan akun, kamu bisa memberi Apresiasi, menyimpan tulisan, membalas komentar, dan mengikuti Rinjani Putri.</p>
+    <div class="rm-row"><a class="rm-btn rm-btn--secondary" href="#">Daftar</a><a class="rm-btn rm-btn--text" href="#" style="color: var(--ink)">Masuk</a></div>
+  </div>
+</aside>
+</sc-if>
+</main>
+</div>
+
+<!-- ============ Bilah aksi ponsel (lengket di bawah) ============ -->
+<sc-if value="{{ mobAct }}" hint-placeholder-val="{{ false }}">
+<div class="ps-mact" role="toolbar" aria-label="Aksi tulisan">
+  <button class="rm-btn rm-btn--text" type="button" aria-pressed="{{ apPressed }}" onClick="{{ toggleAp }}" style="color: {{ apColor }}"><svg class="rm-i {{ apFill }}" viewBox="0 0 256 256" aria-hidden="true"><path d="M128 216S24 160 24 94a54 54 0 0 1 104-20 54 54 0 0 1 104 20c0 66-104 122-104 122z"></path></svg>{{ apCount }}</button>
+  <a class="rm-btn rm-btn--text" href="#komentar" aria-label="{{ koAria }}"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><path d="M45.4 177A95.9 95.9 0 1 1 79 210.6l-34.2 11.4a8 8 0 0 1-10.1-10.1z"></path></svg>{{ koCount }}</a>
+  <button class="rm-btn rm-btn--text" type="button"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><path d="M176 104h24a8 8 0 0 1 8 8v96a8 8 0 0 1-8 8H56a8 8 0 0 1-8-8v-96a8 8 0 0 1 8-8h24"></path><polyline points="88 64 128 24 168 64"></polyline><line x1="128" y1="24" x2="128" y2="136"></line></svg>Bagikan</button>
+  <button class="rm-btn rm-btn--text ps-push" type="button"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><path d="M192 224l-64-40-64 40V48a8 8 0 0 1 8-8h112a8 8 0 0 1 8 8z"></path></svg>Simpan</button>
+</div>
+</sc-if>
+
+<!-- ============ Dialog laporkan komentar ============ -->
+<sc-if value="{{ reportOn }}" hint-placeholder-val="{{ false }}">
+<div class="ps-overlay">
+  <div class="rm-scrim" aria-hidden="true"></div>
+  <div class="rm-float rm-dialog" role="dialog" aria-modal="true" aria-labelledby="ps-lapor-h">
+    <h3 id="ps-lapor-h">Laporkan komentar Farid Zulkifli</h3>
+    <p>Pilih satu alasan. Penulis komentar tidak tahu siapa yang melapor.</p>
+    <div style="display: grid; gap: 14px">
+      <label class="rm-choice"><input class="rm-radio" type="radio" name="{{ nAlasan }}"><span>Spam atau iklan</span></label>
+      <label class="rm-choice"><input class="rm-radio" type="radio" name="{{ nAlasan }}" checked><span>Ujaran kebencian atau pelecehan</span></label>
+      <label class="rm-choice"><input class="rm-radio" type="radio" name="{{ nAlasan }}"><span>Melanggar hak cipta</span></label>
+      <label class="rm-choice"><input class="rm-radio" type="radio" name="{{ nAlasan }}"><span>Alasan lain</span></label>
+    </div>
+    <div class="rm-actions"><button class="rm-btn rm-btn--text" type="button">Batal</button><button class="rm-btn rm-btn--primary" type="button">Kirim laporan</button></div>
+  </div>
+</div>
+</sc-if>
+
+<!-- ============ Dialog tamu: tindakan butuh akun ============ -->
+<sc-if value="{{ guestAskOn }}" hint-placeholder-val="{{ false }}">
+<div class="ps-overlay">
+  <div class="rm-scrim" aria-hidden="true"></div>
+  <div class="rm-float rm-dialog" role="dialog" aria-modal="true" aria-labelledby="ps-masuk-h">
+    <h3 id="ps-masuk-h">Masuk untuk memberi Apresiasi</h3>
+    <p>Setelah masuk, kamu kembali ke tulisan ini di posisi yang sama.</p>
+    <div class="rm-actions"><a class="rm-btn rm-btn--text" href="#">Daftar</a><a class="rm-btn rm-btn--primary" href="#">Masuk</a></div>
+  </div>
+</div>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"device":{"editor":"enum","options":["auto","desktop","mobile"],"default":"auto"},"state":{"editor":"enum","options":["biasa","menu","penulis","lapor","dilaporkan","kosong","tamu","tamuAksi","ditarik","memuat","galat"],"default":"biasa"},"offset":{"editor":"number","default":0},"$preview":{"width":1440,"height":2400}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    var s = props.state || 'biasa';
+    this.state = { w: 1440, ap: false, follow: false, menu: s === 'menu' };
+    this.uid = 'ps' + Math.random().toString(36).slice(2, 8);
+  }
+  componentDidMount() {
+    var self = this;
+    this.onResize = function () { self.setState({ w: window.innerWidth }); };
+    window.addEventListener('resize', this.onResize);
+    this.setState({ w: window.innerWidth });
+  }
+  componentWillUnmount() { window.removeEventListener('resize', this.onResize); }
+  renderVals() {
+    var self = this, s = this.state, p = this.props;
+    var st = p.state || 'biasa';
+    var mob = p.device === 'mobile' || (p.device !== 'desktop' && s.w < 768);
+    var guest = st === 'tamu' || st === 'tamuAksi';
+    var author = st === 'penulis';
+    var loading = st === 'memuat', err = st === 'galat', gone = st === 'ditarik';
+    var post = !loading && !err && !gone;
+    var empty = st === 'kosong';
+    var cls = [mob ? 'is-m' : 'is-d'];
+    return {
+      theme: p.theme === 'dark' ? 'dark' : 'light',
+      rootCls: cls.join(' '),
+      nAlasan: this.uid + '-alasan',
+      mOff: (mob && p.offset) ? '-' + p.offset + 'px' : '0px',
+      isDesk: !mob, isMob: mob,
+      isUser: !guest, isGuest: guest,
+      sideOn: !mob && !guest,
+      rightOn: !mob && guest,
+      meName: author ? 'Rinjani Putri' : 'Hafiz Rahman',
+      meInit: author ? 'RP' : 'HR',
+      isLoading: loading, isError: err, isGone: gone, showPost: post,
+      followOn: !author,
+      followLabel: s.follow ? 'Mengikuti' : 'Ikuti',
+      toggleFollow: function () { self.setState({ follow: !self.state.follow }); },
+      apPressed: s.ap ? 'true' : 'false',
+      apFill: s.ap ? 'rm-i--fill' : '',
+      apColor: s.ap ? 'var(--ink)' : 'var(--ink-muted)',
+      apCount: (empty ? 3 : (86 + (s.ap ? 1 : 0))).toLocaleString('id-ID'),
+      toggleAp: function () { if (!guest) self.setState({ ap: !self.state.ap }); },
+      koCount: empty ? 0 : 14,
+      koAria: 'Komentar ' + (empty ? 0 : 14),
+      menuOn: s.menu && !mob,
+      menuAria: s.menu ? 'true' : 'false',
+      toggleMenu: function () { self.setState({ menu: !self.state.menu }); },
+      composeOn: !guest,
+      gateOn: guest,
+      noComments: empty,
+      hasComments: !empty,
+      authorMenu: author,
+      cMenuAria: author ? 'true' : 'false',
+      cMenuColor: author ? 'var(--ink)' : 'var(--ink-muted)',
+      c3Normal: st !== 'dilaporkan',
+      c3Reported: st === 'dilaporkan',
+      c4Hidden: author,
+      mobAct: mob && post,
+      reportOn: st === 'lapor',
+      guestAskOn: st === 'tamuAksi'
+    };
+  }
+}
+</script>
+</body>
+</html>

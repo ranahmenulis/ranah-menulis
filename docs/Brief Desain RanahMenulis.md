@@ -14,23 +14,20 @@ Pembaca dokumen ini: desainer atau Claude Design. Bagian 8 berisi prompt siap te
 
 **Pengguna utama (hipotesis, PRD 4):** penulis pemula, penulis aktif, calon penulis buku, peserta kelas/lomba, pembaca, serta sisi kerja (Organizer, Editor, Juri/Mentor, Admin). Dua dunia berbeda: **dunia penulis** (tenang, fokus, hangat) dan **dunia kerja pengelola** (padat, jelas, cepat dipindai). Keduanya harus terasa satu keluarga, tetapi kepadatannya boleh berbeda.
 
-**Yang belum ada dan harus diputuskan:** logo, warna, huruf, referensi visual dari founder. PRD tidak menetapkannya (pertanyaan "referensi desain" ditahan sampai Fase 1). Jadi tahap pertama desain adalah **eksplorasi arah**, bukan langsung membuat layar.
+**Yang sudah diputuskan (November 2026):** client memilih **hitam putih, netral, mendekati Medium** (aplikasi Medium setelah masuk, bukan halaman depannya). Merah disetujui client untuk galat dan tindakan berbahaya; mode gelap wajib. Wafi juga memberi referensi aplikasi Substack di ponsel; yang diambil hanya pola tata letaknya (DESIGN.md bagian 2.1). Rinciannya ada di [DESIGN.md](../DESIGN.md), yang menjadi sumber utama token dan komponen. **Belum ada:** logo; huruf final menunggu uji spesimen.
 
-## 2. Arah visual (Usulan)
+## 2. Arah visual (diputuskan)
 
-Pegangan: tipografi bacaan adalah pahlawannya, bukan kartu dan ikon.
+Pegangan: tipografi bacaan adalah pahlawannya, bukan kartu dan ikon. Detail lengkap ada di [DESIGN.md](../DESIGN.md). Ringkasnya:
 
-- **Rasa:** kertas, tinta, perpustakaan, penerbit kecil yang punya selera. Tenang dan hangat, tidak ramai.
-- **Tipografi:** huruf serif berkarakter untuk judul dan teks karya; sans yang bersih untuk antarmuka. Teks bacaan nyaman untuk bacaan panjang (NFR-10): lebar baris sekitar 60–72 karakter, jarak baris longgar. Uji dengan teks Indonesia sungguhan, bukan lorem ipsum.
-- **Warna:** satu warna aksen yang punya sikap, bukan palet SaaS. Latar bukan putih dingin. Mode terang dan gelap, keduanya lulus kontras WCAG AA (NFR-09).
-- **Bentuk:** konsisten satu skala radius, satu gaya tombol, satu gaya kartu. Kerapian lebih penting daripada efek.
+- **Rasa:** seperti membaca di Medium: tenang, netral, tulisan menjadi pusat layar. Bukan dasbor SaaS, bukan media sosial umum.
+- **Tipografi:** Source Serif 4 untuk judul dan teks karya; sans grotesk untuk antarmuka (usulan Schibsted Grotesk). Teks bacaan 20/32, kolom maksimal 680px (NFR-10). Uji dengan teks Indonesia sungguhan.
+- **Warna:** monokrom netral, latar putih, abu-abu murni. Merah hanya untuk galat dan tindakan yang tidak bisa dibatalkan. Mode terang dan gelap, keduanya lulus WCAG AA (NFR-09).
+- **Bentuk:** dua radius saja: pill untuk tombol, chip, dan avatar; tanpa radius untuk yang lain. Pemisahan dengan garis tipis, bukan kartu berbayangan.
 - **Gerak:** hemat. Dipakai untuk memberi kabar (tersimpan, streak naik), bukan hiasan. Hormati `prefers-reduced-motion`.
 - **Konten nyata:** semua contoh karya, nama, dan angka di desain harus masuk akal dan ditulis sungguhan (bahasa Indonesia yang wajar, bukan terjemahan), tidak lorem ipsum, tidak nama "John Doe".
 
-**Tiga arah yang disarankan untuk dieksplorasi dulu** (pilih satu bersama founder):
-1. **Kertas & Tinta**: krem hangat, tinta hitam kecokelatan, aksen terakota. Editorial, seperti halaman buku.
-2. **Perpustakaan Malam**: gelap yang hangat (bukan hitam biru), teks krem, aksen emas redup. Nyaman untuk menulis larut malam.
-3. **Cetak**: dua warna ala cetak, kontras tegas, sentuhan tekstur kertas. Lebih berani dan muda.
+Tiga arah sebelumnya (Kertas & Tinta, Perpustakaan Malam, Cetak) tidak dipakai lagi.
 
 ## 3. Aturan lintas layar (dari PRD)
 
@@ -165,34 +162,56 @@ Orang yang memegang beberapa peran melihat butir gabungan, dibatasi tiga, dengan
 6. **Lomba anonim**: tampilan juri vs tampilan Organizer.
 7. **Akses ditolak** dan **halaman tidak tersedia** (karya ditarik).
 
-## 6. Brief Landing Page
+## 6. Brief Landing Page (final, dikerjakan pertama)
 
-**Tujuan.** Halaman promosi pra-peluncuran. Aplikasi belum ada, jadi satu aksi utama: **bergabung ke daftar tunggu**. (PRD 17.1 mendefinisikan Landing: pesan nilai, cuplikan karya, ajakan daftar; pengguna yang sudah masuk diarahkan ke Beranda.)
+**Tujuan.** Halaman promosi pra-peluncuran. Aplikasi belum ada, jadi satu aksi utama: **bergabung ke daftar tunggu**. (PRD 17.1 mendefinisikan Landing: pesan nilai, cuplikan karya, ajakan daftar; pengguna yang sudah masuk diarahkan ke Beranda.) Landing dikerjakan **paling awal** karena sekaligus menguji arah visual di DESIGN.md sebelum layar aplikasi dibuat.
+
+**Rasa yang diminta client:** mahal, profesional, modern, seperti Medium. Hitam putih, netral.
 
 **Pengunjung.** Penulis (pemula sampai calon penulis buku), peminat kelas dan lomba, pembaca. Datang dari Instagram, Threads, WhatsApp, kebanyakan lewat ponsel.
 
-**Pesan inti (bisa ditajamkan oleh copywriter):** satu perjalanan dari satu paragraf sampai buku terbit; karya yang ditulis sekali dipakai di semua tempat; penulis tetap memegang karyanya.
+**Pesan inti:** satu perjalanan dari satu paragraf sampai buku terbit; naskah yang ditulis sekali dipakai di semua tempat tanpa menulis ulang; penulis tetap memegang karyanya.
 
-**Cerita halaman (urutan usulan):**
-1. Hero: satu pernyataan, satu aksi (daftar tunggu), satu visual yang berbicara tentang menulis.
-2. Perjalanan: Menulis → Streak → Dibagikan → Terbit.
-3. Tiga modul: Studio (+Streak), Community, Projects, masing-masing dengan cuplikan tampilan yang nyata.
-4. Empat jalur Projects: Antologi, Solo, Kelas Menulis, Lomba.
-5. Kepercayaan: dokumen pribadi tetap pribadi, versi kirim tidak berubah, hak cipta pada penulis kecuali dinyatakan lain di muka.
-6. Grup Penulis dan dua negara (Indonesia, Malaysia), singkat.
-7. Form daftar tunggu: nama panggilan, email, negara, minat (opsional).
-8. Tanya jawab singkat. Footer.
+### 6.1 Apa arti "mahal" di sini
 
-**Aturan isi (penting).**
+Mahal bukan berarti banyak efek. Medium terasa mahal karena **menahan diri**. Terjemahannya:
+
+| Ciri | Wujudnya |
+| --- | --- |
+| Huruf yang dirancang | Judul serif besar (Source Serif 4, bobot 400, tracking rapat), teks yang benar-benar enak dibaca, `text-wrap: balance` pada judul, angka tabular |
+| Ruang kosong yang berani | Satu ide per layar; jarak antarbagian 128–160px di desktop; tidak semua ruang diisi |
+| Ketepatan | Satu grid 12 kolom, tepi kiri yang sama untuk semua bagian, garis rambut 1px sebagai satu-satunya pemisah |
+| Sedikit elemen | Satu tombol terisi per layar, tidak ada ikon hiasan, tidak ada lencana, tidak ada kartu bertumpuk |
+| Produk yang nyata | Cuplikan tampilan aplikasi dibuat seteliti produk asli (indikator "Tersimpan", jumlah kata, kalender titik tinta, status "Diterima"), bukan kotak abu-abu |
+| Tulisan yang indah | Contoh paragraf, puisi, dan judul karya ditulis sungguhan dan bagus, karena halaman ini menjual tulisan |
+| Gerak yang jarang | Satu momen di hero, sekali saat dimuat. Selebihnya diam |
+| Satu kejutan kontras | Satu bagian saja yang dibalik (latar `ink`, teks putih): bagian daftar tunggu |
+
+### 6.2 Susunan halaman (final)
+
+1. **Bilah atas:** logo wordmark (`public/logo/`, bukan huruf serif) di kiri; kanan: tautan "Cara kerja", "Projects", "Tanya jawab", lalu tombol pill "Gabung daftar tunggu" (menggulir ke form). Di ponsel: wordmark + tombol saja.
+2. **Hero:** satu pernyataan, satu kalimat penjelas, satu tombol, satu visual. Visual: transformasi paragraf yang diketik → halaman bernomor → sampul buku hitam berjudul serif putih. Bergerak sekali saat dimuat; cadangan statisnya ketiga tahap tersusun bertingkat.
+3. **Cara kerja: satu naskah, empat langkah.** Menulis → Streak → Dibagikan → Terbit, sebagai garis waktu bergaris rambut. Tiap langkah: satu kalimat + satu cuplikan tampilan nyata (bilah editor, kalender titik tinta, butir feed, status "Diterima" di antologi).
+4. **Projects: empat jalur**, disusun seperti daftar isi buku (bergaris, bukan grid kartu): Antologi, Buku Solo, Kelas Menulis, Lomba. Tiap jalur satu kalimat tentang apa yang didapat penulis.
+5. **Kepercayaan:** tiga pernyataan bertipografi besar seperti kutipan: draf pribadi tetap pribadi; versi yang dikirim tidak ikut berubah saat draf diedit; hak cipta tetap milik penulis kecuali disetujui lain di awal.
+6. **Daftar tunggu** (satu-satunya bagian berlatar `ink`): judul, form nama panggilan, email, negara (Indonesia/Malaysia/lainnya), minat opsional (chip: Menulis rutin, Antologi, Buku solo, Kelas, Lomba, Membaca). Keadaan: kirim, sukses, galat, email sudah terdaftar.
+7. **Tanya jawab** 5–6 butir, akordeon bergaris. Grup Penulis dan dua negara dijelaskan di sini, tidak perlu bagian sendiri.
+8. **Footer** kecil: wordmark, "Indonesia · Malaysia", tautan Kebijakan privasi dan Kontak.
+
+Bagian "tiga modul" dari versi sebelumnya dilebur ke bagian 3 supaya halaman lebih pendek dan lebih tenang.
+
+### 6.3 Aturan isi
+
 - **Jangan mengarang** angka pengguna, testimoni, logo mitra, atau tanggal rilis. Yang boleh: fakta dari PRD.
 - Jangan menjanjikan MYR untuk pembayaran (baru Fase 2) atau aplikasi Play Store/App Store (setelah web stabil).
 - Soal AI: keputusan client adalah **tanpa fitur AI di dalam aplikasi**; bila disebut di publik, konfirmasi ke client dulu.
-- Jika memakai tampilan produk, tandai sebagai ilustrasi (aplikasi belum rilis) dan jangan menaruh keterangan panjang di bawah gambar.
-- Contoh tulisan di visual harus ditulis sungguhan dan indah, karena landing ini menjual tulisan.
+- Soal biaya: menurut rapat 8 November 2026, fitur MVP dilepas tanpa langganan, sedangkan program Projects punya biaya per program. **Konfirmasi ke client** sebelum ditulis di Tanya jawab.
+- Tampilan produk adalah ilustrasi (aplikasi belum rilis); jangan menaruh keterangan panjang di bawah gambar.
+- Contoh tulisan di visual ditulis sungguhan dan indah.
 
-**Hal teknis untuk desain.** Responsif mobile-first; kontras AA; bisa dibaca saat gerak dimatikan; metadata Open Graph (pratinjau WhatsApp/Threads); form dengan keadaan kirim, sukses, galat; tidak ada gambar yang gagal tampil (setiap visual punya cadangan statis).
+### 6.4 Hal teknis
 
-**Satu momen yang diingat (Usulan).** Visual hero berupa transformasi: satu paragraf yang diketik → halaman → sampul buku. Ini menyatukan seluruh janji produk dalam satu gerak yang jujur. Gerak sekali saat dimuat, tidak berulang, tanpa efek gulir yang membajak.
+Responsif mobile-first (390 lalu 1440); kontras AA; bisa dibaca saat gerak dimatikan; mode terang utama, mode gelap mengikuti token DESIGN.md; metadata Open Graph (pratinjau WhatsApp/Threads, gambar 1200×630 hitam putih dengan judul serif); form dengan keadaan kirim, sukses, galat; tidak ada gambar yang gagal tampil.
 
 ## 7. Daftar anti-generik (checklist untuk setiap layar)
 
@@ -218,76 +237,90 @@ Diharuskan:
 
 Pakai berurutan. Tiap prompt berdiri sendiri; tempel brief ini (atau bagian yang relevan) sebagai konteks bila perlu. Tool-agnostic, tidak bergantung pada fitur spesifik.
 
-### Prompt 1: Eksplorasi arah (jangan lompat ke layar dulu)
+### Prompt 1: Landing page (kerjakan pertama)
+
+Lampirkan DESIGN.md dan bagian 6 brief ini bersama prompt.
 
 ```
-Kamu desainer produk senior yang selera visualnya kuat dan spesifik. Aku butuh arah visual untuk RanahMenulis.
+Kamu desainer produk senior dengan selera editorial, terbiasa merancang untuk penerbit dan platform baca seperti Medium. Rancang landing page pra-peluncuran RanahMenulis. Hasilnya harus terasa mahal, profesional, dan modern, setara Medium, tanpa meniru Medium.
 
-KONTEKS
-RanahMenulis adalah aplikasi web responsif yang mengantar orang dari satu paragraf sampai buku terbit. Tiga modul: Studio (ruang menulis + kebiasaan/Streak), Community (karya dibaca, diapresiasi), Projects (Antologi, buku Solo, Kelas Menulis, Lomba). Pasar Indonesia dan Malaysia, bahasa Indonesia. Pengguna: penulis pemula sampai calon penulis buku, pembaca, serta tim pengelola (editor, juri, admin).
+Lampiran: DESIGN.md (sistem desain, sumber utama token) dan Brief bagian 6. Bila ada yang bertentangan, DESIGN.md yang menang.
 
-NADA YANG DIMINTA
-Terasa seperti platform buku dan penerbitan. BUKAN dasbor SaaS generik, BUKAN media sosial umum, BUKAN "aplikasi AI". Tenang, hangat, sastrawi tanpa pretensius. Tipografi bacaan adalah pahlawannya.
+PRODUK
+RanahMenulis adalah aplikasi web untuk penulis Indonesia dan Malaysia. Penulis menulis di Studio (dengan target kata harian dan Streak), membagikan karya ke Community, lalu membawa naskah yang sama ke Projects: Antologi, Buku Solo, Kelas Menulis, dan Lomba, tanpa menulis ulang. Aplikasi belum rilis. Satu-satunya aksi halaman ini: gabung daftar tunggu.
 
-TUGAS
-Buat 3 arah visual yang benar-benar berbeda satu sama lain (bukan 3 variasi warna):
-1. Kertas & Tinta: krem hangat, tinta hitam kecokelatan, satu aksen terakota, editorial.
-2. Perpustakaan Malam: gelap hangat (bukan hitam kebiruan), teks krem, aksen redup; nyaman menulis larut malam.
-3. Cetak: dua warna ala cetak, kontras tegas, sentuhan tekstur kertas; lebih berani dan muda.
-Untuk tiap arah tunjukkan: pasangan huruf (serif untuk judul dan teks karya, sans untuk antarmuka; harus bagus untuk bahasa Indonesia), palet dengan token terang dan gelap, skala radius, gaya tombol, gaya kartu, contoh 1 layar editor menulis dan 1 kartu postingan Community dengan TEKS NYATA.
+ARAH VISUAL (sudah diputuskan, jangan diganti)
+- Hitam putih netral. Terang: latar #ffffff, teks #191919, teks redup #5e5e5e, garis #e6e6e6, latar halus #f3f3f3. Gelap: latar #121212, teks #ededed, teks redup #a3a3a3, garis #2e2e2e. Tidak ada warna lain; merah #b3261e hanya untuk pesan galat form.
+- Huruf: Source Serif 4 untuk judul dan semua contoh tulisan (judul besar bobot 400, tracking rapat); Schibsted Grotesk untuk antarmuka, navigasi, tombol, dan label.
+- Radius hanya dua: pill untuk tombol, chip, dan avatar; 0 untuk semua yang lain. Tanpa bayangan pada permukaan diam.
+- Pemisah adalah garis rambut 1px dan ruang kosong, bukan kartu.
 
-ATURAN
-- Semua teks contoh ditulis sungguhan dalam bahasa Indonesia yang wajar (puisi pendek, prolog cerpen). Tanpa lorem ipsum, tanpa nama generik.
-- Dilarang: gradien ungu/biru, glassmorphism, blob, kartu tiga kolom berikon bulat, foto stok orang di depan laptop, emoji sebagai ikon, statistik atau testimoni karangan.
-- Kontras lulus WCAG AA di terang dan gelap.
-- Akhiri dengan rekomendasimu: pilih satu dan jelaskan dalam tiga kalimat kenapa, termasuk risiko arah itu.
-```
+APA ARTI "MAHAL" DI SINI
+Mahal karena menahan diri, bukan karena efek:
+- Tipografi yang dirancang: judul hero serif besar (desktop sekitar 88-96px, ponsel 44-48px), text-wrap balance, teks isi yang enak dibaca.
+- Ruang kosong yang berani: satu ide per layar, jarak antarbagian 128-160px di desktop.
+- Ketepatan: grid 12 kolom, satu tepi kiri untuk semua bagian, perataan yang presisi.
+- Satu tombol terisi per layar. Tanpa ikon hiasan, lencana, atau kartu bertumpuk.
+- Cuplikan aplikasi dibuat seteliti produk asli dengan isi nyata, bukan kotak abu-abu.
+- Satu bagian saja berlatar hitam (daftar tunggu) sebagai kejutan kontras.
+- Gerak hanya satu momen di hero, sekali saat dimuat. Selebihnya diam.
 
-### Prompt 2: Sistem desain (setelah arah dipilih)
-
-```
-Arah visual terpilih: [NAMA ARAH]. Bangun sistem desain RanahMenulis berdasarkan arah itu.
-
-Isi: token warna (terang dan gelap), skala tipografi (judul, teks karya untuk bacaan panjang dengan lebar baris 60-72 karakter, antarmuka), spasi, radius, bayangan, tombol (primer, sekunder, ghost; keadaan hover, press, disabled, loading), input dan form (label terlihat, galat di bawah field), kartu, tab, dialog, toast, badge status, bilah navigasi desktop, navigasi ringkas tablet, bilah bawah smartphone (Beranda, Studio, Streak, Projects, Profil), keadaan kosong, keadaan memuat (skeleton), keadaan galat.
-
-Komponen khusus produk: (1) indikator simpan dengan tiga keadaan: Menyimpan, Tersimpan, Belum tersinkron; (2) badge status submission untuk delapan status: Draf, Terkirim, Dalam Peninjauan, Perlu Revisi, Revisi Terkirim, Diterima, Ditolak, Ditarik; (3) bilah progres Streak terhadap target kata harian; (4) penanda visibilitas: Pribadi, Publik, Grup.
-
-Aturan: satu pasang tombol, satu gaya kartu, satu skala radius, satu skala heading. Dua tingkat kotak bersarang paling banyak. Gerak hemat dan menghormati prefers-reduced-motion. Setiap komponen punya contoh dengan konten Indonesia nyata.
-```
-
-### Prompt 3: Landing page
-
-```
-Rancang landing page pra-peluncuran RanahMenulis memakai sistem desain yang sudah ditetapkan. Mobile-first, lalu desktop.
-
-TUJUAN: satu aksi, yaitu bergabung ke daftar tunggu (nama panggilan, email, negara Indonesia/Malaysia/lainnya, minat opsional). Aplikasi belum rilis.
-
-PESAN: satu perjalanan dari satu paragraf sampai buku terbit; karya yang ditulis sekali dipakai di Studio, Community, dan Projects tanpa menulis ulang; penulis tetap memegang karyanya.
-
-URUTAN BAGIAN, masing-masing satu ide dan satu layar (maksimal dua):
-1. Hero: satu pernyataan, satu tombol, satu visual. Visual hero = satu momen: paragraf yang diketik menjadi halaman lalu menjadi sampul buku. Bergerak sekali saat dimuat, tidak berulang.
-2. Perjalanan: Menulis, Streak, Dibagikan, Terbit.
-3. Tiga modul dengan cuplikan tampilan yang nyata (editor dengan penghitung kata dan indikator Tersimpan; postingan Community; kartu proyek dengan kuota dan deadline).
-4. Empat jalur Projects: Antologi, Solo, Kelas Menulis, Lomba.
-5. Kepercayaan: dokumen pribadi tetap pribadi; versi yang dikirim tidak berubah saat draf diedit; hak cipta tetap pada penulis kecuali ketentuan proyek menyatakan lain dan disetujui lebih dulu.
-6. Grup Penulis dan dua negara, singkat.
-7. Form daftar tunggu dengan keadaan kirim, sukses, galat.
-8. Tanya jawab 5-6 butir, footer.
+SUSUNAN HALAMAN
+Urutan dan isi bagian sudah ditetapkan. Komposisi tiap bagian bebas kamu tentukan: penempatan di grid, skala, ritme, cara cuplikan aplikasi ditata, dan bagaimana bagian berpindah ke bagian berikutnya. Bentuk yang kusebut di bawah (garis waktu, daftar isi) adalah arah, bukan cetakan; ganti bila kamu punya cara yang lebih kuat dan jelaskan alasannya.
+1. Bilah atas: logo wordmark dari berkas yang disediakan (bukan huruf serif) di kiri; kanan "Cara kerja", "Projects", "Tanya jawab", lalu tombol pill "Gabung daftar tunggu". Ponsel: wordmark dan tombol saja.
+2. Hero: judul kerja "Dari satu paragraf sampai buku terbit." (usulkan dua alternatif yang lebih tajam, tetap konkret); satu kalimat penjelas; tombol "Gabung daftar tunggu". Visual: satu paragraf yang diketik berubah menjadi halaman bernomor, lalu menjadi sampul buku hitam berjudul serif putih. Berjalan sekali; cadangan statisnya ketiga tahap tersusun bertingkat.
+3. Cara kerja, "satu naskah, empat langkah": Menulis, Streak, Dibagikan, Terbit, sebagai garis waktu bergaris rambut. Tiap langkah satu kalimat dan satu cuplikan tampilan: bilah editor ("Pribadi · Tersimpan 14.02 · 1.240 kata"), kalender Streak berupa titik tinta (penuh = target tercapai, cincin = ada tulisan, titik kecil = kosong), satu butir feed Community, satu status "Diterima" pada antologi.
+4. Projects: Antologi, Buku Solo, Kelas Menulis, Lomba, disusun seperti daftar isi buku (baris bergaris, bukan grid kartu), masing-masing satu kalimat tentang apa yang didapat penulis.
+5. Kepercayaan: tiga pernyataan serif besar: draf pribadi tetap pribadi; versi yang dikirim ke proyek tidak ikut berubah saat draf diedit; hak cipta tetap milik penulis kecuali disetujui lain di awal.
+6. Daftar tunggu (latar hitam): nama panggilan, email, negara (Indonesia, Malaysia, lainnya), minat opsional sebagai chip (Menulis rutin, Antologi, Buku solo, Kelas, Lomba, Membaca). Tampilkan keadaan kosong, sedang mengirim, sukses, galat, dan email sudah terdaftar.
+7. Tanya jawab: 5-6 butir dalam akordeon bergaris, termasuk Grup Penulis dan ketersediaan di Indonesia dan Malaysia.
+8. Footer kecil: wordmark, "Indonesia · Malaysia", Kebijakan privasi, Kontak.
 
 ATURAN ISI
-- Jangan mengarang angka pengguna, testimoni, logo mitra, atau tanggal rilis.
-- Jangan menjanjikan pembayaran MYR atau aplikasi toko aplikasi.
-- Tampilan produk adalah ilustrasi; jangan menaruh keterangan di bawah gambar.
-- Tulis semua teks sungguhan dalam bahasa Indonesia yang wajar. Headline menyebut hal konkret (menulis, buku, pembaca), bukan "wujudkan kreativitasmu". Tombol berupa kata kerja + objek ("Gabung daftar tunggu").
-- Contoh tulisan di visual harus indah dan ditulis sungguhan.
+- Semua teks dalam bahasa Indonesia yang wajar dan ditulis sungguhan. Contoh tulisan (paragraf di hero, judul karya, puisi pendek di feed) harus indah, karena halaman ini menjual tulisan. Nama contoh yang masuk akal, misalnya Rinjani Putri atau Hafiz Rahman.
+- Jangan mengarang jumlah pengguna, testimoni, logo mitra, tanggal rilis, atau harga. Jangan menjanjikan pembayaran ringgit atau aplikasi di Play Store/App Store. Jangan menyebut AI.
+- Jawaban yang faktanya belum pasti (misalnya biaya) tulis sebagai [konfirmasi client].
+- Tombol berupa kata kerja + objek. Tanpa tanda seru beruntun. Bila sebuah kalimat terdengar seperti iklan umum, tulis ulang.
 
-ATURAN VISUAL
-- Dilarang: gradien ungu/biru, glassmorphism, grid tiga ikon bulat sebagai satu-satunya struktur, foto stok orang tersenyum, emoji sebagai ikon, animasi masuk pada setiap kartu saat gulir, parallax pada teks.
-- Tipografi bacaan jadi pahlawan; ruang kosong disengaja; satu aksi utama per layar.
-- Setiap visual punya cadangan statis; kontras AA; prefers-reduced-motion mematikan gerak tanpa menyembunyikan konten.
-- Sertakan metadata berbagi (judul, deskripsi, gambar Open Graph) untuk pratinjau WhatsApp dan Threads.
+DILARANG
+Gradien, glassmorphism, blur, glow, blob; grid tiga kolom berikon bulat; foto stok; ilustrasi orang generik; emoji sebagai ikon; label kecil huruf kapital di atas setiap judul; penomoran bagian "01 / 02"; animasi masuk saat gulir; parallax; kartu yang terangkat saat hover; huruf Inter, Geist, Playfair, Fraunces, Instrument Serif; tampilan yang mirip template shadcn.
 
-Keluaran: desain mobile (390) dan desktop (1440), plus keadaan form. Akhiri dengan daftar hal yang kamu pilih untuk TIDAK dilakukan dan alasannya.
+KELUARAN
+- Untuk hero, tunjukkan dulu dua komposisi yang benar-benar berbeda (bukan variasi warna atau ukuran), pilih satu, dan jelaskan alasannya dalam dua kalimat.
+- Ponsel 390px dan desktop 1440px, mode terang. Ditambah hero dan daftar tunggu versi desktop mode gelap.
+- Keadaan form lengkap.
+- Gambar Open Graph 1200x630 (hitam putih, judul serif).
+- Di akhir: daftar hal yang sengaja tidak kamu lakukan beserta alasannya, lalu tiga titik paling lemah di desainmu sendiri.
+```
+
+### Prompt 2: Uji spesimen huruf (opsional, bila sans di landing terasa kurang pas)
+
+```
+Kamu desainer produk senior. Arah visual RanahMenulis sudah diputuskan: hitam putih, netral, mendekati aplikasi Medium setelah masuk (halaman artikel, feed, editor), bukan halaman depannya. Sistem lengkapnya ada di DESIGN.md yang kutempel di bawah. Jangan mengusulkan warna aksen atau arah lain.
+
+TUGAS
+Buat satu halaman spesimen untuk memilih huruf sans antarmuka. Serif tetap Source Serif 4. Bandingkan tiga kandidat sans: Schibsted Grotesk, Public Sans, IBM Plex Sans. Untuk tiap kandidat tampilkan, dalam mode terang dan gelap:
+1. Satu butir feed (avatar, nama penulis, judul serif, cuplikan, meta "12 Nov · 24 apresiasi · 6 komentar").
+2. Bilah editor Studio: "Pribadi · Tersimpan 14.02 · 1.240 kata · Bagikan".
+3. Satu baris tabel pengelola: "Rinjani Putri · Antologi Hujan Bulan Juni · Perlu Revisi · 3 hari lagi · Rp75.000".
+4. Bilah bawah ponsel: Beranda, Studio, Streak, Projects, Profil.
+
+ATURAN
+- Semua teks contoh ditulis sungguhan dalam bahasa Indonesia yang wajar (prolog cerpen, puisi pendek). Tanpa lorem ipsum, tanpa nama generik.
+- Ikuti token, radius (pill atau 0), dan larangan anti-slop di DESIGN.md.
+- Akhiri dengan rekomendasimu dalam tiga kalimat, termasuk risikonya.
+```
+
+### Prompt 3: Komponen sistem desain
+
+```
+Bangun pustaka komponen RanahMenulis persis menurut DESIGN.md yang kutempel di bawah (token, tipografi, radius, bagian 7). Jangan menambah warna, radius, atau bayangan di luar yang tertulis.
+
+Tampilkan dalam mode terang dan gelap: tombol (primer, sekunder, teks, berbahaya; keadaan hover, press, disabled, loading), input dan form (label terlihat, galat di bawah field), chip, tab, avatar, dialog, lembar bawah ponsel, laci, menu, toast, bilah atas desktop dengan sidebar, rail tablet, bilah bawah ponsel, keadaan kosong, memuat, dan galat.
+
+Komponen khusus produk: (1) indikator simpan tiga keadaan; (2) delapan status submission monokrom sesuai tabel 7.4; (3) kalender titik tinta Streak sesuai 7.3; (4) penanda visibilitas Pribadi, Grup, Publik.
+
+Setiap komponen punya contoh dengan konten Indonesia nyata.
 ```
 
 ### Prompt 4: Layar inti per modul (ulangi per layar bertanda ★)
@@ -331,11 +364,11 @@ Layar yang disarankan didesain lebih dulu, berurutan: **Editor + indikator simpa
 
 Yang tidak perlu: `animate-expo` dan `write-swift` (bukan native), `remove-animations` / `improve-animations` (belum ada kode).
 
-**Rekomendasi alur:** (1) Claude Design: Prompt 1 → pilih arah → Prompt 2 → Prompt 3 dan 4. (2) Saat implementasi Next.js: pakai `design-taste-frontend` untuk landing/halaman publik (diarahkan editorial), `emil-design-eng` dan `break-ui` untuk komponen aplikasi.
+**Rekomendasi alur:** (1) Claude Design: Prompt 1 (landing) → tinjau bersama client → Prompt 2 bila huruf sans perlu diganti → Prompt 3 (komponen) → Prompt 4 (layar inti), selalu dengan DESIGN.md sebagai konteks. (2) Saat implementasi Next.js: pakai `design-taste-frontend` untuk landing/halaman publik (diarahkan editorial), `emil-design-eng` dan `break-ui` untuk komponen aplikasi.
 
 ## 10. Yang perlu diputuskan sebelum desain final
 
-1. **Referensi visual dari founder** (3 situs/aplikasi yang disukai dan 3 yang tidak) dan preferensi warna/logo. Belum ada.
+1. **Logo dan huruf sans final.** Arah visual sudah diputuskan (hitam putih, mendekati Medium; lihat DESIGN.md). Logo sudah ada di `public/logo/` (DESIGN.md 4.8); belum ada SVG. Huruf sans dinilai dari hasil landing (Prompt 1), diuji ulang dengan Prompt 2 bila perlu.
 2. **Dashboard / Beranda**: disusun di bagian 4A. Perlu persetujuan founder atas keputusan utamanya (bagian atas Beranda, bukan halaman terpisah).
 3. **Bahasa Melayu** di MVP atau tidak (Q-32): memengaruhi panjang teks dan istilah "Apresiasi".
 4. **Isi pesan "tanpa AI"** di materi publik: setujui client dulu.

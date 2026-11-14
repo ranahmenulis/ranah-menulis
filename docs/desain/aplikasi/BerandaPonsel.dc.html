@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Beranda ponsel</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/ranahmenulis/components/variabel.css">
+<link rel="stylesheet" href="ds/ranahmenulis/components/bundle.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600&amp;family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&amp;display=swap">
+<style>
+body{margin:0}
+.wb-cap{margin:0;height:40px;display:flex;align-items:center;gap:8px;font:400 14px/20px var(--font-sans);color:var(--ink-muted)}
+.wb-cap b{font-weight:500;color:var(--ink)}
+.wb-ph{position:relative;width:390px;height:2500px;overflow:hidden;outline:1px solid var(--line)}
+.wb-fold{position:absolute;left:0;right:0;top:788px;height:0;border-top:1px dashed var(--ink-muted);z-index:20;pointer-events:none}
+</style>
+</helmet>
+<div data-theme="light" style="width: 2110px; min-height: 2540px; background: var(--canvas); color: var(--ink); font-family: var(--font-sans); display: flex; gap: 40px; align-items: flex-start">
+  <div><p class="wb-cap"><b>Biasa</b> · garis putus = batas layar pertama (844 dikurangi bilah bawah 56)</p><div class="wb-ph"><dc-import name="Beranda" device="mobile" state="biasa" hint-size="390px,2500px"></dc-import><i class="wb-fold" aria-hidden="true"></i></div></div>
+  <div><p class="wb-cap"><b>Pengguna baru</b></p><div class="wb-ph"><dc-import name="Beranda" device="mobile" state="baru" hint-size="390px,2500px"></dc-import><i class="wb-fold" aria-hidden="true"></i></div></div>
+  <div><p class="wb-cap"><b>Memuat</b></p><div class="wb-ph"><dc-import name="Beranda" device="mobile" state="memuat" hint-size="390px,2500px"></dc-import><i class="wb-fold" aria-hidden="true"></i></div></div>
+  <div><p class="wb-cap"><b>Galat satu blok</b></p><div class="wb-ph"><dc-import name="Beranda" device="mobile" state="galat" hint-size="390px,2500px"></dc-import><i class="wb-fold" aria-hidden="true"></i></div></div>
+  <div><p class="wb-cap"><b>Organizer</b></p><div class="wb-ph"><dc-import name="Beranda" device="mobile" state="organizer" hint-size="390px,2500px"></dc-import><i class="wb-fold" aria-hidden="true"></i></div></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":2110,"height":2540}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

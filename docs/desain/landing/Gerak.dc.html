@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Gerak</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="./ds/ranahmenulis/bundle.css">
+<link rel="stylesheet" href="./landing.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600&amp;family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&amp;display=swap">
+<style>
+body{margin:0}
+.g-sec{border-top:1px solid var(--line);padding-top:24px;margin-top:56px;display:grid;grid-template-columns:240px minmax(0,1fr);gap:24px}
+.g-label{margin:0;font:500 14px/20px var(--font-sans)}
+.g-note{margin:8px 0 0;font:400 14px/22px var(--font-sans);color:var(--ink-muted)}
+.g-axis{position:relative;height:24px;border-bottom:1px solid var(--line-strong);font:400 12px/16px var(--font-sans);color:var(--ink-muted);font-variant-numeric:tabular-nums}
+.g-axis span{position:absolute;top:0;transform:translateX(-50%)}
+.g-track{position:relative;height:56px;border-bottom:1px solid var(--line)}
+.g-track b{position:absolute;left:0;top:18px;font:500 13px/18px var(--font-sans);width:150px}
+.g-bar{position:absolute;top:18px;height:20px;background:var(--ink)}
+.g-bar.ring{background:transparent;box-shadow:inset 0 0 0 1.5px var(--ink)}
+.g-tick{position:absolute;top:40px;font:400 12px/16px var(--font-sans);color:var(--ink-muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.g-table{width:100%;border-collapse:collapse;font:400 14px/20px var(--font-sans);font-variant-numeric:tabular-nums}
+.g-table th{text-align:left;font-weight:500;color:var(--ink-muted);font-size:13px;padding:0 16px 10px 0;border-bottom:1px solid var(--line-strong)}
+.g-table td{padding:12px 16px 12px 0;border-bottom:1px solid var(--line);vertical-align:top}
+.g-table code{font:400 13px/18px ui-monospace,Menlo,Consolas,monospace}
+</style>
+</helmet>
+<div data-theme="light" style="width: 1440px; box-sizing: border-box; padding: 72px 120px 96px; background: var(--canvas); color: var(--ink); font-family: var(--font-sans)">
+  <h1 style="margin: 0; font: 400 72px/1 var(--font-serif); letter-spacing: -0.025em">Gerak</h1>
+  <p style="margin: 20px 0 0; max-width: 680px; font: 400 22px/32px var(--font-serif); color: var(--ink-muted)">Satu momen di hero, sekali saat dimuat, selesai dalam 3,6 detik. Semua gerak hanya memakai opasitas dan transform.</p>
+
+  <section class="g-sec">
+    <div><p class="g-label">Garis waktu hero</p><p class="g-note">Desktop. Ponsel sama, tanpa tahap halaman (sampul mulai 2.626 ms).</p></div>
+    <div>
+      <div class="g-axis"><span style="left: 150px">0</span><span style="left: calc(150px + (100% - 150px) * 0.25)">1.000</span><span style="left: calc(150px + (100% - 150px) * 0.5)">2.000</span><span style="left: calc(150px + (100% - 150px) * 0.75)">3.000</span><span style="left: 100%">4.000 ms</span></div>
+      <div class="g-track"><b>Mengetik</b><i class="g-bar" style="left: calc(150px + (100% - 150px) * 0.0085); width: calc((100% - 150px) * 0.5355)"></i><span class="g-tick" style="left: 150px">34 → 2.176: 128 karakter, 2 per 34 ms</span></div>
+      <div class="g-track"><b>Tersimpan</b><i class="g-bar ring" style="left: calc(150px + (100% - 150px) * 0.544); width: 4px"></i><span class="g-tick" style="left: calc(150px + (100% - 150px) * 0.544)">2.176: kursor hilang, “Menyimpan…” jadi “Tersimpan 14.02”</span></div>
+      <div class="g-track"><b>Halaman 12</b><i class="g-bar" style="left: calc(150px + (100% - 150px) * 0.6565); width: calc((100% - 150px) * 0.1)"></i><span class="g-tick" style="left: calc(150px + (100% - 150px) * 0.6565)">2.626 → 3.026</span></div>
+      <div class="g-track"><b>Sampul</b><i class="g-bar" style="left: calc(150px + (100% - 150px) * 0.8065); width: calc((100% - 150px) * 0.1)"></i><span class="g-tick" style="left: calc(150px + (100% - 150px) * 0.8065)">3.226 → 3.626</span></div>
+    </div>
+  </section>
+
+  <section class="g-sec">
+    <div><p class="g-label">Properti</p><p class="g-note">Tidak ada animasi warna, ukuran, atau posisi tata letak.</p></div>
+    <table class="g-table">
+      <thead><tr><th>Elemen</th><th>Dari</th><th>Ke</th><th>Durasi, kurva</th></tr></thead>
+      <tbody>
+        <tr><td>Isi halaman dan sampul</td><td><code>opacity: 0; transform: translateY(8px)</code></td><td><code>opacity: 1; transform: none</code></td><td>400 ms, <code>cubic-bezier(0.2, 0, 0, 1)</code></td></tr>
+        <tr><td>Garis tunggu (bingkai kosong)</td><td><code>opacity: 1</code></td><td><code>opacity: 0</code></td><td>300 ms, kurva sama</td></tr>
+        <tr><td>Kursor ketik</td><td colspan="2"><code>opacity</code> 1 ↔ 0, langkah, berhenti di 2.176 ms</td><td>1.000 ms per kedip</td></tr>
+        <tr><td>Huruf yang diketik</td><td colspan="3">Muncul tanpa transisi, dua huruf per 34 ms. Bukan animasi CSS.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="g-sec">
+    <div><p class="g-label">Tanpa JavaScript</p><p class="g-note">HTML dari server sudah berisi keadaan akhir.</p></div>
+    <div style="display: grid; gap: 12px; max-width: 760px">
+      <p style="margin: 0; font: 400 16px/26px var(--font-sans)">Paragraf lengkap, “Tersimpan 14.02”, halaman 12, dan sampul semuanya terlihat tanpa garis tunggu. Skrip kecil di <code style="font: 400 13px/18px ui-monospace,Menlo,Consolas,monospace">&lt;head&gt;</code> menambah kelas <code style="font: 400 13px/18px ui-monospace,Menlo,Consolas,monospace">is-animating</code> pada hero sebelum tampilan pertama; hanya kelas itu yang menyembunyikan teks dan tahap. Bila skrip gagal atau lambat, pengunjung tetap melihat keadaan akhir, tidak pernah hero yang kosong.</p>
+      <p style="margin: 0; font: 400 14px/20px var(--font-sans); color: var(--ink-muted)">Papan Hero B di kanvas ini adalah keadaan akhir tersebut.</p>
+    </div>
+  </section>
+
+  <section class="g-sec">
+    <div><p class="g-label">Reduced motion</p><p class="g-note"><code style="font: 400 13px/18px ui-monospace,Menlo,Consolas,monospace">prefers-reduced-motion: reduce</code></p></div>
+    <div style="display: grid; gap: 8px; max-width: 760px; font: 400 16px/26px var(--font-sans)">
+      <p style="margin: 0">Langsung ke keadaan akhir: tanpa ketikan, tanpa kursor berkedip, tanpa geser dan fade. Kelas <code style="font: 400 13px/18px ui-monospace,Menlo,Consolas,monospace">is-animating</code> tidak pernah dipasang.</p>
+      <p style="margin: 0">Hover dan press tetap berubah, tetapi seketika (transisi 1 ms). Titik tiga saat mengirim berhenti berdenyut dan tampil penuh; label “Mengirim…” yang memberi kabar.</p>
+    </div>
+  </section>
+
+  <section class="g-sec">
+    <div><p class="g-label">Tombol</p><p class="g-note">Tidak ada scale, tidak ada bayangan, tidak ada gerak saat tombol bilah atas berganti peran.</p></div>
+    <table class="g-table">
+      <thead><tr><th>Tombol</th><th>Hover</th><th>Press</th><th>Transisi</th></tr></thead>
+      <tbody>
+        <tr><td>Primer, hero, berbahaya</td><td><code>opacity: 0.85</code></td><td><code>opacity: 0.72</code></td><td>opasitas 120 ms, <code>cubic-bezier(0.2, 0, 0, 1)</code></td></tr>
+        <tr><td>Sekunder</td><td>latar <code>subtle</code></td><td>latar <code>line</code></td><td>seketika, warna latar tidak dianimasikan</td></tr>
+        <tr><td>Teks</td><td>warna <code>ink</code></td><td><code>ink</code> + garis bawah</td><td>seketika</td></tr>
+        <tr><td>Fokus keyboard</td><td colspan="2">outline 2px <code>ink</code>, offset 2px</td><td>seketika</td></tr>
+        <tr><td>Bilah atas berganti sekunder ↔ primer</td><td colspan="2">ganti kelas saat tombol hero keluar atau bagian daftar tunggu masuk layar</td><td>seketika</td></tr>
+        <tr><td>Mengirim</td><td colspan="2">tiga titik, <code>opacity</code> 0.25 ↔ 1, jeda 160 ms antartitik</td><td>1.000 ms, berulang selama mengirim</td></tr>
+      </tbody>
+    </table>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1900}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

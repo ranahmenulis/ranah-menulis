@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Beranda</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/ranahmenulis/components/variabel.css">
+<link rel="stylesheet" href="ds/ranahmenulis/components/bundle.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600&amp;family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&amp;display=swap">
+<style>
+body{margin:0}
+.br{position:relative;min-height:2200px;background:var(--canvas);color:var(--ink);font-family:var(--font-sans);-webkit-font-smoothing:antialiased}
+.br.is-m{min-height:2500px}
+.br-shell{display:flex;align-items:stretch;min-height:2144px}
+.br-main{flex:999 1 560px;min-width:0;padding:40px 48px 96px;display:flex;gap:48px;align-items:flex-start}
+.br-col{flex:1 1 728px;max-width:728px;min-width:0}
+.br-right{flex:0 0 320px;display:grid;gap:32px;padding-top:6px}
+.br.is-m .br-main{padding:20px 16px 160px;display:block}
+.br-date{margin:0;font:400 13px/18px var(--font-sans);color:var(--ink-muted)}
+.br-h1{margin:4px 0 20px;font:600 28px/34px var(--font-sans)}
+.br.is-m .br-h1{font-size:24px;line-height:30px;margin-bottom:16px}
+.br-feedtabs{margin-top:40px}
+.br.is-m .br-feedtabs{margin-top:8px}
+.br-sub{margin:4px 0 0;font:400 13px/18px var(--font-sans);color:var(--ink-muted);font-variant-numeric:tabular-nums}
+.br-big{margin:0;font:600 20px/28px var(--font-serif)}
+.br.is-m .br-big{font-size:18px;line-height:24px}
+.br-prog{display:grid;gap:8px;max-width:420px}
+.br-prog-top{display:flex;align-items:baseline;gap:12px;font:400 14px/20px var(--font-sans);font-variant-numeric:tabular-nums}
+.br-prog-top b{font:400 22px/28px var(--font-serif)}
+.br-acts{display:flex;flex-wrap:wrap;gap:4px 12px}
+.br-acts .rm-btn{padding:0;height:28px}
+.br-proj{display:grid;gap:12px;min-width:0}
+.br-proj-row{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:start;gap:12px;font:400 14px/20px var(--font-sans)}
+.br-proj-row .rm-status{margin-top:-2px}
+.br-proj-row b{font-weight:500}
+.br-feed{display:grid}
+.br-feed .rm-feed-item:first-child{border-top:0}
+.br-note-by{display:flex;align-items:center;gap:10px;font:400 13px/18px var(--font-sans);color:var(--ink-muted)}
+.br-note-by b{font-weight:500;color:var(--ink)}
+.br-rhead{margin:0 0 12px;font:600 16px/24px var(--font-sans)}
+.br-who{display:grid;grid-template-columns:32px minmax(0,1fr) auto;gap:12px;align-items:start;padding:10px 0}
+.br-who p{margin:0;font:400 13px/18px var(--font-sans);color:var(--ink-muted)}
+.br-who b{display:block;font:500 14px/20px var(--font-sans);color:var(--ink)}
+.br-foot{display:flex;flex-wrap:wrap;gap:6px 14px;font:400 13px/18px var(--font-sans)}
+.br-foot a{color:var(--ink-muted);text-decoration:none}
+.br-mbar{height:52px;display:flex;align-items:center;gap:2px;padding:0 8px 0 16px;border-bottom:1px solid var(--line);background:var(--canvas)}
+.br-follow{margin:0 -16px;border-bottom:1px solid var(--line)}
+.br-bottom{position:sticky;bottom:0;z-index:5}
+.br-fab{position:absolute;right:16px;top:-72px}
+.br-skel{display:grid;gap:10px}
+.br-empty{padding:40px 0 8px}
+.br-empty p.small{margin:0;max-width:440px;font:400 14px/22px var(--font-sans);color:var(--ink-muted)}
+.br-done{font:400 14px/20px var(--font-sans);color:var(--ink-muted)}
+</style>
+</helmet>
+<div class="br {{ rootCls }}" data-theme="{{ theme }}">
+
+<!-- ============ Bilah atas desktop ============ -->
+<sc-if value="{{ isDesk }}" hint-placeholder-val="{{ true }}">
+<header class="rm-topbar">
+  <button class="rm-icon-btn" type="button" aria-label="Sembunyikan sidebar"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true"><line x1="40" y1="64" x2="216" y2="64"></line><line x1="40" y1="128" x2="216" y2="128"></line><line x1="40" y1="192" x2="216" y2="192"></line></svg></button>
+  <a class="rm-logo rm-logo--28" href="#" aria-label="RanahMenulis, Beranda"><img src="/_blob/d29e1e89eab6f00efbe8181520ab70e5" alt="RanahMenulis"><img class="rm-on-dark" src="/_blob/785f553aa8906c11b9ee99c9ecba9cb4" alt="RanahMenulis"></a>
+  <div class="rm-search" style="margin-left: 16px"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><circle cx="112" cy="112" r="80"></circle><line x1="168.6" y1="168.6" x2="224" y2="224"></line></svg>Cari penulis dan karya</div>
+  <span style="margin-left: auto"></span>
+  <a class="rm-btn rm-btn--text" href="Main.dc.html"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><path d="M92.7 216H48a8 8 0 0 1-8-8v-44.7a8 8 0 0 1 2.3-5.6l120-120a8 8 0 0 1 11.4 0l44.6 44.6a8 8 0 0 1 0 11.4z"></path><line x1="136" y1="64" x2="192" y2="120"></line></svg>Tulis</a>
+  <button class="rm-icon-btn" type="button" aria-label="{{ bellAria }}"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true"><path d="M56 104a72 72 0 0 1 144 0c0 35.8 8.2 64.5 14.8 76A8 8 0 0 1 208 192H48a8 8 0 0 1-6.9-12c6.6-11.5 14.9-40.2 14.9-76z"></path><path d="M96 192a32 32 0 0 0 64 0"></path></svg><sc-if value="{{ hasUnread }}" hint-placeholder-val="{{ true }}"><span class="rm-badge-dot"></span></sc-if></button>
+  <span class="rm-avatar" style="--s: 32px" aria-label="{{ userName }}">{{ userInit }}</span>
+</header>
+</sc-if>
+
+<!-- ============ Bilah atas ponsel ============ -->
+<sc-if value="{{ isMob }}" hint-placeholder-val="{{ false }}">
+<header class="br-mbar">
+  <span class="rm-logo rm-mono"><img src="/_blob/6764dec210bfec4e8815fa13cc4b973e" alt="RanahMenulis"><img class="rm-on-dark" src="/_blob/fd5a44cbf67158c3e41c6039bda6a617" alt="RanahMenulis"></span><span style="margin-left: auto"></span>
+  <button class="rm-icon-btn" type="button" aria-label="Cari" style="width: 44px; height: 44px"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><circle cx="112" cy="112" r="80"></circle><line x1="168.6" y1="168.6" x2="224" y2="224"></line></svg></button>
+  <button class="rm-icon-btn" type="button" aria-label="{{ bellAria }}" style="width: 44px; height: 44px"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><path d="M56 104a72 72 0 0 1 144 0c0 35.8 8.2 64.5 14.8 76A8 8 0 0 1 208 192H48a8 8 0 0 1-6.9-12c6.6-11.5 14.9-40.2 14.9-76z"></path><path d="M96 192a32 32 0 0 0 64 0"></path></svg><sc-if value="{{ hasUnread }}" hint-placeholder-val="{{ true }}"><span class="rm-badge-dot"></span></sc-if></button>
+  <span class="rm-avatar" style="--s: 28px" aria-label="{{ userName }}">{{ userInit }}</span>
+</header>
+</sc-if>
+
+<div class="br-shell">
+<sc-if value="{{ isDesk }}" hint-placeholder-val="{{ true }}">
+<nav class="rm-sidebar" aria-label="Utama" style="flex: 0 0 240px">
+  <a class="rm-nav-item" href="#" aria-current="page"><svg class="rm-i rm-i--24 rm-i--fill" viewBox="0 0 256 256" aria-hidden="true" style="stroke: none"><path d="M224 115.5V208a16 16 0 0 1-16 16h-40a8 8 0 0 1-8-8v-48a8 8 0 0 0-8-8h-48a8 8 0 0 0-8 8v48a8 8 0 0 1-8 8H48a16 16 0 0 1-16-16v-92.5a16 16 0 0 1 5.2-11.8l80-75.5a16 16 0 0 1 21.6 0l80 75.5a16 16 0 0 1 5.2 11.8z"></path></svg>Beranda</a>
+  <a class="rm-nav-item" href="Studio.dc.html"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true"><rect x="48" y="32" width="160" height="192" rx="8"></rect><line x1="88" y1="32" x2="88" y2="224"></line><line x1="120" y1="80" x2="168" y2="80"></line><line x1="120" y1="112" x2="168" y2="112"></line></svg>Studio</a>
+  <a class="rm-nav-item rm-nav-item--sub" href="Streak.dc.html">Streak</a>
+  <a class="rm-nav-item" href="#"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true"><rect x="40" y="40" width="48" height="176" rx="8"></rect><rect x="88" y="40" width="48" height="176" rx="8"></rect><path d="M168 46l40 10-34 160-40-10z"></path></svg>Projects</a>
+  <a class="rm-nav-item" href="#"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true"><path d="M192 224l-64-40-64 40V48a8 8 0 0 1 8-8h112a8 8 0 0 1 8 8z"></path></svg>Tersimpan</a>
+  <a class="rm-nav-item" href="#"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true"><circle cx="128" cy="96" r="64"></circle><path d="M32 216c19.4-33.5 54.6-56 96-56s76.6 22.5 96 56"></path></svg>Profil</a>
+  <sc-if value="{{ isOrg }}" hint-placeholder-val="{{ false }}"><div class="rm-nav-sep" role="separator"></div><a class="rm-nav-item" href="#">Kelola</a></sc-if>
+  <sc-if value="{{ hasGroups }}" hint-placeholder-val="{{ true }}"><div class="rm-nav-sep" role="separator"></div><p class="rm-nav-group">Grup saya</p><a class="rm-nav-item" href="#"><span class="rm-avatar" style="--s: 20px">GP</span>Grup Penulis Pesisir</a></sc-if>
+</nav>
+</sc-if>
+
+<main class="br-main">
+<div class="br-col">
+  <p class="br-date">Sabtu, 14 November</p>
+  <h1 class="br-h1">Hari ini</h1>
+
+  <!-- ===== Memuat ===== -->
+  <sc-if value="{{ isLoading }}" hint-placeholder-val="{{ false }}">
+  <div class="rm-today {{ todayCls }}" aria-busy="true" aria-label="Memuat Hari ini">
+    <sc-for list="{{ skelRows }}" as="r" hint-placeholder-count="4">
+    <div class="rm-today-row"><span class="rm-skel" style="width: 110px; height: 14px"></span><div class="br-skel"><span class="rm-skel" style="width: {{ r.w1 }}; height: 20px"></span><span class="rm-skel" style="width: {{ r.w2 }}; height: 12px"></span></div></div>
+    </sc-for>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ notLoading }}" hint-placeholder-val="{{ true }}">
+  <sc-if value="{{ isNew }}" hint-placeholder-val="{{ false }}">
+    <ol class="rm-steplist" aria-label="Tiga langkah awal" style="margin-bottom: 24px">
+      <li class="is-done"><span class="rm-check is-done"><svg class="rm-i rm-i--16" viewBox="0 0 256 256" aria-hidden="true"><polyline points="40 144 96 200 224 72"></polyline></svg></span><span>Lengkapi profil: negara dan zona waktu</span><span class="rm-meta">Selesai</span></li>
+      <li><span class="rm-check"></span><span>Tetapkan target kata per hari</span><a class="rm-btn rm-btn--text rm-btn--sm" href="Streak.dc.html" style="color: var(--ink)">Tetapkan</a></li>
+      <li><span class="rm-check"></span><span>Tulis dokumen pertamamu di Studio</span><a class="rm-btn rm-btn--text rm-btn--sm" href="Main.dc.html" style="color: var(--ink)">Buka Studio</a></li>
+    </ol>
+  </sc-if>
+
+  <div class="rm-today {{ todayCls }}">
+    <!-- 1. Lanjutkan menulis -->
+    <div class="rm-today-row">
+      <p class="rm-today-label">{{ contLabel }}</p>
+      <sc-if value="{{ hasDoc }}" hint-placeholder-val="{{ true }}"><div style="min-width: 0"><p class="rm-today-title">{{ docTitle }}</p><p class="br-sub">{{ docMeta }}</p></div><a class="rm-btn {{ contBtnCls }}" href="Main.dc.html">{{ contBtn }}</a></sc-if>
+      <sc-if value="{{ isNew }}" hint-placeholder-val="{{ false }}"><div style="min-width: 0"><p class="br-big">Belum ada dokumen.</p><p class="br-sub">Satu kalimat sudah cukup untuk memulai.</p></div><a class="rm-btn {{ contBtnCls }}" href="Main.dc.html">Mulai menulis</a></sc-if>
+    </div>
+
+    <!-- 2. Progres hari ini -->
+    <div class="rm-today-row">
+      <p class="rm-today-label">Progres hari ini</p>
+      <sc-if value="{{ hasDoc }}" hint-placeholder-val="{{ true }}">
+        <a class="br-prog" href="Streak.dc.html" style="color: inherit; text-decoration: none" aria-label="{{ progAria }}">
+          <span class="br-prog-top"><b>{{ progNow }}</b><span style="color: var(--ink-muted)">/ {{ progTarget }} kata</span><span style="margin-left: auto">Streak {{ progStreak }} hari</span></span>
+          <span class="rm-progress"><i style="width: {{ progPct }}"></i></span>
+        </a>
+      </sc-if>
+      <sc-if value="{{ isNew }}" hint-placeholder-val="{{ false }}"><div><p class="br-big" style="font-size: 18px; line-height: 26px">Belum ada target harian.</p><a class="rm-btn rm-btn--text rm-btn--sm" href="Streak.dc.html" style="padding: 0; color: var(--ink)">Tetapkan target</a></div></sc-if>
+    </div>
+
+    <!-- 3. Perlu perhatian -->
+    <sc-if value="{{ showAttn }}" hint-placeholder-val="{{ true }}">
+    <div class="rm-today-row">
+      <p class="rm-today-label">Perlu perhatian</p>
+      <sc-if value="{{ attnError }}" hint-placeholder-val="{{ false }}">
+        <div class="rm-banner" role="alert" style="grid-column: 2 / -1"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><circle cx="128" cy="128" r="96"></circle><line x1="128" y1="80" x2="128" y2="136"></line><circle cx="128" cy="172" r="10" class="rm-i--fill"></circle></svg><p>Daftar ini gagal dimuat. Blok lain di Beranda tetap bisa dipakai.</p><button class="rm-btn rm-btn--secondary rm-btn--sm" type="button" onClick="{{ retry }}">Coba lagi</button></div>
+      </sc-if>
+      <sc-if value="{{ attnOk }}" hint-placeholder-val="{{ true }}">
+      <ul class="rm-attn">
+        <sc-for list="{{ attn }}" as="a" hint-placeholder-count="3">
+        <li>
+          <span><b style="font-weight: 500">{{ a.title }}</b><span class="rm-meta">{{ a.meta }}</span></span>
+          <sc-if value="{{ a.hasActs }}" hint-placeholder-val="{{ true }}"><span class="br-acts"><sc-for list="{{ a.acts }}" as="x" hint-placeholder-count="1"><a class="rm-btn rm-btn--text rm-btn--sm" href="#" style="color: var(--ink)">{{ x.label }}</a></sc-for></span></sc-if>
+        </li>
+        </sc-for>
+        <sc-if value="{{ attnMore }}" hint-placeholder-val="{{ false }}"><li><a class="rm-btn rm-btn--text rm-btn--sm" href="#" style="padding: 0; color: var(--ink)">{{ attnMoreLabel }}</a></li></sc-if>
+        <sc-if value="{{ isOrg }}" hint-placeholder-val="{{ false }}"><li><a class="rm-link" href="#" style="font: 500 14px/20px var(--font-sans); text-decoration: underline">Lihat semua di Kelola</a></li></sc-if>
+      </ul>
+      </sc-if>
+    </div>
+    </sc-if>
+
+    <!-- 4. Proyek saya -->
+    <sc-if value="{{ showProj }}" hint-placeholder-val="{{ true }}">
+    <div class="rm-today-row">
+      <p class="rm-today-label">Proyek saya</p>
+      <div class="br-proj">
+        <sc-for list="{{ projects }}" as="pj" hint-placeholder-count="2">
+        <div class="br-proj-row"><span class="rm-status {{ pj.cls }}">{{ pj.status }}</span><span style="min-width: 0"><b>{{ pj.name }}</b><span class="rm-meta" style="display: block">{{ pj.meta }}</span></span></div>
+        </sc-for>
+        <sc-if value="{{ isDesk }}" hint-placeholder-val="{{ true }}"><a class="rm-btn rm-btn--text rm-btn--sm" href="#" style="padding: 0; justify-self: start">Lihat semua</a></sc-if>
+      </div>
+      <sc-if value="{{ isMob }}" hint-placeholder-val="{{ false }}"><a class="rm-btn rm-btn--text rm-btn--sm" href="#" style="padding: 0">Lihat semua</a></sc-if>
+    </div>
+    </sc-if>
+
+    <!-- 5. Notifikasi baru (desktop) -->
+    <sc-if value="{{ showNotif }}" hint-placeholder-val="{{ true }}">
+    <div class="rm-today-row">
+      <p class="rm-today-label">Notifikasi baru</p>
+      <div style="min-width: 0"><p style="margin: 0; font: 400 14px/20px var(--font-sans)"><b style="font-weight: 500">{{ notifWho }}</b> {{ notifText }}</p><p class="br-sub">{{ notifMeta }}</p></div>
+      <a class="rm-btn rm-btn--text rm-btn--sm" href="#">Buka notifikasi</a>
+    </div>
+    </sc-if>
+  </div>
+  </sc-if>
+
+  <!-- ===== Deretan penulis (ponsel) ===== -->
+  <sc-if value="{{ showFollowRow }}" hint-placeholder-val="{{ false }}">
+  <div class="br-follow">
+    <div class="rm-follow-row" style="padding-top: 16px" role="list" aria-label="Penulis dan grup yang kamu ikuti">
+      <a class="rm-follow" href="#" role="listitem"><span class="rm-avatar">HR</span><i class="rm-follow-new" aria-label="Ada karya baru"></i><span class="rm-follow-name">Hafiz Rahman</span></a>
+      <a class="rm-follow" href="#" role="listitem"><span class="rm-avatar">NA</span><i class="rm-follow-new" aria-label="Ada karya baru"></i><span class="rm-follow-name">Nur Aisyah</span></a>
+      <a class="rm-follow" href="#" role="listitem"><span class="rm-avatar">GP</span><span class="rm-follow-name">Grup Penulis Pesisir</span></a>
+      <a class="rm-follow" href="#" role="listitem"><span class="rm-avatar">DP</span><i class="rm-follow-new" aria-label="Ada karya baru"></i><span class="rm-follow-name">Dimas Pratama</span></a>
+      <a class="rm-follow" href="#" role="listitem"><span class="rm-avatar">AS</span><span class="rm-follow-name">Aina Sofea</span></a>
+      <a class="rm-follow rm-follow--add" href="#" role="listitem"><span class="rm-avatar" aria-hidden="true">+</span><span class="rm-follow-name">Temukan</span></a>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ===== Feed ===== -->
+  <div class="rm-tabs br-feedtabs" role="tablist" aria-label="Feed"><button class="rm-tab" type="button" role="tab" aria-selected="true">Mengikuti</button><a class="rm-tab" href="#" role="tab" aria-selected="false">Jelajahi</a></div>
+
+  <sc-if value="{{ isLoading }}" hint-placeholder-val="{{ false }}">
+    <div aria-busy="true" aria-label="Memuat feed">
+      <div class="rm-feed-item" style="border-top: 0"><div style="display: flex; gap: 8px; align-items: center"><span class="rm-skel" style="width: 20px; height: 20px; border-radius: 9999px"></span><span class="rm-skel" style="width: 200px; height: 12px"></span></div><span class="rm-skel" style="width: 64%; height: 22px"></span><span class="rm-skel" style="width: 100%; height: 12px"></span><span class="rm-skel" style="width: 82%; height: 12px"></span></div>
+      <div class="rm-feed-item"><div style="display: flex; gap: 8px; align-items: center"><span class="rm-skel" style="width: 20px; height: 20px; border-radius: 9999px"></span><span class="rm-skel" style="width: 160px; height: 12px"></span></div><span class="rm-skel" style="width: 100%; height: 12px"></span><span class="rm-skel" style="width: 90%; height: 12px"></span><span class="rm-skel" style="width: 40%; height: 12px"></span></div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ feedEmpty }}" hint-placeholder-val="{{ false }}">
+    <div class="rm-empty br-empty">
+      <p>Kamu belum mengikuti siapa pun.</p>
+      <span class="small" style="font: 400 14px/22px var(--font-sans); color: var(--ink-muted); max-width: 440px">Jelajahi tulisan dari penulis di Indonesia dan Malaysia, lalu ikuti yang suaranya ingin kamu baca lagi.</span>
+      <a class="rm-btn rm-btn--secondary" href="#">Buka Jelajahi</a>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ feedOk }}" hint-placeholder-val="{{ true }}">
+  <div class="br-feed">
+    <article class="rm-feed-item">
+      <div class="br-note-by"><span class="rm-avatar" style="--s: 32px">HR</span><span><b>Hafiz Rahman</b> · di <b>Grup Penulis Pesisir</b> · 2 jam</span></div>
+      <p class="rm-note-text">Ibu menyimpan laut
+di dalam toples kerupuk:
+setiap kali dibuka,
+rumah kami berbau pulang.</p>
+      <div class="rm-actbar"><span>Apresiasi 48</span><span>Komentar 6</span><span>Bagikan</span><span style="margin-left: auto">Simpan</span></div>
+    </article>
+    <article class="rm-feed-item">
+      <div class="rm-feed-by"><span class="rm-avatar" style="--s: 20px">NA</span><b>Nur Aisyah</b> · kemarin</div>
+      <h2 class="rm-feed-title">Bahasa yang Kupakai untuk Memarahi Adik</h2>
+      <p class="rm-feed-excerpt">Di rumah kami ada dua bahasa: satu untuk tamu, satu untuk adik yang menghabiskan susu. Aku baru sadar keduanya sama-sama bahasa sayang setelah ia merantau ke Johor dan tidak ada lagi yang bisa kumarahi.</p>
+      <div class="rm-feed-foot"><span>Prolog · Esai · 2 menit baca</span><span>Apresiasi 112</span><span>Komentar 19</span><span class="rm-push">Simpan</span><span>⋯</span></div>
+    </article>
+    <article class="rm-feed-item">
+      <div class="br-note-by"><span class="rm-avatar" style="--s: 32px">DP</span><span><b>Dimas Pratama</b> · 5 jam</span></div>
+      <p class="rm-note-text">Hari ketiga belas menulis sebelum subuh. Belum ada yang bagus, tapi tanganku mulai hafal jalan ke meja.</p>
+      <div class="rm-actbar"><span>Apresiasi 23</span><span>Komentar 4</span><span>Bagikan</span><span style="margin-left: auto">Simpan</span></div>
+    </article>
+    <article class="rm-feed-item">
+      <div class="rm-feed-by"><span class="rm-avatar" style="--s: 20px">AS</span><b>Aina Sofea</b> · Kuala Lumpur · 3 hari</div>
+      <h2 class="rm-feed-title">Pasar Malam Selepas Hujan</h2>
+      <p class="rm-feed-excerpt">Lampu-lampu gerai menyala satu per satu, dan bau air hujan bercampur asap sate. Mak Cik penjual kuih itu masih ingat namaku, walau sudah sepuluh tahun aku tidak pulang.</p>
+      <div class="rm-feed-foot"><span>Cuplikan · Cerpen</span><span>Apresiasi 67</span><span>Komentar 9</span><span class="rm-push">Simpan</span><span>⋯</span></div>
+    </article>
+  </div>
+  </sc-if>
+</div>
+
+<!-- ===== Kolom kanan (desktop) ===== -->
+<sc-if value="{{ isDesk }}" hint-placeholder-val="{{ true }}">
+<aside class="br-right" aria-label="Saran">
+  <section>
+    <h2 class="br-rhead">Penulis untuk diikuti</h2>
+    <div class="br-who"><span class="rm-avatar" style="--s: 32px">MA</span><p><b>Maya Anindita</b>Puisi pendek tentang kota-kota kecil di Jawa Timur.</p><button class="rm-btn rm-btn--text rm-btn--sm" type="button" style="color: var(--ink)">Ikuti</button></div>
+    <div class="br-who"><span class="rm-avatar" style="--s: 32px">FZ</span><p><b>Farid Zulkifli</b>Cerpen dari Penang, ditulis dalam dua bahasa.</p><button class="rm-btn rm-btn--text rm-btn--sm" type="button" style="color: var(--ink)">Ikuti</button></div>
+    <div class="br-who"><span class="rm-avatar" style="--s: 32px">L</span><p><b>Laras</b>Esai tentang dapur, ibu, dan resep yang tidak pernah ditulis.</p><button class="rm-btn rm-btn--text rm-btn--sm" type="button" style="color: var(--ink)">Ikuti</button></div>
+  </section>
+  <nav class="br-foot" aria-label="Tautan kecil"><a href="#">Tentang</a><a href="#">Bantuan</a><a href="#">Kebijakan privasi</a><a href="#">Kontak</a></nav>
+</aside>
+</sc-if>
+</main>
+</div>
+
+<!-- ===== Bilah bawah ponsel + tombol Tulis ===== -->
+<sc-if value="{{ isMob }}" hint-placeholder-val="{{ false }}">
+<div class="br-bottom">
+  <a class="rm-fab br-fab" href="Main.dc.html" aria-label="Tulis"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true"><path d="M92.7 216H48a8 8 0 0 1-8-8v-44.7a8 8 0 0 1 2.3-5.6l120-120a8 8 0 0 1 11.4 0l44.6 44.6a8 8 0 0 1 0 11.4z"></path><line x1="136" y1="64" x2="192" y2="120"></line></svg></a>
+  <nav class="rm-bottombar" aria-label="Utama">
+    <a class="rm-bottom-item" href="#" aria-current="page"><svg class="rm-i rm-i--24 rm-i--fill" viewBox="0 0 256 256" aria-hidden="true" style="stroke: none"><path d="M224 115.5V208a16 16 0 0 1-16 16h-40a8 8 0 0 1-8-8v-48a8 8 0 0 0-8-8h-48a8 8 0 0 0-8 8v48a8 8 0 0 1-8 8H48a16 16 0 0 1-16-16v-92.5a16 16 0 0 1 5.2-11.8l80-75.5a16 16 0 0 1 21.6 0l80 75.5a16 16 0 0 1 5.2 11.8z"></path></svg>Beranda</a>
+    <a class="rm-bottom-item" href="Studio.dc.html"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true"><rect x="48" y="32" width="160" height="192" rx="8"></rect><line x1="88" y1="32" x2="88" y2="224"></line><line x1="120" y1="80" x2="168" y2="80"></line><line x1="120" y1="112" x2="168" y2="112"></line></svg>Studio</a>
+    <a class="rm-bottom-item" href="Streak.dc.html"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true"><rect x="40" y="40" width="176" height="176" rx="8"></rect><line x1="176" y1="24" x2="176" y2="56"></line><line x1="80" y1="24" x2="80" y2="56"></line><line x1="40" y1="88" x2="216" y2="88"></line><circle cx="92" cy="132" r="10" class="rm-i--fill"></circle><circle cx="128" cy="132" r="10" class="rm-i--fill"></circle><circle cx="164" cy="132" r="10" class="rm-i--fill"></circle></svg>Streak</a>
+    <a class="rm-bottom-item" href="#"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true"><rect x="40" y="40" width="48" height="176" rx="8"></rect><rect x="88" y="40" width="48" height="176" rx="8"></rect><path d="M168 46l40 10-34 160-40-10z"></path></svg>Projects</a>
+    <a class="rm-bottom-item" href="#"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true"><circle cx="128" cy="96" r="64"></circle><path d="M32 216c19.4-33.5 54.6-56 96-56s76.6 22.5 96 56"></path></svg>Profil</a>
+  </nav>
+</div>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"device":{"editor":"enum","options":["auto","desktop","mobile"],"default":"auto"},"state":{"editor":"enum","options":["biasa","baru","memuat","galat","ringkas","organizer"],"default":"biasa"},"$preview":{"width":1440,"height":2200}}'>
+var RM_ATTN_WRITER = [
+  { title: 'Editor meminta revisi untuk “Surat untuk Kakek di Pelabuhan”', meta: 'Antologi Surat yang Tidak Pernah Terkirim · tenggat revisi 18 Nov', acts: ['Baca catatan editor'] },
+  { title: 'Pembayaran Kelas Menulis Puisi Dasar menunggu konfirmasi', meta: 'Rp150.000 · kuotamu ditahan 1 jam 42 menit lagi', acts: ['Lihat pembayaran'] },
+  { title: 'Hafiz Rahman mengundangmu ke Grup Penulis Pesisir', meta: 'Grup kecil, 14 anggota', acts: ['Terima', 'Tolak'] }
+];
+var RM_ATTN_ORG = [
+  { title: '4 pendaftaran menunggu konfirmasi pembayaran', meta: 'Kelas Menulis Puisi Dasar · yang paling lama menunggu sejak 09.12', acts: ['Konfirmasi'] },
+  { title: '9 naskah baru masuk dan belum ditugaskan ke editor', meta: 'Antologi Surat yang Tidak Pernah Terkirim · sejak kemarin', acts: ['Tugaskan'] },
+  { title: 'Lomba Cerpen Hujan 2026 ditutup 3 hari lagi', meta: 'Tenggat kirim 17 Nov pukul 23.59 WIB', acts: ['Buka proyek'] }
+];
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { w: 1440, retried: false };
+  }
+  componentDidMount() {
+    var self = this;
+    this.onResize = function () { self.setState({ w: window.innerWidth }); };
+    window.addEventListener('resize', this.onResize);
+    this.setState({ w: window.innerWidth });
+  }
+  componentWillUnmount() { window.removeEventListener('resize', this.onResize); }
+  renderVals() {
+    var self = this, s = this.state, p = this.props;
+    var st = p.state || 'biasa';
+    var theme = p.theme === 'dark' ? 'dark' : 'light';
+    var mobile = p.device === 'mobile' || (p.device !== 'desktop' && s.w < 768);
+    var isNew = st === 'baru', org = st === 'organizer', loading = st === 'memuat';
+    var attnSrc = org ? RM_ATTN_ORG : RM_ATTN_WRITER;
+    var attnErr = st === 'galat' && !s.retried;
+    var projects = org
+      ? [{ status: 'Terkirim', cls: '', name: 'Kelas Menulis Esai, angkatan November', meta: 'Tugas 2 “Rumah yang Kutinggalkan” · dikirim 12 Nov' }]
+      : [
+        { status: 'Perlu Revisi', cls: 'rm-status--revisi-line', name: 'Antologi Surat yang Tidak Pernah Terkirim', meta: '“Surat untuk Kakek di Pelabuhan” · tenggat revisi 18 Nov' },
+        { status: 'Terkirim', cls: '', name: 'Lomba Cerpen Hujan 2026', meta: '“Yang Ditunggu Nenek di Bawah Jambu Air” · pengumuman finalis 30 Nov' }
+      ];
+    if (mobile && !org) projects = projects.slice(0, 1);
+    var sk = [{ w1: '62%', w2: '40%' }, { w1: '48%', w2: '30%' }, { w1: '80%', w2: '56%' }, { w1: '58%', w2: '36%' }];
+    return {
+      theme: theme,
+      rootCls: mobile ? 'is-m' : '',
+      isDesk: !mobile, isMob: mobile,
+      todayCls: mobile ? 'rm-today--s' : '',
+      isLoading: loading, notLoading: !loading,
+      isNew: isNew, hasDoc: !isNew, isOrg: org,
+      hasGroups: !isNew,
+      userName: org ? 'Hafiz Rahman' : 'Rinjani Putri', userInit: org ? 'HR' : 'RP',
+      hasUnread: !isNew, bellAria: isNew ? 'Notifikasi' : 'Notifikasi, 3 belum dibaca',
+      contLabel: isNew ? 'Mulai menulis' : 'Lanjutkan menulis',
+      docTitle: org ? 'Catatan dari Dermaga' : 'Yang Ditunggu Nenek di Bawah Jambu Air',
+      docMeta: org ? '412 kata · diubah tadi pagi pukul 06.10 · Pribadi' : '167 kata · diubah 40 menit lalu · Pribadi',
+      contBtn: mobile ? 'Lanjutkan' : 'Lanjutkan menulis',
+      contBtnCls: mobile ? 'rm-btn--secondary rm-btn--sm' : 'rm-btn--primary',
+      progNow: org ? '210' : '320', progTarget: org ? '300' : '500', progStreak: org ? 3 : 6, progPct: org ? '70%' : '64%',
+      progAria: org ? 'Progres hari ini 210 dari 300 kata, streak 3 hari. Buka Streak' : 'Progres hari ini 320 dari 500 kata, streak 6 hari. Buka Streak',
+      showAttn: !isNew && st !== 'ringkas',
+      attnError: attnErr, attnOk: !attnErr,
+      retry: function () { self.setState({ retried: true }); },
+      attnMore: mobile && !org && attnSrc.length > 1,
+      attnMoreLabel: 'Lihat ' + (attnSrc.length - 1) + ' lainnya',
+      attn: (mobile ? attnSrc.slice(0, 1) : attnSrc).map(function (a) { return { title: a.title, meta: a.meta, hasActs: a.acts.length > 0, acts: a.acts.map(function (l) { return { label: l }; }) }; }),
+      showProj: !isNew && st !== 'ringkas',
+      projects: projects,
+      showNotif: !mobile && !isNew && st !== 'ringkas',
+      notifWho: org ? 'Rinjani Putri' : 'Nur Aisyah',
+      notifText: org ? 'mengirim naskah ke Antologi Surat yang Tidak Pernah Terkirim.' : 'membalas komentarmu di “Bahasa yang Kupakai untuk Memarahi Adik”.',
+      notifMeta: '3 belum dibaca · terbaru 25 menit lalu',
+      showFollowRow: mobile && !isNew && !loading,
+      feedEmpty: isNew && !loading, feedOk: !isNew && !loading,
+      skelRows: sk
+    };
+  }
+}
+</script>
+</body>
+</html>

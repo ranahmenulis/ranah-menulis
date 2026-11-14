@@ -1,0 +1,442 @@
+{
+  "v": 3,
+  "createdOnFiles": {
+    "v": 1,
+    "at": "2026-11-14T15:40:00Z"
+  },
+  "title": "RanahMenulis Aplikasi",
+  "launch": {
+    "view": "canvas"
+  },
+  "pages": [],
+  "boards": {
+    "Main.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 960,
+      "title": "Editor Studio · desktop · terang · Tersimpan",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "EditorGelap.dc.html": {
+      "x": 1520,
+      "y": 0,
+      "w": 1440,
+      "h": 1000,
+      "title": "Editor · desktop · gelap · teks dipilih",
+      "is_interactive": true
+    },
+    "EditorKonflik.dc.html": {
+      "x": 3040,
+      "y": 0,
+      "w": 1440,
+      "h": 1000,
+      "title": "Editor · dialog konflik",
+      "is_interactive": true
+    },
+    "EditorSimpan.dc.html": {
+      "x": 4560,
+      "y": 0,
+      "w": 1440,
+      "h": 640,
+      "title": "Editor · indikator simpan, tiga keadaan"
+    },
+    "EditorInteraksi.dc.html": {
+      "x": 0,
+      "y": 1120,
+      "w": 1440,
+      "h": 3096,
+      "title": "Editor · teks dipilih, drawer bantuan, menu ⋯",
+      "is_interactive": true
+    },
+    "EditorFokus.dc.html": {
+      "x": 1520,
+      "y": 1120,
+      "w": 1440,
+      "h": 2048,
+      "title": "Editor · mode fokus, terang dan gelap"
+    },
+    "EditorKeadaan.dc.html": {
+      "x": 3040,
+      "y": 1120,
+      "w": 1440,
+      "h": 3096,
+      "title": "Editor · kosong, memuat, galat"
+    },
+    "EditorPonsel.dc.html": {
+      "x": 0,
+      "y": 4336,
+      "w": 2540,
+      "h": 884,
+      "title": "Editor · ponsel 390 · terang",
+      "is_interactive": true
+    },
+    "EditorPonselGelap.dc.html": {
+      "x": 2620,
+      "y": 4336,
+      "w": 1250,
+      "h": 884,
+      "title": "Editor · ponsel 390 · gelap"
+    },
+    "Streak.dc.html": {
+      "x": 0,
+      "y": 5640,
+      "w": 1440,
+      "h": 1440,
+      "title": "Studio, tab Streak · desktop · hari berjalan",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "StreakHari.dc.html": {
+      "x": 1520,
+      "y": 5640,
+      "w": 1440,
+      "h": 4536,
+      "title": "Streak · target tercapai, milestone baru, streak putus",
+      "is_interactive": true
+    },
+    "StreakAwal.dc.html": {
+      "x": 3040,
+      "y": 5640,
+      "w": 1440,
+      "h": 4536,
+      "title": "Streak · belum ada target, pengaturan target, zona waktu",
+      "is_interactive": true
+    },
+    "StreakMuatGalat.dc.html": {
+      "x": 4560,
+      "y": 5640,
+      "w": 1440,
+      "h": 3008,
+      "title": "Streak · memuat dan galat"
+    },
+    "StreakPonsel.dc.html": {
+      "x": 0,
+      "y": 10296,
+      "w": 2540,
+      "h": 2040,
+      "title": "Streak · ponsel 390",
+      "is_interactive": true
+    },
+    "Beranda.dc.html": {
+      "x": 0,
+      "y": 12780,
+      "w": 1440,
+      "h": 2200,
+      "title": "Beranda · desktop · Hari ini + feed",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "BerandaVarian.dc.html": {
+      "x": 1520,
+      "y": 12780,
+      "w": 1440,
+      "h": 6816,
+      "title": "Beranda · pengguna baru, Organizer, blok kosong menghilang",
+      "is_interactive": true
+    },
+    "BerandaMuatGalat.dc.html": {
+      "x": 3040,
+      "y": 12780,
+      "w": 1440,
+      "h": 4528,
+      "title": "Beranda · memuat dan galat per blok"
+    },
+    "BerandaPonsel.dc.html": {
+      "x": 0,
+      "y": 19716,
+      "w": 2110,
+      "h": 2540,
+      "title": "Beranda · ponsel 390",
+      "is_interactive": true
+    },
+    "Studio.dc.html": {
+      "x": 0,
+      "y": 22980,
+      "w": 1440,
+      "h": 1000,
+      "title": "Studio, tab Dokumen · desktop [usulan]",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "StudioKeadaan.dc.html": {
+      "x": 1520,
+      "y": 22980,
+      "w": 1440,
+      "h": 5392,
+      "title": "Studio, tab Dokumen · menu, Sampah, kosong, memuat, galat",
+      "is_interactive": true
+    },
+    "BilahBawah.dc.html": {
+      "x": 3040,
+      "y": 22980,
+      "w": 1760,
+      "h": 1180,
+      "title": "Bilah bawah ponsel · lima tab vs empat tab [usulan]",
+      "is_interactive": true
+    },
+    "MenulisStreak.dc.html": {
+      "x": 0,
+      "y": 28980,
+      "w": 3280,
+      "h": 5379,
+      "title": "Menulis menggerakkan Streak · desktop 1440, ponsel 390, terang dan gelap [usulan]"
+    },
+    "StreakHapus.dc.html": {
+      "x": 6720,
+      "y": 5640,
+      "w": 2660,
+      "h": 3000,
+      "title": "Streak · menghapus tulisan hari ini, dua opsi [konfirmasi]"
+    },
+    "Discover.dc.html": {
+      "x": 0,
+      "y": 35100,
+      "w": 1440,
+      "h": 1400,
+      "title": "Jelajahi (Discover) · desktop · Trending Today",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "DiscoverKeadaan.dc.html": {
+      "x": 1520,
+      "y": 35100,
+      "w": 1440,
+      "h": 5740,
+      "title": "Jelajahi · gelap, tiga kategori, memuat, kategori kosong, galat, tamu",
+      "is_interactive": true
+    },
+    "DiscoverPonsel.dc.html": {
+      "x": 3040,
+      "y": 35100,
+      "w": 2540,
+      "h": 2000,
+      "title": "Jelajahi · ponsel 390 terang dan gelap, tablet 768",
+      "is_interactive": true
+    },
+    "Postingan.dc.html": {
+      "x": 0,
+      "y": 41260,
+      "w": 1440,
+      "h": 2400,
+      "title": "Halaman postingan · desktop · pembaca masuk",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "PostinganKeadaan.dc.html": {
+      "x": 1520,
+      "y": 41260,
+      "w": 1440,
+      "h": 13240,
+      "title": "Halaman postingan · gelap, tamu, penulis, lapor, kosong, ditarik, memuat, galat",
+      "is_interactive": true
+    },
+    "PostinganPonsel.dc.html": {
+      "x": 3040,
+      "y": 41260,
+      "w": 2540,
+      "h": 2780,
+      "title": "Halaman postingan · ponsel 390 terang dan gelap",
+      "is_interactive": true
+    },
+    "TulisPostingan.dc.html": {
+      "x": 0,
+      "y": 54920,
+      "w": 1440,
+      "h": 1300,
+      "title": "Tulis postingan · desktop · dari dokumen Studio",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "TulisKeadaan.dc.html": {
+      "x": 1520,
+      "y": 54920,
+      "w": 1440,
+      "h": 10100,
+      "title": "Tulis postingan · kosong, langsung, pilih dokumen, melebihi, sumber dihapus, galat, sukses",
+      "is_interactive": true
+    },
+    "TulisPonsel.dc.html": {
+      "x": 3040,
+      "y": 54920,
+      "w": 2540,
+      "h": 2800,
+      "title": "Tulis postingan · ponsel 390 terang dan gelap",
+      "is_interactive": true
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "EditorGelap.dc.html",
+    "EditorKonflik.dc.html",
+    "EditorSimpan.dc.html",
+    "EditorInteraksi.dc.html",
+    "EditorFokus.dc.html",
+    "EditorKeadaan.dc.html",
+    "EditorPonsel.dc.html",
+    "EditorPonselGelap.dc.html",
+    "Streak.dc.html",
+    "StreakHari.dc.html",
+    "StreakAwal.dc.html",
+    "StreakMuatGalat.dc.html",
+    "StreakPonsel.dc.html",
+    "StreakHapus.dc.html",
+    "Beranda.dc.html",
+    "BerandaVarian.dc.html",
+    "BerandaMuatGalat.dc.html",
+    "BerandaPonsel.dc.html",
+    "Studio.dc.html",
+    "StudioKeadaan.dc.html",
+    "BilahBawah.dc.html",
+    "MenulisStreak.dc.html",
+    "Discover.dc.html",
+    "DiscoverKeadaan.dc.html",
+    "DiscoverPonsel.dc.html",
+    "Postingan.dc.html",
+    "PostinganKeadaan.dc.html",
+    "PostinganPonsel.dc.html",
+    "TulisPostingan.dc.html",
+    "TulisKeadaan.dc.html",
+    "TulisPonsel.dc.html"
+  ],
+  "notes": {
+    "t-editor": {
+      "x": 0,
+      "y": -300,
+      "text": "Editor Studio",
+      "kind": "title1",
+      "maxW": 6000
+    },
+    "t-streak": {
+      "x": 0,
+      "y": 5340,
+      "text": "Studio, tab Streak",
+      "kind": "title1",
+      "maxW": 6000
+    },
+    "t-beranda": {
+      "x": 0,
+      "y": 12480,
+      "text": "Beranda (Dashboard sementara, PLT-10)",
+      "kind": "title1",
+      "maxW": 4480
+    },
+    "n-editor": {
+      "x": 6080,
+      "y": 0,
+      "w": 560,
+      "size": "m",
+      "fill": "gray",
+      "text": "Keputusan Editor\n\n· Satu tombol terisi: Bagikan. Toolbar format berwarna tinta hanya selama teks dipilih (DESIGN.md 6.3).\n· Belum tersinkron tidak merah. Mengetuknya membuka penjelasan singkat, bukan toast.\n· Pindah ke sampah tidak merah: bisa dipulihkan.\n· Dialog konflik tidak punya tombol tutup dan Esc tidak menutupnya. Lanjutkan aktif setelah satu pilihan dibuat.\n· Ponsel: Bantuan dan Mode fokus pindah ke menu ⋯ karena bilah 390px hanya muat empat kontrol.\n· Angka kata adalah jumlah kata sungguhan dari naskah contoh (167).\n· Indikator target \"468 / 500 hari ini\" [usulan] adalah kata hari ini dari semua dokumen, bukan jumlah kata dokumen. Bergerak setelah simpan otomatis; Menyimpan… belum mengubahnya. Diketuk: popover per dokumen. Lihat papan Menulis menggerakkan Streak."
+    },
+    "n-streak": {
+      "x": 6080,
+      "y": 5640,
+      "w": 560,
+      "size": "m",
+      "fill": "gray",
+      "text": "Keputusan Streak\n\n· Data contoh satu bulan dihitung dari satu tabel: streak, total minggu, rata-rata, dan hari terbaik saling cocok.\n· Perubahan target berlaku besok (PRD STK-01). Dialog mengatakannya sebelum disimpan.\n· Streak putus: tanpa merah, tanpa kata gagal. Kalender tetap menyimpan setiap hari yang ditulis.\n· Milestone baru: satu label Baru dan cincin hari ini terisi sekali. Tanpa konfeti. Kartu untuk dibagikan adalah Fase 2.\n· [konfirmasi] Daftar milestone contoh (Q-10).\n· Mengetuk hari menampilkan kata per dokumen (STK-03). Mulai menulis menyebut dokumen terakhir yang dibuka.\n· Statistik kosong tanpa ambang hari: \"Belum cukup data untuk statistik. Tulis beberapa hari, lalu angkanya muncul di sini.\" [konfirmasi] ambang data minimum.\n· Menghapus tulisan hari ini: [konfirmasi], lihat papan dua opsi di kanan."
+    },
+    "n-beranda": {
+      "x": 4560,
+      "y": 12780,
+      "w": 560,
+      "size": "m",
+      "fill": "gray",
+      "text": "Keputusan Beranda\n\n· Hari ini adalah baris bergaris di atas feed, bukan widget. Blok tanpa isi tidak dirender.\n· Satu tombol terisi: Lanjutkan menulis (pengguna baru: Mulai menulis).\n· Perlu perhatian paling banyak tiga butir. Organizer melihat struktur yang sama dengan isi berbeda, plus tautan ke Kelola.\n· Ponsel: blok Notifikasi baru tidak ditampilkan supaya Hari ini muat satu layar; titik di lonceng tetap ada.\n· Galat satu blok tidak mematikan blok lain atau feed.\n· Feed hanya dari penulis yang diikuti dan Grup; tidak ada konteks Kelas.\n· Postingan karya di Community MVP hanya prolog atau cuplikan, maksimal 500 kata (COM-01). Baris bawah memakai penanda jujur: \"Prolog · Esai · 2 menit baca\", \"Cuplikan · Cerpen\"."
+    },
+    "t-studio": {
+      "x": 0,
+      "y": 22680,
+      "text": "Studio: tab Dokumen dan bilah bawah ponsel [usulan]",
+      "kind": "title1",
+      "maxW": 4800
+    },
+    "t-alur": {
+      "x": 0,
+      "y": 28680,
+      "text": "Menulis menggerakkan Streak [usulan]",
+      "kind": "title1",
+      "maxW": 3280
+    },
+    "n-hapus": {
+      "x": 9460,
+      "y": 5640,
+      "w": 560,
+      "size": "m",
+      "fill": "orange",
+      "text": "Menghapus tulisan hari ini [konfirmasi]\n\n· PRD bertentangan. BR-STK-04 (usulan): menghapus tulisan hari ini mengurangi progres. Q-08 (default): tidak mengurangi.\n· Tampilan yang ada tidak diubah. Editor dan papan Menulis menggerakkan Streak (langkah 6) masih menggambar opsi mengurangi, 468 menjadi 454.\n· Papan di kiri menaruh kedua opsi berdampingan: 454 vs tetap 468. Lalu tercapai lalu dihapus: A1 dicabut (486 / 500, cincin terbuka, streak 6), A2 tidak dicabut (486 / 500, cincin penuh, streak 7), B tetap 500 / 500.\n· [usulan] Bila client memilih A, pakai A1: angka dan cincin tidak pernah bertentangan. Bila memilih B, keadaan dicabut tidak ada.\n· Setelah client memilih, papan Main, MenulisStreak langkah 6, dan README IndikatorTarget disesuaikan."
+    },
+    "n-sampah": {
+      "x": 4880,
+      "y": 22980,
+      "w": 480,
+      "size": "m",
+      "fill": "orange",
+      "text": "Sampah [konfirmasi] Q-12\n\n· Lama dokumen disimpan di Sampah belum diputuskan. Papan tidak lagi menyebut angka hari: keadaan kosong dan catatan bawah memakai \"Dokumen di Sampah bisa dipulihkan.\"\n· Meta butir Sampah tidak lagi memuat tanggal terhapus permanen, karena tanggal itu mengandaikan 30 hari.\n· Setelah Q-12 diputuskan, tanggal hapus permanen boleh kembali di meta butir."
+    },
+    "n-ringkasan": {
+      "x": 6720,
+      "y": 0,
+      "w": 720,
+      "size": "s",
+      "fill": "gray",
+      "text": "Ringkasan perubahan, 15 Nov 2026 (koreksi ke PRD v0.2)\n\n· Main (Editor): butir Riwayat versi dihapus dari menu ⋯ desktop dan lembar menu ponsel; di PRD riwayat versi hanya untuk submission. Ikut berubah di EditorInteraksi, EditorPonsel, dan semua papan yang memuat Main. Empat keadaan indikator ditambah untuk papan dua opsi; tampilan yang sudah ada tidak berubah.\n· EditorInteraksi: keterangan menu ⋯ menjadi \"Kirim ke proyek, Ekspor; Pindah ke sampah\".\n· Beranda (ikut BerandaPonsel, BerandaVarian, BerandaMuatGalat): butir Nur Aisyah tanpa \"di Kelas Menulis Esai\"; baris bawah \"Prolog · Esai · 2 menit baca\" dan \"Cuplikan · Cerpen\" (COM-01). Isi contoh tidak berubah.\n· Studio (ikut StudioKeadaan): Sampah tanpa angka 30 hari dan tanpa tanggal hapus permanen. [konfirmasi] Q-12, lihat catatan di samping Bilah bawah.\n· Streak (ikut StreakAwal, StreakPonsel): statistik kosong \"Belum cukup data untuk statistik. Tulis beberapa hari, lalu angkanya muncul di sini.\" Keterangan StreakAwal disesuaikan.\n· Papan baru StreakHapus, di kanan baris Streak: dua opsi menghapus tulisan hari ini dan keadaan tercapai lalu dihapus.\n· BilahBawah: \"sesuai keputusan client\" diganti \"PRD 16 menetapkan lima tab; empat tab adalah usulan. [konfirmasi] ke client.\" Kedua varian tetap.\n· Sistem desain: Menu, ButirFeed, StatistikRingkas, IndikatorTarget, NavPonsel, dan README (revisi 1d)."
+    },
+    "t-community": {
+      "x": 0,
+      "y": 34800,
+      "text": "Community MVP (R3): Jelajahi",
+      "kind": "title1",
+      "maxW": 5580
+    },
+    "t-postingan": {
+      "x": 0,
+      "y": 40960,
+      "text": "Community MVP (R3): halaman postingan",
+      "kind": "title1",
+      "maxW": 5580
+    },
+    "t-tulis": {
+      "x": 0,
+      "y": 54620,
+      "text": "Community MVP (R3): tulis postingan",
+      "kind": "title1",
+      "maxW": 5580
+    },
+    "n-jelajahi": {
+      "x": 5660,
+      "y": 35100,
+      "w": 600,
+      "size": "m",
+      "fill": "gray",
+      "text": "Keputusan Jelajahi (COM-09, PRD 17.4)\n\n· Pola Explore: chip kategori lengket di bawah bilah atas, chip terpilih isian ink. Itu satu-satunya isian ink di layar; Muat lebih banyak dan Daftar sekunder.\n· Grid tiga kolom, tablet dua, ponsel daftar bergaris. Ubin border 1px line, radius 0, tanpa bayangan [usulan]: satu pengecualian dari aturan garis-bukan-kartu, mengikuti acuan client.\n· Tiga bentuk ubin: catatan pendek (cuplikan puisi atau esai, teks dulu, judul karya di bawah), prolog bertajuk, prolog bergambar. Judul selalu di luar gambar.\n· Kategori kosong disembunyikan (COM-09). Keadaan kategori kosong hanya muncul lewat tautan lama.\n· Hanya Most Appreciated yang diurutkan menurut Apresiasi. Aturan kategori lain BR-COM-05, rumusnya [konfirmasi] Q-17. Indonesia dan Malaysia Writers dari negara profil (BR-COM-06, AC-18).\n· Nama kategori tetap bahasa Inggris seperti PRD. [konfirmasi] diterjemahkan atau tidak.\n· Gambar pada postingan tidak tercantum di COM-01. Ubin bergambar memakai tempat gambar berlabel. [konfirmasi]\n· [usulan] Sidebar mendapat butir Jelajahi di bawah Beranda. Di ponsel Jelajahi dibuka dari ikon cari. Papan Beranda belum diubah.\n· Tanpa banner promosi, tanpa Subscribe, tanpa angka besar di ubin."
+    },
+    "n-postingan": {
+      "x": 5660,
+      "y": 41260,
+      "w": 600,
+      "size": "m",
+      "fill": "gray",
+      "text": "Keputusan halaman postingan (PRD 17.4, COM-01, 04, 05, 06)\n\n· Satu kolom 680. Penanda \"Prolog dari: [judul karya] · hanya bagian ini yang publik\" di atas teks, \"Akhir prolog.\" di bawahnya. Tanpa menit baca.\n· Prolog contoh adalah empat blok pertama dokumen di papan Editor (135 kata). Jelajahi, postingan, dan Tulis postingan memakai teks yang sama.\n· \"diperbarui 13 Nov\" mengikuti Q-16: karya boleh diperbarui dengan penanda.\n· Bilah aksi berupa tombol teks: Apresiasi, Komentar, Bagikan, Simpan, ⋯ (Salin tautan, Laporkan tulisan). Tanpa bagikan ulang. Satu isian ink: Kirim komentar (tamu: Masuk).\n· Komentar datar dipisah garis; balasan satu tingkat, indentasi 24. Lihat balasan lainnya dan Lihat komentar lainnya adalah tombol teks selebar kolom.\n· Penulis: Sembunyikan, Laporkan, Hapus (merah, selalu dengan dialog) di menu komentar (COM-05, BR-COM-03, Q-16). Pengguna biasa tidak melihat Hapus pada komentar orang lain (AC-17).\n· Tamu membaca semuanya (US-01). Tindakan yang butuh akun membuka dialog Masuk lalu kembali ke posisi yang sama.\n· Ponsel: bilah aksi lengket di bawah menggantikan bilah navigasi di halaman ini [usulan].\n· Tulisan terkait paling banyak 5. Dasar pemilihannya [konfirmasi].\n· [konfirmasi] Siapa yang masih melihat komentar yang disembunyikan penulis, dan apakah komentar yang dilaporkan disembunyikan untuk semua orang selama ditinjau."
+    },
+    "n-tulis": {
+      "x": 5660,
+      "y": 54920,
+      "w": 600,
+      "size": "m",
+      "fill": "gray",
+      "text": "Keputusan Tulis postingan (COM-01, STD-10, AC-14, AC-15)\n\n· Dua jalan masuk sebagai tab: Tulis langsung dan Dari dokumen Studio. Pemilih: pilih dokumen, ketuk bagian (centang terisi, latar subtle), pratinjau dengan tipografi halaman postingan.\n· Pesan wajib selalu tampil di kolom pengaturan dan tidak bisa ditutup: \"Yang menjadi publik hanya teks ini...\"\n· Visibilitas tanpa pilihan bawaan. Terbitkan aktif setelah penulis memilih Publik atau Grup (BR-COM-01). Opsi Grup hanya tampil bila penulis anggota grup; cakupannya [konfirmasi] Q-38.\n· Penghitung kata dihitung dari teks yang tampil. Lebih dari 500: merah hanya pada angka, garis, dan pesan; isi tidak dipotong; draf tetap bisa disimpan.\n· Jenis Prolog atau Cuplikan menentukan penanda di halaman postingan. [konfirmasi] Daftar genre.\n· [konfirmasi] Tempat draf postingan disimpan dan ditemukan lagi.\n· Ponsel: tiga langkah berurutan; Terbitkan aktif di langkah pratinjau.\n· Sukses tanpa konfeti: satu kalimat, ringkasan, Lihat postingan."
+    }
+  },
+  "designSystems": [
+    {
+      "title": "Sistem Desain RanahMenulis",
+      "namespace": "ranahmenulis",
+      "artifact": "https://claude.ai/artifact/FmTvmjt7LXVGP8gEoXhSmg",
+      "version": "1794665115-ed2b",
+      "copiedAt": "2026-11-14T16:35:00Z"
+    }
+  ]
+}

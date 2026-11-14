@@ -1,0 +1,132 @@
+{
+  "v": 3,
+  "createdOnFiles": {
+    "v": 1,
+    "at": "2026-11-14T14:00:00Z"
+  },
+  "title": "RanahMenulis Landing",
+  "launch": {
+    "view": "canvas"
+  },
+  "pages": [],
+  "boards": {
+    "HeroA.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 900,
+      "title": "Hero A · naskah bertumpuk (tidak dipilih)"
+    },
+    "HeroB.dc.html": {
+      "x": 1520,
+      "y": 0,
+      "w": 1440,
+      "h": 1260,
+      "title": "Hero B · judul kerja lama (pembanding)"
+    },
+    "OG.dc.html": {
+      "x": 3040,
+      "y": 0,
+      "w": 1200,
+      "h": 630,
+      "title": "Open Graph 1200×630"
+    },
+    "Main.dc.html": {
+      "x": 0,
+      "y": 1600,
+      "w": 1440,
+      "h": 6600,
+      "title": "Landing · desktop 1440 · terang",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "Mobile.dc.html": {
+      "x": 1520,
+      "y": 1600,
+      "w": 390,
+      "h": 10400,
+      "title": "Landing · ponsel 390 · terang",
+      "is_interactive": true
+    },
+    "Dark.dc.html": {
+      "x": 1990,
+      "y": 1600,
+      "w": 1440,
+      "h": 2500,
+      "title": "Hero dan daftar tunggu · desktop · gelap",
+      "is_interactive": true
+    },
+    "Gerak.dc.html": {
+      "x": 0,
+      "y": 12400,
+      "w": 1440,
+      "h": 1900,
+      "title": "Gerak"
+    },
+    "BilahAtas.dc.html": {
+      "x": 1520,
+      "y": 12400,
+      "w": 1440,
+      "h": 760,
+      "title": "Bilah atas setelah hero"
+    },
+    "FormStates.dc.html": {
+      "x": 1990,
+      "y": 4220,
+      "w": 1440,
+      "h": 1900,
+      "title": "Daftar tunggu · lima keadaan form"
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "HeroA.dc.html",
+    "HeroB.dc.html",
+    "OG.dc.html",
+    "Mobile.dc.html",
+    "Dark.dc.html",
+    "FormStates.dc.html",
+    "Gerak.dc.html",
+    "BilahAtas.dc.html"
+  ],
+  "notes": {
+    "row1": {
+      "x": 0,
+      "y": -300,
+      "text": "Hero: dua komposisi, dan Open Graph",
+      "kind": "title1",
+      "maxW": 4240
+    },
+    "row3": {
+      "x": 0,
+      "y": 12100,
+      "text": "Gerak dan bilah atas",
+      "kind": "title1",
+      "maxW": 2960
+    },
+    "row2": {
+      "x": 0,
+      "y": 1300,
+      "text": "Landing pra-peluncuran",
+      "kind": "title1",
+      "maxW": 3430
+    },
+    "konfirmasi": {
+      "x": 0,
+      "y": 8360,
+      "w": 720,
+      "size": "m",
+      "fill": "orange",
+      "text": "[konfirmasi] Tiga teks sudah terpasang di halaman, belum boleh tayang sebelum client setuju:\n\n1. Biaya (Tanya jawab): \"tanpa biaya langganan di awal\"; program Projects berbayar per program. Dasar: rapat 8 Nov 2026.\n2. Grup Penulis (Tanya jawab): kalimat \"hanya melihat grupnya sendiri\" dan \"boleh keluar kapan saja\" dihapus karena Q-38 belum final.\n3. Nada privasi (janji pertama dan Tanya jawab draf): pengecualian \"alasan hukum atau moderasi, dan itu dicatat\" (BR-STD-05). Jujur sesuai PRD; client yang memutuskan nadanya."
+    }
+  },
+  "designSystems": [
+    {
+      "title": "Sistem Desain RanahMenulis",
+      "namespace": "ranahmenulis",
+      "artifact": "https://claude.ai/artifact/FmTvmjt7LXVGP8gEoXhSmg",
+      "version": "1794665115-ed2b",
+      "copiedAt": "2026-11-14T16:40:00Z"
+    }
+  ]
+}

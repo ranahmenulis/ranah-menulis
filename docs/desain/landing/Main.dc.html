@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>RanahMenulis landing</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="./ds/ranahmenulis/bundle.css">
+<link rel="stylesheet" href="./landing.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600&amp;family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="{{ rootCls }}" data-theme="{{ theme }}" style="font-family: var(--font-sans); color: var(--ink); background: var(--canvas)">
+
+<sc-if value="{{ showBar }}" hint-placeholder-val="{{ true }}">
+<header class="lp-bar {{ barScrolled }}">
+  <div class="lp-wrap">
+    <a class="rm-logo" href="#" aria-label="RanahMenulis, ke atas"><img src="/_blob/bef43a777d9f0c788cfa7d5d7a185b85" alt="RanahMenulis" style="height: {{ logoH }}"><img class="rm-on-dark" src="/_blob/d58158875b6926e7ffedff0f66d1140e" alt="RanahMenulis" style="height: {{ logoH }}"></a>
+    <nav class="lp-nav" aria-label="Halaman">
+      <a class="lp-link" href="#cara-kerja">Cara kerja</a>
+      <a class="lp-link" href="#projects">Projects</a>
+      <a class="lp-link" href="#tanya-jawab">Tanya jawab</a>
+      <a class="rm-btn {{ barBtn }} rm-btn--sm" href="#daftar">Gabung daftar tunggu</a>
+    </nav>
+  </div>
+</header>
+</sc-if>
+
+<sc-if value="{{ showHero }}" hint-placeholder-val="{{ true }}">
+<section class="lp-hero" aria-labelledby="hero-h">
+  <div class="lp-wrap lp-grid">
+    <h1 class="lp-h1" id="hero-h">{{ headline }}</h1>
+    <p class="lp-lead">Tulis di Studio, bagikan cuplikannya ke pembaca, lalu kirim naskah yang sama ke antologi, kelas, lomba, atau buku solo. Tanpa menyalin ulang.</p>
+    <div class="lp-actions">
+      <a class="rm-btn rm-btn--primary rm-btn--hero" id="hero-cta" href="#daftar">Gabung daftar tunggu</a>
+      <a class="rm-btn rm-btn--text" href="#cara-kerja">Lihat cara kerjanya</a>
+    </div>
+    <div class="hs" role="img" aria-label="Satu paragraf diketik di Studio, menjadi halaman 12 sebuah buku, lalu menjadi buku bersampul hitam berjudul Yang Ditunggu Nenek di Bawah Jambu Air karya Rinjani Putri.">
+      <div class="hs-stage hs-s1">
+        <div class="rm-frame hs-ed" aria-hidden="true">
+          <div class="rm-editorbar">
+            <span class="rm-logo rm-mono rm-mono--20"><img src="/_blob/a68775175697cf5444619329a2f461c2" alt=""><img class="rm-on-dark" src="/_blob/d369697e2b998cc83b4f253ebd2de34c" alt=""></span>
+            <span class="rm-doc-name">Yang Ditunggu Nenek</span>
+            <span class="rm-vis"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><rect x="40" y="88" width="176" height="128" rx="8"></rect><path d="M92 88V56a36 36 0 0 1 72 0v32"></path></svg>Pribadi</span>
+            <span class="rm-save">{{ saveLabel }}</span>
+            <span class="rm-meta" style="margin-left: auto">{{ wordCount }} kata</span>
+          </div>
+          <div class="hs-ed-body">
+            <p class="hs-ed-title">Yang Ditunggu Nenek di Bawah Jambu Air</p>
+            <p class="hs-ed-text">{{ typedText }}<sc-if value="{{ caretOn }}" hint-placeholder-val="{{ false }}"><span class="lp-caret"></span></sc-if></p>
+          </div>
+        </div>
+      </div>
+      <div class="hs-stage hs-s2 {{ pageWait }}">
+        <div class="hs-page" aria-hidden="true">
+          <p class="hs-run">Yang Ditunggu Nenek di Bawah Jambu Air</p>
+          <p class="hs-ptext">Hujan pertama bulan November selalu datang sore hari, tepat ketika Nenek selesai menyapu halaman. Ia tidak pernah berlari masuk. Ia berdiri dulu di bawah jambu air, membiarkan beberapa tetes jatuh ke kerudungnya, seolah menunggu seseorang yang berjanji pulang bersama musim.</p>
+          <p class="hs-ptext">Aku baru mengerti kebiasaan itu bertahun-tahun kemudian, setelah rumah itu dijual dan pohon jambunya ditebang orang yang tidak suka daun berserakan.</p>
+          <p class="hs-pnum">12</p>
+        </div>
+      </div>
+      <div class="hs-stage hs-s3 hs-cover {{ coverWait }}">
+        <span class="rm-cover-wrap" aria-hidden="true"><span class="rm-cover" data-theme="light"><span class="rm-cover-title">Yang Ditunggu Nenek di Bawah Jambu Air</span><span class="rm-cover-author">Rinjani Putri</span></span></span>
+      </div>
+    </div>
+  </div>
+</section>
+</sc-if>
+
+<sc-if value="{{ showRest }}" hint-placeholder-val="{{ true }}">
+<section class="lp-sec" id="cara-kerja" aria-labelledby="steps-h">
+  <div class="lp-wrap lp-grid">
+    <div class="lp-top"><h2 class="lp-h2" id="steps-h">Satu naskah, empat langkah.</h2></div>
+    <ol class="lp-steps" style="list-style: none; padding: 0">
+      <li class="lp-step">
+        <div class="lp-step-text"><i class="rm-dot-full" aria-hidden="true"></i><h3>Menulis</h3><p>Tulis di Studio. Tulisanmu tersimpan otomatis dan tetap pribadi sampai kamu sendiri yang membagikannya.</p></div>
+        <figure class="lp-step-shot rm-frame" style="margin: 0" aria-label="Cuplikan editor Studio">
+          <div class="rm-editorbar">
+            <span class="rm-logo rm-mono rm-mono--20"><img src="/_blob/a68775175697cf5444619329a2f461c2" alt=""><img class="rm-on-dark" src="/_blob/d369697e2b998cc83b4f253ebd2de34c" alt=""></span>
+            <span class="rm-doc-name">Yang Ditunggu Nenek di Bawah Jambu Air</span>
+            <span class="rm-meta">Pribadi · Tersimpan 14.02 · 167 kata</span>
+            <span class="rm-btn rm-btn--secondary rm-btn--sm" style="margin-left: auto">Bagikan</span>
+          </div>
+          <div class="lp-shot-pad">
+            <p style="margin: 0 0 16px; font: 600 28px/36px var(--font-serif); letter-spacing: -0.015em">Yang Ditunggu Nenek di Bawah Jambu Air</p>
+            <p style="margin: 0; font: 400 18px/29px var(--font-serif)">Ada orang yang menunggu dengan duduk di beranda, memandangi ujung jalan sampai matanya perih. Nenek menunggu dengan basah.</p>
+          </div>
+        </figure>
+      </li>
+      <li class="lp-step">
+        <div class="lp-step-text"><i class="rm-dot-full" aria-hidden="true"></i><h3>Target harian</h3><p>Tetapkan target kata per hari di Studio. Streak, bagian dari Studio, mencatat setiap hari yang tercapai sebagai satu titik di kalendermu. Tanpa konfeti, tanpa poin.</p></div>
+        <figure class="lp-step-shot rm-frame" style="margin: 0" aria-label="Cuplikan kalender Streak di Studio">
+          <div class="lp-shot-pad lp-shot-cal">
+            <div style="display: grid; gap: 20px; min-width: 200px">
+              <div style="display: flex; align-items: baseline; gap: 10px"><span class="rm-figure">12</span><span style="font: 400 14px/20px var(--font-sans); color: var(--ink-muted)">hari berturut-turut</span></div>
+              <div style="display: grid; gap: 8px">
+                <div style="display: flex; justify-content: space-between; font: 400 13px/18px var(--font-sans); font-variant-numeric: tabular-nums"><span>Hari ini 500 / 500 kata</span><span style="color: var(--ink-muted)">Tercapai</span></div>
+                <div class="rm-progress"><i style="width: 100%"></i></div>
+              </div>
+            </div>
+            <div class="rm-cal" aria-label="Kalender November 2026">
+              <span class="rm-cal-h">S</span><span class="rm-cal-h">S</span><span class="rm-cal-h">R</span><span class="rm-cal-h">K</span><span class="rm-cal-h">J</span><span class="rm-cal-h">S</span><span class="rm-cal-h">M</span>
+              <span class="rm-cal-d"></span><span class="rm-cal-d"></span><span class="rm-cal-d"></span><span class="rm-cal-d"></span><span class="rm-cal-d"></span><span class="rm-cal-d"></span><span class="rm-cal-d" aria-label="1 Nov, ada tulisan"><i class="rm-dot-ring"></i></span>
+              <span class="rm-cal-d" aria-label="2 Nov, kosong"><i class="rm-dot-empty"></i></span><span class="rm-cal-d"><i class="rm-dot-full"></i></span><span class="rm-cal-d"><i class="rm-dot-full"></i></span><span class="rm-cal-d"><i class="rm-dot-full"></i></span><span class="rm-cal-d"><i class="rm-dot-full"></i></span><span class="rm-cal-d"><i class="rm-dot-full"></i></span><span class="rm-cal-d"><i class="rm-dot-full"></i></span>
+              <span class="rm-cal-d"><i class="rm-dot-full"></i></span><span class="rm-cal-d"><i class="rm-dot-full"></i></span><span class="rm-cal-d"><i class="rm-dot-full"></i></span><span class="rm-cal-d"><i class="rm-dot-full"></i></span><span class="rm-cal-d"><i class="rm-dot-full"></i></span><span class="rm-cal-d is-today" aria-label="Hari ini, 14 Nov, target tercapai"><i class="rm-dot-full"></i></span><span class="rm-cal-d"></span>
+            </div>
+          </div>
+        </figure>
+      </li>
+      <li class="lp-step">
+        <div class="lp-step-text"><i class="rm-dot-full" aria-hidden="true"></i><h3>Dibagikan</h3><p>Bagikan prolog atau cuplikan ke Community. Yang tampil hanya bagian yang kamu pilih; naskah lengkapnya tetap di Studio.</p></div>
+        <figure class="lp-step-shot rm-frame" style="margin: 0; padding: 0 24px" aria-label="Cuplikan butir feed Community">
+          <article class="rm-feed-item" style="border: 0">
+            <div class="rm-feed-by"><span class="rm-avatar" style="--s: 32px">HR</span><b>Hafiz Rahman</b> · di <b>Grup Penulis Pesisir</b> · 2 jam</div>
+            <p class="rm-note-text">Ibu menyimpan laut
+di dalam toples kerupuk:
+setiap kali dibuka,
+rumah kami berbau pulang.</p>
+            <div class="rm-actbar"><span>Apresiasi 48</span><span>Komentar 6</span><span>Bagikan</span><span>Simpan</span></div>
+          </article>
+        </figure>
+      </li>
+      <li class="lp-step">
+        <div class="lp-step-text"><i class="rm-dot-full" aria-hidden="true"></i><h3>Terbit</h3><p>Kirim naskah yang sama ke antologi tanpa menyalin ulang. Editor membaca salinan saat kamu menekan Kirim, dan drafmu boleh terus kamu ubah.</p></div>
+        <figure class="lp-step-shot rm-frame" style="margin: 0" aria-label="Cuplikan status kiriman antologi">
+          <div class="lp-shot-row">
+            <span class="rm-cover-wrap" aria-hidden="true"><span class="rm-cover rm-cover--s" data-theme="light"><span class="rm-cover-title">Surat yang Tidak Pernah Terkirim</span></span></span>
+            <div style="min-width: 0"><h4>Antologi: Surat yang Tidak Pernah Terkirim</h4><span class="rm-meta">“Toples Kerupuk” · versi 2 · dikirim 3 Nov</span></div>
+            <span class="rm-status rm-status--diterima"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><polyline points="40 144 96 200 224 72"></polyline></svg>Diterima</span>
+          </div>
+          <div class="lp-shot-row" style="grid-template-columns: 64px minmax(0, 1fr)">
+            <span></span>
+            <span class="rm-meta">Draf di Studio diubah 2 jam lalu. Versi yang dikirim tetap versi 2.</span>
+          </div>
+        </figure>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<section class="lp-sec" id="projects" aria-labelledby="proj-h">
+  <div class="lp-wrap lp-grid">
+    <div class="lp-top"><h2 class="lp-h2" id="proj-h">Ke mana naskahmu bisa pergi.</h2></div>
+    <div class="lp-toc">
+      <div class="lp-toc-row"><div class="lp-toc-head"><h3>Antologi</h3><span class="lp-leader" aria-hidden="true"></span><span class="lp-toc-flow">Seleksi · revisi · terbit</span></div><p>Naskahmu masuk ke buku bertema bersama tulisan penulis lain. Editor memberi catatan, kamu merevisi, sampai naskahmu diterima.</p></div>
+      <div class="lp-toc-row"><div class="lp-toc-head"><h3>Buku Solo</h3><span class="lp-leader" aria-hidden="true"></span><span class="lp-toc-flow">Editing · sampul · produksi</span></div><p>Bukumu sendiri. Editing, proofreading, sampul, dan layout dikerjakan bertahap, dan kamu bisa melihat posisi bukumu di setiap tahap.</p></div>
+      <div class="lp-toc-row"><div class="lp-toc-head"><h3>Kelas Menulis</h3><span class="lp-leader" aria-hidden="true"></span><span class="lp-toc-flow">Materi · tugas · umpan balik</span></div><p>Belajar dari mentor lewat materi, tugas, dan catatan untuk tulisanmu sendiri, dari puisi sampai novel.</p></div>
+      <div class="lp-toc-row"><div class="lp-toc-head"><h3>Lomba</h3><span class="lp-leader" aria-hidden="true"></span><span class="lp-toc-flow">Kriteria · finalis · pemenang</span></div><p>Kompetisi dengan kriteria penilaian yang jelas. Penyelenggara boleh memilih penjurian anonim, sehingga juri menilai naskah tanpa tahu penulisnya.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="lp-sec" aria-label="Janji kepada penulis">
+  <div class="lp-wrap lp-grid">
+    <div class="lp-top lp-trust">
+      <div class="lp-trust-row"><h3>Draf pribadimu tetap pribadi.</h3><p>Dokumen di Studio tidak dibaca orang lain. Satu-satunya pengecualian adalah alasan hukum atau moderasi, dan itu dicatat. Yang tampil di Community hanya salinan teks yang kamu pilih.</p></div>
+      <div class="lp-trust-row"><h3>Yang sudah dikirim tidak ikut berubah.</h3><p>Setiap kiriman menyimpan salinan pada saat kamu menekan Kirim. Revisi membuat versi baru, dan versi sebelumnya tetap tersimpan.</p></div>
+      <div class="lp-trust-row"><h3>Hak cipta tetap milikmu.</h3><p>Kecuali ketentuan sebuah proyek menyatakan lain. Ketentuan itu tertulis, bisa kamu baca sebelum mendaftar, dan hanya berlaku bila kamu menyetujuinya.</p></div>
+    </div>
+  </div>
+</section>
+</sc-if>
+
+<sc-if value="{{ showWait }}" hint-placeholder-val="{{ true }}">
+<section class="lp-wait" id="daftar" data-theme="{{ invTheme }}" aria-labelledby="wait-h">
+  <div class="lp-wrap lp-grid">
+    <div class="lp-wait-intro">
+      <span class="rm-logo"><img src="/_blob/bef43a777d9f0c788cfa7d5d7a185b85" alt="RanahMenulis" style="height: 40px"><img class="rm-on-dark" src="/_blob/d58158875b6926e7ffedff0f66d1140e" alt="RanahMenulis" style="height: 40px"></span>
+      <h2 class="lp-h2" id="wait-h">Simpan namamu di daftar tunggu.</h2>
+      <p>Kami mengabarimu lewat email saat RanahMenulis dibuka untuk penulis di Indonesia dan Malaysia.</p>
+    </div>
+
+    <sc-if value="{{ showForm }}" hint-placeholder-val="{{ true }}">
+    <form class="lp-form" onSubmit="{{ submit }}" noValidate="{{ true }}" aria-label="Gabung daftar tunggu">
+      <div class="lp-form-row">
+        <div class="rm-field">
+          <label class="rm-field-label" for="f-name">Nama panggilan</label>
+          <input class="rm-input" id="f-name" type="text" autoComplete="nickname" placeholder="Misalnya Rinjani" value="{{ name }}" onChange="{{ onName }}" aria-invalid="{{ nameInvalid }}" aria-describedby="f-name-e">
+          <sc-if value="{{ nameErr }}" hint-placeholder-val="{{ false }}"><p class="rm-field-error" id="f-name-e" style="margin: 0"><svg class="rm-i rm-i--16" viewBox="0 0 256 256" aria-hidden="true" style="margin-top: 2px"><circle cx="128" cy="128" r="96"></circle><line x1="128" y1="80" x2="128" y2="136"></line><circle cx="128" cy="172" r="10" class="rm-i--fill"></circle></svg>{{ nameErr }}</p></sc-if>
+        </div>
+        <div class="rm-field">
+          <label class="rm-field-label" for="f-email">Email</label>
+          <input class="rm-input" id="f-email" type="email" autoComplete="email" placeholder="nama@domain.com" value="{{ email }}" onChange="{{ onEmail }}" aria-invalid="{{ emailInvalid }}" aria-describedby="f-email-e">
+          <sc-if value="{{ emailErr }}" hint-placeholder-val="{{ false }}"><p class="rm-field-error" id="f-email-e" style="margin: 0"><svg class="rm-i rm-i--16" viewBox="0 0 256 256" aria-hidden="true" style="margin-top: 2px"><circle cx="128" cy="128" r="96"></circle><line x1="128" y1="80" x2="128" y2="136"></line><circle cx="128" cy="172" r="10" class="rm-i--fill"></circle></svg>{{ emailErr }}</p></sc-if>
+        </div>
+      </div>
+      <div class="rm-field">
+        <label class="rm-field-label" for="f-country">Negara</label>
+        <div class="rm-select-wrap">
+          <select class="rm-select" id="f-country" value="{{ country }}" onChange="{{ onCountry }}"><option value="Indonesia">Indonesia</option><option value="Malaysia">Malaysia</option><option value="Lainnya">Lainnya</option></select>
+          <svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><polyline points="208 96 128 176 48 96"></polyline></svg>
+        </div>
+      </div>
+      <fieldset class="lp-fieldset">
+        <legend class="rm-field-label">Minat <span>(opsional, boleh lebih dari satu)</span></legend>
+        <div class="lp-chips">
+          <sc-for list="{{ chips }}" as="c" hint-placeholder-count="6"><button class="rm-chip" type="button" aria-pressed="{{ c.pressed }}" onClick="{{ c.pick }}">{{ c.label }}</button></sc-for>
+        </div>
+      </fieldset>
+      <sc-if value="{{ isExists }}" hint-placeholder-val="{{ false }}">
+        <p class="lp-info"><svg class="rm-i rm-i--16" viewBox="0 0 256 256" aria-hidden="true" style="margin-top: 2px"><circle cx="128" cy="128" r="96"></circle><line x1="128" y1="120" x2="128" y2="176"></line><circle cx="128" cy="84" r="10" class="rm-i--fill"></circle></svg>Email ini sudah ada di daftar tunggu. Kamu tidak perlu mendaftar lagi; kabar pembukaan akan dikirim ke alamat ini.</p>
+      </sc-if>
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 16px">
+        <button class="rm-btn rm-btn--primary rm-btn--hero" type="submit" aria-busy="{{ busy }}" style="min-width: 248px">
+          <sc-if value="{{ busy }}" hint-placeholder-val="{{ false }}"><span class="rm-dots" aria-hidden="true"><i></i><i></i><i></i></span></sc-if>{{ submitLabel }}
+        </button>
+        <sc-if value="{{ isExists }}" hint-placeholder-val="{{ false }}"><button class="rm-btn rm-btn--text" type="button" onClick="{{ reset }}">Pakai email lain</button></sc-if>
+      </div>
+      <p class="lp-fine">Dengan bergabung, kamu menyetujui <a href="#">Kebijakan privasi</a> RanahMenulis.</p>
+    </form>
+    </sc-if>
+
+    <sc-if value="{{ isSuccess }}" hint-placeholder-val="{{ false }}">
+    <div class="lp-done" role="status">
+      <p class="big">Terima kasih, {{ greetName }}. Namamu sudah tercatat.</p>
+      <p>Kabar pembukaan akan dikirim ke {{ email }}.</p>
+    </div>
+    </sc-if>
+  </div>
+</section>
+</sc-if>
+
+<sc-if value="{{ showStates }}" hint-placeholder-val="{{ false }}">
+<section class="lp-wait" style="margin-top: 0; padding-block: 96px" data-theme="{{ invTheme }}" aria-label="Lima keadaan form daftar tunggu">
+  <div class="lp-wrap lp-grid">
+    <div class="lp-wait-intro" style="grid-column: 1 / span 6">
+      <h2 class="lp-h2">Simpan namamu di daftar tunggu.</h2>
+      <p>Kami mengabarimu lewat email saat RanahMenulis dibuka untuk penulis di Indonesia dan Malaysia.</p>
+    </div>
+    <div class="lp-states">
+      <div class="lp-state">
+        <div class="rm-field"><label class="rm-field-label" for="s1n">Nama panggilan</label><input class="rm-input" id="s1n" placeholder="Misalnya Rinjani"></div>
+        <div class="rm-field"><label class="rm-field-label" for="s1e">Email</label><input class="rm-input" id="s1e" placeholder="nama@domain.com"></div>
+        <div class="rm-field"><label class="rm-field-label" for="s1c">Negara</label><div class="rm-select-wrap"><select class="rm-select" id="s1c"><option>Indonesia</option></select><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><polyline points="208 96 128 176 48 96"></polyline></svg></div></div>
+        <div class="lp-chips"><span class="rm-chip">Menulis rutin</span><span class="rm-chip">Antologi</span><span class="rm-chip">Buku solo</span><span class="rm-chip">Kelas</span><span class="rm-chip">Lomba</span><span class="rm-chip">Membaca</span></div>
+        <span class="rm-btn rm-btn--primary rm-btn--hero">Gabung daftar tunggu</span>
+        <p class="rm-caption" style="margin: 0">Keadaan: kosong</p>
+      </div>
+      <div class="lp-state">
+        <div class="rm-field"><label class="rm-field-label" for="s2n">Nama panggilan</label><input class="rm-input" id="s2n" value="Rinjani" readOnly="{{ true }}"></div>
+        <div class="rm-field"><label class="rm-field-label" for="s2e">Email</label><input class="rm-input" id="s2e" value="rinjani.putri@gmail.com" readOnly="{{ true }}"></div>
+        <div class="rm-field"><label class="rm-field-label" for="s2c">Negara</label><div class="rm-select-wrap"><select class="rm-select" id="s2c" disabled="{{ true }}"><option>Indonesia</option></select><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><polyline points="208 96 128 176 48 96"></polyline></svg></div></div>
+        <div class="lp-chips"><span class="rm-chip" aria-pressed="true">Menulis rutin</span><span class="rm-chip" aria-pressed="true">Antologi</span><span class="rm-chip">Buku solo</span><span class="rm-chip">Kelas</span><span class="rm-chip">Lomba</span><span class="rm-chip">Membaca</span></div>
+        <span class="rm-btn rm-btn--primary rm-btn--hero" aria-busy="true" style="min-width: 248px"><span class="rm-dots" aria-hidden="true"><i></i><i></i><i></i></span>Mengirim…</span>
+        <p class="rm-caption" style="margin: 0">Keadaan: sedang mengirim. Isian terkunci, lebar tombol tetap.</p>
+      </div>
+      <div class="lp-state">
+        <div class="rm-field"><label class="rm-field-label" for="s3n">Nama panggilan</label><input class="rm-input" id="s3n" value="" aria-invalid="true"><p class="rm-field-error" style="margin: 0"><svg class="rm-i rm-i--16" viewBox="0 0 256 256" aria-hidden="true" style="margin-top: 2px"><circle cx="128" cy="128" r="96"></circle><line x1="128" y1="80" x2="128" y2="136"></line><circle cx="128" cy="172" r="10" class="rm-i--fill"></circle></svg>Isi nama panggilanmu dulu.</p></div>
+        <div class="rm-field"><label class="rm-field-label" for="s3e">Email</label><input class="rm-input" id="s3e" value="rinjani.putri@gmail" aria-invalid="true"><p class="rm-field-error" style="margin: 0"><svg class="rm-i rm-i--16" viewBox="0 0 256 256" aria-hidden="true" style="margin-top: 2px"><circle cx="128" cy="128" r="96"></circle><line x1="128" y1="80" x2="128" y2="136"></line><circle cx="128" cy="172" r="10" class="rm-i--fill"></circle></svg>Alamat email belum lengkap. Contoh: nama@domain.com</p></div>
+        <span class="rm-btn rm-btn--primary rm-btn--hero">Gabung daftar tunggu</span>
+        <p class="rm-caption" style="margin: 0">Keadaan: galat isian. Isian tidak dihapus.</p>
+      </div>
+      <div class="lp-state">
+        <div class="rm-field"><label class="rm-field-label" for="s4e">Email</label><input class="rm-input" id="s4e" value="rinjani.putri@gmail.com"></div>
+        <div class="rm-banner" role="alert"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><circle cx="128" cy="128" r="96"></circle><line x1="128" y1="80" x2="128" y2="136"></line><circle cx="128" cy="172" r="10" class="rm-i--fill"></circle></svg><p>Gagal mengirim karena koneksi terputus. Isianmu masih di sini; coba kirim lagi.</p></div>
+        <span class="rm-btn rm-btn--primary rm-btn--hero">Coba kirim lagi</span>
+        <p class="rm-caption" style="margin: 0">Keadaan: galat kirim</p>
+      </div>
+      <div class="lp-state">
+        <div class="rm-field"><label class="rm-field-label" for="s5e">Email</label><input class="rm-input" id="s5e" value="hafiz.rahman@yahoo.com"></div>
+        <p class="lp-info"><svg class="rm-i rm-i--16" viewBox="0 0 256 256" aria-hidden="true" style="margin-top: 2px"><circle cx="128" cy="128" r="96"></circle><line x1="128" y1="120" x2="128" y2="176"></line><circle cx="128" cy="84" r="10" class="rm-i--fill"></circle></svg>Email ini sudah ada di daftar tunggu. Kamu tidak perlu mendaftar lagi; kabar pembukaan akan dikirim ke alamat ini.</p>
+        <span class="rm-btn rm-btn--text" style="justify-self: start; padding: 0">Pakai email lain</span>
+        <p class="rm-caption" style="margin: 0">Keadaan: email sudah terdaftar. Kabar, bukan galat.</p>
+      </div>
+      <div class="lp-state">
+        <p style="margin: 0; font: 400 32px/40px var(--font-serif); letter-spacing: -0.01em; text-wrap: balance">Terima kasih, Rinjani. Namamu sudah tercatat.</p>
+        <p style="margin: 0; font: 400 16px/24px var(--font-sans); color: var(--ink-muted)">Kabar pembukaan akan dikirim ke rinjani.putri@gmail.com.</p>
+        <p class="rm-caption" style="margin: 0">Keadaan: sukses. Form diganti kalimat ini.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</sc-if>
+
+<sc-if value="{{ showRest }}" hint-placeholder-val="{{ true }}">
+<section class="lp-sec" id="tanya-jawab" aria-labelledby="faq-h">
+  <div class="lp-wrap lp-grid">
+    <div class="lp-top lp-grid" style="column-gap: 24px">
+      <h2 class="lp-h2 lp-faq-h" id="faq-h">Tanya jawab</h2>
+      <div class="rm-accordion lp-faq">
+        <details open="{{ true }}">
+          <summary>Apa itu Grup Penulis?<svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><line x1="40" y1="128" x2="216" y2="128"></line><line class="rm-i-v" x1="128" y1="40" x2="128" y2="216"></line></svg></summary>
+          <p class="rm-answer">Ruang kecil tempat sekelompok penulis saling membaca tulisan yang dibagikan ke grup. Grup dikelola oleh admin grup. Dokumen yang tidak kamu bagikan tetap pribadi.</p>
+        </details>
+        <details>
+          <summary>Apakah tersedia di Indonesia dan Malaysia?<svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><line x1="40" y1="128" x2="216" y2="128"></line><line class="rm-i-v" x1="128" y1="40" x2="128" y2="216"></line></svg></summary>
+          <p class="rm-answer">Ya. Saat dibuka, RanahMenulis melayani penulis di Indonesia dan Malaysia. Kamu memilih negara di profil, dan tulisanmu muncul di daftar penulis negara itu. Antarmukanya berbahasa Indonesia lebih dulu. Penulis dari negara lain boleh masuk daftar tunggu.</p>
+        </details>
+        <details>
+          <summary>Siapa yang bisa membaca drafku?<svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><line x1="40" y1="128" x2="216" y2="128"></line><line class="rm-i-v" x1="128" y1="40" x2="128" y2="216"></line></svg></summary>
+          <p class="rm-answer">Tidak ada orang lain. Dokumen di Studio selalu pribadi; pengecualiannya hanya alasan hukum atau moderasi, dan itu dicatat. Pembaca melihat cuplikan yang kamu bagikan, dan pengelola proyek membaca naskah yang kamu kirim ke proyek mereka.</p>
+        </details>
+        <details>
+          <summary>Apakah hak cipta karyaku tetap milikku?<svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><line x1="40" y1="128" x2="216" y2="128"></line><line class="rm-i-v" x1="128" y1="40" x2="128" y2="216"></line></svg></summary>
+          <p class="rm-answer">Ya. Pengecualiannya hanya bila ketentuan sebuah proyek menyatakan lain. Ketentuan itu bisa kamu baca sebelum mendaftar, dan kamu harus menyetujuinya lebih dulu.</p>
+        </details>
+        <details>
+          <summary>Berapa biayanya?<svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><line x1="40" y1="128" x2="216" y2="128"></line><line class="rm-i-v" x1="128" y1="40" x2="128" y2="216"></line></svg></summary>
+          <p class="rm-answer">Menulis di Studio dan membaca di Community direncanakan tanpa biaya langganan di awal. Program di Projects, seperti antologi dan kelas, punya biayanya sendiri yang tampil sebelum kamu mendaftar.</p>
+        </details>
+        <details>
+          <summary>Kapan RanahMenulis dibuka?<svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><line x1="40" y1="128" x2="216" y2="128"></line><line class="rm-i-v" x1="128" y1="40" x2="128" y2="216"></line></svg></summary>
+          <p class="rm-answer">Tanggalnya belum diumumkan. Orang di daftar tunggu yang pertama kami kabari.</p>
+        </details>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="lp-foot">
+  <div class="lp-wrap lp-grid">
+    <div class="lp-foot-in">
+      <span class="rm-logo rm-logo--28"><img src="/_blob/bef43a777d9f0c788cfa7d5d7a185b85" alt="RanahMenulis"><img class="rm-on-dark" src="/_blob/d58158875b6926e7ffedff0f66d1140e" alt="RanahMenulis"></span>
+      <span class="lp-foot-meta">Indonesia · Malaysia</span>
+      <nav aria-label="Kaki halaman"><a href="#">Kebijakan privasi</a><a href="#">Kontak</a></nav>
+    </div>
+  </div>
+</footer>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"device":{"editor":"enum","options":["auto","desktop","mobile"],"default":"auto"},"headline":{"editor":"enum","options":["baru","lama"],"default":"baru"},"bar":{"editor":"enum","options":["auto","top","scrolled","wait"],"default":"auto"},"only":{"editor":null},"still":{"editor":null},"$preview":{"width":1440,"height":6600}}'>
+var RM_FULL = 'Hujan pertama bulan November selalu datang sore hari, tepat ketika Nenek selesai menyapu halaman. Ia tidak pernah berlari masuk.';
+var RM_CHIPS = ['Menulis rutin', 'Antologi', 'Buku solo', 'Kelas', 'Lomba', 'Membaca'];
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { typed: 0, stage: 0, w: 1440, name: '', email: '', country: 'Indonesia', picks: {}, formState: 'idle', nameErr: '', emailErr: '' };
+  }
+  componentDidMount() {
+    var self = this;
+    this.onResize = function () { self.setState({ w: window.innerWidth }); };
+    window.addEventListener('resize', this.onResize);
+    this.setState({ w: window.innerWidth });
+    this.onScroll = function () {
+      var h = document.getElementById('hero-cta'), wt = document.getElementById('daftar');
+      var heroOut = h ? h.getBoundingClientRect().bottom < 64 : false;
+      var waitIn = false;
+      if (wt) { var r = wt.getBoundingClientRect(); waitIn = r.top < window.innerHeight && r.bottom > 64; }
+      var sc = (window.scrollY || 0) > 8;
+      if (heroOut !== self.state.heroOut || waitIn !== self.state.waitIn || sc !== self.state.sc) self.setState({ heroOut: heroOut, waitIn: waitIn, sc: sc });
+    };
+    window.addEventListener('scroll', this.onScroll, { passive: true });
+    var still = this.props.still === true || this.props.still === 'true';
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (still || reduce) { this.setState({ typed: RM_FULL.length, stage: 3 }); return; }
+    this.timer = setInterval(function () {
+      var n = self.state.typed + 2;
+      if (n >= RM_FULL.length) {
+        clearInterval(self.timer);
+        self.setState({ typed: RM_FULL.length, stage: 1 });
+        self.t2 = setTimeout(function () { self.setState({ stage: 2 }); }, 450);
+        self.t3 = setTimeout(function () { self.setState({ stage: 3 }); }, 1050);
+      } else {
+        self.setState({ typed: n });
+      }
+    }, 34);
+  }
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.onResize);
+    window.removeEventListener('scroll', this.onScroll);
+    clearInterval(this.timer); clearTimeout(this.t2); clearTimeout(this.t3); clearTimeout(this.t4);
+  }
+  submit(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    var s = this.state, self = this;
+    if (s.formState === 'sending') return;
+    var nameErr = s.name.trim() ? '' : 'Isi nama panggilanmu dulu.';
+    var email = s.email.trim();
+    var emailErr = !email ? 'Isi alamat emailmu.' : (/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email) ? '' : 'Alamat email belum lengkap. Contoh: nama@domain.com');
+    if (nameErr || emailErr) { this.setState({ nameErr: nameErr, emailErr: emailErr, formState: 'error' }); return; }
+    this.setState({ nameErr: '', emailErr: '', formState: 'sending' });
+    this.t4 = setTimeout(function () {
+      self.setState({ formState: email.toLowerCase() === 'hafiz.rahman@yahoo.com' ? 'exists' : 'success' });
+    }, 1200);
+  }
+  renderVals() {
+    var self = this, s = this.state, p = this.props;
+    var theme = p.theme === 'dark' ? 'dark' : 'light';
+    var mobile = p.device === 'mobile' || (p.device !== 'desktop' && s.w < 768);
+    var only = p.only || 'all';
+    var fs = s.formState;
+    var barMode = (p.bar && p.bar !== 'auto') ? p.bar : (s.heroOut && s.waitIn ? 'wait' : (s.heroOut ? 'scrolled' : (s.sc ? 'scrolled-hero' : 'top')));
+    var words = Math.round(147 + (s.typed / RM_FULL.length) * 20);
+    return {
+      theme: theme,
+      headline: p.headline === 'lama' ? 'Dari satu paragraf sampai buku terbit.' : 'Tulis paragrafnya hari ini. Bukunya menyusul.',
+      barBtn: barMode === 'scrolled' ? 'rm-btn--primary' : 'rm-btn--secondary',
+      barScrolled: barMode === 'top' ? '' : 'is-scrolled',
+      invTheme: theme === 'dark' ? 'light' : 'dark',
+      rootCls: 'lp' + (mobile ? ' is-mobile' : ''),
+      logoH: mobile ? '28px' : '32px',
+      showBar: only === 'all' || only === 'hero' || only === 'dark' || only === 'bar',
+      showHero: only === 'all' || only === 'hero' || only === 'dark',
+      showRest: only === 'all',
+      showWait: only === 'all' || only === 'dark',
+      showStates: only === 'states',
+      typedText: RM_FULL.slice(0, s.typed),
+      caretOn: s.stage === 0,
+      saveLabel: s.stage === 0 ? 'Menyimpan…' : 'Tersimpan 14.02',
+      wordCount: words.toLocaleString('id-ID'),
+      pageWait: s.stage >= 2 ? '' : 'hs-wait',
+      coverWait: s.stage >= 3 ? '' : 'hs-wait',
+      name: s.name, email: s.email, country: s.country,
+      onName: function (e) { self.setState({ name: e.target.value, nameErr: '' }); },
+      onEmail: function (e) { self.setState({ email: e.target.value, emailErr: '', formState: fs === 'exists' ? 'idle' : fs }); },
+      onCountry: function (e) { self.setState({ country: e.target.value }); },
+      chips: RM_CHIPS.map(function (label) {
+        return { label: label, pressed: s.picks[label] ? 'true' : 'false', pick: function () { var pk = Object.assign({}, self.state.picks); pk[label] = !pk[label]; self.setState({ picks: pk }); } };
+      }),
+      submit: function (e) { self.submit(e); },
+      reset: function () { self.setState({ email: '', formState: 'idle' }); },
+      nameErr: s.nameErr, emailErr: s.emailErr,
+      nameInvalid: s.nameErr ? 'true' : 'false',
+      emailInvalid: s.emailErr ? 'true' : 'false',
+      busy: fs === 'sending',
+      submitLabel: fs === 'sending' ? 'Mengirim…' : 'Gabung daftar tunggu',
+      isExists: fs === 'exists',
+      isSuccess: fs === 'success',
+      showForm: fs !== 'success',
+      greetName: s.name.trim() || 'kamu'
+    };
+  }
+}
+</script>
+</body>
+</html>

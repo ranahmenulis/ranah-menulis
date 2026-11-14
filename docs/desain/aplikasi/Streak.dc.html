@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Dasbor Streak</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/ranahmenulis/components/variabel.css">
+<link rel="stylesheet" href="ds/ranahmenulis/components/bundle.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600&amp;family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&amp;display=swap">
+<style>
+body{margin:0}
+.st{position:relative;min-height:1440px;background:var(--canvas);color:var(--ink);font-family:var(--font-sans);-webkit-font-smoothing:antialiased}
+.st.is-m{min-height:2000px}
+.st.is-m.is-lock{height:844px;min-height:0;overflow:hidden}
+.st-shell{display:flex;align-items:stretch;min-height:1384px}
+.st-main{flex:999 1 560px;min-width:0;padding:40px 48px 96px}
+.st-wrap{max-width:1040px;margin:0 auto}
+.st.is-m .st-main{padding:20px 16px 96px}
+.st-title{margin:0 0 12px;font:600 28px/34px var(--font-sans)}
+.st.is-m .st-title{display:none}
+.st-tabs{margin-bottom:20px}
+.st.is-m .st-tabs{margin:-8px -16px 16px;padding:0 16px}
+.st-head{display:flex;align-items:center;flex-wrap:wrap;gap:4px 16px;margin-bottom:20px;min-height:32px}
+.st-mtitle{margin-left:10px;font:600 16px/24px var(--font-sans)}
+.st-top{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:48px;padding:32px 0;border-top:1px solid var(--line-strong);border-bottom:1px solid var(--line)}
+.st.is-m .st-top{grid-template-columns:minmax(0,1fr);gap:28px;padding:24px 0}
+.st-label{margin:0 0 12px;font:500 14px/20px var(--font-sans);color:var(--ink-muted)}
+.st-fig{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.st-fig .rm-figure{font-variant-numeric:lining-nums tabular-nums}
+.st.is-m .st-fig .rm-figure{font-size:44px}
+.st-fig > span:not(.rm-figure){font:400 16px/24px var(--font-sans);color:var(--ink-muted)}
+.st-line{margin:12px 0 0;font:400 14px/20px var(--font-sans);color:var(--ink)}
+.st-sub{margin:8px 0 0;font:400 14px/20px var(--font-sans);color:var(--ink-muted)}
+.st-today{display:grid;gap:0}
+.st-today .rm-progress{margin-top:16px}
+.st-today .rm-btn{justify-self:start;margin-top:24px}
+.st-side{padding-left:48px;border-left:1px solid var(--line)}
+.st.is-m .st-side{padding-left:0;border-left:0;padding-top:24px;border-top:1px solid var(--line)}
+.st-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:64px;padding-top:40px}
+.st.is-m .st-grid{grid-template-columns:minmax(0,1fr);gap:40px;padding-top:28px}
+.st-h2{margin:0;font:600 20px/28px var(--font-sans)}
+.st-calhead{display:flex;align-items:center;gap:4px;margin-bottom:12px}
+.st-calhead .st-h2{margin-right:auto}
+.st-day{border:0;background:none;padding:0;cursor:pointer;color:var(--ink)}
+.st-day.is-picked{box-shadow:inset 0 0 0 1px var(--line-strong)}
+.st-day.is-today{box-shadow:inset 0 0 0 1px var(--ink)}
+.st-day.is-today.is-picked{box-shadow:inset 0 0 0 2px var(--ink)}
+.st-detail{margin:16px 0 0;padding-top:14px;border-top:1px solid var(--line);font:400 14px/20px var(--font-sans);font-variant-numeric:lining-nums}
+.st-detail b{font-weight:500}
+.st-docs{list-style:none;margin:8px 0 0;padding:0;display:grid}
+.st-docs li{display:flex;align-items:baseline;gap:12px;padding:6px 0;font:400 14px/20px var(--font-sans);border-bottom:1px solid var(--line)}
+.st-docs li > span:first-child{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.st-docs li > span:last-child{color:var(--ink-muted);font-variant-numeric:lining-nums tabular-nums}
+.st-docs-note{margin:8px 0 0;font:400 13px/18px var(--font-sans);color:var(--ink-muted)}
+.st-open{margin:8px 0 0;font:400 13px/18px var(--font-sans);color:var(--ink-muted)}
+.st-legend{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:14px;font:400 13px/18px var(--font-sans);color:var(--ink-muted)}
+.st-legend span{display:inline-flex;align-items:center;gap:8px}
+.st-legend .rm-dot-empty{opacity:1;background:var(--ink-faint)}
+.st-empty{margin:16px 0 0;font:600 18px/26px var(--font-serif)}
+.st-stats{margin-top:32px}
+.st-mslist{margin-top:8px}
+.st-new{display:flex;align-items:center;gap:12px;margin:0 0 24px;font:400 14px/20px var(--font-sans)}
+.st-notice{margin:0 0 24px}
+.st-setup p.big{margin:0;font:600 20px/28px var(--font-serif)}
+.st-setup p.small{margin:8px 0 0;max-width:440px;font:400 14px/22px var(--font-sans);color:var(--ink-muted)}
+.st-setup .st-acts{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:24px}
+.st-scrim{position:absolute;inset:0;z-index:8}
+.st-dlgwrap{position:absolute;inset:0;z-index:9;display:grid;place-items:start center;padding:140px 24px 24px}
+.st-dlg{max-width:480px}
+.st-chips{display:flex;flex-wrap:wrap;gap:8px}
+.st-zone{display:flex;align-items:center;gap:12px;padding-top:16px;border-top:1px solid var(--line)}
+.st-zone div{flex:1;min-width:0;display:grid;gap:2px}
+.st-zone p{margin:0;font:400 14px/20px var(--font-sans);color:var(--ink)}
+.st-sheet{position:absolute;left:0;right:0;bottom:0;z-index:9}
+.st-mbar{height:52px;display:flex;align-items:center;gap:2px;padding:0 8px 0 16px;border-bottom:1px solid var(--line);background:var(--canvas)}
+.st-bottom{position:sticky;bottom:0;z-index:5}
+.st-skel{display:grid;gap:12px}
+</style>
+</helmet>
+<div class="st {{ rootCls }}" data-theme="{{ theme }}">
+
+<!-- ============ Bilah atas desktop ============ -->
+<sc-if value="{{ isDesk }}" hint-placeholder-val="{{ true }}">
+<header class="rm-topbar">
+  <button class="rm-icon-btn" type="button" aria-label="Sembunyikan sidebar"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true"><line x1="40" y1="64" x2="216" y2="64"></line><line x1="40" y1="128" x2="216" y2="128"></line><line x1="40" y1="192" x2="216" y2="192"></line></svg></button>
+  <a class="rm-logo rm-logo--28" href="#" aria-label="RanahMenulis, Beranda"><img src="/_blob/d29e1e89eab6f00efbe8181520ab70e5" alt="RanahMenulis"><img class="rm-on-dark" src="/_blob/785f553aa8906c11b9ee99c9ecba9cb4" alt="RanahMenulis"></a>
+  <div class="rm-search" style="margin-left: 16px"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><circle cx="112" cy="112" r="80"></circle><line x1="168.6" y1="168.6" x2="224" y2="224"></line></svg>Cari penulis dan karya</div>
+  <span style="margin-left: auto"></span>
+  <a class="rm-btn rm-btn--text" href="Main.dc.html"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><path d="M92.7 216H48a8 8 0 0 1-8-8v-44.7a8 8 0 0 1 2.3-5.6l120-120a8 8 0 0 1 11.4 0l44.6 44.6a8 8 0 0 1 0 11.4z"></path><line x1="136" y1="64" x2="192" y2="120"></line></svg>Tulis</a>
+  <button class="rm-icon-btn" type="button" aria-label="Notifikasi, ada yang belum dibaca"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true"><path d="M56 104a72 72 0 0 1 144 0c0 35.8 8.2 64.5 14.8 76A8 8 0 0 1 208 192H48a8 8 0 0 1-6.9-12c6.6-11.5 14.9-40.2 14.9-76z"></path><path d="M96 192a32 32 0 0 0 64 0"></path></svg><span class="rm-badge-dot"></span></button>
+  <span class="rm-avatar" style="--s: 32px" aria-label="Rinjani Putri">RP</span>
+</header>
+</sc-if>
+
+<!-- ============ Bilah atas ponsel ============ -->
+<sc-if value="{{ isMob }}" hint-placeholder-val="{{ false }}">
+<header class="st-mbar">
+  <span class="rm-logo rm-mono"><img src="/_blob/6764dec210bfec4e8815fa13cc4b973e" alt="RanahMenulis"><img class="rm-on-dark" src="/_blob/fd5a44cbf67158c3e41c6039bda6a617" alt="RanahMenulis"></span><span class="st-mtitle">Studio</span><span style="margin-left: auto"></span>
+  <button class="rm-icon-btn" type="button" aria-label="Cari" style="width: 44px; height: 44px"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><circle cx="112" cy="112" r="80"></circle><line x1="168.6" y1="168.6" x2="224" y2="224"></line></svg></button>
+  <button class="rm-icon-btn" type="button" aria-label="Notifikasi, ada yang belum dibaca" style="width: 44px; height: 44px"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><path d="M56 104a72 72 0 0 1 144 0c0 35.8 8.2 64.5 14.8 76A8 8 0 0 1 208 192H48a8 8 0 0 1-6.9-12c6.6-11.5 14.9-40.2 14.9-76z"></path><path d="M96 192a32 32 0 0 0 64 0"></path></svg><span class="rm-badge-dot"></span></button>
+  <span class="rm-avatar" style="--s: 28px" aria-label="Rinjani Putri">RP</span>
+</header>
+</sc-if>
+
+<div class="st-shell">
+<sc-if value="{{ isDesk }}" hint-placeholder-val="{{ true }}">
+<nav class="rm-sidebar" aria-label="Utama" style="flex: 0 0 240px">
+  <a class="rm-nav-item" href="Beranda.dc.html"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true"><path d="M216 115.5V208a8 8 0 0 1-8 8h-40v-56a8 8 0 0 0-8-8h-64a8 8 0 0 0-8 8v56H48a8 8 0 0 1-8-8v-92.5a8 8 0 0 1 2.6-5.9l80-75.5a8 8 0 0 1 10.8 0l80 75.5a8 8 0 0 1 2.6 5.9z"></path></svg>Beranda</a>
+  <a class="rm-nav-item" href="Studio.dc.html"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true"><rect x="48" y="32" width="160" height="192" rx="8"></rect><line x1="88" y1="32" x2="88" y2="224"></line><line x1="120" y1="80" x2="168" y2="80"></line><line x1="120" y1="112" x2="168" y2="112"></line></svg>Studio</a>
+  <a class="rm-nav-item rm-nav-item--sub" href="#" aria-current="page">Streak</a>
+  <a class="rm-nav-item" href="#"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true"><rect x="40" y="40" width="48" height="176" rx="8"></rect><rect x="88" y="40" width="48" height="176" rx="8"></rect><path d="M168 46l40 10-34 160-40-10z"></path></svg>Projects</a>
+  <a class="rm-nav-item" href="#"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true"><path d="M192 224l-64-40-64 40V48a8 8 0 0 1 8-8h112a8 8 0 0 1 8 8z"></path></svg>Tersimpan</a>
+  <a class="rm-nav-item" href="#"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true"><circle cx="128" cy="96" r="64"></circle><path d="M32 216c19.4-33.5 54.6-56 96-56s76.6 22.5 96 56"></path></svg>Profil</a>
+  <div class="rm-nav-sep" role="separator"></div>
+  <p class="rm-nav-group">Grup saya</p>
+  <a class="rm-nav-item" href="#"><span class="rm-avatar" style="--s: 20px">GP</span>Grup Penulis Pesisir</a>
+</nav>
+</sc-if>
+
+<main class="st-main">
+<div class="st-wrap">
+  <h1 class="st-title">Studio</h1>
+  <div class="rm-tabs st-tabs" role="tablist" aria-label="Studio"><a class="rm-tab" href="Studio.dc.html" role="tab" aria-selected="false">Dokumen</a><a class="rm-tab" href="#" role="tab" aria-selected="true">Streak</a></div>
+  <div class="st-head">
+    <span class="rm-meta">Sabtu, 14 November · dihitung dengan WIB</span>
+    <sc-if value="{{ hasTarget }}" hint-placeholder-val="{{ true }}"><button class="rm-btn rm-btn--text" type="button" onClick="{{ openSet }}" style="margin-left: auto; color: var(--ink)">Atur target</button></sc-if>
+  </div>
+
+  <sc-if value="{{ showZone }}" hint-placeholder-val="{{ false }}">
+  <div class="rm-notice st-notice" role="status"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><circle cx="128" cy="128" r="96"></circle><polyline points="128 72 128 128 176 128"></polyline></svg><p>Perangkat ini memakai WITA (UTC+8), sedangkan streakmu dihitung dengan WIB (UTC+7). Hari berganti pukul 00.00 WIB, atau 01.00 di perangkatmu.</p><button class="rm-btn rm-btn--text rm-btn--sm" type="button" onClick="{{ openSet }}" style="color: var(--ink)">Ubah zona waktu</button></div>
+  </sc-if>
+
+  <sc-if value="{{ showNewMs }}" hint-placeholder-val="{{ false }}">
+  <p class="st-new" role="status"><span class="rm-tag">Baru</span>Milestone 10.000 kata terbuka. Itu jumlah kata bersih sejak kamu mulai menulis di Studio.</p>
+  </sc-if>
+
+  <!-- ===== Memuat ===== -->
+  <sc-if value="{{ isLoading }}" hint-placeholder-val="{{ false }}">
+  <div class="st-top" aria-busy="true" aria-label="Memuat Streak">
+    <div class="st-skel"><span class="rm-skel" style="width: 80px; height: 14px"></span><span class="rm-skel" style="width: 180px; height: 52px"></span><span class="rm-skel" style="width: 100%; height: 4px; margin-top: 8px"></span><span class="rm-skel" style="width: 60%; height: 14px"></span><span class="rm-skel" style="width: 136px; height: 40px; border-radius: 9999px; margin-top: 12px"></span></div>
+    <div class="st-skel st-side"><span class="rm-skel" style="width: 100px; height: 14px"></span><span class="rm-skel" style="width: 72px; height: 52px"></span><span class="rm-skel" style="width: 70%; height: 14px"></span></div>
+  </div>
+  <div class="st-grid">
+    <div class="st-skel"><span class="rm-skel" style="width: 140px; height: 20px; margin-bottom: 8px"></span><div style="display: grid; grid-template-columns: repeat(7, 36px); gap: 0"><sc-for list="{{ skelDots }}" as="d" hint-placeholder-count="35"><span style="width: 36px; height: 36px; display: grid; place-items: center"><span class="rm-skel" style="width: 14px; height: 14px; border-radius: 9999px"></span></span></sc-for></div></div>
+    <div class="st-skel"><span class="rm-skel" style="width: 120px; height: 20px; margin-bottom: 8px"></span><span class="rm-skel" style="width: 100%; height: 44px"></span><span class="rm-skel" style="width: 100%; height: 44px"></span><span class="rm-skel" style="width: 100%; height: 44px"></span></div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ notLoading }}" hint-placeholder-val="{{ true }}">
+  <!-- ===== Hari ini + streak ===== -->
+  <section class="st-top" aria-label="Hari ini">
+    <sc-if value="{{ hasTarget }}" hint-placeholder-val="{{ true }}">
+    <div class="st-today">
+      <p class="st-label">Hari ini</p>
+      <div class="st-fig"><span class="rm-figure">{{ todayWords }}</span><span>/ {{ target }} kata</span></div>
+      <div class="rm-progress" role="progressbar" aria-label="Progres hari ini" aria-valuemin="0" aria-valuemax="{{ target }}" aria-valuenow="{{ todayRaw }}"><i style="width: {{ pct }}"></i></div>
+      <p class="st-line">{{ todayLine }}</p>
+      <a class="rm-btn rm-btn--primary" href="Main.dc.html">Mulai menulis</a>
+      <p class="st-open">Membuka dokumen terakhir, “Yang Ditunggu Nenek di Bawah Jambu Air”. Angka hari ini berlanjut di bilah editor.</p>
+    </div>
+    <div class="st-side">
+      <p class="st-label">Streak saat ini</p>
+      <div class="st-fig"><span class="rm-figure">{{ streak }}</span><span>hari berturut-turut</span></div>
+      <p class="st-sub">{{ streakLine }}</p>
+      <p class="st-sub" style="color: var(--ink)">Terpanjang: 14 hari, 2–15 Okt</p>
+    </div>
+    </sc-if>
+    <sc-if value="{{ noTarget }}" hint-placeholder-val="{{ false }}">
+    <div class="st-setup">
+      <p class="big">Belum ada target harian.</p>
+      <p class="small">Tetapkan berapa kata yang ingin kamu tulis setiap hari. Setiap hari yang tercapai menjadi satu titik di kalendermu.</p>
+      <div class="st-acts"><button class="rm-btn rm-btn--primary" type="button" onClick="{{ openSet }}">Tetapkan target</button><a class="rm-btn rm-btn--text" href="Main.dc.html">Mulai menulis dulu</a></div>
+    </div>
+    <div class="st-side">
+      <p class="st-label">Streak saat ini</p>
+      <p class="st-sub" style="margin: 0; color: var(--ink)">Streak dihitung setelah kamu punya target. Tulisan sebelum itu tetap tercatat di kalender.</p>
+    </div>
+    </sc-if>
+  </section>
+
+  <div class="st-grid">
+    <!-- ===== Kalender ===== -->
+    <section aria-labelledby="cal-h">
+      <div class="st-calhead">
+        <h2 class="st-h2" id="cal-h">November 2026</h2>
+        <button class="rm-icon-btn" type="button" aria-label="Bulan sebelumnya"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><polyline points="160 208 80 128 160 48"></polyline></svg></button>
+        <button class="rm-icon-btn" type="button" aria-label="Bulan berikutnya" disabled="{{ yes }}" style="opacity: 0.4"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><polyline points="96 48 176 128 96 208"></polyline></svg></button>
+      </div>
+      <sc-if value="{{ calError }}" hint-placeholder-val="{{ false }}">
+        <div class="rm-banner" role="alert"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><circle cx="128" cy="128" r="96"></circle><line x1="128" y1="80" x2="128" y2="136"></line><circle cx="128" cy="172" r="10" class="rm-i--fill"></circle></svg><p>Kalender November gagal dimuat. Progres hari ini tetap tercatat dan blok lain bisa dipakai.</p><button class="rm-btn rm-btn--secondary rm-btn--sm" type="button">Coba lagi</button></div>
+      </sc-if>
+      <sc-if value="{{ calOk }}" hint-placeholder-val="{{ true }}">
+      <div class="rm-cal st-cal {{ calCls }}" role="grid" aria-label="Kalender November 2026, minggu mulai Senin">
+        <span class="rm-cal-h">S</span><span class="rm-cal-h">S</span><span class="rm-cal-h">R</span><span class="rm-cal-h">K</span><span class="rm-cal-h">J</span><span class="rm-cal-h">S</span><span class="rm-cal-h">M</span>
+        <sc-for list="{{ cells }}" as="c" hint-placeholder-count="42">
+          <sc-if value="{{ c.blank }}" hint-placeholder-val="{{ false }}"><span class="rm-cal-d"></span></sc-if>
+          <sc-if value="{{ c.isDay }}" hint-placeholder-val="{{ true }}"><button class="rm-cal-d st-day {{ c.cls }}" type="button" aria-label="{{ c.aria }}" aria-pressed="{{ c.pressed }}" onClick="{{ c.pick }}" disabled="{{ c.future }}"><sc-if value="{{ c.full }}" hint-placeholder-val="{{ true }}"><i class="rm-dot-full"></i></sc-if><sc-if value="{{ c.ring }}" hint-placeholder-val="{{ false }}"><i class="rm-dot-ring"></i></sc-if><sc-if value="{{ c.fill }}" hint-placeholder-val="{{ false }}"><i class="rm-dot-fill"></i></sc-if><sc-if value="{{ c.empty }}" hint-placeholder-val="{{ false }}"><i class="rm-dot-empty"></i></sc-if></button></sc-if>
+        </sc-for>
+      </div>
+      <div class="st-legend" aria-hidden="true"><span><i class="rm-dot-full"></i>Target tercapai</span><span><i class="rm-dot-ring"></i>Ada tulisan</span><span><i class="rm-dot-empty"></i>Kosong</span></div>
+      <sc-if value="{{ monthEmpty }}" hint-placeholder-val="{{ false }}"><p class="st-empty">Belum ada tulisan bulan ini.</p><p class="st-sub" style="margin-top: 4px">Satu kalimat di Studio sudah cukup untuk titik pertama.</p></sc-if>
+      <sc-if value="{{ hasDetail }}" hint-placeholder-val="{{ true }}"><div role="status"><p class="st-detail"><b>{{ detailDay }}</b> · {{ detailText }}</p><sc-if value="{{ hasDocs }}" hint-placeholder-val="{{ true }}"><ul class="st-docs" aria-label="Kata per dokumen"><sc-for list="{{ dayDocs }}" as="d" hint-placeholder-count="2"><li><span>{{ d.t }}</span><span>{{ d.n }}</span></li></sc-for></ul><p class="st-docs-note">Kata bersih yang ditulis hari itu, dari catatan simpan otomatis Studio. Dokumen yang kemudian dihapus tetap dihitung.</p></sc-if></div></sc-if>
+      </sc-if>
+      <div class="st-stats">
+        <sc-if value="{{ hasStats }}" hint-placeholder-val="{{ true }}">
+        <div class="rm-stats">
+          <div class="rm-stat"><b>{{ weekTotal }}</b><span>kata minggu ini</span></div>
+          <div class="rm-stat"><b>{{ weekAvg }}</b><span>rata-rata per hari minggu ini</span></div>
+          <div class="rm-stat"><b>{{ best }}</b><span>{{ bestLabel }}</span></div>
+        </div>
+        <a class="rm-btn rm-btn--text rm-btn--sm" href="#" style="padding: 0; margin-top: 12px">Lihat statistik</a>
+        </sc-if>
+        <sc-if value="{{ noStats }}" hint-placeholder-val="{{ false }}"><p class="st-sub" style="padding-top: 16px; border-top: 1px solid var(--line)">Belum cukup data untuk statistik. Tulis beberapa hari, lalu angkanya muncul di sini.</p></sc-if>
+      </div>
+    </section>
+
+    <!-- ===== Milestone ===== -->
+    <section aria-labelledby="ms-h">
+      <h2 class="st-h2" id="ms-h">Milestone</h2>
+      <div class="st-mslist">
+        <sc-for list="{{ milestones }}" as="m" hint-placeholder-count="5">
+          <div class="rm-ms {{ m.cls }}">
+            <span style="display: grid; place-items: center"><sc-if value="{{ m.open }}" hint-placeholder-val="{{ true }}"><i class="rm-dot-full"></i></sc-if><sc-if value="{{ m.fresh }}" hint-placeholder-val="{{ false }}"><i class="rm-dot-fill"></i></sc-if><sc-if value="{{ m.locked }}" hint-placeholder-val="{{ false }}"><i class="rm-dot-lock"></i></sc-if></span>
+            <div><p class="rm-ms-title">{{ m.title }}</p><p class="rm-ms-sub">{{ m.sub }}</p></div>
+            <sc-if value="{{ m.fresh }}" hint-placeholder-val="{{ false }}"><span class="rm-tag">Baru</span></sc-if>
+            <sc-if value="{{ m.notFresh }}" hint-placeholder-val="{{ true }}"><span class="rm-meta">{{ m.right }}</span></sc-if>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+  </div>
+  </sc-if>
+</div>
+</main>
+</div>
+
+<sc-if value="{{ nav5 }}" hint-placeholder-val="{{ false }}">
+<nav class="rm-bottombar st-bottom" aria-label="Utama">
+  <a class="rm-bottom-item" href="Beranda.dc.html"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true"><path d="M216 115.5V208a8 8 0 0 1-8 8h-40v-56a8 8 0 0 0-8-8h-64a8 8 0 0 0-8 8v56H48a8 8 0 0 1-8-8v-92.5a8 8 0 0 1 2.6-5.9l80-75.5a8 8 0 0 1 10.8 0l80 75.5a8 8 0 0 1 2.6 5.9z"></path></svg>Beranda</a>
+  <a class="rm-bottom-item" href="Studio.dc.html"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true"><rect x="48" y="32" width="160" height="192" rx="8"></rect><line x1="88" y1="32" x2="88" y2="224"></line><line x1="120" y1="80" x2="168" y2="80"></line><line x1="120" y1="112" x2="168" y2="112"></line></svg>Studio</a>
+  <a class="rm-bottom-item" href="#" aria-current="page"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true" style="stroke: none"><path class="rm-i--fill" d="M208 32h-24v-8a8 8 0 0 0-16 0v8H88v-8a8 8 0 0 0-16 0v8H48a16 16 0 0 0-16 16v160a16 16 0 0 0 16 16h160a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16zM92 184a12 12 0 1 1 12-12 12 12 0 0 1-12 12zm36 0a12 12 0 1 1 12-12 12 12 0 0 1-12 12zm0-40a12 12 0 1 1 12-12 12 12 0 0 1-12 12zm36 0a12 12 0 1 1 12-12 12 12 0 0 1-12 12zm44-56H48V48h160z"></path></svg>Streak</a>
+  <a class="rm-bottom-item" href="#"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true"><rect x="40" y="40" width="48" height="176" rx="8"></rect><rect x="88" y="40" width="48" height="176" rx="8"></rect><path d="M168 46l40 10-34 160-40-10z"></path></svg>Projects</a>
+  <a class="rm-bottom-item" href="#"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true"><circle cx="128" cy="96" r="64"></circle><path d="M32 216c19.4-33.5 54.6-56 96-56s76.6 22.5 96 56"></path></svg>Profil</a>
+</nav>
+</sc-if>
+<sc-if value="{{ nav4 }}" hint-placeholder-val="{{ false }}">
+<nav class="rm-bottombar rm-bottombar--4 st-bottom" aria-label="Utama">
+  <a class="rm-bottom-item" href="Beranda.dc.html"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true"><path d="M216 115.5V208a8 8 0 0 1-8 8h-40v-56a8 8 0 0 0-8-8h-64a8 8 0 0 0-8 8v56H48a8 8 0 0 1-8-8v-92.5a8 8 0 0 1 2.6-5.9l80-75.5a8 8 0 0 1 10.8 0l80 75.5a8 8 0 0 1 2.6 5.9z"></path></svg>Beranda</a>
+  <a class="rm-bottom-item" href="#" aria-current="page"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true" style="stroke: none"><path class="rm-i--fill" d="M208 24H56a16 16 0 0 0-16 16v176a16 16 0 0 0 16 16h152a16 16 0 0 0 16-16V40a16 16 0 0 0-16-16zM88 216H56V40h32zm80-104h-48a8 8 0 0 1 0-16h48a8 8 0 0 1 0 16zm0-32h-48a8 8 0 0 1 0-16h48a8 8 0 0 1 0 16z"></path></svg>Studio</a>
+  <a class="rm-bottom-item" href="#"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true"><rect x="40" y="40" width="48" height="176" rx="8"></rect><rect x="88" y="40" width="48" height="176" rx="8"></rect><path d="M168 46l40 10-34 160-40-10z"></path></svg>Projects</a>
+  <a class="rm-bottom-item" href="#"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true"><circle cx="128" cy="96" r="64"></circle><path d="M32 216c19.4-33.5 54.6-56 96-56s76.6 22.5 96 56"></path></svg>Profil</a>
+</nav>
+</sc-if>
+
+<!-- ============ Pengaturan target ============ -->
+<sc-if value="{{ setOpen }}" hint-placeholder-val="{{ false }}">
+  <div class="rm-scrim st-scrim" aria-hidden="true"></div>
+  <div class="{{ dlgWrapCls }}">
+    <div class="rm-float {{ dlgCls }}" role="dialog" aria-modal="true" aria-labelledby="tg-t">
+      <h3 id="tg-t" style="margin: 0; font: 600 20px/28px var(--font-sans)">Target harian</h3>
+      <div class="rm-field">
+        <label class="rm-field-label" for="tg-in">Kata per hari</label>
+        <input class="rm-input" id="tg-in" type="text" inputMode="numeric" value="{{ tgVal }}" onChange="{{ onTg }}" aria-invalid="{{ tgInvalid }}" aria-describedby="tg-h">
+        <sc-if value="{{ tgErr }}" hint-placeholder-val="{{ false }}"><p class="rm-field-error" style="margin: 0"><svg class="rm-i rm-i--16" viewBox="0 0 256 256" aria-hidden="true" style="margin-top: 2px"><circle cx="128" cy="128" r="96"></circle><line x1="128" y1="80" x2="128" y2="136"></line><circle cx="128" cy="172" r="10" class="rm-i--fill"></circle></svg>Isi angka bulat lebih dari nol.</p></sc-if>
+        <sc-if value="{{ tgOk }}" hint-placeholder-val="{{ true }}"><p class="rm-field-hint" id="tg-h" style="margin: 0">{{ tgHint }}</p></sc-if>
+      </div>
+      <div class="st-chips" role="group" aria-label="Pilihan cepat"><sc-for list="{{ presets }}" as="c" hint-placeholder-count="4"><button class="rm-chip" type="button" aria-pressed="{{ c.pressed }}" onClick="{{ c.pick }}">{{ c.label }}</button></sc-for></div>
+      <div class="st-zone">
+        <div><span class="rm-field-label">Zona waktu</span><p>WIB, Asia/Jakarta (UTC+7)</p></div>
+        <a class="rm-btn rm-btn--text rm-btn--sm" href="#" style="color: var(--ink)">Ubah di Pengaturan</a>
+      </div>
+      <div class="rm-notice"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><circle cx="128" cy="128" r="96"></circle><polyline points="128 72 128 128 176 128"></polyline></svg><p>Hari dihitung dari 00.00 sampai 23.59 menurut zona waktu ini. Mengubah zona waktu hanya berlaku ke depan; hari yang sudah lewat tidak dihitung ulang.</p></div>
+      <div class="rm-actions"><button class="rm-btn rm-btn--secondary" type="button" onClick="{{ closeSet }}">Batal</button><button class="rm-btn rm-btn--primary" type="button" disabled="{{ tgBad }}">Simpan target</button></div>
+    </div>
+  </div>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"device":{"editor":"enum","options":["auto","desktop","mobile"],"default":"auto"},"state":{"editor":"enum","options":["berjalan","belum","tercapai","milestone","putus","pengaturan","zona","memuat","galat","lanjut"],"default":"berjalan"},"nav":{"editor":"enum","options":["5","4"],"default":"5"},"$preview":{"width":1440,"height":1440}}'>
+var RM_BASE = { 1: 540, 2: 510, 3: 230, 4: 620, 5: 0, 6: 505, 7: 180, 8: 520, 9: 520, 10: 610, 11: 505, 12: 812, 13: 540, 14: 320 };
+var RM_DAYS = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
+var RM_BEFORE_NOV = 3206;
+var TODAY = 14;
+var DOC_K = 'Surat untuk Kakek di Pelabuhan', DOC_N = 'Yang Ditunggu Nenek di Bawah Jambu Air', DOC_T = 'Daftar nama tokoh', DOC_P = 'Pasar Pagi di Bukittinggi', DOC_R = 'Prolog: Rumah di Ujung Rel';
+function dayDocs(d, v) {
+  if (!v) return [];
+  var r;
+  if (d === 14) { r = v === 320 ? [[DOC_K, 252], [DOC_T, 68]] : (v === 120 ? [[DOC_N, 120]] : [[DOC_K, 252], [DOC_N, v - 320], [DOC_T, 68]]); }
+  else if (d === 13) r = [[DOC_K, v - 19], [DOC_N, 19]];
+  else if (d >= 11) r = [[DOC_K, v]];
+  else if (d >= 7) { var a = Math.round(v * 0.6); r = [[DOC_P, a], [DOC_K, v - a]]; }
+  else if (d <= 2) r = [[DOC_R, v - 60], [DOC_T, 60]];
+  else r = [[DOC_R, v]];
+  return r.filter(function (x) { return x[1] > 0; }).sort(function (a, b) { return b[1] - a[1]; });
+}
+function fmt(n) { return Number(n).toLocaleString('id-ID'); }
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    var s = props.state || 'berjalan';
+    this.state = { w: 1440, picked: TODAY, set: s === 'pengaturan', tg: s === 'pengaturan' ? '750' : '500' };
+  }
+  componentDidMount() {
+    var self = this;
+    this.onResize = function () { self.setState({ w: window.innerWidth }); };
+    window.addEventListener('resize', this.onResize);
+    this.setState({ w: window.innerWidth });
+  }
+  componentWillUnmount() { window.removeEventListener('resize', this.onResize); }
+  renderVals() {
+    var self = this, s = this.state, p = this.props;
+    var st = p.state || 'berjalan';
+    var theme = p.theme === 'dark' ? 'dark' : 'light';
+    var mobile = p.device === 'mobile' || (p.device !== 'desktop' && s.w < 768);
+    var noTarget = st === 'belum';
+    var target = noTarget ? 0 : 500;
+    var D = {};
+    var k;
+    if (!noTarget) { for (k in RM_BASE) D[k] = RM_BASE[k]; }
+    if (st === 'tercapai') D[14] = 512;
+    if (st === 'milestone') D[14] = 708;
+    if (st === 'putus') { D[13] = 0; D[14] = 120; }
+    if (st === 'lanjut') D[14] = 468;
+    var today = D[TODAY] || 0;
+    var met = function (d) { return target > 0 && (D[d] || 0) >= target; };
+    var streak = 0, d0 = met(TODAY) ? TODAY : TODAY - 1;
+    for (var d = d0; d >= 1 && met(d); d--) streak++;
+    var monthSum = 0; for (k in D) monthSum += D[k];
+    var lifetime = noTarget ? 0 : RM_BEFORE_NOV + monthSum;
+    var week = 0; for (var w = 9; w <= TODAY; w++) week += (D[w] || 0);
+    var best = 0, bestDay = 0; for (k in D) { if (D[k] > best) { best = D[k]; bestDay = Number(k); } }
+    var celebrate = st === 'tercapai' || st === 'milestone';
+    var cells = [];
+    for (var b = 0; b < 6; b++) cells.push({ blank: true, isDay: false });
+    for (var day = 1; day <= 30; day++) {
+      var v = D[day] || 0, fut = day > TODAY, isT = day === TODAY;
+      var full = !fut && target > 0 && v >= target && !(isT && celebrate);
+      var fill = isT && celebrate;
+      var ring = !fut && v > 0 && !(target > 0 && v >= target);
+      var empty = !fut && v === 0;
+      var label = day + ' Nov' + (isT ? ', hari ini' : '') + (fut ? '' : (v === 0 ? ', kosong' : ', ' + fmt(v) + ' kata' + (target > 0 && v >= target ? ', target tercapai' : '')));
+      cells.push({ blank: false, isDay: true, day: day, full: full, fill: fill, ring: ring, empty: empty, future: fut, aria: label,
+        cls: (isT ? 'is-today ' : '') + (s.picked === day ? 'is-picked' : ''), pressed: s.picked === day ? 'true' : 'false',
+        pick: (function (dd) { return function () { self.setState({ picked: dd }); }; })(day) });
+    }
+    while (cells.length < 42) cells.push({ blank: true, isDay: false });
+    var pd = s.picked, pv = D[pd] || 0;
+    var wd = RM_DAYS[(pd - 1 + 6) % 7];
+    var detailText = pv === 0 ? 'Tidak ada tulisan.' : (fmt(pv) + ' kata' + (target > 0 ? (pv >= target ? ', target tercapai.' : ', ' + fmt(target - pv) + ' kata lagi untuk target.') : '.'));
+    var todayLine;
+    if (st === 'putus') todayLine = fmt(target - today) + ' kata lagi untuk memulai streak baru hari ini.';
+    else if (today >= target) todayLine = 'Target hari ini tercapai. Streakmu naik menjadi ' + streak + ' hari.';
+    else todayLine = fmt(target - today) + ' kata lagi sebelum hari berganti pukul 00.00 WIB.';
+    var streakLine = st === 'putus' ? 'Streak sebelumnya 5 hari, 8–12 Nov. Kalender tetap menyimpan setiap hari yang sudah kamu tulis.' : (today >= target ? 'Hari ini sudah dihitung.' : 'Hari ini belum dihitung sampai target tercapai.');
+    var ms = [
+      { title: '7 hari berturut-turut', sub: 'Menulis sampai target tujuh hari tanpa putus', open: !noTarget, right: noTarget ? '7 hari lagi' : '8 Okt' },
+      { title: '14 hari berturut-turut', sub: 'Streak terpanjangmu sejauh ini', open: !noTarget, right: noTarget ? '14 hari lagi' : '15 Okt' },
+      { title: '10.000 kata', sub: 'Total kata bersih sejak kamu mulai', open: false, fresh: lifetime >= 10000, right: fmt(Math.max(0, 10000 - lifetime)) + ' kata lagi' },
+      { title: '30 hari berturut-turut', sub: 'Streak saat ini ' + streak + ' hari', open: false, right: (30 - streak) + ' hari lagi' },
+      { title: '50.000 kata', sub: 'Kira-kira satu naskah novel pendek', open: false, right: fmt(50000 - lifetime) + ' kata lagi' }
+    ].map(function (m) {
+      var locked = !m.open && !m.fresh;
+      return { title: m.title, sub: noTarget && m.title.indexOf('hari') > 0 ? 'Dihitung setelah kamu punya target' : m.sub, open: m.open, fresh: !!m.fresh, locked: locked, notFresh: !m.fresh, right: m.right, cls: locked ? 'is-locked' : '' };
+    });
+    var tgN = Number(String(s.tg).replace(/\./g, ''));
+    var tgBad = !(Number.isInteger(tgN) && tgN > 0);
+    var tgHint = tgBad ? '' : (tgN === 500 ? 'Target saat ini 500 kata per hari.' : 'Hari ini tetap 500 kata. Target ' + fmt(tgN) + ' kata berlaku mulai besok, Minggu 15 Nov.');
+    if (noTarget && !tgBad) tgHint = 'Target berlaku mulai besok, Minggu 15 Nov. Tulisan hari ini tetap tercatat di kalender.';
+    var skel = []; for (var i = 0; i < 35; i++) skel.push({ i: i });
+    return {
+      theme: theme, yes: true,
+      nav5: mobile && String(p.nav || '5') !== '4', nav4: mobile && String(p.nav || '5') === '4',
+      calCls: mobile ? 'rm-cal--touch' : '',
+      rootCls: (mobile ? 'is-m' : '') + (mobile && s.set ? ' is-lock' : ''),
+      isDesk: !mobile, isMob: mobile,
+      isLoading: st === 'memuat', notLoading: st !== 'memuat',
+      hasTarget: !noTarget, noTarget: noTarget,
+      showZone: st === 'zona', showNewMs: st === 'milestone',
+      todayWords: fmt(today), todayRaw: today, target: fmt(target),
+      pct: Math.min(100, Math.round(today / (target || 1) * 100)) + '%',
+      todayLine: todayLine, streak: streak, streakLine: streakLine,
+      calError: st === 'galat', calOk: st !== 'galat',
+      cells: cells, skelDots: skel,
+      monthEmpty: noTarget, hasDetail: !noTarget,
+      detailDay: (pd === TODAY ? 'Hari ini, ' : '') + wd + ' ' + pd + ' Nov', detailText: detailText,
+      dayDocs: dayDocs(pd, pv).map(function (x) { return { t: x[0], n: fmt(x[1]) }; }), hasDocs: pv > 0,
+      hasStats: !noTarget, noStats: noTarget,
+      weekTotal: fmt(week), weekAvg: fmt(Math.round(week / 6)), best: fmt(best), bestLabel: 'kata, hari terbaik bulan ini (' + bestDay + ' Nov)',
+      milestones: ms,
+      setOpen: s.set,
+      openSet: function () { self.setState({ set: true }); },
+      closeSet: function () { self.setState({ set: false, tg: '500' }); },
+      dlgWrapCls: mobile ? 'st-sheetwrap' : 'st-dlgwrap',
+      dlgCls: mobile ? 'rm-sheet st-sheet' : 'rm-dialog st-dlg',
+      tgVal: s.tg,
+      onTg: function (e) { self.setState({ tg: e.target.value }); },
+      tgErr: tgBad, tgOk: !tgBad, tgBad: tgBad, tgInvalid: tgBad ? 'true' : 'false', tgHint: tgHint,
+      presets: [250, 500, 750, 1000].map(function (n) { return { label: fmt(n), pressed: tgN === n ? 'true' : 'false', pick: function () { self.setState({ tg: String(n) }); } }; })
+    };
+  }
+}
+</script>
+</body>
+</html>

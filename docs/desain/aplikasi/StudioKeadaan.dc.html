@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Studio, keadaan tab Dokumen</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/ranahmenulis/components/variabel.css">
+<link rel="stylesheet" href="ds/ranahmenulis/components/bundle.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600&amp;family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&amp;display=swap">
+<style>
+body{margin:0}
+.wb-cap{margin:0;height:40px;display:flex;align-items:center;gap:12px;font:400 14px/20px var(--font-sans);color:var(--ink-muted)}
+.wb-cap b{font-weight:500;color:var(--ink)}
+</style>
+</helmet>
+<div data-theme="light" style="width: 1440px; min-height: 5392px; background: var(--canvas); color: var(--ink); font-family: var(--font-sans); display: grid; gap: 48px; align-content: start">
+  <div>
+    <p class="wb-cap"><b>Menu ⋯ pada satu dokumen.</b> Kirim ke proyek dan Ekspor juga ada di sini; Pindah ke sampah terakhir setelah garis, tidak merah karena bisa dipulihkan.</p>
+    <div style="height: 1000px; overflow: hidden"><dc-import name="Studio" device="desktop" state="menu" hint-size="1440px,1000px"></dc-import></div>
+  </div>
+  <div>
+    <p class="wb-cap"><b>Tab Sampah.</b> Pulihkan sebagai tombol teks. Hapus permanen hanya lewat menu ⋯ dan dialog konfirmasi merah.</p>
+    <div style="height: 1000px; overflow: hidden"><dc-import name="Studio" device="desktop" state="sampah" hint-size="1440px,1000px"></dc-import></div>
+  </div>
+  <div>
+    <p class="wb-cap"><b>Kosong.</b> Satu kalimat serif dan satu tombol. Baris progres hari ini tetap ada karena target berlaku untuk tulisan pertama juga.</p>
+    <div style="height: 1000px; overflow: hidden"><dc-import name="Studio" device="desktop" state="kosong" hint-size="1440px,1000px"></dc-import></div>
+  </div>
+  <div>
+    <p class="wb-cap"><b>Memuat.</b> Kerangka berbentuk baris dokumen. Tidak tampil bila daftar terbuka di bawah 300 ms.</p>
+    <div style="height: 1000px; overflow: hidden"><dc-import name="Studio" device="desktop" state="memuat" hint-size="1440px,1000px"></dc-import></div>
+  </div>
+  <div>
+    <p class="wb-cap"><b>Galat.</b> Hanya daftar yang gagal; baris progres dan tab Streak tetap jalan. Isi dokumen tidak pernah disebut hilang.</p>
+    <div style="height: 1000px; overflow: hidden"><dc-import name="Studio" device="desktop" state="galat" hint-size="1440px,1000px"></dc-import></div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":5392}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

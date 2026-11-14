@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Jelajahi</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/ranahmenulis/components/variabel.css">
+<link rel="stylesheet" href="ds/ranahmenulis/components/bundle.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600&amp;family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&amp;display=swap">
+<style>
+body{margin:0}
+.dc{position:relative;min-height:1400px;background:var(--canvas);color:var(--ink);font-family:var(--font-sans);-webkit-font-smoothing:antialiased}
+.dc.is-t{min-height:1024px}
+.dc.is-m{height:844px;min-height:0;display:flex;flex-direction:column;overflow:hidden}
+.dc-top{position:sticky;top:0;z-index:5;background:var(--canvas)}
+.dc-shell{display:flex;align-items:stretch}
+.dc-main{flex:1;min-width:0;padding:32px 48px 96px}
+.dc.is-guest .dc-main{max-width:1168px;margin:0 auto}
+.dc.is-t .dc-main{padding:24px 32px 80px}
+.dc-wrap{max-width:1040px;margin:0 auto}
+.dc-h1{margin:0 0 4px;font:600 28px/36px var(--font-sans)}
+.dc-chips{position:sticky;top:56px;z-index:4;background:var(--canvas);display:flex;gap:8px;padding:16px 0;border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none}
+.dc-chips::-webkit-scrollbar{display:none}
+.dc-chips .rm-chip{flex:none}
+.dc-desc{margin:16px 0 24px;font:400 14px/20px var(--font-sans);color:var(--ink-muted)}
+.dc-grid{columns:3;column-gap:24px}
+.dc.is-t .dc-grid{columns:2}
+.dc-tile{break-inside:avoid;margin:0 0 24px;border:1px solid var(--line);background:var(--canvas);display:grid}
+.dc-body{padding:20px;display:grid;gap:8px;min-width:0}
+.dc-img{aspect-ratio:3/2;background:var(--subtle);display:grid;place-items:center;border-bottom:1px solid var(--line)}
+.dc-img span{font:400 13px/18px var(--font-sans);color:var(--ink-muted)}
+.dc-label{margin:0;font:400 13px/18px var(--font-sans);color:var(--ink-muted)}
+.dc-title{font-size:20px;line-height:26px;margin:0}
+.dc-ex{-webkit-line-clamp:4}
+.dc-note{display:-webkit-box;-webkit-line-clamp:8;-webkit-box-orient:vertical;overflow:hidden}
+.dc-more{display:grid;justify-items:center;gap:8px;padding:16px 0 0}
+.dc-end{margin:0;font:400 13px/18px var(--font-sans);color:var(--ink-muted)}
+.dc-skel{break-inside:avoid;margin:0 0 24px;border:1px solid var(--line);padding:20px;display:grid;gap:10px}
+.dc-chipskel{display:flex;gap:8px;padding:16px 0;border-bottom:1px solid var(--line)}
+.dc-state{max-width:680px;padding:24px 0}
+.dc-state .rm-note{margin:-4px 0 0}
+/* ponsel */
+.dc-mbar{flex:none;height:52px;display:flex;align-items:center;gap:4px;padding:0 4px 0 16px;background:var(--canvas)}
+.dc-scroll{flex:1;min-height:0;overflow:auto;scrollbar-width:none}
+.dc-scroll::-webkit-scrollbar{display:none}
+.is-m .dc-main{padding:0 0 24px}
+.is-m .dc-h1{padding:8px 16px 0;font-size:22px;line-height:30px}
+.is-m .dc-chips{top:0;padding:12px 16px}
+.is-m .dc-desc{margin:12px 16px 0}
+.is-m .dc-grid{columns:1;padding:0 16px}
+.is-m .dc-tile{margin:0;border:0;border-bottom:1px solid var(--line);grid-template-columns:minmax(0,1fr)}
+.is-m .dc-tile.has-img{grid-template-columns:minmax(0,1fr) 80px;column-gap:16px;align-items:start}
+.is-m .dc-tile.has-img .dc-img{grid-column:2;grid-row:1;width:80px;height:53px;margin-top:20px;border:0}
+.is-m .dc-tile.has-img .dc-img span{display:none}
+.is-m .dc-tile.has-img .dc-body{grid-column:1;grid-row:1}
+.is-m .dc-body{padding:20px 0}
+.is-m .dc-title{font-size:18px;line-height:24px}
+.is-m .dc-ex{-webkit-line-clamp:2}
+.is-m .dc-more{padding:24px 16px 32px}
+.is-m .dc-skel{margin:0 16px;border:0;border-bottom:1px solid var(--line);padding:20px 0}
+.is-m .dc-chipskel{padding:12px 16px}
+.is-m .dc-state{padding:24px 16px}
+.dc-bottom{flex:none}
+</style>
+</helmet>
+<div class="dc {{ rootCls }}" data-theme="{{ theme }}">
+
+<!-- ============ Bilah atas desktop dan tablet ============ -->
+<sc-if value="{{ topDesk }}" hint-placeholder-val="{{ true }}">
+<header class="rm-topbar dc-top">
+  <sc-if value="{{ isUser }}" hint-placeholder-val="{{ true }}"><button class="rm-icon-btn" type="button" aria-label="Sembunyikan sidebar"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true"><line x1="40" y1="64" x2="216" y2="64"></line><line x1="40" y1="128" x2="216" y2="128"></line><line x1="40" y1="192" x2="216" y2="192"></line></svg></button></sc-if>
+  <a class="rm-logo rm-logo--28" href="#" aria-label="RanahMenulis, Beranda"><img src="/_blob/d29e1e89eab6f00efbe8181520ab70e5" alt="RanahMenulis"><img class="rm-on-dark" src="/_blob/785f553aa8906c11b9ee99c9ecba9cb4" alt="RanahMenulis"></a>
+  <div class="rm-search" style="margin-left: 16px"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><circle cx="112" cy="112" r="80"></circle><line x1="168.6" y1="168.6" x2="224" y2="224"></line></svg>Cari penulis dan karya</div>
+  <span style="margin-left: auto"></span>
+  <sc-if value="{{ isUser }}" hint-placeholder-val="{{ true }}">
+    <a class="rm-btn rm-btn--text" href="TulisPostingan.dc.html"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><path d="M92.7 216H48a8 8 0 0 1-8-8v-44.7a8 8 0 0 1 2.3-5.6l120-120a8 8 0 0 1 11.4 0l44.6 44.6a8 8 0 0 1 0 11.4z"></path><line x1="136" y1="64" x2="192" y2="120"></line></svg>Tulis</a>
+    <button class="rm-icon-btn" type="button" aria-label="Notifikasi"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true"><path d="M56 104a72 72 0 0 1 144 0c0 35.8 8.2 64.5 14.8 76A8 8 0 0 1 208 192H48a8 8 0 0 1-6.9-12c6.6-11.5 14.9-40.2 14.9-76z"></path><path d="M96 192a32 32 0 0 0 64 0"></path></svg></button>
+    <span class="rm-avatar" style="--s: 32px" aria-label="Rinjani Putri">RP</span>
+  </sc-if>
+  <sc-if value="{{ isGuest }}" hint-placeholder-val="{{ false }}">
+    <a class="rm-btn rm-btn--text" href="#" style="color: var(--ink)">Masuk</a>
+    <a class="rm-btn rm-btn--secondary rm-btn--sm" href="#">Daftar</a>
+  </sc-if>
+</header>
+</sc-if>
+
+<!-- ============ Bilah atas ponsel ============ -->
+<sc-if value="{{ isMob }}" hint-placeholder-val="{{ false }}">
+<header class="dc-mbar">
+  <span class="rm-logo rm-mono"><img src="/_blob/6764dec210bfec4e8815fa13cc4b973e" alt="RanahMenulis"><img class="rm-on-dark" src="/_blob/fd5a44cbf67158c3e41c6039bda6a617" alt="RanahMenulis"></span><span style="margin-left: auto"></span>
+  <button class="rm-icon-btn" type="button" aria-label="Cari" aria-pressed="true" style="width: 44px; height: 44px; color: var(--ink)"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><circle cx="112" cy="112" r="80"></circle><line x1="168.6" y1="168.6" x2="224" y2="224"></line></svg></button>
+  <sc-if value="{{ isUser }}" hint-placeholder-val="{{ true }}"><span class="rm-avatar" style="--s: 28px; margin: 0 8px" aria-label="Rinjani Putri">RP</span></sc-if>
+  <sc-if value="{{ isGuest }}" hint-placeholder-val="{{ false }}"><a class="rm-btn rm-btn--text" href="#" style="color: var(--ink); height: 44px; margin-right: 8px">Masuk</a></sc-if>
+</header>
+</sc-if>
+
+<div class="dc-shell {{ shellCls }}">
+
+<!-- ============ Sidebar desktop (pengguna masuk) ============ -->
+<sc-if value="{{ sideDesk }}" hint-placeholder-val="{{ true }}">
+<nav class="rm-sidebar" aria-label="Utama" style="flex: 0 0 240px">
+  <a class="rm-nav-item" href="Beranda.dc.html"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true"><path d="M224 115.5V208a16 16 0 0 1-16 16h-40a8 8 0 0 1-8-8v-48a8 8 0 0 0-8-8h-48a8 8 0 0 0-8 8v48a8 8 0 0 1-8 8H48a16 16 0 0 1-16-16v-92.5a16 16 0 0 1 5.2-11.8l80-75.5a16 16 0 0 1 21.6 0l80 75.5a16 16 0 0 1 5.2 11.8z"></path></svg>Beranda</a>
+  <a class="rm-nav-item" href="#" aria-current="page"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true" style="stroke-width: 22"><circle cx="128" cy="128" r="96"></circle><polygon points="176 80 112 112 80 176 144 144 176 80"></polygon></svg>Jelajahi</a>
+  <a class="rm-nav-item" href="Studio.dc.html"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true"><rect x="48" y="32" width="160" height="192" rx="8"></rect><line x1="88" y1="32" x2="88" y2="224"></line><line x1="120" y1="80" x2="168" y2="80"></line><line x1="120" y1="112" x2="168" y2="112"></line></svg>Studio</a>
+  <a class="rm-nav-item rm-nav-item--sub" href="Streak.dc.html">Streak</a>
+  <a class="rm-nav-item" href="#"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true"><rect x="40" y="40" width="48" height="176" rx="8"></rect><rect x="88" y="40" width="48" height="176" rx="8"></rect><path d="M168 46l40 10-34 160-40-10z"></path></svg>Projects</a>
+  <a class="rm-nav-item" href="#"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true"><path d="M192 224l-64-40-64 40V48a8 8 0 0 1 8-8h112a8 8 0 0 1 8 8z"></path></svg>Tersimpan</a>
+  <a class="rm-nav-item" href="#"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true"><circle cx="128" cy="96" r="64"></circle><path d="M32 216c19.4-33.5 54.6-56 96-56s76.6 22.5 96 56"></path></svg>Profil</a>
+</nav>
+</sc-if>
+
+<!-- ============ Rail tablet ============ -->
+<sc-if value="{{ sideTab }}" hint-placeholder-val="{{ false }}">
+<nav class="rm-rail" aria-label="Utama" style="flex: 0 0 72px">
+  <a class="rm-rail-item" href="Beranda.dc.html"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true"><path d="M224 115.5V208a16 16 0 0 1-16 16h-40a8 8 0 0 1-8-8v-48a8 8 0 0 0-8-8h-48a8 8 0 0 0-8 8v48a8 8 0 0 1-8 8H48a16 16 0 0 1-16-16v-92.5a16 16 0 0 1 5.2-11.8l80-75.5a16 16 0 0 1 21.6 0l80 75.5a16 16 0 0 1 5.2 11.8z"></path></svg>Beranda</a>
+  <a class="rm-rail-item" href="#" aria-current="page"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true" style="stroke-width: 22"><circle cx="128" cy="128" r="96"></circle><polygon points="176 80 112 112 80 176 144 144 176 80"></polygon></svg>Jelajahi</a>
+  <a class="rm-rail-item" href="Studio.dc.html"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true"><rect x="48" y="32" width="160" height="192" rx="8"></rect><line x1="88" y1="32" x2="88" y2="224"></line><line x1="120" y1="80" x2="168" y2="80"></line><line x1="120" y1="112" x2="168" y2="112"></line></svg>Studio</a>
+  <a class="rm-rail-item" href="#"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true"><rect x="40" y="40" width="48" height="176" rx="8"></rect><rect x="88" y="40" width="48" height="176" rx="8"></rect><path d="M168 46l40 10-34 160-40-10z"></path></svg>Projects</a>
+  <a class="rm-rail-item" href="#"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true"><circle cx="128" cy="96" r="64"></circle><path d="M32 216c19.4-33.5 54.6-56 96-56s76.6 22.5 96 56"></path></svg>Profil</a>
+</nav>
+</sc-if>
+
+<main class="dc-main {{ scrollCls }}" aria-label="Jelajahi">
+<div class="dc-wrap">
+  <h1 class="dc-h1">Jelajahi</h1>
+
+  <!-- Chip kategori: hanya kategori yang berisi -->
+  <sc-if value="{{ showChips }}" hint-placeholder-val="{{ true }}">
+  <div class="dc-chips" role="toolbar" aria-label="Kategori">
+    <sc-for list="{{ chips }}" as="c" hint-placeholder-count="8"><button class="rm-chip" type="button" aria-pressed="{{ c.pressed }}" onClick="{{ c.pick }}">{{ c.label }}</button></sc-for>
+  </div>
+  </sc-if>
+
+  <!-- Memuat: chip dan ubin kerangka -->
+  <sc-if value="{{ isLoading }}" hint-placeholder-val="{{ false }}">
+  <div aria-busy="true" aria-label="Memuat Jelajahi">
+    <div class="dc-chipskel"><span class="rm-skel" style="width: 120px; height: 32px; border-radius: 9999px"></span><span class="rm-skel" style="width: 104px; height: 32px; border-radius: 9999px"></span><span class="rm-skel" style="width: 112px; height: 32px; border-radius: 9999px"></span><span class="rm-skel" style="width: 136px; height: 32px; border-radius: 9999px"></span><span class="rm-skel" style="width: 96px; height: 32px; border-radius: 9999px"></span></div>
+    <p class="dc-desc"><span class="rm-skel" style="display: inline-block; width: 320px; height: 14px"></span></p>
+    <div class="dc-grid">
+      <sc-for list="{{ skels }}" as="s" hint-placeholder-count="6"><div class="dc-skel">
+        <sc-if value="{{ s.img }}" hint-placeholder-val="{{ false }}"><span class="rm-skel" style="width: 100%; aspect-ratio: 3 / 2"></span></sc-if>
+        <div style="display: flex; gap: 8px; align-items: center"><span class="rm-skel" style="width: 20px; height: 20px; border-radius: 9999px"></span><span class="rm-skel" style="width: 120px; height: 12px"></span></div>
+        <span class="rm-skel" style="width: 70%; height: 20px"></span>
+        <span class="rm-skel" style="width: 100%; height: 12px"></span>
+        <span class="rm-skel" style="width: 92%; height: 12px"></span>
+        <sc-if value="{{ s.long }}" hint-placeholder-val="{{ true }}"><span class="rm-skel" style="width: 80%; height: 12px"></span><span class="rm-skel" style="width: 64%; height: 12px"></span></sc-if>
+      </div></sc-for>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- Galat -->
+  <sc-if value="{{ isError }}" hint-placeholder-val="{{ false }}">
+  <div class="dc-state">
+    <div class="rm-banner" role="alert"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><circle cx="128" cy="128" r="96"></circle><line x1="128" y1="80" x2="128" y2="136"></line><circle cx="128" cy="172" r="10" class="rm-i--fill"></circle></svg><p>Jelajahi gagal dimuat. Feed di Beranda dan tulisan yang kamu simpan tetap bisa dibuka.</p><button class="rm-btn rm-btn--secondary rm-btn--sm" type="button">Coba lagi</button></div>
+  </div>
+  </sc-if>
+
+  <!-- Kategori kosong (dibuka lewat tautan lama) -->
+  <sc-if value="{{ isEmptyCat }}" hint-placeholder-val="{{ false }}">
+  <div class="dc-state">
+    <div class="rm-empty" style="padding-top: 8px">
+      <p>Hidden Gems sedang kosong.</p>
+      <p class="rm-note">Kategori ini tidak tampil di daftar sampai ada tulisan yang masuk. Kamu membukanya lewat tautan lama.</p>
+      <button class="rm-btn rm-btn--secondary" type="button">Lihat Trending Today</button>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- Grid -->
+  <sc-if value="{{ showGrid }}" hint-placeholder-val="{{ true }}">
+  <p class="dc-desc">{{ desc }}</p>
+  <div class="dc-grid">
+    <sc-for list="{{ tiles }}" as="t" hint-placeholder-count="9"><article class="dc-tile {{ t.cls }}">
+      <sc-if value="{{ t.img }}" hint-placeholder-val="{{ false }}"><div class="dc-img" role="img" aria-label="{{ t.imgAria }}"><span>Foto unggahan penulis</span></div></sc-if>
+      <div class="dc-body">
+        <div class="rm-feed-by"><span class="rm-avatar" style="--s: 20px">{{ t.init }}</span><b>{{ t.name }}</b>{{ t.place }}</div>
+        <sc-if value="{{ t.note }}" hint-placeholder-val="{{ false }}"><p class="rm-note-text dc-note">{{ t.text }}</p><p class="dc-label">{{ t.label }} dari “{{ t.title }}”</p></sc-if>
+        <sc-if value="{{ t.titled }}" hint-placeholder-val="{{ true }}"><p class="dc-label">{{ t.label }}</p><h2 class="rm-feed-title dc-title"><a class="rm-link" href="Postingan.dc.html">{{ t.title }}</a></h2><p class="rm-feed-excerpt dc-ex">{{ t.text }}</p></sc-if>
+        <div class="rm-feed-foot"><span aria-label="{{ t.apAria }}"><svg class="rm-i rm-i--16" viewBox="0 0 256 256" aria-hidden="true"><path d="M128 216S24 160 24 94a54 54 0 0 1 104-20 54 54 0 0 1 104 20c0 66-104 122-104 122z"></path></svg>{{ t.ap }}</span><span aria-label="{{ t.koAria }}"><svg class="rm-i rm-i--16" viewBox="0 0 256 256" aria-hidden="true"><path d="M45.4 177A95.9 95.9 0 1 1 79 210.6l-34.2 11.4a8 8 0 0 1-10.1-10.1z"></path></svg>{{ t.ko }}</span><button class="rm-icon-btn rm-push" type="button" aria-label="Simpan" style="width: 32px; height: 32px; margin: -8px -8px -8px auto"><svg class="rm-i rm-i--16" viewBox="0 0 256 256" aria-hidden="true"><path d="M192 224l-64-40-64 40V48a8 8 0 0 1 8-8h112a8 8 0 0 1 8 8z"></path></svg></button></div>
+      </div>
+    </article></sc-for>
+  </div>
+  <div class="dc-more">
+    <sc-if value="{{ hasMore }}" hint-placeholder-val="{{ true }}"><button class="rm-btn rm-btn--secondary" type="button">Muat lebih banyak</button></sc-if>
+    <sc-if value="{{ noMore }}" hint-placeholder-val="{{ false }}"><p class="dc-end">Itu semua tulisan di kategori ini.</p></sc-if>
+  </div>
+  </sc-if>
+</div>
+</main>
+</div>
+
+<!-- ============ Bilah bawah ponsel (pengguna masuk) ============ -->
+<sc-if value="{{ mobUser }}" hint-placeholder-val="{{ false }}">
+<nav class="rm-bottombar dc-bottom" aria-label="Utama">
+  <a class="rm-bottom-item" href="Beranda.dc.html"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true"><path d="M224 115.5V208a16 16 0 0 1-16 16h-40a8 8 0 0 1-8-8v-48a8 8 0 0 0-8-8h-48a8 8 0 0 0-8 8v48a8 8 0 0 1-8 8H48a16 16 0 0 1-16-16v-92.5a16 16 0 0 1 5.2-11.8l80-75.5a16 16 0 0 1 21.6 0l80 75.5a16 16 0 0 1 5.2 11.8z"></path></svg>Beranda</a>
+  <a class="rm-bottom-item" href="Studio.dc.html"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true"><rect x="48" y="32" width="160" height="192" rx="8"></rect><line x1="88" y1="32" x2="88" y2="224"></line><line x1="120" y1="80" x2="168" y2="80"></line><line x1="120" y1="112" x2="168" y2="112"></line></svg>Studio</a>
+  <a class="rm-bottom-item" href="Streak.dc.html"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true"><rect x="40" y="40" width="176" height="176" rx="8"></rect><line x1="176" y1="24" x2="176" y2="56"></line><line x1="80" y1="24" x2="80" y2="56"></line><line x1="40" y1="88" x2="216" y2="88"></line><circle cx="92" cy="132" r="10" class="rm-i--fill"></circle><circle cx="128" cy="132" r="10" class="rm-i--fill"></circle><circle cx="164" cy="132" r="10" class="rm-i--fill"></circle></svg>Streak</a>
+  <a class="rm-bottom-item" href="#"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true"><rect x="40" y="40" width="48" height="176" rx="8"></rect><rect x="88" y="40" width="48" height="176" rx="8"></rect><path d="M168 46l40 10-34 160-40-10z"></path></svg>Projects</a>
+  <a class="rm-bottom-item" href="#"><svg class="rm-i rm-i--24" viewBox="0 0 256 256" aria-hidden="true"><circle cx="128" cy="96" r="64"></circle><path d="M32 216c19.4-33.5 54.6-56 96-56s76.6 22.5 96 56"></path></svg>Profil</a>
+</nav>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"device":{"editor":"enum","options":["auto","desktop","tablet","mobile"],"default":"auto"},"state":{"editor":"enum","options":["biasa","tiga","memuat","kosong","galat","tamu"],"default":"biasa"},"cat":{"editor":"enum","options":["trending","new","editor","appreciated","saved","hidden","id","my"],"default":"trending"},"$preview":{"width":1440,"height":1400}}'>
+var DC_TILES = [
+  { k: 'note', name: 'Hafiz Rahman', init: 'HR', label: 'Cuplikan · Puisi', title: 'Toples Kerupuk', text: 'Ibu menyimpan laut\ndi dalam toples kerupuk:\nsetiap kali dibuka,\nrumah kami berbau pulang.', ap: 48, ko: 6 },
+  { k: 'titled', name: 'Rinjani Putri', init: 'RP', label: 'Prolog · Cerpen', title: 'Hujan Pertama Bulan November', text: 'Hujan pertama bulan November selalu datang sore hari, tepat ketika Nenek selesai menyapu halaman. Ia tidak pernah berlari masuk. Ia berdiri dulu di bawah jambu air, membiarkan beberapa tetes jatuh ke kerudungnya.', ap: 86, ko: 14 },
+  { k: 'img', name: 'Aina Sofea', init: 'AS', place: 'Kuala Lumpur', label: 'Cuplikan · Cerpen', title: 'Pasar Malam Selepas Hujan', text: 'Lampu-lampu gerai menyala satu per satu, dan bau air hujan bercampur asap sate. Mak Cik penjual kuih itu masih ingat namaku, walau sudah sepuluh tahun aku tidak pulang.', ap: 67, ko: 9 },
+  { k: 'note', name: 'Laras', init: 'L', label: 'Cuplikan · Esai', title: 'Resep yang Tidak Pernah Ditulis', text: 'Ibu tidak pernah menakar garam. Ia menakar dengan diam: berapa lama kami tidak saling bicara di meja makan, berapa banyak nasi yang kembali ke dapur.', ap: 39, ko: 5 },
+  { k: 'titled', name: 'Nur Aisyah', init: 'NA', label: 'Prolog · Esai', title: 'Bahasa yang Kupakai untuk Memarahi Adik', text: 'Di rumah kami ada dua bahasa: satu untuk tamu, satu untuk adik yang menghabiskan susu. Aku baru sadar keduanya sama-sama bahasa sayang setelah ia merantau ke Johor.', ap: 112, ko: 19 },
+  { k: 'titled', name: 'Farid Zulkifli', init: 'FZ', place: 'Pulau Pinang', label: 'Prolog · Cerpen', title: 'Jam Dinding di Kedai Kopi Ah Seng', text: 'Jam itu lambat lima minit sejak tahun 1998, dan tiada pelanggan tetap yang mahu ia dibaiki. Kata Ah Seng, orang yang datang ke sini memang tidak tergesa-gesa.', ap: 54, ko: 7 },
+  { k: 'note', name: 'Maya Anindita', init: 'MA', label: 'Cuplikan · Puisi', title: 'Probolinggo, Pukul Lima', text: 'Kereta pertama lewat\nmembawa bau garam dan bawang merah.\nKota ini bangun\nsebelum sempat bermimpi.', ap: 31, ko: 2 },
+  { k: 'img', name: 'Dimas Pratama', init: 'DP', label: 'Prolog · Cerpen', title: 'Surat dari Lantai Dua Puluh', text: 'Dari jendela kantor, Jakarta tampak seperti maket yang lupa dibereskan. Aku menulis surat ini di sela rapat, untuk Bapak yang seumur hidup tidak pernah naik lift.', ap: 23, ko: 4 },
+  { k: 'titled', name: 'Siti Khadijah', init: 'SK', place: 'Johor Bahru', label: 'Cuplikan · Memoar', title: 'Anak Tangga Rumah Tok Wan', text: 'Rumah Tok Wan punya tujuh anak tangga, dan setiap satu berbunyi lain. Kami belajar membaca suasana hati orang dewasa dari bunyi tangga yang mereka pijak.', ap: 18, ko: 3 }
+];
+var DC_CATS = [
+  { id: 'trending', label: 'Trending Today', desc: 'Tulisan yang paling banyak dibaca dan dibalas hari ini.', list: [1, 4, 0, 2, 5, 3, 7, 6, 8], more: true },
+  { id: 'new', label: 'New Writers', desc: 'Postingan pertama dari penulis yang baru bergabung.', list: [8, 7, 6], more: false },
+  { id: 'editor', label: "Editor's Picks", desc: 'Dipilih langsung oleh tim RanahMenulis.', list: [1, 5, 3, 2], more: false },
+  { id: 'appreciated', label: 'Most Appreciated', desc: 'Diurutkan menurut jumlah Apresiasi.', list: [4, 1, 2, 5, 0, 3, 6, 7, 8], more: true },
+  { id: 'saved', label: 'Most Saved', desc: 'Tulisan yang paling sering disimpan pembaca.', list: [3, 1, 8, 0, 5], more: false },
+  { id: 'hidden', label: 'Hidden Gems', desc: 'Jarang diapresiasi, tetapi dibaca sampai habis dan disimpan.', list: [8, 3, 6], more: false },
+  { id: 'id', label: 'Indonesia Writers', desc: 'Penulis yang negara di profilnya Indonesia.', list: [1, 4, 0, 3, 6, 7], more: true },
+  { id: 'my', label: 'Malaysia Writers', desc: 'Penulis yang negara di profilnya Malaysia.', list: [2, 5, 8], more: false }
+];
+var DC_SKELS = [{ img: false, long: true }, { img: true, long: false }, { img: false, long: false }, { img: false, long: true }, { img: false, long: false }, { img: true, long: false }];
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { w: 1440, cat: props.cat || 'trending' };
+  }
+  componentDidMount() {
+    var self = this;
+    this.onResize = function () { self.setState({ w: window.innerWidth }); };
+    window.addEventListener('resize', this.onResize);
+    this.setState({ w: window.innerWidth });
+  }
+  componentWillUnmount() { window.removeEventListener('resize', this.onResize); }
+  renderVals() {
+    var self = this, s = this.state, p = this.props;
+    var st = p.state || 'biasa';
+    var dev = (p.device && p.device !== 'auto') ? p.device : (s.w < 768 ? 'mobile' : (s.w < 1100 ? 'tablet' : 'desktop'));
+    var mob = dev === 'mobile', tab = dev === 'tablet', desk = dev === 'desktop';
+    var guest = st === 'tamu';
+    var loading = st === 'memuat', err = st === 'galat', emptyCat = st === 'kosong';
+    var cats = st === 'tiga' ? DC_CATS.filter(function (c) { return c.id === 'trending' || c.id === 'new' || c.id === 'id'; }) : DC_CATS;
+    var cur = null;
+    cats.forEach(function (c) { if (c.id === s.cat) cur = c; });
+    if (!cur) cur = cats[0];
+    var cls = [mob ? 'is-m' : (tab ? 'is-t' : 'is-d')];
+    if (guest) cls.push('is-guest');
+    return {
+      theme: p.theme === 'dark' ? 'dark' : 'light',
+      rootCls: cls.join(' '),
+      shellCls: mob ? 'dc-scroll' : '',
+      scrollCls: '',
+      topDesk: !mob, isMob: mob,
+      isUser: !guest, isGuest: guest,
+      sideDesk: desk && !guest, sideTab: tab && !guest,
+      mobUser: mob && !guest,
+      showChips: !loading && !err,
+      chips: cats.map(function (c) {
+        return { label: c.label, pressed: (!emptyCat && c.id === cur.id) ? 'true' : 'false', pick: function () { self.setState({ cat: c.id }); } };
+      }),
+      isLoading: loading, isError: err, isEmptyCat: emptyCat,
+      skels: DC_SKELS,
+      showGrid: !loading && !err && !emptyCat,
+      desc: cur.desc,
+      hasMore: !!cur.more, noMore: !cur.more,
+      tiles: cur.list.map(function (i) {
+        var t = DC_TILES[i];
+        return {
+          cls: t.k === 'img' ? 'has-img' : '',
+          img: t.k === 'img', note: t.k === 'note', titled: t.k !== 'note',
+          imgAria: 'Foto unggahan penulis untuk ' + t.title,
+          name: t.name, init: t.init, place: t.place ? ' · ' + t.place : '',
+          label: t.label, title: t.title, text: t.text,
+          ap: t.ap, ko: t.ko,
+          apAria: 'Apresiasi ' + t.ap, koAria: 'Komentar ' + t.ko
+        };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>
