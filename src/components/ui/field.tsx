@@ -15,7 +15,16 @@ type FieldProps = {
 };
 
 /** Label selalu terlihat di atas field. Konsumen memberi id yang sama ke kontrolnya. */
-export function Field({ id, label, optional, hint, error, success, children, className }: FieldProps) {
+export function Field({
+  id,
+  label,
+  optional,
+  hint,
+  error,
+  success,
+  children,
+  className,
+}: FieldProps) {
   return (
     <div className={cn("grid min-w-0 gap-2", className)}>
       <label htmlFor={id} className="text-sm font-medium text-ink">

@@ -18,7 +18,12 @@ type LogoProps = {
   label?: string;
 };
 
-function Wrap({ href, label, className, children }: Pick<LogoProps, "href" | "label" | "className"> & { children: React.ReactNode }) {
+function Wrap({
+  href,
+  label,
+  className,
+  children,
+}: Pick<LogoProps, "href" | "label" | "className"> & { children: React.ReactNode }) {
   const cls = cn("inline-flex shrink-0 items-center", className);
   if (href) {
     return (

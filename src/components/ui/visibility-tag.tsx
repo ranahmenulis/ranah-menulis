@@ -16,7 +16,9 @@ export function VisibilityTag(props: Props) {
         : [UsersThree, `Grup: ${props.groupName}`];
 
   return (
-    <span className={cn("inline-flex min-w-0 items-center gap-1.5 text-xs text-ink-muted", className)}>
+    <span
+      className={cn("inline-flex min-w-0 items-center gap-1.5 text-xs text-ink-muted", className)}
+    >
       <Icon size={16} aria-hidden className="shrink-0" />
       <span className="truncate">{text}</span>
     </span>

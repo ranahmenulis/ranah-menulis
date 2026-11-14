@@ -62,7 +62,7 @@ export function StatusSubmission({ status, outlineRevisi, filled, className }: P
       className={cn(
         pill,
         tone[status],
-        filled && "border-ink bg-ink text-on-ink font-medium",
+        filled && "border-ink bg-ink font-medium text-on-ink",
         className,
       )}
     >
