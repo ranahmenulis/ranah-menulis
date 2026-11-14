@@ -1,8 +1,13 @@
 import type { Metadata } from "next";
-import { Faq, Footer, Hero, HowItWorks, Projects, Trust } from "@/components/landing/sections";
-import { TopBar } from "@/components/landing/top-bar";
-import { Waitlist } from "@/components/landing/waitlist";
-import { heroLead, heroTitle } from "@/components/landing/copy";
+import { heroLead, heroTitle } from "@/features/landing/copy";
+import { Faq } from "@/features/landing/components/faq";
+import { Footer } from "@/features/landing/components/footer";
+import { Hero } from "@/features/landing/components/hero";
+import { HowItWorks } from "@/features/landing/components/how-it-works";
+import { Projects } from "@/features/landing/components/projects";
+import { TopBar } from "@/features/landing/components/top-bar";
+import { Trust } from "@/features/landing/components/trust";
+import { Waitlist } from "@/features/landing/components/waitlist";
 
 export const metadata: Metadata = {
   title: "RanahMenulis · " + heroTitle,

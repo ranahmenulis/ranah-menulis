@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Monogram } from "@/components/ui/logo";
 import { BookCover } from "@/components/ui/book-cover";
 import { VisibilityTag } from "@/components/ui/visibility-tag";
-import { heroDoc } from "./copy";
+import { heroDoc } from "../copy";
 
 /**
  * Satu momen di hero: paragraf diketik di Studio, tersimpan, menjadi halaman 12, lalu sampul.
@@ -89,7 +89,9 @@ export function HeroStage() {
         <div className="overflow-hidden border border-line bg-canvas" aria-hidden>
           <div className="flex h-12 items-center gap-3 border-b border-line px-4">
             <Monogram height={20} />
-            <span className="hidden max-w-[160px] truncate text-sm font-medium md:inline">{heroDoc.shortTitle}</span>
+            <span className="hidden max-w-[160px] truncate text-sm font-medium md:inline">
+              {heroDoc.shortTitle}
+            </span>
             <VisibilityTag visibility="pribadi" />
             <span data-hero-hide className="text-xs text-ink-muted">
               {phase === 0 ? "Menyimpan…" : "Tersimpan 14.02"}
@@ -105,7 +107,7 @@ export function HeroStage() {
             <p data-hero-hide className="font-serif text-[17px] leading-7">
               {FULL.slice(0, typed)}
               {phase === 0 && (
-                <span className="ml-px inline-block h-[1.1em] w-[1.5px] -mb-[0.15em] bg-ink align-baseline animate-[lp-blink_1s_steps(1)_infinite]" />
+                <span className="-mb-[0.15em] ml-px inline-block h-[1.1em] w-[1.5px] animate-[lp-blink_1s_steps(1)_infinite] bg-ink align-baseline" />
               )}
             </p>
           </div>

@@ -6,9 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
 import { Field, Input, Select, describedBy } from "@/components/ui/field";
 import { ErrorBanner } from "@/components/ui/states";
-import { joinWaitlist } from "@/lib/waitlist/actions";
-import { countries, initialWaitlistState } from "@/lib/waitlist/state";
-import { waitlist } from "./copy";
+import { joinWaitlist } from "../waitlist/actions";
+import { countries, initialWaitlistState } from "../waitlist/state";
+import { waitlist } from "../copy";
 
 /**
  * Form daftar tunggu: lima keadaan (kosong, mengirim, galat isian, galat kirim, sudah terdaftar)
@@ -24,7 +24,10 @@ export function WaitlistForm() {
   if (state.status === "success") {
     const greet = state.values.name || "kamu";
     return (
-      <div role="status" className="mt-10 grid content-start gap-4 md:col-span-6 md:col-start-7 md:mt-0">
+      <div
+        role="status"
+        className="mt-10 grid content-start gap-4 md:col-span-6 md:col-start-7 md:mt-0"
+      >
         <p className="font-serif text-[32px] leading-10 tracking-[-0.01em] text-balance">
           Terima kasih, {greet}. Namamu sudah tercatat.
         </p>
@@ -46,7 +49,14 @@ export function WaitlistForm() {
       className="mt-10 grid content-start gap-5 md:col-span-6 md:col-start-7 md:mt-0"
     >
       {/* Jebakan bot, tersembunyi dari manusia dan pembaca layar. */}
-      <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden className="hidden" />
+      <input
+        type="text"
+        name="website"
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden
+        className="hidden"
+      />
       {interests.map((i) => (
         <input key={i} type="hidden" name="interests" value={i} />
       ))}
@@ -81,7 +91,12 @@ export function WaitlistForm() {
       </div>
 
       <Field id="f-country" label="Negara">
-        <Select id="f-country" name="country" defaultValue={state.values.country} disabled={pending}>
+        <Select
+          id="f-country"
+          name="country"
+          defaultValue={state.values.country}
+          disabled={pending}
+        >
           {countries.map((c) => (
             <option key={c.value} value={c.value}>
               {c.label}
@@ -92,7 +107,8 @@ export function WaitlistForm() {
 
       <fieldset className="m-0 grid min-w-0 gap-2 border-0 p-0">
         <legend className="mb-2 p-0 text-sm font-medium">
-          Minat <span className="font-normal text-ink-muted">(opsional, boleh lebih dari satu)</span>
+          Minat{" "}
+          <span className="font-normal text-ink-muted">(opsional, boleh lebih dari satu)</span>
         </legend>
         <div role="group" aria-label="Minat" className="flex flex-wrap gap-2">
           {waitlist.interests.map((label) => (
@@ -101,7 +117,9 @@ export function WaitlistForm() {
               pressed={interests.includes(label)}
               disabled={pending}
               onClick={() =>
-                setInterests((cur) => (cur.includes(label) ? cur.filter((x) => x !== label) : [...cur, label]))
+                setInterests((cur) =>
+                  cur.includes(label) ? cur.filter((x) => x !== label) : [...cur, label],
+                )
               }
             >
               {label}
@@ -113,12 +131,15 @@ export function WaitlistForm() {
       {exists && (
         <p className="flex gap-2 text-sm text-ink" role="status">
           <Info size={16} aria-hidden className="mt-0.5 shrink-0" />
-          Email ini sudah ada di daftar tunggu. Kamu tidak perlu mendaftar lagi; kabar pembukaan akan dikirim ke alamat ini.
+          Email ini sudah ada di daftar tunggu. Kamu tidak perlu mendaftar lagi; kabar pembukaan
+          akan dikirim ke alamat ini.
         </p>
       )}
 
       {failed && (
-        <ErrorBanner>Gagal mengirim karena koneksi terputus. Isianmu masih di sini; coba kirim lagi.</ErrorBanner>
+        <ErrorBanner>
+          Gagal mengirim karena koneksi terputus. Isianmu masih di sini; coba kirim lagi.
+        </ErrorBanner>
       )}
 
       <div className="flex flex-wrap items-center gap-4">
