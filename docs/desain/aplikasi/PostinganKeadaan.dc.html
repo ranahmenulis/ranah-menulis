@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Halaman postingan, keadaan desktop</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/ranahmenulis/components/variabel.css">
+<link rel="stylesheet" href="ds/ranahmenulis/components/bundle.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600&amp;family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&amp;display=swap">
+<style>
+body{margin:0}
+.wb-cap{margin:0;min-height:40px;display:flex;align-items:center;gap:12px;font:400 14px/20px var(--font-sans);color:var(--ink-muted)}
+.wb-cap b{font-weight:500;color:var(--ink)}
+.wb-fr{overflow:hidden;outline:1px solid var(--line)}
+</style>
+</helmet>
+<div data-theme="light" style="width: 1440px; min-height: 13240px; background: var(--canvas); color: var(--ink); font-family: var(--font-sans); display: grid; gap: 48px; align-content: start">
+  <div>
+    <p class="wb-cap"><b>Gelap, pembaca masuk.</b> Teks prolog memakai ink; tanpa garis menyala. Apresiasi diketuk: ikon terisi, hitungan naik satu, ketuk lagi menarik (COM-04, AC-16).</p>
+    <div class="wb-fr" style="height: 2400px"><dc-import name="Postingan" device="desktop" theme="dark" state="biasa" hint-size="1440px,2400px"></dc-import></div>
+  </div>
+  <div>
+    <p class="wb-cap"><b>Tamu.</b> Isi dan semua komentar terbaca tanpa akun (US-01). Blok "Masuk untuk ikut membalas" menggantikan kolom komentar; kolom kanan 320 berisi pencarian dan ajakan masuk.</p>
+    <div class="wb-fr" style="height: 1900px"><dc-import name="Postingan" device="desktop" state="tamu" hint-size="1440px,2400px"></dc-import></div>
+  </div>
+  <div>
+    <p class="wb-cap"><b>Tamu mengetuk Apresiasi.</b> Dialog Masuk, lalu kembali ke posisi yang sama. [usulan] Apresiasi tidak tercatat otomatis setelah masuk; tamu mengetuk lagi.</p>
+    <div class="wb-fr" style="height: 900px"><div style="margin-top: -760px"><dc-import name="Postingan" device="desktop" state="tamuAksi" hint-size="1440px,2400px"></dc-import></div></div>
+  </div>
+  <div>
+    <p class="wb-cap"><b>Penulis mengelola komentar (COM-05, Q-16).</b> Menu per komentar: Sembunyikan, Laporkan, Hapus (merah, tidak bisa dibatalkan, selalu dengan dialog). Komentar yang disembunyikan menjadi satu baris redup untuk penulis.</p>
+    <div class="wb-fr" style="height: 1400px"><div style="margin-top: -1000px"><dc-import name="Postingan" device="desktop" state="penulis" hint-size="1440px,2400px"></dc-import></div></div>
+  </div>
+  <div>
+    <p class="wb-cap"><b>Laporkan komentar.</b> Empat alasan, satu pilihan. Hak cipta disebut karena BR-COM-07. [konfirmasi] Daftar alasan dan siapa yang meninjau.</p>
+    <div class="wb-fr" style="height: 900px"><div style="margin-top: -760px"><dc-import name="Postingan" device="desktop" state="lapor" hint-size="1440px,2400px"></dc-import></div></div>
+  </div>
+  <div>
+    <p class="wb-cap"><b>Komentar dilaporkan.</b> Untuk pelapor, komentar menjadi baris redup "ditinjau"; komentar lain tetap. [konfirmasi] Apakah komentar disembunyikan untuk semua orang selama ditinjau.</p>
+    <div class="wb-fr" style="height: 1400px"><div style="margin-top: -1000px"><dc-import name="Postingan" device="desktop" state="dilaporkan" hint-size="1440px,2400px"></dc-import></div></div>
+  </div>
+  <div>
+    <p class="wb-cap"><b>Komentar kosong.</b> Satu kalimat dan kolom komentar; tidak ada ilustrasi.</p>
+    <div class="wb-fr" style="height: 900px"><div style="margin-top: -900px"><dc-import name="Postingan" device="desktop" state="kosong" hint-size="1440px,2400px"></dc-import></div></div>
+  </div>
+  <div>
+    <p class="wb-cap"><b>Menu ⋯ tulisan.</b> Salin tautan dan Laporkan tulisan. Tidak ada bagikan ulang.</p>
+    <div class="wb-fr" style="height: 640px"><div style="margin-top: -700px"><dc-import name="Postingan" device="desktop" state="menu" hint-size="1440px,2400px"></dc-import></div></div>
+  </div>
+  <div>
+    <p class="wb-cap"><b>Ditarik atau dihapus (PRD 17.4, BR-COM-04).</b> Satu kalimat yang sama untuk keduanya; komentar dan apresiasi ikut tersembunyi. Bookmark menampilkan tulisan sebagai tidak tersedia (COM-06).</p>
+    <div class="wb-fr" style="height: 520px"><dc-import name="Postingan" device="desktop" state="ditarik" hint-size="1440px,2400px"></dc-import></div>
+  </div>
+  <div>
+    <p class="wb-cap"><b>Memuat.</b> Kerangka judul, penulis, dan paragraf.</p>
+    <div class="wb-fr" style="height: 760px"><dc-import name="Postingan" device="desktop" state="memuat" hint-size="1440px,2400px"></dc-import></div>
+  </div>
+  <div>
+    <p class="wb-cap"><b>Galat.</b> Banner merah lembut, Coba lagi, dan jalan kembali ke Jelajahi.</p>
+    <div class="wb-fr" style="height: 420px"><dc-import name="Postingan" device="desktop" state="galat" hint-size="1440px,2400px"></dc-import></div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":13240}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

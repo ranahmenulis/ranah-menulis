@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Editor Studio</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/ranahmenulis/components/variabel.css">
+<link rel="stylesheet" href="ds/ranahmenulis/components/bundle.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600&amp;family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&amp;display=swap">
+<style>
+body{margin:0}
+.ed{position:relative;height:960px;display:flex;flex-direction:column;background:var(--canvas);color:var(--ink);font-family:var(--font-sans);overflow:hidden;-webkit-font-smoothing:antialiased}
+.ed.is-m{height:844px}
+.ed.is-bar{height:auto;overflow:visible}
+.ed-bar{position:relative;z-index:4;background:var(--canvas);flex:none}
+.ed-bar .rm-doc-name{max-width:340px}
+.ed-spacer{flex:1}
+.ed-savewrap{position:relative;display:inline-flex}
+.ed-savebtn{border:0;background:none;padding:0;cursor:pointer;font:inherit}
+.ed-pop{position:absolute;top:calc(100% + 12px);left:-14px;width:300px;z-index:6}
+.ed-main{flex:1;min-height:0;overflow:auto;scrollbar-width:thin;padding:96px 48px 160px}
+.ed.has-drawer .ed-main{padding-right:408px}
+.ed.is-focus .ed-main{padding-top:140px}
+.ed.is-m .ed-main{padding:32px 16px 120px;scrollbar-width:none}
+.ed.is-m .ed-main::-webkit-scrollbar{display:none}
+.ed-selwrap{position:relative}
+.ed-selwrap .rm-fmtbar{position:absolute;left:50%;bottom:calc(100% + 10px);transform:translateX(-50%);white-space:nowrap;z-index:3;font-style:normal}
+.ed-menu{position:absolute;top:50px;right:56px;z-index:6}
+.ed-menu .rm-menu-item span{margin-left:auto;font-size:13px;color:var(--ink-muted)}
+.ed-drawer{position:absolute;top:56px;right:0;bottom:0;width:360px;display:flex;flex-direction:column;z-index:3;overflow:hidden}
+.ed-dhead{display:flex;align-items:center;gap:8px;padding:12px 8px 0 20px;font:600 16px/24px var(--font-sans)}
+.ed-dtabs{padding:0 20px;gap:24px}
+.ed-dintro{margin:0;padding:16px 20px;font:400 14px/20px var(--font-sans);color:var(--ink-muted);border-bottom:1px solid var(--line)}
+.ed-scroll{overflow:auto;flex:1;min-height:0;scrollbar-width:thin}
+.ed-scrim{position:absolute;inset:0;z-index:8}
+.ed-dlg{position:absolute;inset:0;z-index:9;display:grid;place-items:center;padding:48px}
+.ed-hud{position:absolute;z-index:2}
+.ed-hud .rm-btn--text{color:var(--ink-faint);font-weight:400}
+.ed-mbar{flex:none;height:52px;display:flex;align-items:center;gap:4px;padding:0 4px 0 16px;background:var(--canvas)}
+.ed-mtitle{flex:1;min-width:0;margin-left:10px;font:500 14px/20px var(--font-sans);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ed-mmeta{flex:none;display:flex;flex-wrap:wrap;align-items:center;gap:0 10px;padding:0 16px 8px;border-bottom:1px solid var(--line)}
+.ed-mright{margin-left:auto;display:flex;align-items:center;gap:10px}
+.ed-tgwrap{position:relative;display:inline-flex}
+.ed-tip{position:absolute;top:calc(100% + 8px);right:0;z-index:6}
+.ed-tgpop{position:absolute;top:calc(100% + 12px);right:-8px;z-index:6}
+.ed-mtgpop{position:absolute;left:16px;right:16px;z-index:9}
+.ed-mtgpop .rm-tgpop{width:auto}
+.ed-sheet{position:absolute;left:0;right:0;bottom:0;z-index:9}
+.ed-sheet.is-tall{top:16%;display:flex;flex-direction:column;padding:0;gap:0}
+.ed-sheet .rm-menu-item{height:48px;padding:0 4px;font-size:15px}
+.ed-mconf{position:absolute;inset:0;z-index:9;background:var(--surface);display:flex;flex-direction:column}
+.ed-mconf-body{flex:1;min-height:0;overflow:auto;padding:24px 16px;display:grid;gap:16px;align-content:start}
+.ed-mconf-foot{padding:12px 16px 16px;border-top:1px solid var(--line)}
+.ed-skel{display:grid;gap:14px;max-width:680px;margin:0 auto}
+.ed-err{max-width:680px;margin:0 auto;display:grid;gap:16px;justify-items:start}
+.rm-icon-btn[aria-pressed="true"]{color:var(--ink)}
+</style>
+</helmet>
+<div class="ed {{ rootCls }}" data-theme="{{ theme }}">
+
+<!-- ============ Bilah editor desktop ============ -->
+<sc-if value="{{ deskBar }}" hint-placeholder-val="{{ true }}">
+<header class="rm-editorbar ed-bar">
+  <a class="rm-logo rm-mono rm-mono--20" href="#" aria-label="Kembali ke Studio"><img src="/_blob/6764dec210bfec4e8815fa13cc4b973e" alt=""><img class="rm-on-dark" src="/_blob/fd5a44cbf67158c3e41c6039bda6a617" alt=""></a>
+  <sc-if value="{{ isLoading }}" hint-placeholder-val="{{ false }}"><span class="rm-skel" style="width: 240px; height: 14px"></span></sc-if>
+  <sc-if value="{{ notLoading }}" hint-placeholder-val="{{ true }}"><span class="rm-doc-name">{{ docName }}</span></sc-if>
+  <span class="rm-vis"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><rect x="40" y="88" width="176" height="128" rx="8"></rect><path d="M92 88V56a36 36 0 0 1 72 0v32"></path></svg>Pribadi</span>
+  <sc-if value="{{ showSave }}" hint-placeholder-val="{{ true }}">
+  <span class="ed-savewrap">
+    <sc-if value="{{ saveNormal }}" hint-placeholder-val="{{ true }}"><span class="rm-save" role="status">{{ saveLabel }}</span></sc-if>
+    <sc-if value="{{ saveOffline }}" hint-placeholder-val="{{ false }}"><button class="rm-save rm-save--offline ed-savebtn" type="button" role="status" aria-expanded="{{ popOpen }}" onClick="{{ togglePop }}"><svg class="rm-i rm-i--16" viewBox="0 0 256 256" aria-hidden="true"><line x1="48" y1="40" x2="208" y2="216"></line><path d="M96 80a72 72 0 0 0-24 52 44 44 0 0 0 4 88h116"></path><path d="M220 186a52 52 0 0 0-46-94 80 80 0 0 0-46-38"></path></svg>Belum tersinkron</button></sc-if>
+    <sc-if value="{{ popOn }}" hint-placeholder-val="{{ false }}"><span class="rm-float rm-pop ed-pop"><b>Perubahanmu tersimpan di perangkat ini.</b><span>Studio mengirimnya otomatis saat koneksi kembali. Kamu boleh terus menulis.</span></span></sc-if>
+  </span>
+  </sc-if>
+  <span class="ed-spacer"></span>
+  <sc-if value="{{ showSave }}" hint-placeholder-val="{{ true }}"><span class="rm-meta">{{ words }} kata</span></sc-if>
+  <sc-if value="{{ showTarget }}" hint-placeholder-val="{{ true }}"><span class="ed-tgwrap"><button class="rm-target" type="button" title="Kata hari ini dari semua dokumen" aria-label="{{ tgAria }}" aria-expanded="{{ tgOpen }}" onClick="{{ toggleTg }}"><sc-if value="{{ tgRing }}" hint-placeholder-val="{{ true }}"><i class="rm-dot-ring" aria-hidden="true"></i></sc-if><sc-if value="{{ tgFresh }}" hint-placeholder-val="{{ false }}"><i class="rm-dot-fill" aria-hidden="true"></i></sc-if><sc-if value="{{ tgFull }}" hint-placeholder-val="{{ false }}"><i class="rm-dot-full" aria-hidden="true"></i></sc-if><b>{{ tgNum }}</b> hari ini<sc-if value="{{ tgPend }}" hint-placeholder-val="{{ false }}"><span class="rm-target-pend">· tercatat saat tersambung</span></sc-if></button><sc-if value="{{ tgTip }}" hint-placeholder-val="{{ false }}"><span class="rm-float rm-tip ed-tip" role="tooltip">Kata hari ini dari semua dokumen</span></sc-if><sc-if value="{{ tgPopDesk }}" hint-placeholder-val="{{ false }}"><div class="ed-tgpop"><div class="rm-float rm-tgpop" role="dialog" aria-label="Kata hari ini">
+      <p class="rm-tgpop-head">{{ tgHead }}</p>
+      <sc-if value="{{ tgHasNote }}" hint-placeholder-val="{{ false }}"><p class="rm-tgpop-note">{{ tgNote }}</p></sc-if>
+      <ul class="rm-tgpop-list"><sc-for list="{{ tgDocs }}" as="d" hint-placeholder-count="3"><li><span>{{ d.t }}</span><span>{{ d.n }}</span></li></sc-for></ul>
+      <div class="rm-tgpop-foot"><span>{{ tgFoot }}</span><a href="Streak.dc.html">Buka Streak</a></div>
+    </div></div></sc-if></span></sc-if>
+  <button class="rm-icon-btn" type="button" aria-label="Bantuan menulis" aria-pressed="{{ drawerAria }}" onClick="{{ toggleDrawer }}"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><line x1="88" y1="232" x2="168" y2="232"></line><path d="M78.7 167A79.5 79.5 0 0 1 48 104.5C47.8 61.1 82.7 25 126.1 24a80 80 0 0 1 51.3 143A24.3 24.3 0 0 0 168 186v2a8 8 0 0 1-8 8H96a8 8 0 0 1-8-8v-2a24.1 24.1 0 0 0-9.3-19z"></path></svg></button>
+  <button class="rm-btn rm-btn--primary rm-btn--sm" type="button" disabled="{{ shareOff }}">Bagikan</button>
+  <button class="rm-icon-btn" type="button" aria-label="Menu dokumen" aria-haspopup="menu" aria-expanded="{{ menuAria }}" onClick="{{ toggleMenu }}"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><circle cx="60" cy="128" r="12" class="rm-i--fill"></circle><circle cx="128" cy="128" r="12" class="rm-i--fill"></circle><circle cx="196" cy="128" r="12" class="rm-i--fill"></circle></svg></button>
+  <button class="rm-icon-btn" type="button" aria-label="Masuk mode fokus" title="Mode fokus" onClick="{{ toggleFocus }}"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><polyline points="168 48 208 48 208 88"></polyline><polyline points="88 208 48 208 48 168"></polyline><polyline points="208 168 208 208 168 208"></polyline><polyline points="48 88 48 48 88 48"></polyline></svg></button>
+</header>
+</sc-if>
+
+<!-- ============ Bilah editor ponsel ============ -->
+<sc-if value="{{ mobBar }}" hint-placeholder-val="{{ false }}">
+<header class="ed-mbar">
+  <a class="rm-logo rm-mono" href="#" aria-label="Kembali ke Studio"><img src="/_blob/6764dec210bfec4e8815fa13cc4b973e" alt=""><img class="rm-on-dark" src="/_blob/fd5a44cbf67158c3e41c6039bda6a617" alt=""></a>
+  <span class="ed-mtitle">{{ docName }}</span>
+  <button class="rm-btn rm-btn--primary rm-btn--sm" type="button" disabled="{{ shareOff }}">Bagikan</button>
+  <button class="rm-icon-btn" type="button" aria-label="Menu dokumen" aria-haspopup="menu" aria-expanded="{{ menuAria }}" onClick="{{ toggleMenu }}" style="width: 44px; height: 44px"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><circle cx="60" cy="128" r="12" class="rm-i--fill"></circle><circle cx="128" cy="128" r="12" class="rm-i--fill"></circle><circle cx="196" cy="128" r="12" class="rm-i--fill"></circle></svg></button>
+</header>
+<div class="ed-mmeta">
+  <span class="rm-vis"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><rect x="40" y="88" width="176" height="128" rx="8"></rect><path d="M92 88V56a36 36 0 0 1 72 0v32"></path></svg>Pribadi</span>
+  <sc-if value="{{ saveNormal }}" hint-placeholder-val="{{ true }}"><span class="rm-save" role="status">{{ saveLabel }}</span></sc-if>
+  <sc-if value="{{ saveOffline }}" hint-placeholder-val="{{ false }}"><span class="rm-save rm-save--offline" role="status"><svg class="rm-i rm-i--16" viewBox="0 0 256 256" aria-hidden="true"><line x1="48" y1="40" x2="208" y2="216"></line><path d="M96 80a72 72 0 0 0-24 52 44 44 0 0 0 4 88h116"></path><path d="M220 186a52 52 0 0 0-46-94 80 80 0 0 0-46-38"></path></svg>Belum tersinkron</span></sc-if>
+  <span class="ed-mright"><span class="rm-meta">{{ words }} kata</span><button class="rm-target" type="button" title="Kata hari ini dari semua dokumen" aria-label="{{ tgAria }}" aria-expanded="{{ tgOpen }}" onClick="{{ toggleTg }}"><sc-if value="{{ tgRing }}" hint-placeholder-val="{{ true }}"><i class="rm-dot-ring" aria-hidden="true"></i></sc-if><sc-if value="{{ tgFresh }}" hint-placeholder-val="{{ false }}"><i class="rm-dot-fill" aria-hidden="true"></i></sc-if><sc-if value="{{ tgFull }}" hint-placeholder-val="{{ false }}"><i class="rm-dot-full" aria-hidden="true"></i></sc-if><b>{{ tgNum }}</b> hari ini<sc-if value="{{ tgPend }}" hint-placeholder-val="{{ false }}"><span class="rm-target-pend">· tercatat saat tersambung</span></sc-if></button></span>
+</div>
+<sc-if value="{{ tgPopMob }}" hint-placeholder-val="{{ false }}"><div class="ed-mtgpop" style="top: {{ mPopTop }}"><div class="rm-float rm-tgpop" role="dialog" aria-label="Kata hari ini">
+      <p class="rm-tgpop-head">{{ tgHead }}</p>
+      <sc-if value="{{ tgHasNote }}" hint-placeholder-val="{{ false }}"><p class="rm-tgpop-note">{{ tgNote }}</p></sc-if>
+      <ul class="rm-tgpop-list"><sc-for list="{{ tgDocs }}" as="d" hint-placeholder-count="3"><li><span>{{ d.t }}</span><span>{{ d.n }}</span></li></sc-for></ul>
+      <div class="rm-tgpop-foot"><span>{{ tgFoot }}</span><a href="Streak.dc.html">Buka Streak</a></div>
+    </div></div></sc-if>
+</sc-if>
+
+<!-- ============ Kanvas ============ -->
+<sc-if value="{{ showMain }}" hint-placeholder-val="{{ true }}">
+<main class="ed-main" aria-label="Kanvas menulis">
+
+  <sc-if value="{{ showDoc }}" hint-placeholder-val="{{ true }}">
+  <article class="rm-editor {{ edSize }}">
+    <h1>Yang Ditunggu Nenek di Bawah Jambu Air</h1>
+    <p>Hujan pertama bulan November selalu datang sore hari, tepat ketika Nenek selesai menyapu halaman. Ia tidak pernah berlari masuk. Ia berdiri dulu di bawah jambu air, membiarkan beberapa tetes jatuh ke kerudungnya, seolah menunggu seseorang yang berjanji pulang bersama musim.</p>
+    <p>Waktu kecil aku mengira Nenek sedang menghitung. Bibirnya bergerak pelan, dan setiap kali petir lewat di atas sawah, ia berhenti sebentar lalu mulai lagi dari awal. Ibu bilang itu doa. Kakek, yang jarang bicara, bilang itu bukan urusan anak-anak.</p>
+    <p>Ada orang yang menunggu dengan duduk di beranda, memandangi ujung jalan sampai matanya perih. <sc-if value="{{ selOn }}" hint-placeholder-val="{{ false }}"><span class="ed-selwrap"><span class="rm-fmtbar" role="toolbar" aria-label="Format teks"><button type="button" aria-label="Tebal" aria-pressed="{{ fmtB }}" onClick="{{ toggleB }}"><b>B</b></button><button type="button" aria-label="Miring" aria-pressed="{{ fmtI }}" onClick="{{ toggleI }}"><i>I</i></button><span class="rm-fmtbar-sep" aria-hidden="true"></span><button type="button" aria-label="Judul" aria-pressed="false">H</button><button type="button" aria-label="Kutipan" aria-pressed="false"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><path d="M108 144H48a8 8 0 0 1-8-8V80a8 8 0 0 1 8-8h52a8 8 0 0 1 8 8v88a40 40 0 0 1-40 40"></path><path d="M216 144h-60a8 8 0 0 1-8-8V80a8 8 0 0 1 8-8h52a8 8 0 0 1 8 8v88a40 40 0 0 1-40 40"></path></svg></button><button type="button" aria-label="Daftar" aria-pressed="false"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><line x1="96" y1="64" x2="216" y2="64"></line><line x1="96" y1="128" x2="216" y2="128"></line><line x1="96" y1="192" x2="216" y2="192"></line><circle cx="52" cy="64" r="10" class="rm-i--fill"></circle><circle cx="52" cy="128" r="10" class="rm-i--fill"></circle><circle cx="52" cy="192" r="10" class="rm-i--fill"></circle></svg></button></span><span class="rm-sel" style="font-style: {{ selStyle }}; font-weight: {{ selWeight }}">Nenek menunggu dengan basah.</span></span></sc-if><sc-if value="{{ selOff }}" hint-placeholder-val="{{ true }}">Nenek menunggu dengan basah.</sc-if> Ia pulang ke dapur dengan ujung kain yang menetes, menyalakan tungku, lalu menanak nasi lebih banyak dari yang sanggup kami habiskan.</p>
+    <blockquote>“Kalau dia pulang lapar, jangan sampai dia tahu kita lupa,” katanya suatu sore, kepada tungku, bukan kepadaku.</blockquote>
+    <p>Nasi sisa itu selalu ia bungkus daun pisang dan ia taruh di ambang jendela. Pagi harinya bungkusan itu sudah tidak ada. Aku tidak pernah bertanya siapa yang mengambilnya, dan Nenek tidak pernah{{ tail }}<sc-if value="{{ caretOn }}" hint-placeholder-val="{{ true }}"><span class="rm-caret" aria-hidden="true"></span></sc-if></p>
+  </article>
+  </sc-if>
+
+  <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+  <article class="rm-editor {{ edSize }}">
+    <h1 class="rm-ph">Judul</h1>
+    <p><span class="rm-caret" aria-hidden="true"></span><span class="rm-ph">Mulai dari satu kalimat.</span></p>
+  </article>
+  </sc-if>
+
+  <sc-if value="{{ isLoading }}" hint-placeholder-val="{{ false }}">
+  <div class="ed-skel" aria-busy="true" aria-label="Membuka dokumen">
+    <span class="rm-skel" style="width: 78%; height: 40px; margin-bottom: 24px"></span>
+    <span class="rm-skel" style="width: 100%; height: 16px"></span>
+    <span class="rm-skel" style="width: 96%; height: 16px"></span>
+    <span class="rm-skel" style="width: 88%; height: 16px"></span>
+    <span class="rm-skel" style="width: 60%; height: 16px; margin-bottom: 18px"></span>
+    <span class="rm-skel" style="width: 100%; height: 16px"></span>
+    <span class="rm-skel" style="width: 92%; height: 16px"></span>
+    <span class="rm-skel" style="width: 70%; height: 16px"></span>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isError }}" hint-placeholder-val="{{ false }}">
+  <div class="ed-err">
+    <div class="rm-banner" role="alert" style="width: 100%"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><circle cx="128" cy="128" r="96"></circle><line x1="128" y1="80" x2="128" y2="136"></line><circle cx="128" cy="172" r="10" class="rm-i--fill"></circle></svg><p>Dokumen ini gagal dibuka. Isinya tetap aman di server; yang gagal hanya pemuatannya.</p><button class="rm-btn rm-btn--secondary rm-btn--sm" type="button">Coba lagi</button></div>
+    <a class="rm-btn rm-btn--text" href="#" style="padding: 0">Kembali ke Studio</a>
+  </div>
+  </sc-if>
+
+</main>
+</sc-if>
+
+<!-- ============ Menu ⋯ desktop ============ -->
+<sc-if value="{{ deskMenu }}" hint-placeholder-val="{{ false }}">
+<div class="rm-float rm-menu ed-menu" role="menu" aria-label="Menu dokumen">
+  <button class="rm-menu-item" type="button" role="menuitem"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><path d="M227.3 28.7 26.6 85.3a8 8 0 0 0-1.2 15l92.1 43.6a8 8 0 0 1 3.8 3.8l43.6 92.1a8 8 0 0 0 15-1.2L236.3 37.7a8 8 0 0 0-9-9z"></path><line x1="121.2" y1="134.8" x2="166.5" y2="89.5"></line></svg>Kirim ke proyek</button>
+  <button class="rm-menu-item" type="button" role="menuitem"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><polyline points="86 110 128 152 170 110"></polyline><line x1="128" y1="40" x2="128" y2="152"></line><path d="M216 152v56a8 8 0 0 1-8 8H48a8 8 0 0 1-8-8v-56"></path></svg>Ekspor<span>TXT, PDF</span></button>
+  <div class="rm-menu-sep" role="separator"></div>
+  <button class="rm-menu-item" type="button" role="menuitem"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><line x1="216" y1="56" x2="40" y2="56"></line><line x1="104" y1="104" x2="104" y2="168"></line><line x1="152" y1="104" x2="152" y2="168"></line><path d="M200 56v152a8 8 0 0 1-8 8H64a8 8 0 0 1-8-8V56"></path><path d="M168 56V40a16 16 0 0 0-16-16h-48a16 16 0 0 0-16 16v16"></path></svg>Pindah ke sampah<span>Bisa dipulihkan</span></button>
+</div>
+</sc-if>
+
+<!-- ============ Drawer bantuan desktop ============ -->
+<sc-if value="{{ deskDrawer }}" hint-placeholder-val="{{ false }}">
+<aside class="rm-float rm-drawer ed-drawer" aria-label="Bantuan menulis">
+  <div class="ed-dhead">Bantuan menulis<button class="rm-icon-btn" type="button" aria-label="Tutup bantuan" onClick="{{ toggleDrawer }}" style="margin-left: auto"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><line x1="200" y1="56" x2="56" y2="200"></line><line x1="200" y1="200" x2="56" y2="56"></line></svg></button></div>
+  <div class="rm-tabs ed-dtabs" role="tablist"><button class="rm-tab" type="button" role="tab" aria-selected="{{ tabKitAria }}" onClick="{{ pickKit }}">Kit inspirasi</button><button class="rm-tab" type="button" role="tab" aria-selected="{{ tabPromptAria }}" onClick="{{ pickPrompt }}">Prompt</button></div>
+  <div class="ed-scroll">
+    <sc-if value="{{ tabPrompt }}" hint-placeholder-val="{{ true }}">
+      <p class="ed-dintro">Pancingan untuk memulai saat buntu. Salin, lalu jawab dengan kata-katamu sendiri.</p>
+      <sc-for list="{{ prompts }}" as="p" hint-placeholder-count="5"><div class="rm-prompt"><p>{{ p.text }}</p><button class="rm-btn rm-btn--text rm-btn--sm" type="button" onClick="{{ p.copy }}" style="color: {{ p.color }}" aria-label="{{ p.aria }}"><sc-if value="{{ p.copied }}" hint-placeholder-val="{{ false }}"><svg class="rm-i rm-i--16" viewBox="0 0 256 256" aria-hidden="true"><polyline points="40 144 96 200 224 72"></polyline></svg></sc-if><sc-if value="{{ p.idle }}" hint-placeholder-val="{{ true }}"><svg class="rm-i rm-i--16" viewBox="0 0 256 256" aria-hidden="true"><rect x="40" y="88" width="128" height="128" rx="8"></rect><path d="M88 88V48a8 8 0 0 1 8-8h112a8 8 0 0 1 8 8v112a8 8 0 0 1-8 8h-40"></path></svg></sc-if>{{ p.label }}</button></div></sc-for>
+    </sc-if>
+    <sc-if value="{{ tabKit }}" hint-placeholder-val="{{ false }}">
+      <p class="ed-dintro">Bahan kecil untuk kalimat berikutnya. Pilih satu bagian.</p>
+      <div class="rm-kit-list"><sc-for list="{{ kits }}" as="k" hint-placeholder-count="7"><a class="rm-kit-item" href="#">{{ k.name }}<span>{{ k.hint }}</span></a></sc-for></div>
+    </sc-if>
+  </div>
+</aside>
+</sc-if>
+
+<!-- ============ Mode fokus ============ -->
+<sc-if value="{{ focusOn }}" hint-placeholder-val="{{ false }}">
+  <div class="ed-hud" style="top: 20px; right: 24px"><button class="rm-btn rm-btn--text rm-btn--sm" type="button" onClick="{{ toggleFocus }}">Keluar dari mode fokus · Esc</button></div>
+  <div class="ed-hud rm-focus-hud" style="bottom: 24px; right: 32px" role="status"><span>{{ saveLabel }}</span><span>{{ words }} kata</span><span>{{ tgNum }} hari ini</span></div>
+</sc-if>
+
+<!-- ============ Menu dan bantuan ponsel (lembar bawah) ============ -->
+<sc-if value="{{ mobMenu }}" hint-placeholder-val="{{ false }}">
+  <div class="rm-scrim ed-scrim" aria-hidden="true"></div>
+  <div class="rm-float rm-sheet ed-sheet" role="menu" aria-label="Menu dokumen" style="gap: 0; padding-top: 12px">
+    <button class="rm-menu-item" type="button" role="menuitem" onClick="{{ openMobDrawer }}"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><line x1="88" y1="232" x2="168" y2="232"></line><path d="M78.7 167A79.5 79.5 0 0 1 48 104.5C47.8 61.1 82.7 25 126.1 24a80 80 0 0 1 51.3 143A24.3 24.3 0 0 0 168 186v2a8 8 0 0 1-8 8H96a8 8 0 0 1-8-8v-2a24.1 24.1 0 0 0-9.3-19z"></path></svg>Bantuan menulis</button>
+    <button class="rm-menu-item" type="button" role="menuitem" onClick="{{ toggleFocus }}"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><polyline points="168 48 208 48 208 88"></polyline><polyline points="88 208 48 208 48 168"></polyline><polyline points="208 168 208 208 168 208"></polyline><polyline points="48 88 48 48 88 48"></polyline></svg>Mode fokus</button>
+    <div class="rm-menu-sep" role="separator"></div>
+    <button class="rm-menu-item" type="button" role="menuitem"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><path d="M227.3 28.7 26.6 85.3a8 8 0 0 0-1.2 15l92.1 43.6a8 8 0 0 1 3.8 3.8l43.6 92.1a8 8 0 0 0 15-1.2L236.3 37.7a8 8 0 0 0-9-9z"></path><line x1="121.2" y1="134.8" x2="166.5" y2="89.5"></line></svg>Kirim ke proyek</button>
+    <button class="rm-menu-item" type="button" role="menuitem"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><polyline points="86 110 128 152 170 110"></polyline><line x1="128" y1="40" x2="128" y2="152"></line><path d="M216 152v56a8 8 0 0 1-8 8H48a8 8 0 0 1-8-8v-56"></path></svg>Ekspor TXT atau PDF</button>
+    <div class="rm-menu-sep" role="separator"></div>
+    <button class="rm-menu-item" type="button" role="menuitem"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><line x1="216" y1="56" x2="40" y2="56"></line><line x1="104" y1="104" x2="104" y2="168"></line><line x1="152" y1="104" x2="152" y2="168"></line><path d="M200 56v152a8 8 0 0 1-8 8H64a8 8 0 0 1-8-8V56"></path><path d="M168 56V40a16 16 0 0 0-16-16h-48a16 16 0 0 0-16 16v16"></path></svg>Pindah ke sampah</button>
+    <button class="rm-btn rm-btn--secondary" type="button" onClick="{{ toggleMenu }}" style="margin-top: 12px">Tutup</button>
+  </div>
+</sc-if>
+
+<sc-if value="{{ mobDrawer }}" hint-placeholder-val="{{ false }}">
+  <div class="rm-scrim ed-scrim" aria-hidden="true"></div>
+  <aside class="rm-float rm-sheet ed-sheet is-tall" aria-label="Bantuan menulis">
+    <div class="ed-dhead" style="padding: 8px 4px 0 16px">Bantuan menulis<button class="rm-icon-btn" type="button" aria-label="Tutup bantuan" onClick="{{ toggleDrawer }}" style="margin-left: auto; width: 44px; height: 44px"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><line x1="200" y1="56" x2="56" y2="200"></line><line x1="200" y1="200" x2="56" y2="56"></line></svg></button></div>
+    <div class="rm-tabs ed-dtabs" role="tablist" style="padding: 0 16px"><button class="rm-tab" type="button" role="tab" aria-selected="{{ tabKitAria }}" onClick="{{ pickKit }}">Kit inspirasi</button><button class="rm-tab" type="button" role="tab" aria-selected="{{ tabPromptAria }}" onClick="{{ pickPrompt }}">Prompt</button></div>
+    <div class="ed-scroll">
+      <sc-if value="{{ tabPrompt }}" hint-placeholder-val="{{ true }}">
+        <p class="ed-dintro" style="padding: 14px 16px">Pancingan untuk memulai saat buntu. Salin, lalu jawab dengan kata-katamu sendiri.</p>
+        <sc-for list="{{ prompts }}" as="p" hint-placeholder-count="5"><div class="rm-prompt" style="padding: 16px"><p>{{ p.text }}</p><button class="rm-btn rm-btn--text rm-btn--sm" type="button" onClick="{{ p.copy }}" style="color: {{ p.color }}; height: 44px" aria-label="{{ p.aria }}">{{ p.label }}</button></div></sc-for>
+      </sc-if>
+      <sc-if value="{{ tabKit }}" hint-placeholder-val="{{ false }}">
+        <div class="rm-kit-list"><sc-for list="{{ kits }}" as="k" hint-placeholder-count="7"><a class="rm-kit-item" href="#" style="padding: 0 16px">{{ k.name }}<span>{{ k.hint }}</span></a></sc-for></div>
+      </sc-if>
+    </div>
+  </aside>
+</sc-if>
+
+<!-- ============ Dialog konflik desktop ============ -->
+<sc-if value="{{ deskConflict }}" hint-placeholder-val="{{ false }}">
+  <div class="rm-scrim ed-scrim" aria-hidden="true"></div>
+  <div class="ed-dlg">
+    <div class="rm-float rm-dialog rm-conflict" role="alertdialog" aria-modal="true" aria-labelledby="kf-t" aria-describedby="kf-d">
+      <h3 id="kf-t">Dokumen ini diubah di dua tempat</h3>
+      <p id="kf-d">Saat perangkat ini tidak tersambung, dokumen yang sama diubah dari ponselmu. Pilih versi yang dipakai. Tidak ada yang ditimpa sebelum kamu memilih.</p>
+      <div class="rm-conflict-cols">
+        <label class="rm-version {{ clsA }}"><span class="rm-version-head"><input class="rm-radio" type="radio" name="kf" checked="{{ pickA }}" onChange="{{ choseA }}"><span>Perangkat ini<span class="rm-meta">Hari ini 14.36 · 170 kata</span></span></span><span class="rm-meta">Paragraf terakhir</span><p class="rm-version-text">Nasi sisa itu selalu ia bungkus daun pisang dan ia taruh di ambang jendela. Pagi harinya bungkusan itu sudah tidak ada. <span class="rm-diff-add">Aku tidak pernah bertanya siapa yang mengambilnya, dan Nenek tidak pernah merasa perlu menjelaskan.</span></p></label>
+        <label class="rm-version {{ clsB }}"><span class="rm-version-head"><input class="rm-radio" type="radio" name="kf" checked="{{ pickB }}" onChange="{{ choseB }}"><span>Ponsel<span class="rm-meta">Hari ini 14.31 · 163 kata</span></span></span><span class="rm-meta">Paragraf terakhir</span><p class="rm-version-text">Nasi sisa itu selalu ia bungkus daun pisang dan ia taruh di ambang jendela. Pagi harinya bungkusan itu sudah tidak ada. <span class="rm-diff-add">Mungkin kucing, kata Ibu. Nenek hanya tersenyum.</span></p></label>
+      </div>
+      <p class="rm-meta" style="margin: 0">Judul dan empat paragraf lainnya sama di kedua versi. Bagian yang berbeda bergaris bawah.</p>
+      <label class="rm-choice"><input class="rm-radio" type="radio" name="kf" checked="{{ pickC }}" onChange="{{ choseC }}"><span>Simpan keduanya<span>Dokumen ini memakai versi perangkat ini. Versi ponsel disimpan sebagai dokumen baru di folder yang sama.</span></span></label>
+      <div class="rm-actions"><button class="rm-btn rm-btn--primary" type="button" disabled="{{ noPick }}">Lanjutkan</button></div>
+    </div>
+  </div>
+</sc-if>
+
+<!-- ============ Konflik ponsel: halaman penuh ============ -->
+<sc-if value="{{ mobConflict }}" hint-placeholder-val="{{ false }}">
+  <div class="ed-mconf" role="alertdialog" aria-modal="true" aria-labelledby="km-t">
+    <div class="ed-mconf-body">
+      <h3 id="km-t" style="margin: 0; font: 600 20px/28px var(--font-sans)">Dokumen ini diubah di dua tempat</h3>
+      <p style="margin: 0; font: 400 14px/22px var(--font-sans); color: var(--ink-muted)">Pilih versi yang dipakai. Tidak ada yang ditimpa sebelum kamu memilih.</p>
+      <label class="rm-version {{ clsA }}"><span class="rm-version-head"><input class="rm-radio" type="radio" name="km" checked="{{ pickA }}" onChange="{{ choseA }}"><span>Perangkat ini<span class="rm-meta">14.36 · 170 kata</span></span></span><p class="rm-version-text">…sudah tidak ada. <span class="rm-diff-add">Aku tidak pernah bertanya siapa yang mengambilnya, dan Nenek tidak pernah merasa perlu menjelaskan.</span></p></label>
+      <label class="rm-version {{ clsB }}"><span class="rm-version-head"><input class="rm-radio" type="radio" name="km" checked="{{ pickB }}" onChange="{{ choseB }}"><span>Ponsel lain<span class="rm-meta">14.31 · 163 kata</span></span></span><p class="rm-version-text">…sudah tidak ada. <span class="rm-diff-add">Mungkin kucing, kata Ibu. Nenek hanya tersenyum.</span></p></label>
+      <label class="rm-choice"><input class="rm-radio" type="radio" name="km" checked="{{ pickC }}" onChange="{{ choseC }}"><span>Simpan keduanya<span>Versi ponsel lain menjadi dokumen baru di folder yang sama.</span></span></label>
+    </div>
+    <div class="ed-mconf-foot"><button class="rm-btn rm-btn--primary" type="button" disabled="{{ noPick }}" style="width: 100%; height: 44px">Lanjutkan</button></div>
+  </div>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"device":{"editor":"enum","options":["auto","desktop","mobile"],"default":"auto"},"state":{"editor":"enum","options":["tersimpan","menyimpan","offline","seleksi","bantuan","menu","fokus","konflik","kosong","memuat","galat"],"default":"tersimpan"},"only":{"editor":null},"tg":{"editor":"enum","options":["auto","berjalan","simpan2","tercapai","melebihi","offline","sinkron","hapusBaru","hapusLama","hapusTetap","tercabut","tercapaiTetapA","tercapaiTetapB","tempel"],"default":"auto"},"tgPop":{"editor":"boolean","default":false},"tgTip":{"editor":"boolean","default":false},"$preview":{"width":1440,"height":960}}'>
+var RM_TG = {
+  berjalan: { n: 468, doc: 167, nenek: 148 },
+  menyimpan: { n: 468, doc: 169, nenek: 148 },
+  tercapai: { n: 500, doc: 199, nenek: 180, fresh: true },
+  melebihi: { n: 612, doc: 311, nenek: 292 },
+  offline: { n: 471, doc: 170, nenek: 151, pend: true, note: 'Tercatat saat tersambung. 3 kata dari perangkat ini dikirim nanti, dihitung ke hari kamu menulisnya, dan tidak dihitung dua kali.' },
+  sinkron: { n: 471, doc: 170, nenek: 151 },
+  simpan2: { n: 470, doc: 169, nenek: 150, save: 'Tersimpan 14.03' },
+  hapusBaru: { n: 454, doc: 153, nenek: 134 },
+  hapusLama: { n: 468, doc: 155, nenek: 148 },
+  hapusTetap: { n: 468, doc: 153, nenek: 148, note: 'Menghapus tulisan tidak mengurangi kata hari ini. 32 kata lagi untuk target hari ini.' },
+  tercabut: { n: 486, doc: 185, nenek: 166, note: 'Tulisan hari ini berkurang 14 kata, jadi target belum tercapai lagi. 14 kata lagi untuk target hari ini.' },
+  tercapaiTetapA: { n: 486, doc: 185, nenek: 166, keep: true, note: 'Target hari ini sudah tercapai pukul 14.20. Menghapus tulisan mengurangi angka, tetapi tidak mencabut hari ini dari streak.' },
+  tercapaiTetapB: { n: 500, doc: 185, nenek: 180, note: 'Target hari ini sudah tercapai. Menghapus tulisan tidak mengurangi kata hari ini.' },
+  tempel: { n: 518, doc: 1367, nenek: 198, note: 'Teks yang ditempel sekaligus tidak dihitung penuh. Dari tempelan 1.200 kata pukul 14.10, 50 kata masuk hitungan hari ini.' }
+};
+var RM_PROMPTS = [
+  'Tulis satu adegan ketika tokohmu menunggu sesuatu yang tidak pernah ia sebut namanya.',
+  'Ceritakan sebuah rumah lewat satu bau yang masih tertinggal di dalamnya.',
+  'Buka dengan kalimat yang diucapkan seseorang di dapur. Jangan jelaskan siapa dia sampai paragraf ketiga.',
+  'Tulis surat untuk orang yang sudah pindah rumah, tanpa sekali pun memakai kata rindu.',
+  'Pilih satu benda di mejamu dan tulis riwayatnya dari sudut pandang benda itu.'
+];
+var RM_KITS = [
+  ['Ide cerita', 'Premis singkat'], ['Kalimat pembuka', 'Untuk paragraf pertama'], ['Kamus diksi', 'Padanan kata'],
+  ['Pertanyaan refleksi', 'Untuk tulisan pribadi'], ['Ide judul', 'Pola judul'], ['Kalimat penutup', 'Untuk akhir bagian'], ['Kamus transisi', 'Penyambung antarparagraf']
+];
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    var s = props.state || 'tersimpan';
+    this.state = { w: 1440, tgPop: props.tgPop === true || props.tgPop === 'true', menu: s === 'menu', drawer: s === 'bantuan', focus: s === 'fokus', pop: s === 'offline' && !(props.tgPop === true || props.tgPop === 'true'), tab: 'prompt', copied: s === 'bantuan' ? { 1: true } : {}, pick: '', b: false, i: s === 'seleksi' };
+  }
+  componentDidMount() {
+    var self = this;
+    this.onResize = function () { self.setState({ w: window.innerWidth }); };
+    window.addEventListener('resize', this.onResize);
+    this.setState({ w: window.innerWidth });
+  }
+  componentWillUnmount() { window.removeEventListener('resize', this.onResize); clearTimeout(this.tc); }
+  renderVals() {
+    var self = this, s = this.state, p = this.props;
+    var st = p.state || 'tersimpan';
+    var theme = p.theme === 'dark' ? 'dark' : 'light';
+    var mobile = p.device === 'mobile' || (p.device !== 'desktop' && s.w < 768);
+    var onlyBar = p.only === 'bar';
+    var loading = st === 'memuat', err = st === 'galat', empty = st === 'kosong';
+    var conflict = st === 'konflik';
+    var focus = s.focus && !loading && !err;
+    var offline = st === 'offline' || conflict;
+    var tgKey = (p.tg && p.tg !== 'auto') ? p.tg : (offline ? 'offline' : (st === 'menyimpan' ? 'menyimpan' : 'berjalan'));
+    var T = RM_TG[tgKey] || RM_TG.berjalan;
+    var words = empty ? 0 : T.doc;
+    var done = T.n >= 500 || !!T.keep;
+    var docs = [['Surat untuk Kakek di Pelabuhan', 252], ['Yang Ditunggu Nenek di Bawah Jambu Air', T.nenek], ['Daftar nama tokoh', 68]].sort(function (a, b) { return b[1] - a[1]; });
+    var tgNote = T.note || (done ? (T.fresh ? '' : 'Target hari ini sudah tercapai. Angka tetap bertambah selama kamu menulis.') : (500 - T.n) + ' kata lagi untuk target hari ini.');
+    var cls = [];
+    if (mobile) cls.push('is-m');
+    if (onlyBar) cls.push('is-bar');
+    if (focus) cls.push('is-focus');
+    if (s.drawer && !mobile && !focus) cls.push('has-drawer');
+    var copy = function (i) { return function () { var c = {}; c[i] = true; self.setState({ copied: c }); clearTimeout(self.tc); self.tc = setTimeout(function () { self.setState({ copied: {} }); }, 2000); }; };
+    var pick = function (v) { return function () { self.setState({ pick: v }); }; };
+    return {
+      theme: theme,
+      rootCls: cls.join(' '),
+      deskBar: !mobile && !focus,
+      mobBar: mobile && !focus && !onlyBar,
+      showMain: !onlyBar,
+      isLoading: loading, notLoading: !loading,
+      isError: err, isEmpty: empty,
+      showDoc: !loading && !err && !empty,
+      showSave: !loading && !err,
+      saveNormal: !offline && !loading && !err,
+      saveOffline: offline && !loading && !err,
+      saveLabel: T.save || (st === 'menyimpan' ? 'Menyimpan…' : (empty ? 'Draf baru' : (offline ? 'Belum tersinkron' : 'Tersimpan 14.02'))),
+      popOn: s.pop && offline && !mobile,
+      popOpen: s.pop ? 'true' : 'false',
+      togglePop: function () { self.setState({ pop: !self.state.pop }); },
+      docName: empty ? 'Tanpa judul' : (err ? 'Dokumen tidak terbuka' : 'Yang Ditunggu Nenek di Bawah Jambu Air'),
+      words: words.toLocaleString('id-ID'),
+      shareOff: empty || loading || err,
+      edSize: mobile ? 'rm-editor--s' : '',
+      selOn: st === 'seleksi', selOff: st !== 'seleksi',
+      fmtB: s.b ? 'true' : 'false', fmtI: s.i ? 'true' : 'false',
+      selStyle: s.i ? 'italic' : 'normal', selWeight: s.b ? '600' : '400',
+      toggleB: function () { self.setState({ b: !self.state.b }); },
+      toggleI: function () { self.setState({ i: !self.state.i }); },
+      tail: offline ? ' merasa perlu menjelaskan.' : '',
+      caretOn: st !== 'seleksi' && !conflict,
+      deskMenu: s.menu && !mobile && !focus,
+      mobMenu: s.menu && mobile && !focus,
+      menuAria: s.menu ? 'true' : 'false',
+      toggleMenu: function () { self.setState({ menu: !self.state.menu, drawer: false, tgPop: false }); },
+      deskDrawer: s.drawer && !mobile && !focus,
+      mobDrawer: s.drawer && mobile && !focus,
+      drawerAria: s.drawer ? 'true' : 'false',
+      toggleDrawer: function () { self.setState({ drawer: !self.state.drawer, menu: false }); },
+      openMobDrawer: function () { self.setState({ drawer: true, menu: false }); },
+      tabPrompt: s.tab === 'prompt', tabKit: s.tab === 'kit',
+      tabPromptAria: s.tab === 'prompt' ? 'true' : 'false', tabKitAria: s.tab === 'kit' ? 'true' : 'false',
+      pickPrompt: function () { self.setState({ tab: 'prompt' }); },
+      pickKit: function () { self.setState({ tab: 'kit' }); },
+      prompts: RM_PROMPTS.map(function (t, i) {
+        var c = !!s.copied[i];
+        return { text: t, copy: copy(i), copied: c, idle: !c, label: c ? 'Tersalin' : 'Salin', aria: c ? 'Prompt tersalin' : 'Salin prompt', color: c ? 'var(--ink)' : 'var(--ink-muted)' };
+      }),
+      kits: RM_KITS.map(function (k) { return { name: k[0], hint: k[1] }; }),
+      focusOn: focus,
+      toggleFocus: function () { self.setState({ focus: !self.state.focus, menu: false, drawer: false }); },
+      deskConflict: conflict && !mobile,
+      mobConflict: conflict && mobile,
+      pickA: s.pick === 'a', pickB: s.pick === 'b', pickC: s.pick === 'c',
+      clsA: s.pick === 'a' || s.pick === 'c' ? 'is-picked' : '', clsB: s.pick === 'b' ? 'is-picked' : '',
+      choseA: pick('a'), choseB: pick('b'), choseC: pick('c'),
+      noPick: !s.pick,
+      showTarget: !loading && !err,
+      tgNum: T.n.toLocaleString('id-ID') + ' / 500',
+      tgTip: (p.tgTip === true || p.tgTip === 'true') && !s.tgPop,
+      tgRing: !done, tgFresh: done && !!T.fresh, tgFull: done && !T.fresh,
+      tgPend: !!T.pend,
+      tgAria: 'Kata hari ini dari semua dokumen: ' + T.n + ' dari target 500' + (T.pend ? ', sebagian tercatat saat tersambung' : '') + '. Buka rincian',
+      tgOpen: s.tgPop ? 'true' : 'false',
+      toggleTg: function () { self.setState({ tgPop: !self.state.tgPop, menu: false, drawer: false, pop: false }); },
+      tgPopDesk: s.tgPop && !mobile && !focus && !loading && !err,
+      tgPopMob: s.tgPop && mobile && !focus && !loading && !err,
+      mPopTop: T.pend ? '128px' : '108px',
+      tgHead: T.fresh ? 'Target hari ini tercapai. Streakmu naik menjadi 7 hari.' : 'Kata hari ini dari semua dokumen',
+      tgHasNote: !!tgNote, tgNote: tgNote,
+      tgDocs: docs.map(function (d) { return { t: d[0], n: d[1].toLocaleString('id-ID') }; }),
+      tgFoot: 'Streak saat ini ' + (done ? 7 : 6) + ' hari' + (done ? '' : ' · hari ini belum dihitung')
+    };
+  }
+}
+</script>
+</body>
+</html>

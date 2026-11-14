@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Menulis menggerakkan Streak</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/ranahmenulis/components/variabel.css">
+<link rel="stylesheet" href="ds/ranahmenulis/components/bundle.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600&amp;family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&amp;display=swap">
+<style>
+body{margin:0}
+.st-row{display:grid;grid-template-columns:320px 1440px 390px 390px;gap:0 40px;align-items:start;padding:48px 0;border-top:1px solid var(--line)}
+.st-row--dark{grid-template-columns:320px 1440px 1440px}
+.cap{display:grid;gap:8px;align-content:start}
+.cap .num{margin:0;font:400 56px/1 var(--font-serif);color:var(--ink);font-variant-numeric:lining-nums}
+.cap h2{margin:0;font:600 20px/28px var(--font-sans)}
+.cap p{margin:0;font:400 14px/22px var(--font-sans);color:var(--ink-muted)}
+.cap .flag{color:var(--ink);font-weight:500}
+.cell{display:grid;gap:8px;align-content:start;min-width:0}
+.th{margin:0;font:500 13px/18px var(--font-sans);color:var(--ink-muted)}
+.sub{margin:8px 0 0;font:400 13px/18px var(--font-sans);color:var(--ink-muted)}
+.cr{overflow:hidden;outline:1px solid var(--line);position:relative}
+</style>
+</helmet>
+<div data-theme="light" style="width: 3280px; background: var(--canvas); color: var(--ink); font-family: var(--font-sans); display: grid; align-content: start">
+  <div style="display: grid; gap: 8px; max-width: 960px; padding-bottom: 40px">
+    <p style="margin: 0; font: 600 28px/34px var(--font-sans)">Menulis menggerakkan Streak [usulan]</p>
+    <p style="margin: 0; font: 400 16px/24px var(--font-sans); color: var(--ink-muted)">Streak tidak diisi manual. Setiap simpan otomatis di Studio mengirim perubahan kata bersih, dan Streak menambahkannya ke total hari ini (PRD STK-02, BR-STK-01..08; DESIGN.md 5.4). Contoh satu hari: target 500, streak sebelum hari ini 6 hari, tiga dokumen ditulis hari ini.</p>
+  </div>
+  <section class="st-row">
+    <div class="cap"><p class="num">1</p><h2>Menulis</h2><p>Dokumen “167 kata” dan indikator “468 / 500 hari ini” adalah dua angka berbeda: yang kedua menjumlahkan semua dokumen hari ini. Angka indikator berubah setelah simpan otomatis selesai, bukan setiap ketukan.</p></div>
+    <div class="cell"><p class="sub">a. Tersimpan. Tooltip saat kursor di atas indikator</p><div class="cr" style="width: 1440px; height: 110px"><dc-import name="Main" device="desktop" state="tersimpan" tg="berjalan" tg-tip="true" hint-size="1440px,960px"></dc-import></div><p class="sub">b. Mengetik: dokumen sudah 169 kata, indikator belum berubah selama “Menyimpan…”</p><div class="cr" style="width: 1440px; height: 57px"><dc-import name="Main" device="desktop" state="menyimpan" tg="auto" hint-size="1440px,960px"></dc-import></div><p class="sub">c. Tersimpan 14.03: indikator naik 2 kata, sama dengan dokumen</p><div class="cr" style="width: 1440px; height: 57px"><dc-import name="Main" device="desktop" state="tersimpan" tg="simpan2" hint-size="1440px,960px"></dc-import></div></div>
+    <div class="cell"><p class="th">Ponsel · terang</p><p class="sub">a. Tersimpan</p><div class="cr" style="width: 390px; height: 104px"><dc-import name="Main" device="mobile" state="tersimpan" tg="berjalan" hint-size="390px,844px"></dc-import></div><p class="sub">b. Menyimpan…</p><div class="cr" style="width: 390px; height: 104px"><dc-import name="Main" device="mobile" state="menyimpan" tg="auto" hint-size="390px,844px"></dc-import></div><p class="sub">c. Tersimpan 14.03</p><div class="cr" style="width: 390px; height: 104px"><dc-import name="Main" device="mobile" state="tersimpan" tg="simpan2" hint-size="390px,844px"></dc-import></div></div>
+    <div class="cell"><p class="th">Ponsel · gelap</p><p class="sub">a. Tersimpan</p><div class="cr" style="width: 390px; height: 104px"><dc-import name="Main" device="mobile" state="tersimpan" tg="berjalan" theme="dark" hint-size="390px,844px"></dc-import></div><p class="sub">b. Menyimpan…</p><div class="cr" style="width: 390px; height: 104px"><dc-import name="Main" device="mobile" state="menyimpan" tg="auto" theme="dark" hint-size="390px,844px"></dc-import></div><p class="sub">c. Tersimpan 14.03</p><div class="cr" style="width: 390px; height: 104px"><dc-import name="Main" device="mobile" state="tersimpan" tg="simpan2" theme="dark" hint-size="390px,844px"></dc-import></div></div>
+  </section>
+  <section class="st-row">
+    <div class="cap"><p class="num">2</p><h2>Target tercapai di tengah menulis</h2><p>Cincin pada indikator terisi sekali (300 ms) dan angka menjadi 500 / 500. Tidak ada toast, dialog, atau suara. Kalimat streak naik baru terbaca bila indikator diketuk, seperti popover yang terbuka di sini, dan di tab Streak.</p></div>
+    <div class="cell"><div class="cr" style="width: 1440px; height: 400px"><dc-import name="Main" device="desktop" state="tersimpan" tg="tercapai" tg-pop="true" hint-size="1440px,960px"></dc-import></div></div>
+    <div class="cell"><p class="th">Ponsel · terang</p><div class="cr" style="width: 390px; height: 460px"><dc-import name="Main" device="mobile" state="tersimpan" tg="tercapai" tg-pop="true" hint-size="390px,844px"></dc-import></div></div>
+    <div class="cell"><p class="th">Ponsel · gelap</p><div class="cr" style="width: 390px; height: 460px"><dc-import name="Main" device="mobile" state="tersimpan" tg="tercapai" theme="dark" tg-pop="true" hint-size="390px,844px"></dc-import></div></div>
+  </section>
+  <section class="st-row">
+    <div class="cap"><p class="num">3</p><h2>Sesudah tercapai</h2><p>Indikator terus bertambah mengikuti tulisan: 612 / 500. Cincin tetap penuh, tanpa pesan baru.</p></div>
+    <div class="cell"><div class="cr" style="width: 1440px; height: 57px"><dc-import name="Main" device="desktop" state="tersimpan" tg="melebihi" hint-size="1440px,960px"></dc-import></div></div>
+    <div class="cell"><p class="th">Ponsel · terang</p><div class="cr" style="width: 390px; height: 104px"><dc-import name="Main" device="mobile" state="tersimpan" tg="melebihi" hint-size="390px,844px"></dc-import></div></div>
+    <div class="cell"><p class="th">Ponsel · gelap</p><div class="cr" style="width: 390px; height: 104px"><dc-import name="Main" device="mobile" state="tersimpan" tg="melebihi" theme="dark" hint-size="390px,844px"></dc-import></div></div>
+  </section>
+  <section class="st-row">
+    <div class="cap"><p class="num">4</p><h2>Popover indikator</h2><p>Diketuk: kata hari ini per dokumen (tiga teratas), streak saat ini, dan tautan Buka Streak. Ponsel: lapisan selebar layar di bawah baris meta.</p></div>
+    <div class="cell"><div class="cr" style="width: 1440px; height: 400px"><dc-import name="Main" device="desktop" state="tersimpan" tg="melebihi" tg-pop="true" hint-size="1440px,960px"></dc-import></div></div>
+    <div class="cell"><p class="th">Ponsel · terang</p><div class="cr" style="width: 390px; height: 460px"><dc-import name="Main" device="mobile" state="tersimpan" tg="melebihi" tg-pop="true" hint-size="390px,844px"></dc-import></div></div>
+    <div class="cell"><p class="th">Ponsel · gelap</p><div class="cr" style="width: 390px; height: 460px"><dc-import name="Main" device="mobile" state="tersimpan" tg="melebihi" theme="dark" tg-pop="true" hint-size="390px,844px"></dc-import></div></div>
+  </section>
+  <section class="st-row">
+    <div class="cap"><p class="num">5</p><h2>Offline</h2><p>Belum tersinkron: indikator tetap bergerak dari catatan di perangkat, dengan penanda “tercatat saat tersambung”. Setelah tersambung penanda hilang dan angkanya tetap 471, tanpa lompatan.</p></div>
+    <div class="cell"><p class="sub">a. Belum tersinkron, indikator diketuk</p><div class="cr" style="width: 1440px; height: 420px"><dc-import name="Main" device="desktop" state="offline" tg="offline" tg-pop="true" hint-size="1440px,960px"></dc-import></div><p class="sub">b. Tersambung kembali</p><div class="cr" style="width: 1440px; height: 57px"><dc-import name="Main" device="desktop" state="tersimpan" tg="sinkron" hint-size="1440px,960px"></dc-import></div></div>
+    <div class="cell"><p class="th">Ponsel · terang</p><p class="sub">a. Belum tersinkron</p><div class="cr" style="width: 390px; height: 480px"><dc-import name="Main" device="mobile" state="offline" tg="offline" tg-pop="true" hint-size="390px,844px"></dc-import></div><p class="sub">b. Tersambung kembali</p><div class="cr" style="width: 390px; height: 104px"><dc-import name="Main" device="mobile" state="tersimpan" tg="sinkron" hint-size="390px,844px"></dc-import></div></div>
+    <div class="cell"><p class="th">Ponsel · gelap</p><p class="sub">a. Belum tersinkron</p><div class="cr" style="width: 390px; height: 480px"><dc-import name="Main" device="mobile" state="offline" tg="offline" theme="dark" tg-pop="true" hint-size="390px,844px"></dc-import></div><p class="sub">b. Tersambung kembali</p><div class="cr" style="width: 390px; height: 104px"><dc-import name="Main" device="mobile" state="tersimpan" tg="sinkron" theme="dark" hint-size="390px,844px"></dc-import></div></div>
+  </section>
+  <section class="st-row">
+    <div class="cap"><p class="num">6</p><h2>Menghapus tulisan</h2><p>Menghapus satu kalimat yang ditulis hari ini (14 kata) mengurangi indikator: 468 menjadi 454. Menghapus kalimat dari kemarin (12 kata) hanya mengurangi jumlah kata dokumen; indikator tetap 468.</p></div>
+    <div class="cell"><p class="sub">a. Sebelum menghapus</p><div class="cr" style="width: 1440px; height: 57px"><dc-import name="Main" device="desktop" state="tersimpan" tg="berjalan" hint-size="1440px,960px"></dc-import></div><p class="sub">b. Hapus tulisan hari ini: dokumen 153, indikator 454</p><div class="cr" style="width: 1440px; height: 57px"><dc-import name="Main" device="desktop" state="tersimpan" tg="hapusBaru" hint-size="1440px,960px"></dc-import></div><p class="sub">c. Hapus tulisan kemarin: dokumen 155, indikator tetap 468</p><div class="cr" style="width: 1440px; height: 57px"><dc-import name="Main" device="desktop" state="tersimpan" tg="hapusLama" hint-size="1440px,960px"></dc-import></div></div>
+    <div class="cell"><p class="th">Ponsel · terang</p><p class="sub">b. Hapus tulisan hari ini</p><div class="cr" style="width: 390px; height: 104px"><dc-import name="Main" device="mobile" state="tersimpan" tg="hapusBaru" hint-size="390px,844px"></dc-import></div><p class="sub">c. Hapus tulisan kemarin</p><div class="cr" style="width: 390px; height: 104px"><dc-import name="Main" device="mobile" state="tersimpan" tg="hapusLama" hint-size="390px,844px"></dc-import></div></div>
+    <div class="cell"><p class="th">Ponsel · gelap</p><p class="sub">b. Hapus tulisan hari ini</p><div class="cr" style="width: 390px; height: 104px"><dc-import name="Main" device="mobile" state="tersimpan" tg="hapusBaru" theme="dark" hint-size="390px,844px"></dc-import></div><p class="sub">c. Hapus tulisan kemarin</p><div class="cr" style="width: 390px; height: 104px"><dc-import name="Main" device="mobile" state="tersimpan" tg="hapusLama" theme="dark" hint-size="390px,844px"></dc-import></div></div>
+  </section>
+  <section class="st-row">
+    <div class="cap"><p class="num">7</p><h2>Teks tempel besar</h2><p>Menempel 1.200 kata sekaligus menambah dokumen penuh, tetapi indikator hanya sebagian: 468 menjadi 518. Popover menjelaskan dengan nada netral.</p><p class="flag">[konfirmasi] Ambang dan perilaku tempel belum ditetapkan (PRD Q-08, BR-STK-05). Angka 50 kata hanya contoh.</p></div>
+    <div class="cell"><div class="cr" style="width: 1440px; height: 420px"><dc-import name="Main" device="desktop" state="tersimpan" tg="tempel" tg-pop="true" hint-size="1440px,960px"></dc-import></div></div>
+    <div class="cell"><p class="th">Ponsel · terang</p><div class="cr" style="width: 390px; height: 480px"><dc-import name="Main" device="mobile" state="tersimpan" tg="tempel" tg-pop="true" hint-size="390px,844px"></dc-import></div></div>
+    <div class="cell"><p class="th">Ponsel · gelap</p><div class="cr" style="width: 390px; height: 480px"><dc-import name="Main" device="mobile" state="tersimpan" tg="tempel" theme="dark" tg-pop="true" hint-size="390px,844px"></dc-import></div></div>
+  </section>
+  <section class="st-row">
+    <div class="cap"><p class="num">8</p><h2>Dari tab Streak kembali ke menulis</h2><p>Mengetuk satu hari di kalender menampilkan kata per dokumen (STK-03). Mulai menulis membuka dokumen terakhir, dan indikator di editor melanjutkan angka hari itu: 468 / 500.</p></div>
+    <div class="cell"><p class="sub">a. Tab Streak, hari ini dipilih</p><div class="cr" style="width: 1440px; height: 560px"><div style="margin-top: -620px"><dc-import name="Streak" device="desktop" state="lanjut" hint-size="1440px,1280px"></dc-import></div></div><p class="sub">b. Mulai menulis: “Yang Ditunggu Nenek”, indikator 468 / 500</p><div class="cr" style="width: 1440px; height: 57px"><dc-import name="Main" device="desktop" state="tersimpan" tg="berjalan" hint-size="1440px,960px"></dc-import></div></div>
+    <div class="cell"><p class="th">Ponsel · terang</p><p class="sub">a. Rincian hari ini</p><div class="cr" style="width: 390px; height: 640px"><div style="margin-top: -700px"><dc-import name="Streak" device="mobile" state="lanjut" hint-size="390px,1800px"></dc-import></div></div><p class="sub">b. Editor</p><div class="cr" style="width: 390px; height: 104px"><dc-import name="Main" device="mobile" state="tersimpan" tg="berjalan" hint-size="390px,844px"></dc-import></div></div>
+    <div class="cell"><p class="th">Ponsel · gelap</p><p class="sub">a. Rincian hari ini</p><div class="cr" style="width: 390px; height: 640px"><div style="margin-top: -700px"><dc-import name="Streak" device="mobile" state="lanjut" theme="dark" hint-size="390px,1800px"></dc-import></div></div><p class="sub">b. Editor</p><div class="cr" style="width: 390px; height: 104px"><dc-import name="Main" device="mobile" state="tersimpan" tg="berjalan" theme="dark" hint-size="390px,844px"></dc-import></div></div>
+  </section>
+  <section class="st-row st-row--dark">
+    <div class="cap"><p class="num">G</p><h2>Desktop gelap</h2><p>Langkah 2 dan 4 di mode gelap. Cincin dan angka memakai ink #ededed; tanpa bayangan pada popover, cukup surface dan garis.</p></div>
+    <div class="cell"><p class="sub">Langkah 2, target tercapai</p><div class="cr" style="width: 1440px; height: 400px"><dc-import name="Main" device="desktop" state="tersimpan" tg="tercapai" theme="dark" tg-pop="true" hint-size="1440px,960px"></dc-import></div></div>
+    <div class="cell cell--wide"><p class="sub">Langkah 4, popover setelah melebihi</p><div class="cr" style="width: 1440px; height: 400px"><dc-import name="Main" device="desktop" state="tersimpan" tg="melebihi" theme="dark" tg-pop="true" hint-size="1440px,960px"></dc-import></div></div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":3280,"height":6000}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

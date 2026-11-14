@@ -1,0 +1,22 @@
+/* Sistem Desain RanahMenulis: variabel CSS dari tokens.json [usulan].
+   Untuk kanvas Design dan pratinjau di luar halaman sistem desain. Sumber kebenaran tetap tokens.json;
+   berkas ini diperbarui bersama tokens.json, tidak pernah disalin ke proyek lain. */
+:root, [data-theme="light"] {
+  --canvas: #ffffff; --surface: #ffffff; --subtle: #f3f3f3; --ink: #191919; --ink-read: #191919; --ink-muted: #5e5e5e; --ink-faint: #767676;
+  --line: #e6e6e6; --line-strong: #191919; --on-ink: #ffffff; --danger: #b3261e; --danger-subtle: #fbeeed;
+  --shadow-float: 0 2px 12px rgba(0, 0, 0, 0.08);
+  color-scheme: light;
+}
+[data-theme="dark"] {
+  --canvas: #121212; --surface: #1a1a1a; --subtle: #232323; --ink: #ededed; --ink-read: #d2d2d2; --ink-muted: #a3a3a3; --ink-faint: #8c8c8c;
+  --line: #2e2e2e; --line-strong: #ededed; --on-ink: #121212; --danger: #ff8f87; --danger-subtle: #2a1716;
+  --shadow-float: none;
+  color-scheme: dark;
+}
+:root {
+  --font-serif: "Source Serif 4", Charter, Georgia, serif;
+  --font-sans: "Schibsted Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --radius-0: 0px; --radius-full: 9999px;
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-6: 24px; --space-8: 32px; --space-12: 48px; --space-16: 64px; --space-24: 96px; --space-32: 128px; --space-40: 160px;
+  --opacity-hover: 0.85; --opacity-press: 0.72; --opacity-disabled: 0.4; --opacity-dot-empty: 0.3;
+}

@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Halaman postingan ponsel</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/ranahmenulis/components/variabel.css">
+<link rel="stylesheet" href="ds/ranahmenulis/components/bundle.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600&amp;family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&amp;display=swap">
+<style>
+body{margin:0}
+.wb-cap{margin:0;height:40px;display:flex;align-items:center;gap:8px;font:400 14px/20px var(--font-sans);color:var(--ink-muted)}
+.wb-cap b{font-weight:500;color:var(--ink)}
+.wb-ph{width:390px;height:844px;overflow:hidden;outline:1px solid var(--line)}
+.wb-row{display:flex;gap:40px;align-items:flex-start}
+</style>
+</helmet>
+<div data-theme="light" style="width: 2540px; min-height: 2780px; background: var(--canvas); color: var(--ink); font-family: var(--font-sans); display: grid; gap: 48px; align-content: start">
+  <div class="wb-row">
+    <div><p class="wb-cap"><b>Biasa</b> · bilah aksi lengket di bawah</p><div class="wb-ph"><dc-import name="Postingan" device="mobile" state="biasa" hint-size="390px,844px"></dc-import></div></div>
+    <div><p class="wb-cap"><b>Tamu</b> · Masuk di bilah atas</p><div class="wb-ph"><dc-import name="Postingan" device="mobile" state="tamu" hint-size="390px,844px"></dc-import></div></div>
+    <div><p class="wb-cap"><b>Tamu</b> · mengetuk Apresiasi</p><div class="wb-ph"><dc-import name="Postingan" device="mobile" state="tamuAksi" hint-size="390px,844px"></dc-import></div></div>
+    <div><p class="wb-cap"><b>Penulis</b> · kelola komentar</p><div class="wb-ph"><dc-import name="Postingan" device="mobile" state="penulis" offset="1150" hint-size="390px,844px"></dc-import></div></div>
+    <div><p class="wb-cap"><b>Laporkan komentar</b> · lembar bawah</p><div class="wb-ph"><dc-import name="Postingan" device="mobile" state="lapor" offset="1150" hint-size="390px,844px"></dc-import></div></div>
+    <div><p class="wb-cap"><b>Komentar dilaporkan</b></p><div class="wb-ph"><dc-import name="Postingan" device="mobile" state="dilaporkan" offset="1150" hint-size="390px,844px"></dc-import></div></div>
+  </div>
+  <div class="wb-row">
+    <div><p class="wb-cap"><b>Komentar kosong</b></p><div class="wb-ph"><dc-import name="Postingan" device="mobile" state="kosong" offset="1050" hint-size="390px,844px"></dc-import></div></div>
+    <div><p class="wb-cap"><b>Ditarik</b></p><div class="wb-ph"><dc-import name="Postingan" device="mobile" state="ditarik" hint-size="390px,844px"></dc-import></div></div>
+    <div><p class="wb-cap"><b>Memuat</b></p><div class="wb-ph"><dc-import name="Postingan" device="mobile" state="memuat" hint-size="390px,844px"></dc-import></div></div>
+    <div><p class="wb-cap"><b>Galat</b></p><div class="wb-ph"><dc-import name="Postingan" device="mobile" state="galat" hint-size="390px,844px"></dc-import></div></div>
+    <div><p class="wb-cap"><b>Tulisan terkait</b> · bawah halaman</p><div class="wb-ph"><dc-import name="Postingan" device="mobile" state="biasa" offset="2150" hint-size="390px,844px"></dc-import></div></div>
+  </div>
+  <div class="wb-row">
+    <div><p class="wb-cap"><b>Gelap</b> · biasa</p><div class="wb-ph"><dc-import name="Postingan" device="mobile" theme="dark" state="biasa" hint-size="390px,844px"></dc-import></div></div>
+    <div><p class="wb-cap"><b>Gelap</b> · penulis</p><div class="wb-ph"><dc-import name="Postingan" device="mobile" theme="dark" state="penulis" offset="1150" hint-size="390px,844px"></dc-import></div></div>
+    <div><p class="wb-cap"><b>Gelap</b> · tamu</p><div class="wb-ph"><dc-import name="Postingan" device="mobile" theme="dark" state="tamu" offset="1050" hint-size="390px,844px"></dc-import></div></div>
+    <div><p class="wb-cap"><b>Gelap</b> · ditarik</p><div class="wb-ph"><dc-import name="Postingan" device="mobile" theme="dark" state="ditarik" hint-size="390px,844px"></dc-import></div></div>
+    <div><p class="wb-cap"><b>Gelap</b> · memuat</p><div class="wb-ph"><dc-import name="Postingan" device="mobile" theme="dark" state="memuat" hint-size="390px,844px"></dc-import></div></div>
+    <div><p class="wb-cap"><b>Gelap</b> · galat</p><div class="wb-ph"><dc-import name="Postingan" device="mobile" theme="dark" state="galat" hint-size="390px,844px"></dc-import></div></div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":2540,"height":2780}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Tulis postingan</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/ranahmenulis/components/variabel.css">
+<link rel="stylesheet" href="ds/ranahmenulis/components/bundle.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600&amp;family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&amp;display=swap">
+<style>
+body{margin:0}
+.tp{position:relative;min-height:1300px;background:var(--canvas);color:var(--ink);font-family:var(--font-sans);-webkit-font-smoothing:antialiased}
+.tp.is-m{height:844px;min-height:0;display:flex;flex-direction:column;overflow:hidden}
+.tp-bar{position:sticky;top:0;z-index:5;background:var(--canvas)}
+.tp-bar .rm-doc-name{max-width:none}
+.tp-tabs{max-width:1128px;margin:0 auto;padding:0 48px;box-sizing:content-box}
+.tp-body{max-width:1128px;margin:0 auto;padding:40px 48px 120px;box-sizing:content-box;display:grid;gap:48px;align-items:start}
+.tp-body.is-direct{grid-template-columns:minmax(0,680px) 360px;justify-content:space-between}
+.tp-body.is-pick{grid-template-columns:minmax(0,560px) 520px;justify-content:space-between}
+.tp-body.is-one{grid-template-columns:minmax(0,680px);justify-content:center}
+.tp-side{display:grid;gap:24px;align-content:start;position:sticky;top:120px}
+.tp-sec{display:grid;gap:12px}
+.tp-sec-h{margin:0;font:500 14px/20px var(--font-sans);color:var(--ink)}
+.tp-two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.tp-seg{display:flex;gap:20px;align-items:center;min-height:44px}
+.tp-opt{display:inline-flex;align-items:center;gap:8px;font:400 14px/20px var(--font-sans);color:var(--ink);cursor:pointer}
+.tp-count{display:grid;gap:8px}
+.tp-count-row{display:flex;align-items:baseline;gap:8px;font:400 14px/20px var(--font-sans);color:var(--ink-muted);font-variant-numeric:lining-nums tabular-nums}
+.tp-count-row b{font-weight:500;color:var(--ink)}
+.tp-count.is-over .tp-count-row b{color:var(--danger)}
+.tp-count.is-over .rm-progress > i{background:var(--danger)}
+.tp-title{width:100%;border:0;padding:0;margin:0 0 24px;background:none;color:var(--ink);font:600 42px/52px var(--font-serif);letter-spacing:-0.015em}
+.tp-title::placeholder{color:var(--ink-faint)}
+.tp-docname{display:flex;align-items:center;gap:12px;padding:0 0 16px;border-bottom:1px solid var(--line)}
+.tp-docname b{font:600 18px/26px var(--font-serif)}
+.tp-docname .rm-btn--text{margin-left:auto;color:var(--ink)}
+.tp-blk{display:grid;grid-template-columns:20px minmax(0,1fr);gap:16px;align-items:start;padding:16px 16px 16px 12px;border-bottom:1px solid var(--line);cursor:pointer}
+.tp-blk.is-on{background:var(--subtle)}
+.tp-blk .rm-check{margin-top:4px}
+.tp-blk p{margin:0;font:400 17px/28px var(--font-serif);color:var(--ink-read,var(--ink))}
+.tp-blk.is-q p{font-style:italic}
+.tp-blk:not(.is-on) p{color:var(--ink-muted)}
+.tp-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.tp-prev{border:1px solid var(--line);padding:32px}
+.tp-prev-h{margin:0 0 12px;font:500 13px/18px var(--font-sans);color:var(--ink-muted)}
+.tp-prev .rm-read h2{font-size:30px;line-height:38px}
+.tp-prev .rm-read p,.tp-prev .rm-read blockquote{font-size:18px;line-height:29px}
+.rm-read .tp-mark,.tp-mark{margin:0 0 12px;font:400 13px/18px var(--font-sans);color:var(--ink-muted)}
+.tp-scope{display:flex;gap:8px;align-items:flex-start;margin:0 0 24px !important;padding:10px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);font:400 13px/18px var(--font-sans) !important;color:var(--ink-muted)}
+.tp-scope b{font-weight:500;color:var(--ink)}
+.tp-by{display:flex;align-items:center;gap:10px;margin:0 0 16px;font:500 14px/20px var(--font-sans)}
+.tp-doclist{display:grid}
+.tp-doc{display:flex;gap:14px;align-items:flex-start;padding:16px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.tp-doc:first-child{border-top:1px solid var(--line)}
+.tp-doc b{display:block;font:600 18px/26px var(--font-serif)}
+.tp-doc > span > span{display:block;font:400 13px/18px var(--font-sans);color:var(--ink-muted)}
+.tp-done{display:grid;gap:16px;justify-items:start;padding:72px 0}
+.tp-done h1{margin:0;font:600 32px/40px var(--font-serif)}
+.tp-done p{margin:0;font:400 16px/26px var(--font-sans);color:var(--ink-muted);max-width:560px}
+.tp-done .tp-item{width:100%;padding:20px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);display:grid;gap:4px}
+.tp-done .tp-item b{font:600 20px/28px var(--font-serif)}
+/* ponsel */
+.tp-mbar{flex:none;height:52px;display:flex;align-items:center;gap:8px;padding:0 12px 0 4px;background:var(--canvas)}
+.tp-mbar .rm-doc-name{flex:1;min-width:0;font:500 15px/22px var(--font-sans);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tp-mscroll{flex:1;min-height:0;overflow:auto;scrollbar-width:none}
+.tp-mscroll::-webkit-scrollbar{display:none}
+.is-m .tp-tabs{padding:0 16px}
+.is-m .tp-body{display:grid;grid-template-columns:minmax(0,1fr) !important;padding:24px 16px 40px;gap:32px}
+.is-m .tp-side{position:static}
+.is-m .tp-title{font-size:30px;line-height:38px}
+.is-m .rm-editor p{font-size:18px;line-height:29px}
+.is-m .tp-prev{padding:20px 16px}
+.is-m .tp-blk{padding:14px 12px 14px 8px;gap:12px}
+.is-m .tp-blk p{font-size:16px;line-height:26px}
+.is-m .tp-done{padding:40px 0}
+.tp-mfoot{flex:none;display:flex;align-items:center;gap:12px;height:56px;padding:0 16px;border-top:1px solid var(--line);background:var(--canvas)}
+.tp-mfoot .tp-count{flex:1}
+</style>
+</helmet>
+<div class="tp {{ rootCls }}" data-theme="{{ theme }}">
+
+<!-- ============ Bilah atas desktop ============ -->
+<sc-if value="{{ isDesk }}" hint-placeholder-val="{{ true }}">
+<header class="rm-editorbar tp-bar">
+  <a class="rm-icon-btn" href="Studio.dc.html" aria-label="Tutup tanpa menerbitkan"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><line x1="200" y1="56" x2="56" y2="200"></line><line x1="200" y1="200" x2="56" y2="56"></line></svg></a>
+  <span class="rm-doc-name">{{ barTitle }}</span>
+  <sc-if value="{{ showDraftState }}" hint-placeholder-val="{{ false }}"><span class="rm-status rm-status--draf">Draf</span></sc-if>
+  <span style="flex: 1"></span>
+  <sc-if value="{{ barActs }}" hint-placeholder-val="{{ true }}">
+    <sc-if value="{{ isDirect }}" hint-placeholder-val="{{ false }}"><button class="rm-btn rm-btn--text" type="button">Pratinjau</button></sc-if>
+    <button class="rm-btn rm-btn--secondary rm-btn--sm" type="button" disabled="{{ draftOff }}">Simpan sebagai draf</button>
+    <button class="rm-btn rm-btn--primary rm-btn--sm" type="button" disabled="{{ pubOff }}" aria-busy="{{ pubBusy }}">Terbitkan</button>
+  </sc-if>
+</header>
+</sc-if>
+
+<!-- ============ Bilah atas ponsel ============ -->
+<sc-if value="{{ isMob }}" hint-placeholder-val="{{ false }}">
+<header class="tp-mbar">
+  <a class="rm-icon-btn" href="Studio.dc.html" aria-label="{{ mBackAria }}" style="width: 44px; height: 44px; color: var(--ink)"><sc-if value="{{ mBackArrow }}" hint-placeholder-val="{{ false }}"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><line x1="216" y1="128" x2="40" y2="128"></line><polyline points="112 56 40 128 112 200"></polyline></svg></sc-if><sc-if value="{{ mBackX }}" hint-placeholder-val="{{ true }}"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><line x1="200" y1="56" x2="56" y2="200"></line><line x1="200" y1="200" x2="56" y2="56"></line></svg></sc-if></a>
+  <span class="rm-doc-name">{{ barTitle }}</span>
+  <sc-if value="{{ barActs }}" hint-placeholder-val="{{ true }}"><button class="rm-btn rm-btn--primary rm-btn--sm" type="button" disabled="{{ pubOff }}">Terbitkan</button></sc-if>
+</header>
+</sc-if>
+
+<div class="{{ scrollCls }}">
+
+<!-- ============ Dua jalan masuk ============ -->
+<sc-if value="{{ tabsOn }}" hint-placeholder-val="{{ true }}">
+<div class="tp-tabs"><div class="rm-tabs" role="tablist" aria-label="Cara menulis postingan"><button class="rm-tab" type="button" role="tab" aria-selected="{{ tabDirectSel }}" onClick="{{ goDirect }}">Tulis langsung</button><button class="rm-tab" type="button" role="tab" aria-selected="{{ tabPickSel }}" onClick="{{ goPick }}">Dari dokumen Studio</button></div></div>
+</sc-if>
+
+<div class="tp-body {{ bodyCls }}" style="margin-top: {{ mOff }}">
+
+  <!-- ===== Banner galat terbit ===== -->
+  <sc-if value="{{ pubErr }}" hint-placeholder-val="{{ false }}">
+  <div class="rm-banner" role="alert" style="grid-column: 1 / -1"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><circle cx="128" cy="128" r="96"></circle><line x1="128" y1="80" x2="128" y2="136"></line><circle cx="128" cy="172" r="10" class="rm-i--fill"></circle></svg><p>Postingan belum terbit karena koneksi terputus saat mengirim. Teks dan pengaturanmu tetap di sini.</p><button class="rm-btn rm-btn--secondary rm-btn--sm" type="button">Terbitkan lagi</button></div>
+  </sc-if>
+
+  <!-- ===== Dokumen sumber dihapus ===== -->
+  <sc-if value="{{ srcGone }}" hint-placeholder-val="{{ false }}">
+  <div class="rm-notice" role="status" style="grid-column: 1 / -1"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><circle cx="128" cy="128" r="96"></circle><line x1="128" y1="120" x2="128" y2="176"></line><circle cx="128" cy="84" r="10" class="rm-i--fill"></circle></svg><p>Dokumen sumbernya, “Yang Ditunggu Nenek di Bawah Jambu Air”, sudah dipindahkan ke Sampah. Draf postingan ini tidak berubah: teksnya sudah disalin saat kamu memilihnya. Tautan ke dokumen asal tidak ditampilkan.</p></div>
+  </sc-if>
+
+  <!-- ===== Tulis langsung: kolom tulis ===== -->
+  <sc-if value="{{ isDirect }}" hint-placeholder-val="{{ false }}">
+  <div>
+    <label class="tp-sr" for="tp-judul">Judul postingan</label>
+    <input class="tp-title" id="tp-judul" type="text" placeholder="Judul" value="{{ dTitle }}">
+    <div class="rm-editor {{ edSize }}" style="margin: 0">
+      <sc-if value="{{ dEmpty }}" hint-placeholder-val="{{ false }}"><p><span class="rm-caret" aria-hidden="true"></span><span class="rm-ph">Tulis prolog atau cuplikan, paling banyak 500 kata.</span></p></sc-if>
+      <sc-for list="{{ dBlocks }}" as="b" hint-placeholder-count="2"><sc-if value="{{ b.para }}" hint-placeholder-val="{{ true }}"><p>{{ b.text }}</p></sc-if><sc-if value="{{ b.quote }}" hint-placeholder-val="{{ false }}"><blockquote>{{ b.text }}</blockquote></sc-if></sc-for>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ===== Dari dokumen: pilih dokumen ===== -->
+  <sc-if value="{{ isPickDoc }}" hint-placeholder-val="{{ false }}">
+  <div style="display: grid; gap: 16px">
+    <p class="tp-sec-h" style="font-size: 16px">Pilih dokumen Studio</p>
+    <p class="rm-meta" style="margin: -8px 0 8px; font-size: 14px; line-height: 20px">Kamu akan memilih bagian yang menjadi salinan publik. Dokumennya sendiri tidak ikut terbit.</p>
+    <sc-if value="{{ docsLoading }}" hint-placeholder-val="{{ false }}">
+    <div class="tp-doclist" aria-busy="true" aria-label="Memuat dokumen">
+      <sc-for list="{{ skels }}" as="k" hint-placeholder-count="4"><div class="tp-doc" style="cursor: default"><span class="rm-skel" style="width: 18px; height: 18px; border-radius: 9999px"></span><span style="display: grid; gap: 8px; flex: 1"><span class="rm-skel" style="width: {{ k.w }}; height: 18px"></span><span class="rm-skel" style="width: 160px; height: 12px"></span></span></div></sc-for>
+    </div>
+    </sc-if>
+    <sc-if value="{{ docsErr }}" hint-placeholder-val="{{ false }}">
+    <div class="rm-banner" role="alert"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><circle cx="128" cy="128" r="96"></circle><line x1="128" y1="80" x2="128" y2="136"></line><circle cx="128" cy="172" r="10" class="rm-i--fill"></circle></svg><p>Daftar dokumen Studio gagal dimuat. Kamu tetap bisa menulis langsung.</p><button class="rm-btn rm-btn--secondary rm-btn--sm" type="button">Coba lagi</button></div>
+    </sc-if>
+    <sc-if value="{{ docsOk }}" hint-placeholder-val="{{ true }}">
+    <div class="tp-doclist" role="radiogroup" aria-label="Dokumen Studio">
+      <sc-for list="{{ docs }}" as="d" hint-placeholder-count="4"><label class="tp-doc"><input class="rm-radio" type="radio" name="{{ d.name }}" checked="{{ d.on }}"><span><b>{{ d.t }}</b><span>{{ d.meta }}</span></span></label></sc-for>
+    </div>
+    <div><button class="rm-btn rm-btn--secondary" type="button" onClick="{{ goBlocks }}">Pilih bagian dari dokumen ini</button></div>
+    </sc-if>
+  </div>
+  </sc-if>
+
+  <!-- ===== Dari dokumen: pilih blok ===== -->
+  <sc-if value="{{ isPickBlk }}" hint-placeholder-val="{{ true }}">
+  <div>
+    <div class="tp-docname"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><rect x="40" y="88" width="176" height="128" rx="8"></rect><path d="M92 88V56a36 36 0 0 1 72 0v32"></path></svg><b>{{ docTitle }}</b><button class="rm-btn rm-btn--text" type="button" onClick="{{ goDocs }}">Ganti dokumen</button></div>
+    <p class="rm-meta" style="margin: 12px 0; font-size: 14px; line-height: 20px">Ketuk bagian yang ingin kamu bagikan. Bagian yang tidak dipilih tetap pribadi.</p>
+    <div role="group" aria-label="Bagian dokumen">
+      <sc-for list="{{ blocks }}" as="b" hint-placeholder-count="5"><label class="tp-blk {{ b.cls }}" onClick="{{ b.toggle }}"><span class="rm-check {{ b.chk }}" aria-hidden="true"><svg class="rm-i" viewBox="0 0 256 256"><polyline points="40 144 96 200 224 72"></polyline></svg></span><span class="tp-sr">{{ b.aria }}</span><p>{{ b.text }}</p></label></sc-for>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ===== Kolom pengaturan dan pratinjau ===== -->
+  <sc-if value="{{ sideOn }}" hint-placeholder-val="{{ true }}">
+  <aside class="tp-side" aria-label="Pengaturan postingan">
+    <sc-if value="{{ titleField }}" hint-placeholder-val="{{ true }}">
+    <div class="rm-field"><label class="rm-field-label" for="tp-judul2">Judul postingan</label><input class="rm-input" id="tp-judul2" type="text" value="{{ pTitle }}"></div>
+    </sc-if>
+    <div class="tp-two">
+      <div class="tp-sec"><p class="tp-sec-h">Jenis</p><div class="tp-seg" role="radiogroup" aria-label="Jenis"><label class="tp-opt"><input class="rm-radio" type="radio" name="{{ nKind }}" checked="{{ kindPro }}">Prolog</label><label class="tp-opt"><input class="rm-radio" type="radio" name="{{ nKind }}" checked="{{ kindCup }}">Cuplikan</label></div></div>
+      <div class="rm-field"><label class="rm-field-label" for="tp-genre">Genre</label><div class="rm-select-wrap"><select class="rm-select" id="tp-genre"><option>{{ genre }}</option><option>Cerpen</option><option>Puisi</option><option>Esai</option><option>Memoar</option><option>Novel</option></select><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><polyline points="208 96 128 176 48 96"></polyline></svg></div></div>
+    </div>
+    <div class="tp-sec">
+      <p class="tp-sec-h">Siapa yang bisa membaca</p>
+      <label class="rm-choice"><input class="rm-radio" type="radio" name="{{ nVis }}" checked="{{ visPub }}"><span>Publik<span>Semua orang, termasuk yang belum punya akun. Muncul di feed pengikut dan Jelajahi.</span></span></label>
+      <label class="rm-choice"><input class="rm-radio" type="radio" name="{{ nVis }}"><span>Grup Penulis Pesisir<span>Hanya anggota grup ini. Tampil karena kamu anggotanya.</span></span></label>
+      <sc-if value="{{ visNone }}" hint-placeholder-val="{{ false }}"><p class="rm-field-hint" style="margin: 0">Pilih salah satu sebelum menerbitkan. Postingan tidak pernah publik tanpa pilihanmu.</p></sc-if>
+    </div>
+    <div class="rm-notice"><svg class="rm-i" viewBox="0 0 256 256" aria-hidden="true"><rect x="40" y="88" width="176" height="128" rx="8"></rect><path d="M92 88V56a36 36 0 0 1 72 0v32"></path></svg><p>Yang menjadi publik hanya teks ini. Dokumenmu di Studio tetap pribadi. Mengubah dokumen tidak mengubah postingan ini kecuali kamu memperbaruinya sendiri.</p></div>
+    <sc-if value="{{ countSide }}" hint-placeholder-val="{{ true }}">
+    <div class="tp-count {{ overCls }}" role="status">
+      <div class="tp-count-row"><b>{{ wordsNum }}</b><span>/ 500 kata</span></div>
+      <div class="rm-progress" aria-hidden="true"><i style="width: {{ barW }}"></i></div>
+      <sc-if value="{{ isOver }}" hint-placeholder-val="{{ false }}"><p class="rm-field-error" style="margin: 0"><svg class="rm-i rm-i--16" viewBox="0 0 256 256" aria-hidden="true" style="margin-top: 2px"><circle cx="128" cy="128" r="96"></circle><line x1="128" y1="80" x2="128" y2="136"></line><circle cx="128" cy="172" r="10" class="rm-i--fill"></circle></svg>{{ overMsg }}</p></sc-if>
+    </div>
+    </sc-if>
+
+    <!-- Pratinjau persis seperti pembaca -->
+    <sc-if value="{{ prevOn }}" hint-placeholder-val="{{ true }}">
+    <div>
+      <p class="tp-prev-h">Pratinjau untuk pembaca</p>
+      <div class="tp-prev">
+        <article class="rm-read">
+          <p class="tp-mark">{{ markLabel }}</p>
+          <h2>{{ pTitle }}</h2>
+          <div class="tp-by"><span class="rm-avatar" style="--s: 28px">RP</span>Rinjani Putri</div>
+          <p class="tp-scope"><svg class="rm-i rm-i--16" viewBox="0 0 256 256" aria-hidden="true"><circle cx="128" cy="128" r="96"></circle><line x1="32" y1="128" x2="224" y2="128"></line><path d="M128 32c-24 26-36 58-36 96s12 70 36 96c24-26 36-58 36-96s-12-70-36-96z"></path></svg><span>{{ scopeKind }} dari: <b>{{ docTitle }}</b> · hanya bagian ini yang publik</span></p>
+          <sc-for list="{{ prevBlocks }}" as="b" hint-placeholder-count="4"><sc-if value="{{ b.para }}" hint-placeholder-val="{{ true }}"><p>{{ b.text }}</p></sc-if><sc-if value="{{ b.quote }}" hint-placeholder-val="{{ false }}"><blockquote>{{ b.text }}</blockquote></sc-if></sc-for>
+        </article>
+      </div>
+    </div>
+    </sc-if>
+  </aside>
+  </sc-if>
+
+  <!-- ===== Sukses terbit ===== -->
+  <sc-if value="{{ isDone }}" hint-placeholder-val="{{ false }}">
+  <div class="tp-done" role="status">
+    <h1>Postinganmu sudah terbit.</h1>
+    <p>Siapa pun bisa membacanya di Community. Dokumen “Yang Ditunggu Nenek di Bawah Jambu Air” tetap pribadi di Studio.</p>
+    <div class="tp-item"><span class="rm-meta">Prolog · Cerpen · Publik · 135 kata</span><b>Hujan Pertama Bulan November</b></div>
+    <div class="rm-row"><a class="rm-btn rm-btn--primary" href="Postingan.dc.html">Lihat postingan</a><button class="rm-btn rm-btn--secondary" type="button">Salin tautan</button><a class="rm-btn rm-btn--text" href="Studio.dc.html">Kembali ke Studio</a></div>
+  </div>
+  </sc-if>
+</div>
+</div>
+
+<!-- ============ Kaki ponsel: penghitung kata ============ -->
+<sc-if value="{{ mFoot }}" hint-placeholder-val="{{ false }}">
+<div class="tp-mfoot">
+  <div class="tp-count {{ overCls }}" role="status"><div class="tp-count-row"><b>{{ wordsNum }}</b><span>/ 500 kata</span><sc-if value="{{ isOver }}" hint-placeholder-val="{{ false }}"><span style="color: var(--danger)">· lebih {{ overBy }}</span></sc-if></div><div class="rm-progress" aria-hidden="true"><i style="width: {{ barW }}"></i></div></div>
+  <sc-if value="{{ mPrevBtn }}" hint-placeholder-val="{{ false }}"><button class="rm-btn rm-btn--secondary rm-btn--sm" type="button" onClick="{{ goPrev }}">Pratinjau</button></sc-if>
+  <sc-if value="{{ mDraftBtn }}" hint-placeholder-val="{{ true }}"><button class="rm-btn rm-btn--text" type="button" style="color: var(--ink)" disabled="{{ draftOff }}">Simpan draf</button></sc-if>
+</div>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"device":{"editor":"enum","options":["auto","desktop","mobile"],"default":"auto"},"state":{"editor":"enum","options":["kosong","langsung","pilihDok","pilihBlok","pratinjau","melebihi","sumberHapus","galatTerbit","sukses","memuat","galat"],"default":"pilihBlok"},"offset":{"editor":"number","default":0},"$preview":{"width":1440,"height":1300}}'>
+var TP_NENEK = [
+  ['p', 'Hujan pertama bulan November selalu datang sore hari, tepat ketika Nenek selesai menyapu halaman. Ia tidak pernah berlari masuk. Ia berdiri dulu di bawah jambu air, membiarkan beberapa tetes jatuh ke kerudungnya, seolah menunggu seseorang yang berjanji pulang bersama musim.'],
+  ['p', 'Waktu kecil aku mengira Nenek sedang menghitung. Bibirnya bergerak pelan, dan setiap kali petir lewat di atas sawah, ia berhenti sebentar lalu mulai lagi dari awal. Ibu bilang itu doa. Kakek, yang jarang bicara, bilang itu bukan urusan anak-anak.'],
+  ['p', 'Ada orang yang menunggu dengan duduk di beranda, memandangi ujung jalan sampai matanya perih. Nenek menunggu dengan basah. Ia pulang ke dapur dengan ujung kain yang menetes, menyalakan tungku, lalu menanak nasi lebih banyak dari yang sanggup kami habiskan.'],
+  ['q', '“Kalau dia pulang lapar, jangan sampai dia tahu kita lupa,” katanya suatu sore, kepada tungku, bukan kepadaku.'],
+  ['p', 'Nasi sisa itu selalu ia bungkus daun pisang dan ia taruh di ambang jendela. Pagi harinya bungkusan itu sudah tidak ada. Aku tidak pernah bertanya siapa yang mengambilnya, dan Nenek tidak pernah merasa perlu menjelaskan.']
+];
+var TP_SURAT = [
+  ['p', 'Kek, ini surat ketiga yang kutulis tahun ini, dan seperti dua surat sebelumnya, aku tidak tahu harus mengirimnya ke mana. Kantor pos di dekat pelabuhan sudah lama menjadi toko ponsel. Tukang pos yang dulu mengantar kiriman dari Kakek sudah pensiun dan pindah ke Gresik, kata Ibu, ikut anak bungsunya yang membuka bengkel.'],
+  ['p', 'Jadi surat ini kusimpan saja di laci, bersama karcis kapal yang Kakek tinggalkan di saku jaket lama. Karcis itu sudah pudar. Tanggalnya tidak terbaca lagi, tetapi tujuan kapalnya masih jelas: Makassar. Aku sering membayangkan Kakek berdiri di geladak, memegang pagar besi yang dingin, menghitung lampu-lampu kota yang makin kecil di belakang.'],
+  ['p', 'Ibu jarang bercerita tentang Kakek. Kalau aku bertanya, ia menjawab dengan hal-hal kecil yang tidak menjawab apa-apa. Kakek suka kopi tanpa gula. Kakek tidur dengan radio menyala. Kakek tidak pernah mau difoto kalau sedang memakai kopiah, karena katanya kopiahnya terlalu besar dan membuat kepalanya tampak seperti kendi.'],
+  ['p', 'Dari potongan-potongan itu aku menyusun Kakek sendiri. Kakek yang kubuat tertawa dengan bahu, bukan dengan suara. Kakek yang kubuat menyimpan uang receh di kaleng biskuit dan membeli koran setiap Kamis, meski hanya membaca halaman cuaca. Aku tahu Kakek yang ini mungkin keliru, tetapi hanya Kakek ini yang kupunya.'],
+  ['p', 'Minggu lalu aku pergi ke pelabuhan sendirian. Bau solar dan ikan asin masih sama seperti yang Ibu ceritakan. Ada seorang bapak tua yang menjual kacang rebus di dekat gerbang, dan entah kenapa aku membeli dua bungkus. Satu kumakan sambil duduk di tepi dermaga. Satu lagi kubiarkan di sebelahku sampai dingin.'],
+  ['p', 'Bapak penjual kacang itu bertanya apakah aku menunggu kapal. Aku bilang tidak. Ia tertawa kecil dan bilang semua orang yang duduk di dermaga pada jam segitu sedang menunggu kapal, hanya saja sebagian tidak tahu kapal yang mana. Aku tidak membantah. Aku hanya menunjuk bungkus kacang yang kedua, dan ia mengangguk seperti sudah paham.'],
+  ['p', 'Aku ingin bertanya banyak hal, Kek. Kenapa Kakek pergi pada bulan puasa. Kenapa Kakek tidak membawa jaket yang karcisnya tertinggal itu. Apakah Kakek pernah menulis surat seperti ini juga, untuk seseorang yang tidak tahu harus dikirim ke mana, lalu menyimpannya di laci sampai kertasnya menguning dan tulisannya pudar.'],
+  ['p', 'Nenek tidak pernah marah kalau nama Kakek disebut. Ia hanya berhenti sebentar, seperti orang yang mendengar namanya dipanggil dari jauh, lalu melanjutkan pekerjaannya. Menyapu, menjemur, menanak nasi lebih banyak dari yang kami perlukan. Dulu aku mengira itu kebiasaan orang tua. Sekarang aku mengerti bahwa itu cara Nenek menunggu tanpa mengaku menunggu.'],
+  ['p', 'Ada satu hal yang belum pernah kuceritakan kepada siapa pun. Di bagian dalam jaket Kakek, di balik lapisan kain yang sobek, aku menemukan secarik kertas bertuliskan alamat di Makassar. Aku belum berani mencarinya. Aku takut alamat itu masih ada, dan lebih takut lagi kalau ternyata sudah tidak ada.'],
+  ['p', 'Kalau surat ini suatu hari sampai, Kakek tidak perlu membalas. Aku hanya ingin Kakek tahu bahwa rumah masih berdiri di tempat yang sama. Jambu air di halaman sudah dua kali ditebang dan dua kali tumbuh lagi. Radio Kakek masih ada di atas lemari, dan setiap malam Nenek menyalakannya sebentar sebelum tidur.'],
+  ['p', 'Aku akan menulis lagi bulan depan. Mungkin waktu itu aku sudah berani bertanya kepada Ibu tentang malam Kakek berangkat. Mungkin juga belum. Untuk sementara, aku akan terus datang ke pelabuhan setiap Sabtu, membeli dua bungkus kacang rebus, dan menunggu dengan cara yang Nenek ajarkan: diam, sabar, dan sedikit basah.']
+];
+var TP_LANGSUNG = [
+  ['p', 'Listrik baru masuk ke kampung kami ketika aku kelas empat, tetapi Uwak tetap menyalakan lampu tempel setiap magrib. Katanya, lampu listrik terlalu jujur. Semua sudut terlihat, semua debu ketahuan, dan orang jadi malu duduk lama-lama.'],
+  ['p', 'Lampu tempel lain. Cahayanya hanya cukup untuk wajah orang yang sedang bicara. Yang lain boleh diam di gelap, mendengarkan, tanpa harus menunjukkan bahwa mereka sedang menangis.']
+];
+var TP_DOCS = [
+  { t: 'Yang Ditunggu Nenek di Bawah Jambu Air', meta: 'Cerpen · diubah hari ini, 14.02' },
+  { t: 'Surat untuk Kakek di Pelabuhan', meta: 'Esai · diubah hari ini, 11.20' },
+  { t: 'Daftar nama tokoh', meta: 'Catatan · diubah 12 Nov' },
+  { t: 'Catatan riset: Pelabuhan Tanjung Perak', meta: 'Catatan · diubah 9 Nov' }
+];
+function tpWords(list) { var n = 0; list.forEach(function (b) { n += b[1].split(/\s+/).filter(Boolean).length; }); return n; }
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    var st = props.state || 'pilihBlok';
+    var sel = st === 'melebihi' ? TP_SURAT.map(function (b, i) { return i; }) : [0, 1, 2, 3];
+    this.state = { w: 1440, sel: sel, mode: null, step: null };
+    this.uid = 'tp' + Math.random().toString(36).slice(2, 8);
+  }
+  componentDidMount() {
+    var self = this;
+    this.onResize = function () { self.setState({ w: window.innerWidth }); };
+    window.addEventListener('resize', this.onResize);
+    this.setState({ w: window.innerWidth });
+  }
+  componentWillUnmount() { window.removeEventListener('resize', this.onResize); }
+  renderVals() {
+    var self = this, s = this.state, p = this.props;
+    var st = s.step || p.state || 'pilihBlok';
+    var mob = p.device === 'mobile' || (p.device !== 'desktop' && s.w < 768);
+    var direct = st === 'kosong' || st === 'langsung' || st === 'sumberHapus';
+    var pickDoc = st === 'pilihDok' || st === 'memuat' || st === 'galat';
+    var pickBlk = st === 'pilihBlok' || st === 'melebihi' || st === 'galatTerbit' || st === 'pratinjau';
+    var done = st === 'sukses';
+    var surat = st === 'melebihi';
+    var src = surat ? TP_SURAT : TP_NENEK;
+    var chosen = src.filter(function (b, i) { return s.sel.indexOf(i) >= 0; });
+    var dList = st === 'kosong' ? [] : (st === 'sumberHapus' ? TP_NENEK.slice(0, 4) : TP_LANGSUNG);
+    var words = direct ? tpWords(dList) : (pickBlk ? tpWords(chosen) : 0);
+    var over = words > 500;
+    var mobBlkOnly = mob && (st === 'pilihBlok' || st === 'melebihi');
+    var mobPrevOnly = mob && st === 'pratinjau';
+    var toBlocks = function (list) { return list.map(function (b) { return { text: b[1], para: b[0] === 'p', quote: b[0] === 'q' }; }); };
+    var pTitle = surat ? 'Surat untuk Kakek di Pelabuhan' : 'Hujan Pertama Bulan November';
+    var bodyCls = done ? 'is-one' : (direct ? 'is-direct' : (pickBlk ? 'is-pick' : 'is-one'));
+    return {
+      theme: p.theme === 'dark' ? 'dark' : 'light',
+      rootCls: mob ? 'is-m' : 'is-d',
+      scrollCls: mob ? 'tp-mscroll' : '',
+      isDesk: !mob, isMob: mob,
+      barTitle: done ? 'Postingan terbit' : (st === 'sumberHapus' || st === 'galatTerbit' ? 'Draf postingan' : 'Postingan baru'),
+      showDraftState: st === 'sumberHapus',
+      barActs: !done,
+      mBackX: !(mob && st === 'pratinjau'), mBackArrow: mob && st === 'pratinjau',
+      mBackAria: (mob && st === 'pratinjau') ? 'Kembali memilih bagian' : 'Tutup tanpa menerbitkan',
+      draftOff: st === 'kosong' || pickDoc,
+      pubOff: st === 'kosong' || pickDoc || over || (mob && st === 'pilihBlok'),
+      pubBusy: 'false',
+      tabsOn: !done && !(mob && st === 'pratinjau'),
+      tabDirectSel: direct ? 'true' : 'false', tabPickSel: direct ? 'false' : 'true',
+      goDirect: function () { self.setState({ step: 'langsung' }); },
+      goPick: function () { self.setState({ step: 'pilihDok' }); },
+      goBlocks: function () { self.setState({ step: 'pilihBlok' }); },
+      goDocs: function () { self.setState({ step: 'pilihDok' }); },
+      bodyCls: bodyCls,
+      pubErr: st === 'galatTerbit',
+      srcGone: st === 'sumberHapus',
+      isDirect: direct,
+      dTitle: st === 'kosong' ? '' : (st === 'sumberHapus' ? 'Hujan Pertama Bulan November' : 'Lampu Tempel'),
+      dEmpty: st === 'kosong',
+      dBlocks: toBlocks(dList),
+      edSize: mob ? 'rm-editor--s' : '',
+      isPickDoc: pickDoc,
+      docsLoading: st === 'memuat', docsErr: st === 'galat', docsOk: st === 'pilihDok',
+      skels: [{ w: '72%' }, { w: '56%' }, { w: '40%' }, { w: '64%' }],
+      docs: TP_DOCS.map(function (d, i) { return { t: d.t, meta: d.meta, on: i === 0, name: self.uid + '-doc' }; }),
+      isPickBlk: pickBlk && !mobPrevOnly,
+      docTitle: surat ? 'Surat untuk Kakek di Pelabuhan' : 'Yang Ditunggu Nenek di Bawah Jambu Air',
+      blocks: src.map(function (b, i) {
+        var on = s.sel.indexOf(i) >= 0;
+        var n = b[1].split(/\s+/).filter(Boolean).length;
+        return {
+          text: b[1], cls: (on ? 'is-on' : '') + (b[0] === 'q' ? ' is-q' : ''), chk: on ? 'is-done' : '',
+          aria: (on ? 'Dipilih, ' : 'Tidak dipilih, ') + n + ' kata',
+          toggle: function () { var a = self.state.sel.slice(); var k = a.indexOf(i); if (k >= 0) a.splice(k, 1); else a.push(i); a.sort(function (x, y) { return x - y; }); self.setState({ sel: a }); }
+        };
+      }),
+      sideOn: (direct || (pickBlk && !mobBlkOnly)) && !done,
+      pTitle: pTitle,
+      kindPro: !((direct && st === 'langsung') || surat) && st !== 'kosong',
+      kindCup: (direct && st === 'langsung') || surat,
+      nKind: this.uid + '-kind', nVis: this.uid + '-vis',
+      genre: st === 'kosong' ? 'Pilih genre' : (surat ? 'Esai' : 'Cerpen'),
+      visPub: st !== 'kosong',
+      visNone: st === 'kosong',
+      countSide: !mob,
+      overCls: over ? 'is-over' : '',
+      wordsNum: words.toLocaleString('id-ID'),
+      barW: Math.min(100, Math.round(words / 5)) + '%',
+      isOver: over,
+      overBy: (words - 500) + ' kata',
+      overMsg: 'Lebih ' + (words - 500) + ' kata dari batas 500. Kurangi bagian yang dipilih atau simpan sebagai draf; tidak ada teks yang terhapus.',
+      prevOn: pickBlk && !mobBlkOnly,
+      markLabel: surat ? 'Cuplikan · Esai' : 'Prolog · Cerpen',
+      scopeKind: surat ? 'Cuplikan' : 'Prolog',
+      prevBlocks: toBlocks(chosen),
+      isDone: done,
+      mFoot: mob && !done && !pickDoc && st !== 'pratinjau',
+      mPrevBtn: mobBlkOnly, mDraftBtn: !mobBlkOnly,
+      goPrev: function () { self.setState({ step: 'pratinjau' }); },
+      titleField: pickBlk,
+      mOff: (mob && p.offset) ? '-' + p.offset + 'px' : '0px'
+    };
+  }
+}
+</script>
+</body>
+</html>

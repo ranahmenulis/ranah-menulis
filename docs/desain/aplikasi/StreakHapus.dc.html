@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Menghapus tulisan hari ini, dua opsi</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/ranahmenulis/components/variabel.css">
+<link rel="stylesheet" href="ds/ranahmenulis/components/bundle.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600&amp;family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&amp;display=swap">
+<style>
+body{margin:0}
+.st-row{display:grid;grid-template-columns:320px 1440px 390px 390px;gap:0 40px;align-items:start;padding:40px 0;border-top:1px solid var(--line)}
+.st-head{margin:0;padding:48px 0 8px;font:600 22px/30px var(--font-sans);border-top:1px solid var(--line-strong)}
+.cap{display:grid;gap:8px;align-content:start}
+.cap .num{margin:0;font:400 44px/1 var(--font-serif);color:var(--ink);font-variant-numeric:lining-nums}
+.cap h2{margin:0;font:600 18px/26px var(--font-sans)}
+.cap p{margin:0;font:400 14px/22px var(--font-sans);color:var(--ink-muted)}
+.cap .flag{color:var(--ink);font-weight:500}
+.cell{display:grid;gap:8px;align-content:start;min-width:0}
+.th{margin:0;font:500 13px/18px var(--font-sans);color:var(--ink-muted)}
+.sub{margin:8px 0 0;font:400 13px/18px var(--font-sans);color:var(--ink-muted)}
+.cr{overflow:hidden;outline:1px solid var(--line);position:relative}
+</style>
+</helmet>
+<div data-theme="light" style="width: 2660px; background: var(--canvas); color: var(--ink); font-family: var(--font-sans); display: grid; align-content: start">
+  <div style="display: grid; gap: 8px; max-width: 1040px; padding-bottom: 40px">
+    <p style="margin: 0; font: 600 28px/34px var(--font-sans)">Menghapus tulisan hari ini: dua opsi untuk dipilih client [konfirmasi]</p>
+    <p style="margin: 0; font: 400 16px/24px var(--font-sans); color: var(--ink-muted)">PRD belum sepakat. BR-STK-04 (usulan): menghapus tulisan hari ini mengurangi progres. Q-08 (default): tidak mengurangi. Contoh yang sama untuk semua baris: target 500, streak sebelum hari ini 6 hari, dokumen “Yang Ditunggu Nenek di Bawah Jambu Air”, lalu satu kalimat 14 kata yang ditulis hari ini dihapus.</p>
+  </div>
+
+  <p class="st-head">Kasus 1 · belum tercapai: indikator 468 / 500, lalu 14 kata hari ini dihapus</p>
+  <section class="st-row">
+    <div class="cap"><p class="num">A</p><h2>Mengurangi progres</h2><p>BR-STK-04 usulan. Indikator turun ke 454 / 500, sama dengan yang sudah digambar di papan Menulis menggerakkan Streak, langkah 6. Dokumen 153 kata.</p></div>
+    <div class="cell"><p class="sub">Desktop · terang</p><div class="cr" style="width: 1440px; height: 57px"><dc-import name="Main" device="desktop" state="tersimpan" tg="hapusBaru" hint-size="1440px,960px"></dc-import></div><p class="sub">Desktop · gelap</p><div class="cr" style="width: 1440px; height: 57px"><dc-import name="Main" device="desktop" state="tersimpan" tg="hapusBaru" theme="dark" hint-size="1440px,960px"></dc-import></div></div>
+    <div class="cell"><p class="th">Ponsel · terang</p><div class="cr" style="width: 390px; height: 104px"><dc-import name="Main" device="mobile" state="tersimpan" tg="hapusBaru" hint-size="390px,844px"></dc-import></div></div>
+    <div class="cell"><p class="th">Ponsel · gelap</p><div class="cr" style="width: 390px; height: 104px"><dc-import name="Main" device="mobile" state="tersimpan" tg="hapusBaru" theme="dark" hint-size="390px,844px"></dc-import></div></div>
+  </section>
+  <section class="st-row">
+    <div class="cap"><p class="num">B</p><h2>Tidak mengurangi progres</h2><p>Default Q-08. Indikator tetap 468 / 500, dokumen tetap turun ke 153 kata. Popover menyebut alasannya sekali, dengan nada netral.</p></div>
+    <div class="cell"><p class="sub">Desktop · terang, indikator diketuk</p><div class="cr" style="width: 1440px; height: 400px"><dc-import name="Main" device="desktop" state="tersimpan" tg="hapusTetap" tg-pop="true" hint-size="1440px,960px"></dc-import></div><p class="sub">Desktop · gelap</p><div class="cr" style="width: 1440px; height: 57px"><dc-import name="Main" device="desktop" state="tersimpan" tg="hapusTetap" theme="dark" hint-size="1440px,960px"></dc-import></div></div>
+    <div class="cell"><p class="th">Ponsel · terang</p><div class="cr" style="width: 390px; height: 460px"><dc-import name="Main" device="mobile" state="tersimpan" tg="hapusTetap" tg-pop="true" hint-size="390px,844px"></dc-import></div></div>
+    <div class="cell"><p class="th">Ponsel · gelap</p><div class="cr" style="width: 390px; height: 460px"><dc-import name="Main" device="mobile" state="tersimpan" tg="hapusTetap" theme="dark" tg-pop="true" hint-size="390px,844px"></dc-import></div></div>
+  </section>
+
+  <p class="st-head">Kasus 2 · tercapai lalu dihapus: indikator 500 / 500 pukul 14.20, lalu 14 kata hari ini dihapus</p>
+  <section class="st-row">
+    <div class="cap"><p class="num">A1</p><h2>Mengurangi, status dicabut</h2><p>Indikator 486 / 500, cincin kembali terbuka. Popover: streak kembali 6 hari, hari ini belum dihitung. Tanpa merah dan tanpa kata gagal.</p></div>
+    <div class="cell"><p class="sub">Desktop · terang, indikator diketuk</p><div class="cr" style="width: 1440px; height: 400px"><dc-import name="Main" device="desktop" state="tersimpan" tg="tercabut" tg-pop="true" hint-size="1440px,960px"></dc-import></div><p class="sub">Desktop · gelap</p><div class="cr" style="width: 1440px; height: 57px"><dc-import name="Main" device="desktop" state="tersimpan" tg="tercabut" theme="dark" hint-size="1440px,960px"></dc-import></div></div>
+    <div class="cell"><p class="th">Ponsel · terang</p><div class="cr" style="width: 390px; height: 460px"><dc-import name="Main" device="mobile" state="tersimpan" tg="tercabut" tg-pop="true" hint-size="390px,844px"></dc-import></div></div>
+    <div class="cell"><p class="th">Ponsel · gelap</p><div class="cr" style="width: 390px; height: 460px"><dc-import name="Main" device="mobile" state="tersimpan" tg="tercabut" theme="dark" tg-pop="true" hint-size="390px,844px"></dc-import></div></div>
+  </section>
+  <section class="st-row">
+    <div class="cap"><p class="num">A2</p><h2>Mengurangi, status tidak dicabut</h2><p>Indikator 486 / 500, tetapi cincin tetap penuh dan streak tetap 7 hari. Angka dan cincin tidak lagi sejalan; popover menjelaskannya.</p></div>
+    <div class="cell"><p class="sub">Desktop · terang, indikator diketuk</p><div class="cr" style="width: 1440px; height: 400px"><dc-import name="Main" device="desktop" state="tersimpan" tg="tercapaiTetapA" tg-pop="true" hint-size="1440px,960px"></dc-import></div><p class="sub">Desktop · gelap</p><div class="cr" style="width: 1440px; height: 57px"><dc-import name="Main" device="desktop" state="tersimpan" tg="tercapaiTetapA" theme="dark" hint-size="1440px,960px"></dc-import></div></div>
+    <div class="cell"><p class="th">Ponsel · terang</p><div class="cr" style="width: 390px; height: 460px"><dc-import name="Main" device="mobile" state="tersimpan" tg="tercapaiTetapA" tg-pop="true" hint-size="390px,844px"></dc-import></div></div>
+    <div class="cell"><p class="th">Ponsel · gelap</p><div class="cr" style="width: 390px; height: 460px"><dc-import name="Main" device="mobile" state="tersimpan" tg="tercapaiTetapA" theme="dark" tg-pop="true" hint-size="390px,844px"></dc-import></div></div>
+  </section>
+  <section class="st-row">
+    <div class="cap"><p class="num">B</p><h2>Tidak mengurangi</h2><p>Indikator tetap 500 / 500 dan streak tetap 7 hari. Status tidak mungkin dicabut karena angkanya tidak turun. Dokumen 185 kata.</p></div>
+    <div class="cell"><p class="sub">Desktop · terang, indikator diketuk</p><div class="cr" style="width: 1440px; height: 400px"><dc-import name="Main" device="desktop" state="tersimpan" tg="tercapaiTetapB" tg-pop="true" hint-size="1440px,960px"></dc-import></div><p class="sub">Desktop · gelap</p><div class="cr" style="width: 1440px; height: 57px"><dc-import name="Main" device="desktop" state="tersimpan" tg="tercapaiTetapB" theme="dark" hint-size="1440px,960px"></dc-import></div></div>
+    <div class="cell"><p class="th">Ponsel · terang</p><div class="cr" style="width: 390px; height: 460px"><dc-import name="Main" device="mobile" state="tersimpan" tg="tercapaiTetapB" tg-pop="true" hint-size="390px,844px"></dc-import></div></div>
+    <div class="cell"><p class="th">Ponsel · gelap</p><div class="cr" style="width: 390px; height: 460px"><dc-import name="Main" device="mobile" state="tersimpan" tg="tercapaiTetapB" theme="dark" tg-pop="true" hint-size="390px,844px"></dc-import></div></div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":2660,"height":3000}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
