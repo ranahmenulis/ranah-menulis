@@ -23,8 +23,7 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
-    // Not part of this repo (see .gitignore): legacy project and local agent tooling.
-    "ranahmenulis/**",
+    // Not part of this repo (see .gitignore): local agent tooling.
     ".agents/**",
     ".claude/**",
   ]),
