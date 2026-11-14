@@ -59,7 +59,13 @@ export function ErrorBanner({
   className?: string;
 }) {
   return (
-    <div role="alert" className={cn("flex items-start gap-3 bg-danger-subtle px-4 py-3.5 text-sm text-ink", className)}>
+    <div
+      role="alert"
+      className={cn(
+        "flex items-start gap-3 bg-danger-subtle px-4 py-3.5 text-sm text-ink",
+        className,
+      )}
+    >
       <WarningCircle size={20} aria-hidden className="shrink-0 text-danger" />
       <p className="min-w-0 flex-1">{children}</p>
       {action}
@@ -68,7 +74,9 @@ export function ErrorBanner({
 }
 
 /** Tombol "Coba lagi" untuk ErrorBanner. Pakai di komponen klien yang memegang aksinya. */
-export function RetryButton(props: Omit<ComponentProps<typeof Button>, "variant" | "size" | "children">) {
+export function RetryButton(
+  props: Omit<ComponentProps<typeof Button>, "variant" | "size" | "children">,
+) {
   return (
     <Button variant="secondary" size="sm" className="-my-1" {...props}>
       Coba lagi

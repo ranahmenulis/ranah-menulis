@@ -40,7 +40,7 @@ export function Avatar({ name, src, size = 32, className }: AvatarProps) {
       aria-label={name}
       style={{ ...style, fontSize: size * 0.4 }}
       className={cn(
-        "inline-grid shrink-0 place-items-center rounded-full bg-subtle font-medium leading-none text-ink-muted",
+        "inline-grid shrink-0 place-items-center rounded-full bg-subtle leading-none font-medium text-ink-muted",
         className,
       )}
     >

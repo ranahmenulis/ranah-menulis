@@ -91,33 +91,81 @@
 /* Bagian yang dibalik (daftar tunggu di landing): memakai set token tema lawan, sehingga
    input, chip, fokus, galat, dan logo tetap terbaca. Ikut tema yang sedang berlaku. */
 .theme-invert {
-  --canvas: #121212; --surface: #1a1a1a; --subtle: #232323; --ink: #ededed; --ink-read: #d2d2d2;
-  --ink-muted: #a3a3a3; --ink-faint: #8c8c8c; --line: #2e2e2e; --line-strong: #ededed;
-  --on-ink: #121212; --danger: #ff8f87; --danger-subtle: #2a1716; --float-shadow: none;
-  --logo-light: none; --logo-dark: inline-block; --cover-edge: #2e2e2e;
+  --canvas: #121212;
+  --surface: #1a1a1a;
+  --subtle: #232323;
+  --ink: #ededed;
+  --ink-read: #d2d2d2;
+  --ink-muted: #a3a3a3;
+  --ink-faint: #8c8c8c;
+  --line: #2e2e2e;
+  --line-strong: #ededed;
+  --on-ink: #121212;
+  --danger: #ff8f87;
+  --danger-subtle: #2a1716;
+  --float-shadow: none;
+  --logo-light: none;
+  --logo-dark: inline-block;
+  --cover-edge: #2e2e2e;
   color-scheme: dark;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) .theme-invert {
-    --canvas: #ffffff; --surface: #ffffff; --subtle: #f3f3f3; --ink: #191919; --ink-read: #191919;
-    --ink-muted: #5e5e5e; --ink-faint: #767676; --line: #e6e6e6; --line-strong: #191919;
-    --on-ink: #ffffff; --danger: #b3261e; --danger-subtle: #fbeeed; --float-shadow: 0 2px 12px rgb(0 0 0 / 0.08);
-    --logo-light: inline-block; --logo-dark: none; --cover-edge: transparent;
+    --canvas: #ffffff;
+    --surface: #ffffff;
+    --subtle: #f3f3f3;
+    --ink: #191919;
+    --ink-read: #191919;
+    --ink-muted: #5e5e5e;
+    --ink-faint: #767676;
+    --line: #e6e6e6;
+    --line-strong: #191919;
+    --on-ink: #ffffff;
+    --danger: #b3261e;
+    --danger-subtle: #fbeeed;
+    --float-shadow: 0 2px 12px rgb(0 0 0 / 0.08);
+    --logo-light: inline-block;
+    --logo-dark: none;
+    --cover-edge: transparent;
     color-scheme: light;
   }
 }
 [data-theme="dark"] .theme-invert {
-  --canvas: #ffffff; --surface: #ffffff; --subtle: #f3f3f3; --ink: #191919; --ink-read: #191919;
-  --ink-muted: #5e5e5e; --ink-faint: #767676; --line: #e6e6e6; --line-strong: #191919;
-  --on-ink: #ffffff; --danger: #b3261e; --danger-subtle: #fbeeed; --float-shadow: 0 2px 12px rgb(0 0 0 / 0.08);
-  --logo-light: inline-block; --logo-dark: none; --cover-edge: transparent;
+  --canvas: #ffffff;
+  --surface: #ffffff;
+  --subtle: #f3f3f3;
+  --ink: #191919;
+  --ink-read: #191919;
+  --ink-muted: #5e5e5e;
+  --ink-faint: #767676;
+  --line: #e6e6e6;
+  --line-strong: #191919;
+  --on-ink: #ffffff;
+  --danger: #b3261e;
+  --danger-subtle: #fbeeed;
+  --float-shadow: 0 2px 12px rgb(0 0 0 / 0.08);
+  --logo-light: inline-block;
+  --logo-dark: none;
+  --cover-edge: transparent;
   color-scheme: light;
 }
 [data-theme="light"] .theme-invert {
-  --canvas: #121212; --surface: #1a1a1a; --subtle: #232323; --ink: #ededed; --ink-read: #d2d2d2;
-  --ink-muted: #a3a3a3; --ink-faint: #8c8c8c; --line: #2e2e2e; --line-strong: #ededed;
-  --on-ink: #121212; --danger: #ff8f87; --danger-subtle: #2a1716; --float-shadow: none;
-  --logo-light: none; --logo-dark: inline-block; --cover-edge: #2e2e2e;
+  --canvas: #121212;
+  --surface: #1a1a1a;
+  --subtle: #232323;
+  --ink: #ededed;
+  --ink-read: #d2d2d2;
+  --ink-muted: #a3a3a3;
+  --ink-faint: #8c8c8c;
+  --line: #2e2e2e;
+  --line-strong: #ededed;
+  --on-ink: #121212;
+  --danger: #ff8f87;
+  --danger-subtle: #2a1716;
+  --float-shadow: none;
+  --logo-light: none;
+  --logo-dark: inline-block;
+  --cover-edge: #2e2e2e;
   color-scheme: dark;
 }
 
@@ -200,12 +248,16 @@
     background: var(--line);
   }
 
-  h1, h2, h3 {
+  h1,
+  h2,
+  h3 {
     text-wrap: balance;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
+    *,
+    *::before,
+    *::after {
       animation-duration: 1ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 1ms !important;
@@ -347,13 +399,23 @@
 
 /* Denyut skeleton dan titik memuat. Tidak bergerak bila reduced-motion. */
 @keyframes rm-pulse {
-  0%, 100% { opacity: 0.25; }
-  50% { opacity: 1; }
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 @keyframes rm-skel {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.55; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
 }
 
 /* Landing */
@@ -372,7 +434,9 @@
 }
 
 @keyframes lp-blink {
-  50% { opacity: 0; }
+  50% {
+    opacity: 0;
+  }
 }
 
 /* Hero bergerak: skrip kecil di halaman memasang is-animating pada <html> sebelum tampilan pertama.

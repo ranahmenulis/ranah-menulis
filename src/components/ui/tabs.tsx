@@ -8,8 +8,7 @@ export type TabItem = { id: string; label: string; href?: string };
 
 const bar =
   "flex gap-6 overflow-x-auto overflow-y-hidden shadow-[inset_0_-1px_0_var(--line)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden";
-const tab =
-  "shrink-0 cursor-pointer whitespace-nowrap py-3 text-sm no-underline";
+const tab = "shrink-0 cursor-pointer whitespace-nowrap py-3 text-sm no-underline";
 // Garis digambar dengan box-shadow inset, bukan border bermargin negatif, supaya bilah yang
 // bisa digulir tidak memunculkan scrollbar vertikal.
 const active = "text-ink shadow-[inset_0_-1px_0_var(--line-strong)]";

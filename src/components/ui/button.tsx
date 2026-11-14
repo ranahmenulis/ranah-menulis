@@ -23,10 +23,8 @@ const base =
 const variants: Record<ButtonVariant, string> = {
   primary:
     "border-transparent bg-ink text-on-ink hover:opacity-(--opacity-hover) active:opacity-press",
-  secondary:
-    "border-ink text-ink transition-none hover:bg-subtle active:bg-line",
-  text:
-    "border-transparent text-ink-muted transition-none hover:text-ink active:text-ink active:underline active:underline-offset-3",
+  secondary: "border-ink text-ink transition-none hover:bg-subtle active:bg-line",
+  text: "border-transparent text-ink-muted transition-none hover:text-ink active:text-ink active:underline active:underline-offset-3",
   // Hanya di dialog konfirmasi. Label on-ink agar tetap terbaca di mode gelap (usulan).
   danger:
     "border-transparent bg-danger text-on-ink hover:opacity-(--opacity-hover) active:opacity-press",
@@ -65,7 +63,8 @@ export function LoadingDots() {
   );
 }
 
-type ButtonProps = Common & Omit<ComponentProps<"button">, "type"> & { type?: "button" | "submit" | "reset" };
+type ButtonProps = Common &
+  Omit<ComponentProps<"button">, "type"> & { type?: "button" | "submit" | "reset" };
 
 export function Button({
   variant,

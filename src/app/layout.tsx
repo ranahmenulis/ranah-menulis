@@ -19,8 +19,7 @@ const serif = Source_Serif_4({
 
 export const metadata: Metadata = {
   title: "RanahMenulis",
-  description:
-    "Ekosistem digital untuk menulis, komunitas literasi, dan penerbitan buku.",
+  description: "Ekosistem digital untuk menulis, komunitas literasi, dan penerbitan buku.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -30,7 +29,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       suppressHydrationWarning // skrip landing memasang kelas is-animating sebelum hidrasi
       className={`${sans.variable} ${serif.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="flex min-h-full flex-col">{children}</body>
     </html>
   );
 }
