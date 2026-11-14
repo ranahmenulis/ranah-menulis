@@ -1,5 +1,5 @@
 import { Wordmark } from "@/components/ui/logo";
-import { waitlist } from "./copy";
+import { waitlist } from "../copy";
 import { Grid, Wrap } from "./layout";
 import { WaitlistForm } from "./waitlist-form";
 
@@ -18,7 +18,9 @@ export function Waitlist() {
             <h2 id="wait-h" className="landing-h2">
               {waitlist.title}
             </h2>
-            <p className="font-serif text-xl leading-7 text-ink-muted md:text-[22px] md:leading-8">{waitlist.intro}</p>
+            <p className="font-serif text-xl leading-7 text-ink-muted md:text-[22px] md:leading-8">
+              {waitlist.intro}
+            </p>
           </div>
           <WaitlistForm />
         </Grid>

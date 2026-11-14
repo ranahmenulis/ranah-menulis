@@ -29,6 +29,14 @@ Urutan rilis dan ketergantungan data: `docs/MVP Scope RanahMenulis.md`. Backend 
 - File `.dc.html` tidak bisa dibuka di browser; baca sebagai teks. Catatan keputusan per bagian ada di `docs/desain/aplikasi/canvas.json` (`notes`).
 - Teknis: logo hanya PNG (belum ada SVG), jadi minta SVG ke pembuat logo; ikon di artifact digambar ulang, ganti dengan paket Phosphor asli; JPG logo berlatar putih tidak boleh dipasang di mode gelap.
 
+## Utang sebelum langkah 3 (per 15 November 2026)
+
+- Belum sesuai CLAUDE.md butir 5: tes RLS untuk migrasi 0002 belum ada (butuh Supabase lokal). Tes untuk server action daftar tunggu sudah ada di `src/features/landing/waitlist/actions.test.ts`, dan kode landing kini berada di `src/features/landing/` (aturan struktur ada di CLAUDE.md).
+- Migrasi 0002 belum diterapkan dan belum melewati persetujuan rencana (butir 3).
+- Dialog, Laci, Menu, dan Toast belum dibuat; Editor Studio membutuhkannya.
+- Pengalih tema manual belum ada (tema masih ikut sistem).
+- Uji viewport nyata: Chrome headless biasa terpotong di bawah 500px; pakai Chrome DevTools Protocol (`Emulation.setDeviceMetricsOverride`).
+
 ## Keputusan yang masih terbuka
 
 Memblokir tampilan:
