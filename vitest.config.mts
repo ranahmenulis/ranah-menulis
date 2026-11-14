@@ -11,6 +11,6 @@ export default defineConfig({
     // jsdom dipakai untuk semua tes; cukup untuk logika murni dan komponen.
     environment: "jsdom",
     include: ["src/**/*.test.{ts,tsx}"],
-    exclude: ["node_modules", ".next", "ranahmenulis"],
+    exclude: ["node_modules", ".next"],
   },
 });
