@@ -1,21 +1,23 @@
 import type { Metadata, Viewport } from "next";
-import { Schibsted_Grotesk, Source_Serif_4 } from "next/font/google";
+import { Inter, Merriweather } from "next/font/google";
 import { Suspense } from "react";
 import { ToastProvider } from "@/components/ui/toast";
 import { I18nRoot } from "@/lib/i18n/i18n-root";
 import { themeScript } from "@/lib/theme/theme";
 import "./globals.css";
 
-// Huruf sans masih usulan (DESIGN.md 4.2); final setelah uji spesimen.
-const sans = Schibsted_Grotesk({
+// Client font brief (DESIGN.md 4.2): Inter for the interface, Merriweather for writing and reading.
+// Both are variable; the opsz axis gives headings and large text their display cut.
+const sans = Inter({
   subsets: ["latin"],
-  variable: "--font-schibsted",
+  variable: "--font-inter",
+  axes: ["opsz"],
   display: "swap",
 });
 
-const serif = Source_Serif_4({
+const serif = Merriweather({
   subsets: ["latin"],
-  variable: "--font-source-serif",
+  variable: "--font-merriweather",
   axes: ["opsz"],
   style: ["normal", "italic"],
   display: "swap",

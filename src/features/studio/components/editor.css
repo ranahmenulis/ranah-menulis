@@ -1,4 +1,5 @@
-/* Writing surface (DESIGN.md 4.2 and 6.3). Text uses ink-read so dark mode is easier on the eyes. */
+/* Writing surface (DESIGN.md 4.2 and 6.3): Merriweather, sized like read-body and read-h2 so the
+   editor and the published post match. Text uses ink-read so dark mode is easier on the eyes. */
 
 .studio-prose {
   color: var(--ink-read);
@@ -11,17 +12,16 @@
 .studio-prose p {
   margin: 0 0 1.4em;
   font-family: var(--font-serif);
-  font-size: 1.125rem;
-  line-height: 1.8125rem;
-  letter-spacing: -0.003em;
+  font-size: 1rem;
+  line-height: 1.75rem;
   text-wrap: pretty;
 }
 
 .studio-prose h2 {
   margin: 1.6em 0 0.6em;
   font-family: var(--font-serif);
-  font-size: 1.375rem;
-  line-height: 1.875rem;
+  font-size: 1.25rem;
+  line-height: 1.75rem;
   font-weight: 600;
   text-wrap: balance;
 }
@@ -38,8 +38,8 @@
   margin: 0 0 1.4em;
   padding-left: 1.5em;
   font-family: var(--font-serif);
-  font-size: 1.125rem;
-  line-height: 1.8125rem;
+  font-size: 1rem;
+  line-height: 1.75rem;
 }
 
 .studio-prose ul {
@@ -66,12 +66,12 @@
   .studio-prose p,
   .studio-prose ul,
   .studio-prose ol {
-    font-size: 1.25rem;
-    line-height: 2rem;
+    font-size: 1.125rem;
+    line-height: 1.875rem;
   }
 
   .studio-prose h2 {
-    font-size: 1.625rem;
-    line-height: 2.125rem;
+    font-size: 1.4375rem;
+    line-height: 2rem;
   }
 }

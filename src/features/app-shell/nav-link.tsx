@@ -15,7 +15,8 @@ const layout: Record<Variant, string> = {
 };
 
 /**
- * One navigation entry. Active = ink, weight 500, filled icon; no pill behind it (DESIGN.md 5.1).
+ * One navigation entry, always weight 500 (client font brief). Active = ink and a filled icon; no
+ * pill behind it (DESIGN.md 5.1). The weight never changes, so labels do not shift.
  * An entry without a destination yet renders as a disabled item instead of a link to nowhere.
  */
 export function NavLink({
@@ -32,8 +33,8 @@ export function NavLink({
   const label = nav[entry.id as keyof typeof nav] ?? entry.label;
   const cls = cn(
     layout[variant],
-    "no-underline",
-    active ? "font-medium text-ink" : "text-ink-muted",
+    "font-medium no-underline",
+    active ? "text-ink" : "text-ink-muted",
     href ? "hover:text-ink" : "cursor-default opacity-(--opacity-disabled)",
   );
   const content = (
