@@ -1,6 +1,7 @@
 import {
   BookmarkSimple,
   Books,
+  Compass,
   House,
   Notebook,
   User,
@@ -22,16 +23,27 @@ export const DUMMY_USER = { name: "Rinjani Putri", unread: 3 };
 export const STUDIO_HREF = "/studio";
 export const STREAK_HREF = "/studio/streak";
 export const NEW_DOCUMENT_HREF = "/studio/baru";
+export const DISCOVER_HREF = "/jelajahi";
+export const NEW_POST_HREF = "/tulis";
 
 const home: NavEntry = { id: "beranda", label: "Beranda", Icon: House, href: "/beranda" };
+const discover: NavEntry = {
+  id: "jelajahi",
+  label: "Jelajahi",
+  Icon: Compass,
+  href: DISCOVER_HREF,
+};
 const studio: NavEntry = { id: "studio", label: "Studio", Icon: Notebook, href: STUDIO_HREF };
 const streak: NavEntry = { id: "streak", label: "Streak", Icon: CalendarDots, href: STREAK_HREF };
 const projects: NavEntry = { id: "projects", label: "Projects", Icon: Books };
 const saved: NavEntry = { id: "tersimpan", label: "Tersimpan", Icon: BookmarkSimple };
 const profile: NavEntry = { id: "profil", label: "Profil", Icon: User };
 
-/** Desktop sidebar and tablet rail. Streak is a sub-item of Studio on the sidebar (DESIGN.md 5.3). */
-export const mainNav = [home, studio, projects, saved, profile];
+/**
+ * Desktop sidebar and tablet rail. Streak is a sub-item of Studio on the sidebar (DESIGN.md 5.3).
+ * Jelajahi sits under Beranda [usulan]; phones keep five tabs and open it from the search icon.
+ */
+export const mainNav = [home, discover, studio, projects, saved, profile];
 export const sidebarSub = streak;
 /** Phones: five tabs per PRD 16. [konfirmasi] four tabs is a proposal. */
 export const bottomNav = [home, studio, streak, projects, profile];
@@ -41,7 +53,16 @@ export function activeId(pathname: string): string | null {
   if (pathname.startsWith(STREAK_HREF)) return "streak";
   if (pathname.startsWith(STUDIO_HREF)) return "studio";
   if (pathname.startsWith("/beranda")) return "beranda";
+  if (pathname.startsWith(DISCOVER_HREF)) return "jelajahi";
   return null;
+}
+
+/**
+ * A post page replaces the phone bottom bar with its own action bar and the top bar with a back
+ * arrow [usulan, DESIGN.md 6.9]. Applies below md only; wider screens keep the full frame.
+ */
+export function isPostPage(pathname: string): boolean {
+  return pathname.startsWith("/postingan/");
 }
 
 /** Title in the phone top bar; Beranda shows the logo alone. */
