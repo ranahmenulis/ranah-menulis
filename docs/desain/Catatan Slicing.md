@@ -14,12 +14,18 @@ Serah terima per **15 November 2026** untuk sesi yang mulai mengubah desain menj
 2. [x] **Landing.** Papan di `docs/desain/landing/`, teks di `docs/Copy Landing RanahMenulis.md`. Gerak hero: `landing/Gerak.dc.html`.
    Sisa sebelum tayang: terapkan migrasi `0002_daftar_tunggu.sql` ke Supabase, halaman `/kebijakan-privasi` dan `/kontak` (tautan sudah dipasang, halamannya belum ada), gambar Open Graph 1200×630 (papan `OG.dc.html`), SVG logo, dan tiga butir persetujuan client di bawah.
 3. [x] **Editor Studio** (dengan IndikatorSimpan, IndikatorTarget, DialogKonflik, drawer bantuan, mode fokus), selesai 15 November 2026 dengan **penyimpanan di perangkat** (IndexedDB). Overlay Dialog, Laci, Menu, Popover, dan Toast ada di `src/components/ui/`; editor di `src/features/studio/`, rute `/studio/[id]`. Sisa yang disengaja, jangan dianggap selesai:
-   - **3c, sinkron server:** migrasi `documents` + RLS + tes RLS, dan store Supabase. Butuh login (R1); diajukan sebagai rencana sendiri. Sampai itu, "Tersimpan" berarti tersimpan di perangkat dan "Belum tersinkron" hanya muncul saat peramban offline.
+   - **Keputusan user (15 November 2026): seluruh slicing memakai data dummy dan login di-bypass sampai semua layar selesai dan desain disetujui.** Backend (auth, migrasi, RLS, store Supabase) baru dikerjakan sesudahnya; jangan membangunnya lebih awal.
+   - **3c, sinkron server (ditunda sampai desain disetujui):** migrasi `documents` + RLS + tes RLS, dan store Supabase. Butuh login (R1); diajukan sebagai rencana sendiri. Sampai itu, "Tersimpan" berarti tersimpan di perangkat dan "Belum tersinkron" hanya muncul saat peramban offline.
    - Butir menu **Kirim ke proyek, Ekspor, Pindah ke sampah** dan tombol **Bagikan** tampil nonaktif (menunggu Projects R4, ekspor STD-07, daftar dokumen langkah 4, dialog Bagikan langkah 6).
    - Tautan "Kembali ke Studio" menuju `/` dan popover target belum punya "Buka Streak" sampai tab Streak ada (langkah 4).
    - **[konfirmasi]** target harian 500 tetap (STK-01), aturan menghapus tulisan hari ini (dipakai opsi mengurangi, BR-STK-04), ambang teks tempel (Q-08, belum ada batas), zona waktu hari mengikuti perangkat, isi kit inspirasi (contoh sementara di `help-content.ts`).
    - Keadaan "Belum tersimpan" (penyimpanan perangkat gagal, mencoba ulang tiap 5 detik) tidak ada di papan; ditambahkan sebagai [usulan].
-4. [ ] **Tab Streak**, lalu **Beranda** (blok Hari ini), lalu **tab Dokumen Studio**.
+4. [x] **Tab Streak**, lalu **Beranda** (blok Hari ini), lalu **tab Dokumen Studio**, selesai 15 November 2026 dengan data lokal dan dummy, termasuk kerangka aplikasi (bilah atas, sidebar, rail, bilah bawah 5 tab). Rute `/beranda`, `/studio`, `/studio/streak`. Yang disengaja belum:
+   - Beranda: **Perlu perhatian, Proyek saya, Notifikasi, dan feed memakai fixture dummy** (`src/features/home/fixtures.ts`); tombol aksinya nonaktif. Diganti data nyata di langkah 5 (Community) dan R4 (Projects). Tab "Jelajahi" hanya menampilkan toast "segera hadir".
+   - Butir nav **Projects, Tersimpan, Profil**, pencarian, dan lonceng tampil nonaktif; daftar **Grup saya** di sidebar belum ada (Q-38).
+   - Dokumen: **Kirim ke proyek dan Ekspor** nonaktif; folder hanya satu tingkat, tanpa hapus folder (perilaku dokumen di dalamnya [konfirmasi]); pencarian dan urutan dokumen (STD-03) belum.
+   - Streak: zona waktu mengikuti perangkat (papan menampilkan catatan zona; menunggu profil), daftar milestone tetap contoh papan (Q-10), ambang statistik tidak ada ([konfirmasi]), target hari pertama berlaku hari itu juga.
+   - Bilah bawah memakai lima tab; empat tab tetap [konfirmasi] ke client.
 5. [ ] **Community:** Jelajahi, halaman postingan, Tulis postingan.
 6. [ ] **Layar yang belum didesain**, dibangun langsung dari komponen yang ada dan spesifikasi DESIGN.md bagian 6: akun dan onboarding (R1), profil publik, Tersimpan, Notifikasi, Statistik, dialog Bagikan dan Kirim ke proyek, Projects (R4–R5), Kelola dan Admin, Grup.
 
