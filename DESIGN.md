@@ -161,6 +161,14 @@ Ini yang membuat Ranah langsung berbeda dari tampilan shadcn bawaan yang membula
 - Gerak hanya untuk memberi kabar: tersimpan, streak naik, laci terbuka. Tidak ada animasi masuk saat gulir, tidak ada parallax.
 - `prefers-reduced-motion`: semua gerak jadi perubahan instan atau fade 100ms.
 
+**Pengecualian landing (15 November 2026, keputusan pengguna).** Landing pra-peluncuran boleh bergerak lebih banyak dari aplikasi agar terasa premium, mengikuti skill `design-taste-frontend` (motion.md) dan `animate`, tetapi tetap di dalam sistem desain ini (palet, huruf, dan tata letak tidak dipilih ulang). Isinya tepat tiga lapisan, tidak lebih:
+
+1. **Entrance hero, sekali saat dimuat:** H1 naik baris per baris dari masker kata (700ms, baris berjarak 80ms), lalu kalimat penjelas dan tombol naik 12px (520ms, berjarak 60ms).
+2. **Satu momen:** `word-highlight` di bagian Tiga janji (dipilih lewat `moments.mjs`). Ketiga judul janji menjadi satu pernyataan yang menyala dari setengah tinta ke tinta, kata demi kata, saat melewati tengah layar. Tanpa warna aksen karena palet monokrom.
+3. **Lapisan hover dan tekan:** tombol naik 1px saat hover (hanya pointer halus), turun 1px dan skala 0,985 saat ditekan; tautan menggambar garis bawah dari kiri. Hanya kelas `lp-btn`, `lp-press`, `lp-link` di landing; tombol aplikasi tidak berubah.
+
+Ditambah **loop pratinjau di Cara kerja**: siklus 3,2 detik, mulai dari gambar jadi, satu perubahan per siklus, hanya satu loop berjalan di satu layar (yang paling terlihat; lainnya main saat disentuh pointer), dan tombol jeda. Tetap dilarang di landing: judul atau baris yang muncul saat digulir, parallax, dan accordion (FAQ selalu terbuka). Semua gerak memakai `--ease-out`, hanya `transform` dan `opacity` (kecuali warna kata pada momen). HTML dari server berisi keadaan akhir; kelas `lp-motion` di `<html>` (skrip inline, tidak dipasang saat reduced motion) yang menyalakan gerak.
+
 ### 4.7 Ikon
 
 - Satu set: **Phosphor** bobot Regular (Usulan; tidak terlalu identik dengan tampilan shadcn). Ukuran 20px di UI, 24px di navigasi.

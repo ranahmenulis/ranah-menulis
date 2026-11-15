@@ -1,13 +1,13 @@
-// Teks landing. Sumber: docs/Copy Landing RanahMenulis.md (usulan 14 Nov 2026).
-// Tiga butir ditandai [konfirmasi] dan belum boleh tayang sebelum client setuju:
-//   1. Biaya (FAQ "Berapa biayanya?")
-//   2. Grup Penulis (FAQ; kalimat soal keluar grup sengaja dihapus, Q-38)
-//   3. Nada privasi: pengecualian "alasan hukum atau moderasi, dan itu dicatat" (BR-STD-05)
+// Landing copy. Source: docs/Copy Landing RanahMenulis.md, section 4 (short v2, 15 Nov 2026).
+// Three items are marked [konfirmasi] and must not go live before the client agrees:
+//   1. Pricing (FAQ "Berapa biayanya?")
+//   2. Grup Penulis (FAQ, Q-38)
+//   3. Privacy tone: the "alasan hukum atau moderasi" exception (BR-STD-05)
 
 export const heroTitle = "Tulis paragrafnya hari ini. Bukunya menyusul.";
 
 export const heroLead =
-  "Tulis di Studio, bagikan cuplikannya ke pembaca, lalu kirim naskah yang sama ke antologi, kelas, lomba, atau buku solo. Tanpa menyalin ulang.";
+  "Tulis di Studio, bagikan cuplikannya, lalu kirim naskah yang sama ke antologi atau buku solo. Tanpa menyalin ulang.";
 
 export const heroDoc = {
   title: "Yang Ditunggu Nenek di Bawah Jambu Air",
@@ -25,101 +25,80 @@ export const heroDoc = {
 
 export const stepsTitle = "Satu naskah, empat langkah.";
 
+// One sentence per step; the moving previews demonstrate the rest (copy v2, section 4).
 export const steps = {
   menulis: {
     title: "Menulis",
-    text: "Tulis di Studio. Tulisanmu tersimpan otomatis dan tetap pribadi sampai kamu sendiri yang membagikannya.",
+    text: "Tersimpan otomatis dan tetap pribadi sampai kamu membagikannya.",
   },
   target: {
     title: "Target harian",
-    text: "Tetapkan target kata per hari di Studio. Streak, bagian dari Studio, mencatat setiap hari yang tercapai sebagai satu titik di kalendermu. Tanpa konfeti, tanpa poin.",
+    text: "Setiap hari yang mencapai target menjadi satu titik di kalendermu.",
   },
   dibagikan: {
     title: "Dibagikan",
-    text: "Bagikan prolog atau cuplikan ke Community. Yang tampil hanya bagian yang kamu pilih; naskah lengkapnya tetap di Studio.",
+    text: "Yang tampil di Community hanya bagian yang kamu pilih.",
   },
   terbit: {
     title: "Terbit",
-    text: "Kirim naskah yang sama ke antologi tanpa menyalin ulang. Editor membaca salinan saat kamu menekan Kirim, dan drafmu boleh terus kamu ubah.",
+    text: "Kirim naskah ke antologi tanpa menyalin ulang. Drafmu tetap bisa diubah.",
   },
 };
 
 export const projectsTitle = "Ke mana naskahmu bisa pergi.";
 
 export const projects = [
-  {
-    name: "Antologi",
-    flow: "Seleksi · revisi · terbit",
-    text: "Naskahmu masuk ke buku bertema bersama tulisan penulis lain. Editor memberi catatan, kamu merevisi, sampai naskahmu diterima.",
-  },
-  {
-    name: "Buku Solo",
-    flow: "Editing · sampul · produksi",
-    text: "Bukumu sendiri. Editing, proofreading, sampul, dan layout dikerjakan bertahap, dan kamu bisa melihat posisi bukumu di setiap tahap.",
-  },
-  {
-    name: "Kelas Menulis",
-    flow: "Materi · tugas · umpan balik",
-    text: "Belajar dari mentor lewat materi, tugas, dan catatan untuk tulisanmu sendiri, dari puisi sampai novel.",
-  },
-  {
-    name: "Lomba",
-    flow: "Kriteria · finalis · pemenang",
-    text: "Kompetisi dengan kriteria penilaian yang jelas. Penyelenggara boleh memilih penjurian anonim, sehingga juri menilai naskah tanpa tahu penulisnya.",
-  },
+  { name: "Antologi", flow: "Seleksi · revisi · terbit" },
+  { name: "Buku Solo", flow: "Editing · sampul · produksi" },
+  { name: "Kelas Menulis", flow: "Materi · tugas · umpan balik" },
+  { name: "Lomba", flow: "Kriteria · finalis · pemenang" },
 ];
 
+// The three titles read together as one statement (the word-highlight moment); each label and
+// sentence sits small underneath.
 export const trust = [
   {
+    label: "Privasi",
     title: "Draf pribadimu tetap pribadi.",
-    // [konfirmasi] nada pengecualian (BR-STD-05)
-    text: "Dokumen di Studio tidak dibaca orang lain. Satu-satunya pengecualian adalah alasan hukum atau moderasi, dan itu dicatat. Yang tampil di Community hanya salinan teks yang kamu pilih.",
+    // [konfirmasi] tone of the exception (BR-STD-05)
+    text: "Tidak dibaca orang lain, kecuali alasan hukum atau moderasi yang dicatat.",
   },
   {
+    label: "Kiriman",
     title: "Yang sudah dikirim tidak ikut berubah.",
-    text: "Setiap kiriman menyimpan salinan pada saat kamu menekan Kirim. Revisi membuat versi baru, dan versi sebelumnya tetap tersimpan.",
+    text: "Revisi membuat versi baru; versi yang dikirim tetap tersimpan.",
   },
   {
+    label: "Hak cipta",
     title: "Hak cipta tetap milikmu.",
-    text: "Kecuali ketentuan sebuah proyek menyatakan lain. Ketentuan itu tertulis, bisa kamu baca sebelum mendaftar, dan hanya berlaku bila kamu menyetujuinya.",
+    text: "Kecuali ketentuan proyek yang kamu baca dan setujui sebelum mendaftar.",
   },
 ];
 
 export const waitlist = {
   title: "Simpan namamu di daftar tunggu.",
-  intro:
-    "Kami mengabarimu lewat email saat RanahMenulis dibuka untuk penulis di Indonesia dan Malaysia.",
+  intro: "Kami kabari lewat email saat RanahMenulis dibuka.",
   interests: ["Menulis rutin", "Antologi", "Buku solo", "Kelas", "Lomba", "Membaca"],
 };
 
+// The draft-privacy and copyright questions moved to the three promises above.
 export const faq = [
   {
     question: "Apa itu Grup Penulis?",
     // [konfirmasi] Q-38
     answer:
-      "Ruang kecil tempat sekelompok penulis saling membaca tulisan yang dibagikan ke grup. Grup dikelola oleh admin grup. Dokumen yang tidak kamu bagikan tetap pribadi.",
+      "Ruang kecil tempat sekelompok penulis saling membaca tulisan yang dibagikan ke grup. Dokumen yang tidak kamu bagikan tetap pribadi.",
   },
   {
     question: "Apakah tersedia di Indonesia dan Malaysia?",
     answer:
-      "Ya. Saat dibuka, RanahMenulis melayani penulis di Indonesia dan Malaysia. Kamu memilih negara di profil, dan tulisanmu muncul di daftar penulis negara itu. Antarmukanya berbahasa Indonesia lebih dulu. Penulis dari negara lain boleh masuk daftar tunggu.",
-  },
-  {
-    question: "Siapa yang bisa membaca drafku?",
-    // [konfirmasi] nada pengecualian (BR-STD-05)
-    answer:
-      "Tidak ada orang lain. Dokumen di Studio selalu pribadi; pengecualiannya hanya alasan hukum atau moderasi, dan itu dicatat. Pembaca melihat cuplikan yang kamu bagikan, dan pengelola proyek membaca naskah yang kamu kirim ke proyek mereka.",
-  },
-  {
-    question: "Apakah hak cipta karyaku tetap milikku?",
-    answer:
-      "Ya. Pengecualiannya hanya bila ketentuan sebuah proyek menyatakan lain. Ketentuan itu bisa kamu baca sebelum mendaftar, dan kamu harus menyetujuinya lebih dulu.",
+      "Ya. Kamu memilih negara di profil, dan tulisanmu muncul di daftar penulis negara itu. Antarmukanya berbahasa Indonesia lebih dulu.",
   },
   {
     question: "Berapa biayanya?",
-    // [konfirmasi] biaya; dasar rapat 8 November 2026
+    // [konfirmasi] pricing; based on the 8 November 2026 meeting
     answer:
-      "Menulis di Studio dan membaca di Community direncanakan tanpa biaya langganan di awal. Program di Projects, seperti antologi dan kelas, punya biayanya sendiri yang tampil sebelum kamu mendaftar.",
+      "Menulis dan membaca direncanakan tanpa biaya langganan di awal. Program di Projects punya biaya sendiri yang tampil sebelum mendaftar.",
   },
   {
     question: "Kapan RanahMenulis dibuka?",

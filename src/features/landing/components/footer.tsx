@@ -11,10 +11,13 @@ export function Footer() {
           <span className="text-xs text-ink-muted">Indonesia · Malaysia</span>
           {/* Halaman Kebijakan privasi dan Kontak belum ada; wajib sebelum landing tayang. */}
           <nav aria-label="Kaki halaman" className="flex w-full gap-6 md:ml-auto md:w-auto">
-            <TextLink href="/kebijakan-privasi" className="text-xs text-ink-muted hover:text-ink">
+            <TextLink
+              href="/kebijakan-privasi"
+              className="lp-link text-xs text-ink-muted hover:text-ink"
+            >
               Kebijakan privasi
             </TextLink>
-            <TextLink href="/kontak" className="text-xs text-ink-muted hover:text-ink">
+            <TextLink href="/kontak" className="lp-link text-xs text-ink-muted hover:text-ink">
               Kontak
             </TextLink>
           </nav>

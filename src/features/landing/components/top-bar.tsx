@@ -57,18 +57,28 @@ export function TopBar() {
           className="[--logo-h:28px] md:[--logo-h:32px]"
         />
         <nav aria-label="Halaman" className="ml-auto flex items-center gap-7">
-          <a href="#cara-kerja" className="hidden text-sm text-ink-muted hover:text-ink md:inline">
+          <a
+            href="#cara-kerja"
+            className="lp-link hidden text-sm text-ink-muted hover:text-ink md:inline"
+          >
             Cara kerja
           </a>
-          <a href="#projects" className="hidden text-sm text-ink-muted hover:text-ink md:inline">
+          <a
+            href="#projects"
+            className="lp-link hidden text-sm text-ink-muted hover:text-ink md:inline"
+          >
             Projects
           </a>
-          <a href="#tanya-jawab" className="hidden text-sm text-ink-muted hover:text-ink md:inline">
+          <a
+            href="#tanya-jawab"
+            className="lp-link hidden text-sm text-ink-muted hover:text-ink md:inline"
+          >
             Tanya jawab
           </a>
           <ButtonLink
             href="#daftar"
             size="sm"
+            className="lp-btn"
             variant={mode === "scrolled" ? "primary" : "secondary"}
           >
             Gabung daftar tunggu

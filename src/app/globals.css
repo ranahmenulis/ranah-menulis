@@ -468,3 +468,109 @@ html.is-animating [data-hero]:not([data-started]) [data-hero-stage] > * {
   transform: translateY(8px);
   transition: none;
 }
+
+/* ------------------------------------------------------------------------------------------
+   Landing motion (DESIGN.md 4.6, landing exception; design-taste-frontend motion.md).
+   Every rule below needs html.lp-motion, set by the inline script in app/page.tsx only when
+   reduced motion is off. Without it (no script, reduced motion) every part stands final.
+   Curves: --ease-out for every step and entrance; transform and opacity only, except the
+   statement's word colour (the moment's own property).
+   ------------------------------------------------------------------------------------------ */
+
+@utility landing-statement {
+  font-family: var(--font-serif);
+  font-size: 2.25rem;
+  line-height: 2.75rem;
+  font-weight: 400;
+  letter-spacing: -0.025em;
+  max-width: 16em;
+  text-wrap: pretty;
+  @media (width >= 48rem) {
+    font-size: 3.5rem;
+    line-height: 4rem;
+  }
+}
+
+/* Hero entrance: the h1 rises line by line out of word masks (700ms, lines 80ms apart), then
+   the lead and buttons fade up 12px (520ms, 60ms apart) as the last line is half way up. The
+   mask is padded so descenders (g, p, y) are not clipped at line-height 1. */
+.lp-word {
+  display: inline-block;
+  overflow: clip;
+  padding-block: 0.06em 0.14em;
+  margin-block: -0.06em -0.14em;
+  vertical-align: top;
+}
+.lp-word > span {
+  display: inline-block;
+}
+html.lp-motion [data-enter] .lp-word > span {
+  transition: transform 700ms var(--ease-out) calc(var(--line, 0) * 80ms);
+}
+html.lp-motion [data-enter]:not([data-entered]) .lp-word > span {
+  transform: translateY(115%);
+}
+html.lp-motion [data-enter] [data-enter-item] {
+  transition:
+    opacity 520ms var(--ease-out),
+    transform 520ms var(--ease-out);
+  transition-delay: calc(var(--follow, 350ms) + var(--i, 0) * 60ms);
+}
+html.lp-motion [data-enter]:not([data-entered]) [data-enter-item] {
+  opacity: 0;
+  transform: translateY(12px);
+}
+
+/* Hover and press layer: buttons step 1px up on hover (fine pointer only) and sink 1px with a
+   .985 press; text buttons only press; links draw an underline left to right. */
+html.lp-motion .lp-btn {
+  transition:
+    opacity 120ms var(--ease-out),
+    background-color 120ms var(--ease-out),
+    transform 120ms var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  html.lp-motion .lp-btn:hover {
+    transform: translateY(-1px);
+    transition-duration: 150ms;
+  }
+}
+html.lp-motion :is(.lp-btn, .lp-press):active {
+  transform: translateY(1px) scale(0.985);
+  transition-duration: 90ms;
+}
+html.lp-motion .lp-press {
+  transition: transform 120ms var(--ease-out);
+}
+html.lp-motion .lp-press:active {
+  transform: scale(0.985);
+}
+html.lp-motion .lp-link {
+  text-decoration: none;
+  background: linear-gradient(currentColor, currentColor) no-repeat 0 100% / 0% 1px;
+  transition:
+    color 120ms var(--ease-out),
+    background-size 120ms var(--ease-out);
+}
+html.lp-motion .lp-link:is(:hover, :focus-visible) {
+  background-size: 100% 1px;
+  transition-duration: 150ms;
+}
+
+/* The badge in the Terbit preview arrives with a short pop when its state changes. */
+@keyframes lp-pop {
+  from {
+    opacity: 0.4;
+    transform: scale(0.96);
+  }
+}
+
+/* The moment (word-highlight): words rest at half ink and turn to ink as the statement crosses
+   the middle of the screen (PromiseStatement). Half ink keeps about 4:1 contrast. */
+html.lp-motion .lp-wh [data-w] {
+  color: color-mix(in oklab, var(--ink) 50%, var(--canvas));
+  transition: color 160ms ease;
+}
+html.lp-motion .lp-wh [data-w].is-on {
+  color: var(--ink);
+}
