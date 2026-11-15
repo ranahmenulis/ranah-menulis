@@ -7,7 +7,7 @@ import { useT } from "@/lib/i18n/provider";
 import { LoopTimeContext, useLoop } from "../../motion/use-loop";
 
 /**
- * Frame of one "Cara kerja" preview. The picture is one image for assistive tech (its label
+ * Frame of one Ekosistem preview. The picture is one image for assistive tech (its label
  * describes the finished state); the loop inside only demonstrates it. The pause button sits in
  * the gap under the frame, so it never covers the picture and never shifts the layout.
  */

@@ -120,6 +120,7 @@ export function WaitlistForm() {
                 key={value}
                 pressed={interests.includes(value)}
                 disabled={pending}
+                className="lp-press"
                 onClick={() =>
                   setInterests((cur) =>
                     cur.includes(value) ? cur.filter((x) => x !== value) : [...cur, value],
@@ -159,18 +160,22 @@ export function WaitlistForm() {
           {pending ? form.sending : failed ? form.retry : form.submit}
         </Button>
         {exists && (
-          <Button
-            variant="text"
-            onClick={() => {
-              setDismissedFor(state);
-              if (emailRef.current) {
-                emailRef.current.value = "";
-                emailRef.current.focus();
-              }
-            }}
-          >
-            {form.otherEmail}
-          </Button>
+          // The wrapper fades in with the "already registered" note above; the text button itself
+          // carries transition-none.
+          <span className="transition-opacity duration-200 ease-(--ease-out) starting:opacity-0">
+            <Button
+              variant="text"
+              onClick={() => {
+                setDismissedFor(state);
+                if (emailRef.current) {
+                  emailRef.current.value = "";
+                  emailRef.current.focus();
+                }
+              }}
+            >
+              {form.otherEmail}
+            </Button>
+          </span>
         )}
       </div>
 

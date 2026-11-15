@@ -7,7 +7,8 @@ import { Ecosystem } from "@/features/landing/components/ecosystem";
 import { Footer } from "@/features/landing/components/footer";
 import { Publishing } from "@/features/landing/components/publishing";
 import { SocialProof } from "@/features/landing/components/social-proof";
-import { MARKERS, textStats } from "@/features/landing/components/studio-mockup";
+import { MARKERS } from "@/features/landing/components/studio-markers";
+import { textStats } from "@/features/landing/components/studio-mockup";
 import { Waitlist } from "@/features/landing/components/waitlist";
 import { WritingExperience } from "@/features/landing/components/writing-experience";
 import { landing } from "@/features/landing/copy/id";
@@ -65,6 +66,17 @@ describe("studio mockup markers", () => {
     expect(name(MARKERS.target)).toBe("Target Harian");
     expect(name(MARKERS.counter)).toBe("Word & Character Counter");
     expect(name(MARKERS.reading)).toBe("Reading Time");
+  });
+
+  it("pair every marked legend entry with its pin, matching the rules in globals.css", () => {
+    const { container } = render(<WritingExperience copy={landing.studio} />);
+    const entries = Array.from(container.querySelectorAll("li[data-marker-for]"));
+    const marked = entries.map((li) => li.getAttribute("data-marker-for"));
+    // globals.css ("Studio legend") names these four by hand.
+    expect(marked).toEqual(["1", "3", "5", "6"]);
+    for (const n of marked) expect(container.querySelector(`[data-marker="${n}"]`)).toBeTruthy();
+    const statistics = screen.getByRole("heading", { name: "Statistik Menulis" }).closest("li")!;
+    expect(statistics.hasAttribute("data-marker-for")).toBe(false);
   });
 });
 
