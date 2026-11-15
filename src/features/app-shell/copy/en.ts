@@ -21,6 +21,7 @@ export const shell: typeof source = {
     write: "Write",
     searchAndDiscover: "Search and explore",
     notifications: "Notifications, {count} unread",
+    notificationsNone: "Notifications",
     writeNew: "Write a new document",
   },
   guest: {

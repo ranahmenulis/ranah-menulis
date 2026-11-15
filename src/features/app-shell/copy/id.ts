@@ -19,6 +19,7 @@ export const shell = {
     write: "Tulis",
     searchAndDiscover: "Cari dan jelajahi",
     notifications: "Notifikasi, {count} belum dibaca",
+    notificationsNone: "Notifikasi",
     writeNew: "Tulis dokumen baru",
   },
   guest: {
