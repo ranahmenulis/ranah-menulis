@@ -29,9 +29,9 @@ export function WaitlistForm() {
     return (
       <div
         role="status"
-        className="mt-10 grid content-start gap-4 transition-[opacity,translate] duration-520 ease-(--ease-out) md:col-span-6 md:col-start-7 md:mt-0 starting:translate-y-2 starting:opacity-0"
+        className="grid content-start gap-4 transition-[opacity,translate] duration-520 ease-(--ease-out) starting:translate-y-2 starting:opacity-0"
       >
-        <p className="font-serif text-[32px] leading-10 tracking-[-0.01em] text-balance">
+        <p className="text-[28px] leading-9 font-semibold tracking-[-0.02em] text-balance md:text-[32px] md:leading-10">
           {format(form.thanks, { name: greet })}
         </p>
         <p className="text-base leading-6 text-ink-muted">
@@ -49,7 +49,7 @@ export function WaitlistForm() {
       action={action}
       noValidate
       aria-label={form.ariaLabel}
-      className="mt-10 grid content-start gap-5 md:col-span-6 md:col-start-7 md:mt-0"
+      className="grid content-start gap-5"
     >
       {/* Jebakan bot, tersembunyi dari manusia dan pembaca layar. */}
       <input

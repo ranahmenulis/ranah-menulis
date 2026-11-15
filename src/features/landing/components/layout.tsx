@@ -17,6 +17,18 @@ export function Section({ className, ...props }: ComponentProps<"section">) {
   return <section className={cn("pt-20 md:pt-32", className)} {...props} />;
 }
 
+/** Small pill above a section title (client images: "The Ecosystem", "Ranah Studio", ...). */
+export function Eyebrow({ className, ...props }: ComponentProps<"p">) {
+  return (
+    <p className={cn("mb-5 md:col-span-12 md:mb-6", className)}>
+      <span
+        className="inline-flex h-8 items-center rounded-full bg-subtle px-3.5 text-xs font-semibold tracking-[0.12em] text-ink uppercase"
+        {...props}
+      />
+    </p>
+  );
+}
+
 /** Garis atas + judul bagian, selebar grid. */
 export function SectionTop({ className, ...props }: ComponentProps<"div">) {
   return (

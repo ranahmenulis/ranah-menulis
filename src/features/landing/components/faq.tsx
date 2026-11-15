@@ -17,7 +17,7 @@ export function Faq({ title, items }: { title: string; items: Dictionary["landin
             <dl className="mt-6 border-t border-line md:col-span-8 md:col-start-5 md:mt-0">
               {items.map((f) => (
                 <div key={f.question} className="border-b border-line py-5 md:py-6">
-                  <dt className="font-serif text-xl leading-7 text-ink md:text-[22px] md:leading-8">
+                  <dt className="text-lg leading-7 font-semibold text-ink md:text-xl">
                     {f.question}
                   </dt>
                   <dd className="m-0 mt-2 max-w-[680px] text-base leading-[26px] text-ink-muted">

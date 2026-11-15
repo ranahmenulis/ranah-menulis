@@ -4,7 +4,6 @@ import { landing } from "@/features/landing/copy/id";
 import { EnterTitle } from "@/features/landing/components/enter-title";
 import { Faq } from "@/features/landing/components/faq";
 import { LoopFrame } from "@/features/landing/components/previews/loop-frame";
-import { Trust } from "@/features/landing/components/trust";
 import { MOTION_CLASS } from "@/features/landing/motion/motion-env";
 import { resetLoops } from "@/features/landing/motion/loop-registry";
 
@@ -35,13 +34,6 @@ describe("landing without motion (no script, reduced motion)", () => {
   it("keeps the hero title whole for assistive tech", () => {
     render(<EnterTitle id="hero-h" text={landing.hero.title} className="display" />);
     expect(screen.getByRole("heading", { level: 1 }).textContent).toBe(landing.hero.title);
-  });
-
-  it("states the three promises as one heading with every word in ink", () => {
-    render(<Trust trust={landing.trust} />);
-    const statement = screen.getByRole("heading", { level: 2 });
-    expect(statement.textContent).toBe(landing.trust.map((t) => t.title).join(" "));
-    expect(statement.querySelectorAll(".is-on")).toHaveLength(0);
   });
 
   it("shows every FAQ answer open, without an accordion", () => {

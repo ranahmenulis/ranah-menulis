@@ -493,23 +493,8 @@
    Landing motion (DESIGN.md 4.6, landing exception; design-taste-frontend motion.md).
    Every rule below needs html.lp-motion, set by the inline script in app/page.tsx only when
    reduced motion is off. Without it (no script, reduced motion) every part stands final.
-   Curves: --ease-out for every step and entrance; transform and opacity only, except the
-   statement's word colour (the moment's own property).
+   Curves: --ease-out for every step and entrance; transform and opacity only.
    ------------------------------------------------------------------------------------------ */
-
-@utility landing-statement {
-  font-family: var(--font-sans);
-  font-size: 2rem;
-  line-height: 2.5rem;
-  font-weight: 600;
-  letter-spacing: -0.03em;
-  max-width: 16em;
-  text-wrap: pretty;
-  @media (width >= 48rem) {
-    font-size: 3.25rem;
-    line-height: 3.75rem;
-  }
-}
 
 /* Hero entrance: the h1 rises line by line out of word masks (700ms, lines 80ms apart), then
    the lead and buttons fade up 12px (520ms, 60ms apart) as the last line is half way up. The
@@ -583,16 +568,6 @@ html.lp-motion .lp-link:is(:hover, :focus-visible) {
     opacity: 0.4;
     transform: scale(0.96);
   }
-}
-
-/* The moment (word-highlight): words rest at half ink and turn to ink as the statement crosses
-   the middle of the screen (PromiseStatement). Half ink keeps about 4:1 contrast. */
-html.lp-motion .lp-wh [data-w] {
-  color: color-mix(in oklab, var(--ink) 50%, var(--canvas));
-  transition: color 160ms ease;
-}
-html.lp-motion .lp-wh [data-w].is-on {
-  color: var(--ink);
 }
 
 /* Theme switch (lib/theme/theme.ts): the new theme is revealed as a circle that script animates on
