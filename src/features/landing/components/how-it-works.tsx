@@ -35,7 +35,7 @@ export function HowItWorks({ copy }: { copy: Dictionary["landing"] }) {
               {stepsTitle}
             </h2>
           </SectionTop>
-          <ol className="relative mt-10 grid list-none gap-14 p-0 before:absolute before:top-3 before:bottom-3 before:left-1.5 before:w-px before:bg-line md:col-span-12 md:mt-[72px] md:gap-24">
+          <ol className="relative mt-10 grid list-none grid-cols-1 gap-14 p-0 before:absolute before:top-3 before:bottom-3 before:left-1.5 before:w-px before:bg-line md:col-span-12 md:mt-[72px] md:gap-24">
             <Step title={steps.menulis.title} text={steps.menulis.text}>
               <LoopFrame id="menulis" label={steps.menulis.preview}>
                 <EditorPreview />
