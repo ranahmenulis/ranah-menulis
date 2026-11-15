@@ -14,12 +14,11 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: meta.title, description: meta.description };
 }
 
-// Runs before the hero so the classes exist before first paint, and only without reduced motion.
-// `is-animating` drives the hero stage; `lp-motion` the rest of the landing's motion (hero
-// entrance, preview loops, the promise statement). Safety: if the hero stage has not started, or
-// the landing has not hydrated (`data-lp-ready`), within 3.5 s the classes are removed and every
-// part shows its final state.
-const heroScript = `(function(){var d=document.documentElement;if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return;d.classList.add("is-animating","lp-motion");setTimeout(function(){if(!document.querySelector("[data-hero][data-started]"))d.classList.remove("is-animating");if(!d.hasAttribute("data-lp-ready"))d.classList.remove("lp-motion")},3500)})();`;
+// Runs before the hero so the class exists before first paint, and only without reduced motion.
+// `lp-motion` turns on the landing's motion (hero entrance and video, preview loops, the promise
+// statement). Safety: if the landing has not hydrated (`data-lp-ready`) within 3.5 s the class is
+// removed and every part shows its final state (the hero shows its poster).
+const heroScript = `(function(){var d=document.documentElement;if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return;d.classList.add("lp-motion");setTimeout(function(){if(!d.hasAttribute("data-lp-ready"))d.classList.remove("lp-motion")},3500)})();`;
 
 // Pre-launch landing. Must not go live before the client approves the three items in
 // docs/desain/Catatan Slicing.md (pricing, Grup Penulis, privacy tone).

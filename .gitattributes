@@ -10,3 +10,6 @@
 *.ico binary
 *.woff2 binary
 *.pdf binary
+
+# Video is stored in Git LFS (landing hero, public/landing/hero/).
+*.mp4 filter=lfs diff=lfs merge=lfs -text

@@ -2,7 +2,7 @@ import type { CSSProperties } from "react";
 import { ButtonLink } from "@/components/ui/button";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
 import { EnterTitle } from "./enter-title";
-import { HeroStage } from "./hero-stage";
+import { HeroVideo } from "./hero-video";
 import { Grid, Wrap } from "./layout";
 
 export function Hero({ copy }: { copy: Dictionary["landing"]["hero"] }) {
@@ -35,7 +35,7 @@ export function Hero({ copy }: { copy: Dictionary["landing"]["hero"] }) {
               {copy.secondary}
             </ButtonLink>
           </div>
-          <HeroStage />
+          <HeroVideo label={copy.ariaLabel} />
         </Grid>
       </Wrap>
     </section>

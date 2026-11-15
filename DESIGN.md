@@ -169,6 +169,8 @@ Ini yang membuat Ranah langsung berbeda dari tampilan shadcn bawaan yang membula
 2. **Satu momen:** `word-highlight` di bagian Tiga janji (dipilih lewat `moments.mjs`). Ketiga judul janji menjadi satu pernyataan yang menyala dari setengah tinta ke tinta, kata demi kata, saat melewati tengah layar. Tanpa warna aksen karena palet monokrom.
 3. **Lapisan hover dan tekan:** tombol naik 1px saat hover (hanya pointer halus), turun 1px dan skala 0,985 saat ditekan; tautan menggambar garis bawah dari kiri. Hanya kelas `lp-btn`, `lp-press`, `lp-link` di landing; tombol aplikasi tidak berubah.
 
+Ditambah **video hero** (15 November 2026, menggantikan animasi kode "paragraf → halaman 12 → sampul"): loop tanpa suara yang dirender dari komponen asli aplikasi (brief: `docs/desain/landing/Brief Video Hero.md`), 16:10 dari md ke atas dan 4:5 di ponsel, versi terang dan gelap mengikuti tema. Poster tampil lebih dulu dan menjadi gambar utuh tanpa JS atau saat reduced motion; video memudar masuk (300ms) setelah benar-benar main, berhenti saat hero tidak terlihat, dan punya tombol jeda karena berjalan lebih dari 5 detik.
+
 Ditambah **loop pratinjau di Cara kerja**: siklus 3,2 detik, mulai dari gambar jadi, satu perubahan per siklus, hanya satu loop berjalan di satu layar (yang paling terlihat; lainnya main saat disentuh pointer), dan tombol jeda. Tetap dilarang di landing: judul atau baris yang muncul saat digulir, parallax, dan accordion (FAQ selalu terbuka). Semua gerak memakai `--ease-out`, hanya `transform` dan `opacity` (kecuali warna kata pada momen). HTML dari server berisi keadaan akhir; kelas `lp-motion` di `<html>` (skrip inline, tidak dipasang saat reduced motion) yang menyalakan gerak.
 
 ### 4.7 Ikon
