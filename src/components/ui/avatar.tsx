@@ -1,6 +1,6 @@
 import { cn } from "@/lib/cn";
 
-export type AvatarSize = 20 | 32 | 44 | 64 | 88;
+export type AvatarSize = 20 | 32 | 44 | 56 | 64 | 88;
 
 /** Dua huruf: awal kata pertama dan terakhir. Nama satu huruf tetap menghasilkan satu huruf. */
 export function initials(name: string): string {
