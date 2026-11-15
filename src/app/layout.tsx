@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Schibsted_Grotesk, Source_Serif_4 } from "next/font/google";
 import { Suspense } from "react";
 import { ToastProvider } from "@/components/ui/toast";
@@ -25,6 +25,10 @@ export const metadata: Metadata = {
   title: "RanahMenulis",
   description: "Ekosistem digital untuk menulis, komunitas literasi, dan penerbitan buku.",
 };
+
+// cover lets the page draw under the notch; the bars pad themselves with --safe-top. The status
+// bar colour (theme-color) is set by themeScript, so it also follows a saved theme.
+export const viewport: Viewport = { viewportFit: "cover" };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (

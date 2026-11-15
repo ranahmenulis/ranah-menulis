@@ -58,7 +58,7 @@ export function EditorBar({
   onFocusMode,
 }: EditorBarProps) {
   return (
-    <header className="relative z-40 flex flex-none flex-wrap items-center gap-x-2 border-b border-line bg-canvas pr-2 pl-4 md:h-14 md:flex-nowrap md:gap-x-4 md:px-4">
+    <header className="relative z-40 flex flex-none flex-wrap items-center gap-x-2 border-b border-line bg-canvas pt-(--safe-top) pr-2 pl-4 md:h-[calc(3.5rem+var(--safe-top))] md:flex-nowrap md:gap-x-4 md:px-4">
       <Monogram
         href={STUDIO_HOME}
         label="Kembali ke Studio"

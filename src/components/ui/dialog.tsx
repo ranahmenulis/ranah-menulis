@@ -101,7 +101,8 @@ export function Dialog({
       <div
         className={cn(
           "grid gap-4 p-6 max-md:px-4 max-md:pb-[calc(1rem+env(safe-area-inset-bottom))]",
-          fullPageOnMobile && "max-md:min-h-dvh max-md:grid-rows-[auto_auto_1fr_auto]",
+          fullPageOnMobile &&
+            "max-md:min-h-dvh max-md:grid-rows-[auto_auto_1fr_auto] max-md:pt-[calc(1.5rem+var(--safe-top))]",
           size === "wide" && "md:gap-5 md:p-7",
         )}
       >

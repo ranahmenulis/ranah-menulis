@@ -76,10 +76,10 @@ export function Drawer({
         "backdrop:transition-discrete backdrop:duration-150 open:backdrop:opacity-100",
         // md+: fixed panel on the right, slides in from its own width.
         "md:fixed md:right-0 md:left-auto md:z-30 md:w-(--drawer-w) md:max-w-none",
-        "md:top-14 md:bottom-0 md:h-auto md:max-h-none md:translate-x-full md:border-y-0 md:border-r-0",
+        "md:top-[calc(3.5rem+var(--safe-top))] md:bottom-0 md:h-auto md:max-h-none md:translate-x-full md:border-y-0 md:border-r-0",
         "md:open:translate-x-0 starting:md:open:translate-x-full",
         // Below md: tall bottom sheet.
-        "max-md:fixed max-md:inset-x-0 max-md:top-[16%] max-md:bottom-0 max-md:h-auto max-md:max-h-none",
+        "max-md:fixed max-md:inset-x-0 max-md:top-[16%] max-md:bottom-0 max-md:h-auto max-md:max-h-none max-md:pb-[env(safe-area-inset-bottom)]",
         "max-md:w-full max-md:max-w-none max-md:translate-y-full max-md:border-x-0 max-md:border-b-0",
         "max-md:open:translate-y-0 starting:max-md:open:translate-y-full",
         className,

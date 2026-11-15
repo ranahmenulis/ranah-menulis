@@ -19,8 +19,25 @@ export function readTheme(cookie: string): Theme | null {
   return match && isTheme(match[1]) ? match[1] : null;
 }
 
+/** Browser chrome colour per theme: the same value as --canvas in globals.css. */
+export const THEME_COLORS: Record<Theme, string> = { light: "#ffffff", dark: "#121212" };
+
+const COLOR_META = "data-theme-color";
+
 export function applyTheme(theme: Theme, root: HTMLElement = document.documentElement): void {
   root.setAttribute("data-theme", theme);
+  // The browser's status bar colour comes from one meta of our own (not Next's `themeColor`,
+  // which renders a pair that only follows the system and is re-inserted by Next). The head script
+  // creates it before paint; this keeps it in step when the person picks a theme.
+  const doc = root.ownerDocument;
+  let meta = doc.head.querySelector(`meta[${COLOR_META}]`);
+  if (!meta) {
+    meta = doc.createElement("meta");
+    meta.setAttribute("name", "theme-color");
+    meta.setAttribute(COLOR_META, "");
+    doc.head.append(meta);
+  }
+  meta.setAttribute("content", THEME_COLORS[theme]);
 }
 
 export type RevealOrigin = { x: number; y: number };
@@ -77,4 +94,4 @@ export function saveTheme(theme: Theme, origin?: RevealOrigin): void {
 export const THEME_EVENT = "ranah-theme-change";
 
 /** Runs in <head> before first paint so the page never flashes the wrong theme. */
-export const themeScript = `(function(){try{var m=document.cookie.match(/(?:^|; )${THEME_COOKIE}=(light|dark)/);if(m)document.documentElement.setAttribute("data-theme",m[1])}catch(e){}})();`;
+export const themeScript = `(function(){try{var d=document,r=d.documentElement,c=${JSON.stringify(THEME_COLORS)},m=d.cookie.match(/(?:^|; )${THEME_COOKIE}=(light|dark)/);if(m)r.setAttribute("data-theme",m[1]);var q=window.matchMedia&&matchMedia("(prefers-color-scheme: dark)"),e=d.createElement("meta");e.setAttribute("name","theme-color");e.setAttribute("${COLOR_META}","");function s(){e.setAttribute("content",c[r.getAttribute("data-theme")||(q&&q.matches?"dark":"light")])}s();d.head.append(e);if(q&&q.addEventListener)q.addEventListener("change",s)}catch(x){}})();`;

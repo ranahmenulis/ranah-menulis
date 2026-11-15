@@ -48,7 +48,7 @@ export function TopBar() {
   return (
     <header
       className={cn(
-        "sticky top-0 z-10 border-b bg-canvas",
+        "sticky top-0 z-10 border-b bg-canvas pt-(--safe-top)",
         mode === "top" ? "border-transparent" : "border-line",
       )}
     >

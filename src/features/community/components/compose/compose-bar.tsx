@@ -27,7 +27,7 @@ type Props = {
  */
 export function ComposeBar(p: Props) {
   return (
-    <header className="sticky top-0 z-40 flex h-13 items-center gap-2 border-b border-line bg-canvas pr-3 pl-2 md:h-14 md:gap-3 md:px-4">
+    <header className="sticky top-0 z-40 flex h-[calc(3.25rem+var(--safe-top))] items-center gap-2 border-b border-line bg-canvas pt-(--safe-top) pr-3 pl-2 md:h-[calc(3.5rem+var(--safe-top))] md:gap-3 md:px-4">
       {p.backToText ? (
         <IconButton label="Kembali memilih bagian" onClick={p.onBackToText}>
           <ArrowLeft size={20} aria-hidden />
