@@ -244,6 +244,11 @@
     opacity: 1;
   }
 
+  /* A modal dialog freezes the page behind it. */
+  html:has(dialog:modal) {
+    overflow: hidden;
+  }
+
   ::selection {
     background: var(--line);
   }
@@ -415,6 +420,20 @@
   }
   50% {
     opacity: 0.55;
+  }
+}
+
+/* Skeletons stay invisible for the first 300ms so quick loads never flash (DESIGN.md 8). */
+@keyframes rm-appear {
+  to {
+    opacity: 1;
+  }
+}
+
+/* Daily target reached: the ring fills once (DESIGN.md 7.3). The only celebration; no sound. */
+@keyframes rm-fill {
+  to {
+    transform: scale(1);
   }
 }
 
