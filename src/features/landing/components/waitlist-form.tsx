@@ -8,7 +8,8 @@ import { Field, Input, Select, describedBy } from "@/components/ui/field";
 import { ErrorBanner } from "@/components/ui/states";
 import { joinWaitlist } from "../waitlist/actions";
 import { countries, initialWaitlistState } from "../waitlist/state";
-import { waitlist } from "../copy";
+import { format, useT } from "@/lib/i18n/provider";
+import { landing as landingId } from "../copy/id";
 
 /**
  * Form daftar tunggu: lima keadaan (kosong, mengirim, galat isian, galat kirim, sudah terdaftar)
@@ -16,23 +17,25 @@ import { waitlist } from "../copy";
  * Papan: docs/desain/landing/FormStates.dc.html.
  */
 export function WaitlistForm() {
+  const { form, interests: interestLabels } = useT().landing.waitlist;
   const [state, action, pending] = useActionState(joinWaitlist, initialWaitlistState);
+  // Interests are stored by their Indonesian name whatever language the form is shown in.
   const [interests, setInterests] = useState<string[]>([]);
   const [dismissedFor, setDismissedFor] = useState<typeof state | null>(null);
   const emailRef = useRef<HTMLInputElement>(null);
 
   if (state.status === "success") {
-    const greet = state.values.name || "kamu";
+    const greet = state.values.name || form.fallbackName;
     return (
       <div
         role="status"
         className="mt-10 grid content-start gap-4 md:col-span-6 md:col-start-7 md:mt-0"
       >
         <p className="font-serif text-[32px] leading-10 tracking-[-0.01em] text-balance">
-          Terima kasih, {greet}. Namamu sudah tercatat.
+          {format(form.thanks, { name: greet })}
         </p>
         <p className="text-base leading-6 text-ink-muted">
-          Kabar pembukaan akan dikirim ke {state.values.email}.
+          {format(form.confirmation, { email: state.values.email })}
         </p>
       </div>
     );
@@ -45,7 +48,7 @@ export function WaitlistForm() {
     <form
       action={action}
       noValidate
-      aria-label="Gabung daftar tunggu"
+      aria-label={form.ariaLabel}
       className="mt-10 grid content-start gap-5 md:col-span-6 md:col-start-7 md:mt-0"
     >
       {/* Jebakan bot, tersembunyi dari manusia dan pembaca layar. */}
@@ -62,26 +65,26 @@ export function WaitlistForm() {
       ))}
 
       <div className="grid gap-4 md:grid-cols-2">
-        <Field id="f-name" label="Nama panggilan" error={state.errors.name}>
+        <Field id="f-name" label={form.name} error={state.errors.name}>
           <Input
             id="f-name"
             name="name"
             autoComplete="nickname"
-            placeholder="Misalnya Rinjani"
+            placeholder={form.namePlaceholder}
             defaultValue={state.values.name}
             readOnly={pending}
             aria-invalid={state.errors.name ? true : undefined}
             aria-describedby={describedBy("f-name", { error: state.errors.name })}
           />
         </Field>
-        <Field id="f-email" label="Email" error={state.errors.email}>
+        <Field id="f-email" label={form.email} error={state.errors.email}>
           <Input
             id="f-email"
             name="email"
             ref={emailRef}
             type="email"
             autoComplete="email"
-            placeholder="nama@domain.com"
+            placeholder={form.emailPlaceholder}
             defaultValue={state.values.email}
             readOnly={pending}
             aria-invalid={state.errors.email ? true : undefined}
@@ -90,7 +93,7 @@ export function WaitlistForm() {
         </Field>
       </div>
 
-      <Field id="f-country" label="Negara">
+      <Field id="f-country" label={form.country}>
         <Select
           id="f-country"
           name="country"
@@ -99,7 +102,7 @@ export function WaitlistForm() {
         >
           {countries.map((c) => (
             <option key={c.value} value={c.value}>
-              {c.label}
+              {form.countries[c.value]}
             </option>
           ))}
         </Select>
@@ -107,40 +110,37 @@ export function WaitlistForm() {
 
       <fieldset className="m-0 grid min-w-0 gap-2 border-0 p-0">
         <legend className="mb-2 p-0 text-sm font-medium">
-          Minat{" "}
-          <span className="font-normal text-ink-muted">(opsional, boleh lebih dari satu)</span>
+          {form.interest} <span className="font-normal text-ink-muted">{form.interestHint}</span>
         </legend>
-        <div role="group" aria-label="Minat" className="flex flex-wrap gap-2">
-          {waitlist.interests.map((label) => (
-            <Chip
-              key={label}
-              pressed={interests.includes(label)}
-              disabled={pending}
-              onClick={() =>
-                setInterests((cur) =>
-                  cur.includes(label) ? cur.filter((x) => x !== label) : [...cur, label],
-                )
-              }
-            >
-              {label}
-            </Chip>
-          ))}
+        <div role="group" aria-label={form.interest} className="flex flex-wrap gap-2">
+          {interestLabels.map((label, index) => {
+            const value = landingId.waitlist.interests[index];
+            return (
+              <Chip
+                key={value}
+                pressed={interests.includes(value)}
+                disabled={pending}
+                onClick={() =>
+                  setInterests((cur) =>
+                    cur.includes(value) ? cur.filter((x) => x !== value) : [...cur, value],
+                  )
+                }
+              >
+                {label}
+              </Chip>
+            );
+          })}
         </div>
       </fieldset>
 
       {exists && (
         <p className="flex gap-2 text-sm text-ink" role="status">
           <Info size={16} aria-hidden className="mt-0.5 shrink-0" />
-          Email ini sudah ada di daftar tunggu. Kamu tidak perlu mendaftar lagi; kabar pembukaan
-          akan dikirim ke alamat ini.
+          {form.exists}
         </p>
       )}
 
-      {failed && (
-        <ErrorBanner>
-          Gagal mengirim karena koneksi terputus. Isianmu masih di sini; coba kirim lagi.
-        </ErrorBanner>
-      )}
+      {failed && <ErrorBanner>{form.failed}</ErrorBanner>}
 
       <div className="flex flex-wrap items-center gap-4">
         <Button
@@ -149,7 +149,7 @@ export function WaitlistForm() {
           loading={pending}
           className="lp-btn min-w-62 max-md:w-full"
         >
-          {pending ? "Mengirim…" : failed ? "Coba kirim lagi" : "Gabung daftar tunggu"}
+          {pending ? form.sending : failed ? form.retry : form.submit}
         </Button>
         {exists && (
           <Button
@@ -162,17 +162,17 @@ export function WaitlistForm() {
               }
             }}
           >
-            Pakai email lain
+            {form.otherEmail}
           </Button>
         )}
       </div>
 
       <p className="text-xs text-ink-muted">
-        Dengan bergabung, kamu menyetujui{" "}
+        {form.consentBefore}{" "}
         <a href="/kebijakan-privasi" className="text-ink underline underline-offset-3">
-          Kebijakan privasi
+          {form.privacy}
         </a>{" "}
-        RanahMenulis.
+        {form.consentAfter}
       </p>
     </form>
   );

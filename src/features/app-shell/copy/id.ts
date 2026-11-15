@@ -1,0 +1,30 @@
+export const shell = {
+  nav: {
+    label: "Utama",
+    beranda: "Beranda",
+    jelajahi: "Jelajahi",
+    studio: "Studio",
+    streak: "Streak",
+    projects: "Projects",
+    tersimpan: "Tersimpan",
+    profil: "Profil",
+    soon: "Segera",
+  },
+  topBar: {
+    back: "Kembali",
+    toggleSidebar: "Sembunyikan atau tampilkan sidebar",
+    home: "RanahMenulis, Beranda",
+    searchSoon: "Pencarian belum tersedia",
+    searchPlaceholder: "Cari penulis dan karya",
+    write: "Tulis",
+    searchAndDiscover: "Cari dan jelajahi",
+    notifications: "Notifikasi, {count} belum dibaca",
+    writeNew: "Tulis dokumen baru",
+  },
+  guest: {
+    brand: "RanahMenulis",
+    signIn: "Masuk",
+    signUp: "Daftar",
+    soon: "Masuk tersedia setelah akun dibuka",
+  },
+};

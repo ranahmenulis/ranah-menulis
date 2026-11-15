@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/cn";
+import { format, useT } from "@/lib/i18n/provider";
 import { reached, useLoopTime } from "../../motion/use-loop";
 
 // One subject per cycle: today's target is reached, then today's ring fills and the streak rises.
@@ -8,7 +9,6 @@ const RESET_MS = 150;
 const REACHED_AT = 700;
 const FILLED_AT = 1000;
 
-const weekdays = ["S", "S", "R", "K", "J", "S", "M"];
 // November 2026 starts on a Sunday; the calendar starts on Monday, so six blank cells first.
 const calendar: ("blank" | "ring" | "empty" | "full")[] = [
   ...Array<"blank">(6).fill("blank"),
@@ -37,6 +37,7 @@ function TodayDot({ filled, instant }: { filled: boolean; instant: boolean }) {
 }
 
 function CalendarPreview({ filled, instant }: { filled: boolean; instant: boolean }) {
+  const { weekdays } = useT().landing.previews;
   return (
     <div className="grid grid-cols-[repeat(7,36px)]">
       {weekdays.map((d, i) => (
@@ -78,6 +79,7 @@ function StreakCount({ risen, instant }: { risen: boolean; instant: boolean }) {
 }
 
 export function StreakPreview() {
+  const { previews } = useT().landing;
   const time = useLoopTime();
   const instant = time !== null && time < RESET_MS;
   const done = reached(time, REACHED_AT);
@@ -88,11 +90,11 @@ export function StreakPreview() {
       <div className="grid min-w-[200px] gap-5">
         <div className="flex items-baseline gap-2.5">
           <StreakCount risen={filled} instant={instant} />
-          <span className="text-sm text-ink-muted">hari berturut-turut</span>
+          <span className="text-sm text-ink-muted">{previews.streakUnit}</span>
         </div>
         <div className="grid gap-2">
           <div className="flex justify-between text-xs tabular-nums">
-            <span>Hari ini {done ? 500 : 480} / 500 kata</span>
+            <span>{format(previews.todayWords, { count: String(done ? 500 : 480) })}</span>
             <span
               className={cn(
                 "text-ink-muted",
@@ -100,7 +102,7 @@ export function StreakPreview() {
                 !filled && "opacity-0",
               )}
             >
-              Tercapai
+              {previews.reached}
             </span>
           </div>
           <div className="h-1 bg-line">

@@ -1,11 +1,10 @@
-import { trust } from "../copy";
+import type { Dictionary } from "@/lib/i18n/dictionaries";
 import { Grid, Section, SectionTop, Wrap } from "./layout";
 import { PromiseStatement } from "./promise-statement";
 
-const statement = trust.map((t) => t.title).join(" ");
-
 /** The three promises as one statement (the page's moment), each explained in one short line. */
-export function Trust() {
+export function Trust({ trust }: { trust: Dictionary["landing"]["trust"] }) {
+  const statement = trust.map((t) => t.title).join(" ");
   return (
     <Section aria-labelledby="trust-h">
       <Wrap>

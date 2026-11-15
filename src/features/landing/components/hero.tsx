@@ -1,22 +1,22 @@
 import type { CSSProperties } from "react";
 import { ButtonLink } from "@/components/ui/button";
-import { heroLead, heroTitle } from "../copy";
+import type { Dictionary } from "@/lib/i18n/dictionaries";
 import { EnterTitle } from "./enter-title";
 import { HeroStage } from "./hero-stage";
 import { Grid, Wrap } from "./layout";
 
-export function Hero() {
+export function Hero({ copy }: { copy: Dictionary["landing"]["hero"] }) {
   return (
     <section aria-labelledby="hero-h" data-enter className="pt-10 md:pt-24">
       <Wrap>
         <Grid>
-          <EnterTitle id="hero-h" text={heroTitle} className="display md:col-span-9" />
+          <EnterTitle id="hero-h" text={copy.title} className="display md:col-span-9" />
           <p
             data-enter-item
             style={{ "--i": 0 } as CSSProperties}
             className="mt-5 max-w-[560px] font-serif text-xl leading-7 text-pretty text-ink-muted md:col-span-6 md:mt-8 md:text-[22px] md:leading-8"
           >
-            {heroLead}
+            {copy.lead}
           </p>
           <div
             data-enter-item
@@ -29,10 +29,10 @@ export function Hero() {
               size="hero"
               className="lp-btn w-full md:w-auto"
             >
-              Gabung daftar tunggu
+              {copy.cta}
             </ButtonLink>
             <ButtonLink href="#cara-kerja" variant="text" className="lp-press">
-              Lihat cara kerjanya
+              {copy.secondary}
             </ButtonLink>
           </div>
           <HeroStage />

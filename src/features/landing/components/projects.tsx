@@ -1,7 +1,8 @@
-import { projects, projectsTitle } from "../copy";
+import type { Dictionary } from "@/lib/i18n/dictionaries";
 import { Grid, Section, SectionTop, Wrap } from "./layout";
 
-export function Projects() {
+export function Projects({ copy }: { copy: Dictionary["landing"] }) {
+  const { projects, projectsTitle } = copy;
   return (
     <Section id="projects" aria-labelledby="proj-h">
       <Wrap>

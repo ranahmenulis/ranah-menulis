@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import { Pause, Play } from "@phosphor-icons/react/dist/ssr";
 import { cn } from "@/lib/cn";
+import { useT } from "@/lib/i18n/provider";
 import { LoopTimeContext, useLoop } from "../../motion/use-loop";
 
 /**
@@ -21,6 +22,7 @@ export function LoopFrame({
   className?: string;
   children: ReactNode;
 }) {
+  const { previews } = useT().landing;
   const { attach, motion, active, paused, time, enter, leave, togglePause } = useLoop(id);
 
   return (
@@ -42,7 +44,7 @@ export function LoopFrame({
         <button
           type="button"
           onClick={togglePause}
-          aria-label={paused ? "Putar animasi" : "Jeda animasi"}
+          aria-label={paused ? previews.play : previews.pause}
           data-show={active || paused || undefined}
           className={cn(
             "absolute top-full right-0 mt-1 grid size-11 cursor-pointer place-items-center text-ink-muted",

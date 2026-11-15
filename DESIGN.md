@@ -407,6 +407,10 @@ Di tampilan Organizer/Editor, status yang terisi adalah yang menunggu tindakan m
 
 Selalu di dekat judul dokumen dan di dialog Bagikan: ikon + teks `text-xs`. **Pribadi** (gembok), **Grup: Nama Grup** (dua orang), **Publik** (globe). Mengubah ke Publik selalu lewat dialog yang menyebut persis teks mana yang akan tampil.
 
+### 7.x Tombol tema dan bahasa
+
+Dua kontrol tampilan ada di bilah atas landing, aplikasi, dan bingkai tamu [usulan]. Dari md ke atas: tombol bahasa (menu, ikon Translate, butir aktif bertanda "Aktif") dan tombol tema (ikon bergantian Desktop, Sun, Moon; satu klik berpindah Ikuti sistem → Terang → Gelap). Di bawah md keduanya digabung menjadi satu menu "Tampilan dan bahasa" (lembar bawah) agar bilah ponsel tidak sesak. Pilihan tema disimpan di cookie dan dipasang sebelum cat pertama; tanpa pilihan, tema mengikuti sistem.
+
 ## 8. Keadaan halaman
 
 | Keadaan | Aturan |

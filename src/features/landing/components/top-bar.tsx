@@ -3,7 +3,9 @@
 import { useEffect, useState } from "react";
 import { ButtonLink } from "@/components/ui/button";
 import { Wordmark } from "@/components/ui/logo";
+import { DisplayControls } from "@/components/ui/display-controls";
 import { cn } from "@/lib/cn";
+import { useT } from "@/lib/i18n/provider";
 import { Wrap } from "./layout";
 
 type Mode = "top" | "scrolled-hero" | "scrolled" | "wait";
@@ -17,6 +19,7 @@ type Mode = "top" | "scrolled-hero" | "scrolled" | "wait";
  */
 export function TopBar() {
   const [mode, setMode] = useState<Mode>("top");
+  const copy = useT().landing.topBar;
 
   useEffect(() => {
     function update() {
@@ -52,28 +55,28 @@ export function TopBar() {
       <Wrap className="flex h-[52px] items-center gap-8 md:h-16">
         <Wordmark
           href="#"
-          label="RanahMenulis, ke atas"
+          label={copy.logoLabel}
           height={32}
           className="[--logo-h:28px] md:[--logo-h:32px]"
         />
-        <nav aria-label="Halaman" className="ml-auto flex items-center gap-7">
+        <nav aria-label={copy.navLabel} className="ml-auto flex items-center gap-3 md:gap-7">
           <a
             href="#cara-kerja"
             className="lp-link hidden text-sm text-ink-muted hover:text-ink md:inline"
           >
-            Cara kerja
+            {copy.how}
           </a>
           <a
             href="#projects"
             className="lp-link hidden text-sm text-ink-muted hover:text-ink md:inline"
           >
-            Projects
+            {copy.projects}
           </a>
           <a
             href="#tanya-jawab"
             className="lp-link hidden text-sm text-ink-muted hover:text-ink md:inline"
           >
-            Tanya jawab
+            {copy.faq}
           </a>
           <ButtonLink
             href="#daftar"
@@ -81,8 +84,10 @@ export function TopBar() {
             className="lp-btn"
             variant={mode === "scrolled" ? "primary" : "secondary"}
           >
-            Gabung daftar tunggu
+            <span className="sm:hidden">{copy.ctaShort}</span>
+            <span className="max-sm:hidden">{copy.cta}</span>
           </ButtonLink>
+          <DisplayControls />
         </nav>
       </Wrap>
     </header>
