@@ -5,7 +5,6 @@ import { CheckMark } from "@/components/ui/choice";
 import { VisibilityTag } from "@/components/ui/visibility-tag";
 import { cn } from "@/lib/cn";
 import { useT } from "@/lib/i18n/provider";
-import { heroDoc } from "../../copy/doc";
 import { reached, useLoopTime } from "../../motion/use-loop";
 
 // One subject per cycle: the first paragraph is ticked, then the public-copy notice appears.
@@ -15,7 +14,7 @@ const TICKED_AT = 700;
 const NOTICE_AT = 1500;
 
 export function SharePreview() {
-  const { previews } = useT().landing;
+  const { previews, doc: heroDoc } = useT().landing;
   const time = useLoopTime();
   const instant = time !== null && time < RESET_MS;
   const ticked = reached(time, TICKED_AT);

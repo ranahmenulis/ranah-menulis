@@ -160,6 +160,8 @@ Ini yang membuat Ranah langsung berbeda dari tampilan shadcn bawaan yang membula
 - Kurva: `cubic-bezier(0.2, 0, 0, 1)` untuk masuk; keluar lebih cepat.
 - Gerak hanya untuk memberi kabar: tersimpan, streak naik, laci terbuka. Tidak ada animasi masuk saat gulir, tidak ada parallax.
 - `prefers-reduced-motion`: semua gerak jadi perubahan instan atau fade 100ms.
+- Gulir yang diizinkan (16 November 2026): tautan jangkar menggulir halus (`scroll-behavior: smooth`, hanya tanpa reduced motion; `data-scroll-behavior` di `<html>` agar pindah rute tetap instan), dan barisan yang bisa digulir ke samping memakai `scroll-edge-fade` (tepi yang masih berisi memudar, terikat posisi gulir) serta `scroll-snap`. Tetap dilarang: animasi masuk saat gulir, parallax, bilah kemajuan baca, bilah navigasi yang menyembunyikan diri saat gulir.
+- Jembatan perubahan: ubin Jelajahi yang baru muncul (muat lebih banyak, ganti kategori) fade 150ms; blok sukses daftar tunggu fade dan naik 8px (520ms); ikon Apresiasi dan Simpan mengecil ke 0,9 saat ditekan (120ms) [usulan].
 
 **Pengecualian landing (15 November 2026, keputusan pengguna).** Landing pra-peluncuran boleh bergerak lebih banyak dari aplikasi agar terasa premium, mengikuti skill `design-taste-frontend` (motion.md) dan `animate`, tetapi tetap di dalam sistem desain ini (palet, huruf, dan tata letak tidak dipilih ulang). Isinya tepat tiga lapisan, tidak lebih:
 
@@ -409,7 +411,7 @@ Selalu di dekat judul dokumen dan di dialog Bagikan: ikon + teks `text-xs`. **Pr
 
 ### 7.x Tombol tema dan bahasa
 
-Dua kontrol tampilan ada di bilah atas landing, aplikasi, dan bingkai tamu [usulan]. Dari md ke atas: tombol bahasa (menu, ikon Translate, butir aktif bertanda "Aktif") dan tombol tema (ikon bergantian Desktop, Sun, Moon; satu klik berpindah Ikuti sistem → Terang → Gelap). Di bawah md keduanya digabung menjadi satu menu "Tampilan dan bahasa" (lembar bawah) agar bilah ponsel tidak sesak. Pilihan tema disimpan di cookie dan dipasang sebelum cat pertama; tanpa pilihan, tema mengikuti sistem.
+Dua kontrol tampilan ada di bilah atas landing, aplikasi, dan bingkai tamu [usulan]. Dari md ke atas: tombol bahasa (menu, ikon Translate, butir aktif bertanda "Aktif") dan tombol tema (ikon Sun atau Moon sesuai tema yang tampil; satu klik membalik Terang dan Gelap). Di bawah md keduanya digabung menjadi satu menu "Tampilan dan bahasa" (lembar bawah) agar bilah ponsel tidak sesak. Pilihan tema disimpan di cookie dan dipasang sebelum cat pertama; tanpa pilihan tersimpan, tema otomatis mengikuti sistem (tidak ada opsi "Ikuti sistem" di antarmuka; pilihan pengguna menimpanya). Saat tema berganti lewat tombol, tema baru terungkap sebagai lingkaran yang membesar dari tombol itu (View Transitions, 500 ms, ease-out); di layar sempit asalnya tombol menu. Reduced motion atau browser tanpa dukungan: berganti seketika. Papan `/sistem-desain` tidak memakai efek ini.
 
 ## 8. Keadaan halaman
 

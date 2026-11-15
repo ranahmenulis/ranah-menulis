@@ -16,7 +16,7 @@ const badge =
   "inline-flex h-6 items-center gap-1.5 justify-self-start rounded-full border px-2.5 text-xs font-medium";
 
 export function SubmissionPreview() {
-  const { previews } = useT().landing;
+  const { previews, doc } = useT().landing;
   const time = useLoopTime();
   const instant = time !== null && time < RESET_MS;
   const accepted = reached(time, ACCEPTED_AT);
@@ -25,11 +25,9 @@ export function SubmissionPreview() {
   return (
     <>
       <div className="grid grid-cols-[64px_minmax(0,1fr)] items-center gap-4 p-4 md:grid-cols-[64px_minmax(0,1fr)_auto] md:px-6 md:py-5">
-        <BookCover title="Surat yang Tidak Pernah Terkirim" width={64} />
+        <BookCover title={doc.anthologyTitle} width={64} />
         <div className="min-w-0">
-          <h4 className="text-base leading-6 font-semibold">
-            Antologi: Surat yang Tidak Pernah Terkirim
-          </h4>
+          <h4 className="text-base leading-6 font-semibold">{doc.anthologyLabel}</h4>
           <span className="text-xs text-ink-muted">{previews.submissionMeta}</span>
         </div>
         <span

@@ -5,7 +5,6 @@ import { Monogram } from "@/components/ui/logo";
 import { BookCover } from "@/components/ui/book-cover";
 import { VisibilityTag } from "@/components/ui/visibility-tag";
 import { useT } from "@/lib/i18n/provider";
-import { heroDoc } from "../copy/doc";
 
 /**
  * Satu momen di hero: paragraf diketik di Studio, tersimpan, menjadi halaman 12, lalu sampul.
@@ -16,7 +15,6 @@ import { heroDoc } from "../copy/doc";
  * reduced motion, pengunjung langsung melihat keadaan akhir.
  */
 
-const FULL = heroDoc.typed;
 const WORDS_END = 167;
 
 const stage =
@@ -26,13 +24,21 @@ const stage =
   "data-[wait=true]:[&>*]:translate-y-2 data-[wait=true]:[&>*]:opacity-0";
 
 export function HeroStage() {
-  const { hero } = useT().landing;
-  const [typed, setTyped] = useState(FULL.length);
+  const { hero, doc: heroDoc } = useT().landing;
+  const FULL = heroDoc.typed;
+  // null = the whole text (final state, also the server HTML); a number only while typing.
+  const [typedCount, setTyped] = useState<number | null>(null);
+  const typed = typedCount ?? FULL.length;
   const [phase, setPhase] = useState(3); // 0 mengetik, 1 tersimpan, 2 halaman, 3 sampul (akhir)
   const [started, setStarted] = useState(false);
   // Keputusan dibaca sekali. Strict Mode menjalankan efek dua kali; pembacaan kedua tidak boleh
   // bergantung pada kelas yang mungkin sudah berubah.
   const animate = useRef<boolean | null>(null);
+  // The typing effect runs once on mount; it reads the text length through this ref.
+  const fullLength = useRef(FULL.length);
+  useEffect(() => {
+    fullLength.current = FULL.length;
+  }, [FULL.length]);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -53,9 +59,9 @@ export function HeroStage() {
         let n = 0;
         interval = setInterval(() => {
           n += 2;
-          if (n >= FULL.length) {
+          if (n >= fullLength.current) {
             clearInterval(interval);
-            setTyped(FULL.length);
+            setTyped(null);
             setPhase(1);
             timers.push(setTimeout(() => setPhase(2), 450));
             timers.push(

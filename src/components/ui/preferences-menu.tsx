@@ -3,13 +3,15 @@
 import { SlidersHorizontal } from "@phosphor-icons/react/dist/ssr";
 import { LOCALES } from "@/lib/i18n/config";
 import { useChangeLocale, useLocale, useT } from "@/lib/i18n/provider";
-import { THEMES } from "@/lib/theme/theme";
+import { useRef } from "react";
+import { originOf, THEMES } from "@/lib/theme/theme";
 import { useTheme } from "@/lib/theme/use-theme";
 import { Menu, type MenuEntry } from "./menu";
 
 /** One button for narrow bars: appearance and language together in a single menu. */
 export function PreferencesMenu({ className }: { className?: string }) {
   const { common } = useT();
+  const ref = useRef<HTMLDivElement>(null);
   const locale = useLocale();
   const { change } = useChangeLocale();
   const [theme, setTheme] = useTheme();
@@ -18,7 +20,10 @@ export function PreferencesMenu({ className }: { className?: string }) {
       id: `theme-${code}`,
       label: common.theme[code],
       hint: code === theme ? common.language.active : undefined,
-      onSelect: () => setTheme(code),
+      onSelect: () => {
+        const trigger = ref.current?.querySelector("button");
+        setTheme(code, trigger ? originOf(trigger) : undefined);
+      },
     })),
     { type: "separator", id: "sep" },
     ...LOCALES.map((code) => ({
@@ -29,11 +34,12 @@ export function PreferencesMenu({ className }: { className?: string }) {
     })),
   ];
   return (
-    <Menu
-      label={common.preferences.label}
-      icon={<SlidersHorizontal size={22} aria-hidden />}
-      items={items}
-      className={className}
-    />
+    <div ref={ref} className={className}>
+      <Menu
+        label={common.preferences.label}
+        icon={<SlidersHorizontal size={22} aria-hidden />}
+        items={items}
+      />
+    </div>
   );
 }

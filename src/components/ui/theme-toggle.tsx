@@ -1,26 +1,42 @@
 "use client";
 
-import { Desktop, Moon, Sun } from "@phosphor-icons/react/dist/ssr";
+import { Moon, Sun } from "@phosphor-icons/react/dist/ssr";
+import { cn } from "@/lib/cn";
 import { format, useT } from "@/lib/i18n/provider";
-import { nextTheme, type Theme } from "@/lib/theme/theme";
+import { nextTheme, originOf } from "@/lib/theme/theme";
 import { useTheme } from "@/lib/theme/use-theme";
 import { IconButton } from "./icon-button";
 
-const icons = { system: Desktop, light: Sun, dark: Moon } satisfies Record<Theme, unknown>;
+// Both icons sit in the same cell. The one leaving turns half a turn and shrinks away while the one
+// arriving turns in from the other side, so the icon reads as one shape changing into the other.
+const layer =
+  "col-start-1 row-start-1 transition-[opacity,transform] duration-[700ms] ease-(--ease-out) motion-reduce:transition-none";
+const hidden = "scale-0 opacity-0";
 
-/** Cycles Ikuti sistem → Terang → Gelap. The icon shows the current mode. */
+/** Flips between Terang and Gelap. The icon on screen shows the current mode and morphs on change. */
 export function ThemeToggle({ className }: { className?: string }) {
   const { theme: labels } = useT().common;
   const [theme, setTheme] = useTheme();
   const next = nextTheme(theme);
-  const Icon = icons[theme];
+  const dark = theme === "dark";
   return (
     <IconButton
       label={format(labels.cycle, { current: labels[theme], next: labels[next] })}
-      onClick={() => setTheme(next)}
+      onClick={(e) => setTheme(next, originOf(e.currentTarget))}
       className={className}
     >
-      <Icon size={22} aria-hidden />
+      <span className="grid place-items-center">
+        <Sun
+          size={22}
+          aria-hidden
+          className={cn(layer, dark ? cn(hidden, "rotate-180") : "rotate-0")}
+        />
+        <Moon
+          size={22}
+          aria-hidden
+          className={cn(layer, dark ? "rotate-0" : cn(hidden, "-rotate-180"))}
+        />
+      </span>
     </IconButton>
   );
 }

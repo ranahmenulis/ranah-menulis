@@ -224,6 +224,14 @@
     scroll-padding-top: 72px;
   }
 
+  /* Anchor links (landing sections, "Komentar") glide instead of jumping. layout.tsx sets
+     data-scroll-behavior so Next.js still jumps instantly on route changes. */
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
   body {
     background: var(--canvas);
     color: var(--ink);
@@ -573,4 +581,60 @@ html.lp-motion .lp-wh [data-w] {
 }
 html.lp-motion .lp-wh [data-w].is-on {
   color: var(--ink);
+}
+
+/* Theme switch (lib/theme/theme.ts): the new theme is revealed as a circle that script animates on
+   ::view-transition-new(root). The browser's default cross-fade is turned off. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-old(root) {
+  z-index: 1;
+}
+::view-transition-new(root) {
+  z-index: 2;
+}
+
+/* Scroll-linked edge fade for rows that scroll sideways (Jelajahi chips, Beranda follow row): the
+   edge that still has content fades out, so the row does not look cut off by accident. Driven by
+   the scroll position, not time; browsers without scroll timelines show the plain row. */
+@property --edge-start {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+@property --edge-end {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+@keyframes scroll-edge-fade {
+  0% {
+    --edge-start: 0px;
+    --edge-end: 24px;
+  }
+  8%,
+  92% {
+    --edge-start: 24px;
+    --edge-end: 24px;
+  }
+  100% {
+    --edge-start: 24px;
+    --edge-end: 0px;
+  }
+}
+@supports (animation-timeline: scroll()) {
+  .scroll-edge-fade {
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 var(--edge-start),
+      #000 calc(100% - var(--edge-end)),
+      transparent
+    );
+    animation: scroll-edge-fade linear both;
+    animation-timeline: scroll(self inline);
+  }
 }

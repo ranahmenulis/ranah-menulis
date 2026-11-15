@@ -29,7 +29,7 @@ export function WaitlistForm() {
     return (
       <div
         role="status"
-        className="mt-10 grid content-start gap-4 md:col-span-6 md:col-start-7 md:mt-0"
+        className="mt-10 grid content-start gap-4 transition-[opacity,translate] duration-520 ease-(--ease-out) md:col-span-6 md:col-start-7 md:mt-0 starting:translate-y-2 starting:opacity-0"
       >
         <p className="font-serif text-[32px] leading-10 tracking-[-0.01em] text-balance">
           {format(form.thanks, { name: greet })}
@@ -134,13 +134,20 @@ export function WaitlistForm() {
       </fieldset>
 
       {exists && (
-        <p className="flex gap-2 text-sm text-ink" role="status">
+        <p
+          className="flex gap-2 text-sm text-ink transition-opacity duration-200 ease-(--ease-out) starting:opacity-0"
+          role="status"
+        >
           <Info size={16} aria-hidden className="mt-0.5 shrink-0" />
           {form.exists}
         </p>
       )}
 
-      {failed && <ErrorBanner>{form.failed}</ErrorBanner>}
+      {failed && (
+        <ErrorBanner className="transition-opacity duration-200 ease-(--ease-out) starting:opacity-0">
+          {form.failed}
+        </ErrorBanner>
+      )}
 
       <div className="flex flex-wrap items-center gap-4">
         <Button

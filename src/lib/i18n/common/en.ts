@@ -9,7 +9,6 @@ export const common: typeof source = {
   },
   theme: {
     label: "Appearance",
-    system: "Match system",
     light: "Light",
     dark: "Dark",
     cycle: "Appearance: {current}. Switch to {next}",
