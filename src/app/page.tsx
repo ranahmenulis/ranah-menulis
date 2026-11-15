@@ -14,12 +14,15 @@ export const metadata: Metadata = {
   description: heroLead,
 };
 
-// Dipasang sebelum hero supaya kelas ada sebelum tampilan pertama. Tanpa reduced motion saja.
-// Bila hero tidak mulai dalam 3,5 detik (JS lambat atau gagal), kelas dicabut dan keadaan akhir tampil.
-const heroScript = `(function(){var d=document.documentElement;if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return;d.classList.add("is-animating");setTimeout(function(){if(!document.querySelector("[data-hero][data-started]"))d.classList.remove("is-animating")},3500)})();`;
+// Runs before the hero so the classes exist before first paint, and only without reduced motion.
+// `is-animating` drives the hero stage; `lp-motion` the rest of the landing's motion (hero
+// entrance, preview loops, the promise statement). Safety: if the hero stage has not started, or
+// the landing has not hydrated (`data-lp-ready`), within 3.5 s the classes are removed and every
+// part shows its final state.
+const heroScript = `(function(){var d=document.documentElement;if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return;d.classList.add("is-animating","lp-motion");setTimeout(function(){if(!document.querySelector("[data-hero][data-started]"))d.classList.remove("is-animating");if(!d.hasAttribute("data-lp-ready"))d.classList.remove("lp-motion")},3500)})();`;
 
-// Landing pra-peluncuran. Belum boleh tayang sebelum client menyetujui tiga butir di
-// docs/desain/Catatan Slicing.md (biaya, Grup Penulis, nada privasi).
+// Pre-launch landing. Must not go live before the client approves the three items in
+// docs/desain/Catatan Slicing.md (pricing, Grup Penulis, privacy tone).
 export default function Home() {
   return (
     <>

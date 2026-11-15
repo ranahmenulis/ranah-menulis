@@ -4,14 +4,16 @@ Serah terima per **15 November 2026** untuk sesi yang mulai mengubah desain menj
 
 ## Keadaan sekarang
 
-- Repo baru berisi fondasi: Next.js 16, React 19, Tailwind 4, Supabase (klien di `src/lib/supabase/`, `src/proxy.ts`), satu migrasi `supabase/migrations/0001_fondasi_akun_dan_role.sql`. `src/app/page.tsx` masih placeholder, token belum diimplementasi.
-- Desain ada di tiga artifact claude.ai, **sudah disalin** ke [docs/desain/](README.md) (token, CSS komponen, 32 papan aplikasi, 9 papan landing). Claude Design **tidak dipakai lagi** karena boros usage.
-- Belum di-commit: DESIGN.md, `docs/desain/`, `docs/Copy Landing RanahMenulis.md`, `docs/referensi/`, `public/logo/`, perubahan Brief Desain. DESIGN.md belum memuat tambahan dari artifact (lihat bagian terakhir README arsip).
+**Progres per 15 November 2026: langkah 1–5 selesai, langkah 6 belum dimulai.** Semua layar memakai data dummy atau lokal (IndexedDB) dan login di-bypass sampai semua layar selesai dan desain disetujui. Backend (auth, migrasi 0002 dan seterusnya, RLS, store Supabase) belum dikerjakan; migrasi 0002 belum diterapkan. Perubahan langkah 5 belum di-commit.
+
+- Desain ada di tiga artifact claude.ai yang **sudah disalin** ke [docs/desain/](README.md) (token, CSS komponen, 32 papan aplikasi, 9 papan landing). Claude Design **tidak dipakai lagi** karena boros usage.
+- Peta kode ada di CLAUDE.md. Daftar yang disengaja belum dibuat tercantum di tiap langkah di bawah.
 
 ## Urutan slicing
 
 1. [x] **Token dan komponen dasar.** `globals.css` Tailwind v4 dari DESIGN.md bagian 10, ditambah `ink-read` (#191919 / #d2d2d2) dan `opacity-press` (0.72). Huruf lewat `next/font`: Source Serif 4 (sumbu optical size) dan Schibsted Grotesk. Dua radius saja (`rounded-full` dan 0). Rujukan kelas: `docs/desain/sistem-desain/components/bundle.css` (awalan `rm-`) dan README tiap komponen.
 2. [x] **Landing.** Papan di `docs/desain/landing/`, teks di `docs/Copy Landing RanahMenulis.md`. Gerak hero: `landing/Gerak.dc.html`.
+   **Revisi 15 November 2026** (permintaan client: sedikit teks, simpel tapi menjelaskan): teks v2 (bagian 4 dokumen copy, ±190 kata), pratinjau Cara kerja yang ber-loop, entrance hero, momen `word-highlight` di Tiga janji, FAQ terbuka, lapisan hover. Aturannya di DESIGN.md 4.6 (pengecualian landing). Video hero menyusul (`landing/Brief Video Hero.md`); sampai videonya jadi, tahap hero lama tetap dipakai.
    Sisa sebelum tayang: terapkan migrasi `0002_daftar_tunggu.sql` ke Supabase, halaman `/kebijakan-privasi` dan `/kontak` (tautan sudah dipasang, halamannya belum ada), gambar Open Graph 1200×630 (papan `OG.dc.html`), SVG logo, dan tiga butir persetujuan client di bawah.
 3. [x] **Editor Studio** (dengan IndikatorSimpan, IndikatorTarget, DialogKonflik, drawer bantuan, mode fokus), selesai 15 November 2026 dengan **penyimpanan di perangkat** (IndexedDB). Overlay Dialog, Laci, Menu, Popover, dan Toast ada di `src/components/ui/`; editor di `src/features/studio/`, rute `/studio/[id]`. Sisa yang disengaja, jangan dianggap selesai:
    - **Keputusan user (15 November 2026): seluruh slicing memakai data dummy dan login di-bypass sampai semua layar selesai dan desain disetujui.** Backend (auth, migrasi, RLS, store Supabase) baru dikerjakan sesudahnya; jangan membangunnya lebih awal.

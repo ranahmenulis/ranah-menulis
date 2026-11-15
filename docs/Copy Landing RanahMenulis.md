@@ -1,6 +1,7 @@
 # Copy Landing RanahMenulis (tulis ulang v1)
 
 **Status:** usulan, 14 November 2026. Menggantikan teks di prototipe landing (`Main.dc.html`). Semua klaim dicocokkan dengan PRD v0.2; butir yang belum pasti ditandai **[konfirmasi]**.
+**Pembaruan 15 November 2026:** client meminta landing "jangan terlalu banyak teks, simpel tapi menjelaskan". Versi ringkas ada di [bagian 4](#4-versi-ringkas-v2-15-november-2026) dan menggantikan bagian 2 untuk teks yang tampil. Bagian 2 tetap menjadi dasar klaimnya.
 **Dasar:** [DESIGN.md](../DESIGN.md) bagian 12 (Suara dan nada), [Brief bagian 6](Brief%20Desain%20RanahMenulis.md).
 
 ---
@@ -82,3 +83,91 @@ Satu perubahan: tombol saat memuat "Mengirim" → **"Mengirim…"**.
 1. Biaya: apakah kalimat "tanpa biaya langganan di awal" boleh dipublikasikan?
 2. Grup Penulis: apa yang dilihat anggota dan apakah anggota bebas keluar (Q-38).
 3. Janji privasi: apakah tim nyaman dengan kalimat pengecualian "alasan hukum atau moderasi, dan itu dicatat". Ini jujur sesuai PRD, tetapi client yang memutuskan nadanya.
+
+---
+
+## 4. Versi ringkas v2 (15 November 2026)
+
+**Status:** draf untuk ditinjau pengguna. Client melihatnya nanti bersama landing yang sudah jadi.
+
+**Prinsip:** video hero dan pratinjau yang bergerak yang menjelaskan cara kerja; teks hanya memberi nama dan satu janji. Target ±200 kata yang terbaca (sebelumnya ±470). Kartu suara di bagian 1 tetap berlaku, termasuk tanpa tanda seru dan daftar kata yang dilarang.
+
+### Hero
+
+| Elemen | v1 | v2 |
+| --- | --- | --- |
+| H1 | Tulis paragrafnya hari ini. Bukunya menyusul. | (tetap) |
+| Kalimat penjelas | Tulis di Studio, bagikan cuplikannya ke pembaca, lalu kirim naskah yang sama ke antologi, kelas, lomba, atau buku solo. Tanpa menyalin ulang. (25 kata) | **Tulis di Studio, bagikan cuplikannya, lalu kirim naskah yang sama ke antologi atau buku solo. Tanpa menyalin ulang.** (18 kata) |
+| Tombol | Gabung daftar tunggu · Lihat cara kerjanya | (tetap) |
+
+Kelas dan Lomba tetap disebut di bagian Projects.
+
+### Cara kerja: Satu naskah, empat langkah
+
+Judul langkah tetap. Satu kalimat per langkah; pratinjau yang bergerak memperagakan sisanya.
+
+| Langkah | v1 (kata) | v2 |
+| --- | --- | --- |
+| Menulis | 17 | **Tersimpan otomatis dan tetap pribadi sampai kamu membagikannya.** |
+| Target harian | 26 | **Setiap hari yang mencapai target menjadi satu titik di kalendermu.** |
+| Dibagikan | 21 | **Yang tampil di Community hanya bagian yang kamu pilih.** |
+| Terbit | 22 | **Kirim naskah ke antologi tanpa menyalin ulang. Drafmu tetap bisa diubah.** |
+
+"Tanpa konfeti, tanpa poin" dan "naskah lengkapnya tetap di Studio" kini diperagakan oleh pratinjau, tidak ditulis.
+
+### Projects: Ke mana naskahmu bisa pergi
+
+Paragraf penjelas setiap jalur **dihapus**. Yang tampil hanya nama dan label alur:
+
+| Jalur | Label alur |
+| --- | --- |
+| Antologi | Seleksi · revisi · terbit |
+| Buku Solo | Editing · sampul · produksi |
+| Kelas Menulis | Materi · tugas · umpan balik |
+| Lomba | Kriteria · finalis · pemenang |
+
+Dari 92 menjadi ±20 kata. Klaim "penjurian anonim" (Lomba) ikut hilang dari landing; ia tetap ada di PRD.
+
+### Tiga janji
+
+Ketiga judul dibaca bersama sebagai satu pernyataan besar (momen `word-highlight`, DESIGN.md 4.6). Di bawahnya setiap janji punya label pendek (**Privasi**, **Kiriman**, **Hak cipta**) dan satu kalimat:
+
+| Judul | v2 |
+| --- | --- |
+| Draf pribadimu tetap pribadi. | **Tidak dibaca orang lain, kecuali alasan hukum atau moderasi yang dicatat.** **[konfirmasi]** nada pengecualian (BR-STD-05) |
+| Yang sudah dikirim tidak ikut berubah. | **Revisi membuat versi baru; versi yang dikirim tetap tersimpan.** |
+| Hak cipta tetap milikmu. | **Kecuali ketentuan proyek yang kamu baca dan setujui sebelum mendaftar.** |
+
+### Daftar tunggu
+
+| Elemen | v1 | v2 |
+| --- | --- | --- |
+| Judul | Simpan namamu di daftar tunggu. | (tetap) |
+| Pengantar | Kami mengabarimu lewat email saat RanahMenulis dibuka untuk penulis di Indonesia dan Malaysia. | **Kami kabari lewat email saat RanahMenulis dibuka.** |
+
+Negara tetap disebut di FAQ dan di kaki halaman ("Indonesia · Malaysia"). Label, placeholder, dan pesan form tidak berubah.
+
+### Tanya jawab
+
+Dua pertanyaan **dihapus** karena sudah dijawab oleh Tiga janji: "Siapa yang bisa membaca drafku?" dan "Apakah hak cipta karyaku tetap milikku?". Semua jawaban tampil terbuka, tanpa accordion (aturan `design-taste-frontend`); dengan empat butir pendek, itu tetap ringkas.
+
+| Pertanyaan | v2 |
+| --- | --- |
+| Apa itu Grup Penulis? | **Ruang kecil tempat sekelompok penulis saling membaca tulisan yang dibagikan ke grup. Dokumen yang tidak kamu bagikan tetap pribadi.** **[konfirmasi]** Q-38 |
+| Apakah tersedia di Indonesia dan Malaysia? | **Ya. Kamu memilih negara di profil, dan tulisanmu muncul di daftar penulis negara itu. Antarmukanya berbahasa Indonesia lebih dulu.** |
+| Berapa biayanya? | **Menulis dan membaca direncanakan tanpa biaya langganan di awal. Program di Projects punya biaya sendiri yang tampil sebelum mendaftar.** **[konfirmasi]** biaya |
+| Kapan RanahMenulis dibuka? | (tetap) Tanggalnya belum diumumkan. Orang di daftar tunggu yang pertama kami kabari. |
+
+Kalimat "penulis dari negara lain boleh masuk daftar tunggu" dihapus: form daftar tunggu tidak membatasi negara, jadi tidak perlu diumumkan.
+
+### Ringkasan jumlah kata (perkiraan)
+
+| Bagian | v1 | v2 |
+| --- | --- | --- |
+| Hero (kalimat penjelas) | 25 | 18 |
+| Cara kerja | 88 | ±40 |
+| Projects | 92 | ±20 |
+| Tiga janji | 79 | ±30 |
+| Daftar tunggu | 26 | ±12 |
+| Tanya jawab | 182 | ±70 |
+| **Total** | **±490** | **±190** |

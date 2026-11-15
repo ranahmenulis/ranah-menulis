@@ -13,7 +13,7 @@ export function Projects() {
           </SectionTop>
           <div className="mt-10 border-t border-line-strong md:col-span-12 md:mt-[72px]">
             {projects.map((p) => (
-              <div key={p.name} className="grid gap-2.5 border-b border-line py-6 md:py-8">
+              <div key={p.name} className="border-b border-line py-6 md:py-8">
                 <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
                   <h3 className="font-serif text-[22px] leading-[30px] font-semibold whitespace-nowrap md:text-[26px] md:leading-[34px]">
                     {p.name}
@@ -26,9 +26,6 @@ export function Projects() {
                     {p.flow}
                   </span>
                 </div>
-                <p className="font-serif text-base leading-[26px] text-ink-muted md:max-w-[58.333%]">
-                  {p.text}
-                </p>
               </div>
             ))}
           </div>

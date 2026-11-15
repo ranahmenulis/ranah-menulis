@@ -143,7 +143,12 @@ export function WaitlistForm() {
       )}
 
       <div className="flex flex-wrap items-center gap-4">
-        <Button type="submit" size="hero" loading={pending} className="min-w-62 max-md:w-full">
+        <Button
+          type="submit"
+          size="hero"
+          loading={pending}
+          className="lp-btn min-w-62 max-md:w-full"
+        >
           {pending ? "Mengirim…" : failed ? "Coba kirim lagi" : "Gabung daftar tunggu"}
         </Button>
         {exists && (

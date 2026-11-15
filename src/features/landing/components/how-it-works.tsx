@@ -1,7 +1,11 @@
 import type { ReactNode } from "react";
 import { steps, stepsTitle } from "../copy";
 import { Grid, Section, SectionTop, Wrap } from "./layout";
-import { EditorPreview, FeedPreview, StreakPreview, SubmissionPreview } from "./step-previews";
+import { EditorPreview } from "./previews/editor-preview";
+import { LoopFrame } from "./previews/loop-frame";
+import { SharePreview } from "./previews/share-preview";
+import { StreakPreview } from "./previews/streak-preview";
+import { SubmissionPreview } from "./previews/submission-preview";
 
 function Step({ title, text, children }: { title: string; text: string; children: ReactNode }) {
   return (
@@ -16,6 +20,10 @@ function Step({ title, text, children }: { title: string; text: string; children
   );
 }
 
+/**
+ * Four steps, one sentence each; the previews demonstrate the rest. Each preview loops (3.2 s),
+ * one at a time: the one most in view plays, the others hold their final picture until hovered.
+ */
 export function HowItWorks() {
   return (
     <Section id="cara-kerja" aria-labelledby="steps-h">
@@ -28,16 +36,36 @@ export function HowItWorks() {
           </SectionTop>
           <ol className="relative mt-10 grid list-none gap-14 p-0 before:absolute before:top-3 before:bottom-3 before:left-1.5 before:w-px before:bg-line md:col-span-12 md:mt-[72px] md:gap-24">
             <Step {...steps.menulis}>
-              <EditorPreview />
+              <LoopFrame
+                id="menulis"
+                label="Editor Studio: kalimat terakhir diketik, lalu tersimpan. Dokumen tetap pribadi."
+              >
+                <EditorPreview />
+              </LoopFrame>
             </Step>
             <Step {...steps.target}>
-              <StreakPreview />
+              <LoopFrame
+                id="target"
+                label="Streak di Studio: target 500 kata hari ini tercapai, titik hari ini terisi, streak menjadi 12 hari."
+              >
+                <StreakPreview />
+              </LoopFrame>
             </Step>
             <Step {...steps.dibagikan}>
-              <FeedPreview />
+              <LoopFrame
+                id="dibagikan"
+                label="Memilih bagian untuk Community: hanya paragraf pertama yang dicentang dan menjadi publik."
+              >
+                <SharePreview />
+              </LoopFrame>
             </Step>
             <Step {...steps.terbit}>
-              <SubmissionPreview />
+              <LoopFrame
+                id="terbit"
+                label="Kiriman antologi diterima. Draf di Studio boleh berubah; versi yang dikirim tetap versi 2."
+              >
+                <SubmissionPreview />
+              </LoopFrame>
             </Step>
           </ol>
         </Grid>
