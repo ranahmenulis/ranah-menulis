@@ -3,24 +3,27 @@ import type { landing as source } from "./id";
 // English landing copy. A translation draft: it needs the client's review before launch.
 export const landing: typeof source = {
   meta: {
-    title: "RanahMenulis · Write the paragraph today. The book follows.",
+    title: "RanahMenulis · A digital home for every story",
     description:
-      "Write in Studio, share an excerpt, then send the same manuscript to an anthology or a solo book. No copying over.",
+      "Find a place to write, grow your craft, connect with a community, and publish your work with RanahMenulis.",
   },
   topBar: {
     logoLabel: "RanahMenulis, back to top",
     navLabel: "Page",
-    how: "How it works",
-    projects: "Projects",
+    menu: "Page menu",
+    ecosystem: "Ecosystem",
+    studio: "Studio",
+    publishing: "Publishing",
     faq: "FAQ",
     cta: "Join the waitlist",
     ctaShort: "Waitlist",
   },
   hero: {
-    title: "Write the paragraph today. The book follows.",
-    lead: "Write in Studio, share an excerpt, then send the same manuscript to an anthology or a solo book. No copying over.",
+    eyebrow: "Digital Writing Ecosystem",
+    title: "A Digital Home for Every Story. Start With Us.",
+    lead: "Find a place to write, grow your craft, connect with a community, and publish your work with RanahMenulis.",
     cta: "Join the waitlist",
-    secondary: "See how it works",
+    secondary: "Explore the Ecosystem",
     ariaLabel:
       "Silent video: a paragraph is typed in Studio and saved, today's 500-word target is reached and the streak rises to 7 days. The first paragraph is shared to Community as a public post while the document stays private. The post appears in Explore, then the cover of the book What Grandma Waited For Beneath the Water Apple Tree by Rinjani Putri is shown.",
     saving: "Saving…",
@@ -43,31 +46,109 @@ export const landing: typeof source = {
     anthologyTitle: "The Letter That Was Never Sent",
     anthologyLabel: "Anthology: The Letter That Was Never Sent",
   },
-  stepsTitle: "One manuscript, four steps.",
-  steps: {
-    menulis: {
-      title: "Write",
-      text: "Saved automatically and private until you share it.",
-      preview: "Studio editor: the last sentence is typed, then saved. The document stays private.",
+  socialProof: {
+    title: "A Place for Writers to Grow.",
+    writers: "writers",
+    works: "works",
+    books: "published books",
+    programs: "programs",
+    and: "and",
+    cta: "Join them",
+  },
+  ecosystem: {
+    eyebrow: "The Ecosystem",
+    title: "One Ecosystem. Many Possibilities.",
+    lead: "Everything you need to grow as a writer, in one place.",
+    inStudio: "Part of Studio",
+    soon: "Coming later",
+    modules: {
+      streak: {
+        name: "Ranah Streak",
+        preview:
+          "Streak in Studio: today's 500-word goal is reached, today's dot fills in, the streak becomes 12 days.",
+      },
+      project: {
+        name: "Ranah Project",
+        preview:
+          "Anthology submission accepted. The draft in Studio may change; the submitted version stays version 2.",
+      },
+      studio: {
+        name: "Ranah Studio",
+        preview:
+          "Studio editor: the last sentence is typed, then saved. The document stays private.",
+      },
+      community: {
+        name: "Ranah Community",
+        preview:
+          "Community: an excerpt from a writer you follow, with Appreciation and comments. The Writer Battle, Roast My Writing, and The Writers Confess programs come later.",
+      },
+      marketplace: {
+        name: "Marketplace",
+        preview:
+          "Marketplace, coming later: books and ebooks, writing services, job listings, and literary events.",
+      },
     },
-    target: {
-      title: "Daily goal",
-      text: "Every day you reach your goal becomes a dot on your calendar.",
-      preview:
-        "Streak in Studio: today's 500-word goal is reached, today's dot fills in, the streak becomes 12 days.",
+    community: {
+      programs: ["Writer Battle", "Roast My Writing", "The Writers Confess"],
+      author: "Nur Aisyah",
+      initials: "NA",
+      time: "2 hours ago",
+      excerpt:
+        "Writing for twenty minutes before dawn changed the way I read the day. Sentences that used to blur now have edges.",
+      meta: "Excerpt · Essay",
     },
-    dibagikan: {
-      title: "Share",
-      text: "Only the parts you choose appear in Community.",
-      preview:
-        "Choosing parts for Community: only the first paragraph is ticked and becomes public.",
+    marketplace: {
+      categories: ["Books & ebooks", "Writing services", "Jobs", "Literary events"],
+      listingMeta: "Paperback · Rinjani Putri",
     },
-    terbit: {
-      title: "Publish",
-      text: "Send the manuscript to an anthology without copying it over. Your draft stays editable.",
-      preview:
-        "Anthology submission accepted. The draft in Studio may change; the submitted version stays version 2.",
-    },
+  },
+  studio: {
+    eyebrow: "Ranah Studio",
+    title: "Your Focused, Comfortable Place to Write.",
+    lead: "Write, develop, and finish your work in Ranah Studio. A professional workspace for writers.",
+    mockup:
+      "Ranah Studio editor: a title and two paragraphs, a simple format bar, word and character counts, reading time, and today's goal at 320 of 500 words.",
+    characters: "characters",
+    readingTime: "{count} min read",
+    today: "Today {count} / 500 words",
+    soon: "Coming later",
+    features: [
+      { name: "Text Formatter", text: "Format your writing with ease." },
+      { name: "Writing Statistics", text: "Track your progress and consistency." },
+      { name: "Daily Goal", text: "Build a measurable writing habit." },
+      { name: "Writing Templates", text: "Start faster with a range of templates." },
+      {
+        name: "Word & Character Counter",
+        text: "Know your word and character count in real time.",
+      },
+      { name: "Reading Time", text: "See how long your work takes to read." },
+    ],
+    cta: "Try Ranah Studio Now",
+  },
+  publishing: {
+    eyebrow: "Publishing Opportunities",
+    title: "From Digital Manuscript to Real Book.",
+    lead: "Make your dream of publishing your first book real with the RanahMenulis publishing ecosystem.",
+    covers: "Three black and white book covers from RanahMenulis publishing programs.",
+    coverTitles: [
+      "The Letter That Was Never Sent",
+      "What Grandma Waited For Beneath the Water Apple Tree",
+      "Twenty Minutes Before Dawn",
+    ],
+    pathsTitle: "Publishing Paths for Every Stage of Your Journey",
+    paths: [
+      { name: "Anthology", text: "Write alongside other writers in one book with a chosen theme." },
+      { name: "Solo Book", text: "Publish your own book with support from the team." },
+      {
+        name: "Writing Class",
+        text: "Sharpen your skills and get your manuscript ready to publish.",
+      },
+      {
+        name: "Writing Contest",
+        text: "Enter writing competitions with a chance to be published.",
+      },
+    ],
+    cta: "Publish Your Work Now",
   },
   previews: {
     pause: "Pause animation",
@@ -84,33 +165,18 @@ export const landing: typeof source = {
     submissionNote:
       "The draft in Studio changed 2 hours ago. The submitted version stays version 2.",
   },
-  projectsTitle: "Where your manuscript can go.",
-  projects: [
-    { name: "Anthology", flow: "Selection · revision · publishing" },
-    { name: "Solo Book", flow: "Editing · cover · production" },
-    { name: "Writing Class", flow: "Lessons · assignments · feedback" },
-    { name: "Contest", flow: "Criteria · finalists · winners" },
-  ],
-  trust: [
-    {
-      label: "Privacy",
-      title: "Your private drafts stay private.",
-      text: "No one else reads them, except for a recorded legal or moderation reason.",
-    },
-    {
-      label: "Submissions",
-      title: "What you've sent doesn't change.",
-      text: "A revision creates a new version; the version you sent stays saved.",
-    },
-    {
-      label: "Copyright",
-      title: "Copyright stays yours.",
-      text: "Except for project terms you read and accept before signing up.",
-    },
-  ],
   waitlist: {
-    title: "Save your name on the waitlist.",
-    intro: "We'll email you when RanahMenulis opens.",
+    eyebrow: "Start Your Writing Journey",
+    title: "It's Time to Write, Grow, and Publish.",
+    intro: "Join RanahMenulis and become part of a writing ecosystem in Indonesia and Malaysia.",
+    note: "RanahMenulis isn't open yet. Save your name and we'll email you when it opens.",
+    pillarsLabel: "What RanahMenulis offers",
+    pillars: [
+      "A Focused Place to Write",
+      "A Supportive Community",
+      "Publishing Chances",
+      "Personal Growth",
+    ],
     interests: ["Regular writing", "Anthology", "Solo book", "Classes", "Contests", "Reading"],
     form: {
       ariaLabel: "Join the waitlist",
@@ -129,7 +195,7 @@ export const landing: typeof source = {
         "This email is already on the waitlist. You don't need to sign up again; we'll send the opening news to this address.",
       failed:
         "Couldn't send because the connection dropped. Your entries are still here; try again.",
-      submit: "Join the waitlist",
+      submit: "Join RanahMenulis",
       sending: "Sending…",
       retry: "Try again",
       otherEmail: "Use another email",
@@ -161,9 +227,18 @@ export const landing: typeof source = {
     },
   ],
   footer: {
-    countries: "Indonesia · Malaysia",
+    description: "Digital Writing Ecosystem. A place for every writer to write, grow, and publish.",
     navLabel: "Footer",
-    privacy: "Privacy policy",
+    product: "Product",
+    program: "Programs",
+    support: "Support",
+    help: "Help Center",
+    faq: "FAQ",
     contact: "Contact",
+    privacy: "Privacy Policy",
+    terms: "Terms & Conditions",
+    soon: "Coming soon",
+    social: "Social media",
+    copyright: "© 2026 RanahMenulis. All rights reserved.",
   },
 };

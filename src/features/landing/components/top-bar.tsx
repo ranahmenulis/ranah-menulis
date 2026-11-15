@@ -1,7 +1,9 @@
 "use client";
 
+import { List } from "@phosphor-icons/react/dist/ssr";
 import { useEffect, useState } from "react";
 import { ButtonLink } from "@/components/ui/button";
+import { Menu } from "@/components/ui/menu";
 import { Wordmark } from "@/components/ui/logo";
 import { DisplayControls } from "@/components/ui/display-controls";
 import { cn } from "@/lib/cn";
@@ -20,6 +22,12 @@ type Mode = "top" | "scrolled-hero" | "scrolled" | "wait";
 export function TopBar() {
   const [mode, setMode] = useState<Mode>("top");
   const copy = useT().landing.topBar;
+  const sections = [
+    ["ekosistem", copy.ecosystem],
+    ["studio", copy.studio],
+    ["penerbitan", copy.publishing],
+    ["tanya-jawab", copy.faq],
+  ] as const;
 
   useEffect(() => {
     function update() {
@@ -59,25 +67,16 @@ export function TopBar() {
           height={32}
           className="[--logo-h:28px] md:[--logo-h:32px]"
         />
-        <nav aria-label={copy.navLabel} className="ml-auto flex items-center gap-3 md:gap-7">
-          <a
-            href="#cara-kerja"
-            className="lp-link hidden text-sm text-ink-muted hover:text-ink md:inline"
-          >
-            {copy.how}
-          </a>
-          <a
-            href="#projects"
-            className="lp-link hidden text-sm text-ink-muted hover:text-ink md:inline"
-          >
-            {copy.projects}
-          </a>
-          <a
-            href="#tanya-jawab"
-            className="lp-link hidden text-sm text-ink-muted hover:text-ink md:inline"
-          >
-            {copy.faq}
-          </a>
+        <nav aria-label={copy.navLabel} className="ml-auto flex items-center gap-2 md:gap-7">
+          {sections.map(([id, label]) => (
+            <a
+              key={id}
+              href={`#${id}`}
+              className="lp-link hidden text-sm font-medium text-ink-muted hover:text-ink md:inline"
+            >
+              {label}
+            </a>
+          ))}
           <ButtonLink
             href="#daftar"
             size="sm"
@@ -88,6 +87,19 @@ export function TopBar() {
             <span className="max-sm:hidden">{copy.cta}</span>
           </ButtonLink>
           <DisplayControls />
+          {/* Narrow screens: the section links move into a hamburger menu (client brief). */}
+          <Menu
+            className="md:hidden"
+            label={copy.menu}
+            icon={<List size={24} aria-hidden />}
+            items={sections.map(([id, label]) => ({
+              id,
+              label,
+              onSelect: () => {
+                window.location.hash = id;
+              },
+            }))}
+          />
         </nav>
       </Wrap>
     </header>

@@ -2,6 +2,7 @@
 
 **Status:** usulan, 14 November 2026. Menggantikan teks di prototipe landing (`Main.dc.html`). Semua klaim dicocokkan dengan PRD v0.2; butir yang belum pasti ditandai **[konfirmasi]**.
 **Pembaruan 15 November 2026:** client meminta landing "jangan terlalu banyak teks, simpel tapi menjelaskan". Versi ringkas ada di [bagian 4](#4-versi-ringkas-v2-15-november-2026) dan menggantikan bagian 2 untuk teks yang tampil. Bagian 2 tetap menjadi dasar klaimnya.
+**Pembaruan 15 November 2026 (v3):** client mengirim brief landing baru. Teks yang tampil kini [bagian 5](#5-versi-v3-brief-landing-client-15-november-2026); v2 tetap sebagai arsip.
 **Dasar:** [DESIGN.md](../DESIGN.md) bagian 12 (Suara dan nada), [Brief bagian 6](Brief%20Desain%20RanahMenulis.md).
 
 ---
@@ -171,3 +172,39 @@ Kalimat "penulis dari negara lain boleh masuk daftar tunggu" dihapus: form dafta
 | Daftar tunggu | 26 | ±12 |
 | Tanya jawab | 182 | ±70 |
 | **Total** | **±490** | **±190** |
+
+---
+
+## 5. Versi v3: brief landing client (15 November 2026)
+
+**Status:** dipasang di `src/features/landing/copy/id.ts` dan `en.ts`. Menggantikan v2 untuk teks yang tampil. Sumber: brief landing client (prompt dan enam gambar) dan dua catatan susulan client.
+
+**Aturan sumber:** eyebrow, judul, subjudul, ubin, pilar, dan kaki halaman mengikuti **gambar** client kata per kata (bila prompt dan gambar berbeda, gambar yang dipakai, karena gambar itu yang dilihat dan dikomentari client), tanpa kata "Muslim". Latar hitam penutup diambil dari prompt.
+
+**Kartu suara (bagian 1) dilonggarkan untuk teks dari client.** Judul dan subjudul di bawah adalah kata-kata client sendiri, termasuk kata yang sebelumnya dilarang ("ekosistem", "bersama kami", "wujudkan", "perjalanan") dan huruf besar di awal setiap kata. Teks pendukung yang kita tulis sendiri (keterangan, FAQ, form, galat) tetap mengikuti kartu suara.
+
+**Keputusan yang mengatur v3:**
+- Eyebrow "DIGITAL WRITING ECOSYSTEM", tanpa kata "Muslim".
+- Tombol tetap menuju daftar tunggu karena aplikasi belum dibuka. Tombol Masuk disembunyikan sampai autentikasi ada.
+- Fitur di luar MVP tampil dengan label "Menyusul" dan dicatat di PRD (Q-50 sampai Q-52).
+- Catatan client: social proof dibuat ringkas (satu baris angka dan satu tombol, setengah layar, tanpa foto); kartu Ekosistem cukup judul tanpa teks kecil, karena mockup yang menjelaskan isinya.
+
+### Urutan dan teks
+
+| Bagian | Judul | Teks |
+| --- | --- | --- |
+| Hero (gambar 6) | Ruang Digital Untuk Setiap Ceritamu. Mulai Bersama Kami. | Eyebrow "Digital Writing Ecosystem". Temukan ruang untuk menulis, mengembangkan kemampuan, terhubung dengan komunitas, dan menerbitkan karyamu bersama RanahMenulis. Tombol: **Gabung daftar tunggu** · **Jelajahi Ekosistem** |
+| Social proof (gambar 5) | Ruang Bertumbuh untuk Para Penulis. | **1k+** penulis, **1k+** karya, **100** buku terbit, dan **10** program. Tombol: Gabung bersama mereka. **[konfirmasi]** sumber angka; angka ada di `src/features/landing/social-proof.ts` |
+| Ekosistem (gambar 4) | Satu Ekosistem. Banyak Kemungkinan. | Eyebrow "The Ecosystem". Semua yang dibutuhkan untuk mengembangkan perjalanan menulismu, dalam satu tempat. Lima modul, judul saja: Ranah Streak (label "Bagian dari Studio"), Ranah Project, Ranah Studio, Ranah Community (program Writer Battle, Roast My Writing, The Writers Confess bertanda "Menyusul"), Marketplace ("Menyusul") |
+| Studio (gambar 3) | Ruang Menulismu yang Fokus dan Nyaman. | Eyebrow "Ranah Studio". Tulis, kembangkan, dan selesaikan karyamu di Ranah Studio. Workspace profesional untuk penulis. Enam ubin: Text Formatter, Statistik Menulis, Target Harian, Template Menulis ("Menyusul", STD-05 Fase 2), Word & Character Counter, Reading Time. Tombol **Coba Ranah Studio Sekarang** (ke daftar tunggu) |
+| Penerbitan (gambar 2) | Dari Naskah Digital Menjadi Karya Nyata. | Eyebrow "Publishing Opportunities". Wujudkan impian menerbitkan buku pertamamu bersama ekosistem penerbitan RanahMenulis. Subjudul daftar: Berbagai Jalur Penerbitan Sesuai Tahap Perjalananmu. Antologi, Solo Book, Kelas Menulis, Lomba Menulis dengan kalimat dari gambar. Tombol **Terbitkan Karyamu Sekarang** (ke daftar tunggu) |
+| Tanya jawab | (tetap v2) | (tetap v2) |
+| Penutup hitam (gambar 1, latar hitam dari prompt) | Saatnya Menulis, Berkembang, dan Menerbitkan Karya. | Eyebrow "Mulai Perjalanan Menulismu". Bergabunglah dengan RanahMenulis dan menjadi bagian dari ekosistem penulis di Indonesia dan Malaysia. Catatan: RanahMenulis belum dibuka. Simpan namamu, kami kabari lewat email saat dibuka. Tombol form: **Gabung Bersama RanahMenulis**. Empat pilar: Ruang Menulis Fokus, Komunitas Positif, Peluang Terbit, Pengembangan Diri |
+| Kaki halaman (gambar 1) | | Digital Writing Ecosystem. Ruang tumbuh bagi setiap penulis untuk menulis, berkembang, dan menerbitkan karya. Produk (Ranah Streak, Ranah Project, Ranah Studio, Ranah Community, Marketplace), Program (Antologi, Solo Book, Kelas Menulis, Lomba Menulis), Dukungan (Pusat Bantuan, FAQ, Kontak). © 2026 RanahMenulis. All rights reserved. · Kebijakan Privasi · Syarat & Ketentuan. Ikon media sosial dan halaman yang belum ada tampil nonaktif |
+
+### Yang perlu dikonfirmasi ke client sebelum tayang (tambahan v3)
+
+1. Sumber angka social proof (1k+ penulis, 1k+ karya, 100 buku terbit, 10 program). Brief sendiri meminta angka tidak dikarang.
+2. Alamat akun media sosial dan halaman Kontak, Tentang kami, Kebijakan privasi.
+3. Q-50 sampai Q-52 di PRD (program Community, isi Marketplace, waktu baca).
+4. Terjemahan Inggris (`en.ts`) masih draf.

@@ -60,6 +60,11 @@ Sumber: diskusi lanjutan dan rapat 8 November 2026 (transkrip di `transrip.md`).
 - Risiko R-16 sampai R-18, kriteria uji AC-G1 sampai AC-G3 dan AC-M1.
 - PRD dipecah per bagian di folder `prd/`; file gabungan dihasilkan dengan `python prd/gabung.py`.
 
+## Revisi 15 November 2026 (brief landing client)
+
+- Keputusan baru Q-50 (program Community: Writer Battle, Roast My Writing, The Writers Confess), Q-51 (isi Marketplace diperluas: jasa kepenulisan, info pekerjaan, event literasi), dan Q-52 (waktu baca di Studio). Landing menampilkan ketiganya; yang belum masuk MVP diberi label "Menyusul".
+- Positioning "Digital Writing Ecosystem" dipakai di landing tanpa menyebut segmen agama (keputusan 15 November 2026); bagian 1, 2, dan 4 tidak berubah.
+
 ## Belum dikerjakan
 
 - Bagian 9 (daftar fitur), 10 (kebutuhan fungsional), 12 (user stories), dan 26 (acceptance criteria) masih memuat ID fitur yang sama dalam empat bentuk. Penggabungan jadi satu tabel per fitur sebaiknya dilakukan setelah desain disetujui, supaya tidak dikerjakan dua kali.

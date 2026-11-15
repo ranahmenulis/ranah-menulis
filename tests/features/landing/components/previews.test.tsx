@@ -1,7 +1,9 @@
 import type { ReactNode } from "react";
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
+import { CommunityPreview } from "@/features/landing/components/previews/community-preview";
 import { EditorPreview } from "@/features/landing/components/previews/editor-preview";
+import { MarketplacePreview } from "@/features/landing/components/previews/marketplace-preview";
 import { SharePreview } from "@/features/landing/components/previews/share-preview";
 import { StreakPreview } from "@/features/landing/components/previews/streak-preview";
 import { SubmissionPreview } from "@/features/landing/components/previews/submission-preview";
@@ -64,5 +66,21 @@ describe("landing previews, inside a cycle", () => {
     at(300, <SubmissionPreview />);
     expect(screen.getByText("Dikirim")).toBeTruthy();
     expect(screen.queryByText("Diterima")).toBeNull();
+  });
+});
+
+describe("landing still previews", () => {
+  it("shows the Community programs as coming later", () => {
+    render(<CommunityPreview />);
+    for (const p of ["Writer Battle", "Roast My Writing", "The Writers Confess"]) {
+      expect(screen.getByText(p)).toBeTruthy();
+    }
+    expect(screen.getByText("Menyusul")).toBeTruthy();
+  });
+
+  it("shows the Marketplace categories without a price", () => {
+    const { container } = render(<MarketplacePreview />);
+    expect(screen.getByText("Event literasi")).toBeTruthy();
+    expect(container.textContent).not.toMatch(/Rp|RM/);
   });
 });
