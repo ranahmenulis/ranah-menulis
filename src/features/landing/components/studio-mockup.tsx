@@ -11,6 +11,7 @@ import {
 import { Monogram } from "@/components/ui/logo";
 import { VisibilityTag } from "@/components/ui/visibility-tag";
 import { format, useLocale, useT } from "@/lib/i18n/provider";
+import { MARKERS } from "./studio-markers";
 
 // Words per minute for the reading time shown in the mockup. [konfirmasi] Reading time is not in
 // PRD v0.2 yet; it ships with the editor counters (STD-04) once agreed.
@@ -31,19 +32,13 @@ export function textStats(paragraphs: readonly string[]) {
 // Only the formats STD-01 allows: bold, italic, subheading, quote, bullet and numbered lists.
 const tools = [TextB, TextItalic, TextH, Quotes, ListBullets, ListNumbers];
 
-/**
- * Where each feature of the legend shows in the mockup, by its 1-based place in
- * `studio.features` (Text Formatter, Statistik, Target, Template, Counter, Reading Time).
- * Statistics and templates are not on this screen, so they have no marker.
- */
-export const MARKERS = { format: 1, target: 3, counter: 5, reading: 6 } as const;
-
 /** Numbered pin tying a part of the mockup to its line in the legend below. */
 function Marker({ n }: { n: number }) {
   return (
     <span
       aria-hidden
-      className="inline-grid size-5 shrink-0 place-items-center rounded-full bg-ink text-[11px] leading-none font-semibold text-on-ink tabular-nums"
+      data-marker={n}
+      className="lp-marker inline-grid size-5 shrink-0 place-items-center rounded-full bg-ink text-[11px] leading-none font-semibold text-on-ink tabular-nums"
     >
       {n}
     </span>
@@ -101,7 +96,10 @@ export function StudioMockup() {
             <Marker n={MARKERS.target} />
           </span>
           <span className="block h-1 bg-line">
-            <i className="block h-full bg-ink" style={{ width: `${(TODAY_WORDS / 500) * 100}%` }} />
+            <i
+              className="lp-target block h-full origin-left bg-ink"
+              style={{ transform: `scaleX(${TODAY_WORDS / 500})` }}
+            />
           </span>
         </div>
       </div>

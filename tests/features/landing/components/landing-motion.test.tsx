@@ -20,6 +20,34 @@ class StubObserver {
   disconnect() {}
 }
 
+/** Records the observer so a test can report the title as in or out of view. */
+class ViewObserver {
+  static last: ViewObserver | null = null;
+  disconnected = false;
+  constructor(private readonly callback: IntersectionObserverCallback) {
+    ViewObserver.last = this;
+  }
+  observe() {}
+  disconnect() {
+    this.disconnected = true;
+  }
+  report(isIntersecting: boolean) {
+    this.callback(
+      [{ isIntersecting } as IntersectionObserverEntry],
+      this as unknown as IntersectionObserver,
+    );
+  }
+}
+
+function renderClosingTitle() {
+  const { container } = render(
+    <section data-enter>
+      <EnterTitle as="h2" trigger="view" id="wait-h" text="Mulai menulis" className="display" />
+    </section>,
+  );
+  return container.querySelector("section")!;
+}
+
 describe("landing without motion (no script, reduced motion)", () => {
   it("renders no pause control on a preview", () => {
     render(
@@ -34,6 +62,14 @@ describe("landing without motion (no script, reduced motion)", () => {
   it("keeps the hero title whole for assistive tech", () => {
     render(<EnterTitle id="hero-h" text={landing.hero.title} className="display" />);
     expect(screen.getByRole("heading", { level: 1 }).textContent).toBe(landing.hero.title);
+  });
+
+  it("leaves the closing title standing without waiting for it to be seen", () => {
+    const section = renderClosingTitle();
+    expect(screen.getByRole("heading", { level: 2 }).textContent).toBe("Mulai menulis");
+    // Without lp-motion the CSS never hides it, and no observer is started.
+    expect(section.hasAttribute("data-entered")).toBe(false);
+    expect(document.documentElement.hasAttribute("data-lp-ready")).toBe(true);
   });
 
   it("shows every FAQ answer open, without an accordion", () => {
@@ -56,5 +92,24 @@ describe("landing with motion", () => {
     fireEvent.click(pause);
     expect(screen.getByRole("button", { name: "Putar animasi" })).toBeTruthy();
     expect(document.documentElement.hasAttribute("data-lp-ready")).toBe(true);
+  });
+
+  it("brings the closing title in once, when it comes into view", () => {
+    document.documentElement.classList.add(MOTION_CLASS);
+    vi.stubGlobal("IntersectionObserver", ViewObserver);
+    const section = renderClosingTitle();
+    const observer = ViewObserver.last!;
+    observer.report(false);
+    expect(section.hasAttribute("data-entered")).toBe(false);
+    observer.report(true);
+    expect(section.hasAttribute("data-entered")).toBe(true);
+    expect(observer.disconnected).toBe(true);
+  });
+
+  it("shows the closing title at once when there is no IntersectionObserver", () => {
+    document.documentElement.classList.add(MOTION_CLASS);
+    vi.stubGlobal("IntersectionObserver", undefined);
+    const section = renderClosingTitle();
+    expect(section.hasAttribute("data-entered")).toBe(true);
   });
 });

@@ -6,21 +6,40 @@ import { markLandingReady, motionAllowed } from "../motion/motion-env";
 const LINE_GAP_MS = 80;
 /** Lead and buttons start as the last line is about half way up (700ms rise). */
 const FOLLOW_MS = 350;
+/** A `view` title enters once it is past the bottom 15% of the screen (DESIGN.md 4.6). */
+const VIEW_MARGIN = "0px 0px -15% 0px";
+
+/** Groups words into lines by their top edge, as the browser wrapped them at this width. */
+function numberLines(title: HTMLElement): number {
+  const tops: number[] = [];
+  for (const word of title.querySelectorAll<HTMLElement>("[data-word]")) {
+    const top = Math.round(word.offsetTop);
+    if (!tops.includes(top)) tops.push(top);
+    word.style.setProperty("--line", String(tops.indexOf(top)));
+  }
+  return tops.length;
+}
 
 /**
- * The hero's entrance, once on load (design-taste-frontend motion.md): the h1 rises line by line
- * out of word masks, then the elements marked `data-enter-item` fade up. The server HTML is the
- * standing hero; CSS hides the words only while `html.lp-motion` is on and the section has no
- * `data-entered` yet, so without script or under reduced motion nothing waits.
+ * A landing title's entrance (design-taste-frontend motion.md): it rises line by line out of word
+ * masks, then the elements marked `data-enter-item` fade up. `load` runs once on load (the hero);
+ * `view` runs once when the title comes into view (the closing title, the landing's one arrival
+ * moment). The server HTML is the standing title; CSS hides the words only while `html.lp-motion`
+ * is on and the section has no `data-entered` yet, so without script, under reduced motion, or
+ * without IntersectionObserver nothing waits.
  */
 export function EnterTitle({
   id,
   text,
   className,
+  as: Tag = "h1",
+  trigger = "load",
 }: {
   id: string;
   text: string;
   className: string;
+  as?: "h1" | "h2";
+  trigger?: "load" | "view";
 }) {
   const ref = useRef<HTMLHeadingElement>(null);
 
@@ -31,23 +50,32 @@ export function EnterTitle({
     markLandingReady();
     if (!motionAllowed()) return;
 
-    // Group words into lines by their top edge, as the browser wrapped them at this width.
-    const words = [...title.querySelectorAll<HTMLElement>("[data-word]")];
-    const tops: number[] = [];
-    for (const word of words) {
-      const top = Math.round(word.offsetTop);
-      if (!tops.includes(top)) tops.push(top);
-      word.style.setProperty("--line", String(tops.indexOf(top)));
+    const lines = numberLines(title);
+    section.style.setProperty("--follow", `${(lines - 1) * LINE_GAP_MS + FOLLOW_MS}ms`);
+    const enter = () => section.setAttribute("data-entered", "");
+
+    if (trigger === "view") {
+      if (typeof IntersectionObserver === "undefined") return enter();
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (!entry?.isIntersecting) return;
+          observer.disconnect();
+          enter();
+        },
+        { rootMargin: VIEW_MARGIN },
+      );
+      observer.observe(title);
+      return () => observer.disconnect();
     }
-    section.style.setProperty("--follow", `${(tops.length - 1) * LINE_GAP_MS + FOLLOW_MS}ms`);
+
     // Next frame, so the hidden start state is committed before the transition runs.
-    const frame = requestAnimationFrame(() => section.setAttribute("data-entered", ""));
+    const frame = requestAnimationFrame(enter);
     return () => cancelAnimationFrame(frame);
-  }, []);
+  }, [trigger]);
 
   const words = text.split(" ");
   return (
-    <h1 id={id} ref={ref} className={className}>
+    <Tag id={id} ref={ref} className={className}>
       {words.map((word, i) => (
         <span key={i}>
           <span data-word className="lp-word">
@@ -56,6 +84,6 @@ export function EnterTitle({
           {i < words.length - 1 && " "}
         </span>
       ))}
-    </h1>
+    </Tag>
   );
 }

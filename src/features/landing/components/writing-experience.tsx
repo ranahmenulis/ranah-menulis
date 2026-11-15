@@ -3,15 +3,19 @@ import { ButtonLink } from "@/components/ui/button";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
 import { Eyebrow, Grid, Section, SectionTop, Wrap } from "./layout";
 import { PreviewFrame, Tag } from "./previews/preview-frame";
+import { MARKERS } from "./studio-markers";
 import { StudioMockup } from "./studio-mockup";
 
 // Writing templates are Phase 2 (STD-05), so that entry says so (0-based place in the copy).
 const LATER = new Set([3]);
+// Legend entries with a pin on the mockup (1-based), so hovering them can light that pin.
+const MARKED = new Set<number>(Object.values(MARKERS));
 
 /**
  * Ranah Studio (client image 3) as an annotated product shot: numbered pins on the mockup point
  * to an editorial legend underneath (01-06, hairlines only, no boxes), so each feature is named
- * next to the part of the screen that shows it. Then one centred way in.
+ * next to the part of the screen that shows it. Hovering an entry with a pin lights that pin and
+ * dims the others (globals.css, "Studio legend"). Then one centred way in.
  */
 export function WritingExperience({ copy }: { copy: Dictionary["landing"]["studio"] }) {
   return (
@@ -32,7 +36,11 @@ export function WritingExperience({ copy }: { copy: Dictionary["landing"]["studi
           </PreviewFrame>
           <ol className="m-0 mt-10 grid list-none grid-cols-1 gap-x-6 p-0 sm:grid-cols-2 md:col-span-12 md:mt-14 lg:grid-cols-3">
             {copy.features.map((f, i) => (
-              <li key={f.name} className="grid content-start gap-2 border-t border-line pt-5 pb-8">
+              <li
+                key={f.name}
+                data-marker-for={MARKED.has(i + 1) ? i + 1 : undefined}
+                className="grid content-start gap-2 border-t border-line pt-5 pb-8"
+              >
                 <div className="flex items-center gap-3">
                   <span
                     aria-hidden
