@@ -30,6 +30,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="id"
+      data-scroll-behavior="smooth"
       suppressHydrationWarning // skrip landing memasang kelas is-animating sebelum hidrasi
       className={`${sans.variable} ${serif.variable} h-full antialiased`}
     >

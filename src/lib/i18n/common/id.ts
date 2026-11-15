@@ -7,7 +7,6 @@ export const common = {
   },
   theme: {
     label: "Tampilan",
-    system: "Ikuti sistem",
     light: "Terang",
     dark: "Gelap",
     /** Accessible name of the cycling button: current mode, then the next one. */

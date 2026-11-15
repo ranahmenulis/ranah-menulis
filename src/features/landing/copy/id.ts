@@ -31,6 +31,23 @@ export const landing = {
     saved: "Tersimpan 14.02",
     words: "kata",
   },
+  // Sample manuscript shown in the hero and the previews.
+  doc: {
+    title: "Yang Ditunggu Nenek di Bawah Jambu Air",
+    shortTitle: "Yang Ditunggu Nenek",
+    author: "Rinjani Putri",
+    typed:
+      "Hujan pertama bulan November selalu datang sore hari, tepat ketika Nenek selesai menyapu halaman. Ia tidak pernah berlari masuk.",
+    page: [
+      "Hujan pertama bulan November selalu datang sore hari, tepat ketika Nenek selesai menyapu halaman. Ia tidak pernah berlari masuk. Ia berdiri dulu di bawah jambu air, membiarkan beberapa tetes jatuh ke kerudungnya, seolah menunggu seseorang yang berjanji pulang bersama musim.",
+      "Aku baru mengerti kebiasaan itu bertahun-tahun kemudian, setelah rumah itu dijual dan pohon jambunya ditebang orang yang tidak suka daun berserakan.",
+    ],
+    editorBase:
+      "Ada orang yang menunggu dengan duduk di beranda, memandangi ujung jalan sampai matanya perih.",
+    editorTail: " Nenek menunggu dengan basah.",
+    anthologyTitle: "Surat yang Tidak Pernah Terkirim",
+    anthologyLabel: "Antologi: Surat yang Tidak Pernah Terkirim",
+  },
   stepsTitle: "Satu naskah, empat langkah.",
   // One sentence per step; the moving previews demonstrate the rest (copy v2, section 4).
   steps: {

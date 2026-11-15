@@ -11,22 +11,36 @@ import { I18nProvider } from "@/lib/i18n/provider";
 
 afterEach(() => {
   cleanup();
+  vi.unstubAllGlobals();
   setLocale.mockClear();
   document.documentElement.removeAttribute("data-theme");
   document.documentElement.removeAttribute("lang");
   document.cookie = "theme=; max-age=0; path=/";
 });
 
+function stubSystem(dark: boolean) {
+  vi.stubGlobal("matchMedia", () => ({
+    matches: dark,
+    addEventListener() {},
+    removeEventListener() {},
+  }));
+}
+
 describe("ThemeToggle", () => {
-  it("cycles the theme and describes the next mode in its name", () => {
+  it("starts from a light system and flips to dark, then back", () => {
+    stubSystem(false);
     render(<ThemeToggle />);
-    const button = screen.getByRole("button", { name: /Ikuti sistem.*Terang/ });
-    fireEvent.click(button);
-    expect(document.documentElement.getAttribute("data-theme")).toBe("light");
     fireEvent.click(screen.getByRole("button", { name: /Terang.*Gelap/ }));
     expect(document.documentElement.getAttribute("data-theme")).toBe("dark");
-    fireEvent.click(screen.getByRole("button", { name: /Gelap.*Ikuti sistem/ }));
-    expect(document.documentElement.hasAttribute("data-theme")).toBe(false);
+    fireEvent.click(screen.getByRole("button", { name: /Gelap.*Terang/ }));
+    expect(document.documentElement.getAttribute("data-theme")).toBe("light");
+  });
+
+  it("starts from a dark system and flips to light", () => {
+    stubSystem(true);
+    render(<ThemeToggle />);
+    fireEvent.click(screen.getByRole("button", { name: /Gelap.*Terang/ }));
+    expect(document.documentElement.getAttribute("data-theme")).toBe("light");
   });
 });
 

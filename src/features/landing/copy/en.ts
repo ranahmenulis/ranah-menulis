@@ -22,10 +22,26 @@ export const landing: typeof source = {
     cta: "Join the waitlist",
     secondary: "See how it works",
     ariaLabel:
-      "A paragraph is typed in Studio, becomes page 12 of a book, then becomes a black-covered book titled Yang Ditunggu Nenek di Bawah Jambu Air by Rinjani Putri.",
+      "A paragraph is typed in Studio, becomes page 12 of a book, then becomes a black-covered book titled What Grandma Waited For Beneath the Water Apple Tree by Rinjani Putri.",
     saving: "Saving…",
     saved: "Saved 2:02 PM",
     words: "words",
+  },
+  doc: {
+    title: "What Grandma Waited For Beneath the Water Apple Tree",
+    shortTitle: "What Grandma Waited For",
+    author: "Rinjani Putri",
+    typed:
+      "The first rain of November always came in the late afternoon, just as Grandma finished sweeping the yard. She never ran inside.",
+    page: [
+      "The first rain of November always came in the late afternoon, just as Grandma finished sweeping the yard. She never ran inside. She stood a while under the water apple tree, letting a few drops fall onto her headscarf, as if waiting for someone who had promised to come home with the season.",
+      "I only understood the habit years later, after the house was sold and the tree was cut down by someone who disliked fallen leaves.",
+    ],
+    editorBase:
+      "Someone was waiting by sitting on the porch, staring down the end of the road until her eyes ached.",
+    editorTail: " Grandma waited by getting wet.",
+    anthologyTitle: "The Letter That Was Never Sent",
+    anthologyLabel: "Anthology: The Letter That Was Never Sent",
   },
   stepsTitle: "One manuscript, four steps.",
   steps: {
@@ -62,7 +78,7 @@ export const landing: typeof source = {
     todayWords: "Today {count} / 500 words",
     reached: "Reached",
     weekdays: ["M", "T", "W", "T", "F", "S", "S"],
-    submissionMeta: "“Toples Kerupuk” · version 2 · sent Nov 3",
+    submissionMeta: "“The Cracker Jar” · version 2 · sent Nov 3",
     sent: "Sent",
     accepted: "Accepted",
     submissionNote:

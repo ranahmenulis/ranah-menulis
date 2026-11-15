@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { applyTheme, nextTheme, readTheme, saveTheme, themeScript } from "@/lib/theme/theme";
 
 afterEach(() => {
@@ -7,22 +7,27 @@ afterEach(() => {
 });
 
 describe("theme", () => {
-  it("cycles system → light → dark → system", () => {
-    expect(nextTheme("system")).toBe("light");
+  it("flips between light and dark", () => {
     expect(nextTheme("light")).toBe("dark");
-    expect(nextTheme("dark")).toBe("system");
+    expect(nextTheme("dark")).toBe("light");
   });
 
   it("reads a stored theme and ignores unknown values", () => {
     expect(readTheme("a=1; theme=dark; b=2")).toBe("dark");
-    expect(readTheme("theme=purple")).toBe("system");
-    expect(readTheme("")).toBe("system");
+    expect(readTheme("theme=purple")).toBeNull();
+    expect(readTheme("theme=system")).toBeNull();
+    expect(readTheme("")).toBeNull();
   });
 
-  it("sets data-theme for light and dark and removes it for system", () => {
+  it("sets data-theme", () => {
     applyTheme("dark");
     expect(document.documentElement.getAttribute("data-theme")).toBe("dark");
-    applyTheme("system");
+    applyTheme("light");
+    expect(document.documentElement.getAttribute("data-theme")).toBe("light");
+  });
+
+  it("the head script leaves the page to the system when nothing is saved", () => {
+    new Function(themeScript)();
     expect(document.documentElement.hasAttribute("data-theme")).toBe(false);
   });
 
@@ -35,6 +40,51 @@ describe("theme", () => {
   it("the head script applies a stored theme before paint", () => {
     document.cookie = "theme=dark; path=/";
     new Function(themeScript)();
+    expect(document.documentElement.getAttribute("data-theme")).toBe("dark");
+  });
+});
+
+describe("saveTheme reveal", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    Reflect.deleteProperty(document, "startViewTransition");
+  });
+
+  function stubTransition() {
+    const animate = vi.fn();
+    document.documentElement.animate = animate as never;
+    const start = vi.fn((update: () => void) => {
+      update();
+      return { ready: Promise.resolve() };
+    });
+    Object.defineProperty(document, "startViewTransition", { value: start, configurable: true });
+    return { start, animate };
+  }
+
+  it("applies the theme inside a view transition and grows a circle from the origin", async () => {
+    const { start, animate } = stubTransition();
+    saveTheme("dark", { x: 100, y: 20 });
+    expect(start).toHaveBeenCalledOnce();
+    expect(document.documentElement.getAttribute("data-theme")).toBe("dark");
+    await Promise.resolve();
+    await Promise.resolve();
+    const [frames, options] = animate.mock.calls[0];
+    expect(frames.clipPath[0]).toBe("circle(0px at 100px 20px)");
+    expect(options.pseudoElement).toBe("::view-transition-new(root)");
+  });
+
+  it("switches at once without an origin", () => {
+    const { start } = stubTransition();
+    saveTheme("light");
+    expect(start).not.toHaveBeenCalled();
+    expect(document.documentElement.getAttribute("data-theme")).toBe("light");
+  });
+
+  it("switches at once with reduced motion", () => {
+    const { start } = stubTransition();
+    vi.stubGlobal("matchMedia", () => ({ matches: true }));
+    saveTheme("dark", { x: 1, y: 1 });
+    expect(start).not.toHaveBeenCalled();
     expect(document.documentElement.getAttribute("data-theme")).toBe("dark");
   });
 });
