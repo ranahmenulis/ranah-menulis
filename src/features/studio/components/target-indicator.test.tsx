@@ -14,7 +14,7 @@ function log(words: Record<string, number>) {
 
 describe("TargetIndicator", () => {
   it("shows today's words against the target and is named for screen readers", () => {
-    render(<TargetIndicator progress={log({ Surat: 468 })} pending={false} />);
+    render(<TargetIndicator target={500} progress={log({ Surat: 468 })} pending={false} />);
 
     const button = screen.getByRole("button", {
       name: /Kata hari ini dari semua dokumen: 468 dari target 500/,
@@ -24,18 +24,24 @@ describe("TargetIndicator", () => {
   });
 
   it("keeps counting past the target without a new message", () => {
-    render(<TargetIndicator progress={log({ Surat: 612 })} pending={false} />);
+    render(<TargetIndicator target={500} progress={log({ Surat: 612 })} pending={false} />);
     expect(screen.getByRole("button").textContent).toContain("612 / 500");
     expect(screen.queryByRole("dialog")).toBeNull();
   });
 
   it("marks words as recorded later while offline", () => {
-    render(<TargetIndicator progress={log({ Surat: 471 })} pending />);
+    render(<TargetIndicator target={500} progress={log({ Surat: 471 })} pending />);
     expect(screen.getByRole("button").textContent).toContain("tercatat saat tersambung");
   });
 
   it("opens a popover with the remaining words and the top three documents", () => {
-    render(<TargetIndicator progress={log({ A: 10, B: 300, C: 50, D: 80 })} pending={false} />);
+    render(
+      <TargetIndicator
+        target={500}
+        progress={log({ A: 10, B: 300, C: 50, D: 80 })}
+        pending={false}
+      />,
+    );
 
     fireEvent.click(screen.getByRole("button"));
 
@@ -46,7 +52,7 @@ describe("TargetIndicator", () => {
   });
 
   it("handles zero words with no document rows", () => {
-    render(<TargetIndicator progress={emptyLog()} pending={false} />);
+    render(<TargetIndicator target={500} progress={emptyLog()} pending={false} />);
     fireEvent.click(screen.getByRole("button"));
 
     const popover = screen.getByRole("dialog");

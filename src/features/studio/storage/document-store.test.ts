@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { emptyLog, totalWords } from "../daily-progress";
-import { commitSave, type StudioDocument } from "./document-store";
+import { applyMeta, commitSave, type StudioDocument } from "./document-store";
 
 const content = { type: "doc", content: [] };
 const input = { id: "a", title: "Judul", content, wordCount: 120 };
@@ -41,5 +41,28 @@ describe("commitSave", () => {
     const result = commitSave(existing, input, 3, emptyLog(), 300);
 
     expect(result).toEqual({ ok: false, conflict: existing });
+  });
+});
+
+describe("commitSave keeps filing state", () => {
+  it("does not drop the folder or trash state when the text is saved", () => {
+    const existing = stored({ folderId: "f1", deletedAt: 50 });
+
+    const result = commitSave(existing, input, 3, emptyLog(), 9);
+
+    expect(result.ok && result.doc.folderId).toBe("f1");
+    expect(result.ok && result.doc.deletedAt).toBe(50);
+  });
+});
+
+describe("applyMeta", () => {
+  it("changes only the given fields, bumps the version, and keeps the content", () => {
+    const doc = stored();
+
+    const next = applyMeta(doc, { title: "Baru", deletedAt: 7 }, 99);
+
+    expect(next).toMatchObject({ title: "Baru", deletedAt: 7, version: 4, updatedAt: 99 });
+    expect(next.content).toBe(doc.content);
+    expect(doc.title).toBe("Judul");
   });
 });

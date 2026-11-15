@@ -13,7 +13,8 @@ import { cn } from "@/lib/cn";
 import { paragraphsOf } from "../diff-paragraphs";
 import { useOnlineStatus } from "../hooks/use-online-status";
 import { useStudioDocument, type LoadState } from "../hooks/use-studio-document";
-import { createIndexedDbStore } from "../storage/indexeddb-store";
+import { studioStore as store } from "../storage/store";
+import { useDailyTarget } from "../hooks/use-daily-target";
 import { ConflictDialog, type ConflictVersion } from "./conflict-dialog";
 import { EditorBar } from "./editor-bar";
 import { EditorCanvas } from "./editor-canvas";
@@ -22,7 +23,6 @@ import { FocusHud } from "./focus-hud";
 import { HelpDrawer } from "./help-drawer";
 import type { MenuEntry } from "@/components/ui/menu";
 
-const store = createIndexedDbStore();
 /** [konfirmasi] Back-link target until the Studio document list exists (step 4). */
 const STUDIO_HOME = "/";
 
@@ -46,6 +46,7 @@ function NotReady({ load, onRetry }: { load: LoadState; onRetry: () => void }) {
 export function StudioEditor({ documentId }: { documentId: string }) {
   const doc = useStudioDocument(documentId, store);
   const online = useOnlineStatus();
+  const target = useDailyTarget();
   const toast = useToast();
   const [helpOpen, setHelpOpen] = useState(false);
   const [focusMode, setFocusMode] = useState(false);
@@ -156,6 +157,7 @@ export function StudioEditor({ documentId }: { documentId: string }) {
           savedAt={doc.savedAt}
           offline={!online}
           progress={doc.progress}
+          target={target}
           helpOpen={helpOpen}
           empty={isEmpty}
           ready={ready}
@@ -184,6 +186,7 @@ export function StudioEditor({ documentId }: { documentId: string }) {
           savedAt={doc.savedAt}
           words={doc.words}
           progress={doc.progress}
+          target={target}
           onExit={() => setFocusMode(false)}
         />
       )}

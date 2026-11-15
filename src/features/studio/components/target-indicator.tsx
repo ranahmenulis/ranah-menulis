@@ -3,10 +3,12 @@
 import { useState } from "react";
 import { Popover } from "@/components/ui/popover";
 import { cn } from "@/lib/cn";
-import { DAILY_TARGET, topDocuments, totalWords, type DailyLog } from "../daily-progress";
+import { topDocuments, totalWords, type DailyLog } from "../daily-progress";
 
 type TargetIndicatorProps = {
   progress: DailyLog;
+  /** Today's target in words. */
+  target: number;
   /** Offline: the count keeps moving from local data and is marked as recorded later. */
   pending: boolean;
   className?: string;
@@ -20,9 +22,9 @@ const number = new Intl.NumberFormat("id-ID");
  * count on purpose. Reaching the target fills the ring once; nothing interrupts writing.
  * [usulan] The Streak sentence and "Buka Streak" link arrive with the Streak tab (step 4).
  */
-export function TargetIndicator({ progress, pending, className }: TargetIndicatorProps) {
+export function TargetIndicator({ progress, target, pending, className }: TargetIndicatorProps) {
   const total = totalWords(progress);
-  const reached = total >= DAILY_TARGET;
+  const reached = total >= target;
   const [open, setOpen] = useState(false);
 
   // Fill the ring only when this session crosses the target, not when a finished day is reopened.
@@ -34,7 +36,7 @@ export function TargetIndicator({ progress, pending, className }: TargetIndicato
   }
 
   const docs = topDocuments(progress);
-  const remaining = DAILY_TARGET - total;
+  const remaining = target - total;
   const note = pending
     ? "Tercatat saat tersambung. Kata dari perangkat ini dikirim nanti, dihitung ke hari kamu menulisnya, dan tidak dihitung dua kali."
     : reached
@@ -53,12 +55,12 @@ export function TargetIndicator({ progress, pending, className }: TargetIndicato
           {...props}
           type="button"
           title="Kata hari ini dari semua dokumen"
-          aria-label={`Kata hari ini dari semua dokumen: ${total} dari target ${DAILY_TARGET}${pending ? ", sebagian tercatat saat tersambung" : ""}. Buka rincian`}
+          aria-label={`Kata hari ini dari semua dokumen: ${total} dari target ${target}${pending ? ", sebagian tercatat saat tersambung" : ""}. Buka rincian`}
           className="group inline-flex min-h-8 cursor-pointer flex-wrap items-center justify-end gap-x-1.5 text-xs text-ink-muted tabular-nums"
         >
           <Dot reached={reached} fresh={justReached} />
           <b className="font-medium whitespace-nowrap text-ink group-hover:underline group-hover:underline-offset-3 group-aria-expanded:underline">
-            {number.format(total)} / {number.format(DAILY_TARGET)}
+            {number.format(total)} / {number.format(target)}
           </b>
           <span className="whitespace-nowrap">hari ini</span>
           {pending && (

@@ -9,7 +9,16 @@ export type StudioDocument = {
   /** Increases by one on every accepted save. Used to detect two writers (BR-STD-04). */
   version: number;
   updatedAt: number;
+  /** Folder the document is filed in; absent or null means the top level. */
+  folderId?: string | null;
+  /** Set when moved to Sampah. The document keeps its content and can be restored. */
+  deletedAt?: number | null;
 };
+
+export type StudioFolder = { id: string; name: string; createdAt: number };
+
+/** Fields that change without touching the text: renaming, filing, trashing. */
+export type DocumentMeta = Partial<Pick<StudioDocument, "title" | "folderId" | "deletedAt">>;
 
 export type SaveInput = {
   id: string;
@@ -32,6 +41,23 @@ export interface DocumentStore {
   today(): Promise<DailyLog>;
   /** Copy a version into a new document (conflict resolution "keep both"). */
   duplicate(source: StudioDocument, title: string): Promise<StudioDocument>;
+  /** Every document, including those in Sampah. Callers filter on `deletedAt`. */
+  list(): Promise<StudioDocument[]>;
+  listFolders(): Promise<StudioFolder[]>;
+  /** One log per day that has words, oldest first. Streak and statistics are derived from this. */
+  history(): Promise<DailyLog[]>;
+  /** Rename, move, trash, or restore. Counts as a change: the version increases. */
+  updateMeta(id: string, patch: DocumentMeta): Promise<StudioDocument | null>;
+  deletePermanently(id: string): Promise<void>;
+  /** Bulk-load daily logs (sample data in development, later the offline queue). */
+  importHistory(logs: DailyLog[]): Promise<void>;
+  createFolder(name: string): Promise<StudioFolder>;
+  renameFolder(id: string, name: string): Promise<void>;
+}
+
+/** Pure meta rule shared by every store. */
+export function applyMeta(doc: StudioDocument, patch: DocumentMeta, now: number): StudioDocument {
+  return { ...doc, ...patch, version: doc.version + 1, updatedAt: now };
 }
 
 /** Pure save rule shared by every store; the storage adapter only has to make it atomic. */
@@ -45,6 +71,7 @@ export function commitSave(
   if (existing && existing.version !== baseVersion) return { ok: false, conflict: existing };
 
   const doc: StudioDocument = {
+    ...existing, // keeps folder and trash state across saves
     ...input,
     version: (existing?.version ?? 0) + 1,
     updatedAt: now,
