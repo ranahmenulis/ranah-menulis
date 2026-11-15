@@ -34,6 +34,12 @@ describe("navigation", () => {
     expect(activeId("/jelajahi")).toBe("jelajahi");
   });
 
+  it("gives Tersimpan and Notifikasi their own destinations", () => {
+    expect(mainNav.find((n) => n.id === "tersimpan")?.href).toBe("/tersimpan");
+    expect(activeId("/tersimpan")).toBe("tersimpan");
+    expect(activeId("/notifikasi")).toBe("notifikasi");
+  });
+
   it("recognises post pages, which replace the phone bottom bar", () => {
     expect(isPostPage("/postingan/hujan-pertama-bulan-november")).toBe(true);
     expect(isPostPage("/jelajahi")).toBe(false);

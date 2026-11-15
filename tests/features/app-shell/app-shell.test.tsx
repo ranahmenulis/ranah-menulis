@@ -78,8 +78,33 @@ describe("AppShell", () => {
     expect(screen.getAllByRole("button", { name: "Kembali", hidden: true })).toHaveLength(1);
   });
 
-  it("announces unread notifications on the bell", () => {
+  it("announces unread notifications on the bell, which opens Notifikasi", () => {
+    localStorage.clear();
     renderAt("/beranda");
-    expect(screen.getByRole("button", { name: "Notifikasi, 3 belum dibaca" })).toBeTruthy();
+    const bell = screen.getByRole("link", { name: "Notifikasi, 4 belum dibaca" });
+    expect(bell.getAttribute("href")).toBe("/notifikasi");
+    expect(bell.getAttribute("aria-current")).toBeNull();
+  });
+
+  it("drops the unread count from the bell once everything is read", () => {
+    localStorage.setItem(
+      "ranah.notificationsRead",
+      JSON.stringify(["n-balasan-nur", "n-balasan-maya", "n-apresiasi", "n-revisi"]),
+    );
+    renderAt("/beranda");
+    expect(screen.getByRole("link", { name: "Notifikasi" })).toBeTruthy();
+    localStorage.clear();
+  });
+
+  it("marks the bell as current on Notifikasi and Tersimpan as current in the navigation", () => {
+    localStorage.clear();
+    renderAt("/notifikasi");
+    expect(
+      screen.getByRole("link", { name: "Notifikasi, 4 belum dibaca" }).getAttribute("aria-current"),
+    ).toBe("page");
+    cleanup();
+
+    renderAt("/tersimpan");
+    expect(new Set(current().filter(Boolean))).toEqual(new Set(["Tersimpan"]));
   });
 });

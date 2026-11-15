@@ -8,7 +8,10 @@ import { StatusSubmission } from "@/components/ui/status-submission";
 import { cn } from "@/lib/cn";
 import type { StreakData } from "@/features/studio/hooks/use-streak-data";
 import { formatChanged } from "@/features/studio/relative-time";
-import { attention, notification, projects } from "./fixtures";
+import { NOTIFICATIONS_HREF } from "@/features/app-shell/nav";
+import { agoLabel, leadOf } from "@/features/notifications/notification-text";
+import { useNotifications } from "@/features/notifications/use-notifications";
+import { attention, projects } from "./fixtures";
 
 const number = new Intl.NumberFormat("id-ID");
 
@@ -164,19 +167,26 @@ function Projects() {
   );
 }
 
+/** The newest unread notification and how many wait; nothing is drawn when all are read. */
 function Notifications() {
+  const { items, unread, now } = useNotifications();
+  const latest = items.find((n) => !n.read);
+  if (!latest) return null;
+  const lead = leadOf(latest);
   return (
     <div className="max-md:hidden">
       <Row label="Notifikasi baru">
         <div className="min-w-0 text-sm">
           <p>
-            <b className="font-medium">{notification.who}</b> {notification.text}
+            {lead && <b className="font-medium">{lead}</b>} {latest.text}
           </p>
-          <p className={sub}>{notification.meta}</p>
+          <p className={sub}>
+            {unread} belum dibaca{now > 0 && ` · terbaru ${agoLabel(latest.agoMs, now)}`}
+          </p>
         </div>
-        <Button variant="text" size="sm" disabled title="Segera">
+        <ButtonLink href={NOTIFICATIONS_HREF} variant="text" size="sm">
           Buka notifikasi
-        </Button>
+        </ButtonLink>
       </Row>
     </div>
   );
@@ -207,8 +217,9 @@ function Loading() {
 
 /**
  * "Hari ini" (PLT-10, Brief 4A): the answer to "what should I do now", as lines, not widgets. Blocks
- * that have nothing are not drawn. Writing blocks use this device's data; attention, projects and
- * notifications are dummy content until Projects and notifications exist. One filled button only.
+ * that have nothing are not drawn. Writing blocks use this device's data and notifications come
+ * from src/features/notifications; attention and projects are dummy content until Projects exists.
+ * One filled button only.
  */
 export function TodayBlock({ data, showDummy }: { data: StreakData; showDummy: boolean }) {
   if (data.status === "loading") return <Loading />;

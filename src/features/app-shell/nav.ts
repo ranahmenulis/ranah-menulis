@@ -18,9 +18,11 @@ export type NavEntry = {
 };
 
 /** [konfirmasi] Dummy account until sign-in exists; login is bypassed during slicing. */
-export const DUMMY_USER = { name: "Rinjani Putri", unread: 3 };
+export const DUMMY_USER = { name: "Rinjani Putri" };
 
 export const STUDIO_HREF = "/studio";
+export const SAVED_HREF = "/tersimpan";
+export const NOTIFICATIONS_HREF = "/notifikasi";
 export const STREAK_HREF = "/studio/streak";
 export const NEW_DOCUMENT_HREF = "/studio/baru";
 export const DISCOVER_HREF = "/jelajahi";
@@ -36,7 +38,12 @@ const discover: NavEntry = {
 const studio: NavEntry = { id: "studio", label: "Studio", Icon: Notebook, href: STUDIO_HREF };
 const streak: NavEntry = { id: "streak", label: "Streak", Icon: CalendarDots, href: STREAK_HREF };
 const projects: NavEntry = { id: "projects", label: "Projects", Icon: Books };
-const saved: NavEntry = { id: "tersimpan", label: "Tersimpan", Icon: BookmarkSimple };
+const saved: NavEntry = {
+  id: "tersimpan",
+  label: "Tersimpan",
+  Icon: BookmarkSimple,
+  href: SAVED_HREF,
+};
 const profile: NavEntry = { id: "profil", label: "Profil", Icon: User };
 
 /**
@@ -54,6 +61,8 @@ export function activeId(pathname: string): string | null {
   if (pathname.startsWith(STUDIO_HREF)) return "studio";
   if (pathname.startsWith("/beranda")) return "beranda";
   if (pathname.startsWith(DISCOVER_HREF)) return "jelajahi";
+  if (pathname.startsWith(SAVED_HREF)) return "tersimpan";
+  if (pathname.startsWith(NOTIFICATIONS_HREF)) return "notifikasi";
   return null;
 }
 

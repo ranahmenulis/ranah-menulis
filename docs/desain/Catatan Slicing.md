@@ -4,7 +4,7 @@ Serah terima per **15 November 2026** untuk sesi yang mulai mengubah desain menj
 
 ## Keadaan sekarang
 
-**Progres per 15 November 2026: langkah 1–5 selesai, langkah 6 belum dimulai.** Semua layar memakai data dummy atau lokal (IndexedDB) dan login di-bypass sampai semua layar selesai dan desain disetujui. Backend (auth, migrasi 0002 dan seterusnya, RLS, store Supabase) belum dikerjakan; migrasi 0002 belum diterapkan. Perubahan langkah 5 belum di-commit.
+**Progres per 15 November 2026: langkah 1–5 selesai, langkah 6 berjalan (6a selesai, 6b–6g belum).** Semua layar memakai data dummy atau lokal (IndexedDB) dan login di-bypass sampai semua layar selesai dan desain disetujui. Backend (auth, migrasi 0002 dan seterusnya, RLS, store Supabase) belum dikerjakan; migrasi 0002 belum diterapkan. Perubahan langkah 5 belum di-commit.
 
 - Desain ada di tiga artifact claude.ai yang **sudah disalin** ke [docs/desain/](README.md) (token, CSS komponen, 32 papan aplikasi, 9 papan landing). Claude Design **tidak dipakai lagi** karena boros usage.
 - Peta kode ada di CLAUDE.md. Daftar yang disengaja belum dibuat tercantum di tiap langkah di bawah.
@@ -35,14 +35,21 @@ Serah terima per **15 November 2026** untuk sesi yang mulai mengubah desain menj
    - Ponsel: menu ⋯ halaman postingan ada di bilah aksi bawah (papan menaruhnya di bilah atas), dan Terbitkan tidak dinonaktifkan di langkah pilih bagian bila formulir sudah lengkap. Pilihan "Grup" memakai satu grup dummy (Q-38).
    - Postingan yang sudah terbit belum bisa diedit atau ditarik; draf tidak disimpan otomatis. Tombol Bagikan memakai share bawaan peramban atau menyalin tautan (dialog Bagikan dokumen ada di langkah 6).
    - Tombol "Tulis postingan" ada di Beranda dan Jelajahi; Editor Studio belum punya jalan masuk "Bagikan sebagai postingan" (langkah 6).
-6. [ ] **Layar yang belum didesain**, dibangun langsung dari komponen yang ada dan spesifikasi DESIGN.md bagian 6: akun dan onboarding (R1), profil publik, Tersimpan, Notifikasi, Statistik, dialog Bagikan dan Kirim ke proyek, Projects (R4–R5), Kelola dan Admin, Grup.
+6. [ ] **Layar yang belum didesain**, dibangun **seluruhnya langsung di Claude Code** (keputusan user, 15 November 2026: Claude Design tidak dipakai lagi, termasuk untuk Detail proyek, Kirim karya, dan Panel juri) dari komponen yang ada dan spesifikasi DESIGN.md bagian 6. Tetap data dummy atau lokal, tanpa backend. Tiap sub-langkah mendapat rencana rinci sendiri sebelum dikerjakan (CLAUDE.md butir 3):
+   - [x] **6a. Tersimpan dan Notifikasi** (DESIGN 6.6), selesai 15 November 2026. Tersimpan: daftar pola feed dari marks "Simpan", kosong, dan butir tidak tersedia (PRD COM-06). Notifikasi: tab Semua · Komentar · Proyek, belum dibaca bertitik, tandai dibaca, tautan ke objek, notifikasi sejenis digabung (PRD bagian 20). Lonceng di bilah atas menuju ke sini dan hitungannya mengikuti data yang sama; baris Notifikasi di Beranda juga. Yang disengaja belum: teks hanya Indonesia (belum dua bahasa); notifikasi untuk karya sendiri dan proyek tanpa tujuan (`href: null`) sampai 6b dan 6f; Notifikasi tanpa keadaan memuat dan galat (data sinkron); **di ponsel Tersimpan belum punya jalan masuk** (tab Profil nonaktif); preferensi notifikasi dan email belum; urutan Tersimpan memakai tanggal terbit, bukan waktu simpan (mark tidak mencatat waktu) [usulan].
+   - [ ] **6b. Profil publik penulis** (DESIGN 6.5): Karya · Tentang · Proyek; nama penulis di feed dan halaman postingan menjadi tautan.
+   - [ ] **6c. Dialog Bagikan, Kirim ke proyek, dan jalan masuk "Bagikan sebagai postingan"** dari Editor Studio (DESIGN 7.5).
+   - [ ] **6d. Statistik** (DESIGN 6.6). Cakupan belum jelas: statistik postingan, atau perluasan tab Streak.
+   - [ ] **6e. Akun dan onboarding** (R1): Masuk, Daftar, Lupa sandi, Verifikasi, Profil dan zona waktu. Hanya tampilan; tombol Masuk dan Daftar yang kini nonaktif diaktifkan.
+   - [ ] **6f. Projects** (R4–R5): katalog, detail proyek, Kirim karya, QRIS, status submission (DESIGN 6.7, 7.4).
+   - [ ] **6g. Kelola, Admin, Juri, dan Grup** (DESIGN 6.7).
 
 Urutan rilis dan ketergantungan data: `docs/MVP Scope RanahMenulis.md`. Backend mengikuti rilis R1 dst.; jangan membangun tabel di luar yang dibutuhkan layar yang sedang dikerjakan.
 
 ## Aturan kerja
 
 - **Sumber kebenaran bila bertentangan:** keputusan client, PRD v0.2, DESIGN.md, baru arsip artifact.
-- **Skill:** `design-taste-frontend` hanya untuk landing. Aturannya (foto nyata, momen hero) bertabrakan dengan DESIGN.md untuk layar aplikasi. Untuk polesan aplikasi pakai `emil-design-eng` dan `animate`; `break-ui` untuk uji data terburuk.
+- **Skill:** `design-taste-frontend` dibuat untuk landing; aturannya (foto nyata, momen hero, kartu terangkat saat hover) bertabrakan dengan DESIGN.md untuk layar aplikasi. Untuk layar langkah 6 skill ini dipakai atas permintaan user (15 November 2026) hanya pada prinsip yang tidak bertentangan (tepi sejajar, tanpa keterangan di bawah gambar, ikon nyata, teks polos, respons hover dan tekan); bila bertabrakan, **DESIGN.md menang**. Untuk polesan aplikasi pakai `emil-design-eng` dan `animate`; `break-ui` untuk uji data terburuk.
 - **Setiap layar** dicek di terang dan gelap, lebar 375 dan 1280, dengan judul panjang, nama satu huruf, dan nol butir. Keadaan memuat, kosong, galat wajib ada (DESIGN.md bagian 8). Daftar larangan: bagian 9.
 - **Satu tombol terisi per layar.** Merah hanya untuk galat dan tindakan yang tidak bisa dibatalkan.
 - File `.dc.html` tidak bisa dibuka di browser; baca sebagai teks. Catatan keputusan per bagian ada di `docs/desain/aplikasi/canvas.json` (`notes`).

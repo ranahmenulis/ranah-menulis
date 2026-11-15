@@ -3,7 +3,7 @@ import type { SubmissionStatus } from "@/components/ui/status-submission";
 /**
  * Dummy data for Beranda until Projects (R4) and the account screens exist. Everything here is
  * placeholder content written to look like real use; none of it comes from a database. The feed
- * itself comes from src/features/community.
+ * itself comes from src/features/community, notifications from src/features/notifications.
  */
 
 export type AttentionItem = { title: string; meta: string; actions: string[] };
@@ -38,12 +38,6 @@ export const projects: ProjectItem[] = [
     meta: "“Yang Ditunggu Nenek di Bawah Jambu Air” · pengumuman finalis 30 Nov",
   },
 ];
-
-export const notification = {
-  who: "Nur Aisyah",
-  text: "membalas komentarmu di “Bahasa yang Kupakai untuk Memarahi Adik”.",
-  meta: "3 belum dibaca · terbaru 25 menit lalu",
-};
 
 export type Followed = { name: string; fresh: boolean };
 export const followed: Followed[] = [

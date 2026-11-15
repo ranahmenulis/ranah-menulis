@@ -48,6 +48,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <TopBar
         title={mobileTitle(pathname)}
         discoverActive={active === "jelajahi"}
+        notificationsActive={active === "notifikasi"}
         back={onPost}
         onToggleSidebar={() => setSidebar((v) => !v)}
       />
