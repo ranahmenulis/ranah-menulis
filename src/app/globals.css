@@ -183,10 +183,10 @@
   --color-danger: var(--danger);
   --color-danger-subtle: var(--danger-subtle);
 
-  --font-sans: var(--font-schibsted), ui-sans-serif, system-ui, sans-serif;
-  --font-serif: var(--font-source-serif), Charter, Georgia, serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-merriweather), Georgia, serif;
 
-  /* Skala sans antarmuka (DESIGN.md 4.2). Menimpa skala Tailwind. */
+  /* Interface sans scale (DESIGN.md 4.2). Overrides the Tailwind scale. */
   --text-xs: 0.8125rem;
   --text-xs--line-height: 1.125rem;
   --text-sm: 0.875rem;
@@ -300,7 +300,8 @@
   }
 }
 
-/* Skala tulisan. Sans untuk antarmuka, serif untuk bacaan (DESIGN.md 4.2). */
+/* Type scale. Inter for the interface, Merriweather for writing and reading (DESIGN.md 4.2).
+   Merriweather has a taller x-height than the old Source Serif 4, so serif sizes sit 1-2px lower. */
 
 @utility heading-sm {
   font-family: var(--font-sans);
@@ -320,7 +321,8 @@
   font-family: var(--font-sans);
   font-size: 1.5rem;
   line-height: 1.875rem;
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: -0.015em;
   @media (width >= 48rem) {
     font-size: 1.75rem;
     line-height: 2.125rem;
@@ -329,93 +331,92 @@
 
 @utility read-body {
   font-family: var(--font-serif);
-  font-size: 1.125rem;
-  line-height: 1.8125rem;
+  font-size: 1rem;
+  line-height: 1.75rem;
   font-weight: 400;
-  letter-spacing: -0.003em;
   @media (width >= 48rem) {
-    font-size: 1.25rem;
-    line-height: 2rem;
+    font-size: 1.125rem;
+    line-height: 1.875rem;
   }
 }
 
 @utility read-title {
   font-family: var(--font-serif);
-  font-size: 2rem;
-  line-height: 2.5rem;
+  font-size: 1.75rem;
+  line-height: 2.25rem;
   font-weight: 600;
-  letter-spacing: -0.015em;
+  letter-spacing: -0.01em;
   text-wrap: balance;
   @media (width >= 48rem) {
-    font-size: 2.625rem;
-    line-height: 3.25rem;
+    font-size: 2.25rem;
+    line-height: 2.875rem;
   }
 }
 
 @utility read-subtitle {
   font-family: var(--font-serif);
-  font-size: 1.25rem;
+  font-size: 1.125rem;
   line-height: 1.75rem;
   font-weight: 400;
   color: var(--ink-muted);
   @media (width >= 48rem) {
-    font-size: 1.375rem;
-    line-height: 2rem;
+    font-size: 1.25rem;
+    line-height: 1.875rem;
   }
 }
 
 @utility read-h2 {
   font-family: var(--font-serif);
-  font-size: 1.375rem;
-  line-height: 1.875rem;
+  font-size: 1.25rem;
+  line-height: 1.75rem;
   font-weight: 600;
   @media (width >= 48rem) {
-    font-size: 1.625rem;
-    line-height: 2.125rem;
+    font-size: 1.4375rem;
+    line-height: 2rem;
   }
 }
 
 @utility feed-title {
   font-family: var(--font-serif);
-  font-size: 1.125rem;
+  font-size: 1rem;
   line-height: 1.5rem;
   font-weight: 600;
   text-wrap: balance;
   @media (width >= 48rem) {
-    font-size: 1.375rem;
+    font-size: 1.25rem;
     line-height: 1.75rem;
   }
 }
 
 @utility feed-excerpt {
   font-family: var(--font-serif);
-  font-size: 0.9375rem;
-  line-height: 1.5rem;
+  font-size: 0.875rem;
+  line-height: 1.375rem;
   font-weight: 400;
   color: var(--ink-muted);
   @media (width >= 48rem) {
-    font-size: 1rem;
-    line-height: 1.625rem;
+    font-size: 0.9375rem;
+    line-height: 1.5rem;
   }
 }
 
 @utility display {
-  font-family: var(--font-serif);
-  font-size: clamp(44px, 9vw, 96px);
-  line-height: 1;
-  font-weight: 400;
-  letter-spacing: -0.025em;
+  font-family: var(--font-sans);
+  font-size: clamp(40px, 8vw, 88px);
+  line-height: 1.02;
+  font-weight: 700;
+  letter-spacing: -0.035em;
   text-wrap: balance;
 }
 
 @utility figure {
   font-family: var(--font-serif);
-  font-size: 2.75rem;
+  font-size: 2.5rem;
   line-height: 1;
   font-weight: 400;
   font-variant-numeric: lining-nums tabular-nums;
   @media (width >= 48rem) {
-    font-size: 3.5rem;
+    font-size: 3.25rem;
   }
 }
 
@@ -470,15 +471,15 @@
 /* Landing */
 
 @utility landing-h2 {
-  font-family: var(--font-serif);
-  font-size: 2rem;
-  line-height: 2.5rem;
-  font-weight: 400;
+  font-family: var(--font-sans);
+  font-size: 1.75rem;
+  line-height: 2.25rem;
+  font-weight: 600;
   letter-spacing: -0.025em;
   text-wrap: balance;
   @media (width >= 48rem) {
-    font-size: 2.625rem;
-    line-height: 3.25rem;
+    font-size: 2.5rem;
+    line-height: 3rem;
   }
 }
 
@@ -497,16 +498,16 @@
    ------------------------------------------------------------------------------------------ */
 
 @utility landing-statement {
-  font-family: var(--font-serif);
-  font-size: 2.25rem;
-  line-height: 2.75rem;
-  font-weight: 400;
-  letter-spacing: -0.025em;
+  font-family: var(--font-sans);
+  font-size: 2rem;
+  line-height: 2.5rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
   max-width: 16em;
   text-wrap: pretty;
   @media (width >= 48rem) {
-    font-size: 3.5rem;
-    line-height: 4rem;
+    font-size: 3.25rem;
+    line-height: 3.75rem;
   }
 }
 

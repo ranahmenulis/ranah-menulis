@@ -87,14 +87,20 @@ Semua nilai sudah dicek kontrasnya (WCAG 2.1). Rasio di kolom terakhir adalah te
 
 ### 4.2 Tipografi
 
-Medium memakai Source Serif untuk teks artikel dan Söhne (berbayar) untuk antarmuka. Kita memakai keluarga gratis dari Google Fonts lewat `next/font`.
+**Keputusan client (brief font, 15 November 2026):** Inter untuk antarmuka, Merriweather untuk tulisan. Berlaku untuk aplikasi dan landing. Menggantikan usulan sebelumnya (Schibsted Grotesk dan Source Serif 4). Keduanya dari Google Fonts lewat `next/font`, variable font dengan sumbu optical size aktif.
 
-| Peran | Huruf | Alasan |
+| Peran | Huruf | Bobot (brief client) |
 | --- | --- | --- |
-| Serif (judul karya, teks karya, angka besar) | **Source Serif 4**, sumbu optical size aktif | Serif teks yang dipakai Medium sendiri; nyaman untuk bacaan panjang; ukuran optik membuat judul besar tetap tajam |
-| Sans (semua antarmuka) | **Schibsted Grotesk** (Usulan) | Grotesk yang dibuat untuk penerbit berita; netral tetapi tidak sedatar Inter. Pembanding saat uji: Public Sans, IBM Plex Sans |
+| App Heading (judul halaman, hero landing) | **Inter** | Bold 700 |
+| Section Heading (judul bagian) | **Inter** | SemiBold 600 |
+| Body Text (teks antarmuka) | **Inter** | Regular 400 |
+| Navigation | **Inter** | Medium 500 (aktif dan tidak aktif sama; aktif dibedakan warna `ink` dan ikon terisi) |
+| Button | **Inter** | SemiBold 600 |
+| Writing Editor | **Merriweather** | Regular 400 |
+| Article Preview (teks karya di halaman baca, feed, Jelajahi) | **Merriweather** | Regular 400 |
+| Quote (blockquote) | **Merriweather** | Italic 400 |
 
-Font final diputuskan setelah **uji spesimen** dengan teks Indonesia sungguhan: satu paragraf prosa, satu puisi, satu baris UI padat ("Perlu Revisi · 3 hari lagi · Rp75.000").
+Brief tidak mengatur judul karya dan angka besar; keduanya tetap serif (Merriweather 600 untuk judul karya, 400 untuk `figure`). Merriweather punya tinggi huruf kecil yang lebih besar (±0,55 em) dan lebih lebar daripada Source Serif 4, jadi ukuran serif di skala bacaan diturunkan 1–2px agar kolom 680px tetap ±65–75 karakter per baris.
 
 **Skala antarmuka (sans):**
 
@@ -105,27 +111,28 @@ Font final diputuskan setelah **uji spesimen** dengan teks Indonesia sungguhan: 
 | `text-base` | 16 / 24 | 400 | UI utama, form |
 | `heading-sm` | 16 / 24 | 600 | Judul blok kecil |
 | `heading-md` | 20 / 28 | 600 | Judul bagian |
-| `heading-lg` | 28 / 34 (ponsel 24 / 30) | 600 | Judul halaman aplikasi ("Proyek saya") |
+| `heading-lg` | 28 / 34 (ponsel 24 / 30), tracking −0.015em | 700 | Judul halaman aplikasi ("Proyek saya") |
 
 **Skala bacaan (serif):**
 
 | Token | Desktop | Ponsel | Bobot | Dipakai untuk |
 | --- | --- | --- | --- | --- |
-| `read-body` | 20 / 32, tracking −0.003em | 18 / 29 | 400 | Teks karya, editor |
-| `read-title` | 42 / 52, tracking −0.015em | 32 / 40 | 600 | Judul karya di halaman baca dan editor |
-| `read-subtitle` | 22 / 32 | 20 / 28 | 400, `ink-muted` | Subjudul karya |
-| `read-h2` | 26 / 34 | 22 / 30 | 600 | Subjudul di dalam karya |
-| `feed-title` | 22 / 28 | 18 / 24 | 600 | Judul di feed dan daftar |
-| `feed-excerpt` | 16 / 26 | 15 / 24 | 400, `ink-muted` | Cuplikan di feed |
-| `display` | `clamp(44px, 9vw, 96px)` / 1.0, tracking −0.025em | — | 400 | Hero landing saja |
-| `figure` | 56 / 1.0 | 44 / 1.0 | 400, angka lining tabular | Angka streak, statistik |
+| `read-body` | 18 / 30 | 16 / 28 | 400 | Teks karya, editor |
+| `read-title` | 36 / 46, tracking −0.01em | 28 / 36 | 600 | Judul karya di halaman baca dan editor |
+| `read-subtitle` | 20 / 30 | 18 / 28 | 400, `ink-muted` | Subjudul karya |
+| `read-h2` | 23 / 32 | 20 / 28 | 600 | Subjudul di dalam karya |
+| `feed-title` | 20 / 28 | 16 / 24 | 600 | Judul di feed dan daftar |
+| `feed-excerpt` | 15 / 24 | 14 / 22 | 400, `ink-muted` | Cuplikan di feed |
+| `figure` | 52 / 1.0 | 40 / 1.0 | 400, angka lining tabular | Angka streak, statistik |
+
+**Skala landing (sans, Inter):** `display` `clamp(40px, 8vw, 88px)` / 1.02, tracking −0.035em, 700 (hero); `landing-h2` 40 / 48 (ponsel 28 / 36), tracking −0.025em, 600 (judul bagian).
 
 Aturan:
 - Lebar kolom baca maksimal **680px** (±65–72 karakter).
 - Jarak antarparagraf karya `1.4em`. Tidak ada indentasi baris pertama, tidak ada rata kanan-kiri.
 - Puisi: baris dan baris kosong dijaga (`white-space: pre-wrap`).
 - Semua angka yang dibandingkan (jumlah kata, biaya, kuota, tanggal di tabel) memakai `font-variant-numeric: tabular-nums`.
-- Bobot di atas 600 tidak dipakai. Italic hanya dari isi karya dan kutipan.
+- Bobot 700 hanya untuk App Heading (`heading-lg`, `display`); di tempat lain paling tebal 600. Italic hanya dari isi karya dan kutipan.
 
 ### 4.3 Spasi
 
@@ -196,7 +203,7 @@ Aturan:
 - Wordmark utama = monogram R + "ranah." / "menulis" dua baris. Tinggi minimal 28px di layar. Ruang bebas di sekelilingnya minimal setinggi huruf "r".
 - Bilah editor dan bilah atas ponsel yang sempit memakai **monogram R saja**.
 - Terang memakai versi hitam, gelap memakai versi putih. Tidak ada versi abu-abu atau berwarna.
-- Huruf logo adalah geometris rata dengan ujung membulat. Huruf itu **tidak** dipakai di antarmuka: tipografi antarmuka tetap Schibsted Grotesk dan Source Serif 4. Kesamaan rasa (ujung membulat) dijaga lewat tombol pill, bukan lewat font.
+- Huruf logo adalah geometris rata dengan ujung membulat. Huruf itu **tidak** dipakai di antarmuka: tipografi antarmuka tetap Inter dan Merriweather. Kesamaan rasa (ujung membulat) dijaga lewat tombol pill, bukan lewat font.
 - Catatan teknis: belum ada SVG. Untuk implementasi minta SVG dari pembuat logo; sebelum itu pakai PNG transparan. JPG berlatar putih tidak boleh dipasang di atas `canvas` gelap.
 
 ## 5. Kerangka aplikasi
@@ -517,8 +524,8 @@ Token di bawah menggantikan isi `src/app/globals.css`. Mode gelap ikut sistem, d
   --color-danger: var(--danger);
   --color-danger-subtle: var(--danger-subtle);
 
-  --font-sans: var(--font-schibsted), ui-sans-serif, system-ui, sans-serif;
-  --font-serif: var(--font-source-serif), Charter, Georgia, serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-merriweather), Georgia, serif;
 
   --radius-*: initial;
   --radius-full: 9999px;
@@ -539,12 +546,12 @@ body {
 Font di `src/app/layout.tsx` (menggantikan Geist):
 
 ```tsx
-import { Schibsted_Grotesk, Source_Serif_4 } from "next/font/google";
+import { Inter, Merriweather } from "next/font/google";
 
-const sans = Schibsted_Grotesk({ subsets: ["latin"], variable: "--font-schibsted" });
-const serif = Source_Serif_4({
+const sans = Inter({ subsets: ["latin"], variable: "--font-inter", axes: ["opsz"] });
+const serif = Merriweather({
   subsets: ["latin"],
-  variable: "--font-source-serif",
+  variable: "--font-merriweather",
   axes: ["opsz"],
   style: ["normal", "italic"],
 });
@@ -554,7 +561,7 @@ const serif = Source_Serif_4({
 
 ## 11. Belum diputuskan
 
-1. **Huruf sans final** setelah uji spesimen (Schibsted Grotesk vs Public Sans vs IBM Plex Sans).
+1. ~~Huruf sans final~~ Diputuskan client 15 November 2026: Inter dan Merriweather (4.2).
 2. **Mode gelap default:** ikut sistem (usulan) atau terang dulu. Referensi Medium dan Substack dari client sama-sama dalam mode gelap; layak ditanyakan apakah client memakai mode gelap sehari-hari.
 3. **Judul di feed:** serif (usulan, pembeda dari Medium) atau sans tebal seperti Medium. Cukup ganti token `feed-title`.
 4. Nilai ukuran Medium di dokumen ini adalah **perkiraan** dari pengamatan, bukan hasil ekstraksi. Cek ulang dengan inspeksi langsung halaman artikel dan editor Medium sebelum desain final.

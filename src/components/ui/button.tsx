@@ -14,7 +14,7 @@ type Common = {
 
 const base =
   "inline-flex items-center justify-center gap-2 rounded-full border " +
-  "font-medium whitespace-nowrap select-none cursor-pointer no-underline " +
+  "font-semibold whitespace-nowrap select-none cursor-pointer no-underline " +
   "transition-opacity duration-120 ease-out " +
   "disabled:cursor-default disabled:opacity-(--opacity-disabled) " +
   "aria-disabled:cursor-default aria-disabled:opacity-(--opacity-disabled) " +
