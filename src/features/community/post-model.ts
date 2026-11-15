@@ -54,6 +54,13 @@ export function resolveFixtureComments(now: number): Comment[] {
   return fixtureComments.map(({ agoMs, ...rest }) => ({ ...rest, createdAt: now - agoMs }));
 }
 
+/** How many comments each post has, from a flat list of comments. */
+export function commentCounts(comments: readonly Comment[]): Map<string, number> {
+  const counts = new Map<string, number>();
+  for (const c of comments) counts.set(c.postId, (counts.get(c.postId) ?? 0) + 1);
+  return counts;
+}
+
 /** Related reading: same genre first, then the most appreciated; never the post itself. [konfirmasi] */
 export function relatedPosts(post: Post, publicPosts: Post[], limit = 5): Post[] {
   return publicPosts

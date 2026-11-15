@@ -8,6 +8,7 @@ import { DISCOVER_HREF } from "@/features/app-shell/nav";
 import { useCommunity } from "@/features/community/hooks/use-community";
 import { usePostActions } from "@/features/community/hooks/use-post-actions";
 import { mark } from "@/features/community/storage/post-store";
+import { commentCounts } from "@/features/community/post-model";
 import { postStore } from "@/features/community/storage/store";
 import { FeedItem } from "@/features/home/feed-item";
 import { savedPostIds, splitSaved } from "./saved-list";
@@ -32,11 +33,7 @@ export function SavedView() {
     () => splitSaved([...kept], data.posts),
     [kept, data.posts],
   );
-  const commentCounts = useMemo(() => {
-    const counts = new Map<string, number>();
-    for (const c of data.comments) counts.set(c.postId, (counts.get(c.postId) ?? 0) + 1);
-    return counts;
-  }, [data.comments]);
+  const counts = useMemo(() => commentCounts(data.comments), [data.comments]);
 
   const empty = data.status === "ready" && kept.size === 0;
 
@@ -101,7 +98,7 @@ export function SavedView() {
                   key={post.id}
                   post={post}
                   now={data.now}
-                  comments={commentCounts.get(post.id) ?? 0}
+                  comments={counts.get(post.id) ?? 0}
                   appreciated={data.marks[mark.appreciated(post.id)] ?? false}
                   saved={data.marks[mark.saved(post.id)] ?? false}
                   onAppreciate={() => actions.appreciate(post.id)}

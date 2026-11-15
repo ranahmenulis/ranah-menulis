@@ -1,7 +1,10 @@
-import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
+import { cleanup, configure, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { NotificationList } from "@/features/notifications/notification-list";
 import { NotificationsView } from "@/features/notifications/notifications-view";
+
+// Several jsdom files run at once; the time label appears after mount and can be slow under load.
+configure({ asyncUtilTimeout: 5000 });
 
 beforeEach(() => {
   localStorage.clear();

@@ -39,11 +39,12 @@ export const projects: ProjectItem[] = [
   },
 ];
 
-export type Followed = { name: string; fresh: boolean };
+/** `handle` is set for authors, who have a profile; groups have none yet (Q-38). */
+export type Followed = { name: string; fresh: boolean; handle?: string };
 export const followed: Followed[] = [
-  { name: "Hafiz Rahman", fresh: true },
-  { name: "Nur Aisyah", fresh: true },
+  { name: "Hafiz Rahman", fresh: true, handle: "hafizrahman" },
+  { name: "Nur Aisyah", fresh: true, handle: "nuraisyah" },
   { name: "Grup Penulis Pesisir", fresh: false },
-  { name: "Dimas Pratama", fresh: true },
-  { name: "Aina Sofea", fresh: false },
+  { name: "Dimas Pratama", fresh: true, handle: "dimaspratama" },
+  { name: "Aina Sofea", fresh: false, handle: "ainasofea" },
 ];

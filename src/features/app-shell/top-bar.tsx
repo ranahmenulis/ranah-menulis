@@ -57,7 +57,9 @@ export function TopBar({
   const { topBar } = useT().shell;
   const unread = useUnreadCount();
   const unreadLabel =
-    unread > 0 ? format(topBar.notifications, { count: String(unread) }) : topBar.notificationsNone;
+    unread > 0
+      ? format(topBar.notifications, { count: unread.toLocaleString("id-ID") })
+      : topBar.notificationsNone;
   const phoneOnly = back ? "max-md:hidden" : undefined;
   return (
     <header className="sticky top-0 z-30 flex h-13 items-center gap-2 border-b border-line bg-canvas pr-2 pl-4 md:h-14 md:gap-4 md:px-4">

@@ -40,6 +40,13 @@ describe("navigation", () => {
     expect(activeId("/notifikasi")).toBe("notifikasi");
   });
 
+  it("opens your own profile from Profil, and only that page counts as Profil", () => {
+    expect(mainNav.find((n) => n.id === "profil")?.href).toBe("/penulis/rinjaniputri");
+    expect(bottomNav.find((n) => n.id === "profil")?.href).toBe("/penulis/rinjaniputri");
+    expect(activeId("/penulis/rinjaniputri")).toBe("profil");
+    expect(activeId("/penulis/hafizrahman")).toBeNull();
+  });
+
   it("recognises post pages, which replace the phone bottom bar", () => {
     expect(isPostPage("/postingan/hujan-pertama-bulan-november")).toBe(true);
     expect(isPostPage("/jelajahi")).toBe(false);

@@ -8,6 +8,7 @@ import {
   CalendarDots,
 } from "@phosphor-icons/react/dist/ssr";
 import type { Icon } from "@phosphor-icons/react";
+import { OWN_PROFILE_HREF } from "@/features/profile/profile-href";
 
 export type NavEntry = {
   id: string;
@@ -44,7 +45,7 @@ const saved: NavEntry = {
   Icon: BookmarkSimple,
   href: SAVED_HREF,
 };
-const profile: NavEntry = { id: "profil", label: "Profil", Icon: User };
+const profile: NavEntry = { id: "profil", label: "Profil", Icon: User, href: OWN_PROFILE_HREF };
 
 /**
  * Desktop sidebar and tablet rail. Streak is a sub-item of Studio on the sidebar (DESIGN.md 5.3).
@@ -63,6 +64,8 @@ export function activeId(pathname: string): string | null {
   if (pathname.startsWith(DISCOVER_HREF)) return "jelajahi";
   if (pathname.startsWith(SAVED_HREF)) return "tersimpan";
   if (pathname.startsWith(NOTIFICATIONS_HREF)) return "notifikasi";
+  // Only your own profile is "Profil"; another author's page belongs to no navigation entry.
+  if (pathname === OWN_PROFILE_HREF) return "profil";
   return null;
 }
 
