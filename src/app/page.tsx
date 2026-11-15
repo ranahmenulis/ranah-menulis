@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { heroLead, heroTitle } from "@/features/landing/copy";
+import { getDictionary } from "@/lib/i18n/server";
 import { Faq } from "@/features/landing/components/faq";
 import { Footer } from "@/features/landing/components/footer";
 import { Hero } from "@/features/landing/components/hero";
@@ -9,10 +9,10 @@ import { TopBar } from "@/features/landing/components/top-bar";
 import { Trust } from "@/features/landing/components/trust";
 import { Waitlist } from "@/features/landing/components/waitlist";
 
-export const metadata: Metadata = {
-  title: "RanahMenulis · " + heroTitle,
-  description: heroLead,
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { meta } = (await getDictionary()).landing;
+  return { title: meta.title, description: meta.description };
+}
 
 // Runs before the hero so the classes exist before first paint, and only without reduced motion.
 // `is-animating` drives the hero stage; `lp-motion` the rest of the landing's motion (hero
@@ -23,20 +23,21 @@ const heroScript = `(function(){var d=document.documentElement;if(window.matchMe
 
 // Pre-launch landing. Must not go live before the client approves the three items in
 // docs/desain/Catatan Slicing.md (pricing, Grup Penulis, privacy tone).
-export default function Home() {
+export default async function Home() {
+  const { landing } = await getDictionary();
   return (
     <>
       <script dangerouslySetInnerHTML={{ __html: heroScript }} />
       <TopBar />
       <main>
-        <Hero />
-        <HowItWorks />
-        <Projects />
-        <Trust />
-        <Waitlist />
-        <Faq />
+        <Hero copy={landing.hero} />
+        <HowItWorks copy={landing} />
+        <Projects copy={landing} />
+        <Trust trust={landing.trust} />
+        <Waitlist waitlist={landing.waitlist} />
+        <Faq title={landing.faqTitle} items={landing.faq} />
       </main>
-      <Footer />
+      <Footer copy={landing.footer} />
     </>
   );
 }

@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import { cn } from "@/lib/cn";
+import { useT } from "@/lib/i18n/provider";
 import type { NavEntry } from "./nav";
 
 type Variant = "sidebar" | "sub" | "rail" | "tab";
@@ -24,7 +27,9 @@ export function NavLink({
   variant: Variant;
   active: boolean;
 }) {
-  const { Icon, label, href } = entry;
+  const { nav } = useT().shell;
+  const { Icon, href } = entry;
+  const label = nav[entry.id as keyof typeof nav] ?? entry.label;
   const cls = cn(
     layout[variant],
     "no-underline",
@@ -39,7 +44,7 @@ export function NavLink({
   );
   if (!href) {
     return (
-      <span className={cls} aria-disabled="true" title="Segera">
+      <span className={cls} aria-disabled="true" title={nav.soon}>
         {content}
       </span>
     );

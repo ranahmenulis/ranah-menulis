@@ -4,6 +4,7 @@ import { DotsThree } from "@phosphor-icons/react/dist/ssr";
 import { useCallback, useId, useRef, useState, type ReactNode } from "react";
 import { cn } from "@/lib/cn";
 import { useDismiss } from "@/lib/use-dismiss";
+import { useT } from "@/lib/i18n/provider";
 import { Button } from "./button";
 import { IconButton } from "./icon-button";
 
@@ -43,6 +44,7 @@ export function Menu({ items, label, icon, className }: MenuProps) {
   const triggerRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const id = useId();
+  const { close: closeLabel } = useT().common;
 
   const close = useCallback((returnFocus: boolean) => {
     setOpen(false);
@@ -156,7 +158,7 @@ export function Menu({ items, label, icon, className }: MenuProps) {
           ),
         )}
         <Button variant="secondary" className="mt-3 w-full md:hidden" onClick={() => close(true)}>
-          Tutup
+          {closeLabel}
         </Button>
       </div>
     </div>

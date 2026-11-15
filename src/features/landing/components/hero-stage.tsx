@@ -4,7 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { Monogram } from "@/components/ui/logo";
 import { BookCover } from "@/components/ui/book-cover";
 import { VisibilityTag } from "@/components/ui/visibility-tag";
-import { heroDoc } from "../copy";
+import { useT } from "@/lib/i18n/provider";
+import { heroDoc } from "../copy/doc";
 
 /**
  * Satu momen di hero: paragraf diketik di Studio, tersimpan, menjadi halaman 12, lalu sampul.
@@ -25,6 +26,7 @@ const stage =
   "data-[wait=true]:[&>*]:translate-y-2 data-[wait=true]:[&>*]:opacity-0";
 
 export function HeroStage() {
+  const { hero } = useT().landing;
   const [typed, setTyped] = useState(FULL.length);
   const [phase, setPhase] = useState(3); // 0 mengetik, 1 tersimpan, 2 halaman, 3 sampul (akhir)
   const [started, setStarted] = useState(false);
@@ -82,7 +84,7 @@ export function HeroStage() {
       data-hero
       data-started={started || undefined}
       role="img"
-      aria-label={heroDoc.heroAriaLabel}
+      aria-label={hero.ariaLabel}
       className="mt-14 grid grid-cols-2 items-end gap-x-4 gap-y-4 border-b border-line-strong md:col-span-12 md:mt-24 md:grid-cols-12 md:gap-x-6"
     >
       <div data-hero-stage className={`${stage} col-span-2 md:col-span-5`}>
@@ -94,10 +96,10 @@ export function HeroStage() {
             </span>
             <VisibilityTag visibility="pribadi" />
             <span data-hero-hide className="text-xs text-ink-muted">
-              {phase === 0 ? "Menyimpan…" : "Tersimpan 14.02"}
+              {phase === 0 ? hero.saving : hero.saved}
             </span>
             <span data-hero-hide className="ml-auto text-xs text-ink-muted tabular-nums">
-              {words.toLocaleString("id-ID")} kata
+              {words.toLocaleString()} {hero.words}
             </span>
           </div>
           <div className="px-4 pt-5 pb-6 md:min-h-[196px] md:px-6 md:pt-6 md:pb-7">

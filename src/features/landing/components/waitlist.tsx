@@ -1,10 +1,10 @@
 import { Wordmark } from "@/components/ui/logo";
-import { waitlist } from "../copy";
+import type { Dictionary } from "@/lib/i18n/dictionaries";
 import { Grid, Wrap } from "./layout";
 import { WaitlistForm } from "./waitlist-form";
 
 /** Bagian daftar tunggu: dibalik (memakai set token tema lawan) agar menjadi penutup yang tegas. */
-export function Waitlist() {
+export function Waitlist({ waitlist }: { waitlist: Dictionary["landing"]["waitlist"] }) {
   return (
     <section
       id="daftar"

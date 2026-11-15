@@ -3,7 +3,8 @@
 import { Monogram } from "@/components/ui/logo";
 import { VisibilityTag } from "@/components/ui/visibility-tag";
 import { cn } from "@/lib/cn";
-import { heroDoc } from "../../copy";
+import { useT } from "@/lib/i18n/provider";
+import { heroDoc } from "../../copy/doc";
 import { reached, useLoopTime } from "../../motion/use-loop";
 
 const BASE =
@@ -27,6 +28,7 @@ function wordsIn(text: string): number {
 }
 
 export function EditorPreview() {
+  const { hero } = useT().landing;
   const time = useLoopTime();
   const resetting = time !== null && time < TYPE_FROM;
   const chars = typedChars(time);
@@ -42,8 +44,10 @@ export function EditorPreview() {
           {heroDoc.title}
         </span>
         <VisibilityTag visibility="pribadi" />
-        <span className="text-xs text-ink-muted">{saved ? "Tersimpan 14.02" : "Menyimpan…"}</span>
-        <span className="ml-auto text-xs text-ink-muted tabular-nums">{words} kata</span>
+        <span className="text-xs text-ink-muted">{saved ? hero.saved : hero.saving}</span>
+        <span className="ml-auto text-xs text-ink-muted tabular-nums">
+          {words} {hero.words}
+        </span>
       </div>
       <div className="px-4 py-5 md:p-7">
         <p className="mb-4 font-serif text-[28px] leading-9 font-semibold tracking-[-0.015em]">

@@ -1,6 +1,6 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { heroTitle, faq, trust } from "@/features/landing/copy";
+import { landing } from "@/features/landing/copy/id";
 import { EnterTitle } from "@/features/landing/components/enter-title";
 import { Faq } from "@/features/landing/components/faq";
 import { LoopFrame } from "@/features/landing/components/previews/loop-frame";
@@ -33,21 +33,21 @@ describe("landing without motion (no script, reduced motion)", () => {
   });
 
   it("keeps the hero title whole for assistive tech", () => {
-    render(<EnterTitle id="hero-h" text={heroTitle} className="display" />);
-    expect(screen.getByRole("heading", { level: 1 }).textContent).toBe(heroTitle);
+    render(<EnterTitle id="hero-h" text={landing.hero.title} className="display" />);
+    expect(screen.getByRole("heading", { level: 1 }).textContent).toBe(landing.hero.title);
   });
 
   it("states the three promises as one heading with every word in ink", () => {
-    render(<Trust />);
+    render(<Trust trust={landing.trust} />);
     const statement = screen.getByRole("heading", { level: 2 });
-    expect(statement.textContent).toBe(trust.map((t) => t.title).join(" "));
+    expect(statement.textContent).toBe(landing.trust.map((t) => t.title).join(" "));
     expect(statement.querySelectorAll(".is-on")).toHaveLength(0);
   });
 
   it("shows every FAQ answer open, without an accordion", () => {
-    const { container } = render(<Faq />);
+    const { container } = render(<Faq title={landing.faqTitle} items={landing.faq} />);
     expect(container.querySelector("details")).toBeNull();
-    for (const item of faq) expect(screen.getByText(item.answer)).toBeTruthy();
+    for (const item of landing.faq) expect(screen.getByText(item.answer)).toBeTruthy();
   });
 });
 

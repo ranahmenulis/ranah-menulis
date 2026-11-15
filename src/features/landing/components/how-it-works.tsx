@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { steps, stepsTitle } from "../copy";
+import type { Dictionary } from "@/lib/i18n/dictionaries";
 import { Grid, Section, SectionTop, Wrap } from "./layout";
 import { EditorPreview } from "./previews/editor-preview";
 import { LoopFrame } from "./previews/loop-frame";
@@ -24,7 +24,8 @@ function Step({ title, text, children }: { title: string; text: string; children
  * Four steps, one sentence each; the previews demonstrate the rest. Each preview loops (3.2 s),
  * one at a time: the one most in view plays, the others hold their final picture until hovered.
  */
-export function HowItWorks() {
+export function HowItWorks({ copy }: { copy: Dictionary["landing"] }) {
+  const { steps, stepsTitle } = copy;
   return (
     <Section id="cara-kerja" aria-labelledby="steps-h">
       <Wrap>
@@ -35,35 +36,23 @@ export function HowItWorks() {
             </h2>
           </SectionTop>
           <ol className="relative mt-10 grid list-none gap-14 p-0 before:absolute before:top-3 before:bottom-3 before:left-1.5 before:w-px before:bg-line md:col-span-12 md:mt-[72px] md:gap-24">
-            <Step {...steps.menulis}>
-              <LoopFrame
-                id="menulis"
-                label="Editor Studio: kalimat terakhir diketik, lalu tersimpan. Dokumen tetap pribadi."
-              >
+            <Step title={steps.menulis.title} text={steps.menulis.text}>
+              <LoopFrame id="menulis" label={steps.menulis.preview}>
                 <EditorPreview />
               </LoopFrame>
             </Step>
-            <Step {...steps.target}>
-              <LoopFrame
-                id="target"
-                label="Streak di Studio: target 500 kata hari ini tercapai, titik hari ini terisi, streak menjadi 12 hari."
-              >
+            <Step title={steps.target.title} text={steps.target.text}>
+              <LoopFrame id="target" label={steps.target.preview}>
                 <StreakPreview />
               </LoopFrame>
             </Step>
-            <Step {...steps.dibagikan}>
-              <LoopFrame
-                id="dibagikan"
-                label="Memilih bagian untuk Community: hanya paragraf pertama yang dicentang dan menjadi publik."
-              >
+            <Step title={steps.dibagikan.title} text={steps.dibagikan.text}>
+              <LoopFrame id="dibagikan" label={steps.dibagikan.preview}>
                 <SharePreview />
               </LoopFrame>
             </Step>
-            <Step {...steps.terbit}>
-              <LoopFrame
-                id="terbit"
-                label="Kiriman antologi diterima. Draf di Studio boleh berubah; versi yang dikirim tetap versi 2."
-              >
+            <Step title={steps.terbit.title} text={steps.terbit.text}>
+              <LoopFrame id="terbit" label={steps.terbit.preview}>
                 <SubmissionPreview />
               </LoopFrame>
             </Step>

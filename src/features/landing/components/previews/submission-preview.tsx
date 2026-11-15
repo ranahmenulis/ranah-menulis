@@ -3,6 +3,7 @@
 import { Check } from "@phosphor-icons/react/dist/ssr";
 import { BookCover } from "@/components/ui/book-cover";
 import { cn } from "@/lib/cn";
+import { useT } from "@/lib/i18n/provider";
 import { reached, useLoopTime } from "../../motion/use-loop";
 
 // One subject per cycle: the submission turns from sent to accepted, then the note that the sent
@@ -15,6 +16,7 @@ const badge =
   "inline-flex h-6 items-center gap-1.5 justify-self-start rounded-full border px-2.5 text-xs font-medium";
 
 export function SubmissionPreview() {
+  const { previews } = useT().landing;
   const time = useLoopTime();
   const instant = time !== null && time < RESET_MS;
   const accepted = reached(time, ACCEPTED_AT);
@@ -28,7 +30,7 @@ export function SubmissionPreview() {
           <h4 className="text-base leading-6 font-semibold">
             Antologi: Surat yang Tidak Pernah Terkirim
           </h4>
-          <span className="text-xs text-ink-muted">“Toples Kerupuk” · versi 2 · dikirim 3 Nov</span>
+          <span className="text-xs text-ink-muted">{previews.submissionMeta}</span>
         </div>
         <span
           // A new key on the change replays the short pop; the label never shows two words at once.
@@ -41,7 +43,7 @@ export function SubmissionPreview() {
           )}
         >
           {accepted && <Check size={14} aria-hidden />}
-          {accepted ? "Diterima" : "Dikirim"}
+          {accepted ? previews.accepted : previews.sent}
         </span>
       </div>
       <div className="grid grid-cols-[64px_minmax(0,1fr)] gap-4 border-t border-line p-4 md:px-6 md:py-5">
@@ -53,7 +55,7 @@ export function SubmissionPreview() {
             note ? "translate-y-0 opacity-100" : "translate-y-1 opacity-0",
           )}
         >
-          Draf di Studio diubah 2 jam lalu. Versi yang dikirim tetap versi 2.
+          {previews.submissionNote}
         </span>
       </div>
     </>

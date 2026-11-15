@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Schibsted_Grotesk, Source_Serif_4 } from "next/font/google";
+import { Suspense } from "react";
 import { ToastProvider } from "@/components/ui/toast";
+import { I18nRoot } from "@/lib/i18n/i18n-root";
+import { themeScript } from "@/lib/theme/theme";
 import "./globals.css";
 
 // Huruf sans masih usulan (DESIGN.md 4.2); final setelah uji spesimen.
@@ -30,8 +33,16 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       suppressHydrationWarning // skrip landing memasang kelas is-animating sebelum hidrasi
       className={`${sans.variable} ${serif.variable} h-full antialiased`}
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body className="flex min-h-full flex-col">
-        <ToastProvider>{children}</ToastProvider>
+        {/* The language comes from a cookie (runtime data), so pages render inside this boundary. */}
+        <Suspense fallback={null}>
+          <I18nRoot>
+            <ToastProvider>{children}</ToastProvider>
+          </I18nRoot>
+        </Suspense>
       </body>
     </html>
   );

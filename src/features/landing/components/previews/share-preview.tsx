@@ -4,7 +4,8 @@ import { Lock } from "@phosphor-icons/react/dist/ssr";
 import { CheckMark } from "@/components/ui/choice";
 import { VisibilityTag } from "@/components/ui/visibility-tag";
 import { cn } from "@/lib/cn";
-import { heroDoc } from "../../copy";
+import { useT } from "@/lib/i18n/provider";
+import { heroDoc } from "../../copy/doc";
 import { reached, useLoopTime } from "../../motion/use-loop";
 
 // One subject per cycle: the first paragraph is ticked, then the public-copy notice appears.
@@ -14,6 +15,7 @@ const TICKED_AT = 700;
 const NOTICE_AT = 1500;
 
 export function SharePreview() {
+  const { previews } = useT().landing;
   const time = useLoopTime();
   const instant = time !== null && time < RESET_MS;
   const ticked = reached(time, TICKED_AT);
@@ -26,7 +28,7 @@ export function SharePreview() {
           <Lock size={16} aria-hidden className="shrink-0 text-ink-muted" />
           <b className="min-w-0 truncate font-medium">{heroDoc.title}</b>
         </div>
-        <p className="my-3 text-sm text-ink-muted">Bagian yang tidak dipilih tetap pribadi.</p>
+        <p className="my-3 text-sm text-ink-muted">{previews.shareHint}</p>
       </div>
       <div className="border-t border-line">
         {heroDoc.page.map((text, i) => {
@@ -56,7 +58,7 @@ export function SharePreview() {
         )}
       >
         <VisibilityTag visibility="publik" />
-        <span className="text-ink">Yang menjadi publik hanya teks ini.</span>
+        <span className="text-ink">{previews.shareNotice}</span>
       </div>
     </>
   );
