@@ -1,0 +1,213 @@
+"use client";
+
+import type { JSONContent } from "@tiptap/react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { emptyLog, type DailyLog } from "../daily-progress";
+import type { DocumentStore, SaveInput, StudioDocument } from "../storage/document-store";
+
+const AUTOSAVE_DELAY_MS = 800;
+const RETRY_DELAY_MS = 5000;
+
+export type LoadState = "loading" | "ready" | "missing" | "error";
+/** draft: nothing written yet. failed: the device could not store the change (retrying). */
+export type SaveStatus = "draft" | "saved" | "saving" | "failed";
+export type ConflictChoice = "local" | "remote" | "both";
+export type Conflict = { local: SaveInput; remote: StudioDocument };
+
+const EMPTY_DOC: JSONContent = { type: "doc", content: [{ type: "paragraph" }] };
+
+/**
+ * Loads one document and keeps it saved. Saving happens after a short typing pause, never twice at
+ * once, and is flushed when the tab is hidden or the editor unmounts. A save that finds a newer
+ * version stops autosaving and raises a conflict; nothing is overwritten until the writer chooses.
+ * "baru" opens an empty draft that is only stored once something is written.
+ */
+export function useStudioDocument(documentId: string, store: DocumentStore) {
+  const isNew = documentId === "baru";
+  const [load, setLoad] = useState<LoadState>(isNew ? "ready" : "loading");
+  const [attempt, setAttempt] = useState(0);
+  const [initial, setInitial] = useState<{ title: string; content: JSONContent }>({
+    title: "",
+    content: EMPTY_DOC,
+  });
+  /** Changes whenever the editor must be rebuilt from `initial` (open, or "use the other version"). */
+  const [editorKey, setEditorKey] = useState(0);
+  const [title, setTitleState] = useState("");
+  const [words, setWords] = useState(0);
+  const [status, setStatus] = useState<SaveStatus>("draft");
+  const [savedAt, setSavedAt] = useState<Date | null>(null);
+  const [progress, setProgress] = useState<DailyLog>(emptyLog());
+  const [conflict, setConflict] = useState<Conflict | null>(null);
+
+  const id = useRef(isNew ? "" : documentId);
+  const version = useRef(0);
+  const latest = useRef<{ title: string; content: JSONContent; words: number }>({
+    title: "",
+    content: EMPTY_DOC,
+    words: 0,
+  });
+  const dirty = useRef(false);
+  const inFlight = useRef(false);
+  const blocked = useRef(false);
+  const timer = useRef<number | undefined>(undefined);
+  /** Lets a save schedule its own retry without referring to itself. */
+  const flushAgain = useRef<() => void>(() => {});
+
+  const flush = useCallback(async () => {
+    window.clearTimeout(timer.current);
+    const { title: t, content, words: w } = latest.current;
+    if (!dirty.current || inFlight.current || blocked.current) return;
+    if (t.trim() === "" && w === 0) return; // an untouched new draft is not stored
+
+    inFlight.current = true;
+    dirty.current = false;
+    let failed = false;
+    setStatus("saving");
+    try {
+      const input: SaveInput = { id: id.current, title: t, content, wordCount: w };
+      const result = await store.save(input, version.current);
+      if (result.ok) {
+        version.current = result.doc.version;
+        setProgress(result.progress);
+        setSavedAt(new Date(result.doc.updatedAt));
+        setStatus(dirty.current ? "saving" : "saved");
+        if (isNew && window.location.pathname !== `/studio/${id.current}`) {
+          window.history.replaceState(null, "", `/studio/${id.current}`);
+        }
+      } else {
+        blocked.current = true;
+        dirty.current = true;
+        setConflict({ local: input, remote: result.conflict });
+        setStatus("saved");
+      }
+    } catch {
+      failed = true;
+      dirty.current = true;
+      setStatus("failed");
+      timer.current = window.setTimeout(() => flushAgain.current(), RETRY_DELAY_MS);
+    } finally {
+      inFlight.current = false;
+      // Typing during the save left more to write; a failed save waits for its retry timer.
+      if (dirty.current && !blocked.current && !failed) flushAgain.current();
+    }
+  }, [store, isNew]);
+
+  useEffect(() => {
+    flushAgain.current = () => void flush();
+  }, [flush]);
+
+  const schedule = useCallback(() => {
+    dirty.current = true;
+    window.clearTimeout(timer.current);
+    timer.current = window.setTimeout(() => void flush(), AUTOSAVE_DELAY_MS);
+  }, [flush]);
+
+  // Open the document (or a fresh draft) and today's progress.
+  useEffect(() => {
+    let cancelled = false;
+    if (isNew && !id.current) id.current = crypto.randomUUID();
+    (async () => {
+      try {
+        const [doc, today] = await Promise.all([
+          isNew ? Promise.resolve(null) : store.get(documentId),
+          store.today(),
+        ]);
+        if (cancelled) return;
+        setProgress(today);
+        if (isNew) return;
+        if (!doc) return setLoad("missing");
+        version.current = doc.version;
+        latest.current = { title: doc.title, content: doc.content, words: doc.wordCount };
+        setInitial({ title: doc.title, content: doc.content });
+        setTitleState(doc.title);
+        setWords(doc.wordCount);
+        setSavedAt(new Date(doc.updatedAt));
+        setStatus("saved");
+        setEditorKey((k) => k + 1);
+        setLoad("ready");
+      } catch {
+        if (!cancelled) setLoad("error");
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [documentId, isNew, store, attempt]);
+
+  // Never lose a pause: write out pending changes when leaving the tab or the editor.
+  useEffect(() => {
+    const onHide = () => {
+      if (document.visibilityState === "hidden") void flush();
+    };
+    document.addEventListener("visibilitychange", onHide);
+    window.addEventListener("pagehide", flush);
+    return () => {
+      document.removeEventListener("visibilitychange", onHide);
+      window.removeEventListener("pagehide", flush);
+      void flush();
+    };
+  }, [flush]);
+
+  const setTitle = useCallback(
+    (value: string) => {
+      latest.current.title = value;
+      setTitleState(value);
+      schedule();
+    },
+    [schedule],
+  );
+
+  const onContentChange = useCallback(
+    (content: JSONContent, wordCount: number) => {
+      latest.current.content = content;
+      latest.current.words = wordCount;
+      setWords(wordCount);
+      schedule();
+    },
+    [schedule],
+  );
+
+  const resolveConflict = useCallback(
+    async (choice: ConflictChoice) => {
+      if (!conflict) return;
+      const { remote } = conflict;
+      if (choice === "both") {
+        await store.duplicate(remote, `${remote.title || "Tanpa judul"} (versi lain)`);
+      }
+      version.current = remote.version;
+      blocked.current = false;
+      setConflict(null);
+      if (choice === "remote") {
+        dirty.current = false;
+        latest.current = { title: remote.title, content: remote.content, words: remote.wordCount };
+        setInitial({ title: remote.title, content: remote.content });
+        setTitleState(remote.title);
+        setWords(remote.wordCount);
+        setSavedAt(new Date(remote.updatedAt));
+        setEditorKey((k) => k + 1);
+      } else {
+        await flush();
+      }
+    },
+    [conflict, store, flush],
+  );
+
+  return {
+    load,
+    reload: () => {
+      setLoad("loading");
+      setAttempt((n) => n + 1);
+    },
+    initial,
+    editorKey,
+    title,
+    setTitle,
+    words,
+    onContentChange,
+    status: status === "draft" && (title.trim() !== "" || words > 0) ? "saving" : status,
+    savedAt,
+    progress,
+    conflict,
+    resolveConflict,
+  };
+}

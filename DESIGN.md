@@ -346,7 +346,7 @@ Melengkapi 6.1 untuk postingan pendek (catatan) dan bagian komentar:
 | **Avatar** | Lingkaran. Tanpa foto: inisial `ink-muted` di atas `subtle`. Ukuran 20, 32, 44, 64, 88. |
 | **Fokus keyboard** | Outline 2px `ink`, offset 2px, di semua elemen interaktif. Tidak pernah dihilangkan. |
 | **Dialog** | Tanpa radius, `surface`, lebar 480, bayangan token. Ponsel: lembar bawah selebar layar. Judul `heading-md`, aksi di kanan bawah (primer paling kanan). |
-| **Laci** | Dari kanan, tanpa radius, `surface`, border kiri `line`. |
+| **Laci** | Dari kanan, tanpa radius, `surface`, border kiri `line`. Di md ke atas tidak-modal dan menggeser kanvas (halaman tetap bisa dipakai); di ponsel menjadi lembar bawah modal setinggi 84%. Masuk 200ms, keluar 150ms. |
 | **Menu ⋯** | `surface`, border, bayangan, butir `text-sm` tinggi 36, aksi berbahaya di paling bawah setelah garis pemisah. |
 | **Toast** | Kiri bawah (desktop) / atas bilah bawah (ponsel), latar `ink`, teks `on-ink`, tanpa radius, maksimal satu baris + satu aksi. Hilang setelah 4 detik kecuali galat. |
 
@@ -359,6 +359,7 @@ Teks `text-xs` di bilah editor, tidak pernah berupa toast:
 | Menyimpan | "Menyimpan…", `ink-muted` |
 | Tersimpan | "Tersimpan", `ink-muted`; setelah 3 detik berubah jadi "Tersimpan 14.02" |
 | Belum tersinkron | Ikon awan-coret + "Belum tersinkron", `ink`, bobot 500, menetap sampai tersambung. **Bukan merah.** |
+| Belum tersimpan **[usulan]** | Sama dengan "Belum tersinkron" (ikon awan-coret, `ink` 500, bukan merah), tetapi untuk kegagalan menulis ke penyimpanan perangkat. Popover menyebut bahwa perubahan terakhir belum tersimpan dan Studio mencoba lagi. Hilang sendiri setelah berhasil |
 | Konflik | Dialog konflik wajib (Brief R2): dua versi berdampingan |
 
 ### 7.3 Kalender titik tinta (Streak) — ciri khas Ranah
