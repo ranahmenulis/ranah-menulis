@@ -466,17 +466,6 @@
   }
 }
 
-/* Hero bergerak: skrip kecil di halaman memasang is-animating pada <html> sebelum tampilan pertama.
-   Tanpa kelas itu (JS mati, reduced motion) HTML dari server sudah berisi keadaan akhir. */
-html.is-animating [data-hero]:not([data-started]) :is([data-hero-hide], [data-hero-stage]) {
-  visibility: hidden;
-}
-html.is-animating [data-hero]:not([data-started]) [data-hero-stage] > * {
-  opacity: 0;
-  transform: translateY(8px);
-  transition: none;
-}
-
 /* ------------------------------------------------------------------------------------------
    Landing motion (DESIGN.md 4.6, landing exception; design-taste-frontend motion.md).
    Every rule below needs html.lp-motion, set by the inline script in app/page.tsx only when

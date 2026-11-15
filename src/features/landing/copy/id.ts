@@ -26,7 +26,7 @@ export const landing = {
     cta: "Gabung daftar tunggu",
     secondary: "Lihat cara kerjanya",
     ariaLabel:
-      "Satu paragraf diketik di Studio, menjadi halaman 12 sebuah buku, lalu menjadi buku bersampul hitam berjudul Yang Ditunggu Nenek di Bawah Jambu Air karya Rinjani Putri.",
+      "Video tanpa suara: satu paragraf diketik di Studio dan tersimpan, target 500 kata hari ini tercapai dan streak naik menjadi 7 hari. Paragraf pertama dibagikan ke Community sebagai postingan publik, sementara dokumennya tetap pribadi. Postingan itu muncul di Jelajahi, lalu tampil sampul buku Yang Ditunggu Nenek di Bawah Jambu Air karya Rinjani Putri.",
     saving: "Menyimpan…",
     saved: "Tersimpan 14.02",
     words: "kata",

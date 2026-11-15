@@ -171,3 +171,11 @@ Ini adegan terpenting karena memuat pesan privasi.
 3. **Tombol "Bagikan" di editor: diaktifkan di aplikasi** sebelum video dirender. Perubahan aplikasinya punya rencana tersendiri.
 4. **Penutup sampul buku: dipakai**, sebagai objek sampul tanpa UI Projects.
 5. **Pemangkasan teks landing tidak dimintakan persetujuan client sekarang.** Client belum melihat landing; ia melihat hasil jadinya sekaligus.
+
+## 9. Pemasangan di landing (15 November 2026)
+
+- Terpasang di `src/features/landing/components/hero-video.tsx`, menggantikan `hero-stage.tsx`.
+- Render yang dipakai: **hanya versi `en`**, 36,55 dtk, 60 fps. Pengunjung `id` sementara melihat versi `en` (keputusan pengguna). Setelah versi `id` dirender, salin ke `public/landing/hero/id/` dan ubah `VIDEO_LOCALE` di `hero-video.tsx`.
+- Ukuran: terang 2,8–2,9 MB, gelap 3,10–3,11 MB. Sedikit di atas batas 3 MB, diterima pengguna. WebM tidak dipakai karena selalu lebih besar dari MP4.
+- Poster = frame pesan privasi (adegan 3). Video memudar masuk di atasnya setelah main.
+- Masih berbeda dari aplikasi: tombol **Bagikan** tampil aktif di video, padahal di aplikasi masih nonaktif (`editor-bar.tsx`).

@@ -22,7 +22,7 @@ export const landing: typeof source = {
     cta: "Join the waitlist",
     secondary: "See how it works",
     ariaLabel:
-      "A paragraph is typed in Studio, becomes page 12 of a book, then becomes a black-covered book titled What Grandma Waited For Beneath the Water Apple Tree by Rinjani Putri.",
+      "Silent video: a paragraph is typed in Studio and saved, today's 500-word target is reached and the streak rises to 7 days. The first paragraph is shared to Community as a public post while the document stays private. The post appears in Explore, then the cover of the book What Grandma Waited For Beneath the Water Apple Tree by Rinjani Putri is shown.",
     saving: "Saving…",
     saved: "Saved 2:02 PM",
     words: "words",
