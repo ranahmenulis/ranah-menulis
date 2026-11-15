@@ -10,10 +10,10 @@ export function FollowRow({ items }: { items: Followed[] }) {
   return (
     <ul
       aria-label="Penulis dan grup yang kamu ikuti"
-      className="-mx-4 flex [scrollbar-width:none] gap-4 overflow-x-auto px-4 pt-4 pb-1 md:hidden [&::-webkit-scrollbar]:hidden"
+      className="scroll-edge-fade -mx-4 flex snap-x snap-proximity scroll-px-4 [scrollbar-width:none] gap-4 overflow-x-auto px-4 pt-4 pb-1 md:hidden [&::-webkit-scrollbar]:hidden"
     >
       {items.map((f) => (
-        <li key={f.name} className="grid w-16 shrink-0 justify-items-center gap-1.5">
+        <li key={f.name} className="grid w-16 shrink-0 snap-start justify-items-center gap-1.5">
           <span className="relative">
             <Avatar name={f.name} size={56} />
             {f.fresh && (
@@ -27,7 +27,7 @@ export function FollowRow({ items }: { items: Followed[] }) {
           <span className="line-clamp-2 text-center text-xs">{f.name}</span>
         </li>
       ))}
-      <li className="grid w-16 shrink-0 justify-items-center gap-1.5 text-ink-muted">
+      <li className="grid w-16 shrink-0 snap-start justify-items-center gap-1.5 text-ink-muted">
         <span className="grid size-14 place-items-center rounded-full border border-line">
           <Plus size={20} aria-hidden />
         </span>

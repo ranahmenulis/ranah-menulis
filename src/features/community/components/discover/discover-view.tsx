@@ -68,21 +68,24 @@ export function DiscoverView() {
 
       {data.status === "ready" && current && (
         <>
-          <div
-            role="toolbar"
-            aria-label="Kategori"
-            className="sticky top-13 z-20 -mx-4 mt-2 flex [scrollbar-width:none] gap-2 overflow-x-auto border-b border-line bg-canvas px-4 py-3 md:top-14 md:-mx-0 md:px-0 md:py-4 [&::-webkit-scrollbar]:hidden"
-          >
-            {categories.map((c) => (
-              <Chip
-                key={c.id}
-                pressed={c.id === current.id}
-                onClick={() => setPicked(c.id)}
-                className="shrink-0"
-              >
-                {c.label}
-              </Chip>
-            ))}
+          {/* The fade mask sits on the inner row so the sticky bar itself stays opaque. */}
+          <div className="sticky top-13 z-20 -mx-4 mt-2 border-b border-line bg-canvas md:top-14 md:-mx-0">
+            <div
+              role="toolbar"
+              aria-label="Kategori"
+              className="scroll-edge-fade flex [scrollbar-width:none] gap-2 overflow-x-auto px-4 py-3 md:px-0 md:py-4 [&::-webkit-scrollbar]:hidden"
+            >
+              {categories.map((c) => (
+                <Chip
+                  key={c.id}
+                  pressed={c.id === current.id}
+                  onClick={() => setPicked(c.id)}
+                  className="shrink-0"
+                >
+                  {c.label}
+                </Chip>
+              ))}
+            </div>
           </div>
 
           <p className="mt-3 mb-4 text-sm text-ink-muted md:mt-4 md:mb-6">

@@ -43,6 +43,8 @@ export function DiscoverTile({ post, comments, saved, onSave }: Props) {
     <article
       className={cn(
         "relative mb-6 grid break-inside-avoid border border-line bg-canvas",
+        // New tiles (load more, category change) fade in instead of appearing at once.
+        "transition-opacity duration-150 ease-(--ease-out) starting:opacity-0",
         "@max-xl:mb-0 @max-xl:border-0 @max-xl:border-b",
         form === "image" &&
           "@max-xl:grid-cols-[minmax(0,1fr)_5rem] @max-xl:items-start @max-xl:gap-x-4",
