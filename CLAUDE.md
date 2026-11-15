@@ -26,11 +26,11 @@ npm run check                  # format:check + lint + typecheck + tes (gate cep
 npm run test:coverage          # tes + laporan coverage (HTML di coverage/); belum ada ambang batas
 npm test                       # Vitest, sekali jalan (semua tes)
 npm run test:watch             # Vitest mode watch
-npx vitest run src/lib/cn.test.ts      # satu berkas tes
+npx vitest run tests/lib/cn.test.ts      # satu berkas tes
 npx vitest run -t "nama tes"           # tes berdasarkan nama
 ```
 
-- **Tes**: Vitest + jsdom + Testing Library, dikonfigurasi di `vitest.config.mts` (alias `@` → `src`). Berkas tes berada di sebelah kodenya dengan nama `*.test.ts` atau `*.test.tsx` di bawah `src/`. Impor `describe`, `it`, `expect` secara eksplisit dari `vitest` (tidak ada globals). Panggil `cleanup` dari Testing Library di `afterEach` pada tes komponen. Server action diuji dengan me-mock `@/lib/supabase/admin` (lihat `src/features/landing/waitlist/actions.test.ts`).
+- **Tes**: Vitest + jsdom + Testing Library, dikonfigurasi di `vitest.config.mts` (alias `@` → `src`). Berkas tes berada di folder `tests/` di root, struktur foldernya mencerminkan `src/` (mis. `src/lib/cn.ts` → `tests/lib/cn.test.ts`), dengan nama `*.test.ts` atau `*.test.tsx`. Impor kode yang diuji lewat alias `@/` (bukan path relatif). Impor `describe`, `it`, `expect` secara eksplisit dari `vitest` (tidak ada globals). Panggil `cleanup` dari Testing Library di `afterEach` pada tes komponen. Server action diuji dengan me-mock `@/lib/supabase/admin` (lihat `tests/features/landing/waitlist/actions.test.ts`).
 - **Tes RLS**: belum ada. Tes ini butuh Supabase lokal (`npx supabase start`). Tambahkan setiap kali ada migrasi yang mengubah tabel atau policy: pengguna A tidak boleh membaca data pengguna B, dan role tanpa policy tidak boleh mengakses apa pun.
 - **Lint** mengabaikan `ranahmenulis/`, `.agents/`, dan `.claude/` karena bukan bagian repo ini.
 - **Migrasi database**: `supabase/migrations/` berisi SQL berurutan. Terapkan lewat Supabase SQL Editor atau Supabase CLI (`supabase db push`). Jangan ubah skema lewat dasbor secara manual.
@@ -67,7 +67,7 @@ npx vitest run -t "nama tes"           # tes berdasarkan nama
 ```
 src/
 ├── app/                  # routing saja: page, layout, route handler (tipis)
-├── features/<domain>/    # components/, actions, queries, schema, dan *.test.ts milik fitur itu
+├── features/<domain>/    # components/, actions, queries, schema, milik fitur itu (tesnya di `tests/features/<domain>/`)
 ├── components/ui/        # komponen dasar lintas fitur
 └── lib/                  # infrastruktur bersama (supabase, cn)
 ```
