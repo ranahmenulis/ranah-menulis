@@ -7,6 +7,7 @@ import { cn } from "@/lib/cn";
 import { formatAgo } from "@/features/community/format-time";
 import { authorOf, excerptOf, postLabel, tileForm } from "@/features/community/post-model";
 import type { Post } from "@/features/community/types";
+import { AuthorLink } from "@/features/profile/author-link";
 
 function Action({
   icon: Icon,
@@ -66,7 +67,9 @@ export function FeedItem({ post, now, comments, appreciated, saved, onAppreciate
               di <b className="font-medium">{post.groupName}</b> oleh{" "}
             </>
           )}
-          <b className="font-medium">{author.name}</b>
+          <AuthorLink handle={author.handle} className="font-medium">
+            {author.name}
+          </AuthorLink>
           <span className="text-ink-muted"> · {formatAgo(post.publishedAt, now)}</span>
         </span>
       </div>

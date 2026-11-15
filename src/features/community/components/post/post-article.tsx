@@ -4,6 +4,7 @@ import { Globe, UsersThree } from "@phosphor-icons/react/dist/ssr";
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { formatDay } from "../../format-time";
+import { AuthorLink } from "@/features/profile/author-link";
 import { authorOf, postLabel } from "../../post-model";
 import type { Author, Post, PostBlock, PostKind } from "../../types";
 
@@ -90,7 +91,9 @@ export function PostArticle({ post, now, showFollow, following, onFollow }: Prop
         <Avatar name={author.name} size={44} />
         <div className="grid min-w-0 gap-0.5">
           <span className="flex min-w-0 items-center gap-1 text-[15px] leading-[22px] font-medium">
-            <span className="truncate">{author.name}</span>
+            <AuthorLink handle={author.handle} className="truncate">
+              {author.name}
+            </AuthorLink>
             {showFollow && (
               <>
                 <span aria-hidden className="text-ink-muted">

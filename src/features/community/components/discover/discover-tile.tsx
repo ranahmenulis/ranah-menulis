@@ -4,6 +4,7 @@ import { BookmarkSimple, ChatCircle, Heart } from "@phosphor-icons/react/dist/ss
 import Link from "next/link";
 import { Avatar } from "@/components/ui/avatar";
 import { cn } from "@/lib/cn";
+import { AuthorLink } from "@/features/profile/author-link";
 import { authorOf, excerptOf, postLabel, tileForm } from "../../post-model";
 import type { Post } from "../../types";
 
@@ -21,7 +22,9 @@ export function AuthorLine({ authorId, size = 20 }: { authorId: string; size?: 2
     <div className="flex min-w-0 items-center gap-2 text-xs">
       <Avatar name={author.name} size={size} />
       <span className="min-w-0 truncate">
-        <b className="font-medium">{author.name}</b>
+        <AuthorLink handle={author.handle} className="font-medium">
+          {author.name}
+        </AuthorLink>
         {author.place && <span className="text-ink-muted"> · {author.place}</span>}
       </span>
     </div>

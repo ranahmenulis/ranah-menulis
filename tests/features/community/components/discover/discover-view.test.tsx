@@ -91,7 +91,11 @@ describe("DiscoverView", () => {
     renderView();
     await screen.findAllByRole("article");
     const first = tiles()[0];
-    expect(within(first).getByRole("link").getAttribute("href")).toBe("/postingan/baru-saja");
+    const hrefs = within(first)
+      .getAllByRole("link")
+      .map((a) => a.getAttribute("href"));
+    expect(hrefs).toContain("/postingan/baru-saja");
+    expect(hrefs).toContain("/penulis/rinjaniputri"); // the author's name opens the profile
   });
 
   it("saves a post from its tile and remembers it", async () => {

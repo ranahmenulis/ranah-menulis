@@ -10,6 +10,8 @@ import { NotificationList } from "./notification-list";
 import type { NotificationTab } from "./types";
 import { useNotifications } from "./use-notifications";
 
+const number = new Intl.NumberFormat("id-ID");
+
 /**
  * Notifikasi (PLT-04, DESIGN.md 6.6): tabs Semua, Komentar, Proyek; unread lines first marked by a
  * dot. The list is dummy data with a read state kept on this device, so it has no loading or error
@@ -38,7 +40,7 @@ export function NotificationsView() {
       </div>
       {!guest && (
         <p aria-live="polite" className="mt-1 text-sm text-ink-muted">
-          {unread === 0 ? "Semua sudah dibaca." : `${unread} belum dibaca.`}
+          {unread === 0 ? "Semua sudah dibaca." : `${number.format(unread)} belum dibaca.`}
         </p>
       )}
 

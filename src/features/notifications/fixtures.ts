@@ -5,9 +5,9 @@ const HOUR = 60 * MINUTE;
 const DAY = 24 * HOUR;
 
 /**
- * Dummy notifications, newest first. Links point to Community posts that exist in its fixtures;
- * events about the reader's own work and about projects have no destination until those screens
- * (profile, Projects) are built, so their href is null.
+ * Dummy notifications, newest first. Links point to Community posts and author profiles that exist
+ * in its fixtures; project events have no destination until Projects is built, so their href is
+ * null.
  */
 export const notificationFixtures: Notification[] = [
   {
@@ -33,8 +33,8 @@ export const notificationFixtures: Notification[] = [
     kind: "reaction",
     actorId: "hafiz-rahman",
     others: 11,
-    text: "mengapresiasi prolog “Hujan di Dermaga”.",
-    href: null,
+    text: "mengapresiasi prolog “Hujan Pertama Bulan November”.",
+    href: "/postingan/hujan-pertama-bulan-november",
     agoMs: 2 * HOUR + 30 * MINUTE,
   },
   {
@@ -52,7 +52,7 @@ export const notificationFixtures: Notification[] = [
     actorId: "dimas-pratama",
     others: 0,
     text: "mulai mengikutimu.",
-    href: null,
+    href: "/penulis/dimaspratama",
     agoMs: 5 * HOUR,
     seen: true,
   },

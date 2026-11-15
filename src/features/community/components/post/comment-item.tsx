@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Menu, type MenuEntry } from "@/components/ui/menu";
 import { cn } from "@/lib/cn";
 import { formatAgo } from "../../format-time";
+import { AuthorLink } from "@/features/profile/author-link";
 import { authorOf } from "../../post-model";
 import type { Comment } from "../../types";
 import { CommentText } from "./comment-text";
@@ -121,7 +122,9 @@ export function CommentItem(p: Props) {
       <Avatar name={author.name} size={32} />
       <div className="min-w-0 pr-8">
         <div className="flex flex-wrap items-center gap-x-2 text-[13px] leading-[18px] text-ink-muted">
-          <b className="text-sm font-medium text-ink">{author.name}</b>
+          <AuthorLink handle={author.handle} className="text-sm font-medium">
+            {author.name}
+          </AuthorLink>
           {p.byPostAuthor && (
             <span className="border border-line px-1.5 text-xs text-ink-muted">Penulis</span>
           )}

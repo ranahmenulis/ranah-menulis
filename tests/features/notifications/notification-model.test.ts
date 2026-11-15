@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { notificationFixtures } from "@/features/notifications/fixtures";
 import { inTab, unreadCount, withReadState } from "@/features/notifications/notification-model";
 import { agoLabel, leadOf } from "@/features/notifications/notification-text";
+import { authors } from "@/features/community/fixtures/authors";
 import { resolveFixturePosts } from "@/features/community/post-model";
 
 const none = new Set<string>();
@@ -47,10 +48,14 @@ describe("fixtures", () => {
     expect(times).toEqual([...times].sort((a, b) => a - b));
   });
 
-  it("only link to posts that exist", () => {
+  it("only link to posts and profiles that exist", () => {
     const ids = new Set(resolveFixturePosts(Date.now()).map((p) => p.id));
+    const handles = new Set(authors.map((a) => a.handle));
     for (const n of notificationFixtures.filter((x) => x.href)) {
-      expect(ids.has(n.href!.replace("/postingan/", ""))).toBe(true);
+      const href = n.href!;
+      if (href.startsWith("/postingan/"))
+        expect(ids.has(href.replace("/postingan/", ""))).toBe(true);
+      else expect(handles.has(href.replace("/penulis/", ""))).toBe(true);
     }
   });
 });

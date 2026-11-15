@@ -181,7 +181,8 @@ function Notifications() {
             {lead && <b className="font-medium">{lead}</b>} {latest.text}
           </p>
           <p className={sub}>
-            {unread} belum dibaca{now > 0 && ` · terbaru ${agoLabel(latest.agoMs, now)}`}
+            {number.format(unread)} belum dibaca
+            {now > 0 && ` · terbaru ${agoLabel(latest.agoMs, now)}`}
           </p>
         </div>
         <ButtonLink href={NOTIFICATIONS_HREF} variant="text" size="sm">
