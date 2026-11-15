@@ -69,7 +69,7 @@ export function GuestAside({ authorName }: { authorName: string }) {
   return (
     <aside
       aria-label="Untuk tamu"
-      className="sticky top-24 hidden w-80 shrink-0 content-start gap-6 self-start lg:grid"
+      className="sticky top-[calc(6rem+var(--safe-top))] hidden w-80 shrink-0 content-start gap-6 self-start lg:grid"
     >
       <div
         aria-disabled="true"

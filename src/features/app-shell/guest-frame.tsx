@@ -16,7 +16,7 @@ export function GuestFrame({ children, back }: { children: ReactNode; back: bool
   const { guest, topBar } = useT().shell;
   return (
     <div className="flex min-h-dvh flex-col">
-      <header className="sticky top-0 z-30 flex h-13 items-center gap-2 border-b border-line bg-canvas pr-2 pl-4 md:h-14 md:gap-4 md:px-6">
+      <header className="sticky top-0 z-30 flex h-[calc(3.25rem+var(--safe-top))] items-center gap-2 border-b border-line bg-canvas pt-(--safe-top) pr-2 pl-4 md:h-[calc(3.5rem+var(--safe-top))] md:gap-4 md:px-6">
         {back && <BackButton className="md:hidden" />}
         {!back && <Monogram href="/" label={guest.brand} height={24} className="md:hidden" />}
         <Wordmark href="/" label={guest.brand} height={28} className="max-md:hidden" />

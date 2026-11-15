@@ -1,9 +1,19 @@
+import { readFileSync } from "node:fs";
+import path from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { applyTheme, nextTheme, readTheme, saveTheme, themeScript } from "@/lib/theme/theme";
+import {
+  THEME_COLORS,
+  applyTheme,
+  nextTheme,
+  readTheme,
+  saveTheme,
+  themeScript,
+} from "@/lib/theme/theme";
 
 afterEach(() => {
   document.documentElement.removeAttribute("data-theme");
   document.cookie = "theme=; max-age=0; path=/";
+  document.head.querySelectorAll('meta[name="theme-color"]').forEach((m) => m.remove());
 });
 
 describe("theme", () => {
@@ -41,6 +51,66 @@ describe("theme", () => {
     document.cookie = "theme=dark; path=/";
     new Function(themeScript)();
     expect(document.documentElement.getAttribute("data-theme")).toBe("dark");
+  });
+});
+
+describe("theme-color", () => {
+  const colors = () =>
+    [...document.querySelectorAll('meta[name="theme-color"]')].map((m) =>
+      m.getAttribute("content"),
+    );
+
+  afterEach(() => vi.unstubAllGlobals());
+
+  function stubSystem(dark: boolean) {
+    const listeners: Array<() => void> = [];
+    const query = {
+      matches: dark,
+      addEventListener: (_: string, fn: () => void) => listeners.push(fn),
+    };
+    vi.stubGlobal("matchMedia", () => query);
+    return {
+      change(next: boolean) {
+        query.matches = next;
+        listeners.forEach((fn) => fn());
+      },
+    };
+  }
+
+  it("a chosen theme sets one meta and updates it instead of adding another", () => {
+    applyTheme("dark");
+    expect(colors()).toEqual([THEME_COLORS.dark]);
+    applyTheme("light");
+    expect(colors()).toEqual([THEME_COLORS.light]);
+  });
+
+  it("the head script uses the saved theme", () => {
+    stubSystem(false);
+    document.cookie = "theme=dark; path=/";
+    new Function(themeScript)();
+    expect(colors()).toEqual([THEME_COLORS.dark]);
+  });
+
+  it("without a saved theme the head script follows the system, also when it changes", () => {
+    const system = stubSystem(true);
+    new Function(themeScript)();
+    expect(colors()).toEqual([THEME_COLORS.dark]);
+    system.change(false);
+    expect(colors()).toEqual([THEME_COLORS.light]);
+  });
+
+  it("a saved theme keeps winning when the system changes", () => {
+    const system = stubSystem(false);
+    new Function(themeScript)();
+    applyTheme("dark");
+    system.change(false);
+    expect(colors()).toEqual([THEME_COLORS.dark]);
+  });
+
+  it("matches the --canvas token of each theme in globals.css", () => {
+    const css = readFileSync(path.resolve(__dirname, "../../../src/app/globals.css"), "utf8");
+    const canvases = [...css.matchAll(/--canvas:\s*(#[0-9a-f]{6})/gi)].map((m) => m[1]);
+    expect(new Set(canvases)).toEqual(new Set(Object.values(THEME_COLORS)));
   });
 });
 

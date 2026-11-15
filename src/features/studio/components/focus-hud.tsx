@@ -30,7 +30,7 @@ export function FocusHud({ status, savedAt, words, progress, target, onExit }: F
   const number = new Intl.NumberFormat("id-ID");
   return (
     <>
-      <div className="fixed top-4 right-4 z-20 md:top-5 md:right-6">
+      <div className="fixed top-[calc(1rem+var(--safe-top))] right-4 z-20 md:top-[calc(1.25rem+var(--safe-top))] md:right-6">
         <Button variant="text" size="sm" onClick={onExit} className="font-normal text-ink-faint">
           Keluar dari mode fokus · Esc
         </Button>

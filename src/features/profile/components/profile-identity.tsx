@@ -28,7 +28,7 @@ export function ProfileIdentity(p: Props) {
   return (
     <aside
       aria-label={`Profil ${p.author.name}`}
-      className="grid justify-items-start gap-3 py-5 lg:sticky lg:top-24 lg:col-start-2 lg:row-span-3 lg:row-start-1 lg:self-start lg:py-0"
+      className="grid justify-items-start gap-3 py-5 lg:sticky lg:top-[calc(6rem+var(--safe-top))] lg:col-start-2 lg:row-span-3 lg:row-start-1 lg:self-start lg:py-0"
     >
       <Avatar name={p.author.name} size={88} />
       <p className="text-sm">

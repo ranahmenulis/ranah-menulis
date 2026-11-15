@@ -216,12 +216,34 @@
   --opacity-press: 0.72;
   --opacity-disabled: 0.4;
   --opacity-dot-empty: 0.3;
+
+  /* Notch / status bar inset. Zero until layout.tsx sets viewport-fit=cover on a notched phone. */
+  --safe-top: env(safe-area-inset-top, 0px);
 }
 
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;
-    scroll-padding-top: 72px;
+    -webkit-tap-highlight-color: transparent;
+    scroll-padding-top: calc(72px + var(--safe-top));
+  }
+
+  /* Taps act at once: no double-tap-zoom delay on controls. */
+  a,
+  button,
+  summary,
+  label,
+  input,
+  select,
+  textarea,
+  [role="button"],
+  [role="menuitem"] {
+    touch-action: manipulation;
+  }
+
+  /* Scrolling inside a dialog or sheet never chains to the page behind it. */
+  dialog {
+    overscroll-behavior: contain;
   }
 
   /* Anchor links (landing sections, "Komentar") glide instead of jumping. layout.tsx sets

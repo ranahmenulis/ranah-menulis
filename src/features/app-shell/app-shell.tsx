@@ -57,7 +57,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         {sidebar && (
           <nav
             aria-label={nav.label}
-            className="sticky top-14 hidden h-[calc(100dvh-3.5rem)] w-60 shrink-0 content-start gap-0.5 overflow-y-auto border-r border-line px-3 py-4 lg:grid"
+            className="sticky top-[calc(3.5rem+var(--safe-top))] hidden h-[calc(100dvh-3.5rem-var(--safe-top))] w-60 shrink-0 content-start gap-0.5 overflow-y-auto border-r border-line px-3 py-4 lg:grid"
           >
             {mainNav.map((entry) => (
               <div key={entry.id} className="grid">
@@ -72,7 +72,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
         <nav
           aria-label={nav.label}
-          className="sticky top-14 hidden h-[calc(100dvh-3.5rem)] w-18 shrink-0 content-start gap-1 border-r border-line py-3 md:grid lg:hidden"
+          className="sticky top-[calc(3.5rem+var(--safe-top))] hidden h-[calc(100dvh-3.5rem-var(--safe-top))] w-18 shrink-0 content-start gap-1 border-r border-line py-3 md:grid lg:hidden"
         >
           {mainNav.map((entry) => (
             <NavLink

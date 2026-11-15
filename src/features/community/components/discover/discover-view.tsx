@@ -69,7 +69,7 @@ export function DiscoverView() {
       {data.status === "ready" && current && (
         <>
           {/* The fade mask sits on the inner row so the sticky bar itself stays opaque. */}
-          <div className="sticky top-13 z-20 -mx-4 mt-2 border-b border-line bg-canvas md:top-14 md:-mx-0">
+          <div className="sticky top-[calc(3.25rem+var(--safe-top))] z-20 -mx-4 mt-2 border-b border-line bg-canvas md:top-[calc(3.5rem+var(--safe-top))] md:-mx-0">
             <div
               role="toolbar"
               aria-label="Kategori"

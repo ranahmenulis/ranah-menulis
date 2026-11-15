@@ -62,7 +62,7 @@ export function TopBar({
       : topBar.notificationsNone;
   const phoneOnly = back ? "max-md:hidden" : undefined;
   return (
-    <header className="sticky top-0 z-30 flex h-13 items-center gap-2 border-b border-line bg-canvas pr-2 pl-4 md:h-14 md:gap-4 md:px-4">
+    <header className="sticky top-0 z-30 flex h-[calc(3.25rem+var(--safe-top))] items-center gap-2 border-b border-line bg-canvas pt-(--safe-top) pr-2 pl-4 md:h-[calc(3.5rem+var(--safe-top))] md:gap-4 md:px-4">
       <IconButton
         label={topBar.toggleSidebar}
         onClick={onToggleSidebar}
