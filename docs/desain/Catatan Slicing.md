@@ -13,7 +13,12 @@ Serah terima per **15 November 2026** untuk sesi yang mulai mengubah desain menj
 1. [x] **Token dan komponen dasar.** `globals.css` Tailwind v4 dari DESIGN.md bagian 10, ditambah `ink-read` (#191919 / #d2d2d2) dan `opacity-press` (0.72). Huruf lewat `next/font`: Source Serif 4 (sumbu optical size) dan Schibsted Grotesk. Dua radius saja (`rounded-full` dan 0). Rujukan kelas: `docs/desain/sistem-desain/components/bundle.css` (awalan `rm-`) dan README tiap komponen.
 2. [x] **Landing.** Papan di `docs/desain/landing/`, teks di `docs/Copy Landing RanahMenulis.md`. Gerak hero: `landing/Gerak.dc.html`.
    Sisa sebelum tayang: terapkan migrasi `0002_daftar_tunggu.sql` ke Supabase, halaman `/kebijakan-privasi` dan `/kontak` (tautan sudah dipasang, halamannya belum ada), gambar Open Graph 1200×630 (papan `OG.dc.html`), SVG logo, dan tiga butir persetujuan client di bawah.
-3. [ ] **Editor Studio** (dengan IndikatorSimpan, IndikatorTarget, DialogKonflik, drawer bantuan, mode fokus).
+3. [x] **Editor Studio** (dengan IndikatorSimpan, IndikatorTarget, DialogKonflik, drawer bantuan, mode fokus), selesai 15 November 2026 dengan **penyimpanan di perangkat** (IndexedDB). Overlay Dialog, Laci, Menu, Popover, dan Toast ada di `src/components/ui/`; editor di `src/features/studio/`, rute `/studio/[id]`. Sisa yang disengaja, jangan dianggap selesai:
+   - **3c, sinkron server:** migrasi `documents` + RLS + tes RLS, dan store Supabase. Butuh login (R1); diajukan sebagai rencana sendiri. Sampai itu, "Tersimpan" berarti tersimpan di perangkat dan "Belum tersinkron" hanya muncul saat peramban offline.
+   - Butir menu **Kirim ke proyek, Ekspor, Pindah ke sampah** dan tombol **Bagikan** tampil nonaktif (menunggu Projects R4, ekspor STD-07, daftar dokumen langkah 4, dialog Bagikan langkah 6).
+   - Tautan "Kembali ke Studio" menuju `/` dan popover target belum punya "Buka Streak" sampai tab Streak ada (langkah 4).
+   - **[konfirmasi]** target harian 500 tetap (STK-01), aturan menghapus tulisan hari ini (dipakai opsi mengurangi, BR-STK-04), ambang teks tempel (Q-08, belum ada batas), zona waktu hari mengikuti perangkat, isi kit inspirasi (contoh sementara di `help-content.ts`).
+   - Keadaan "Belum tersimpan" (penyimpanan perangkat gagal, mencoba ulang tiap 5 detik) tidak ada di papan; ditambahkan sebagai [usulan].
 4. [ ] **Tab Streak**, lalu **Beranda** (blok Hari ini), lalu **tab Dokumen Studio**.
 5. [ ] **Community:** Jelajahi, halaman postingan, Tulis postingan.
 6. [ ] **Layar yang belum didesain**, dibangun langsung dari komponen yang ada dan spesifikasi DESIGN.md bagian 6: akun dan onboarding (R1), profil publik, Tersimpan, Notifikasi, Statistik, dialog Bagikan dan Kirim ke proyek, Projects (R4–R5), Kelola dan Admin, Grup.
@@ -33,8 +38,8 @@ Urutan rilis dan ketergantungan data: `docs/MVP Scope RanahMenulis.md`. Backend 
 
 - Belum sesuai CLAUDE.md butir 5: tes RLS untuk migrasi 0002 belum ada (butuh Supabase lokal). Tes untuk server action daftar tunggu sudah ada di `src/features/landing/waitlist/actions.test.ts`, dan kode landing kini berada di `src/features/landing/` (aturan struktur ada di CLAUDE.md).
 - Migrasi 0002 belum diterapkan dan belum melewati persetujuan rencana (butir 3).
-- Dialog, Laci, Menu, dan Toast belum dibuat; Editor Studio membutuhkannya.
-- Pengalih tema manual belum ada (tema masih ikut sistem).
+- ~~Dialog, Laci, Menu, dan Toast belum dibuat~~ Selesai 15 November 2026 (lihat langkah 3).
+- Pengalih tema manual belum ada (tema masih ikut sistem). Galeri `/sistem-desain/overlay` punya tombol tema sendiri.
 - Uji viewport nyata: Chrome headless biasa terpotong di bawah 500px; pakai Chrome DevTools Protocol (`Emulation.setDeviceMetricsOverride`).
 
 ## Keputusan yang masih terbuka
