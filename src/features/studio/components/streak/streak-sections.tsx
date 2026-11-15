@@ -3,6 +3,7 @@
 import { Button, ButtonLink } from "@/components/ui/button";
 import type { StreakData } from "../../hooks/use-streak-data";
 import { parseDay, weekStats } from "../../streak";
+import { NO_STATISTICS } from "../../statistics-copy";
 import { formatRun, streakLine, todayLine } from "../../streak-copy";
 
 const number = new Intl.NumberFormat("id-ID");
@@ -125,22 +126,25 @@ export function StatsSection({
   return (
     <section aria-label="Statistik ringkas">
       {hasWriting ? (
-        <dl className="grid grid-cols-3 border-t border-line pt-4">
-          <Stat value={number.format(stats.total)} label="kata minggu ini" />
-          <Stat value={number.format(stats.average)} label="rata-rata per hari minggu ini" />
-          <Stat
-            value={stats.best ? number.format(stats.best.words) : "0"}
-            label={
-              stats.best
-                ? `kata, hari terbaik bulan ini (${shortDay.format(parseDay(stats.best.day))})`
-                : "kata, hari terbaik bulan ini"
-            }
-          />
-        </dl>
+        <div className="border-t border-line pt-4">
+          <dl className="grid grid-cols-3">
+            <Stat value={number.format(stats.total)} label="kata minggu ini" />
+            <Stat value={number.format(stats.average)} label="rata-rata per hari minggu ini" />
+            <Stat
+              value={stats.best ? number.format(stats.best.words) : "0"}
+              label={
+                stats.best
+                  ? `kata, hari terbaik bulan ini (${shortDay.format(parseDay(stats.best.day))})`
+                  : "kata, hari terbaik bulan ini"
+              }
+            />
+          </dl>
+          <ButtonLink href="/studio/statistik" variant="text" className="mt-3 -ml-3 text-ink">
+            Lihat semua statistik
+          </ButtonLink>
+        </div>
       ) : (
-        <p className="border-t border-line pt-4 text-sm text-ink-muted">
-          Belum cukup data untuk statistik. Tulis beberapa hari, lalu angkanya muncul di sini.
-        </p>
+        <p className="border-t border-line pt-4 text-sm text-ink-muted">{NO_STATISTICS}</p>
       )}
     </section>
   );
