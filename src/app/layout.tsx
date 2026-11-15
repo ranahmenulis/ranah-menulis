@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Schibsted_Grotesk, Source_Serif_4 } from "next/font/google";
+import { ToastProvider } from "@/components/ui/toast";
 import "./globals.css";
 
 // Huruf sans masih usulan (DESIGN.md 4.2); final setelah uji spesimen.
@@ -29,7 +30,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       suppressHydrationWarning // skrip landing memasang kelas is-animating sebelum hidrasi
       className={`${sans.variable} ${serif.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col">{children}</body>
+      <body className="flex min-h-full flex-col">
+        <ToastProvider>{children}</ToastProvider>
+      </body>
     </html>
   );
 }
