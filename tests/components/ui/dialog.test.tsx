@@ -74,3 +74,47 @@ describe("Dialog", () => {
     expect(onClose).not.toHaveBeenCalled();
   });
 });
+
+describe("Dialog, swipe to dismiss", () => {
+  it("shows a grabber and wires touch handling only when asked, and only if dismissible", () => {
+    const plain = renderDialog();
+    expect(plain.dialog.querySelector("[aria-hidden].rounded-full")).toBeNull();
+    cleanup();
+
+    const swipe = renderDialog({ swipeToDismiss: true });
+    expect(swipe.dialog.querySelector("[aria-hidden].rounded-full")).not.toBeNull();
+    cleanup();
+
+    const locked = renderDialog({ swipeToDismiss: true, dismissible: false });
+    expect(locked.dialog.querySelector("[aria-hidden].rounded-full")).toBeNull();
+  });
+
+  it("closes when the title is swiped down far enough", () => {
+    const { dialog, onClose } = renderDialog({ swipeToDismiss: true });
+    Object.defineProperty(dialog, "offsetHeight", { value: 300 });
+    const handle = screen.getByText("Ubah nama");
+    const touch = { pointerType: "touch", pointerId: 1 };
+
+    fireEvent.pointerDown(handle, { ...touch, clientY: 0 });
+    fireEvent.pointerMove(handle, { ...touch, clientY: 150 });
+    fireEvent.pointerUp(handle, { ...touch, clientY: 150 });
+
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not close when the body is swiped, so its content can still scroll", () => {
+    const { dialog, onClose } = renderDialog({
+      swipeToDismiss: true,
+      children: <p>Isi</p>,
+    });
+    Object.defineProperty(dialog, "offsetHeight", { value: 300 });
+    const body = screen.getByText("Isi");
+    const touch = { pointerType: "touch", pointerId: 1 };
+
+    fireEvent.pointerDown(body, { ...touch, clientY: 0 });
+    fireEvent.pointerMove(body, { ...touch, clientY: 250 });
+    fireEvent.pointerUp(body, { ...touch, clientY: 250 });
+
+    expect(onClose).not.toHaveBeenCalled();
+  });
+});

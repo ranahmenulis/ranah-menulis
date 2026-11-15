@@ -171,6 +171,59 @@ describe("ComposeView, without Studio documents", () => {
   });
 });
 
+function renderFrom(sourceDocId: string) {
+  return render(
+    <ToastProvider>
+      <ComposeView draftId={null} sourceDocId={sourceDocId} />
+    </ToastProvider>,
+  );
+}
+
+describe("ComposeView, opened from Bagikan in the editor", () => {
+  it("opens on the chosen document's parts with nothing ticked and the public-text notice", async () => {
+    renderFrom("d1");
+    await screen.findByRole("group", { name: "Bagian dokumen" });
+
+    expect(
+      screen.getByRole("tab", { name: "Dari dokumen Studio" }).getAttribute("aria-selected"),
+    ).toBe("true");
+    for (const box of screen.getAllByRole("checkbox")) {
+      expect((box as HTMLInputElement).checked).toBe(false);
+    }
+    expect(screen.getByText(/Yang menjadi publik hanya teks ini/)).toBeTruthy();
+    expect(publish().disabled).toBe(true);
+    expect((screen.getByLabelText("Judul postingan") as HTMLInputElement).value).toBe(
+      "Yang Ditunggu Nenek",
+    );
+  });
+
+  it("falls back to the document picker with a notice when the document is in Sampah", async () => {
+    docs.list = [doc({ deletedAt: Date.now() })];
+    renderFrom("d1");
+    await screen.findByText(/tidak ditemukan atau sudah ada di Sampah/);
+    expect(screen.getByText("Pilih dokumen Studio")).toBeTruthy();
+  });
+
+  it("falls back with a notice when the document does not exist", async () => {
+    renderFrom("hilang");
+    await screen.findByText(/tidak ditemukan atau sudah ada di Sampah/);
+  });
+
+  it("falls back with a notice when nothing is written in the document", async () => {
+    docs.list = [doc({ wordCount: 0, content: { type: "doc", content: [{ type: "paragraph" }] } })];
+    renderFrom("d1");
+    await screen.findByText(/belum ada isinya/);
+    expect(screen.getByText("Pilih dokumen Studio")).toBeTruthy();
+  });
+
+  it("starts a blank post when no document is named", async () => {
+    renderCompose();
+    expect(
+      (await screen.findByRole("tab", { name: "Tulis langsung" })).getAttribute("aria-selected"),
+    ).toBe("true");
+  });
+});
+
 describe("ComposeView, reopening a draft", () => {
   it("tells the author when the source document has been moved to Sampah", async () => {
     docs.list = [doc({ deletedAt: Date.now() })];

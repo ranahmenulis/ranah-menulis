@@ -28,6 +28,9 @@ export const STREAK_HREF = "/studio/streak";
 export const NEW_DOCUMENT_HREF = "/studio/baru";
 export const DISCOVER_HREF = "/jelajahi";
 export const NEW_POST_HREF = "/tulis";
+/** Opens "Tulis postingan" with a Studio document already chosen as the source (STD-10). */
+export const postFromDocumentHref = (documentId: string) =>
+  `${NEW_POST_HREF}?dokumen=${encodeURIComponent(documentId)}`;
 
 const home: NavEntry = { id: "beranda", label: "Beranda", Icon: House, href: "/beranda" };
 const discover: NavEntry = {

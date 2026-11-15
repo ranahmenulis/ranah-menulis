@@ -20,8 +20,15 @@ import { PublishDone } from "./publish-done";
  * public, no default visibility, and a 500-word limit that never cuts text. Dummy and local: posts
  * and drafts are kept on this device.
  */
-export function ComposeView({ draftId }: { draftId: string | null }) {
-  const c = useCompose(postStore, draftId);
+export function ComposeView({
+  draftId,
+  sourceDocId = null,
+}: {
+  draftId: string | null;
+  /** Studio document chosen before arriving (`?dokumen=`); ignored when reopening a draft. */
+  sourceDocId?: string | null;
+}) {
+  const c = useCompose(postStore, draftId, sourceDocId);
   const { state, dispatch } = c;
   const router = useRouter();
   const toast = useToast();
@@ -37,7 +44,7 @@ export function ComposeView({ draftId }: { draftId: string | null }) {
     else toast({ message: "Draf belum tersimpan. Coba lagi.", tone: "error", key: "draft" });
   }
 
-  if (c.load === "loading") return <ComposeLoading />;
+  if (c.load === "loading" || c.sourceParam === "loading") return <ComposeLoading />;
   if (c.load !== "ready") return <ComposeMissing failed={c.load === "error"} />;
 
   const bar = (
@@ -76,6 +83,7 @@ export function ComposeView({ draftId }: { draftId: string | null }) {
         drafts={community.drafts.filter((d) => d.id !== state.draftId)}
         failed={c.failed}
         sourceGone={c.sourceGone}
+        sourceParam={c.sourceParam}
         busy={c.busy}
         onPublish={() => void c.publish()}
         onSaveDraft={() => void saveDraft()}

@@ -1,5 +1,6 @@
 "use client";
 
+import { SendToProjectDialog } from "../send-to-project-dialog";
 import type { DocumentList } from "../../hooks/use-document-list";
 import { DeleteDialog, MoveDialog, NameDialog } from "./document-dialogs";
 import type { Pending } from "./pending";
@@ -70,6 +71,8 @@ export function PendingDialogs({
           onSubmit={(target) => run(() => list.moveTo(pending.doc.id, target))()}
         />
       );
+    case "sendToProject":
+      return <SendToProjectDialog open onClose={onClose} />;
     case "delete":
       return (
         <DeleteDialog

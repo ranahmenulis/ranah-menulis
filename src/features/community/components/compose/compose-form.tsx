@@ -17,6 +17,7 @@ import {
   type ComposeState,
 } from "../../compose-state";
 import { blocksFromDocument } from "../../doc-blocks";
+import type { SourceParam } from "../../hooks/use-source-param";
 import { wordsOf } from "../../post-model";
 import type { StoredPost } from "../../storage/post-store";
 import { DirectEditor } from "./direct-editor";
@@ -31,12 +32,20 @@ type Props = {
   drafts: StoredPost[];
   failed: "publish" | "draft" | null;
   sourceGone: boolean;
+  /** What became of the document named in the address, if any. */
+  sourceParam: SourceParam;
   busy: boolean;
   onPublish: () => void;
   onSaveDraft: () => void;
 };
 
-function Notices({ state, failed, sourceGone, onPublish }: Props) {
+const SOURCE_PARAM_NOTICE: Partial<Record<SourceParam, string>> = {
+  gone: "Dokumen yang ingin kamu bagikan tidak ditemukan atau sudah ada di Sampah. Pilih dokumen lain di bawah.",
+  empty: "Dokumen itu belum ada isinya. Tulis dulu di Studio, atau pilih dokumen lain di bawah.",
+  error: "Dokumen itu gagal dibuka. Pilih dari daftar di bawah.",
+};
+
+function Notices({ state, failed, sourceGone, sourceParam, onPublish }: Props) {
   return (
     <div className="mt-6 grid gap-4 empty:hidden">
       {failed === "publish" && (
@@ -50,6 +59,9 @@ function Notices({ state, failed, sourceGone, onPublish }: Props) {
           Postingan belum terbit karena koneksi terputus saat mengirim. Teks dan pengaturanmu tetap
           di sini.
         </ErrorBanner>
+      )}
+      {SOURCE_PARAM_NOTICE[sourceParam] && state.pick === null && (
+        <Notice>{SOURCE_PARAM_NOTICE[sourceParam]}</Notice>
       )}
       {sourceGone && state.draftSource && (
         <Notice>
@@ -150,7 +162,7 @@ export function ComposeForm(props: Props) {
             className={
               picking
                 ? "mt-6 max-w-170"
-                : "mt-6 grid gap-8 md:grid-cols-[minmax(0,1fr)_23.75rem] md:items-start md:gap-12"
+                : "mt-6 grid grid-cols-[minmax(0,1fr)] gap-8 md:grid-cols-[minmax(0,1fr)_23.75rem] md:items-start md:gap-12"
             }
           >
             {state.tab === "direct" && (

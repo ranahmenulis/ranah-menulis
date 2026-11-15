@@ -15,6 +15,7 @@ export function Row({
   menuLabel,
   items,
   extra,
+  tag,
 }: {
   kind: "folder" | "document";
   title: string;
@@ -25,6 +26,8 @@ export function Row({
   items: MenuEntry[];
   /** e.g. "Pulihkan" for items in Sampah. */
   extra?: ReactNode;
+  /** Short publishing status beside the meta, e.g. "Dibagikan" (DESIGN.md 6.4). */
+  tag?: string;
 }) {
   const Icon = kind === "folder" ? FolderSimple : FileText;
   const heading =
@@ -46,7 +49,12 @@ export function Row({
       <Icon size={24} aria-hidden className="mt-0.5 text-ink-muted max-md:size-5" />
       <div className="min-w-0">
         <h2 className="heading-sm [overflow-wrap:anywhere] text-ink">{heading}</h2>
-        <p className="mt-1 text-xs text-ink-muted">{meta}</p>
+        <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-ink-muted">
+          {meta}
+          {tag && (
+            <span className="rounded-full border border-line px-2 py-px text-ink">{tag}</span>
+          )}
+        </p>
       </div>
       <div className="-mt-1.5 flex items-center gap-1 max-md:-mr-2.5">
         {extra}

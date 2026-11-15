@@ -235,3 +235,110 @@ describe("useStudioDocument: conflicts", () => {
     expect(save.mock.calls[1][1]).toBe(5);
   });
 });
+
+describe("useStudioDocument: saveNow", () => {
+  it("stores pending text straight away and reports it safe", async () => {
+    const { store, save } = makeStore();
+    const { result } = renderHook(() => useStudioDocument("doc-1", store));
+    await advance(0);
+    act(() => result.current.setTitle("Surat baru"));
+
+    let ok = false;
+    await act(async () => {
+      ok = await result.current.saveNow();
+    });
+
+    expect(ok).toBe(true);
+    expect(save).toHaveBeenCalledTimes(1);
+    expect(save.mock.calls[0][0].title).toBe("Surat baru");
+  });
+
+  it("is true without writing when nothing changed, or when a new draft is still untouched", async () => {
+    const { store, save } = makeStore();
+    const opened = renderHook(() => useStudioDocument("doc-1", store));
+    const fresh = renderHook(() => useStudioDocument("baru", store));
+    await advance(0);
+
+    let a = false;
+    let b = false;
+    await act(async () => {
+      a = await opened.result.current.saveNow();
+      b = await fresh.result.current.saveNow();
+    });
+
+    expect([a, b]).toEqual([true, true]);
+    expect(save).not.toHaveBeenCalled();
+  });
+
+  it("waits for a save already in progress before reporting", async () => {
+    let finish: () => void = () => {};
+    const slow = vi.fn<DocumentStore["save"]>(
+      (input, base) =>
+        new Promise<SaveResult>((resolve) => {
+          finish = () =>
+            resolve({
+              ok: true,
+              doc: { ...input, version: base + 1, updatedAt: 1 },
+              progress: emptyLog(),
+            });
+        }),
+    );
+    const { store } = makeStore({ save: slow });
+    const { result } = renderHook(() => useStudioDocument("doc-1", store));
+    await advance(0);
+    act(() => result.current.setTitle("Surat"));
+    await advance(1000); // autosave started and is still running
+
+    let ok: boolean | null = null;
+    act(() => {
+      void result.current.saveNow().then((v) => (ok = v));
+    });
+    await advance(200);
+    expect(ok).toBeNull();
+
+    await act(async () => finish());
+    await advance(100);
+    expect(ok).toBe(true);
+  });
+
+  it("is false while the document is in conflict, and false when the device refuses the save", async () => {
+    const conflicted = makeStore({
+      save: vi.fn(async (): Promise<SaveResult> => ({
+        ok: false,
+        conflict: stored({ version: 9 }),
+      })),
+    });
+    const a = renderHook(() => useStudioDocument("doc-1", conflicted.store));
+    await advance(0);
+    act(() => a.result.current.setTitle("Lain"));
+    await advance(1000);
+    let first = true;
+    await act(async () => {
+      first = await a.result.current.saveNow();
+    });
+    expect(first).toBe(false);
+
+    const failing = makeStore({ save: vi.fn(async () => Promise.reject(new Error("idb"))) });
+    const b = renderHook(() => useStudioDocument("doc-1", failing.store));
+    await advance(0);
+    act(() => b.result.current.setTitle("Lain"));
+    let second = true;
+    await act(async () => {
+      second = await b.result.current.saveNow();
+    });
+    expect(second).toBe(false);
+  });
+
+  it("exposes the id a new draft is stored under", async () => {
+    const { store, save } = makeStore();
+    const { result } = renderHook(() => useStudioDocument("baru", store));
+    await advance(0);
+    act(() => result.current.setTitle("Mulai"));
+    await act(async () => {
+      await result.current.saveNow();
+    });
+
+    expect(result.current.getId()).not.toBe("");
+    expect(save.mock.calls[0][0].id).toBe(result.current.getId());
+  });
+});

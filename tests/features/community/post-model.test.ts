@@ -4,11 +4,12 @@ import {
   MAX_POST_WORDS,
   postLabel,
   relatedPosts,
+  sharedDocumentIds,
   resolveFixturePosts,
   tileForm,
   wordsOf,
 } from "@/features/community/post-model";
-import { mark } from "@/features/community/storage/post-store";
+import { mark, type StoredPost } from "@/features/community/storage/post-store";
 
 const posts = resolveFixturePosts(Date.now());
 const byId = (id: string) => posts.find((p) => p.id === id)!;
@@ -67,5 +68,31 @@ describe("feedFor", () => {
     expect(canRead(byId("garam-dan-pelabuhan"), false)).toBe(false);
     expect(canRead(byId("garam-dan-pelabuhan"), true)).toBe(true);
     expect(canRead(byId("toples-kerupuk"), false)).toBe(true);
+  });
+});
+
+describe("sharedDocumentIds", () => {
+  const stored = (over: Partial<StoredPost>): StoredPost => ({
+    id: "p",
+    status: "published",
+    title: "T",
+    kind: "prolog",
+    genre: "Cerpen",
+    blocks: [],
+    sourceTitle: null,
+    sourceDocId: null,
+    visibility: "publik",
+    updatedAt: 1,
+    ...over,
+  });
+
+  it("collects documents that have a published post, and ignores drafts and posts written directly", () => {
+    const ids = sharedDocumentIds([
+      stored({ id: "a", sourceDocId: "d1" }),
+      stored({ id: "b", sourceDocId: "d2", status: "draft" }),
+      stored({ id: "c", sourceDocId: null }),
+      stored({ id: "d", sourceDocId: "d1" }),
+    ]);
+    expect([...ids]).toEqual(["d1"]);
   });
 });
