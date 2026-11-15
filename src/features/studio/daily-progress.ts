@@ -6,9 +6,6 @@
  * deleting older text does not. Large pastes are not capped yet because the threshold is undecided.
  */
 
-/** [konfirmasi] STK-01: the writer sets this in Streak; fixed until that screen exists. */
-export const DAILY_TARGET = 500;
-
 export type DailyLog = {
   /** Local calendar day, "YYYY-MM-DD". [konfirmasi] Should follow the profile time zone. */
   day: string;

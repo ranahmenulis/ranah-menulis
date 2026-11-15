@@ -21,6 +21,7 @@ type EditorBarProps = {
   savedAt: Date | null;
   offline: boolean;
   progress: DailyLog;
+  target: number;
   helpOpen: boolean;
   /** Nothing written yet: sharing has nothing to share. */
   empty: boolean;
@@ -45,6 +46,7 @@ export function EditorBar({
   savedAt,
   offline,
   progress,
+  target,
   helpOpen,
   empty,
   ready,
@@ -87,7 +89,7 @@ export function EditorBar({
             <span className="text-xs text-ink-muted tabular-nums">
               {words.toLocaleString("id-ID")} kata
             </span>
-            <TargetIndicator progress={progress} pending={offline} />
+            <TargetIndicator progress={progress} target={target} pending={offline} />
           </div>
         </>
       )}
