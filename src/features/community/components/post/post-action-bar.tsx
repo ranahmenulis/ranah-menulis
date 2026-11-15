@@ -25,6 +25,9 @@ type Props = {
   onReport: () => void;
 };
 
+/** Press feedback on the icon only; the button keeps its opacity press state [usulan]. */
+const pressIcon = "transition-transform duration-120 ease-(--ease-out) group-active:scale-90";
+
 /** "Salin tautan" and "Laporkan tulisan" (COM-04). There is no reshare (Fase 2). */
 function postMenu({ onCopyLink, onReport }: Pick<Props, "onCopyLink" | "onReport">): MenuEntry[] {
   return [
@@ -53,9 +56,14 @@ function Actions({
         aria-pressed={appreciated}
         aria-label={`Apresiasi ${appreciations}`}
         onClick={onAppreciate}
-        className={cn("gap-1.5! px-2.5! font-normal!", appreciated && "text-ink!")}
+        className={cn("group gap-1.5! px-2.5! font-normal!", appreciated && "text-ink!")}
       >
-        <Heart size={20} weight={appreciated ? "fill" : "regular"} aria-hidden />
+        <Heart
+          size={20}
+          weight={appreciated ? "fill" : "regular"}
+          aria-hidden
+          className={pressIcon}
+        />
         {text("Apresiasi ")}
         {count(appreciations)}
       </Button>
@@ -76,9 +84,14 @@ function Actions({
         variant="text"
         aria-pressed={saved}
         onClick={onSave}
-        className={cn("ml-auto gap-1.5! px-2.5! font-normal!", saved && "text-ink!")}
+        className={cn("group ml-auto gap-1.5! px-2.5! font-normal!", saved && "text-ink!")}
       >
-        <BookmarkSimple size={20} weight={saved ? "fill" : "regular"} aria-hidden />
+        <BookmarkSimple
+          size={20}
+          weight={saved ? "fill" : "regular"}
+          aria-hidden
+          className={pressIcon}
+        />
         {saved ? "Tersimpan" : "Simpan"}
       </Button>
     </>
