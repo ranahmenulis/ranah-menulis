@@ -319,6 +319,8 @@ Halaman untuk menemukan tulisan di luar yang diikuti. PRD menetapkan delapan kat
 
 ### 6.9 Halaman postingan dengan balasan (pola halaman catatan Substack)
 
+> Implementasi (langkah 5): kolom 680 di tengah; di ponsel bilah aksi lengket di bawah menggantikan bilah navigasi dan memuat menu ⋯, bilah atas hanya panah kembali. Ubin Jelajahi memakai container query (3 kolom ≥ 896px, 2 kolom ≥ 576px, di bawahnya daftar bergaris).
+
 Melengkapi 6.1 untuk postingan pendek (catatan) dan bagian komentar:
 
 1. Satu kolom 680px. Baris penulis di atas (avatar 44, nama, tombol Ikuti sebagai teks, waktu relatif), lalu teks serif `read-body`, lalu bilah aksi: Apresiasi, Komentar, Bagikan, Simpan.

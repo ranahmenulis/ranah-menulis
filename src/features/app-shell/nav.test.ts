@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { activeId, bottomNav, mainNav, mobileTitle, showsWriteButton } from "./nav";
+import { activeId, bottomNav, isPostPage, mainNav, mobileTitle, showsWriteButton } from "./nav";
 
 describe("navigation", () => {
   it("marks Streak and Studio as different entries by path", () => {
@@ -19,6 +19,17 @@ describe("navigation", () => {
     expect(showsWriteButton("/beranda")).toBe(true);
     expect(showsWriteButton("/studio")).toBe(true);
     expect(showsWriteButton("/studio/streak")).toBe(false);
+  });
+
+  it("lists Jelajahi under Beranda on wide screens and keeps it out of the phone tabs", () => {
+    expect(mainNav.map((n) => n.id).slice(0, 3)).toEqual(["beranda", "jelajahi", "studio"]);
+    expect(bottomNav.some((n) => n.id === "jelajahi")).toBe(false);
+    expect(activeId("/jelajahi")).toBe("jelajahi");
+  });
+
+  it("recognises post pages, which replace the phone bottom bar", () => {
+    expect(isPostPage("/postingan/hujan-pertama-bulan-november")).toBe(true);
+    expect(isPostPage("/jelajahi")).toBe(false);
   });
 
   it("has five phone tabs and no Streak in the desktop list (it is a sub-item)", () => {

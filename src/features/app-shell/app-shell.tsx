@@ -5,11 +5,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
 import { cn } from "@/lib/cn";
+import { ViewerSync, useViewer } from "@/lib/viewer";
+import { GuestFrame } from "./guest-frame";
 import { NavLink } from "./nav-link";
 import {
   NEW_DOCUMENT_HREF,
   activeId,
   bottomNav,
+  isPostPage,
   mainNav,
   mobileTitle,
   showsWriteButton,
@@ -25,10 +28,27 @@ export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const active = activeId(pathname);
   const [sidebar, setSidebar] = useState(true);
+  const viewer = useViewer();
+  const onPost = isPostPage(pathname);
+
+  if (viewer === "tamu") {
+    return (
+      <>
+        <ViewerSync pathname={pathname} />
+        <GuestFrame back={onPost}>{children}</GuestFrame>
+      </>
+    );
+  }
 
   return (
     <div className="flex min-h-dvh flex-col max-md:[--toast-offset:calc(5rem+env(safe-area-inset-bottom))]">
-      <TopBar title={mobileTitle(pathname)} onToggleSidebar={() => setSidebar((v) => !v)} />
+      <ViewerSync pathname={pathname} />
+      <TopBar
+        title={mobileTitle(pathname)}
+        discoverActive={active === "jelajahi"}
+        back={onPost}
+        onToggleSidebar={() => setSidebar((v) => !v)}
+      />
 
       <div className="flex min-w-0 flex-1">
         {sidebar && (
@@ -78,14 +98,16 @@ export function AppShell({ children }: { children: ReactNode }) {
         </Link>
       )}
 
-      <nav
-        aria-label="Utama"
-        className="fixed inset-x-0 bottom-0 z-30 grid h-[calc(3.5rem+env(safe-area-inset-bottom))] grid-cols-5 border-t border-line bg-canvas pb-[env(safe-area-inset-bottom)] md:hidden"
-      >
-        {bottomNav.map((entry) => (
-          <NavLink key={entry.id} entry={entry} variant="tab" active={active === entry.id} />
-        ))}
-      </nav>
+      {!onPost && (
+        <nav
+          aria-label="Utama"
+          className="fixed inset-x-0 bottom-0 z-30 grid h-[calc(3.5rem+env(safe-area-inset-bottom))] grid-cols-5 border-t border-line bg-canvas pb-[env(safe-area-inset-bottom)] md:hidden"
+        >
+          {bottomNav.map((entry) => (
+            <NavLink key={entry.id} entry={entry} variant="tab" active={active === entry.id} />
+          ))}
+        </nav>
+      )}
     </div>
   );
 }

@@ -2,7 +2,10 @@ import { cleanup, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 const pathname = vi.hoisted(() => ({ value: "/studio" }));
-vi.mock("next/navigation", () => ({ usePathname: () => pathname.value }));
+vi.mock("next/navigation", () => ({
+  usePathname: () => pathname.value,
+  useRouter: () => ({ back: vi.fn(), push: vi.fn() }),
+}));
 
 import { AppShell } from "./app-shell";
 
@@ -61,6 +64,18 @@ describe("AppShell", () => {
     const projects = screen.getAllByText("Projects");
     expect(projects.every((el) => el.closest("a") === null)).toBe(true);
     expect(projects[0].closest("[aria-disabled=true]")).not.toBeNull();
+  });
+
+  it("marks Jelajahi as current on its page", () => {
+    renderAt("/jelajahi");
+    // The phone search icon (no text) is also current: it is how phones reach Jelajahi.
+    expect(new Set(current().filter(Boolean))).toEqual(new Set(["Jelajahi"]));
+  });
+
+  it("drops the phone bottom bar on a post page, where the post brings its own action bar", () => {
+    renderAt("/postingan/toples-kerupuk");
+    expect(screen.getAllByRole("navigation", { hidden: true })).toHaveLength(2);
+    expect(screen.getAllByRole("button", { name: "Kembali", hidden: true })).toHaveLength(1);
   });
 
   it("announces unread notifications on the bell", () => {

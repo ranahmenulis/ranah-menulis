@@ -1,8 +1,9 @@
 import type { SubmissionStatus } from "@/components/ui/status-submission";
 
 /**
- * Dummy data for Beranda until Community (step 5) and Projects (R4) exist. Everything here is
- * placeholder content written to look like real use; none of it comes from a database.
+ * Dummy data for Beranda until Projects (R4) and the account screens exist. Everything here is
+ * placeholder content written to look like real use; none of it comes from a database. The feed
+ * itself comes from src/features/community.
  */
 
 export type AttentionItem = { title: string; meta: string; actions: string[] };
@@ -51,73 +52,4 @@ export const followed: Followed[] = [
   { name: "Grup Penulis Pesisir", fresh: false },
   { name: "Dimas Pratama", fresh: true },
   { name: "Aina Sofea", fresh: false },
-];
-
-export type FeedEntry =
-  | {
-      kind: "work";
-      id: string;
-      author: string;
-      group?: string;
-      date: string;
-      title: string;
-      excerpt: string;
-      label: string;
-      appreciations: number;
-      comments: number;
-    }
-  | {
-      kind: "note";
-      id: string;
-      author: string;
-      date: string;
-      text: string;
-      appreciations: number;
-      comments: number;
-    };
-
-export const feed: FeedEntry[] = [
-  {
-    kind: "work",
-    id: "w1",
-    author: "Hafiz Rahman",
-    group: "Grup Penulis Pesisir",
-    date: "14 Okt",
-    title: "Bahasa yang Kupakai untuk Memarahi Adik",
-    excerpt:
-      "Ibu tidak pernah mengajariku cara marah dengan baik. Yang kupunya hanya nada suara dan satu kalimat yang kuulang sampai adikku berhenti menangis dan mulai menghitung berapa kali aku mengucapkannya.",
-    label: "Prolog · Esai · 2 menit baca",
-    appreciations: 48,
-    comments: 12,
-  },
-  {
-    kind: "note",
-    id: "n1",
-    author: "Nur Aisyah",
-    date: "1 jam lalu",
-    text: "Menulis dua puluh menit sebelum subuh ternyata mengubah cara aku membaca hari. Kalimat-kalimat yang biasanya kabur jadi punya tepi. Besok aku coba lagi, mungkin dengan lampu yang lebih redup.",
-    appreciations: 31,
-    comments: 5,
-  },
-  {
-    kind: "work",
-    id: "w2",
-    author: "Dimas Pratama",
-    date: "12 Nov",
-    title: "Rumah di Ujung Rel",
-    excerpt:
-      "Setiap kereta lewat, gelas di rak dapur bergeser setengah jari. Bapak sudah berhenti menggesernya kembali. Kami belajar membaca jadwal dari jarak gelas-gelas itu.",
-    label: "Cuplikan · Cerpen",
-    appreciations: 112,
-    comments: 27,
-  },
-  {
-    kind: "note",
-    id: "n2",
-    author: "Aina Sofea",
-    date: "Kemarin",
-    text: "Kata “rindu” kupakai tiga kali dalam satu halaman, dan tidak satu pun terasa jujur. Kuganti dengan menyebut apa yang tertinggal di meja makan. Baru terasa.",
-    appreciations: 64,
-    comments: 9,
-  },
 ];
