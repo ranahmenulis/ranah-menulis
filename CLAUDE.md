@@ -22,6 +22,8 @@ npm run start                  # jalankan hasil build
 npm run lint                   # ESLint (eslint.config.mjs)
 npm run typecheck              # tsc --noEmit
 npm run format                 # Prettier tulis; format:check hanya memeriksa
+npm run check                  # format:check + lint + typecheck + tes (gate cepat, tanpa build)
+npm run test:coverage          # tes + laporan coverage (HTML di coverage/); belum ada ambang batas
 npm test                       # Vitest, sekali jalan (semua tes)
 npm run test:watch             # Vitest mode watch
 npx vitest run src/lib/cn.test.ts      # satu berkas tes
@@ -40,6 +42,7 @@ npx vitest run -t "nama tes"           # tes berdasarkan nama
 - **Token desain** (`src/app/globals.css`): warna dan spasi didefinisikan sebagai CSS variable di `:root`, ditimpa untuk mode gelap lewat `prefers-color-scheme` dan `[data-theme]`. Pakai token seperti `bg-canvas`, `text-ink`, `bg-subtle`, `text-danger`; jangan menambah warna di luar token. Palet monokrom netral, merah hanya untuk galat dan aksi berbahaya.
 - **Komponen dasar** (`src/components/ui/`): Button (varian `primary`, `secondary`, `text`, `danger`, `danger-text`), Field, Tabs, Avatar, Chip, dan status state. Gaya dasar tombol memakai kelas Tailwind dengan `cn()` dari `src/lib/cn.ts`.
 - **Pratinjau** (`src/app/sistem-desain/`): halaman yang merender seluruh komponen dalam mode terang dan gelap. Gunakan untuk memeriksa komponen; periksa apakah halaman ini perlu dibatasi sebelum deploy.
+- **Environment** (`src/lib/env.ts`, `src/lib/env.server.ts`): semua variabel Supabase dibaca lewat modul ini, jangan memakai `process.env.X!` langsung. `getSupabasePublicEnv()` melempar galat dengan petunjuk jika env kosong; `readSupabasePublicEnv()` mengembalikan `null` (dipakai `proxy.ts` agar aplikasi tetap jalan sebelum dikonfigurasi). `env.server.ts` mengimpor `server-only` untuk `SUPABASE_SECRET_KEY`. Variabel `NEXT_PUBLIC_*` harus ditulis literal agar bisa di-inline Next.js. Tambahkan variabel baru ke modul ini, `.env.example`, dan tesnya.
 - **Supabase** (`src/lib/supabase/`): tiga klien dengan peran berbeda.
   - `client.ts`: klien browser, memakai publishable key.
   - `server.ts`: klien server dengan cookie, memakai sesi pengguna sehingga RLS berlaku.
@@ -68,6 +71,9 @@ src/
 - `.npmrc` berisi `min-release-age=7`: npm menolak memasang versi yang dirilis kurang dari 7 hari lalu. Jika sebuah instal gagal karena ini, itu disengaja; tunggu atau minta persetujuan pengguna sebelum menimpanya.
 - **TypeScript ditahan di 5.9**: `typescript-eslint` hanya mendukung `<6.1`, jadi TypeScript 7 akan merusak lint. Cek ulang sebelum menaikkan.
 - `npm audit` penuh masih melaporkan temuan moderate `minimatch` di dalam `typescript-eslint` (dipin oleh `eslint-config-next`, hanya tooling lint). Diterima sampai upstream memperbaiki; yang wajib bersih adalah `npm audit --omit=dev --audit-level=high` (dijalankan CI).
+- **Hook git** (`simple-git-hooks`, dipasang oleh `npm install` lewat script `prepare`): `pre-commit` menjalankan `lint-staged` (ESLint `--fix` dan Prettier pada berkas yang di-stage); `pre-push` menjalankan `typecheck` dan tes. Jangan mem-bypass hook dengan `--no-verify`; perbaiki penyebab kegagalannya.
+- **Akhir baris**: `.gitattributes` memaksa LF dan `.editorconfig` menyeragamkan editor. Jangan mengubah `core.autocrlf` untuk repo ini.
+- **ESLint 10**: sudah dicoba dan berjalan, tetapi 10.14 membawa advisory `minimatch` tambahan (audit 9 vs 7). Naikkan setelah 10.15 melewati jeda 7 hari (setelah 20 November 2026) dan periksa `npm audit` tidak memburuk.
 - CI (`.github/workflows/ci.yml`) menjalankan format:check, lint, typecheck, tes, audit produksi, dan build. Dependabot (`.github/dependabot.yml`) memperbarui mingguan dengan jeda 7 hari.
 - Header keamanan statis ada di `next.config.ts`. CSP berbasis nonce sengaja belum dipasang karena memaksa render dinamis dan bertentangan dengan `cacheComponents`; putuskan setelah ada halaman nyata. Baca `node_modules/next/dist/docs/01-app/02-guides/data-security.md` sebelum menulis Server Action atau akses data.
 - Server Action dan Route Handler diperlakukan sebagai endpoint publik: validasi input di dalamnya dan jangan mengandalkan `proxy.ts` untuk otorisasi. Penegakan sebenarnya di RLS.

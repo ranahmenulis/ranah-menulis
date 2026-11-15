@@ -1,9 +1,8 @@
 import { createBrowserClient } from "@supabase/ssr";
+import { getSupabasePublicEnv } from "@/lib/env";
 
-/** Klien browser. Hanya untuk auth dan operasi yang aman; akses data sensitif lewat server (PRD 19.3). */
+/** Browser client. Only for auth and safe operations; sensitive data goes through the server (PRD 19.3). */
 export function createClient() {
-  return createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
-  );
+  const { url, publishableKey } = getSupabasePublicEnv();
+  return createBrowserClient(url, publishableKey);
 }

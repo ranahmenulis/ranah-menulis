@@ -26,6 +26,7 @@ const eslintConfig = defineConfig([
     // Not part of this repo (see .gitignore): local agent tooling.
     ".agents/**",
     ".claude/**",
+    "coverage/**",
   ]),
 ]);
 
