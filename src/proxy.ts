@@ -1,15 +1,15 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { readSupabasePublicEnv } from "@/lib/env";
 
-/** Menyegarkan sesi Supabase di setiap permintaan (Next.js 16: proxy menggantikan middleware). */
+/** Refreshes the Supabase session on every request (Next.js 16: proxy replaces middleware). */
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });
 
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
-  if (!url || !key) return response; // belum dikonfigurasi
+  const env = readSupabasePublicEnv();
+  if (!env) return response; // not configured yet
 
-  const supabase = createServerClient(url, key, {
+  const supabase = createServerClient(env.url, env.publishableKey, {
     cookies: {
       getAll: () => request.cookies.getAll(),
       setAll: (items) => {
@@ -25,5 +25,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\.(?:svg|png|jpg|jpeg|gif|webp)$).*)"],
 };

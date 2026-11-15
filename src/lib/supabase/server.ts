@@ -1,23 +1,21 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { getSupabasePublicEnv } from "@/lib/env";
 
-/** Klien server (Server Components, Route Handlers, Server Actions). Memakai sesi pengguna, jadi RLS berlaku. */
+/** Server client (Server Components, Route Handlers, Server Actions). Uses the user's session, so RLS applies. */
 export async function createClient() {
   const cookieStore = await cookies();
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
-    {
-      cookies: {
-        getAll: () => cookieStore.getAll(),
-        setAll: (items) => {
-          try {
-            items.forEach(({ name, value, options }) => cookieStore.set(name, value, options));
-          } catch {
-            // Dipanggil dari Server Component: abaikan, sesi disegarkan oleh proxy.
-          }
-        },
+  const { url, publishableKey } = getSupabasePublicEnv();
+  return createServerClient(url, publishableKey, {
+    cookies: {
+      getAll: () => cookieStore.getAll(),
+      setAll: (items) => {
+        try {
+          items.forEach(({ name, value, options }) => cookieStore.set(name, value, options));
+        } catch {
+          // Called from a Server Component: ignore, the proxy refreshes the session.
+        }
       },
     },
-  );
+  });
 }

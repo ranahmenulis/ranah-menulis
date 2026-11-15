@@ -11,7 +11,10 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "check": "npm run format:check && npm run lint && npm run typecheck && npm test",
+    "prepare": "simple-git-hooks"
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",
@@ -29,17 +32,31 @@
     "@types/node": "^24.19.2",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitest/coverage-v8": "^5.1.0",
     "eslint": "^9",
     "eslint-config-next": "16.4.6",
     "eslint-config-prettier": "^10.1.8",
     "jsdom": "^31.0.1",
+    "lint-staged": "^17.6.0",
     "prettier": "^3.10.1",
     "prettier-plugin-tailwindcss": "^0.8.1",
+    "simple-git-hooks": "^2.14.0",
     "tailwindcss": "^4.3.5",
     "typescript": "^5",
     "vitest": "^5.1.0"
   },
   "engines": {
     "node": ">=24"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "npx lint-staged",
+    "pre-push": "npm run typecheck && npm test"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,mjs,mts}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{css,json,yml,yaml}": "prettier --write"
   }
 }

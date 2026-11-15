@@ -1,14 +1,14 @@
 import "server-only";
 import { createClient } from "@supabase/supabase-js";
+import { getSupabaseSecretKey } from "@/lib/env.server";
+import { getSupabasePublicEnv } from "@/lib/env";
 
 /**
- * Klien service role: MELEWATI RLS. Hanya untuk kode server tepercaya
- * (penyiapan Super Admin, webhook pembayaran). Jangan diimpor dari komponen klien.
+ * Service-role client: BYPASSES RLS. Only for trusted server code
+ * (Super Admin setup, payment webhooks). Never import it from a client component.
  */
 export function createAdminClient() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SECRET_KEY!,
-    { auth: { persistSession: false, autoRefreshToken: false } },
-  );
+  return createClient(getSupabasePublicEnv().url, getSupabaseSecretKey(), {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
 }
