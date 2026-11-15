@@ -148,6 +148,29 @@ export function useStudioDocument(documentId: string, store: DocumentStore) {
     };
   }, [flush]);
 
+  /**
+   * Resolves true once everything written so far is stored (waiting out a save in progress), false
+   * when it cannot be: a conflict or a failed save. For leaving the editor with the text intact.
+   */
+  const saveNow = useCallback(async () => {
+    let writes = 0;
+    for (let waits = 0; waits < 100; waits++) {
+      if (blocked.current) return false;
+      if (inFlight.current) {
+        await new Promise((resolve) => window.setTimeout(resolve, 50));
+        continue;
+      }
+      const { title: t, words: w } = latest.current;
+      if (!dirty.current || (t.trim() === "" && w === 0)) return true; // untouched drafts are never stored
+      if (writes++ >= 3) return false; // the device keeps refusing; its retry timer takes over
+      await flush();
+    }
+    return false;
+  }, [flush]);
+
+  /** The stored id; a new draft gets its id when the editor opens and keeps it from then on. */
+  const getId = useCallback(() => id.current, []);
+
   const setTitle = useCallback(
     (value: string) => {
       latest.current.title = value;
@@ -209,5 +232,7 @@ export function useStudioDocument(documentId: string, store: DocumentStore) {
     progress,
     conflict,
     resolveConflict,
+    saveNow,
+    getId,
   };
 }

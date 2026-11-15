@@ -1,27 +1,24 @@
 "use client";
 
-import {
-  ArrowsOut,
-  DownloadSimple,
-  Lightbulb,
-  PaperPlaneTilt,
-  Trash,
-} from "@phosphor-icons/react/dist/ssr";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useToast } from "@/components/ui/toast";
+import { postFromDocumentHref, STUDIO_HREF } from "@/features/app-shell/nav";
 import { cn } from "@/lib/cn";
 import { paragraphsOf } from "../diff-paragraphs";
 import { useOnlineStatus } from "../hooks/use-online-status";
 import { useStudioDocument, type LoadState } from "../hooks/use-studio-document";
 import { studioStore as store } from "../storage/store";
 import { useDailyTarget } from "../hooks/use-daily-target";
+import { useEditorMenu } from "../hooks/use-editor-menu";
 import { ConflictDialog, type ConflictVersion } from "./conflict-dialog";
 import { EditorBar } from "./editor-bar";
 import { EditorCanvas } from "./editor-canvas";
 import { EditorError, EditorLoading, EditorMissing } from "./editor-states";
 import { FocusHud } from "./focus-hud";
 import { HelpDrawer } from "./help-drawer";
-import type { MenuEntry } from "@/components/ui/menu";
+import { SendToProjectDialog } from "./send-to-project-dialog";
+import { ShareDialog } from "./share-dialog";
 
 /** [konfirmasi] Back-link target until the Studio document list exists (step 4). */
 const STUDIO_HOME = "/";
@@ -50,6 +47,8 @@ export function StudioEditor({ documentId }: { documentId: string }) {
   const toast = useToast();
   const [helpOpen, setHelpOpen] = useState(false);
   const [focusMode, setFocusMode] = useState(false);
+  const [dialog, setDialog] = useState<"share" | "send" | null>(null);
+  const router = useRouter();
 
   const enterFocus = useCallback(() => {
     setHelpOpen(false);
@@ -66,52 +65,55 @@ export function StudioEditor({ documentId }: { documentId: string }) {
     return () => window.removeEventListener("keydown", onKey);
   }, [focusMode]);
 
-  const menuItems = useMemo<MenuEntry[]>(
-    () => [
-      {
-        id: "help",
-        label: "Bantuan menulis",
-        icon: <Lightbulb />,
-        mobileOnly: true,
-        onSelect: () => setHelpOpen(true),
-      },
-      {
-        id: "focus",
-        label: "Mode fokus",
-        icon: <ArrowsOut />,
-        mobileOnly: true,
-        onSelect: enterFocus,
-      },
-      { id: "sep-mobile", type: "separator", mobileOnly: true },
-      {
-        id: "send",
-        label: "Kirim ke proyek",
-        icon: <PaperPlaneTilt />,
-        hint: "Segera",
-        disabled: true,
-        onSelect: () => {},
-      },
-      {
-        id: "export",
-        label: "Ekspor",
-        icon: <DownloadSimple />,
-        hint: "Segera",
-        disabled: true,
-        onSelect: () => {},
-      },
-      { id: "sep", type: "separator" },
-      {
-        // Reversible, so ink and not red (DESIGN.md 4.1). Needs the Sampah list (step 4).
-        id: "trash",
-        label: "Pindah ke sampah",
-        icon: <Trash />,
-        hint: "Segera",
-        disabled: true,
-        onSelect: () => {},
-      },
-    ],
-    [enterFocus],
-  );
+  const isEmpty = doc.title.trim() === "" && doc.words === 0;
+  const ready = doc.load === "ready";
+  const { saveNow, getId } = doc;
+
+  const openHelp = useCallback(() => setHelpOpen(true), []);
+  const openSend = useCallback(() => setDialog("send"), []);
+
+  const share = useCallback(async () => {
+    if (!(await saveNow())) return false;
+    router.push(postFromDocumentHref(getId()));
+    return true;
+  }, [saveNow, getId, router]);
+
+  // Reversible: the document keeps its text in Sampah, and "Urungkan" opens it again.
+  const moveToTrash = useCallback(async () => {
+    const id = getId();
+    const failed = () =>
+      toast({ message: "Dokumen belum bisa dipindah. Coba lagi.", tone: "error" });
+    if (!(await saveNow())) return failed();
+    try {
+      if (!(await store.updateMeta(id, { deletedAt: Date.now() }))) return failed();
+    } catch {
+      return failed();
+    }
+    const undo = async () => {
+      try {
+        if (!(await store.updateMeta(id, { deletedAt: null }))) throw new Error("not found");
+        router.push(`/studio/${id}`);
+      } catch {
+        toast({
+          message: "Dokumen belum bisa dipulihkan. Buka Sampah untuk mencoba lagi.",
+          tone: "error",
+        });
+      }
+    };
+    toast({
+      message: "Dokumen dipindah ke Sampah.",
+      action: { label: "Urungkan", onSelect: () => void undo() },
+    });
+    router.push(STUDIO_HREF);
+  }, [saveNow, getId, router, toast]);
+
+  const menuItems = useEditorMenu({
+    canTrash: ready && !isEmpty,
+    onHelp: openHelp,
+    onFocus: enterFocus,
+    onSend: openSend,
+    onTrash: () => void moveToTrash(),
+  });
 
   const versions = useMemo<{ local: ConflictVersion; remote: ConflictVersion } | null>(() => {
     if (!doc.conflict) return null;
@@ -132,8 +134,6 @@ export function StudioEditor({ documentId }: { documentId: string }) {
     };
   }, [doc.conflict]);
 
-  const isEmpty = doc.title.trim() === "" && doc.words === 0;
-  const ready = doc.load === "ready";
   const body = ready ? (
     <EditorCanvas
       key={doc.editorKey}
@@ -163,6 +163,7 @@ export function StudioEditor({ documentId }: { documentId: string }) {
           ready={ready}
           fallbackTitle={FALLBACK_TITLE[doc.load]}
           menuItems={menuItems}
+          onShare={() => setDialog("share")}
           onToggleHelp={() => setHelpOpen((v) => !v)}
           onFocusMode={enterFocus}
         />
@@ -191,6 +192,13 @@ export function StudioEditor({ documentId }: { documentId: string }) {
         />
       )}
       <HelpDrawer open={helpOpen && !focusMode} onClose={() => setHelpOpen(false)} />
+      <ShareDialog
+        open={dialog === "share"}
+        onClose={() => setDialog(null)}
+        documentTitle={doc.title}
+        onContinue={share}
+      />
+      <SendToProjectDialog open={dialog === "send"} onClose={() => setDialog(null)} />
 
       {versions && (
         <ConflictDialog

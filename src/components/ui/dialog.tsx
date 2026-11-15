@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useRef, type ReactNode } from "react";
 import { cn } from "@/lib/cn";
+import { useSheetDrag } from "@/lib/use-sheet-drag";
 
 type DialogProps = {
   open: boolean;
@@ -21,6 +22,11 @@ type DialogProps = {
   /** Small screens: a full page instead of a bottom sheet. */
   fullPageOnMobile?: boolean;
   role?: "dialog" | "alertdialog";
+  /**
+   * Small screens: show a grabber and let a swipe down on the grabber or title close the sheet. Only
+   * for dialogs that are dismissible; ignored when `dismissible` is false.
+   */
+  swipeToDismiss?: boolean;
 };
 
 /**
@@ -39,16 +45,28 @@ export function Dialog({
   size = "md",
   fullPageOnMobile = false,
   role = "dialog",
+  swipeToDismiss = false,
 }: DialogProps) {
   const ref = useRef<HTMLDialogElement>(null);
   const id = useId();
+  const swipe = swipeToDismiss && dismissible;
+  const drag = useSheetDrag(ref, swipe, onClose);
+  const { reset } = drag;
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    if (open && !el.open) el.showModal();
-    else if (!open && el.open) el.close();
-  }, [open]);
+    if (open && !el.open) {
+      reset(); // a sheet swiped away keeps its offset until it opens again
+      el.showModal();
+    } else if (!open && el.open) el.close();
+  }, [open, reset]);
+
+  const heading = (
+    <h2 id={`${id}-title`} className="heading-md">
+      {title}
+    </h2>
+  );
 
   return (
     <dialog
@@ -87,9 +105,17 @@ export function Dialog({
           size === "wide" && "md:gap-5 md:p-7",
         )}
       >
-        <h2 id={`${id}-title`} className="heading-md">
-          {title}
-        </h2>
+        {swipe ? (
+          <div
+            {...drag.handlers}
+            className="grid touch-none gap-4 max-md:-mx-4 max-md:-mt-4 max-md:px-4 max-md:pt-2.5"
+          >
+            <span aria-hidden className="mx-auto h-1 w-9 rounded-full bg-ink-faint md:hidden" />
+            {heading}
+          </div>
+        ) : (
+          heading
+        )}
         {description && (
           <p id={`${id}-desc`} className="text-sm leading-[22px] text-ink-muted">
             {description}

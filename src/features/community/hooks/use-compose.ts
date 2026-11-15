@@ -13,6 +13,7 @@ import {
 } from "../compose-state";
 import { MY_GROUPS } from "../fixtures/authors";
 import type { PostStore, StoredPost } from "../storage/post-store";
+import { useSourceParam } from "./use-source-param";
 
 export type ComposeLoad = "loading" | "ready" | "missing" | "error";
 
@@ -24,8 +25,16 @@ const snapshot = (s: ComposeState) =>
  * filled in; publishing writes the same record as "published". Nothing is autosaved: the author
  * decides when a draft exists (the bar says "Simpan sebagai draf").
  */
-export function useCompose(store: PostStore, draftId: string | null) {
-  const [state, dispatch] = useReducer(composeReducer, initialCompose);
+export function useCompose(
+  store: PostStore,
+  draftId: string | null,
+  /** A Studio document to start from, from the address; the "Dari dokumen Studio" tab opens on it. */
+  startDocId: string | null = null,
+) {
+  const [state, dispatch] = useReducer(composeReducer, startDocId, (docId) =>
+    docId ? { ...initialCompose, tab: "doc" as const } : initialCompose,
+  );
+  const sourceParam = useSourceParam(studioStore, draftId ? null : startDocId, dispatch);
   const [load, setLoad] = useState<ComposeLoad>(draftId ? "loading" : "ready");
   const [saved, setSaved] = useState(() => snapshot(initialCompose));
   const [busy, setBusy] = useState(false);
@@ -108,6 +117,7 @@ export function useCompose(store: PostStore, draftId: string | null) {
     failed,
     done,
     sourceGone,
+    sourceParam,
     dirty: canSaveDraft(state) && snapshot(state) !== saved,
     saveDraft,
     publish,

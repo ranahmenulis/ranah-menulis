@@ -3,6 +3,7 @@ import { authors } from "./fixtures/authors";
 import { fixtureComments } from "./fixtures/comments";
 import { postsA } from "./fixtures/posts-a";
 import { postsB } from "./fixtures/posts-b";
+import type { StoredPost } from "./storage/post-store";
 import type { Author, Comment, Post, PostBlock, PostCore } from "./types";
 
 /** COM-01: a post is a prolog or an excerpt of at most 500 words. */
@@ -70,4 +71,14 @@ export function relatedPosts(post: Post, publicPosts: Post[], limit = 5): Post[]
       return sameGenre || b.appreciations - a.appreciations || a.id.localeCompare(b.id);
     })
     .slice(0, limit);
+}
+
+/**
+ * Studio documents that have a published post copied from them (the "Dibagikan" tag, DESIGN.md 6.4).
+ * Drafts do not count: nothing public exists yet.
+ */
+export function sharedDocumentIds(posts: readonly StoredPost[]): Set<string> {
+  const ids = new Set<string>();
+  for (const p of posts) if (p.status === "published" && p.sourceDocId) ids.add(p.sourceDocId);
+  return ids;
 }

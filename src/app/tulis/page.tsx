@@ -8,14 +8,20 @@ export const metadata: Metadata = {
   robots: { index: false },
 };
 
+async function ComposeRoute({ searchParams }: Pick<PageProps<"/tulis">, "searchParams">) {
+  const { dokumen } = await searchParams;
+  // `?dokumen=<id>` arrives from "Bagikan" in the editor; anything else starts a blank post.
+  return <ComposeView draftId={null} sourceDocId={typeof dokumen === "string" ? dokumen : null} />;
+}
+
 /**
  * Full-screen like the editor, so it sits outside the (app) frame. The writing surface generates
- * ids at render time, which Next 16 only allows behind a Suspense boundary.
+ * ids at render time, and the address is read per request; both need to sit behind Suspense.
  */
-export default function Page() {
+export default function Page({ searchParams }: PageProps<"/tulis">) {
   return (
     <Suspense fallback={<ComposeLoading />}>
-      <ComposeView draftId={null} />
+      <ComposeRoute searchParams={searchParams} />
     </Suspense>
   );
 }

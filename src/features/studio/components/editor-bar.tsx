@@ -30,6 +30,7 @@ type EditorBarProps = {
   /** Name shown in place of the title when the document is not ready. */
   fallbackTitle: string;
   menuItems: MenuEntry[];
+  onShare: () => void;
   onToggleHelp: () => void;
   onFocusMode: () => void;
 };
@@ -52,6 +53,7 @@ export function EditorBar({
   ready,
   fallbackTitle,
   menuItems,
+  onShare,
   onToggleHelp,
   onFocusMode,
 }: EditorBarProps) {
@@ -68,8 +70,9 @@ export function EditorBar({
       </span>
       <Button
         size="sm"
-        disabled
-        title="Berbagi tersedia setelah Community dibuka"
+        disabled={!ready || words === 0}
+        title={ready && words === 0 ? "Tulis sesuatu dulu untuk dibagikan" : undefined}
+        onClick={onShare}
         className="order-3 md:order-6"
       >
         Bagikan

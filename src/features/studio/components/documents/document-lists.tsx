@@ -14,6 +14,7 @@ import type { Pending } from "./pending";
 
 const number = new Intl.NumberFormat("id-ID");
 const soon = { hint: "Segera", disabled: true, onSelect: () => {} } as const;
+const NO_IDS: ReadonlySet<string> = new Set();
 
 const meta = (doc: StudioDocument, verb: string, at: number, now: number) =>
   `${verb} ${formatChanged(at, now)} · ${number.format(doc.wordCount)} kata`;
@@ -31,7 +32,10 @@ export function LiveList({
   folderName,
   onOpenFolder,
   onPending,
+  sharedIds = NO_IDS,
 }: ListProps & {
+  /** Documents that have a published post copied from them. */
+  sharedIds?: ReadonlySet<string>;
   folderId: string | null;
   folderName: string | null;
   onOpenFolder: (id: string) => void;
@@ -58,7 +62,11 @@ export function LiveList({
   const docMenu = (doc: StudioDocument): MenuEntry[] => [
     { id: "rename", label: "Ganti nama", onSelect: () => onPending({ kind: "rename", doc }) },
     { id: "move", label: "Pindah ke folder", onSelect: () => onPending({ kind: "move", doc }) },
-    { id: "send", label: "Kirim ke proyek", ...soon },
+    {
+      id: "send",
+      label: "Kirim ke proyek",
+      onSelect: () => onPending({ kind: "sendToProject", doc }),
+    },
     { id: "export", label: "Ekspor", ...soon },
     { id: "sep", type: "separator" },
     {
@@ -102,6 +110,7 @@ export function LiveList({
             title={nameOf(entry.doc)}
             href={`/studio/${entry.doc.id}`}
             meta={meta(entry.doc, "Diubah", entry.doc.updatedAt, now)}
+            tag={sharedIds.has(entry.doc.id) ? "Dibagikan" : undefined}
             menuLabel={`Menu dokumen ${nameOf(entry.doc)}`}
             items={docMenu(entry.doc)}
           />
