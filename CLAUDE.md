@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Ringkasan proyek & status
 
 - **Apa ini**: RanahMenulis, ekosistem digital untuk menulis, komunitas literasi, dan penerbitan buku (Indonesia dan Malaysia). Dibangun sebagai monolith Next.js 16 (App Router, TypeScript) + Tailwind CSS v4 + Supabase.
-- **Status**: fondasi. Beranda (`/`) adalah landing pra-peluncuran dengan form daftar tunggu; belum ada autentikasi UI. Sistem desain sudah dibuat sebagai pratinjau di `/sistem-desain`. Langkah slicing 1–5 selesai (termasuk Community) serta 6a (Tersimpan, Notifikasi), 6b (profil publik penulis), 6c (Bagikan, Kirim ke proyek, Pindah ke sampah di Editor), 6f-1 (katalog dan detail Projects), 6f-2 (pendaftaran proyek), 6f-3 (Kirim karya), dan 6f-4 (status submission dan Proyek saya); semuanya memakai data dummy atau lokal. Claude Design tidak dipakai lagi: layar sisa dibangun langsung di kode.
+- **Status**: fondasi. Beranda (`/`) adalah landing pra-peluncuran dengan form daftar tunggu; belum ada autentikasi UI. Sistem desain sudah dibuat sebagai pratinjau di `/sistem-desain`. Langkah slicing 1–5 selesai (termasuk Community) serta 6a (Tersimpan, Notifikasi), 6e (akun dan onboarding, tanpa backend), 6b (profil publik penulis), 6c (Bagikan, Kirim ke proyek, Pindah ke sampah di Editor), 6f-1 (katalog dan detail Projects), 6f-2 (pendaftaran proyek), 6f-3 (Kirim karya), dan 6f-4 (status submission dan Proyek saya); semuanya memakai data dummy atau lokal. Claude Design tidak dipakai lagi: layar sisa dibangun langsung di kode.
 - **Sumber kebenaran** (urutan prioritas bila ada yang bertentangan): keputusan client (`docs/catatan-keputusan-client.md`) → PRD v0.2 (`docs/prd/`) → `DESIGN.md` → salinan artifact di `docs/desain/` (arsip, bukan sumber utama). Butir bertanda `[usulan]` atau `[konfirmasi]` belum disetujui client.
 - **Dokumen lain**: `docs/Brief Desain RanahMenulis.md`, `docs/MVP Scope RanahMenulis.md`, `docs/Copy Landing RanahMenulis.md`.
 
@@ -106,7 +106,7 @@ src/
 
 - Kode milik satu fitur diletakkan di `src/features/<domain>/`; hanya yang dipakai lebih dari satu fitur naik ke `components/ui` atau `lib`. Contoh sekarang: `src/features/landing/` (komponen, `copy/`, `waitlist/`).
 - Impor langsung dari berkas sumbernya. Jangan membuat berkas `index.ts` (barrel) yang menggabungkan ekspor.
-- ESLint menegakkan `max-lines` 300 baris per berkas (tidak menghitung baris kosong dan komentar) sebagai **error**, serta `complexity` 15 dan `max-depth` 4 sebagai peringatan. Pecah berkas per tanggung jawab (satu section atau satu komponen per berkas), jangan menaikkan batasnya.
+- ESLint menegakkan `max-lines` 300 baris per berkas (tidak menghitung baris kosong dan komentar) sebagai **error** untuk `src/`; berkas `tests/**` diizinkan 500 baris. `complexity` 15 dan `max-depth` 4 adalah peringatan. Pecah berkas per tanggung jawab (satu section atau satu komponen per berkas), jangan menaikkan batasnya.
 - Prettier (lebar 100, plugin Tailwind mengurutkan kelas) memegang format; `eslint-config-prettier` mematikan aturan format ESLint. Jangan memformat manual.
 
 ## Dependensi, Node, dan keamanan

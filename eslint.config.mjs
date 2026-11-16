@@ -14,6 +14,13 @@ const eslintConfig = defineConfig([
       "max-depth": ["warn", 4],
     },
   },
+  {
+    // Tests read top to bottom, so a longer file is fine; src/ keeps 300.
+    files: ["tests/**"],
+    rules: {
+      "max-lines": ["error", { max: 500, skipBlankLines: true, skipComments: true }],
+    },
+  },
   // Must stay last: turns off formatting rules that Prettier owns.
   prettier,
   // Override default ignores of eslint-config-next.
