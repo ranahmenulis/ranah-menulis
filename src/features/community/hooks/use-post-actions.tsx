@@ -4,10 +4,9 @@ import { useCallback, useState, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/toast";
+import { SignInButton, SignUpButton } from "@/features/account/components/auth-buttons";
 import { mark } from "../storage/post-store";
 import type { CommunityData } from "./use-community";
-
-const SOON = "Masuk tersedia setelah akun dibuka";
 
 /** The dialog a signed-out reader gets for anything that needs an account (PRD 16). */
 export function GuestDialog({ ask, onClose }: { ask: string | null; onClose: () => void }) {
@@ -22,12 +21,10 @@ export function GuestDialog({ ask, onClose }: { ask: string | null; onClose: () 
           <Button variant="text" onClick={onClose}>
             Nanti saja
           </Button>
-          <Button variant="text" disabled title={SOON} className="text-ink!">
+          <SignUpButton variant="text" onClick={onClose} className="text-ink!">
             Daftar
-          </Button>
-          <Button disabled title={SOON}>
-            Masuk
-          </Button>
+          </SignUpButton>
+          <SignInButton onClick={onClose}>Masuk</SignInButton>
         </>
       }
     />

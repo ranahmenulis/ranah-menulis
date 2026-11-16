@@ -21,11 +21,11 @@ export const shell = {
     notifications: "Notifikasi, {count} belum dibaca",
     notificationsNone: "Notifikasi",
     writeNew: "Tulis dokumen baru",
+    account: "Pengaturan akun",
   },
   guest: {
     brand: "RanahMenulis",
     signIn: "Masuk",
     signUp: "Daftar",
-    soon: "Masuk tersedia setelah akun dibuka",
   },
 };

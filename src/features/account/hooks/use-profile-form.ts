@@ -1,0 +1,62 @@
+"use client";
+
+import { useCallback, useMemo, useState } from "react";
+import type { AccountProfile } from "../account-store";
+import { fileToAvatar } from "../avatar-image";
+import { usernameTaken } from "../dummy-auth";
+import { profileIssues, type ProfileField } from "../profile-validation";
+import { photoIssue, type Issue } from "../validation";
+
+const ORDER: ProfileField[] = ["name", "username", "bio"];
+
+/** DOM id of each profile input, used to move focus to the first mistake. */
+export const profileFieldId = (field: ProfileField) => `profile-${field}`;
+
+/**
+ * State of the profile form shared by onboarding and Settings. A mistake shows once the field was
+ * left or the form was submitted, and then follows what is typed. `ownUsername` is the name the
+ * reader already has, which does not count as taken.
+ */
+export function useProfileForm(initial: AccountProfile, ownUsername?: string) {
+  const [values, setValues] = useState(initial);
+  const [touched, setTouched] = useState<ReadonlySet<ProfileField>>(new Set());
+  const [submitted, setSubmitted] = useState(false);
+  const [photoError, setPhotoError] = useState<Issue | null>(null);
+
+  const taken = useCallback((name: string) => usernameTaken(name, ownUsername), [ownUsername]);
+  const issues = useMemo(() => profileIssues(values, taken), [values, taken]);
+
+  const issueOf = (field: ProfileField): Issue | null =>
+    submitted || touched.has(field) ? (issues[field] ?? null) : null;
+
+  const set = (patch: Partial<AccountProfile>) => setValues((v) => ({ ...v, ...patch }));
+  const touch = (field: ProfileField) => setTouched((prev) => new Set(prev).add(field));
+
+  /** Marks the form submitted; false (and focus on the first mistake) when something is wrong. */
+  function validate(): boolean {
+    setSubmitted(true);
+    const first = ORDER.find((field) => issues[field]);
+    if (first) document.getElementById(profileFieldId(first))?.focus();
+    return !first;
+  }
+
+  async function choosePhoto(file: File) {
+    const problem = photoIssue(file);
+    if (problem) return setPhotoError(problem);
+    try {
+      set({ avatar: await fileToAvatar(file) });
+      setPhotoError(null);
+    } catch {
+      setPhotoError("photoType");
+    }
+  }
+
+  function removePhoto() {
+    set({ avatar: null });
+    setPhotoError(null);
+  }
+
+  return { values, set, touch, issueOf, validate, photoError, choosePhoto, removePhoto };
+}
+
+export type ProfileForm = ReturnType<typeof useProfileForm>;

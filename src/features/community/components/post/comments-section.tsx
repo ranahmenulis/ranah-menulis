@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/toast";
+import { SignInButton, SignUpButton } from "@/features/account/components/auth-buttons";
 import { buildThreads, type Thread } from "../../comment-threads";
 import { ME_ID } from "../../fixtures/authors";
 import type { CommunityData } from "../../hooks/use-community";
@@ -139,12 +140,8 @@ export function CommentsSection({ post, data, guest, actions }: Props) {
             Kamu bisa membaca semua komentar tanpa akun. Setelah masuk, kamu kembali ke tulisan ini.
           </p>
           <div className="flex items-center gap-2">
-            <Button disabled title="Masuk tersedia setelah akun dibuka">
-              Masuk
-            </Button>
-            <Button variant="text" disabled title="Masuk tersedia setelah akun dibuka">
-              Daftar
-            </Button>
+            <SignInButton>Masuk</SignInButton>
+            <SignUpButton variant="text">Daftar</SignUpButton>
           </div>
         </div>
       ) : (
