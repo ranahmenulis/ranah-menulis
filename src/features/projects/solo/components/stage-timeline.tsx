@@ -1,0 +1,63 @@
+import { cn } from "@/lib/cn";
+import { formatProjectDate } from "../../project-model";
+import type { TimeZoneName } from "../../types";
+import { STAGE_HINT, STAGE_LABEL, type StageRow } from "../stage-model";
+
+const STATE_TEXT: Record<StageRow["state"], string> = {
+  selesai: "Selesai",
+  berjalan: "Sedang berjalan",
+  menunggu: "Belum dimulai",
+};
+
+/**
+ * The stages of this book, in order (SOL-02, AC-29): where it stands now and when each stage that
+ * began did so. The state is written out, not carried by color alone (DESIGN.md 7.4).
+ */
+export function StageTimeline({ rows, zone }: { rows: StageRow[]; zone: TimeZoneName }) {
+  return (
+    <section aria-labelledby="solo-tahap" className="grid gap-3">
+      <h2 id="solo-tahap" className="heading-sm">
+        Tahap penerbitan
+      </h2>
+      <ol className="grid">
+        {rows.map((row) => (
+          <li
+            key={row.stage}
+            aria-current={row.state === "berjalan" ? "step" : undefined}
+            className="grid grid-cols-[1.25rem_1fr] gap-x-3 border-b border-line py-3"
+          >
+            <span
+              aria-hidden
+              className={cn(
+                "mt-1 size-3 rounded-full border border-ink",
+                row.state === "selesai" && "bg-ink",
+                row.state === "berjalan" &&
+                  "bg-canvas ring-2 ring-ink ring-offset-2 ring-offset-canvas",
+                row.state === "menunggu" && "border-ink-muted",
+              )}
+            />
+            <div className="grid min-w-0 gap-0.5">
+              <div className="flex flex-wrap items-baseline justify-between gap-x-4">
+                <p
+                  className={cn(
+                    "text-base wrap-anywhere",
+                    row.state === "menunggu" ? "text-ink-muted" : "font-medium text-ink",
+                  )}
+                >
+                  {STAGE_LABEL[row.stage]}
+                </p>
+                <p className="text-xs text-ink-muted">
+                  {STATE_TEXT[row.state]}
+                  {row.at !== null && ` · ${formatProjectDate(row.at, zone)}`}
+                </p>
+              </div>
+              {row.state === "berjalan" && (
+                <p className="text-sm text-ink-muted">{STAGE_HINT[row.stage]}</p>
+              )}
+            </div>
+          </li>
+        ))}
+      </ol>
+    </section>
+  );
+}

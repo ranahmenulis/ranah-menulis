@@ -1,4 +1,5 @@
 import { dashboardHref } from "./kelas/class-model";
+import { soloDashboardHref } from "./solo/solo-model";
 import { registerAction, registerHref } from "./registration-model";
 import { kirimHref, submitAction, submitBlock } from "./submission-model";
 import { worksText } from "./submission-text";
@@ -29,6 +30,35 @@ function classAction(
   };
 }
 
+/** A Solo author who has sent the manuscript follows the book on its dashboard. */
+function soloAction(
+  project: Project,
+  guest: boolean,
+  registration: Registration | undefined,
+  sentCount: number | null,
+): ProjectAction | null {
+  if (guest || registration?.status !== "terdaftar" || project.block.kind !== "solo") return null;
+  if (!sentCount) return null;
+  return {
+    label: "Buka dasbor",
+    enabled: true,
+    href: soloDashboardHref(project.slug),
+    sentLine: `${sentCount} dari ${worksText(project.submission?.maxWorks ?? 1)}`,
+  };
+}
+
+/** A registered reader of a class or a Solo book goes to the dashboard of their project. */
+function dashboardAction(
+  project: Project,
+  guest: boolean,
+  registration: Registration | undefined,
+  sentCount: number | null,
+): ProjectAction | null {
+  return (
+    classAction(project, guest, registration) ?? soloAction(project, guest, registration, sentCount)
+  );
+}
+
 /**
  * The one action of a project page for this reader. Registering comes first; once registered and
  * active, categories that take work turn it into "Kirim karya" (or say why that is closed). A class
@@ -45,8 +75,8 @@ export function projectAction(input: {
 }): ProjectAction {
   const { project, state, guest, registration, now, sentCount } = input;
   const rules = project.submission;
-  const classEntry = classAction(project, guest, registration);
-  if (classEntry) return classEntry;
+  const dashboardEntry = dashboardAction(project, guest, registration, sentCount);
+  if (dashboardEntry) return dashboardEntry;
   const sending = !guest && registration && rules ? { registration, rules } : null;
   const block = sending
     ? submitBlock({ project, guest, registration, now, sent: sentCount ?? 0 })
