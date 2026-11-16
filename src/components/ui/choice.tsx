@@ -47,3 +47,29 @@ export function CheckMark({ checked, className }: { checked: boolean; className?
     </span>
   );
 }
+
+type CheckChoiceProps = Omit<ComponentProps<"input">, "type" | "children" | "checked"> & {
+  label: ReactNode;
+  hint?: ReactNode;
+  checked: boolean;
+};
+
+/**
+ * One yes/no statement ("Saya menyetujui ..."): a square mark that fills with ink, label beside it.
+ * The input is the real control (hidden visually); the mark shows its state and its keyboard focus.
+ */
+export function CheckChoice({ label, hint, checked, className, ...props }: CheckChoiceProps) {
+  return (
+    <label className={cn("flex cursor-pointer items-start gap-3 text-sm", className)}>
+      <input type="checkbox" checked={checked} className="peer sr-only" {...props} />
+      <CheckMark
+        checked={checked}
+        className="peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-ink peer-disabled:opacity-(--opacity-disabled)"
+      />
+      <span className="grid min-w-0 gap-0.5">
+        <span className="text-ink">{label}</span>
+        {hint && <span className="text-xs text-ink-muted">{hint}</span>}
+      </span>
+    </label>
+  );
+}

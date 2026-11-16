@@ -30,6 +30,12 @@ export const lombaFixtures: ProjectFixture[] = [
       { label: "Pengumuman finalis", inMs: days(14) },
       { label: "Pengumuman pemenang", inMs: days(21) },
     ],
+    terms: {
+      version: "2026-11-contoh",
+      special: [
+        "Karya tidak boleh memuat identitasmu di dalam isinya, karena penilaian dilakukan anonim.",
+      ],
+    },
     block: {
       kind: "lomba",
       criteria: [
@@ -59,6 +65,7 @@ export const lombaFixtures: ProjectFixture[] = [
     quota: { total: 100, taken: 100 },
     closesInMs: days(4),
     milestones: [{ label: "Pengumuman pemenang", inMs: days(18) }],
+    terms: { version: "2026-11-contoh", special: [] },
     block: {
       kind: "lomba",
       criteria: [
@@ -89,6 +96,12 @@ export const lombaFixtures: ProjectFixture[] = [
     quota: null,
     closesInMs: days(2),
     milestones: [{ label: "Pengumuman pemenang", inMs: days(16) }],
+    terms: {
+      version: "2026-11-contoh",
+      special: [
+        "Karya tidak boleh memuat identitasmu di dalam isinya, karena penilaian dilakukan anonim.",
+      ],
+    },
     block: {
       kind: "lomba",
       criteria: [

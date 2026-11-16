@@ -11,9 +11,9 @@ Kamu melanjutkan slicing RanahMenulis (Next.js 16, Tailwind v4, Supabase; data d
 
 ## 2. Posisi (16 November 2026)
 
-- Selesai: langkah 1–5, 6a–6d, penghitung Studio, bilah format, perbaikan beku dan jalan keluar, **6f-1 (katalog dan detail Projects)**. **Berikutnya: sub-langkah 6f berikutnya** (rekomendasi 6f-2 Pendaftaran; audit aksesibilitas dan alur tetap ditunda, lihat Catatan Slicing).
+- Selesai: langkah 1–5, 6a–6d, penghitung Studio, bilah format, perbaikan beku dan jalan keluar, **6f-1 (katalog dan detail Projects)** dan **6f-2 (pendaftaran, localStorage)**. **Berikutnya: sub-langkah 6f berikutnya** (rekomendasi 6f-3 Kirim karya; audit aksesibilitas dan alur tetap ditunda, lihat Catatan Slicing).
 - Keputusan tetap: semua slicing memakai data dummy dan lokal, login di-bypass, **tanpa backend** (auth, migrasi, RLS, store Supabase) dan jangan menagih persetujuannya. Claude Design tidak dipakai; layar dibangun langsung dari `src/components/ui/` dan DESIGN.md. **Marketplace bukan MVP**, jangan disentuh.
-- **Sudah ada dari 6f-1** (`src/features/projects/`, lihat bullet Projects di CLAUDE.md): `/projects` dan `/projects/[slug]`, nav aktif, sembilan proyek fixture, `project-model.ts` murni. Tombol "Daftar" di `project-aside.tsx` sengaja **nonaktif**: 6f-2 menggantinya (`actionFor` sudah memberi labelnya).
+- **Sudah ada dari 6f-1 dan 6f-2** (`src/features/projects/`, lihat bullet Projects di CLAUDE.md): `/projects`, `/projects/[slug]`, `/projects/[slug]/daftar`, nav aktif, sembilan proyek fixture, `registration-store.ts` (localStorage `ranah.registrations`, satu pendaftaran per proyek) dan `registration-model.ts`. Status pendaftaran: `terdaftar` (gratis) atau `menunggu-pembayaran` (berbayar, menunggu 6f-6). 6f-3 bergantung pada pendaftaran: **Kirim karya hanya untuk yang terdaftar** (PRD 10.5).
 - **Titik sambung yang masih menunggu** (ganti, jangan tambah janji baru):
   - `SendToProjectDialog` (`src/features/studio/components/send-to-project-dialog.tsx`): keadaan "Belum ada proyek yang menerima karya"; dipakai menu Editor dan menu daftar dokumen.
   - Beranda: "Perlu perhatian" dan "Proyek saya" adalah fixture di `src/features/home/fixtures.ts`.
@@ -26,14 +26,14 @@ Kamu melanjutkan slicing RanahMenulis (Next.js 16, Tailwind v4, Supabase; data d
 
 Pecah per bagian PRD 17 dan kerjakan **satu sub-langkah per rencana**:
 1. ~~Katalog Projects dan detail proyek (PRJ-01)~~ **selesai (6f-1).**
-2. Ketentuan, persetujuan hak cipta, dan pendaftaran (PRJ-02).
+2. ~~Ketentuan, persetujuan hak cipta, dan pendaftaran (PRJ-02)~~ **selesai (6f-2).**
 3. Kirim karya dari Studio: versi beku dokumen (STD-09), ganti `SendToProjectDialog` dari keadaan kosong.
 4. Status submission (DESIGN 7.4) dan "Proyek saya" (PRJ-04); sambungkan Beranda, Notifikasi, dan profil.
 5. QRIS semi-manual (PLT-07). Panel Organizer, Editor, dan Juri adalah 6g, bukan 6f.
 
 **Celah di pembagian ini:** PRD 17.5 juga memuat Dasbor Solo (SOL-02), Dasbor Kelas dan Halaman tugas (KLS-02/03), Halaman hasil lomba (LMB-02), dan Detail submission dengan riwayat versi dan Kirim Revisi. Usulan: sub-langkah 6f-5 "dasbor per kategori" sebelum QRIS (tercatat di Catatan Slicing, belum disetujui user). Untuk Kelas Menulis, "Kirim karya" berarti mengumpulkan tugas, bukan submission.
 
-Tanyakan ke user sub-langkah mana yang dimulai sebelum merencanakan (rekomendasi: 6f-2, karena tombol Daftar sudah menunggu dan 6f-3 butuh pendaftaran lebih dulu).
+Tanyakan ke user sub-langkah mana yang dimulai sebelum merencanakan (rekomendasi: 6f-3, karena pendaftaran sudah ada dan `SendToProjectDialog` menunggu).
 
 ## 4. Aturan kerja yang wajib
 
@@ -53,6 +53,7 @@ Tanyakan ke user sub-langkah mana yang dimulai sebelum merencanakan (rekomendasi
 - Jangan `new Date()` atau `Date.now()` saat render komponen klien; baca di efek. Tiptap `useEditor` diberi opsi di level modul. Tanpa tailwind-merge: override kelas butuh akhiran `!`. Menulis berkas dengan Python di Windows menghasilkan CRLF; jalankan Prettier. Tes jsdom `today-block` dan `compose-view` kadang flaky (ulangi). Tes dengan `<dialog>` memanggil `installDialogShim()`; tes yang memuat server action butuh `vi.mock` pada modulnya.
 - `.npmrc` `min-release-age=7`: instal yang gagal karena itu disengaja.
 - **Dari 6f-1:** (1) Halaman `(app)` yang disimpan Next tetap hidup: state yang hanya diisi dari nilai awal akan basi saat kembali. Jadikan **alamat** sumber kebenaran (`useSearchParams`, sinkron saat render) dan buktikan di Chrome nyata (klik tautan "Semua Projects" dan nav). (2) Lint `react-hooks/set-state-in-effect` menolak `setState` sinkron di efek; baca jam lewat `queueMicrotask` atau di callback async. (3) Di tes, `useSearchParams` dari `next/navigation` perlu `vi.mock`. (4) `code-review` menemukan 7 dari 9 valid; semuanya dari data tepi (harga 0, kuota 0, tenggat tengah hari) dan state yang tidak ikut alamat. (5) Cek visual lewat skrip CDP di scratchpad (`cdp-projects.mjs` dkk.) ditulis ulang tiap sesi; `evaluate` tidak bisa mengembalikan elemen DOM (pakai `!!`). (6) `simplify` dikerjakan langsung tanpa empat agen.
+- **Dari 6f-2:** (1) Lewat `scroll-behavior: smooth` `scrollIntoView` di skrip CDP menghitung koordinat di tengah animasi: pakai `behavior: "instant"`. (2) Enter di CDP butuh `text: String.fromCharCode(13)` agar tombol/formulir teraktivasi (tautan tidak butuh). (3) Pola `useSyncExternalStore` + cache parse per nilai (`registration-store.ts`) membuat halaman Next yang di-cache langsung menampilkan status baru; buktikan dengan klik tautan di Chrome. (4) Tes menangkap formulir tanpa tautan kembali: setiap layar baru diuji untuk jalan keluar. (5) `code-review` 6 dari 9 valid (cek ulang waktu saat kirim, idempotensi simpan, batas kuota). (6) Satu pendaftaran per proyek tanpa pembatalan; 6f-6 akan butuh fungsi untuk mengubah status `menunggu-pembayaran` menjadi `terdaftar`.
 - Alur uji cepat 6f-1: buka `/beranda`, klik Projects, pilih chip, buka proyek, klik "Semua Projects"; ulangi hanya dengan Tab dan Enter.
 
 ## 6. Mulai dengan

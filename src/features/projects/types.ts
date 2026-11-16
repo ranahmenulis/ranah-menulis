@@ -32,6 +32,13 @@ export type CategoryBlock =
       anonymous: boolean;
     };
 
+/**
+ * What a participant agrees to before registering (BR-PRJ-02). `version` is stored with the
+ * registration. `special` lists project-specific terms; the base statements are the same for every
+ * project. All of it is sample text [konfirmasi Q-21: the real terms need legal review].
+ */
+export type ProjectTerms = { version: string; special: string[] };
+
 type ProjectBase = {
   slug: string;
   category: ProjectCategory;
@@ -49,6 +56,7 @@ type ProjectBase = {
   fee: Money;
   /** `null` = no quota (open-ended services such as Solo). */
   quota: { total: number; taken: number } | null;
+  terms: ProjectTerms;
   block: CategoryBlock;
 };
 
@@ -75,3 +83,20 @@ export type CategoryFilter = "semua" | ProjectCategory;
 export type StateFilter = "semua" | "buka" | "segera-tutup" | "ditutup";
 export type FeeFilter = "semua" | "gratis" | "berbayar";
 export type Filters = { category: CategoryFilter; state: StateFilter; fee: FeeFilter };
+
+/** `menunggu-pembayaran` until payment exists (6f-6); free projects register straight away. */
+export type RegistrationStatus = "menunggu-pembayaran" | "terdaftar";
+
+/** A registration kept on this device. Becomes a database row when the backend exists. */
+export type Registration = {
+  slug: string;
+  registeredAt: number;
+  /** When the terms were accepted, and which version (BR-PRJ-02). */
+  agreedAt: number;
+  termsVersion: string;
+  /** Solo only: the package chosen at registration. */
+  packageName?: string;
+  status: RegistrationStatus;
+};
+
+export type RegistrationMap = Record<string, Registration>;

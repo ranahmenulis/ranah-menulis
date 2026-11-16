@@ -1,3 +1,4 @@
+import { PROJECTS_HREF } from "@/features/app-shell/nav";
 import type {
   CategoryFilter,
   FeeFilter,
@@ -76,6 +77,8 @@ export const FEE_FILTERS: { id: FeeFilter; label: string }[] = [
 
 export const DEFAULT_FILTERS: Filters = { category: "semua", state: "semua", fee: "semua" };
 
+export const projectHref = (slug: string) => `${PROJECTS_HREF}/${slug}`;
+
 export function categoryLabel(id: ProjectCategory): string {
   return CATEGORIES.find((c) => c.id === id)?.label ?? id;
 }
@@ -151,8 +154,12 @@ export function effectiveFee(project: Project): Money {
   return { idr: pick("idr"), myr: pick("myr") };
 }
 
+export function isFreeMoney(fee: Money): boolean {
+  return moneyParts(fee).length === 0;
+}
+
 export function isFree(project: Project): boolean {
-  return moneyParts(effectiveFee(project)).length === 0;
+  return isFreeMoney(effectiveFee(project));
 }
 
 /** One entry per currency that has a price, rupiah first. Empty when the project is free. */
@@ -242,14 +249,4 @@ export function toQuery(filters: Filters): string {
   if (filters.fee !== "semua") query.set("biaya", filters.fee);
   const text = query.toString();
   return text ? `?${text}` : "";
-}
-
-/**
- * Label of the registration button. It stays disabled until registration exists (6f-2); the label
- * already says what it will do, so only the behaviour is added later.
- */
-export function actionFor(state: ProjectState, guest: boolean): string {
-  if (state === "kuota-penuh") return "Kuota penuh";
-  if (state === "ditutup") return "Pendaftaran ditutup";
-  return guest ? "Masuk untuk mendaftar" : "Daftar";
 }

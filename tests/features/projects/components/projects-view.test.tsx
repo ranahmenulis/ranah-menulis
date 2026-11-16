@@ -13,7 +13,10 @@ configure({ asyncUtilTimeout: 5000 });
 
 const at = (query: string) => window.history.replaceState(null, "", `/projects${query}`);
 
-beforeEach(() => window.history.replaceState(null, "", "/projects"));
+beforeEach(() => {
+  window.history.replaceState(null, "", "/projects");
+  localStorage.clear();
+});
 afterEach(cleanup);
 
 const DAY = 24 * 60 * 60 * 1000;
@@ -144,5 +147,26 @@ describe("ProjectsView", () => {
         .getByRole("button", { name: "Semua" })
         .getAttribute("aria-pressed"),
     ).toBe("true");
+  });
+
+  it("shows one seat less for a project you registered for", async () => {
+    localStorage.setItem(
+      "ranah.registrations",
+      JSON.stringify({
+        q: {
+          slug: "q",
+          registeredAt: 1,
+          agreedAt: 1,
+          termsVersion: "1",
+          status: "terdaftar",
+        },
+      }),
+    );
+    render(
+      <ProjectsView
+        source={[project({ slug: "q", title: "Lomba Q", quota: { total: 10, taken: 4 } })]}
+      />,
+    );
+    expect(await screen.findByText("Sisa 5 dari 10 kuota")).toBeTruthy();
   });
 });
