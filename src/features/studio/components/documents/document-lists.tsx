@@ -33,9 +33,12 @@ export function LiveList({
   onOpenFolder,
   onPending,
   sharedIds = NO_IDS,
+  submittedIds = NO_IDS,
 }: ListProps & {
   /** Documents that have a published post copied from them. */
   sharedIds?: ReadonlySet<string>;
+  /** Documents sent to a project. */
+  submittedIds?: ReadonlySet<string>;
   folderId: string | null;
   folderName: string | null;
   onOpenFolder: (id: string) => void;
@@ -65,6 +68,8 @@ export function LiveList({
     {
       id: "send",
       label: "Kirim ke proyek",
+      // Nothing to send while the document has no text, like Bagikan in the editor.
+      disabled: doc.wordCount === 0,
       onSelect: () => onPending({ kind: "sendToProject", doc }),
     },
     { id: "export", label: "Ekspor", ...soon },
@@ -110,7 +115,10 @@ export function LiveList({
             title={nameOf(entry.doc)}
             href={`/studio/${entry.doc.id}`}
             meta={meta(entry.doc, "Diubah", entry.doc.updatedAt, now)}
-            tag={sharedIds.has(entry.doc.id) ? "Dibagikan" : undefined}
+            tags={[
+              ...(sharedIds.has(entry.doc.id) ? ["Dibagikan"] : []),
+              ...(submittedIds.has(entry.doc.id) ? ["Dikirim ke proyek"] : []),
+            ]}
             menuLabel={`Menu dokumen ${nameOf(entry.doc)}`}
             items={docMenu(entry.doc)}
           />

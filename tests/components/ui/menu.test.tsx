@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { Menu, type MenuEntry } from "@/components/ui/menu";
 
@@ -40,6 +40,22 @@ describe("Menu", () => {
     setup();
     const disabled = screen.getByRole("menuitem", { name: "Ekspor" }) as HTMLButtonElement;
     expect(disabled.disabled).toBe(true);
+  });
+
+  it("moves focus to the first enabled item once the panel is visible, so the arrow keys work", async () => {
+    // jsdom has no layout, so every element has a null offsetParent and counts as not visible.
+    const spy = vi.spyOn(HTMLElement.prototype, "offsetParent", "get").mockImplementation(function (
+      this: HTMLElement,
+    ) {
+      return this.parentElement;
+    });
+    const { trigger } = setup();
+    fireEvent.click(trigger);
+
+    await waitFor(() => expect(document.activeElement?.textContent).toBe("Kirim ke proyek"));
+    fireEvent.keyDown(document.activeElement!, { key: "ArrowDown" });
+    expect(document.activeElement?.textContent).toBe("Pindah ke sampah");
+    spy.mockRestore();
   });
 
   it("closes on Escape and gives focus back to the trigger", () => {

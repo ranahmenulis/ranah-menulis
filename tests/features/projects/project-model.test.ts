@@ -26,6 +26,7 @@ function fixture(over: Partial<ProjectFixture> = {}): ProjectFixture {
     summary: "Ringkasan.",
     about: ["Paragraf."],
     requirements: ["Maksimal 1.000 kata."],
+    submission: { minWords: 1, maxWords: 1000, maxWorks: 1 },
     organizer: "Tim RanahMenulis",
     timeZone: "WIB",
     fee: {},

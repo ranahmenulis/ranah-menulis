@@ -1,9 +1,11 @@
 import type { ReactNode } from "react";
-import { ButtonLink } from "@/components/ui/button";
+import { Button, ButtonLink } from "@/components/ui/button";
 import { Notice, Skeleton } from "@/components/ui/states";
 import { TextLink } from "@/components/ui/text-link";
 import { formatProjectDate, moneyLabel, projectHref } from "../project-model";
 import { registrationFee } from "../registration-model";
+import { confirmRegistration } from "../registration-store";
+import { kirimHref } from "../submission-model";
 import type { Project, Registration } from "../types";
 
 /** One column of 680 with the way back always on top (every full-width screen needs an exit). */
@@ -99,9 +101,28 @@ export function RegisterStatus({
           </p>
         )}
       </div>
-      <ButtonLink href={projectHref(project.slug)} className="justify-self-start">
-        Lihat proyek
-      </ButtonLink>
+      <div className="flex flex-wrap items-center gap-3">
+        {confirmed && project.submission ? (
+          <>
+            <ButtonLink href={kirimHref(project.slug)}>Kirim karya</ButtonLink>
+            <ButtonLink href={projectHref(project.slug)} variant="secondary">
+              Lihat proyek
+            </ButtonLink>
+          </>
+        ) : (
+          <ButtonLink href={projectHref(project.slug)}>Lihat proyek</ButtonLink>
+        )}
+      </div>
+      {!confirmed && process.env.NODE_ENV !== "production" && (
+        // Payment arrives with QRIS (6f-6). Until then this is the only way to try sending work to
+        // a paid project, so it exists in development and never in production.
+        <div className="grid justify-items-start gap-1 border-t border-line pt-4">
+          <Button variant="text" onClick={() => confirmRegistration(project.slug)}>
+            Tandai lunas
+          </Button>
+          <p className="text-xs text-ink-muted">Hanya ada di pengembangan, sampai QRIS dibuat.</p>
+        </div>
+      )}
     </RegisterShell>
   );
 }

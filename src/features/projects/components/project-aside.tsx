@@ -3,7 +3,8 @@ import { Button, ButtonLink } from "@/components/ui/button";
 import { TextLink } from "@/components/ui/text-link";
 import { daysLeftLabel, feeLines, formatProjectDate } from "../project-model";
 import { deadlineText, quotaText } from "../project-text";
-import { registerAction, registerHref } from "../registration-model";
+import { projectAction } from "../project-action";
+import { registerHref } from "../registration-model";
 import type { Project, ProjectState, Registration } from "../types";
 
 function Fact({ label, children }: { label: string; children: ReactNode }) {
@@ -22,6 +23,8 @@ type Props = {
   guest: boolean;
   /** Your own registration, when signed in and you have one. */
   registration?: Registration;
+  /** Works this reader sent here that still count against the limit. */
+  sentCount?: number | null;
 };
 
 function registrationNote(project: Project, registration: Registration): string {
@@ -37,8 +40,8 @@ function registrationNote(project: Project, registration: Registration): string 
  * says why (your own registration, full, closed, guest). Below lg the column moves above the
  * document so the action stays reachable.
  */
-export function ProjectAside({ project, state, now, guest, registration }: Props) {
-  const action = registerAction(state, guest, registration);
+export function ProjectAside({ project, state, now, guest, registration, sentCount = 0 }: Props) {
+  const action = projectAction({ project, state, guest, registration, now, sentCount });
   const lines = feeLines(project);
   const quota = project.quota;
   const open = state === "buka" || state === "segera-tutup";
@@ -85,10 +88,11 @@ export function ProjectAside({ project, state, now, guest, registration }: Props
             )}
           </span>
         </Fact>
+        {action.sentLine && <Fact label="Karya terkirim">{action.sentLine}</Fact>}
       </dl>
       <div className="grid gap-2">
         {action.enabled ? (
-          <ButtonLink href={registerHref(project.slug)} className="w-full">
+          <ButtonLink href={action.href} className="w-full">
             {action.label}
           </ButtonLink>
         ) : (

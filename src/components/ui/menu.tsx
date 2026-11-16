@@ -61,8 +61,9 @@ export function Menu({ items, label, icon, className }: MenuProps) {
   function toggle() {
     if (open) return close(false);
     setOpen(true);
-    // Wait for visibility to apply before moving focus into the panel.
-    requestAnimationFrame(() => visibleItems()[0]?.focus());
+    // The panel fades in with a `visibility` transition, and at its very first frame it is still
+    // hidden, where focus() does nothing. Wait one more frame so keyboard users land on the first item.
+    requestAnimationFrame(() => requestAnimationFrame(() => visibleItems()[0]?.focus()));
   }
 
   function onKeyDown(e: React.KeyboardEvent) {

@@ -11,15 +11,14 @@ Kamu melanjutkan slicing RanahMenulis (Next.js 16, Tailwind v4, Supabase; data d
 
 ## 2. Posisi (16 November 2026)
 
-- Selesai: langkah 1–5, 6a–6d, penghitung Studio, bilah format, perbaikan beku dan jalan keluar, **6f-1 (katalog dan detail Projects)** dan **6f-2 (pendaftaran, localStorage)**. **Berikutnya: sub-langkah 6f berikutnya** (rekomendasi 6f-3 Kirim karya; audit aksesibilitas dan alur tetap ditunda, lihat Catatan Slicing).
+- Selesai: langkah 1–5, 6a–6d, penghitung Studio, bilah format, perbaikan beku dan jalan keluar, **6f-1 (katalog dan detail Projects)**, **6f-2 (pendaftaran)**, dan **6f-3 (Kirim karya)**. **Berikutnya: sub-langkah 6f berikutnya** (rekomendasi 6f-4 Status submission dan "Proyek saya"; audit aksesibilitas dan alur tetap ditunda, lihat Catatan Slicing). Cek `git status -sb` dan `git log --oneline -5`: 6f-1, 6f-2, 6f-3 mungkin belum di-commit atau di-push. Jangan commit dan jangan push tanpa diminta. Yang belum ter-track milik user hanya dua prompt landing di `docs/desain/landing/`.
 - Keputusan tetap: semua slicing memakai data dummy dan lokal, login di-bypass, **tanpa backend** (auth, migrasi, RLS, store Supabase) dan jangan menagih persetujuannya. Claude Design tidak dipakai; layar dibangun langsung dari `src/components/ui/` dan DESIGN.md. **Marketplace bukan MVP**, jangan disentuh.
-- **Sudah ada dari 6f-1 dan 6f-2** (`src/features/projects/`, lihat bullet Projects di CLAUDE.md): `/projects`, `/projects/[slug]`, `/projects/[slug]/daftar`, nav aktif, sembilan proyek fixture, `registration-store.ts` (localStorage `ranah.registrations`, satu pendaftaran per proyek) dan `registration-model.ts`. Status pendaftaran: `terdaftar` (gratis) atau `menunggu-pembayaran` (berbayar, menunggu 6f-6). 6f-3 bergantung pada pendaftaran: **Kirim karya hanya untuk yang terdaftar** (PRD 10.5).
+- **Sudah ada dari 6f-1 sampai 6f-3** (`src/features/projects/`, lihat bullet Projects di CLAUDE.md): `/projects`, `/projects/[slug]`, `/projects/[slug]/daftar`, `/projects/[slug]/kirim`, `registration-store.ts` (localStorage, `confirmRegistration`), `storage/` (IndexedDB `ranah-projects`, `SubmissionStore`), `Submission` dengan `versions[]` dan `statusLog[]`, `submission-model.ts`, `submit-flow.ts`, `use-submissions.ts` (`notifySubmissionsChanged` agar halaman Next yang di-cache tidak basi), `StatusSubmission` di `components/ui/status-submission.tsx` (semua status DESIGN 7.4 sudah ada). Status yang dibuat hanya `terkirim`.
 - **Titik sambung yang masih menunggu** (ganti, jangan tambah janji baru):
-  - `SendToProjectDialog` (`src/features/studio/components/send-to-project-dialog.tsx`): keadaan "Belum ada proyek yang menerima karya"; dipakai menu Editor dan menu daftar dokumen.
   - Beranda: "Perlu perhatian" dan "Proyek saya" adalah fixture di `src/features/home/fixtures.ts`.
-  - Notifikasi proyek: `href: null` di `src/features/notifications/fixtures.ts`.
+  - Notifikasi proyek: `href: null` di `src/features/notifications/fixtures.ts`; notifikasi wajib "Submission diterima sistem" (PRD 20) belum ada.
   - Profil publik: tab Proyek kosong untuk semua penulis (hanya tampil atas persetujuan penulis).
-  - Penanda "Dikirim ke proyek" di daftar dokumen belum ada.
+  - `SentWorks` di layar Kirim hanya daftar baca; detail, riwayat versi, revisi, dan tarik belum ada.
 - Landing sudah menjanjikan: Ranah Project, Antologi/Solo Book/Kelas Menulis/Lomba Menulis, Kirim naskah, status kiriman. Tutup, jangan tambah janji.
 
 ## 3. Cara memecah 6f (usulan; konfirmasi ke user)
@@ -27,13 +26,14 @@ Kamu melanjutkan slicing RanahMenulis (Next.js 16, Tailwind v4, Supabase; data d
 Pecah per bagian PRD 17 dan kerjakan **satu sub-langkah per rencana**:
 1. ~~Katalog Projects dan detail proyek (PRJ-01)~~ **selesai (6f-1).**
 2. ~~Ketentuan, persetujuan hak cipta, dan pendaftaran (PRJ-02)~~ **selesai (6f-2).**
-3. Kirim karya dari Studio: versi beku dokumen (STD-09), ganti `SendToProjectDialog` dari keadaan kosong.
+3. ~~Kirim karya dari Studio: versi beku (STD-09)~~ **selesai (6f-3).**
 4. Status submission (DESIGN 7.4) dan "Proyek saya" (PRJ-04); sambungkan Beranda, Notifikasi, dan profil.
-5. QRIS semi-manual (PLT-07). Panel Organizer, Editor, dan Juri adalah 6g, bukan 6f.
+5. Dasbor per kategori [usulan, belum disetujui]: Solo (SOL-02), Kelas dan tugas (KLS-02/03), hasil Lomba (LMB-02).
+6. QRIS semi-manual (PLT-07). Panel Organizer, Editor, dan Juri adalah 6g, bukan 6f.
 
-**Celah di pembagian ini:** PRD 17.5 juga memuat Dasbor Solo (SOL-02), Dasbor Kelas dan Halaman tugas (KLS-02/03), Halaman hasil lomba (LMB-02), dan Detail submission dengan riwayat versi dan Kirim Revisi. Usulan: sub-langkah 6f-5 "dasbor per kategori" sebelum QRIS (tercatat di Catatan Slicing, belum disetujui user). Untuk Kelas Menulis, "Kirim karya" berarti mengumpulkan tugas, bukan submission.
+**Celah di pembagian ini:** PRD 17.5 juga memuat Dasbor Solo, Dasbor Kelas dan Halaman tugas, Halaman hasil lomba, dan Detail submission dengan riwayat versi dan Kirim Revisi (yang terakhir masuk 6f-4). Untuk Kelas Menulis, "Kirim karya" berarti mengumpulkan tugas, bukan submission (6f-5).
 
-Tanyakan ke user sub-langkah mana yang dimulai sebelum merencanakan (rekomendasi: 6f-3, karena pendaftaran sudah ada dan `SendToProjectDialog` menunggu).
+Tanyakan ke user sub-langkah mana yang dimulai sebelum merencanakan (rekomendasi: 6f-4, karena data submission sudah ada).
 
 ## 4. Aturan kerja yang wajib
 
@@ -56,18 +56,19 @@ Tanyakan ke user sub-langkah mana yang dimulai sebelum merencanakan (rekomendasi
 - **Dari 6f-2:** (1) Lewat `scroll-behavior: smooth` `scrollIntoView` di skrip CDP menghitung koordinat di tengah animasi: pakai `behavior: "instant"`. (2) Enter di CDP butuh `text: String.fromCharCode(13)` agar tombol/formulir teraktivasi (tautan tidak butuh). (3) Pola `useSyncExternalStore` + cache parse per nilai (`registration-store.ts`) membuat halaman Next yang di-cache langsung menampilkan status baru; buktikan dengan klik tautan di Chrome. (4) Tes menangkap formulir tanpa tautan kembali: setiap layar baru diuji untuk jalan keluar. (5) `code-review` 6 dari 9 valid (cek ulang waktu saat kirim, idempotensi simpan, batas kuota). (6) Satu pendaftaran per proyek tanpa pembatalan; 6f-6 akan butuh fungsi untuk mengubah status `menunggu-pembayaran` menjadi `terdaftar`.
 - Alur uji cepat 6f-1: buka `/beranda`, klik Projects, pilih chip, buka proyek, klik "Semua Projects"; ulangi hanya dengan Tab dan Enter.
 
-## 5b. Bahan khusus 6f-3 (Kirim karya dari Studio, STD-09, PRJ-04 langkah 1–5)
+- **Dari 6f-3:** (1) `evaluate` CDP tidak bisa mengembalikan elemen DOM: pakai `!!document.querySelector(...)` di `waitFor`. (2) Radio dalam satu grup hanya satu perhentian Tab; panah memindah dan memilih. Uji keyboard-only dengan Tab ke grup lalu panah. (3) Kompilasi rute baru di server dev bisa lebih dari 15 detik: beri `waitFor` 60 detik dan panaskan rute dengan `curl`. (4) Komponen yang membaca IndexedDB dan dipasang terus di Editor sebaiknya hanya dipasang saat dibuka (`SendToProjectDialog` mengembalikan `null` bila tidak `open`). (5) `code-review` 7 dari 8 valid, hampir semuanya dari keadaan tepi (state yang tidak diatur ulang setelah "Kirim karya lain", hitungan saat memuat, pilihan yang basi). (6) Batas `complexity` 15 muncul sebagai peringatan lint; ekstrak hook atau fungsi murni (`use-submit-form`, `project-action`) alih-alih menaikkan batas. (7) Tes jsdom `statistics-view` flaky di bawah beban (timeout 15 detik); ulangi sendirian. (8) `crypto.subtle` dan `crypto.randomUUID` hanya ada di konteks aman; hash ditulis sendiri di `lib/sha256.ts`, `randomUUID` dipakai seperti Studio dan Community. (9) Berkas tes dibatasi 300 baris; helper bersama dipindah ke `submit-helpers.tsx`. User bertanya apakah 300 baris terlalu pendek untuk tes; jawabannya ada di Catatan Slicing (usulan 450–500, butuh rencana). (10) Menu ⋯ memindah fokus ke butir pertama lewat `requestAnimationFrame`; uji keyboard-only menu di CDP perlu menunggu fokus pindah sebelum panah.
 
-Baca ulang PRD 10.5 (alur pengiriman, tabel status), 10.3 STD-09, 13.2, BR-STD-03, BR-PRJ-05, 17.5 ("Kirim karya"), Q-13 dan Q-22. Pertanyaan yang perlu diajukan ke user sebelum rencana (beri opsi dan rekomendasi):
-- Titik masuk: dari detail proyek (tombol "Kirim karya" menggantikan "Terdaftar") dan/atau dari Editor lewat `SendToProjectDialog`; apakah satu layar penuh `/projects/[slug]/kirim` atau dialog pemilih proyek lalu layar itu.
-- Syarat: hanya yang `terdaftar` (yang `menunggu-pembayaran` belum boleh); sebelum tenggat; batas jumlah karya per peserta (dari `requirements`, belum terstruktur: perlu field `maxWorks` dan `wordLimit` di fixture) [usulan].
-- Isian: judul karya, genre, catatan untuk editor, pernyataan keaslian; pemilih naskah dari Studio (satu dokumen; unggah berkas hanya Solo, Q-13 belum dijawab, jangan dibangun).
-- Validasi: kata terhadap batas proyek (pakai `docStats`/`countWords` yang ada), kelengkapan isian, tenggat; gagal tampil per aturan tanpa menghapus isian.
-- Versi beku: salinan isi dokumen + jumlah kata + hash + waktu, tidak berubah walau dokumen diedit (BR-STD-03); disimpan lokal (IndexedDB seperti `PostStore`/`DocumentStore`, atau localStorage bila kecil; naskah panjang condong IndexedDB). Status awal "Terkirim"; Draf (isian belum dikirim) dan "Ditarik" dari tabel status.
-- Keadaan: dokumen kosong, dokumen di Sampah, dokumen dihapus setelah dikirim (versi beku tetap), proyek ditutup saat mengisi.
-- Jalan keluar terlihat di layar penuh; uji alur lintas layar dengan mouse nyata dan keyboard saja; jangan dialog modal yang diikuti `router.push` tanpa menutupnya dulu.
-- Yang BUKAN 6f-3: daftar "Proyek saya", detail submission, revisi, tarik, notifikasi (6f-4); peninjauan Editor (6g).
-- Penanda "Dikirim ke proyek" di daftar dokumen Studio (butir di bagian 2) kemungkinan ikut di sini atau 6f-4; tanyakan.
+## 5b. Bahan khusus 6f-4 (Status submission dan "Proyek saya", PRJ-04, DESIGN 7.4)
+
+Baca ulang PRD 10.5 (tabel status dan aturan transisi), 13.2, BR-PRJ-05, BR-STD-03, 17.5 ("Proyek saya", "Detail submission"), 20 (notifikasi), Q-22, Q-23. Pertanyaan yang perlu diajukan ke user sebelum rencana (beri opsi dan rekomendasi):
+- Letak "Proyek saya": rute sendiri (`/projects/saya`) atau tab di `/projects`; apakah butir nav baru atau tidak.
+- Detail submission: rute (`/projects/[slug]/kiriman/[id]`), isi (status, `statusLog`, riwayat versi dengan jumlah kata dan hash, feedback editor, tombol Kirim Revisi dan Tarik), dan keadaan Perlu Revisi dengan catatan.
+- **Bagaimana status berubah tanpa peninjau** (6g belum ada): rekomendasi tombol pengembangan di detail submission (seperti "Tandai lunas") yang memajukan status dan mengisi feedback contoh, dengan fungsi yang kelak dipakai panel Editor.
+- Kirim Revisi: versi baru (`versions[1]`), status Revisi Terkirim, versi lama tetap; revisi setelah tenggat hanya bila Perlu Revisi; batas putaran (usulan dua putaran, Q-22 belum dijawab).
+- Tarik: konfirmasi, status Ditarik, melepaskan jatah (sudah dihitung `canAdd` dan `activeSubmissions`), penanda "Dikirim ke proyek" mengikuti.
+- Sambungan: Beranda "Perlu perhatian" dan "Proyek saya" dari data nyata, notifikasi "Submission diterima" dan proyek dengan `href`, tab Proyek di profil (hanya atas persetujuan penulis; pengaturannya belum ada, tanya).
+- Pendaftaran tanpa submission (Kelas, atau belum kirim) tampil di "Proyek saya" dengan status pendaftaran, bukan status submission.
+- Yang BUKAN 6f-4: peninjauan Editor dan penilaian Juri (6g), dasbor Solo dan Kelas (6f-5), QRIS (6f-6).
 
 ## 6. Mulai dengan
 

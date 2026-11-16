@@ -76,6 +76,32 @@ describe("Dialog", () => {
   });
 });
 
+describe("Dialog, focus after closing", () => {
+  function Host({ shown }: { shown: boolean }) {
+    return (
+      <>
+        <button>Pemicu</button>
+        {shown && (
+          <Dialog open onClose={() => {}} title="Pilih" actions={<button>Lanjut</button>} />
+        )}
+      </>
+    );
+  }
+
+  it("gives focus back to the opener when the dialog is removed while open", () => {
+    const view = render(<Host shown={false} />);
+    const opener = screen.getByRole("button", { name: "Pemicu" });
+    opener.focus();
+
+    view.rerender(<Host shown />);
+    // The browser moves focus into a modal; do the same here.
+    screen.getByRole("button", { name: "Lanjut" }).focus();
+    view.rerender(<Host shown={false} />);
+
+    expect(document.activeElement).toBe(opener);
+  });
+});
+
 describe("Dialog, page kept in the background", () => {
   // Next keeps the previous route in an <Activity>. A modal left open there would silently block
   // the page the reader navigated to ("the page froze, nothing can be pressed").

@@ -85,7 +85,23 @@ function registrationsFor(raw: string | null): RegistrationMap {
 export function saveRegistration(registration: Registration) {
   const current = parseRegistrations(snapshot());
   if (current[registration.slug]) return;
-  const next = JSON.stringify({ ...current, [registration.slug]: registration });
+  write({ ...current, [registration.slug]: registration });
+}
+
+/**
+ * Turns a registration that waits for payment into a confirmed one. Payment does not exist yet
+ * (6f-6), so for now only a development-only button calls it; QRIS confirmation will call it later.
+ * Does nothing when there is no such registration or it is already confirmed.
+ */
+export function confirmRegistration(slug: string) {
+  const current = parseRegistrations(snapshot());
+  const registration = current[slug];
+  if (!registration || registration.status === "terdaftar") return;
+  write({ ...current, [slug]: { ...registration, status: "terdaftar" } });
+}
+
+function write(map: RegistrationMap) {
+  const next = JSON.stringify(map);
   try {
     window.localStorage.setItem(KEY, next);
     fallback = null;

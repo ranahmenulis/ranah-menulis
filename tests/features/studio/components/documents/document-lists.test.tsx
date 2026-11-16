@@ -7,6 +7,8 @@ import type { DocumentList } from "@/features/studio/hooks/use-document-list";
 import type { StudioDocument } from "@/features/studio/storage/document-store";
 import { installDialogShim } from "@/test/dialog-shim";
 
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn(), back: vi.fn() }) }));
+
 beforeAll(installDialogShim);
 afterEach(cleanup);
 
@@ -36,7 +38,11 @@ function listOf(docs: StudioDocument[]): DocumentList {
   };
 }
 
-function renderList(sharedIds: ReadonlySet<string>, onPending = vi.fn()) {
+function renderList(
+  sharedIds: ReadonlySet<string>,
+  onPending = vi.fn(),
+  submittedIds: ReadonlySet<string> = new Set(),
+) {
   const list = listOf([doc("a", "Yang Ditunggu Nenek"), doc("b", "Catatan Pasar")]);
   render(
     <ToastProvider>
@@ -47,6 +53,7 @@ function renderList(sharedIds: ReadonlySet<string>, onPending = vi.fn()) {
         onOpenFolder={() => {}}
         onPending={onPending}
         sharedIds={sharedIds}
+        submittedIds={submittedIds}
       />
     </ToastProvider>,
   );
@@ -88,7 +95,43 @@ describe("Dokumen list, Dibagikan tag", () => {
   });
 });
 
+describe("Dokumen list, Dikirim ke proyek tag", () => {
+  it("marks only the documents that were sent, and can carry both tags at once", () => {
+    renderList(new Set(["a"]), vi.fn(), new Set(["a", "b"]));
+
+    const first = within(rowOf("Yang Ditunggu Nenek"));
+    expect(first.getByText("Dibagikan")).toBeTruthy();
+    expect(first.getByText("Dikirim ke proyek")).toBeTruthy();
+    const second = within(rowOf("Catatan Pasar"));
+    expect(second.getByText("Dikirim ke proyek")).toBeTruthy();
+    expect(second.queryByText("Dibagikan")).toBeNull();
+  });
+
+  it("shows no tag when nothing was sent", () => {
+    renderList(new Set());
+    expect(screen.queryByText("Dikirim ke proyek")).toBeNull();
+  });
+});
+
 describe("Dokumen list, Kirim ke proyek", () => {
+  it("is off for a document with no text yet", () => {
+    const empty = { ...doc("e", "Masih Kosong"), wordCount: 0 };
+    render(
+      <ToastProvider>
+        <LiveList
+          list={listOf([empty])}
+          folderId={null}
+          folderName={null}
+          onOpenFolder={() => {}}
+          onPending={() => {}}
+        />
+      </ToastProvider>,
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Menu dokumen Masih Kosong" }));
+    const item = screen.getAllByRole("menuitem", { name: /Kirim ke proyek/ })[0];
+    expect((item as HTMLButtonElement).disabled).toBe(true);
+  });
+
   it("is live in the document menu and opens the dialog for that document", () => {
     const { onPending } = renderList(new Set());
     fireEvent.click(screen.getByRole("button", { name: "Menu dokumen Yang Ditunggu Nenek" }));
@@ -100,7 +143,7 @@ describe("Dokumen list, Kirim ke proyek", () => {
     });
   });
 
-  it("shows the 'no project yet' dialog for a pending send, and closing clears it", () => {
+  it("shows the project picker for a pending send, and closing clears it", async () => {
     const onClose = vi.fn();
     render(
       <PendingDialogs
@@ -109,8 +152,8 @@ describe("Dokumen list, Kirim ke proyek", () => {
         onClose={onClose}
       />,
     );
-    expect(screen.getByText(/Belum ada proyek yang menerima karya/)).toBeTruthy();
-    fireEvent.click(screen.getByRole("button", { name: "Tutup" }));
+    expect(screen.getByRole("dialog", { name: "Kirim ke proyek" })).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "Batal" }));
     expect(onClose).toHaveBeenCalled();
   });
 });

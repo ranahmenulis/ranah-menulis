@@ -48,6 +48,8 @@ export function Dialog({
   swipeToDismiss = false,
 }: DialogProps) {
   const ref = useRef<HTMLDialogElement>(null);
+  /** What had focus when the modal opened, to give focus back even if the dialog is unmounted. */
+  const openerRef = useRef<HTMLElement | null>(null);
   const id = useId();
   const swipe = swipeToDismiss && dismissible;
   const drag = useSheetDrag(ref, swipe, onClose);
@@ -58,12 +60,19 @@ export function Dialog({
     if (!el) return;
     if (open && !el.open) {
       reset(); // a sheet swiped away keeps its offset until it opens again
+      openerRef.current =
+        document.activeElement instanceof HTMLElement ? document.activeElement : null;
       el.showModal();
     } else if (!open && el.open) el.close();
     // Next keeps the previous page mounted but hidden. A native modal left open there would still
     // make the page the reader navigated to inert, so close it when this page goes away.
     return () => {
-      if (el.open) el.close();
+      if (!el.open) return;
+      el.close();
+      // A dialog removed while open (callers that mount it on demand) is detached by now, so the
+      // browser has nowhere to return focus to: put it back on the element that opened it.
+      const opener = openerRef.current;
+      if (opener?.isConnected) opener.focus();
     };
   }, [open, reset]);
 

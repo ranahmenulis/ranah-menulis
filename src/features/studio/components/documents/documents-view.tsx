@@ -6,6 +6,7 @@ import { Button, ButtonLink } from "@/components/ui/button";
 import { ErrorBanner, RetryButton, Skeleton } from "@/components/ui/states";
 import { Tabs } from "@/components/ui/tabs";
 import { useSharedDocumentIds } from "@/features/community/hooks/use-shared-documents";
+import { useSubmittedDocumentIds } from "@/features/projects/hooks/use-submitted-documents";
 import { postStore } from "@/features/community/storage/store";
 import { useDocumentList } from "../../hooks/use-document-list";
 import { studioStore } from "../../storage/store";
@@ -45,6 +46,7 @@ function ListSkeleton() {
 export function DocumentsView() {
   const list = useDocumentList(studioStore);
   const sharedIds = useSharedDocumentIds(postStore);
+  const submittedIds = useSubmittedDocumentIds();
   const [tab, setTab] = useState("semua");
   const [folderId, setFolderId] = useState<string | null>(null);
   const [pending, setPending] = useState<Pending | null>(null);
@@ -124,6 +126,7 @@ export function DocumentsView() {
           onOpenFolder={setFolderId}
           onPending={setPending}
           sharedIds={sharedIds}
+          submittedIds={submittedIds}
         />
       )}
       {ready && inTrash && <TrashList list={list} onPending={setPending} />}

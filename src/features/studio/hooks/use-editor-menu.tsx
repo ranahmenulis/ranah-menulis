@@ -13,6 +13,8 @@ import type { MenuEntry } from "@/components/ui/menu";
 type Actions = {
   /** Nothing is stored yet, so there is nothing to move to Sampah. */
   canTrash: boolean;
+  /** Nothing to send until the document has text. */
+  canSend: boolean;
   onHelp: () => void;
   onFocus: () => void;
   onSend: () => void;
@@ -20,7 +22,7 @@ type Actions = {
 };
 
 /** The ⋯ menu of the editor bar (DESIGN.md 6.3). Help and focus mode only appear on phones. */
-export function useEditorMenu({ canTrash, onHelp, onFocus, onSend, onTrash }: Actions) {
+export function useEditorMenu({ canTrash, canSend, onHelp, onFocus, onSend, onTrash }: Actions) {
   return useMemo<MenuEntry[]>(
     () => [
       {
@@ -38,7 +40,13 @@ export function useEditorMenu({ canTrash, onHelp, onFocus, onSend, onTrash }: Ac
         onSelect: onFocus,
       },
       { id: "sep-mobile", type: "separator", mobileOnly: true },
-      { id: "send", label: "Kirim ke proyek", icon: <PaperPlaneTilt />, onSelect: onSend },
+      {
+        id: "send",
+        label: "Kirim ke proyek",
+        icon: <PaperPlaneTilt />,
+        disabled: !canSend,
+        onSelect: onSend,
+      },
       {
         // Export is not decided yet (STD-07).
         id: "export",
@@ -59,6 +67,6 @@ export function useEditorMenu({ canTrash, onHelp, onFocus, onSend, onTrash }: Ac
         onSelect: onTrash,
       },
     ],
-    [canTrash, onHelp, onFocus, onSend, onTrash],
+    [canTrash, canSend, onHelp, onFocus, onSend, onTrash],
   );
 }

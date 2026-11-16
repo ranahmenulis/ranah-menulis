@@ -1,9 +1,28 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+import { kirimHref } from "@/features/projects/submission-model";
 import { SendToProjectDialog } from "../send-to-project-dialog";
 import type { DocumentList } from "../../hooks/use-document-list";
 import { DeleteDialog, MoveDialog, NameDialog } from "./document-dialogs";
 import type { Pending } from "./pending";
+
+/** "Kirim ke proyek" from the list: the dialog closes itself first, then the send page opens. */
+function SendFromList({ docId, onClose }: { docId: string; onClose: () => void }) {
+  const router = useRouter();
+  return (
+    <SendToProjectDialog
+      open
+      docId={docId}
+      onClose={onClose}
+      onPick={async (slug) => {
+        onClose();
+        router.push(kirimHref(slug, docId));
+        return true;
+      }}
+    />
+  );
+}
 
 /** Renders whichever dialog `pending` names, runs its action, and closes it first. */
 export function PendingDialogs({
@@ -72,7 +91,7 @@ export function PendingDialogs({
         />
       );
     case "sendToProject":
-      return <SendToProjectDialog open onClose={onClose} />;
+      return <SendFromList docId={pending.doc.id} onClose={onClose} />;
     case "delete":
       return (
         <DeleteDialog
