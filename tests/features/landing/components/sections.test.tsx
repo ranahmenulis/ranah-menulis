@@ -107,10 +107,10 @@ describe("writing experience", () => {
     expect(within(counter).queryByText("Menyusul")).toBeNull();
   });
 
-  it("opens a new empty document in the app demo from the Studio call to action", () => {
+  it("sends the Studio call to action to sign-up", () => {
     render(<WritingExperience copy={landing.studio} />);
     const cta = screen.getByRole("link", { name: /Coba Ranah Studio Sekarang/ });
-    expect(cta.getAttribute("href")).toBe("/studio/baru");
+    expect(cta.getAttribute("href")).toBe("/daftar");
   });
 });
 

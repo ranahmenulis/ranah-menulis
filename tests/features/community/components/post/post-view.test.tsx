@@ -16,6 +16,7 @@ import { PostView } from "@/features/community/components/post/post-view";
 
 vi.mock("next/navigation", () => ({
   usePathname: () => "/postingan/x",
+  useSearchParams: () => new URLSearchParams(),
   useRouter: () => ({ back: vi.fn(), push: vi.fn() }),
 }));
 const holder = vi.hoisted(() => ({ store: null as unknown as PostStore }));

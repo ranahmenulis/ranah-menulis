@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Avatar } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
+import { Button, ButtonLink } from "@/components/ui/button";
+import { SETTINGS_HREF } from "@/features/account/redirect";
 import { SAVED_HREF } from "@/features/app-shell/nav";
 import type { Author, Genre } from "@/features/community/types";
 import type { ProfileFixture } from "../fixtures";
@@ -22,7 +23,7 @@ type Props = {
 /**
  * The right column of a profile (DESIGN.md 6.5), above the tabs on phones: avatar, counts, bio,
  * where from, genres, streak when the author shares it, and one button. Your own profile has no
- * Ikuti (COM-08); it offers editing instead, which waits for the account screens.
+ * Ikuti (COM-08); it offers editing in Settings instead.
  */
 export function ProfileIdentity(p: Props) {
   return (
@@ -46,9 +47,9 @@ export function ProfileIdentity(p: Props) {
 
       {p.own ? (
         <>
-          <Button variant="secondary" size="sm" disabled title="Segera">
+          <ButtonLink href={SETTINGS_HREF} variant="secondary" size="sm">
             Ubah profil
-          </Button>
+          </ButtonLink>
           {/* Phones have no sidebar, so this is how Tersimpan is reached there. */}
           <Link
             href={SAVED_HREF}

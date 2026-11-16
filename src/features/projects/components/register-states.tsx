@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { Notice, Skeleton } from "@/components/ui/states";
 import { TextLink } from "@/components/ui/text-link";
+import { SignInButton } from "@/features/account/components/auth-buttons";
 import { formatProjectDate, moneyLabel, projectHref } from "../project-model";
 import { registrationFee } from "../registration-model";
 import { confirmRegistration } from "../registration-store";
@@ -46,11 +47,21 @@ export function RegisterSkeleton() {
 }
 
 /** Why the form is not offered: a guest, a full project, a closed one. The way back stays. */
-export function RegisterBlocked({ project, children }: { project: Project; children: ReactNode }) {
+export function RegisterBlocked({
+  project,
+  children,
+  signIn = false,
+}: {
+  project: Project;
+  children: ReactNode;
+  /** A guest can fix this by signing in, so the way to do that comes first. */
+  signIn?: boolean;
+}) {
   return (
     <RegisterShell project={project}>
       <h1 className="heading-lg wrap-anywhere">{project.title}</h1>
       <Notice>{children}</Notice>
+      {signIn && <SignInButton className="justify-self-start">Masuk</SignInButton>}
       <ButtonLink
         href={projectHref(project.slug)}
         variant="secondary"

@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { EmptyState, ErrorBanner, FeedItemSkeleton, RetryButton } from "@/components/ui/states";
 import { useViewer } from "@/lib/viewer";
+import { SignInButton } from "@/features/account/components/auth-buttons";
 import { DISCOVER_HREF } from "@/features/app-shell/nav";
 import { useCommunity } from "@/features/community/hooks/use-community";
 import { usePostActions } from "@/features/community/hooks/use-post-actions";
@@ -41,14 +42,7 @@ export function SavedView() {
     <div className="max-w-182">
       <h1 className="heading-lg">Tersimpan</h1>
       {guest ? (
-        <EmptyState
-          className="mt-4"
-          action={
-            <Button disabled title="Masuk tersedia setelah akun dibuka">
-              Masuk
-            </Button>
-          }
-        >
+        <EmptyState className="mt-4" action={<SignInButton>Masuk</SignInButton>}>
           Masuk untuk melihat tulisan yang kamu simpan.
         </EmptyState>
       ) : (
