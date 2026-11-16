@@ -14,6 +14,13 @@ export type TimeZoneName = "WIB" | "MYT";
  */
 export type Money = { idr?: number; myr?: number };
 
+/**
+ * What a project accepts when a participant sends work (PRD 10.5 step 4). `null` on a project that
+ * takes no submissions: Kelas Menulis collects assignments (KLS-03), which is 6f-5. Values come from
+ * the manuscript rules written in `requirements` and are samples [konfirmasi, Q-28, Q-31].
+ */
+export type SubmissionRules = { minWords: number; maxWords: number; maxWorks: number };
+
 export type SoloPackage = { name: string; fee: Money; includes: string[] };
 
 /** The one read-only block that differs per category (PRD 10.6: SOL-01, KLS-01, LMB-01). */
@@ -50,6 +57,7 @@ type ProjectBase = {
   about: string[];
   /** Manuscript rules shown before registering: word limit, works per participant, genre. */
   requirements: string[];
+  submission: SubmissionRules | null;
   /** [usulan] Team members only in the MVP (Q-31). */
   organizer: string;
   timeZone: TimeZoneName;

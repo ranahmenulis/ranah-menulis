@@ -16,6 +16,11 @@ vi.mock("next/navigation", () => ({ useRouter: () => ({ push: h.push, back: vi.f
 vi.mock("@/features/studio/storage/store", () => ({
   studioStore: { updateMeta: (...args: unknown[]) => h.updateMeta(...args) },
 }));
+vi.mock("@/features/projects/storage/store", async () => {
+  const { createMemorySubmissionStore } =
+    await import("@/features/projects/storage/memory-submission-store");
+  return { submissionStore: createMemorySubmissionStore() };
+});
 vi.mock("@/features/studio/components/editor-canvas", () => ({ EditorCanvas: () => <div /> }));
 vi.mock("@/features/studio/hooks/use-studio-document", () => ({
   useStudioDocument: () => ({
@@ -47,6 +52,7 @@ beforeEach(() => {
   h.doc.title = "Yang Ditunggu Nenek";
   h.doc.words = 120;
   h.doc.load = "ready";
+  localStorage.clear();
 });
 afterEach(cleanup);
 
@@ -56,6 +62,18 @@ function renderEditor() {
       <StudioEditor documentId="doc-1" />
     </ToastProvider>,
   );
+}
+
+const ESAI = "lomba-esai-literasi-remaja";
+function registerEsai() {
+  const registration = {
+    slug: ESAI,
+    registeredAt: 1,
+    agreedAt: 1,
+    termsVersion: "1",
+    status: "terdaftar",
+  };
+  localStorage.setItem("ranah.registrations", JSON.stringify({ [ESAI]: registration }));
 }
 
 const openMenu = () => fireEvent.click(screen.getByRole("button", { name: "Menu dokumen" }));
@@ -121,12 +139,49 @@ describe("StudioEditor, Bagikan with only a title", () => {
 });
 
 describe("StudioEditor, menu", () => {
-  it("opens the honest 'no project yet' dialog from Kirim ke proyek", () => {
+  it("opens the project picker from Kirim ke proyek, and says so when you have no project yet", async () => {
     renderEditor();
     openMenu();
     fireEvent.click(screen.getByRole("menuitem", { name: /Kirim ke proyek/ }));
 
-    expect(screen.getByText(/Belum ada proyek yang menerima karya/)).toBeTruthy();
+    expect(screen.getByRole("dialog", { name: "Kirim ke proyek" })).toBeTruthy();
+    expect(await screen.findByText(/belum terdaftar di proyek yang menerima karya/)).toBeTruthy();
+  });
+
+  it("offers nothing to send while the document has no text", () => {
+    h.doc.words = 0;
+    renderEditor();
+    openMenu();
+    expect(
+      (screen.getByRole("menuitem", { name: /Kirim ke proyek/ }) as HTMLButtonElement).disabled,
+    ).toBe(true);
+  });
+
+  it("stores the text first, then opens the send page with this document chosen", async () => {
+    registerEsai();
+    renderEditor();
+    openMenu();
+    fireEvent.click(screen.getByRole("menuitem", { name: /Kirim ke proyek/ }));
+    fireEvent.click(await screen.findByRole("radio", { name: /Esai Literasi/ }));
+    fireEvent.click(screen.getByRole("button", { name: "Lanjutkan" }));
+
+    await waitFor(() =>
+      expect(h.push).toHaveBeenCalledWith(`/projects/${ESAI}/kirim?dokumen=doc-1`),
+    );
+    expect(h.saveNow).toHaveBeenCalled();
+  });
+
+  it("stays and says so when the text cannot be stored before sending", async () => {
+    h.saveNow.mockResolvedValue(false);
+    registerEsai();
+    renderEditor();
+    openMenu();
+    fireEvent.click(screen.getByRole("menuitem", { name: /Kirim ke proyek/ }));
+    fireEvent.click(await screen.findByRole("radio", { name: /Esai Literasi/ }));
+    fireEvent.click(screen.getByRole("button", { name: "Lanjutkan" }));
+
+    await screen.findByText(/belum tersimpan di perangkat ini/);
+    expect(h.push).not.toHaveBeenCalled();
   });
 
   it("keeps Ekspor off until its format is decided", () => {

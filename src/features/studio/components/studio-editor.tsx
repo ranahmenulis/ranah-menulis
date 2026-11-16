@@ -9,6 +9,7 @@ import { cn } from "@/lib/cn";
 import { paragraphsOf } from "../diff-paragraphs";
 import { sameStats, type EditorStats } from "../editor-stats";
 import { useOnlineStatus } from "../hooks/use-online-status";
+import { useSendFromEditor } from "../hooks/use-send-from-editor";
 import { useStudioDocument, type LoadState } from "../hooks/use-studio-document";
 import { studioStore as store } from "../storage/store";
 import { useDailyTarget } from "../hooks/use-daily-target";
@@ -29,6 +30,9 @@ const FALLBACK_TITLE: Record<LoadState, string> = {
   error: "Dokumen tidak terbuka",
   missing: "Dokumen tidak ditemukan",
 };
+
+/** A new document has no id until it is first stored. */
+const storedId = (id: string) => (id === "baru" ? null : id);
 
 function NotReady({ load, onRetry }: { load: LoadState; onRetry: () => void }) {
   if (load === "error") return <EditorError onRetry={onRetry} backHref={STUDIO_HREF} />;
@@ -93,6 +97,9 @@ export function StudioEditor({ documentId }: { documentId: string }) {
     return true;
   }, [saveNow, getId, router]);
 
+  const closeDialog = useCallback(() => setDialog(null), []);
+  const sendTo = useSendFromEditor({ saveNow, getId, closeDialog });
+
   // Leaving writes out what was typed first; if the device refuses, stay so nothing is lost.
   const goBack = useCallback(async () => {
     if (await saveNow()) {
@@ -136,6 +143,7 @@ export function StudioEditor({ documentId }: { documentId: string }) {
 
   const menuItems = useEditorMenu({
     canTrash: ready && !isEmpty,
+    canSend: doc.words > 0,
     onHelp: openHelp,
     onFocus: enterFocus,
     onSend: openSend,
@@ -232,7 +240,12 @@ export function StudioEditor({ documentId }: { documentId: string }) {
         documentTitle={doc.title}
         onContinue={share}
       />
-      <SendToProjectDialog open={dialog === "send"} onClose={() => setDialog(null)} />
+      <SendToProjectDialog
+        open={dialog === "send"}
+        onClose={closeDialog}
+        docId={storedId(documentId)}
+        onPick={sendTo}
+      />
 
       {versions && (
         <ConflictDialog

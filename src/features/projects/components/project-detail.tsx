@@ -7,6 +7,9 @@ import { useViewer } from "@/lib/viewer";
 import { categoryLabel, formatProjectDate, projectState } from "../project-model";
 import { deadlineText } from "../project-text";
 import { useRegistrations } from "../registration-store";
+import { activeSubmissions } from "../submission-model";
+import type { SubmissionStore } from "../storage/submission-store";
+import { useSubmissions } from "../use-submissions";
 import { useProjects } from "../use-projects";
 import type { Project, ProjectFixture, ProjectState } from "../types";
 import { CategoryBlockView, Section } from "./category-blocks";
@@ -46,6 +49,8 @@ type Props = {
   slug: string;
   /** Replaces the dummy catalog in tests. */
   source?: ProjectFixture[];
+  /** Replaces the device's submission store in tests. */
+  store?: SubmissionStore;
 };
 
 /**
@@ -53,10 +58,11 @@ type Props = {
  * category block, schedule, copyright) and a sticky right column with fee, quota, deadline, and the
  * action. A draft is treated as not found, since drafts are never public.
  */
-export function ProjectDetail({ slug, source }: Props) {
+export function ProjectDetail({ slug, source, store }: Props) {
   const data = useProjects(source);
   const guest = useViewer() === "tamu";
   const registrations = useRegistrations();
+  const submissions = useSubmissions(store);
 
   if (data.status === "loading") return <ProjectDetailSkeleton />;
 
@@ -64,6 +70,11 @@ export function ProjectDetail({ slug, source }: Props) {
   if (!project) return <ProjectGone />;
 
   const state = projectState(project, data.now);
+  // Unknown while loading, so the button waits; after a failed read the send page explains itself.
+  const sentCount =
+    submissions.status === "loading"
+      ? null
+      : activeSubmissions(submissions.submissions, project.slug).length;
 
   return (
     <div className="mx-auto max-w-260">
@@ -90,6 +101,7 @@ export function ProjectDetail({ slug, source }: Props) {
               now={data.now}
               guest={guest}
               registration={registrations[project.slug]}
+              sentCount={sentCount}
             />
           </div>
         </div>
