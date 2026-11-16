@@ -22,6 +22,14 @@ describe("navigation", () => {
     expect(mobileTitle("/beranda")).toBeNull();
   });
 
+  it("opens Projects from the navigation, for the catalog and for each project", () => {
+    expect(mainNav.find((n) => n.id === "projects")?.href).toBe("/projects");
+    expect(bottomNav.find((n) => n.id === "projects")?.href).toBe("/projects");
+    expect(activeId("/projects")).toBe("projects");
+    expect(activeId("/projects/lomba-cerpen-hujan-2026")).toBe("projects");
+    expect(mobileTitle("/projects")).toBe("Projects");
+  });
+
   it("shows the write button on Beranda and the document list, not on Streak", () => {
     expect(showsWriteButton("/beranda")).toBe(true);
     expect(showsWriteButton("/studio")).toBe(true);
