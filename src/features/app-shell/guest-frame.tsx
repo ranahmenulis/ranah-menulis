@@ -2,7 +2,7 @@
 
 import { MagnifyingGlass } from "@phosphor-icons/react/dist/ssr";
 import type { ReactNode } from "react";
-import { Button } from "@/components/ui/button";
+import { SignInButton, SignUpButton } from "@/features/account/components/auth-buttons";
 import { DisplayControls } from "@/components/ui/display-controls";
 import { Monogram, Wordmark } from "@/components/ui/logo";
 import { useT } from "@/lib/i18n/provider";
@@ -10,7 +10,7 @@ import { BackButton } from "./top-bar";
 
 /**
  * Frame for someone who is not signed in: only a top bar, no navigation (DESIGN.md 6.9). Masuk and
- * Daftar have no destination until accounts exist (R1), so they are shown but inactive.
+ * Daftar lead to the account screens and bring the reader back to this page afterwards.
  */
 export function GuestFrame({ children, back }: { children: ReactNode; back: boolean }) {
   const { guest, topBar } = useT().shell;
@@ -30,12 +30,12 @@ export function GuestFrame({ children, back }: { children: ReactNode; back: bool
           {topBar.searchPlaceholder}
         </div>
         <DisplayControls />
-        <Button variant="text" disabled title={guest.soon} className="text-ink!">
+        <SignInButton variant="text" className="text-ink!">
           {guest.signIn}
-        </Button>
-        <Button variant="secondary" size="sm" disabled title={guest.soon}>
+        </SignInButton>
+        <SignUpButton variant="secondary" size="sm">
           {guest.signUp}
-        </Button>
+        </SignUpButton>
       </header>
       <main className="min-w-0 flex-1 px-4 py-6 md:px-12 md:py-10">{children}</main>
     </div>

@@ -31,6 +31,20 @@ export function useViewer(): Viewer {
   return useSyncExternalStore(subscribe, read, () => "masuk");
 }
 
+/**
+ * Sign-in and sign-out screens flip the tab between the signed-in and the signed-out view. Only in
+ * development and tests; production is always the dummy user while sign-in is bypassed.
+ */
+export function setViewer(next: Viewer) {
+  if (!enabled) return;
+  try {
+    sessionStorage.setItem(KEY, next);
+  } catch {
+    return;
+  }
+  window.dispatchEvent(new Event(EVENT));
+}
+
 /** Reads `?sebagai=` from the address and keeps it for the tab. Renders nothing. */
 export function ViewerSync({ pathname }: { pathname: string }) {
   useEffect(() => {

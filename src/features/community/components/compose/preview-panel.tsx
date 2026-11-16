@@ -1,5 +1,5 @@
 import { Avatar } from "@/components/ui/avatar";
-import { DUMMY_USER } from "@/features/app-shell/nav";
+import { useAccount } from "@/features/account/account-store";
 import { PostText, ScopeLine } from "../post/post-article";
 import type { Genre, PostBlock, PostKind } from "../../types";
 
@@ -13,6 +13,7 @@ type Props = {
 
 /** The post exactly as a reader sees it, in the same typography as the post page (STD-10). */
 export function PreviewPanel({ title, kind, genre, blocks, sourceTitle }: Props) {
+  const { profile } = useAccount();
   const mark = `${kind === "prolog" ? "Prolog" : "Cuplikan"}${genre ? ` · ${genre}` : ""}`;
   return (
     <section aria-label="Pratinjau untuk pembaca">
@@ -23,8 +24,8 @@ export function PreviewPanel({ title, kind, genre, blocks, sourceTitle }: Props)
           {title.trim() || <span className="text-ink-faint">Tanpa judul</span>}
         </p>
         <div className="mb-1 flex items-center gap-2 text-sm">
-          <Avatar name={DUMMY_USER.name} size={32} />
-          {DUMMY_USER.name}
+          <Avatar name={profile.name} src={profile.avatar} size={32} />
+          {profile.name}
         </div>
         <ScopeLine kind={kind} sourceTitle={sourceTitle} />
         <div className="pt-4 text-[17px] [&_.read-body]:text-[17px]! [&_.read-body]:leading-7!">

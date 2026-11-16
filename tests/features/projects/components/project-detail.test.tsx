@@ -105,7 +105,8 @@ describe("ProjectDetail", () => {
   it("asks guests to sign in", async () => {
     sessionStorage.setItem("rm-viewer", "tamu");
     await open("lomba-cerpen-hujan-2026");
-    expect(within(aside()).getByRole("button", { name: "Masuk untuk mendaftar" })).toBeTruthy();
+    const link = within(aside()).getByRole("link", { name: "Masuk untuk mendaftar" });
+    expect(link.getAttribute("href")).toMatch(/^\/masuk/);
   });
 
   it("shows the Lomba criteria and prizes, and says judging is anonymous", async () => {
