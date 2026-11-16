@@ -1,3 +1,4 @@
+import { dashboardHref } from "./kelas/class-model";
 import { registerAction, registerHref } from "./registration-model";
 import { kirimHref, submitAction, submitBlock } from "./submission-model";
 import { worksText } from "./submission-text";
@@ -13,10 +14,25 @@ export type ProjectAction = {
   sentLine: string | null;
 };
 
+/** A registered reader of a class goes to its dashboard: a class collects assignments there. */
+function classAction(
+  project: Project,
+  guest: boolean,
+  registration?: Registration,
+): ProjectAction | null {
+  if (guest || registration?.status !== "terdaftar" || project.block.kind !== "kelas") return null;
+  return {
+    label: "Buka dasbor kelas",
+    enabled: true,
+    href: dashboardHref(project.slug),
+    sentLine: null,
+  };
+}
+
 /**
  * The one action of a project page for this reader. Registering comes first; once registered and
  * active, categories that take work turn it into "Kirim karya" (or say why that is closed). A class
- * keeps the registration wording, since it collects assignments instead (6f-5).
+ * collects assignments instead, so a registered reader gets the way into the class dashboard.
  */
 export function projectAction(input: {
   project: Project;
@@ -29,6 +45,8 @@ export function projectAction(input: {
 }): ProjectAction {
   const { project, state, guest, registration, now, sentCount } = input;
   const rules = project.submission;
+  const classEntry = classAction(project, guest, registration);
+  if (classEntry) return classEntry;
   const sending = !guest && registration && rules ? { registration, rules } : null;
   const block = sending
     ? submitBlock({ project, guest, registration, now, sent: sentCount ?? 0 })

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { StatusSubmission } from "@/components/ui/status-submission";
 import { TextLink } from "@/components/ui/text-link";
 import { categoryLabel, formatNumber, formatProjectDate, projectHref } from "../project-model";
+import { dashboardHref } from "../kelas/class-model";
 import type { MyProject } from "../my-projects";
 import { submissionHref } from "../submission-href";
 import { kirimHref } from "../submission-model";
@@ -27,9 +28,17 @@ function workMeta(work: Submission, project: Project): string {
 function EmptyLine({ row }: { row: MyProject }) {
   const { project, registration } = row;
   if (!project.submission) {
+    if (registration.status !== "terdaftar") {
+      return (
+        <p className="text-sm text-ink-muted">Dasbor kelas terbuka setelah pembayaran selesai.</p>
+      );
+    }
     return (
       <p className="text-sm text-ink-muted">
-        Tugas kelas dikumpulkan di halaman kelas, yang menyusul.
+        Tugas kelas dikumpulkan di dasbor kelas.{" "}
+        <TextLink href={dashboardHref(project.slug)} className="text-ink underline">
+          Buka dasbor kelas
+        </TextLink>
       </p>
     );
   }

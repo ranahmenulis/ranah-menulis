@@ -72,7 +72,11 @@ describe("project page, the send button", () => {
 
     register(KELAS);
     await detail(KELAS);
-    expect(screen.getByRole("button", { name: "Terdaftar" })).toBeTruthy();
+    // A class takes assignments, not works: its button leads to the class dashboard instead.
+    expect(screen.getByRole("link", { name: "Buka dasbor kelas" }).getAttribute("href")).toBe(
+      `/projects/${KELAS}/dasbor`,
+    );
+    expect(screen.queryByRole("link", { name: "Kirim karya" })).toBeNull();
     expect(screen.queryByText(/Karya terkirim/)).toBeNull();
   });
 

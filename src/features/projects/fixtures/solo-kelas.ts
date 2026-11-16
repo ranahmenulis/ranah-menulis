@@ -117,7 +117,8 @@ export const soloKelasFixtures: ProjectFixture[] = [
     fee: {},
     quota: { total: 50, taken: 38 },
     closesInMs: days(3),
-    milestones: [{ label: "Kelas dimulai", inMs: days(5) }],
+    // Already running, with late registration still open: the one class whose dashboard is live.
+    milestones: [{ label: "Kelas dimulai", inMs: -days(2) }],
     terms: { version: "2026-11-contoh", special: [] },
     block: {
       kind: "kelas",

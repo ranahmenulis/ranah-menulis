@@ -65,6 +65,9 @@ describe("Proyek saya", () => {
     );
     const kelas = screen.getByRole("region", { name: /Kelas Cerpen/ });
     expect(within(kelas).getByText(/Tugas kelas dikumpulkan/)).toBeTruthy();
+    expect(
+      within(kelas).getByRole("link", { name: "Buka dasbor kelas" }).getAttribute("href"),
+    ).toBe(`/projects/${KELAS}/dasbor`);
     expect(screen.queryByText("Terkirim")).toBeNull();
   });
 

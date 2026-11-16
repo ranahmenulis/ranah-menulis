@@ -12,8 +12,8 @@ import type {
   TimeZoneName,
 } from "./types";
 
-const HOUR = 60 * 60 * 1000;
-const DAY = 24 * HOUR;
+export const HOUR = 60 * 60 * 1000;
+export const DAY = 24 * HOUR;
 /** [usulan] A project closes "soon" in its last seven calendar days. */
 const SOON_DAYS = 7;
 /** Neither zone has daylight saving, so a fixed offset is exact. */
@@ -22,14 +22,22 @@ const ZONES: Record<TimeZoneName, { iana: string; hours: number }> = {
   MYT: { iana: "Asia/Kuala_Lumpur", hours: 8 },
 };
 
+/** The IANA name of a project zone, for formatting a moment the way the project reads it. */
+export const zoneIana = (zone: TimeZoneName): string => ZONES[zone].iana;
+
 /** Calendar day number of a moment in the project's zone. */
 function dayNumber(timestamp: number, zone: TimeZoneName): number {
   return Math.floor((timestamp + ZONES[zone].hours * HOUR) / DAY);
 }
 
 /** The last millisecond of that calendar day in the zone: the deadline is the end of its day. */
-function endOfDay(timestamp: number, zone: TimeZoneName): number {
+export function endOfDay(timestamp: number, zone: TimeZoneName): number {
   return (dayNumber(timestamp, zone) + 1) * DAY - ZONES[zone].hours * HOUR - 1;
+}
+
+/** The first millisecond of that calendar day in the zone. */
+export function startOfDay(timestamp: number, zone: TimeZoneName): number {
+  return dayNumber(timestamp, zone) * DAY - ZONES[zone].hours * HOUR;
 }
 
 export const CATEGORIES: { id: CategoryFilter; label: string; description: string }[] = [
