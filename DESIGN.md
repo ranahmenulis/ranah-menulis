@@ -330,7 +330,8 @@ Desktop: kolom kiri (nama `heading-lg`, tab Karya · Tentang · Proyek, lalu daf
 | Halaman | Arah |
 | --- | --- |
 | Dasbor Streak (tab Streak di dalam Studio, lihat 5.3) | Angka streak `figure` serif besar, progres hari ini sebagai garis 4px (`line` → `ink`), kalender titik tinta (7.3), tombol "Mulai menulis" |
-| Detail proyek | Tata letak dokumen satu kolom 680 (tema, syarat, jadwal, hak cipta), kolom kanan lengket berisi biaya, kuota, deadline, dan tombol aksi sesuai status |
+| Katalog Projects (`/projects`) | Lebar 1040. Chip kategori lengket (pola Jelajahi) lalu dua baris chip kecil Status dan Biaya, penyaring tersimpan di alamat. Daftar berupa baris bergaris tipis, dua kolom di lg, bukan kartu berbayang: kategori, judul serif, satu baris ringkasan, lalu biaya, sisa kuota, dan tenggat. Keadaan proyek berupa teks biasa (bukan pil, agar tidak tertukar dengan status submission 7.4); hanya "Segera tutup" yang tebal. Kosong: kategori tanpa proyek ("Belum ada proyek Solo yang dibuka." + Lihat semua Projects) dan hasil penyaring kosong (+ Hapus penyaring) **[usulan]** |
+| Detail proyek | Tata letak dokumen satu kolom 680 (tentang, syarat naskah, satu blok khas kategori hanya-baca, jadwal dengan zona waktu proyek, hak cipta), kolom kanan 320 lengket berisi biaya per mata uang, kuota dengan garis 4px, pendaftaran, dan satu tombol aksi sesuai status (Daftar, Masuk untuk mendaftar, Kuota penuh, Pendaftaran ditutup). Di bawah lg kolom kanan pindah ke bawah judul. Tautan "← Semua Projects" di atas **[usulan]** |
 | QRIS | Satu kolom sempit 400: QR di atas latar putih murni (juga di mode gelap, agar terbaca), hitung mundur `tabular-nums`, status sebagai teks besar |
 | Kelola, Admin, Juri | Kepadatan pengelola: tabel 14px, baris 44px, header lengket, tanpa zebra, filter di atas sebagai chip. Panel juri: teks karya `read-body` di kiri, kriteria dan skor di kanan, identitas penulis tidak pernah dirender |
 

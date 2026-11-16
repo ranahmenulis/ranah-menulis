@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
 import { ErrorBanner, RetryButton } from "@/components/ui/states";
+import { StickyChipBar } from "@/components/ui/sticky-chip-bar";
 import { useViewer } from "@/lib/viewer";
 import { NEW_POST_HREF } from "@/features/app-shell/nav";
 import { PAGE_SIZE, categoryById, postsForCategory, visibleCategories } from "../../categories";
@@ -68,25 +69,18 @@ export function DiscoverView() {
 
       {data.status === "ready" && current && (
         <>
-          {/* The fade mask sits on the inner row so the sticky bar itself stays opaque. */}
-          <div className="sticky top-[calc(3.25rem+var(--safe-top))] z-20 -mx-4 mt-2 border-b border-line bg-canvas md:top-[calc(3.5rem+var(--safe-top))] md:-mx-0">
-            <div
-              role="toolbar"
-              aria-label="Kategori"
-              className="scroll-edge-fade flex [scrollbar-width:none] gap-2 overflow-x-auto px-4 py-3 md:px-0 md:py-4 [&::-webkit-scrollbar]:hidden"
-            >
-              {categories.map((c) => (
-                <Chip
-                  key={c.id}
-                  pressed={c.id === current.id}
-                  onClick={() => setPicked(c.id)}
-                  className="shrink-0"
-                >
-                  {c.label}
-                </Chip>
-              ))}
-            </div>
-          </div>
+          <StickyChipBar label="Kategori">
+            {categories.map((c) => (
+              <Chip
+                key={c.id}
+                pressed={c.id === current.id}
+                onClick={() => setPicked(c.id)}
+                className="shrink-0"
+              >
+                {c.label}
+              </Chip>
+            ))}
+          </StickyChipBar>
 
           <p className="mt-3 mb-4 text-sm text-ink-muted md:mt-4 md:mb-6">
             {categoryById(current.id)?.description}

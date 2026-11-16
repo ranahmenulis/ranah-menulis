@@ -59,11 +59,15 @@ describe("AppShell", () => {
     expect(screen.queryByRole("link", { name: "Tulis dokumen baru" })).toBeNull();
   });
 
-  it("shows destinations that do not exist yet as disabled, not as dead links", () => {
+  it("links Projects to its catalog and marks it current there", () => {
     renderAt("/beranda");
     const projects = screen.getAllByText("Projects");
-    expect(projects.every((el) => el.closest("a") === null)).toBe(true);
-    expect(projects[0].closest("[aria-disabled=true]")).not.toBeNull();
+    expect(projects.every((el) => el.closest("a")?.getAttribute("href") === "/projects")).toBe(
+      true,
+    );
+    cleanup();
+    renderAt("/projects/lomba-cerpen-hujan-2026");
+    expect(new Set(current().filter(Boolean))).toEqual(new Set(["Projects"]));
   });
 
   it("marks Jelajahi as current on its page", () => {

@@ -1,72 +1,62 @@
-# Prompt: lanjut slicing
-
-Tempel isi di bawah garis ini ke sesi baru di repo RanahMenulis (`D:\Code\Ranah Penulis`). Dibuat 16 November 2026.
-
----
-
-Kamu melanjutkan slicing RanahMenulis (Next.js 16, Tailwind v4, Supabase; data dummy dan lokal). Jawab dalam Bahasa Indonesia; kode, komentar kode, dan nama tes dalam English. Jangan menulis kode sebelum selesai membaca dan sebelum rencana disetujui.
+Kamu melanjutkan slicing RanahMenulis (Next.js 16, Tailwind v4, Supabase; data dummy dan lokal). Jawab dalam Bahasa Indonesia; kode, komentar kode, dan nama tes dalam English. **Jangan menulis kode sebelum selesai membaca dan sebelum rencana disetujui.**
 
 ## 1. Baca dulu, berurutan
 
-1. `CLAUDE.md` (terutama **Aturan kerja** butir 2, 3, 5, 6, 7) dan `AGENTS.md` (Next.js 16 berbeda dari yang kamu kenal; baca `node_modules/next/dist/docs/` sebelum menulis kode Next.js).
-2. `docs/desain/Catatan Slicing.md`: urutan, aturan, utang, keputusan terbuka. Beberapa catatan di sana sudah basi (lihat bagian 3).
-3. `docs/MVP Scope RanahMenulis.md` dan `docs/prd/23-ruang-lingkup-mvp.md`, lalu `docs/catatan-keputusan-client.md`.
-4. Memori proyek di `C:\Users\toxix\.claude\projects\d--Code-Ranah-Penulis\memory\` (status, keputusan, pelajaran teknis).
+1. `CLAUDE.md` (terutama Aturan kerja butir 2, 3, 5 termasuk butir "Alur dan aksesibilitas", 6, 7) dan `AGENTS.md` (Next.js 16 berbeda; baca `node_modules/next/dist/docs/` sebelum menulis kode Next).
+2. `docs/desain/Catatan Slicing.md` (langkah 6, sub-langkah 6f, dan catatan terakhir "Jalan keluar Editor dan Tulis postingan, dan bug beku").
+3. **PRD Projects (baca sebelum merekomendasikan cakupan apa pun):** `docs/prd/` bagian 08 (modul), 09 (PRJ-01..04, ANT, SOL, KLS, LMB), 10 (kebutuhan fungsional), 13 (alur), 14 (business rules), 15 (peran), 17.5 (halaman Projects), 19 (QRIS, PLT-07), 20 (notifikasi proyek), 23 (MVP), 28 (Q-13, Q-19..Q-31 dan keputusan terbuka lain). Lalu `docs/MVP Scope RanahMenulis.md` dan `docs/catatan-keputusan-client.md`.
+4. `DESIGN.md` bagian 6.7 (halaman di luar pola Medium), 7.4 (status submission monokrom), 8 (keadaan), 9 (larangan).
+5. Memori proyek di `C:\Users\toxix\.claude\projects\d--Code-Ranah-Penulis\memory\`.
+6. `git status` dan `git log --oneline -5`. Posisi: `main` sama dengan `origin/main` (commit `8d05cb5` sudah di-push). **Belum di-commit:** 6f-1 (`src/features/projects/`, `src/app/(app)/projects/`, `src/components/ui/sticky-chip-bar.tsx`, perubahan `nav.ts` dan `discover-view.tsx`, tes baru) dan dokumen (`CLAUDE.md`, `DESIGN.md`, `Catatan Slicing.md`, prompt ini), ditambah dua prompt landing milik user. Jangan push dan jangan commit tanpa diminta.
 
-## 2. Posisi sekarang (16 November 2026)
+## 2. Posisi (16 November 2026)
 
-- **Selesai:** langkah 1–5 (token, landing, Editor Studio, Streak/Beranda/Dokumen/kerangka aplikasi, Community) dan 6a (Tersimpan, Notifikasi), 6b (profil publik), 6c (Bagikan, Kirim ke proyek, sampah), 6d (Statistik). Landing v3 sudah dipasang (font Inter dan Merriweather).
-- **Belum:** **6e** Akun dan onboarding, **6f** Projects, **6g** Kelola, Admin, Juri, Grup.
-- **Keputusan user yang tetap berlaku:** semua slicing memakai data dummy dan login di-bypass sampai SEMUA layar selesai dan desain disetujui. **Jangan** membangun backend (auth, apply migrasi, RLS, store Supabase) dan jangan menagih persetujuannya sebelum itu. Claude Design tidak dipakai; layar dibangun langsung dari `src/components/ui/` dan DESIGN.md.
-- **Marketplace tidak masuk MVP** (PRD 23, keputusan client no. 11, Q-39 dan Q-51). Jangan menyentuhnya.
-- **Git:** `main` maju beberapa commit dari `origin/main`. Jangan push dan jangan commit tanpa diminta. Jalankan `git status` dan laporkan apa yang belum di-commit.
+- Selesai: langkah 1–5, 6a–6d, penghitung Studio, bilah format, perbaikan beku dan jalan keluar, **6f-1 (katalog dan detail Projects)**. **Berikutnya: sub-langkah 6f berikutnya** (rekomendasi 6f-2 Pendaftaran; audit aksesibilitas dan alur tetap ditunda, lihat Catatan Slicing).
+- Keputusan tetap: semua slicing memakai data dummy dan lokal, login di-bypass, **tanpa backend** (auth, migrasi, RLS, store Supabase) dan jangan menagih persetujuannya. Claude Design tidak dipakai; layar dibangun langsung dari `src/components/ui/` dan DESIGN.md. **Marketplace bukan MVP**, jangan disentuh.
+- **Sudah ada dari 6f-1** (`src/features/projects/`, lihat bullet Projects di CLAUDE.md): `/projects` dan `/projects/[slug]`, nav aktif, sembilan proyek fixture, `project-model.ts` murni. Tombol "Daftar" di `project-aside.tsx` sengaja **nonaktif**: 6f-2 menggantinya (`actionFor` sudah memberi labelnya).
+- **Titik sambung yang masih menunggu** (ganti, jangan tambah janji baru):
+  - `SendToProjectDialog` (`src/features/studio/components/send-to-project-dialog.tsx`): keadaan "Belum ada proyek yang menerima karya"; dipakai menu Editor dan menu daftar dokumen.
+  - Beranda: "Perlu perhatian" dan "Proyek saya" adalah fixture di `src/features/home/fixtures.ts`.
+  - Notifikasi proyek: `href: null` di `src/features/notifications/fixtures.ts`.
+  - Profil publik: tab Proyek kosong untuk semua penulis (hanya tampil atas persetujuan penulis).
+  - Penanda "Dikirim ke proyek" di daftar dokumen belum ada.
+- Landing sudah menjanjikan: Ranah Project, Antologi/Solo Book/Kelas Menulis/Lomba Menulis, Kirim naskah, status kiriman. Tutup, jangan tambah janji.
 
-## 3. Rapikan dulu (kecil, satu rencana)
+## 3. Cara memecah 6f (usulan; konfirmasi ke user)
 
-- Catatan Slicing basi di: "Huruf sans final menunggu uji spesimen" (sudah Inter dan Merriweather), "Perubahan langkah 5 belum di-commit", deskripsi langkah 2 yang masih menyebut Tiga janji dan Cara kerja, dan langkah 1 yang masih menyebut Source Serif 4 dan Schibsted Grotesk. Perbarui hanya yang kamu verifikasi.
-- Catat di rencana bahwa tombol Studio di landing menuju `/studio/baru`, yang hanya bisa dibuka karena login di-bypass. Tandai agar diganti saat 6e/auth dipasang.
+Pecah per bagian PRD 17 dan kerjakan **satu sub-langkah per rencana**:
+1. ~~Katalog Projects dan detail proyek (PRJ-01)~~ **selesai (6f-1).**
+2. Ketentuan, persetujuan hak cipta, dan pendaftaran (PRJ-02).
+3. Kirim karya dari Studio: versi beku dokumen (STD-09), ganti `SendToProjectDialog` dari keadaan kosong.
+4. Status submission (DESIGN 7.4) dan "Proyek saya" (PRJ-04); sambungkan Beranda, Notifikasi, dan profil.
+5. QRIS semi-manual (PLT-07). Panel Organizer, Editor, dan Juri adalah 6g, bukan 6f.
 
-## 4. Janji landing yang bergantung pada slicing
+**Celah di pembagian ini:** PRD 17.5 juga memuat Dasbor Solo (SOL-02), Dasbor Kelas dan Halaman tugas (KLS-02/03), Halaman hasil lomba (LMB-02), dan Detail submission dengan riwayat versi dan Kirim Revisi. Usulan: sub-langkah 6f-5 "dasbor per kategori" sebelum QRIS (tercatat di Catatan Slicing, belum disetujui user). Untuk Kelas Menulis, "Kirim karya" berarti mengumpulkan tugas, bukan submission.
 
-Landing sudah menjanjikan hal-hal ini. Slicing berikutnya harus menutupnya, bukan menambah janji baru:
+Tanyakan ke user sub-langkah mana yang dimulai sebelum merencanakan (rekomendasi: 6f-2, karena tombol Daftar sudah menunggu dan 6f-3 butuh pendaftaran lebih dulu).
 
-| Janji landing | Ditutup oleh |
-| --- | --- |
-| Penghitung karakter dan paragraf (ubin "Word & Character Counter", STD-04 MVP), waktu baca (Q-52: kata ÷ 200 per menit, dibulatkan ke atas, minimal 1 menit) di editor | **Tambahan kecil di Studio**, bisa dikerjakan lebih dulu. **Selesai 16 November 2026**: modul hitung di `src/lib/text-stats.ts`, `editor-stats.ts` dan `word-count.tsx` di Studio |
-| Ranah Project, Antologi/Solo Book/Kelas Menulis/Lomba Menulis, Kirim naskah, status kiriman, pilar "Peluang Terbit" dan "Pengembangan Diri" | **6f Projects** (celah terbesar) |
-| "Kamu memilih negara di profil, dan tulisanmu muncul di daftar penulis negara itu"; tombol Masuk dan Daftar | **6e Akun dan onboarding** |
-| Grup Penulis (FAQ) | **6g** (Q-38 belum diputuskan) |
+## 4. Aturan kerja yang wajib
 
-Di luar slicing, tapi blokir sebelum tayang (laporkan, jangan kerjakan tanpa rencana): halaman `/kebijakan-privasi` dan `/kontak` belum ada, migrasi `0002_daftar_tunggu.sql` belum diterapkan (butuh rencana dan persetujuan sendiri), belum ada gambar Open Graph.
+- **Klarifikasi sebelum eksekusi** (butir 2): tanyakan alur, keadaan kosong dan gagal, batas, dan privasi, dengan opsi konkret dan rekomendasi. Rujuk PRD atau catatan keputusan bila jawabannya sudah ada. Butir bertanda `[usulan]` atau `[konfirmasi]` belum disetujui client; tandai di UI dan kode, jangan dianggap final. Pertanyaan Q-19 dst. yang belum dijawab jangan dikarang jawabannya.
+- **Rencana sebelum perubahan besar** (butir 3): lebih dari 5 berkas, lebih dari satu modul, database, atau konfigurasi = rencana, lalu berhenti sampai user menyetujui eksplisit.
+- **Setiap layar penuh wajib punya jalan keluar yang terlihat** (Kirim karya, detail proyek). Dialog modal yang diikuti `router.push/back` menutup dirinya dulu. Uji sebagai **alur lintas layar** dengan klik mouse sungguhan (`Input.dispatchMouseEvent`) **dan** keyboard saja; fokus kembali ke pemicu setelah dialog.
+- **Rutinitas tiap sub-langkah**: komponen yang ada, `break-ui` (judul panjang, nama satu huruf, nol butir, angka besar), `mobile-native` dan cek 375, lihat di peramban nyata (375 dan 1280, terang dan gelap), `code-review` (verifikasi tiap temuan; separuh valid) dan `simplify`. Hindari `apple-design` dan `choreograph`. `design-taste-frontend` hanya untuk landing.
+- **DESIGN.md menang atas skill**: hanya `rounded-full` atau tanpa radius, satu tombol terisi per layar, merah hanya untuk galat dan aksi berbahaya, keadaan memuat/kosong/galat wajib, status submission monokrom (7.4).
+- **Gate**: `npm run check` (±4 menit), dan `npm run build` bila menyentuh routing atau config. Tes regresi ditulis dulu. Berkas tes maksimal 300 baris (pecah, jangan naikkan batas). Laporkan apa adanya. Beri pesan commit (Conventional Commits, English); jangan commit sendiri.
+- Teks baru di layar aplikasi hanya Indonesia (belum dua bahasa); catat sebagai disengaja, jangan menambah kamus diam-diam. Perbarui `CLAUDE.md`, `DESIGN.md`, `Catatan Slicing.md`, dan memori.
 
-## 5. Urutan yang disarankan (konfirmasi ke user dulu)
+## 5. Pelajaran teknis
 
-1. Penghitung karakter, paragraf, dan waktu baca di editor (satu modul, kecil).
-2. **6f Projects**, dipecah per bagian: katalog dan detail proyek, lalu Kirim karya (versi beku dari dokumen, `SendToProjectDialog` diganti dari keadaan kosong), lalu status submission (DESIGN 7.4), lalu QRIS. Pecah sesuai bagian 17 PRD.
-3. **6e Akun dan onboarding**, lalu **6g**.
-
-Tanyakan ke user urutan mana yang dipilih sebelum merencanakan. Bila user menyuruh langsung mengerjakan salah satu, tetap ikuti aturan di bawah.
-
-## 6. Aturan kerja yang wajib
-
-- **Klarifikasi sebelum eksekusi** (CLAUDE.md butir 2): tanyakan alur, keadaan kosong dan gagal, batas, dan privasi, dengan opsi konkret dan rekomendasi. Rujuk PRD atau `catatan-keputusan-client.md` bila jawabannya sudah ada; **baca PRD sebelum merekomendasikan cakupan** (rekomendasi "statistik postingan" untuk 6d pernah salah karena itu Fase 2). Perubahan tata letak: rumuskan masalahnya dulu, lalu tawarkan konsep; jangan langsung "memperbaiki".
-- **Rencana sebelum perubahan besar** (butir 3): lebih dari 5 berkas, lebih dari satu modul, database, atau konfigurasi = rencana, lalu **berhenti sampai user menyetujui eksplisit**. Setiap sub-langkah 6 punya rencana sendiri.
-- **Rutinitas tiap sub-langkah** (Catatan Slicing "Aturan kerja"): komponen yang ada → `break-ui` → `mobile-native` dan cek 375 → lihat di peramban sungguhan → `code-review` dan `simplify`. Skill lain hanya bila perlu (`security-review` untuk 6e dan 6g). Hindari `apple-design` dan `choreograph`. `design-taste-frontend` hanya untuk landing.
-- **Gate** (butir 5): `npm run check`, dan `npm run build` bila menyentuh routing atau config. Laporkan apa adanya. Beri rekomendasi commit (butir 6) dan jangan commit sendiri.
-- DESIGN.md menang atas skill: hanya `rounded-full` atau tanpa radius, satu tombol terisi per layar, merah hanya untuk galat dan aksi berbahaya, keadaan memuat/kosong/galat wajib, terang dan gelap, lebar 375 dan 1280, judul panjang, nama satu huruf, nol butir.
-- Teks baru di Studio, Community, dan layar aplikasi masih hanya Indonesia (belum dua bahasa); catat sebagai yang disengaja belum, jangan diam-diam menambah kamus.
-
-## 7. Pelajaran teknis dari sesi sebelumnya
-
-- **Server dev proyek ini di port 3001** (port 3000 milik aplikasi lain; jangan jalankan `next dev` kedua). Server dev bisa terus menyajikan utilitas CSS lama setelah `@utility` di `globals.css` diubah: verifikasi lewat `npm run build` lalu `next start -p 3002`. Matikan **hanya** proses `next start` milik sendiri, periksa `CommandLine`-nya dulu (`TaskStop` hanya mematikan shell `npx`, bukan prosesnya).
-- Uji viewport nyata lewat Chrome DevTools Protocol (skrip Node WebSocket; Chrome di `C:\Program Files\Google\Chrome\Application\`; profil sementara; lebar 375 dan 1280; tunggu `main h1`; ukur `scrollWidth - innerWidth`). Skrip ditulis ulang tiap sesi di scratchpad. Di Git Bash pakai `MSYS_NO_PATHCONV=1`; heredoc menghilangkan backslash path Windows, tulis skrip dengan Write. Chrome headless biasa terpotong di bawah 500px.
-- **Jangan memanggil `new Date()` atau `Date.now()` saat render komponen klien** (Next 16 prerender menolaknya); baca di efek. `usePathname()` di rute dinamis butuh `<Suspense>`. Rute dinamis baru butuh `npx next typegen` agar `PageProps` dikenal. Tiptap `useEditor` harus diberi opsi di level modul.
-- Tanpa tailwind-merge: override kelas pada komponen perlu akhiran `!`. Menulis berkas dengan Python di Windows menghasilkan CRLF; jalankan Prettier sesudahnya. Tes jsdom `today-block` dan `compose-view` kadang flaky di bawah beban (ulangi). Komponen yang memakai `<dialog>` di tes memanggil `installDialogShim()`. Tes komponen yang memuat server action perlu `vi.mock` pada modul actions-nya.
-- `code-review` sering menuduh keliru: **verifikasi tiap temuan sebelum menerapkan** (kira-kira separuh valid). `simplify` cukup dikerjakan langsung.
+- Server dev di port 3001 (port 3000 milik aplikasi lain; jangan jalankan `next dev` kedua). Setelah ubah `@utility` di `globals.css`, verifikasi lewat `npm run build` dan `next start -p 3002`; matikan hanya proses sendiri (cek `CommandLine`).
+- Uji viewport nyata lewat Chrome DevTools Protocol (skrip Node WebSocket; Chrome di `C:\Program Files\Google\Chrome\Application\`; profil sementara; `MSYS_NO_PATHCONV=1`; tulis skrip dengan Write). Halaman yang di-cache Next tetap ada di DOM tersembunyi: saring elemen yang terlihat. Hindari regex di string template skrip.
+- Next 16 `cacheComponents` menyimpan halaman sebelumnya tersembunyi: modal terbuka di sana membuat halaman tujuan inert (sudah ditangani di `Dialog` dan `Drawer`, tetapi tutup dialog sebelum berpindah). Rute dinamis baru butuh `npx next typegen`; `usePathname()` di rute dinamis butuh `<Suspense>`.
+- Jangan `new Date()` atau `Date.now()` saat render komponen klien; baca di efek. Tiptap `useEditor` diberi opsi di level modul. Tanpa tailwind-merge: override kelas butuh akhiran `!`. Menulis berkas dengan Python di Windows menghasilkan CRLF; jalankan Prettier. Tes jsdom `today-block` dan `compose-view` kadang flaky (ulangi). Tes dengan `<dialog>` memanggil `installDialogShim()`; tes yang memuat server action butuh `vi.mock` pada modulnya.
 - `.npmrc` `min-release-age=7`: instal yang gagal karena itu disengaja.
+- **Dari 6f-1:** (1) Halaman `(app)` yang disimpan Next tetap hidup: state yang hanya diisi dari nilai awal akan basi saat kembali. Jadikan **alamat** sumber kebenaran (`useSearchParams`, sinkron saat render) dan buktikan di Chrome nyata (klik tautan "Semua Projects" dan nav). (2) Lint `react-hooks/set-state-in-effect` menolak `setState` sinkron di efek; baca jam lewat `queueMicrotask` atau di callback async. (3) Di tes, `useSearchParams` dari `next/navigation` perlu `vi.mock`. (4) `code-review` menemukan 7 dari 9 valid; semuanya dari data tepi (harga 0, kuota 0, tenggat tengah hari) dan state yang tidak ikut alamat. (5) Cek visual lewat skrip CDP di scratchpad (`cdp-projects.mjs` dkk.) ditulis ulang tiap sesi; `evaluate` tidak bisa mengembalikan elemen DOM (pakai `!!`). (6) `simplify` dikerjakan langsung tanpa empat agen.
+- Alur uji cepat 6f-1: buka `/beranda`, klik Projects, pilih chip, buka proyek, klik "Semua Projects"; ulangi hanya dengan Tab dan Enter.
 
-## 8. Mulai dengan
+## 6. Mulai dengan
 
-1. Baca bagian 1, jalankan `git status` dan `git log --oneline -10`, lalu laporkan ringkas: posisi, yang belum di-commit, dan apa yang basi di catatan.
-2. Ajukan pertanyaan urutan (bagian 5) dengan rekomendasi, dan **berhenti menunggu jawaban**.
-3. Setelah dijawab, ajukan **rencana** untuk satu sub-langkah (tujuan, berkas, langkah, risiko, cara membatalkan, pertanyaan terbuka), dan berhenti sampai disetujui.
+1. Baca bagian 1, jalankan `git status` dan `git log --oneline -10`, lalu laporkan ringkas posisi dan yang belum di-commit.
+2. Ajukan pertanyaan sub-langkah mana yang dimulai (bagian 3, sisa 6f-2 dst.) dengan rekomendasi, dan **berhenti menunggu jawaban**.
+3. Setelah dijawab, ajukan pertanyaan klarifikasi yang perlu dan **rencana** untuk satu sub-langkah, lalu berhenti sampai disetujui.
