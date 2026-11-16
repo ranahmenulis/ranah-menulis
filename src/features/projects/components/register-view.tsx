@@ -48,7 +48,9 @@ export function RegisterView({ slug, source }: Props) {
   }
   if (guest) {
     return (
-      <RegisterBlocked project={project}>Masuk untuk mendaftar ke proyek ini.</RegisterBlocked>
+      <RegisterBlocked project={project} signIn>
+        Masuk untuk mendaftar ke proyek ini.
+      </RegisterBlocked>
     );
   }
   if (state === "kuota-penuh") {

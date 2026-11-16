@@ -90,13 +90,13 @@ describe("ProfileView, another author", () => {
 });
 
 describe("ProfileView, your own", () => {
-  it("has no Ikuti, offers editing that is not ready, and links to Tersimpan for phones", async () => {
+  it("has no Ikuti, links to editing in Settings, and links to Tersimpan for phones", async () => {
     renderProfile("rinjaniputri");
     await screen.findByRole("heading", { level: 1, name: "Rinjani Putri" });
     expect(screen.queryByRole("button", { name: /Ikuti|Mengikuti/ })).toBeNull();
-    expect(
-      (screen.getByRole("button", { name: "Ubah profil" }) as HTMLButtonElement).disabled,
-    ).toBe(true);
+    expect(screen.getByRole("link", { name: "Ubah profil" }).getAttribute("href")).toBe(
+      "/pengaturan",
+    );
     const identity = screen.getByRole("complementary", { name: "Profil Rinjani Putri" });
     expect(within(identity).getByRole("link", { name: "Tersimpan" }).getAttribute("href")).toBe(
       "/tersimpan",

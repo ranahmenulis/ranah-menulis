@@ -1,9 +1,10 @@
 import type { ReactNode } from "react";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { TextLink } from "@/components/ui/text-link";
+import { SignInButton } from "@/features/account/components/auth-buttons";
 import { daysLeftLabel, feeLines, formatProjectDate } from "../project-model";
 import { deadlineText, quotaText } from "../project-text";
-import { projectAction } from "../project-action";
+import { projectAction, type ProjectAction } from "../project-action";
 import { registerHref } from "../registration-model";
 import type { Project, ProjectState, Registration } from "../types";
 
@@ -13,6 +14,23 @@ function Fact({ label, children }: { label: string; children: ReactNode }) {
       <dt className="text-xs text-ink-muted">{label}</dt>
       <dd className="text-sm wrap-anywhere">{children}</dd>
     </div>
+  );
+}
+
+/** The one button: a link when it can be used, "Masuk" for a guest on an open project, else off. */
+function ActionButton({ action, signIn }: { action: ProjectAction; signIn: boolean }) {
+  if (action.enabled) {
+    return (
+      <ButtonLink href={action.href} className="w-full">
+        {action.label}
+      </ButtonLink>
+    );
+  }
+  if (signIn) return <SignInButton className="w-full">{action.label}</SignInButton>;
+  return (
+    <Button disabled className="w-full">
+      {action.label}
+    </Button>
   );
 }
 
@@ -91,15 +109,7 @@ export function ProjectAside({ project, state, now, guest, registration, sentCou
         {action.sentLine && <Fact label="Karya terkirim">{action.sentLine}</Fact>}
       </dl>
       <div className="grid gap-2">
-        {action.enabled ? (
-          <ButtonLink href={action.href} className="w-full">
-            {action.label}
-          </ButtonLink>
-        ) : (
-          <Button disabled className="w-full">
-            {action.label}
-          </Button>
-        )}
+        <ActionButton action={action} signIn={guest && open} />
         {registration && !guest && (
           <>
             <p className="text-xs text-ink-muted">{registrationNote(project, registration)}</p>

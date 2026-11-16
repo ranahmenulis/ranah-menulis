@@ -6,6 +6,7 @@ import { EmptyState } from "@/components/ui/states";
 import { Tabs } from "@/components/ui/tabs";
 import type { SubmissionStore } from "@/features/projects/storage/submission-store";
 import { useViewer } from "@/lib/viewer";
+import { SignInButton } from "@/features/account/components/auth-buttons";
 import { NOTIFICATION_TABS, inTab } from "./notification-model";
 import { NotificationList } from "./notification-list";
 import type { NotificationTab } from "./types";
@@ -46,14 +47,7 @@ export function NotificationsView({ store }: { store?: SubmissionStore }) {
       )}
 
       {guest ? (
-        <EmptyState
-          className="mt-4"
-          action={
-            <Button disabled title="Masuk tersedia setelah akun dibuka">
-              Masuk
-            </Button>
-          }
-        >
+        <EmptyState className="mt-4" action={<SignInButton>Masuk</SignInButton>}>
           Masuk untuk melihat notifikasimu.
         </EmptyState>
       ) : (

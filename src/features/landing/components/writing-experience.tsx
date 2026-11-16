@@ -56,7 +56,7 @@ export function WritingExperience({ copy }: { copy: Dictionary["landing"]["studi
             ))}
           </ol>
           <div className="mt-4 flex justify-center md:col-span-12 md:mt-6">
-            <ButtonLink href="/studio/baru" size="hero" className="lp-btn w-full sm:w-auto">
+            <ButtonLink href="/daftar" size="hero" className="lp-btn w-full sm:w-auto">
               {copy.cta}
               <ArrowRight size={18} aria-hidden />
             </ButtonLink>

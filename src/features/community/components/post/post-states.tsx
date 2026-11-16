@@ -1,8 +1,9 @@
 "use client";
 
 import { MagnifyingGlass } from "@phosphor-icons/react/dist/ssr";
-import { Button, ButtonLink } from "@/components/ui/button";
+import { ButtonLink } from "@/components/ui/button";
 import { ErrorBanner, RetryButton, Skeleton } from "@/components/ui/states";
+import { SignInButton, SignUpButton } from "@/features/account/components/auth-buttons";
 import { DISCOVER_HREF } from "@/features/app-shell/nav";
 
 /** Shape of a post, shown only if loading takes more than 300ms (DESIGN.md 8). */
@@ -86,17 +87,10 @@ export function GuestAside({ authorName }: { authorName: string }) {
           mengikuti {authorName}.
         </p>
         <div className="flex items-center gap-2">
-          <Button variant="secondary" disabled title="Masuk tersedia setelah akun dibuka">
-            Daftar
-          </Button>
-          <Button
-            variant="text"
-            disabled
-            title="Masuk tersedia setelah akun dibuka"
-            className="text-ink!"
-          >
+          <SignUpButton variant="secondary">Daftar</SignUpButton>
+          <SignInButton variant="text" className="text-ink!">
             Masuk
-          </Button>
+          </SignInButton>
         </div>
       </div>
     </aside>

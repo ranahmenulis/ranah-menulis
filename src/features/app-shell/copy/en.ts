@@ -23,11 +23,11 @@ export const shell: typeof source = {
     notifications: "Notifications, {count} unread",
     notificationsNone: "Notifications",
     writeNew: "Write a new document",
+    account: "Account settings",
   },
   guest: {
     brand: "RanahMenulis",
     signIn: "Sign in",
     signUp: "Sign up",
-    soon: "Sign-in opens once accounts are available",
   },
 };

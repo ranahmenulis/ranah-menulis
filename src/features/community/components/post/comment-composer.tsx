@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/field";
-import { DUMMY_USER } from "@/features/app-shell/nav";
+import { useAccount } from "@/features/account/account-store";
 
 type Props = {
   /** Visible to screen readers only; the field itself shows a placeholder. */
@@ -28,6 +28,7 @@ export function CommentComposer({
   onSubmit,
   onCancel,
 }: Props) {
+  const { profile } = useAccount();
   const [text, setText] = useState(initialText);
   const [sending, setSending] = useState(false);
   const [failed, setFailed] = useState(false);
@@ -52,7 +53,7 @@ export function CommentComposer({
       }}
     >
       <div className="grid grid-cols-[2rem_minmax(0,1fr)_auto] items-center gap-3">
-        <Avatar name={DUMMY_USER.name} size={32} />
+        <Avatar name={profile.name} src={profile.avatar} size={32} />
         <label className="contents">
           <span className="sr-only">{label}</span>
           <Input

@@ -4,6 +4,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 const pathname = vi.hoisted(() => ({ value: "/studio" }));
 vi.mock("next/navigation", () => ({
   usePathname: () => pathname.value,
+  useSearchParams: () => new URLSearchParams(),
   useRouter: () => ({ back: vi.fn(), push: vi.fn() }),
 }));
 
