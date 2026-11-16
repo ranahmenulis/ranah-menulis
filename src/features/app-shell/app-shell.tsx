@@ -4,6 +4,8 @@ import { PencilSimpleLine } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
+import { useLastDocument } from "@/features/studio/hooks/use-last-document";
+import { studioStore } from "@/features/studio/storage/store";
 import { cn } from "@/lib/cn";
 import { useT } from "@/lib/i18n/provider";
 import { ViewerSync, useViewer } from "@/lib/viewer";
@@ -19,6 +21,7 @@ import {
   showsWriteButton,
   sidebarSub,
 } from "./nav";
+import { ResumeWriting } from "./resume-writing";
 import { TopBar } from "./top-bar";
 
 /**
@@ -32,6 +35,8 @@ export function AppShell({ children }: { children: ReactNode }) {
   const [sidebar, setSidebar] = useState(true);
   const viewer = useViewer();
   const onPost = isPostPage(pathname);
+  // One read for both navigations (sidebar and rail are both in the DOM).
+  const lastDocument = useLastDocument(studioStore, pathname);
 
   if (viewer === "tamu") {
     return (
@@ -67,6 +72,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                 )}
               </div>
             ))}
+            <ResumeWriting variant="card" doc={lastDocument} />
           </nav>
         )}
 
@@ -82,6 +88,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               active={active === entry.id || (entry.id === "studio" && active === "streak")}
             />
           ))}
+          <ResumeWriting variant="icon" doc={lastDocument} />
         </nav>
 
         <main className="min-w-0 flex-1 px-4 py-4 max-md:pb-40 md:px-12 md:py-10">{children}</main>

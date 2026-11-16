@@ -34,6 +34,19 @@ export function listEntries(
   return [...folderItems, ...items];
 }
 
+/**
+ * The document to resume writing in: the most recently edited one that is not in Sampah. Shared by
+ * Beranda and the app frame so "last" means one thing. Ties keep the stored order.
+ */
+export function pickLastDocument(docs: StudioDocument[]): StudioDocument | null {
+  let last: StudioDocument | null = null;
+  for (const doc of docs) {
+    if (doc.deletedAt) continue;
+    if (!last || doc.updatedAt > last.updatedAt) last = doc;
+  }
+  return last;
+}
+
 /** Documents in Sampah, most recently trashed first. */
 export function trashed(docs: StudioDocument[]): StudioDocument[] {
   return docs.filter((d) => d.deletedAt).sort((a, b) => (b.deletedAt ?? 0) - (a.deletedAt ?? 0));

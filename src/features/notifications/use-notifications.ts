@@ -1,6 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { contestNotifications } from "@/features/projects/lomba/contest-notifications";
+import { useContestOverrides } from "@/features/projects/lomba/stage-store";
+import { useRegistrations } from "@/features/projects/registration-store";
+import { activeSubmissions } from "@/features/projects/submission-model";
+import { useProjects } from "@/features/projects/use-projects";
 import { assignmentNotifications } from "@/features/projects/kelas/assignment-notifications";
 import { useAssignments } from "@/features/projects/kelas/hooks/use-assignments";
 import type { AssignmentStore } from "@/features/projects/kelas/storage/assignment-store";
@@ -17,6 +22,19 @@ import {
 import { markRead, useReadIds } from "./read-state";
 import type { Notification } from "./types";
 
+/** The title of the reader's own work in each contest a panel made them a finalist of. */
+function ownWorksOf(
+  overrides: ReturnType<typeof useContestOverrides>,
+  submissions: Parameters<typeof activeSubmissions>[0],
+): Record<string, string> {
+  const titles: Record<string, string> = {};
+  for (const [slug, override] of Object.entries(overrides)) {
+    const work = override.mine ? activeSubmissions(submissions, slug)[0] : undefined;
+    if (work) titles[slug] = work.title;
+  }
+  return titles;
+}
+
 /**
  * The fixtures plus the events of the submissions and class assignments on this device. A failed
  * or slow read of either just leaves its events out: notifications are a hint, and everything else
@@ -25,13 +43,33 @@ import type { Notification } from "./types";
 function useAllNotifications(store?: SubmissionStore, tasks?: AssignmentStore): Notification[] {
   const { status, submissions } = useSubmissions(store);
   const assignments = useAssignments(tasks);
+  const catalog = useProjects();
+  const registrations = useRegistrations();
+  const overrides = useContestOverrides();
   return useMemo(
     () => [
       ...(status === "ready" ? submissionNotifications(submissions) : []),
       ...(assignments.status === "ready" ? assignmentNotifications(assignments.submissions) : []),
+      ...(catalog.status === "ready"
+        ? contestNotifications({
+            projects: catalog.projects,
+            registrations,
+            overrides,
+            now: catalog.now,
+            ownWorks: ownWorksOf(overrides, status === "ready" ? submissions : []),
+          })
+        : []),
       ...notificationFixtures,
     ],
-    [status, submissions, assignments.status, assignments.submissions],
+    [
+      status,
+      submissions,
+      assignments.status,
+      assignments.submissions,
+      catalog,
+      registrations,
+      overrides,
+    ],
   );
 }
 

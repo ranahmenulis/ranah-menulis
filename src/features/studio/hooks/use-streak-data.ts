@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { dayKey, totalWords, type DailyLog } from "../daily-progress";
+import { pickLastDocument } from "../documents";
 import {
   summarizeStreak,
   targetFor,
@@ -81,8 +82,7 @@ export function useStreakData(store: DocumentStore): StreakData {
   return useMemo(() => {
     const words = wordsByDay(history);
     const todayLog = history.find((l) => l.day === today);
-    const lastDocument =
-      docs.filter((d) => !d.deletedAt).sort((a, b) => b.updatedAt - a.updatedAt)[0] ?? null;
+    const lastDocument = pickLastDocument(docs);
     return {
       status,
       today,

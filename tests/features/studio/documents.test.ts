@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { listEntries, trashed } from "@/features/studio/documents";
+import { listEntries, pickLastDocument, trashed } from "@/features/studio/documents";
 import type { StudioDocument, StudioFolder } from "@/features/studio/storage/document-store";
 
 const content = { type: "doc" };
@@ -54,6 +54,33 @@ describe("listEntries", () => {
   it("sorts folders by name", () => {
     const entries = listEntries([], [folder("b", "Zebra"), folder("a", "Antologi")], null);
     expect(entries.map((e) => e.kind === "folder" && e.folder.name)).toEqual(["Antologi", "Zebra"]);
+  });
+});
+
+describe("pickLastDocument", () => {
+  it("returns the most recently edited document", () => {
+    const docs = [
+      doc("a", { updatedAt: 5 }),
+      doc("b", { updatedAt: 9 }),
+      doc("c", { updatedAt: 2 }),
+    ];
+    expect(pickLastDocument(docs)?.id).toBe("b");
+  });
+
+  it("skips documents in Sampah, even when they are the newest", () => {
+    const docs = [doc("a", { updatedAt: 5 }), doc("gone", { updatedAt: 99, deletedAt: 100 })];
+    expect(pickLastDocument(docs)?.id).toBe("a");
+  });
+
+  it("returns null with no documents or only trashed ones", () => {
+    expect(pickLastDocument([])).toBeNull();
+    expect(pickLastDocument([doc("x", { deletedAt: 3 })])).toBeNull();
+  });
+
+  it("does not reorder the list it is given", () => {
+    const docs = [doc("a", { updatedAt: 1 }), doc("b", { updatedAt: 2 })];
+    pickLastDocument(docs);
+    expect(docs.map((d) => d.id)).toEqual(["a", "b"]);
   });
 });
 

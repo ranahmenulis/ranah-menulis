@@ -23,6 +23,12 @@ export const shell = {
     writeNew: "Tulis dokumen baru",
     account: "Pengaturan akun",
   },
+  resume: {
+    label: "Lanjutkan menulis",
+    short: "Lanjutkan",
+    untitled: "Tanpa judul",
+    railLabel: "Lanjutkan menulis: {title}",
+  },
   guest: {
     brand: "RanahMenulis",
     signIn: "Masuk",

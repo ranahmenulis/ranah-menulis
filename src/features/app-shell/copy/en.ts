@@ -25,6 +25,12 @@ export const shell: typeof source = {
     writeNew: "Write a new document",
     account: "Account settings",
   },
+  resume: {
+    label: "Continue writing",
+    short: "Continue",
+    untitled: "Untitled",
+    railLabel: "Continue writing: {title}",
+  },
   guest: {
     brand: "RanahMenulis",
     signIn: "Sign in",
