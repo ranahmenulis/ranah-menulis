@@ -6,6 +6,9 @@ import { useContestOverrides } from "@/features/projects/lomba/stage-store";
 import { useRegistrations } from "@/features/projects/registration-store";
 import { activeSubmissions } from "@/features/projects/submission-model";
 import { useProjects } from "@/features/projects/use-projects";
+import { useSoloRows } from "@/features/projects/solo/hooks/use-solo-rows";
+import { soloNotifications } from "@/features/projects/solo/solo-notifications";
+import type { SoloStore } from "@/features/projects/solo/storage/solo-store";
 import { assignmentNotifications } from "@/features/projects/kelas/assignment-notifications";
 import { useAssignments } from "@/features/projects/kelas/hooks/use-assignments";
 import type { AssignmentStore } from "@/features/projects/kelas/storage/assignment-store";
@@ -40,9 +43,14 @@ function ownWorksOf(
  * or slow read of either just leaves its events out: notifications are a hint, and everything else
  * stays.
  */
-function useAllNotifications(store?: SubmissionStore, tasks?: AssignmentStore): Notification[] {
+function useAllNotifications(
+  store?: SubmissionStore,
+  tasks?: AssignmentStore,
+  solo?: SoloStore,
+): Notification[] {
   const { status, submissions } = useSubmissions(store);
   const assignments = useAssignments(tasks);
+  const soloRows = useSoloRows(solo);
   const catalog = useProjects();
   const registrations = useRegistrations();
   const overrides = useContestOverrides();
@@ -50,6 +58,7 @@ function useAllNotifications(store?: SubmissionStore, tasks?: AssignmentStore): 
     () => [
       ...(status === "ready" ? submissionNotifications(submissions) : []),
       ...(assignments.status === "ready" ? assignmentNotifications(assignments.submissions) : []),
+      ...(soloRows.status === "ready" ? soloNotifications(soloRows.rows) : []),
       ...(catalog.status === "ready"
         ? contestNotifications({
             projects: catalog.projects,
@@ -66,6 +75,8 @@ function useAllNotifications(store?: SubmissionStore, tasks?: AssignmentStore): 
       submissions,
       assignments.status,
       assignments.submissions,
+      soloRows.status,
+      soloRows.rows,
       catalog,
       registrations,
       overrides,
@@ -77,9 +88,13 @@ function useAllNotifications(store?: SubmissionStore, tasks?: AssignmentStore): 
  * Unread count only, for the bell in the top bar. It reads the submissions on this device too, so
  * their events count; nothing else is loaded.
  */
-export function useUnreadCount(store?: SubmissionStore, tasks?: AssignmentStore): number {
+export function useUnreadCount(
+  store?: SubmissionStore,
+  tasks?: AssignmentStore,
+  solo?: SoloStore,
+): number {
   const readIds = useReadIds();
-  const all = useAllNotifications(store, tasks);
+  const all = useAllNotifications(store, tasks, solo);
   return useMemo(() => unreadCount(withReadState(all, readIds)), [all, readIds]);
 }
 
@@ -96,9 +111,10 @@ export type NotificationsData = {
 export function useNotifications(
   store?: SubmissionStore,
   tasks?: AssignmentStore,
+  solo?: SoloStore,
 ): NotificationsData {
   const readIds = useReadIds();
-  const all = useAllNotifications(store, tasks);
+  const all = useAllNotifications(store, tasks, solo);
   const [now, setNow] = useState(0);
 
   // Reading the clock during render is refused by Next 16 prerender, so it happens after mount.

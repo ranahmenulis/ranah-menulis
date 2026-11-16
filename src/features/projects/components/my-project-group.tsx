@@ -3,6 +3,7 @@ import { StatusSubmission } from "@/components/ui/status-submission";
 import { TextLink } from "@/components/ui/text-link";
 import { categoryLabel, formatNumber, formatProjectDate, projectHref } from "../project-model";
 import { dashboardHref } from "../kelas/class-model";
+import { soloDashboardHref } from "../solo/solo-model";
 import { resultsHref } from "../lomba/contest-model";
 import type { MyProject } from "../my-projects";
 import { submissionHref } from "../submission-href";
@@ -77,6 +78,16 @@ export function MyProjectGroup({ row }: { row: MyProject }) {
             {project.title}
           </Link>
         </h2>
+        {project.block.kind === "solo" &&
+          works.length > 0 &&
+          registration.status === "terdaftar" && (
+            <TextLink
+              href={soloDashboardHref(project.slug)}
+              className="w-fit text-xs text-ink-muted"
+            >
+              Buka dasbor penerbitan
+            </TextLink>
+          )}
         {project.block.kind === "lomba" && (
           <TextLink href={resultsHref(project.slug)} className="w-fit text-xs text-ink-muted">
             Lihat hasil lomba
