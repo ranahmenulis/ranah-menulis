@@ -435,6 +435,8 @@ Prinsip: **makin berisi, makin butuh tindakanmu.** Selalu ada label teks; ikon h
 
 Di tampilan Organizer/Editor, status yang terisi adalah yang menunggu tindakan mereka (misalnya "Terkirim" untuk editor).
 
+Status tugas Kelas Menulis (`StatusTugas`) memakai bahasa yang sama dan tidak dicampur dengan tabel di atas: Belum dikumpulkan (garis putus-putus), Lewat tenggat dan Selesai (garis `line-strong`, Selesai dengan centang), Dikumpulkan (garis `line`), dan **Perlu perbaikan** (satu-satunya yang terisi). Sebelum kelas dimulai tugas hanya berupa teks "Belum dibuka" [usulan].
+
 ### 7.5 Penanda visibilitas
 
 Selalu di dekat judul dokumen dan di dialog Bagikan: ikon + teks `text-xs`. **Pribadi** (gembok), **Grup: Nama Grup** (dua orang), **Publik** (globe). Mengubah ke Publik selalu lewat dialog yang menyebut persis teks mana yang akan tampil.

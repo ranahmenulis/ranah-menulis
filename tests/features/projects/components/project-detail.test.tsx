@@ -62,8 +62,9 @@ describe("ProjectDetail", () => {
     );
     await open(slug);
     const facts = within(aside());
-    expect((facts.getByRole("button", { name: "Terdaftar" }) as HTMLButtonElement).disabled).toBe(
-      true,
+    // A registered reader of a class gets the way into its dashboard instead of Daftar.
+    expect(facts.getByRole("link", { name: "Buka dasbor kelas" }).getAttribute("href")).toBe(
+      `/projects/${slug}/dasbor`,
     );
     expect(facts.queryByRole("link", { name: "Daftar" })).toBeNull();
     expect(facts.getByText("Sisa 5 dari 30 kuota")).toBeTruthy();
