@@ -7,18 +7,17 @@ Kamu melanjutkan slicing RanahMenulis (Next.js 16, Tailwind v4, Supabase; data d
 3. **PRD Projects (baca sebelum merekomendasikan cakupan apa pun):** `docs/prd/` bagian 08 (modul), 09 (PRJ-01..04, ANT, SOL, KLS, LMB), 10 (kebutuhan fungsional), 13 (alur), 14 (business rules), 15 (peran), 17.5 (halaman Projects), 19 (QRIS, PLT-07), 20 (notifikasi proyek), 23 (MVP), 28 (Q-13, Q-19..Q-31 dan keputusan terbuka lain). Lalu `docs/MVP Scope RanahMenulis.md` dan `docs/catatan-keputusan-client.md`.
 4. `DESIGN.md` bagian 6.7 (halaman di luar pola Medium), 7.4 (status submission monokrom), 8 (keadaan), 9 (larangan).
 5. Memori proyek di `C:\Users\toxix\.claude\projects\d--Code-Ranah-Penulis\memory\`.
-6. `git status` dan `git log --oneline -5`. Posisi: `main` ada di `35b2b1c` (6f-2) di atas `c3fda02` (6f-1); keduanya **belum di-push** (cek `git status -sb`). Yang belum ter-track hanya dua prompt landing milik user di `docs/desain/landing/`. Jangan push dan jangan commit tanpa diminta.
+6. `git status` dan `git log --oneline -5`. Posisi: 6f-1 sampai 6f-3 sudah di-commit; **6f-4 mungkin belum** (cek `git status -sb`). Yang belum ter-track hanya dua prompt landing milik user di `docs/desain/landing/`. Jangan push dan jangan commit tanpa diminta.
 
 ## 2. Posisi (16 November 2026)
 
-- Selesai: langkah 1–5, 6a–6d, penghitung Studio, bilah format, perbaikan beku dan jalan keluar, **6f-1 (katalog dan detail Projects)**, **6f-2 (pendaftaran)**, dan **6f-3 (Kirim karya)**. **Berikutnya: sub-langkah 6f berikutnya** (rekomendasi 6f-4 Status submission dan "Proyek saya"; audit aksesibilitas dan alur tetap ditunda, lihat Catatan Slicing). Cek `git status -sb` dan `git log --oneline -5`: 6f-1, 6f-2, 6f-3 mungkin belum di-commit atau di-push. Jangan commit dan jangan push tanpa diminta. Yang belum ter-track milik user hanya dua prompt landing di `docs/desain/landing/`.
+- Selesai: langkah 1–5, 6a–6d, penghitung Studio, bilah format, perbaikan beku dan jalan keluar, **6f-1 (katalog dan detail Projects)**, **6f-2 (pendaftaran)**, dan **6f-3 (Kirim karya)**, dan **6f-4 (status submission dan "Proyek saya")**. **Berikutnya: 6f-5 (dasbor per kategori)**; audit aksesibilitas dan alur tetap ditunda, lihat Catatan Slicing. Cek `git status -sb` dan `git log --oneline -5`: 6f-4 mungkin belum di-commit. Jangan commit dan jangan push tanpa diminta. Yang belum ter-track milik user hanya dua prompt landing di `docs/desain/landing/`.
 - Keputusan tetap: semua slicing memakai data dummy dan lokal, login di-bypass, **tanpa backend** (auth, migrasi, RLS, store Supabase) dan jangan menagih persetujuannya. Claude Design tidak dipakai; layar dibangun langsung dari `src/components/ui/` dan DESIGN.md. **Marketplace bukan MVP**, jangan disentuh.
-- **Sudah ada dari 6f-1 sampai 6f-3** (`src/features/projects/`, lihat bullet Projects di CLAUDE.md): `/projects`, `/projects/[slug]`, `/projects/[slug]/daftar`, `/projects/[slug]/kirim`, `registration-store.ts` (localStorage, `confirmRegistration`), `storage/` (IndexedDB `ranah-projects`, `SubmissionStore`), `Submission` dengan `versions[]` dan `statusLog[]`, `submission-model.ts`, `submit-flow.ts`, `use-submissions.ts` (`notifySubmissionsChanged` agar halaman Next yang di-cache tidak basi), `StatusSubmission` di `components/ui/status-submission.tsx` (semua status DESIGN 7.4 sudah ada). Status yang dibuat hanya `terkirim`.
+- **Sudah ada dari 6f-1 sampai 6f-4** (`src/features/projects/`, lihat bullet Projects di CLAUDE.md): `/projects`, `/projects/[slug]`, `/projects/[slug]/daftar`, `/projects/[slug]/kirim`, `/projects/saya`, `/projects/[slug]/kiriman/[id]` dan `.../revisi`, `submission-status.ts` (tabel transisi PRD 10.5; putaran dan tenggat revisi dibaca dari `statusLog`), `submission-notifications.ts`, panel peninjau pengembangan di detail kiriman, Beranda "Perlu perhatian" dan "Proyek saya" dari data nyata, `registration-store.ts` (localStorage, `confirmRegistration`), `storage/` (IndexedDB `ranah-projects`, `SubmissionStore`), `Submission` dengan `versions[]` dan `statusLog[]`, `submission-model.ts`, `submit-flow.ts`, `use-submissions.ts` (`notifySubmissionsChanged` agar halaman Next yang di-cache tidak basi), `StatusSubmission` di `components/ui/status-submission.tsx` (semua status DESIGN 7.4 sudah ada). `SubmissionStore` kini punya `add` dan `update` atomik.
 - **Titik sambung yang masih menunggu** (ganti, jangan tambah janji baru):
-  - Beranda: "Perlu perhatian" dan "Proyek saya" adalah fixture di `src/features/home/fixtures.ts`.
-  - Notifikasi proyek: `href: null` di `src/features/notifications/fixtures.ts`; notifikasi wajib "Submission diterima sistem" (PRD 20) belum ada.
-  - Profil publik: tab Proyek kosong untuk semua penulis (hanya tampil atas persetujuan penulis).
-  - `SentWorks` di layar Kirim hanya daftar baca; detail, riwayat versi, revisi, dan tarik belum ada.
+  - Profil publik: tab Proyek kosong untuk semua penulis (hanya tampil atas persetujuan penulis; pengaturannya belum ada, tanya dulu).
+  - Kelas Menulis: `submission: null`; tombol detail untuk kelas masih "Terdaftar" dan "Proyek saya" menulis "Tugas kelas dikumpulkan di halaman kelas, yang menyusul" (ganti saat dasbor kelas ada).
+  - Butir pembayaran di Beranda dan notifikasi (`href: null`) menunggu QRIS (6f-6).
 - Landing sudah menjanjikan: Ranah Project, Antologi/Solo Book/Kelas Menulis/Lomba Menulis, Kirim naskah, status kiriman. Tutup, jangan tambah janji.
 
 ## 3. Cara memecah 6f (usulan; konfirmasi ke user)
@@ -27,13 +26,13 @@ Pecah per bagian PRD 17 dan kerjakan **satu sub-langkah per rencana**:
 1. ~~Katalog Projects dan detail proyek (PRJ-01)~~ **selesai (6f-1).**
 2. ~~Ketentuan, persetujuan hak cipta, dan pendaftaran (PRJ-02)~~ **selesai (6f-2).**
 3. ~~Kirim karya dari Studio: versi beku (STD-09)~~ **selesai (6f-3).**
-4. Status submission (DESIGN 7.4) dan "Proyek saya" (PRJ-04); sambungkan Beranda, Notifikasi, dan profil.
+4. ~~Status submission (DESIGN 7.4) dan "Proyek saya" (PRJ-04); sambungkan Beranda dan Notifikasi~~ **selesai (6f-4); tab Proyek di profil ditunda.**
 5. Dasbor per kategori [usulan, belum disetujui]: Solo (SOL-02), Kelas dan tugas (KLS-02/03), hasil Lomba (LMB-02).
 6. QRIS semi-manual (PLT-07). Panel Organizer, Editor, dan Juri adalah 6g, bukan 6f.
 
-**Celah di pembagian ini:** PRD 17.5 juga memuat Dasbor Solo, Dasbor Kelas dan Halaman tugas, Halaman hasil lomba, dan Detail submission dengan riwayat versi dan Kirim Revisi (yang terakhir masuk 6f-4). Untuk Kelas Menulis, "Kirim karya" berarti mengumpulkan tugas, bukan submission (6f-5).
+**Celah di pembagian ini:** PRD 17.5 juga memuat Dasbor Solo, Dasbor Kelas dan Halaman tugas, dan Halaman hasil lomba (6f-5). Untuk Kelas Menulis, "Kirim karya" berarti mengumpulkan tugas, bukan submission (6f-5).
 
-Tanyakan ke user sub-langkah mana yang dimulai sebelum merencanakan (rekomendasi: 6f-4, karena data submission sudah ada).
+Tanyakan ke user sub-langkah mana yang dimulai sebelum merencanakan (rekomendasi: 6f-5, karena 6f-4 selesai).
 
 ## 4. Aturan kerja yang wajib
 
@@ -58,17 +57,17 @@ Tanyakan ke user sub-langkah mana yang dimulai sebelum merencanakan (rekomendasi
 
 - **Dari 6f-3:** (1) `evaluate` CDP tidak bisa mengembalikan elemen DOM: pakai `!!document.querySelector(...)` di `waitFor`. (2) Radio dalam satu grup hanya satu perhentian Tab; panah memindah dan memilih. Uji keyboard-only dengan Tab ke grup lalu panah. (3) Kompilasi rute baru di server dev bisa lebih dari 15 detik: beri `waitFor` 60 detik dan panaskan rute dengan `curl`. (4) Komponen yang membaca IndexedDB dan dipasang terus di Editor sebaiknya hanya dipasang saat dibuka (`SendToProjectDialog` mengembalikan `null` bila tidak `open`). (5) `code-review` 7 dari 8 valid, hampir semuanya dari keadaan tepi (state yang tidak diatur ulang setelah "Kirim karya lain", hitungan saat memuat, pilihan yang basi). (6) Batas `complexity` 15 muncul sebagai peringatan lint; ekstrak hook atau fungsi murni (`use-submit-form`, `project-action`) alih-alih menaikkan batas. (7) Tes jsdom `statistics-view` flaky di bawah beban (timeout 15 detik); ulangi sendirian. (8) `crypto.subtle` dan `crypto.randomUUID` hanya ada di konteks aman; hash ditulis sendiri di `lib/sha256.ts`, `randomUUID` dipakai seperti Studio dan Community. (9) Berkas tes dibatasi 300 baris; helper bersama dipindah ke `submit-helpers.tsx`. User bertanya apakah 300 baris terlalu pendek untuk tes; jawabannya ada di Catatan Slicing (usulan 450–500, butuh rencana). (10) Menu ⋯ memindah fokus ke butir pertama lewat `requestAnimationFrame`; uji keyboard-only menu di CDP perlu menunggu fokus pindah sebelum panah.
 
-## 5b. Bahan khusus 6f-4 (Status submission dan "Proyek saya", PRJ-04, DESIGN 7.4)
+- **Dari 6f-4:** (1) Status berubah hanya lewat fungsi murni yang mengembalikan `Submission | null` (`null` = ditolak tabel PRD) dan `store.update(id, change)` yang atomik; layar tidak menulis status sendiri. (2) Tanda yang disetel setelah `await` bisa terlambat: efek yang bereaksi pada status baru (fokus ke judul setelah tarik) butuh tanda yang disetel **sebelum** menulis, karena data baru bisa sampai ke layar sebelum panggilan kembali. (3) Dialog yang pemicunya hilang setelah aksi (tombol Tarik karya) tidak bisa mengembalikan fokus: pindahkan ke judul. (4) `getAllByRole("listitem")` tercampur bila satu layar memuat beberapa daftar; batasi dengan `within(...)`. (5) Komponen yang membaca `submissionStore` bawaan (IndexedDB) di jsdom jatuh ke keadaan galat: beri prop `store` untuk tes. (6) `code-review` 7 dari 10 valid: pesan galat terlalu umum (kembalikan alasan dari dalam `change`), id notifikasi berbasis indeks (pakai status dan waktu), dua pembacaan data untuk satu layar (muat sekali di induk), urutan saat jam belum diketahui. (7) Skrip CDP: tunggu teksnya, bukan hanya `location.pathname`; tombol di `<dialog>` tertutup tetap ada di DOM, saring yang terlihat (`getBoundingClientRect().width > 0`); isi IndexedDB langsung dari skrip (`ranah-projects`, store `submissions`) untuk keadaan yang sulit dicapai lewat UI. (8) Masukan client (Fahmi) soal Beranda (terlalu banyak teks, alur dashboard membingungkan, usul garis tipis antar segmen) dicatat di Catatan Slicing untuk tahap enhance UI; jangan dikerjakan sekarang. (9) Batas 300 baris: user memilih **B** (tes boleh 450–500, `src/` tetap 300) sebagai rencana kecil terpisah yang belum dikerjakan; ajukan rencananya sebelum menyentuh `eslint.config.mjs`.
 
-Baca ulang PRD 10.5 (tabel status dan aturan transisi), 13.2, BR-PRJ-05, BR-STD-03, 17.5 ("Proyek saya", "Detail submission"), 20 (notifikasi), Q-22, Q-23. Pertanyaan yang perlu diajukan ke user sebelum rencana (beri opsi dan rekomendasi):
-- Letak "Proyek saya": rute sendiri (`/projects/saya`) atau tab di `/projects`; apakah butir nav baru atau tidak.
-- Detail submission: rute (`/projects/[slug]/kiriman/[id]`), isi (status, `statusLog`, riwayat versi dengan jumlah kata dan hash, feedback editor, tombol Kirim Revisi dan Tarik), dan keadaan Perlu Revisi dengan catatan.
-- **Bagaimana status berubah tanpa peninjau** (6g belum ada): rekomendasi tombol pengembangan di detail submission (seperti "Tandai lunas") yang memajukan status dan mengisi feedback contoh, dengan fungsi yang kelak dipakai panel Editor.
-- Kirim Revisi: versi baru (`versions[1]`), status Revisi Terkirim, versi lama tetap; revisi setelah tenggat hanya bila Perlu Revisi; batas putaran (usulan dua putaran, Q-22 belum dijawab).
-- Tarik: konfirmasi, status Ditarik, melepaskan jatah (sudah dihitung `canAdd` dan `activeSubmissions`), penanda "Dikirim ke proyek" mengikuti.
-- Sambungan: Beranda "Perlu perhatian" dan "Proyek saya" dari data nyata, notifikasi "Submission diterima" dan proyek dengan `href`, tab Proyek di profil (hanya atas persetujuan penulis; pengaturannya belum ada, tanya).
-- Pendaftaran tanpa submission (Kelas, atau belum kirim) tampil di "Proyek saya" dengan status pendaftaran, bukan status submission.
-- Yang BUKAN 6f-4: peninjauan Editor dan penilaian Juri (6g), dasbor Solo dan Kelas (6f-5), QRIS (6f-6).
+## 5b. Bahan khusus 6f-5 (Dasbor per kategori [usulan, belum disetujui]: Solo SOL-02, Kelas KLS-02/03, hasil Lomba LMB-02)
+
+Baca ulang PRD 10.6 (SOL-02, KLS-02, KLS-03, LMB-02), 17.5 ("Dasbor Solo", "Dasbor Kelas", "Halaman tugas", "Halaman hasil lomba"), Q-24 (persetujuan final Solo), Q-27 (pengumpulan tugas terlambat), BR-PRJ-08 (lomba anonim). Pertanyaan yang perlu diajukan ke user sebelum rencana (beri opsi dan rekomendasi):
+- **Cakupan**: ketiganya dalam satu sub-langkah atau dipecah (rekomendasi: pecah; Kelas dulu karena tombol detail dan "Proyek saya" sudah menunggunya, atau Lomba yang paling kecil).
+- Tahap Solo (pengajuan, editing, proofreading, cover, layout, persetujuan final, produksi, selesai) dan **bagaimana tahap berubah tanpa Organizer** (6g belum ada): rekomendasi panel pengembangan seperti panel peninjau, dengan fungsi yang kelak dipakai panel Organizer.
+- Kelas: jadwal, materi, tugas, feedback, bilah progres; tugas dikumpulkan dari Studio (versi beku, `freezeVersion` sudah ada) atau teks langsung; aturan terlambat (Q-27 belum dijawab). Kelas tidak memakai `Submission`: tentukan tipe `Assignment` dan penyimpanannya (store yang sama atau terpisah).
+- Hasil lomba: halaman publik finalis dan pemenang; tanpa Organizer data dari fixture atau panel pengembangan; lomba anonim tidak menyebut nama sebelum diumumkan.
+- Letak rute (`/projects/[slug]/dasbor`?), nama, dan apakah tombol detail dan "Proyek saya" untuk Kelas berganti.
+- Yang BUKAN 6f-5: panel Organizer, Editor, dan Juri (6g), QRIS (6f-6), sertifikat (Fase 2).
 
 ## 6. Mulai dengan
 

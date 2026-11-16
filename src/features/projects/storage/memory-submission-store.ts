@@ -13,5 +13,13 @@ export function createMemorySubmissionStore(): SubmissionStore {
       if (verdict === "ok") rows.set(submission.id, submission);
       return verdict;
     },
+    async update(id, change) {
+      const current = rows.get(id);
+      if (!current) return "missing";
+      const next = change(current, [...rows.values()]);
+      if (!next) return "rejected";
+      rows.set(id, next);
+      return "ok";
+    },
   };
 }

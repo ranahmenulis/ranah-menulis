@@ -119,6 +119,7 @@ describe("sendSubmission", () => {
     const store = {
       list: async () => Promise.reject(new Error("idb")),
       add: async () => "ok" as const,
+      update: async () => "ok" as const,
     };
     const out = await sendSubmission({
       project: esai,

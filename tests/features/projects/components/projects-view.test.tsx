@@ -170,3 +170,11 @@ describe("ProjectsView", () => {
     expect(await screen.findByText("Sisa 5 dari 10 kuota")).toBeTruthy();
   });
 });
+
+describe("ProjectsView, the way to Proyek saya", () => {
+  it("links to it from the head of the catalog", async () => {
+    render(<ProjectsView source={source} />);
+    const link = await screen.findByRole("link", { name: "Proyek saya" });
+    expect(link.getAttribute("href")).toBe("/projects/saya");
+  });
+});

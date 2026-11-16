@@ -18,8 +18,8 @@ const readIds = () => JSON.parse(localStorage.getItem("ranah.notificationsRead")
 describe("NotificationsView", () => {
   it("lists every notification with how many are unread", async () => {
     render(<NotificationsView />);
-    expect(rows()).toHaveLength(8);
-    expect(screen.getByText("4 belum dibaca.")).toBeTruthy();
+    expect(rows()).toHaveLength(6);
+    expect(screen.getByText("3 belum dibaca.")).toBeTruthy();
     expect(await screen.findByText("25 menit lalu")).toBeTruthy();
   });
 
@@ -27,7 +27,7 @@ describe("NotificationsView", () => {
     render(<NotificationsView />);
     expect(
       screen.getAllByText("Belum dibaca.", { selector: ".sr-only", exact: false }),
-    ).toHaveLength(4);
+    ).toHaveLength(3);
   });
 
   it("filters by tab", () => {
@@ -35,16 +35,9 @@ describe("NotificationsView", () => {
     fireEvent.click(screen.getByRole("tab", { name: "Komentar" }));
     expect(rows()).toHaveLength(3);
     fireEvent.click(screen.getByRole("tab", { name: "Proyek" }));
-    expect(rows()).toHaveLength(3);
+    expect(rows()).toHaveLength(1);
     fireEvent.click(screen.getByRole("tab", { name: "Semua" }));
-    expect(rows()).toHaveLength(8);
-  });
-
-  it("marks one line read when it is opened, and remembers it", () => {
-    render(<NotificationsView />);
-    fireEvent.click(screen.getByRole("button", { name: /Editor meminta revisi/ }));
-    expect(screen.getByText("3 belum dibaca.")).toBeTruthy();
-    expect(readIds()).toEqual(["n-revisi"]);
+    expect(rows()).toHaveLength(6);
   });
 
   it("links a line to its post and still marks it read", () => {
@@ -68,7 +61,7 @@ describe("NotificationsView", () => {
   it("starts from what this device already read", () => {
     localStorage.setItem("ranah.notificationsRead", JSON.stringify(["n-balasan-nur"]));
     render(<NotificationsView />);
-    expect(screen.getByText("3 belum dibaca.")).toBeTruthy();
+    expect(screen.getByText("2 belum dibaca.")).toBeTruthy();
   });
 
   it("asks a signed-out reader to sign in instead of listing anything", () => {

@@ -85,7 +85,7 @@ describe("AppShell", () => {
   it("announces unread notifications on the bell, which opens Notifikasi", () => {
     localStorage.clear();
     renderAt("/beranda");
-    const bell = screen.getByRole("link", { name: "Notifikasi, 4 belum dibaca" });
+    const bell = screen.getByRole("link", { name: "Notifikasi, 3 belum dibaca" });
     expect(bell.getAttribute("href")).toBe("/notifikasi");
     expect(bell.getAttribute("aria-current")).toBeNull();
   });
@@ -104,7 +104,7 @@ describe("AppShell", () => {
     localStorage.clear();
     renderAt("/notifikasi");
     expect(
-      screen.getByRole("link", { name: "Notifikasi, 4 belum dibaca" }).getAttribute("aria-current"),
+      screen.getByRole("link", { name: "Notifikasi, 3 belum dibaca" }).getAttribute("aria-current"),
     ).toBe("page");
     cleanup();
 

@@ -28,12 +28,17 @@ export type SubmissionVersion = {
   frozenAt: number;
 };
 
-/** Every status change is recorded: who, when, and why (BR-PRJ-05). */
+/**
+ * Every status change is recorded: who, when, and why (BR-PRJ-05). `reason` is the editor's note
+ * on a decision, or the participant's note on a revision. `dueAt` is the revision deadline, only on
+ * a change to Perlu Revisi.
+ */
 export type StatusChange = {
   status: SubmissionStatus;
   at: number;
-  by: "peserta" | "sistem";
+  by: "peserta" | "sistem" | "editor";
   reason?: string;
+  dueAt?: number;
 };
 
 /**

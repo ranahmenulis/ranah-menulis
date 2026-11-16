@@ -53,5 +53,18 @@ export function createIndexedDbSubmissionStore(): SubmissionStore {
       await done(tx);
       return "ok";
     },
+
+    async update(id, change) {
+      const tx = (await db()).transaction(SUBMISSIONS, "readwrite");
+      const store = tx.objectStore(SUBMISSIONS);
+      const all = (await request(store.getAll())) as Submission[];
+      const current = all.find((s) => s.id === id);
+      if (!current) return "missing";
+      const next = change(current, all);
+      if (!next) return "rejected";
+      store.put(next);
+      await done(tx);
+      return "ok";
+    },
   };
 }

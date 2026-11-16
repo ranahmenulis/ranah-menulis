@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import type { StreakData } from "@/features/studio/hooks/use-streak-data";
 import type { StudioDocument } from "@/features/studio/storage/document-store";
 import { TodayBlock } from "@/features/home/today-block";
+import { createMemorySubmissionStore } from "@/features/projects/storage/memory-submission-store";
 
 afterEach(cleanup);
 
@@ -70,9 +71,8 @@ describe("TodayBlock", () => {
     const { rerender } = render(<TodayBlock data={data()} showDummy={false} />);
     expect(screen.queryByText("Perlu perhatian")).toBeNull();
 
-    rerender(<TodayBlock data={data()} showDummy />);
+    rerender(<TodayBlock data={data()} showDummy submissions={createMemorySubmissionStore()} />);
     expect(screen.getByText("Perlu perhatian")).toBeTruthy();
-    expect(screen.getByText("Proyek saya")).toBeTruthy();
     const filled = screen.getAllByRole("link").filter((a) => a.className.includes("bg-ink"));
     expect(filled).toHaveLength(1);
   });
