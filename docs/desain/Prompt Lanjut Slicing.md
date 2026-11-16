@@ -7,7 +7,7 @@ Kamu melanjutkan slicing RanahMenulis (Next.js 16, Tailwind v4, Supabase; data d
 3. **PRD Projects (baca sebelum merekomendasikan cakupan apa pun):** `docs/prd/` bagian 08 (modul), 09 (PRJ-01..04, ANT, SOL, KLS, LMB), 10 (kebutuhan fungsional), 13 (alur), 14 (business rules), 15 (peran), 17.5 (halaman Projects), 19 (QRIS, PLT-07), 20 (notifikasi proyek), 23 (MVP), 28 (Q-13, Q-19..Q-31 dan keputusan terbuka lain). Lalu `docs/MVP Scope RanahMenulis.md` dan `docs/catatan-keputusan-client.md`.
 4. `DESIGN.md` bagian 6.7 (halaman di luar pola Medium), 7.4 (status submission monokrom), 8 (keadaan), 9 (larangan).
 5. Memori proyek di `C:\Users\toxix\.claude\projects\d--Code-Ranah-Penulis\memory\`.
-6. `git status` dan `git log --oneline -5`. Posisi: `main` sama dengan `origin/main` (commit `8d05cb5` sudah di-push). **Belum di-commit:** 6f-1 (`src/features/projects/`, `src/app/(app)/projects/`, `src/components/ui/sticky-chip-bar.tsx`, perubahan `nav.ts` dan `discover-view.tsx`, tes baru) dan dokumen (`CLAUDE.md`, `DESIGN.md`, `Catatan Slicing.md`, prompt ini), ditambah dua prompt landing milik user. Jangan push dan jangan commit tanpa diminta.
+6. `git status` dan `git log --oneline -5`. Posisi: `main` ada di `35b2b1c` (6f-2) di atas `c3fda02` (6f-1); keduanya **belum di-push** (cek `git status -sb`). Yang belum ter-track hanya dua prompt landing milik user di `docs/desain/landing/`. Jangan push dan jangan commit tanpa diminta.
 
 ## 2. Posisi (16 November 2026)
 
@@ -55,6 +55,19 @@ Tanyakan ke user sub-langkah mana yang dimulai sebelum merencanakan (rekomendasi
 - **Dari 6f-1:** (1) Halaman `(app)` yang disimpan Next tetap hidup: state yang hanya diisi dari nilai awal akan basi saat kembali. Jadikan **alamat** sumber kebenaran (`useSearchParams`, sinkron saat render) dan buktikan di Chrome nyata (klik tautan "Semua Projects" dan nav). (2) Lint `react-hooks/set-state-in-effect` menolak `setState` sinkron di efek; baca jam lewat `queueMicrotask` atau di callback async. (3) Di tes, `useSearchParams` dari `next/navigation` perlu `vi.mock`. (4) `code-review` menemukan 7 dari 9 valid; semuanya dari data tepi (harga 0, kuota 0, tenggat tengah hari) dan state yang tidak ikut alamat. (5) Cek visual lewat skrip CDP di scratchpad (`cdp-projects.mjs` dkk.) ditulis ulang tiap sesi; `evaluate` tidak bisa mengembalikan elemen DOM (pakai `!!`). (6) `simplify` dikerjakan langsung tanpa empat agen.
 - **Dari 6f-2:** (1) Lewat `scroll-behavior: smooth` `scrollIntoView` di skrip CDP menghitung koordinat di tengah animasi: pakai `behavior: "instant"`. (2) Enter di CDP butuh `text: String.fromCharCode(13)` agar tombol/formulir teraktivasi (tautan tidak butuh). (3) Pola `useSyncExternalStore` + cache parse per nilai (`registration-store.ts`) membuat halaman Next yang di-cache langsung menampilkan status baru; buktikan dengan klik tautan di Chrome. (4) Tes menangkap formulir tanpa tautan kembali: setiap layar baru diuji untuk jalan keluar. (5) `code-review` 6 dari 9 valid (cek ulang waktu saat kirim, idempotensi simpan, batas kuota). (6) Satu pendaftaran per proyek tanpa pembatalan; 6f-6 akan butuh fungsi untuk mengubah status `menunggu-pembayaran` menjadi `terdaftar`.
 - Alur uji cepat 6f-1: buka `/beranda`, klik Projects, pilih chip, buka proyek, klik "Semua Projects"; ulangi hanya dengan Tab dan Enter.
+
+## 5b. Bahan khusus 6f-3 (Kirim karya dari Studio, STD-09, PRJ-04 langkah 1–5)
+
+Baca ulang PRD 10.5 (alur pengiriman, tabel status), 10.3 STD-09, 13.2, BR-STD-03, BR-PRJ-05, 17.5 ("Kirim karya"), Q-13 dan Q-22. Pertanyaan yang perlu diajukan ke user sebelum rencana (beri opsi dan rekomendasi):
+- Titik masuk: dari detail proyek (tombol "Kirim karya" menggantikan "Terdaftar") dan/atau dari Editor lewat `SendToProjectDialog`; apakah satu layar penuh `/projects/[slug]/kirim` atau dialog pemilih proyek lalu layar itu.
+- Syarat: hanya yang `terdaftar` (yang `menunggu-pembayaran` belum boleh); sebelum tenggat; batas jumlah karya per peserta (dari `requirements`, belum terstruktur: perlu field `maxWorks` dan `wordLimit` di fixture) [usulan].
+- Isian: judul karya, genre, catatan untuk editor, pernyataan keaslian; pemilih naskah dari Studio (satu dokumen; unggah berkas hanya Solo, Q-13 belum dijawab, jangan dibangun).
+- Validasi: kata terhadap batas proyek (pakai `docStats`/`countWords` yang ada), kelengkapan isian, tenggat; gagal tampil per aturan tanpa menghapus isian.
+- Versi beku: salinan isi dokumen + jumlah kata + hash + waktu, tidak berubah walau dokumen diedit (BR-STD-03); disimpan lokal (IndexedDB seperti `PostStore`/`DocumentStore`, atau localStorage bila kecil; naskah panjang condong IndexedDB). Status awal "Terkirim"; Draf (isian belum dikirim) dan "Ditarik" dari tabel status.
+- Keadaan: dokumen kosong, dokumen di Sampah, dokumen dihapus setelah dikirim (versi beku tetap), proyek ditutup saat mengisi.
+- Jalan keluar terlihat di layar penuh; uji alur lintas layar dengan mouse nyata dan keyboard saja; jangan dialog modal yang diikuti `router.push` tanpa menutupnya dulu.
+- Yang BUKAN 6f-3: daftar "Proyek saya", detail submission, revisi, tarik, notifikasi (6f-4); peninjauan Editor (6g).
+- Penanda "Dikirim ke proyek" di daftar dokumen Studio (butir di bagian 2) kemungkinan ikut di sini atau 6f-4; tanyakan.
 
 ## 6. Mulai dengan
 
