@@ -1,10 +1,16 @@
 "use client";
 
-import { ListBullets, Quotes } from "@phosphor-icons/react/dist/ssr";
+import {
+  ListBullets,
+  ListNumbers,
+  Quotes,
+  TextB,
+  TextH,
+  TextItalic,
+} from "@phosphor-icons/react/dist/ssr";
+import { AllSelection, Selection } from "@tiptap/pm/state";
 import { useEditorState, type Editor } from "@tiptap/react";
-import { BubbleMenu } from "@tiptap/react/menus";
 import type { ReactNode } from "react";
-import { cn } from "@/lib/cn";
 
 type ButtonProps = {
   label: string;
@@ -18,14 +24,12 @@ function FormatButton({ label, pressed, onClick, children }: ButtonProps) {
     <button
       type="button"
       aria-label={label}
+      title={label}
       aria-pressed={pressed}
-      // Keep the text selection: do not let the toolbar take focus from the editor.
+      // Keep the caret and selection: do not let the toolbar take focus from the editor.
       onMouseDown={(e) => e.preventDefault()}
       onClick={onClick}
-      className={cn(
-        "grid h-8 w-9 cursor-pointer place-items-center rounded-full font-serif text-base leading-none font-semibold",
-        "hover:opacity-(--opacity-hover) aria-pressed:rounded-none aria-pressed:shadow-[inset_0_-2px_0_var(--on-ink)]",
-      )}
+      className="grid h-9 w-10 cursor-pointer place-items-center rounded-full text-ink hover:opacity-(--opacity-hover) aria-pressed:rounded-none aria-pressed:shadow-[inset_0_-2px_0_var(--ink)] md:h-8 md:w-9"
     >
       {children}
     </button>
@@ -33,8 +37,23 @@ function FormatButton({ label, pressed, onClick, children }: ButtonProps) {
 }
 
 /**
- * Format toolbar: an ink pill that exists only while text is selected (DESIGN.md 6.3), 10px above
- * the selection. Five formats allowed by STD-01; the active one is underlined, not recolored.
+ * Ctrl+A gives ProseMirror an `AllSelection`, for which list commands misbehave: `isActive` stays
+ * false and a second click wraps the text again instead of undoing the list. Swapping it for the
+ * equivalent text range first keeps every button a clean on and off.
+ */
+function selectTextRange(editor: Editor) {
+  const { doc, selection } = editor.state;
+  if (!(selection instanceof AllSelection)) return;
+  editor.commands.setTextSelection({
+    from: Selection.atStart(doc).from,
+    to: Selection.atEnd(doc).to,
+  });
+}
+
+/**
+ * Format toolbar: a hairline pill that stays under the editor bar, centered over the writing column
+ * (the landing mockup's promise; it replaces the floating selection pill of DESIGN.md 6.3). Only the
+ * six formats STD-01 allows. The active one is underlined, not recolored.
  */
 export function FormatBar({ editor }: { editor: Editor }) {
   const active = useEditorState({
@@ -44,56 +63,65 @@ export function FormatBar({ editor }: { editor: Editor }) {
       italic: e.isActive("italic"),
       heading: e.isActive("heading", { level: 2 }),
       quote: e.isActive("blockquote"),
-      list: e.isActive("bulletList") || e.isActive("orderedList"),
+      bullets: e.isActive("bulletList"),
+      numbers: e.isActive("orderedList"),
     }),
   });
-  const run = () => editor.chain().focus();
+  const run = () => {
+    selectTextRange(editor);
+    return editor.chain().focus();
+  };
 
   return (
-    <BubbleMenu
-      editor={editor}
-      options={{ placement: "top", offset: 10 }}
-      updateDelay={0}
-      role="toolbar"
-      aria-label="Format teks"
-      className="inline-flex h-10 items-center gap-0.5 rounded-full bg-ink px-1.5 text-on-ink shadow-float"
-    >
-      <FormatButton
-        label="Tebal (Ctrl+B)"
-        pressed={active.bold}
-        onClick={() => run().toggleBold().run()}
+    <div className="flex flex-none justify-center border-b border-line bg-canvas px-4 py-1.5 md:py-2">
+      <div
+        role="toolbar"
+        aria-label="Format teks"
+        className="inline-flex items-center gap-0.5 rounded-full border border-line p-0.5 md:px-1.5"
       >
-        B
-      </FormatButton>
-      <FormatButton
-        label="Miring (Ctrl+I)"
-        pressed={active.italic}
-        onClick={() => run().toggleItalic().run()}
-      >
-        <i className="font-normal">I</i>
-      </FormatButton>
-      <span aria-hidden className="mx-1 h-5 w-px bg-on-ink opacity-30" />
-      <FormatButton
-        label="Judul"
-        pressed={active.heading}
-        onClick={() => run().toggleHeading({ level: 2 }).run()}
-      >
-        H
-      </FormatButton>
-      <FormatButton
-        label="Kutipan"
-        pressed={active.quote}
-        onClick={() => run().toggleBlockquote().run()}
-      >
-        <Quotes size={18} aria-hidden />
-      </FormatButton>
-      <FormatButton
-        label="Daftar"
-        pressed={active.list}
-        onClick={() => run().toggleBulletList().run()}
-      >
-        <ListBullets size={18} aria-hidden />
-      </FormatButton>
-    </BubbleMenu>
+        <FormatButton
+          label="Tebal (Ctrl+B)"
+          pressed={active.bold}
+          onClick={() => run().toggleBold().run()}
+        >
+          <TextB size={18} aria-hidden />
+        </FormatButton>
+        <FormatButton
+          label="Miring (Ctrl+I)"
+          pressed={active.italic}
+          onClick={() => run().toggleItalic().run()}
+        >
+          <TextItalic size={18} aria-hidden />
+        </FormatButton>
+        <FormatButton
+          label="Judul"
+          pressed={active.heading}
+          onClick={() => run().toggleHeading({ level: 2 }).run()}
+        >
+          <TextH size={18} aria-hidden />
+        </FormatButton>
+        <FormatButton
+          label="Kutipan"
+          pressed={active.quote}
+          onClick={() => run().toggleBlockquote().run()}
+        >
+          <Quotes size={18} aria-hidden />
+        </FormatButton>
+        <FormatButton
+          label="Daftar berpoin"
+          pressed={active.bullets}
+          onClick={() => run().toggleBulletList().run()}
+        >
+          <ListBullets size={18} aria-hidden />
+        </FormatButton>
+        <FormatButton
+          label="Daftar bernomor"
+          pressed={active.numbers}
+          onClick={() => run().toggleOrderedList().run()}
+        >
+          <ListNumbers size={18} aria-hidden />
+        </FormatButton>
+      </div>
+    </div>
   );
 }

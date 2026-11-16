@@ -1,22 +1,24 @@
 "use client";
 
-import { ArrowsOut, Lightbulb } from "@phosphor-icons/react/dist/ssr";
+import { ArrowLeft, ArrowsOut, Lightbulb } from "@phosphor-icons/react/dist/ssr";
 import { Button } from "@/components/ui/button";
 import { IconButton } from "@/components/ui/icon-button";
-import { Monogram } from "@/components/ui/logo";
 import { Menu, type MenuEntry } from "@/components/ui/menu";
 import { VisibilityTag } from "@/components/ui/visibility-tag";
 import type { DailyLog } from "../daily-progress";
+import type { EditorStats } from "../editor-stats";
 import type { SaveStatus } from "../hooks/use-studio-document";
 import { SaveIndicator } from "./save-indicator";
 import { TargetIndicator } from "./target-indicator";
-
-/** [konfirmasi] Back-link target until the Studio document list exists (step 4). */
-const STUDIO_HOME = "/";
+import { WordCount } from "./word-count";
 
 type EditorBarProps = {
   title: string;
   words: number;
+  /** Characters and paragraphs of the text; `null` until the editor has opened it. */
+  stats: EditorStats | null;
+  /** Counts for the selected text, or `null` while nothing is selected. */
+  selection: EditorStats | null;
   status: SaveStatus;
   savedAt: Date | null;
   offline: boolean;
@@ -30,6 +32,8 @@ type EditorBarProps = {
   /** Name shown in place of the title when the document is not ready. */
   fallbackTitle: string;
   menuItems: MenuEntry[];
+  /** Back to the document list; the screen saves first so nothing written is left behind. */
+  onBack: () => void;
   onShare: () => void;
   onToggleHelp: () => void;
   onFocusMode: () => void;
@@ -43,6 +47,8 @@ type EditorBarProps = {
 export function EditorBar({
   title,
   words,
+  stats,
+  selection,
   status,
   savedAt,
   offline,
@@ -53,19 +59,17 @@ export function EditorBar({
   ready,
   fallbackTitle,
   menuItems,
+  onBack,
   onShare,
   onToggleHelp,
   onFocusMode,
 }: EditorBarProps) {
   return (
     <header className="relative z-40 flex flex-none flex-wrap items-center gap-x-2 border-b border-line bg-canvas pt-(--safe-top) pr-2 pl-4 md:h-[calc(3.5rem+var(--safe-top))] md:flex-nowrap md:gap-x-4 md:px-4">
-      <Monogram
-        href={STUDIO_HOME}
-        label="Kembali ke Studio"
-        height={20}
-        className="order-1 md:order-1"
-      />
-      <span className="order-2 min-w-0 flex-1 truncate text-sm font-medium max-md:ml-2 md:order-2 md:max-w-85 md:flex-none">
+      <IconButton label="Kembali ke Studio" onClick={onBack} className="order-1 -ml-2 md:-ml-1">
+        <ArrowLeft size={20} aria-hidden />
+      </IconButton>
+      <span className="order-2 min-w-0 flex-1 truncate text-sm font-medium md:order-2 md:max-w-85 md:flex-none">
         {ready ? title.trim() || "Tanpa judul" : fallbackTitle}
       </span>
       <Button
@@ -89,9 +93,7 @@ export function EditorBar({
           </div>
 
           <div className="order-7 ml-auto flex items-center gap-3 pb-2 md:order-4 md:pb-0">
-            <span className="text-xs text-ink-muted tabular-nums">
-              {words.toLocaleString("id-ID")} kata
-            </span>
+            <WordCount words={words} stats={stats} selection={selection} />
             <TargetIndicator progress={progress} target={target} pending={offline} />
           </div>
         </>

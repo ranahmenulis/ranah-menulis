@@ -8,7 +8,6 @@ import { Footer } from "@/features/landing/components/footer";
 import { Publishing } from "@/features/landing/components/publishing";
 import { SocialProof } from "@/features/landing/components/social-proof";
 import { MARKERS } from "@/features/landing/components/studio-markers";
-import { textStats } from "@/features/landing/components/studio-mockup";
 import { Waitlist } from "@/features/landing/components/waitlist";
 import { WritingExperience } from "@/features/landing/components/writing-experience";
 import { landing } from "@/features/landing/copy/id";
@@ -80,21 +79,6 @@ describe("studio mockup markers", () => {
   });
 });
 
-describe("studio mockup counts", () => {
-  it("counts words, characters without line breaks, and at least one minute", () => {
-    expect(textStats(["satu dua tiga", "empat lima"])).toEqual({
-      words: 5,
-      characters: 23,
-      minutes: 1,
-    });
-  });
-
-  it("rounds reading time up at 200 words a minute", () => {
-    const words = Array.from({ length: 201 }, () => "kata").join(" ");
-    expect(textStats([words]).minutes).toBe(2);
-  });
-});
-
 describe("publishing", () => {
   it("lists the four Projects paths under the client's heading", () => {
     render(<Publishing copy={landing.publishing} />);
@@ -121,6 +105,12 @@ describe("writing experience", () => {
     expect(within(template).getByText("Menyusul")).toBeTruthy();
     const counter = screen.getByRole("heading", { name: "Reading Time" }).closest("li")!;
     expect(within(counter).queryByText("Menyusul")).toBeNull();
+  });
+
+  it("opens a new empty document in the app demo from the Studio call to action", () => {
+    render(<WritingExperience copy={landing.studio} />);
+    const cta = screen.getByRole("link", { name: /Coba Ranah Studio Sekarang/ });
+    expect(cta.getAttribute("href")).toBe("/studio/baru");
   });
 });
 

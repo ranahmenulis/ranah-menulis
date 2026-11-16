@@ -1,4 +1,4 @@
-import { countWords } from "@/features/studio/count-words";
+import { countWords } from "@/lib/text-stats";
 import { authors } from "./fixtures/authors";
 import { fixtureComments } from "./fixtures/comments";
 import { postsA } from "./fixtures/posts-a";

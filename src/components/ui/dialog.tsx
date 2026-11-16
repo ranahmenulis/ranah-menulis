@@ -60,6 +60,11 @@ export function Dialog({
       reset(); // a sheet swiped away keeps its offset until it opens again
       el.showModal();
     } else if (!open && el.open) el.close();
+    // Next keeps the previous page mounted but hidden. A native modal left open there would still
+    // make the page the reader navigated to inert, so close it when this page goes away.
+    return () => {
+      if (el.open) el.close();
+    };
   }, [open, reset]);
 
   const heading = (

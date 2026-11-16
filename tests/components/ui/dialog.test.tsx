@@ -1,4 +1,5 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { Activity } from "react";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { installDialogShim } from "@/test/dialog-shim";
 import { Dialog } from "@/components/ui/dialog";
@@ -72,6 +73,62 @@ describe("Dialog", () => {
     const { onClose } = renderDialog();
     fireEvent.click(screen.getByText("Ubah nama"));
     expect(onClose).not.toHaveBeenCalled();
+  });
+});
+
+describe("Dialog, page kept in the background", () => {
+  // Next keeps the previous route in an <Activity>. A modal left open there would silently block
+  // the page the reader navigated to ("the page froze, nothing can be pressed").
+  const dialogProps = {
+    open: true,
+    onClose: () => undefined,
+    title: "Bagikan",
+    actions: <button>Lanjut</button>,
+  };
+
+  it("closes the native modal when its page is hidden, and reopens it when the page returns", () => {
+    const view = render(
+      <Activity mode="visible">
+        <Dialog {...dialogProps} />
+      </Activity>,
+    );
+    const dialog = view.container.querySelector("dialog")!;
+    expect(dialog.hasAttribute("open")).toBe(true);
+
+    view.rerender(
+      <Activity mode="hidden">
+        <Dialog {...dialogProps} />
+      </Activity>,
+    );
+    expect(dialog.hasAttribute("open")).toBe(false);
+
+    view.rerender(
+      <Activity mode="visible">
+        <Dialog {...dialogProps} />
+      </Activity>,
+    );
+    expect(dialog.hasAttribute("open")).toBe(true);
+  });
+
+  it("does not reopen a dialog the page had already closed", () => {
+    const view = render(
+      <Activity mode="visible">
+        <Dialog {...dialogProps} open={false} />
+      </Activity>,
+    );
+    const dialog = view.container.querySelector("dialog")!;
+
+    view.rerender(
+      <Activity mode="hidden">
+        <Dialog {...dialogProps} open={false} />
+      </Activity>,
+    );
+    view.rerender(
+      <Activity mode="visible">
+        <Dialog {...dialogProps} open={false} />
+      </Activity>,
+    );
+    expect(dialog.hasAttribute("open")).toBe(false);
   });
 });
 
