@@ -5,6 +5,7 @@ import { SignInButton } from "@/features/account/components/auth-buttons";
 import { daysLeftLabel, feeLines, formatProjectDate } from "../project-model";
 import { deadlineText, quotaText } from "../project-text";
 import { projectAction, type ProjectAction } from "../project-action";
+import { resultsHref } from "../lomba/contest-model";
 import { registerHref } from "../registration-model";
 import type { Project, ProjectState, Registration } from "../types";
 
@@ -110,6 +111,11 @@ export function ProjectAside({ project, state, now, guest, registration, sentCou
       </dl>
       <div className="grid gap-2">
         <ActionButton action={action} signIn={guest && open} />
+        {project.block.kind === "lomba" && (
+          <TextLink href={resultsHref(project.slug)} className="w-fit text-sm text-ink-muted">
+            Lihat hasil lomba
+          </TextLink>
+        )}
         {registration && !guest && (
           <>
             <p className="text-xs text-ink-muted">{registrationNote(project, registration)}</p>

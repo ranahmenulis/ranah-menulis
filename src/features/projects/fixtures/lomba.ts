@@ -7,6 +7,49 @@ import { days } from "./days";
  */
 export const lombaFixtures: ProjectFixture[] = [
   {
+    slug: "lomba-cerita-mini-pesisir-2026",
+    category: "lomba",
+    publication: "terbit",
+    title: "Lomba Cerita Mini Pesisir 2026",
+    summary:
+      "Cerita pendek tentang laut dan orang-orang di tepinya. Sudah selesai: hasil diumumkan.",
+    about: [
+      "Cerita mini bertema pesisir: pelabuhan, nelayan, garam, dan segala yang dibawa pasang. Lomba ini sudah selesai dan hasilnya diumumkan di halaman hasil.",
+      "Penilaian dilakukan juri secara anonim: nama penulis baru dibuka saat pemenang diumumkan.",
+    ],
+    requirements: [
+      "Cerita 500 sampai 1.500 kata bertema pesisir.",
+      "Maksimal satu karya per peserta.",
+      "Belum pernah dimenangkan atau diterbitkan. Jangan mencantumkan namamu di dalam isi karya.",
+    ],
+    submission: { minWords: 500, maxWords: 1_500, maxWorks: 1 },
+    organizer: "Tim RanahMenulis",
+    timeZone: "WIB",
+    fee: { idr: 25_000, myr: 800 },
+    quota: null,
+    closesInMs: -days(30),
+    milestones: [
+      { label: "Pengumuman finalis", inMs: -days(14) },
+      { label: "Pengumuman pemenang", inMs: -days(3) },
+    ],
+    terms: {
+      version: "2026-11-contoh",
+      special: [
+        "Karya tidak boleh memuat identitasmu di dalam isinya, karena penilaian dilakukan anonim.",
+      ],
+    },
+    block: {
+      kind: "lomba",
+      criteria: [
+        { name: "Orisinalitas", weight: 35 },
+        { name: "Kekuatan cerita", weight: 35 },
+        { name: "Bahasa", weight: 30 },
+      ],
+      prizes: ["Juara 1: Rp1.500.000", "Juara 2: Rp750.000", "Juara 3: Rp350.000"],
+      anonymous: true,
+    },
+  },
+  {
     slug: "lomba-cerpen-hujan-2026",
     category: "lomba",
     publication: "terbit",

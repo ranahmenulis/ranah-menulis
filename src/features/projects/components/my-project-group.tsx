@@ -3,6 +3,7 @@ import { StatusSubmission } from "@/components/ui/status-submission";
 import { TextLink } from "@/components/ui/text-link";
 import { categoryLabel, formatNumber, formatProjectDate, projectHref } from "../project-model";
 import { dashboardHref } from "../kelas/class-model";
+import { resultsHref } from "../lomba/contest-model";
 import type { MyProject } from "../my-projects";
 import { submissionHref } from "../submission-href";
 import { kirimHref } from "../submission-model";
@@ -76,6 +77,11 @@ export function MyProjectGroup({ row }: { row: MyProject }) {
             {project.title}
           </Link>
         </h2>
+        {project.block.kind === "lomba" && (
+          <TextLink href={resultsHref(project.slug)} className="w-fit text-xs text-ink-muted">
+            Lihat hasil lomba
+          </TextLink>
+        )}
       </div>
       {works.length === 0 ? (
         <EmptyLine row={row} />
