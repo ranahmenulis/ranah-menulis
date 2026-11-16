@@ -2,7 +2,7 @@
 
 import { Button, ButtonLink } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
-import { DISCOVER_HREF } from "@/features/app-shell/nav";
+import { DISCOVER_HREF, HOME_HREF, STUDIO_HREF } from "@/features/app-shell/nav";
 import { postLabel, wordsOf } from "../../post-model";
 import type { StoredPost } from "../../storage/post-store";
 
@@ -46,10 +46,20 @@ export function PublishDone({ post }: { post: StoredPost }) {
         <Button variant="secondary" onClick={() => void copy()}>
           Salin tautan
         </Button>
-        <ButtonLink href={DISCOVER_HREF} variant="text">
+      </div>
+      <nav aria-label="Kembali ke" className="flex flex-wrap items-center gap-x-2">
+        <ButtonLink href={HOME_HREF} variant="text" className="px-0!">
+          Kembali ke Beranda
+        </ButtonLink>
+        {post.sourceDocId && (
+          <ButtonLink href={STUDIO_HREF} variant="text" className="px-0!">
+            Kembali ke Studio
+          </ButtonLink>
+        )}
+        <ButtonLink href={DISCOVER_HREF} variant="text" className="px-0!">
           Kembali ke Jelajahi
         </ButtonLink>
-      </div>
+      </nav>
     </div>
   );
 }

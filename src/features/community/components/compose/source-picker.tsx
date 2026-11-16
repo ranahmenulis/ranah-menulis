@@ -4,7 +4,7 @@ import { Lock } from "@phosphor-icons/react/dist/ssr";
 import { Button } from "@/components/ui/button";
 import { CheckMark, RadioChoice } from "@/components/ui/choice";
 import { EmptyState, ErrorBanner, RetryButton, Skeleton } from "@/components/ui/states";
-import { countWords } from "@/features/studio/count-words";
+import { countWords } from "@/lib/text-stats";
 import { formatChanged } from "@/features/studio/relative-time";
 import type { StudioDocument } from "@/features/studio/storage/document-store";
 import { cn } from "@/lib/cn";

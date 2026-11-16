@@ -36,11 +36,10 @@ export function ShareDialog({ open, onClose, documentTitle, onContinue }: Props)
     setBusy(true);
     setFailed(false);
     const ok = await onContinue().catch(() => false);
-    // On success the page is about to change, so the dialog stays as it is.
-    if (!ok) {
-      setBusy(false);
-      setFailed(true);
-    }
+    // The editor stays mounted in the background after the page changes, so the busy state must not
+    // outlive this step: coming back would show a button that spins forever.
+    setBusy(false);
+    if (!ok) setFailed(true);
   }
 
   return (

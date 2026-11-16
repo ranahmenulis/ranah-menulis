@@ -47,6 +47,10 @@ export function Drawer({
     } else if (!open && el.open) {
       el.close();
     }
+    // A modal sheet left open on a hidden (cached) page would block the page navigated to.
+    return () => {
+      if (el.open) el.close();
+    };
   }, [open]);
 
   return (

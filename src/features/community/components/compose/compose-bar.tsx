@@ -2,7 +2,8 @@
 
 import { ArrowLeft, X } from "@phosphor-icons/react/dist/ssr";
 import { Button } from "@/components/ui/button";
-import { IconButton } from "@/components/ui/icon-button";
+import { IconButton, iconButtonClass } from "@/components/ui/icon-button";
+import { cn } from "@/lib/cn";
 
 type Props = {
   name: string;
@@ -26,6 +27,8 @@ type Props = {
  * moves to the footer.
  */
 export function ComposeBar(p: Props) {
+  // Once the post is out there is nothing left that "without publishing" could refer to.
+  const closeLabel = p.actions ? "Tutup tanpa menerbitkan" : "Tutup";
   return (
     <header className="sticky top-0 z-40 flex h-[calc(3.25rem+var(--safe-top))] items-center gap-2 border-b border-line bg-canvas pt-(--safe-top) pr-3 pl-2 md:h-[calc(3.5rem+var(--safe-top))] md:gap-3 md:px-4">
       {p.backToText ? (
@@ -33,9 +36,20 @@ export function ComposeBar(p: Props) {
           <ArrowLeft size={20} aria-hidden />
         </IconButton>
       ) : (
-        <IconButton label="Tutup tanpa menerbitkan" onClick={p.onClose}>
+        // From md the icon carries the word "Tutup", so the way out never depends on guessing an X.
+        <button
+          type="button"
+          aria-label={closeLabel}
+          title={closeLabel}
+          onClick={p.onClose}
+          className={cn(
+            iconButtonClass,
+            "md:inline-flex! md:w-auto! md:items-center md:gap-1.5 md:px-3 md:text-sm md:font-medium",
+          )}
+        >
           <X size={20} aria-hidden />
-        </IconButton>
+          <span className="max-md:hidden">Tutup</span>
+        </button>
       )}
       <span className="min-w-0 truncate text-[15px] leading-[22px] font-medium">{p.name}</span>
       {p.isDraft && (

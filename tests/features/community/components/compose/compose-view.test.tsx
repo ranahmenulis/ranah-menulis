@@ -43,9 +43,8 @@ vi.mock("@/features/studio/storage/store", () => ({
     get: async (id: string) => docs.list.find((d) => d.id === id) ?? null,
   },
 }));
-vi.mock("next/navigation", () => ({
-  useRouter: () => ({ back: vi.fn(), push: vi.fn() }),
-}));
+const nav = vi.hoisted(() => ({ back: vi.fn(), push: vi.fn() }));
+vi.mock("next/navigation", () => ({ useRouter: () => nav }));
 
 installDialogShim();
 // Several jsdom files run at once; the editor and stores can be slow to settle under load.
@@ -54,8 +53,13 @@ configure({ asyncUtilTimeout: 5000 });
 beforeEach(() => {
   holder.store = createMemoryPostStore();
   docs.list = [doc({})];
+  nav.back.mockReset();
+  nav.push.mockReset();
 });
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  vi.restoreAllMocks();
+});
 
 function renderCompose() {
   return render(

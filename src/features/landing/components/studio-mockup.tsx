@@ -11,23 +11,10 @@ import {
 import { Monogram } from "@/components/ui/logo";
 import { VisibilityTag } from "@/components/ui/visibility-tag";
 import { format, useLocale, useT } from "@/lib/i18n/provider";
+import { textStats } from "@/lib/text-stats";
 import { MARKERS } from "./studio-markers";
 
-// Words per minute for the reading time shown in the mockup. [konfirmasi] Reading time is not in
-// PRD v0.2 yet; it ships with the editor counters (STD-04) once agreed.
-export const WORDS_PER_MINUTE = 200;
 const TODAY_WORDS = 320;
-
-/** The counts a writer would see for this text: words, characters, minutes to read. */
-export function textStats(paragraphs: readonly string[]) {
-  const text = paragraphs.join("\n");
-  const words = text.split(/\s+/).filter(Boolean).length;
-  return {
-    words,
-    characters: text.replace(/\n/g, "").length,
-    minutes: Math.max(1, Math.ceil(words / WORDS_PER_MINUTE)),
-  };
-}
 
 // Only the formats STD-01 allows: bold, italic, subheading, quote, bullet and numbered lists.
 const tools = [TextB, TextItalic, TextH, Quotes, ListBullets, ListNumbers];

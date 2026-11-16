@@ -1,18 +1,23 @@
 "use client";
 
 import Placeholder from "@tiptap/extension-placeholder";
-import { EditorContent, useEditor, type JSONContent } from "@tiptap/react";
+import { EditorContent, useEditor, type Editor, type JSONContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import { useLayoutEffect, useRef } from "react";
-import { countWords } from "../count-words";
+import { useEffect, useLayoutEffect, useRef } from "react";
+import { docStats, selectionStats, type EditorStats } from "../editor-stats";
 import "./editor.css";
-import { FormatBar } from "./format-bar";
 
 type EditorCanvasProps = {
   initialTitle: string;
   initialContent: JSONContent;
   onTitleChange: (title: string) => void;
   onContentChange: (content: JSONContent, words: number) => void;
+  /** Counts for the whole text, reported when it is opened and after every edit. */
+  onStatsChange?: (stats: EditorStats) => void;
+  /** Counts for the selected text; `null` when nothing is selected. */
+  onSelectionStatsChange?: (selection: EditorStats | null) => void;
+  /** The Tiptap instance once it exists, and `null` when the canvas goes away. */
+  onEditorChange?: (editor: Editor | null) => void;
   /** A brand-new draft puts the caret in the title. */
   autoFocusTitle?: boolean;
 };
@@ -27,6 +32,9 @@ export function EditorCanvas({
   initialContent,
   onTitleChange,
   onContentChange,
+  onStatsChange,
+  onSelectionStatsChange,
+  onEditorChange,
   autoFocusTitle,
 }: EditorCanvasProps) {
   const titleRef = useRef<HTMLTextAreaElement>(null);
@@ -49,9 +57,28 @@ export function EditorCanvas({
     editorProps: {
       attributes: { class: "studio-prose", "aria-label": "Isi tulisan" },
     },
-    onUpdate: ({ editor: e }) =>
-      onContentChange(e.getJSON(), countWords(e.getText({ blockSeparator: " " }))),
+    // A new editor starts with nothing selected; reporting it clears a selection left by the old one.
+    onCreate: ({ editor: e }) => {
+      onStatsChange?.(docStats(e.getJSON()));
+      onSelectionStatsChange?.(null);
+    },
+    onUpdate: ({ editor: e }) => {
+      const json = e.getJSON();
+      const stats = docStats(json);
+      // The same word count feeds the bar, the popover and the daily target (STD-04).
+      onContentChange(json, stats.words);
+      onStatsChange?.(stats);
+      onSelectionStatsChange?.(selectionStats(e));
+    },
+    // A cursor move with nothing selected only reports `null`; the parent ignores repeats.
+    onSelectionUpdate: ({ editor: e }) => onSelectionStatsChange?.(selectionStats(e)),
   });
+
+  // The format bar lives outside the scrolling canvas, so the screen needs the editor instance.
+  useEffect(() => {
+    onEditorChange?.(editor);
+    return () => onEditorChange?.(null);
+  }, [editor, onEditorChange]);
 
   // A long title wraps, so the field grows with its content.
   useLayoutEffect(() => {
@@ -79,7 +106,6 @@ export function EditorCanvas({
         }}
         className="mb-6 block w-full resize-none overflow-hidden border-0 bg-transparent p-0 read-title text-ink-read outline-none md:mb-8"
       />
-      {editor && <FormatBar editor={editor} />}
       <EditorContent editor={editor} />
     </article>
   );

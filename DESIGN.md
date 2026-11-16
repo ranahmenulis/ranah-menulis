@@ -28,7 +28,7 @@ Medium dipakai karena satu hal: **ia membuat tulisan menjadi pusat layar**. Itu 
 | Halaman artikel | Kolom baca tunggal ±680px, teks serif besar, baris penulis di bawah judul, bilah aksi bergaris atas-bawah, pemisah adegan tiga titik, komentar di laci samping | Judul karya serif (Medium memakai sans tebal); dukungan puisi (baris dijaga); penanda visibilitas; tidak ada paywall dan bintang member |
 | Feed beranda | Daftar dipisah garis tipis, bukan kartu; baris "di [grup] oleh [penulis] · tanggal"; judul + cuplikan; meta berikon di kiri dan aksi (simpan, ⋯) di kanan; thumbnail 3:2 di kanan; tab bergaris bawah; kolom kanan (pilihan editor, sedang ramai, topik berchip +, penulis untuk diikuti, tautan footer kecil) | Blok "Hari ini" di atas feed (Brief 4A); thumbnail hanya bila karya punya gambar; judul dan cuplikan memakai serif karena yang dijual adalah suara tulisan (Medium memakai sans tebal) |
 | Sidebar kiri | Beranda, Library, Profil, Stories, Stats, lalu garis dan daftar "Following" | Beranda, Studio (Streak sebagai sub-butir di bawahnya), Projects, Tersimpan, Profil, lalu garis, Kelola/Admin, lalu daftar Grup saya |
-| Editor | Kanvas kosong tanpa toolbar permanen, toolbar format muncul saat teks dipilih, status "Tersimpan" berupa teks abu di bilah atas | Indikator simpan tiga keadaan; jumlah kata selalu terlihat; mode fokus; menu Kirim ke proyek; drawer kit inspirasi |
+| Editor | Kanvas kosong, bilah format tetap di bawah bilah editor (pil bergaris), status "Tersimpan" berupa teks abu di bilah atas | Indikator simpan tiga keadaan; jumlah kata selalu terlihat; mode fokus; menu Kirim ke proyek; drawer kit inspirasi |
 | Daftar cerita (Stories) | Tab Draf/Terbit, baris berisi judul dan meta, menu ⋯ | Folder, penanda "Dibagikan" dan "Dikirim ke proyek" |
 | Profil | Dua kolom di desktop: karya di kiri, identitas di kanan | Genre, negara, portofolio proyek; streak hanya bila penulis memilih |
 | Library | Daftar tersimpan | Disebut "Tersimpan" |
@@ -214,7 +214,7 @@ Logo sudah ada, hitam putih, di `public/logo/`. Logo **tidak boleh digambar ulan
 
 Aturan:
 - Wordmark utama = monogram R + "ranah." / "menulis" dua baris. Tinggi minimal 28px di layar. Ruang bebas di sekelilingnya minimal setinggi huruf "r".
-- Bilah editor dan bilah atas ponsel yang sempit memakai **monogram R saja**.
+- Bilah atas ponsel yang sempit memakai **monogram R saja**. Bilah editor tidak memakai logo sebagai tombol: kiri adalah panah kembali (lihat 6.3).
 - Terang memakai versi hitam, gelap memakai versi putih. Tidak ada versi abu-abu atau berwarna.
 - Huruf logo adalah geometris rata dengan ujung membulat. Huruf itu **tidak** dipakai di antarmuka: tipografi antarmuka tetap Inter dan Merriweather. Kesamaan rasa (ujung membulat) dijaga lewat tombol pill, bukan lewat font.
 - Catatan teknis: belum ada SVG. Untuk implementasi minta SVG dari pembuat logo; sebelum itu pakai PNG transparan. JPG berlatar putih tidak boleh dipasang di atas `canvas` gelap.
@@ -305,10 +305,10 @@ Urutan dari atas, satu kolom 680px:
 
 ### 6.3 Studio: editor (pola editor Medium)
 
-- **Bilah editor** menggantikan bilah atas: kiri monogram R, judul dokumen dipotong, **penanda visibilitas** (ikon gembok + "Pribadi"), indikator simpan. Kanan: jumlah kata (`tabular-nums`), tombol primer kecil "Bagikan", ⋯ (Kirim ke proyek, Ekspor, Riwayat versi, Pindah ke sampah), tombol mode fokus.
+- **Bilah editor** menggantikan bilah atas: kiri **panah kembali** berlabel "Kembali ke Studio" menuju daftar dokumen (diubah 16 November 2026: sebelumnya logo R menuju `/`, tanpa jalan keluar yang jelas; menyimpan dulu dengan `saveNow()` dan bila gagal tinggal di tempat dengan toast), judul dokumen dipotong, **penanda visibilitas** (ikon gembok + "Pribadi"), indikator simpan. Kanan: jumlah kata (`tabular-nums`; tombol yang membuka popover Kata · Karakter · Paragraf · Waktu baca, "12 dari 167 kata" saat teks dipilih), tombol primer kecil "Bagikan", ⋯ (Kirim ke proyek, Ekspor, Riwayat versi, Pindah ke sampah), tombol mode fokus.
 - **Kanvas** 680px: placeholder judul "Judul" (`read-title`, `ink-faint`), placeholder isi "Mulai dari satu kalimat." (`read-body`, `ink-faint`).
-- **Toolbar format** muncul hanya saat teks dipilih: pill `ink` dengan ikon `on-ink`: Tebal, Miring, Judul, Kutipan, Daftar. Tidak ada toolbar permanen ala Word.
-- **Mode fokus:** bilah dan sidebar hilang, hanya teks; jumlah kata dan indikator simpan tetap terlihat redup di pojok. `Esc` keluar.
+- **Bilah format** tetap terlihat di bawah bilah editor (diubah 16 November 2026 mengikuti mockup landing dan permintaan user; sebelumnya pil `ink` melayang saat teks dipilih): satu pil bergaris 1px (`line`, latar kanvas, tidak terisi karena Bagikan adalah satu-satunya tombol terisi) di tengah kolom, ikon `ink`: Tebal, Miring, Judul, Kutipan, Daftar berpoin, Daftar bernomor (enam format STD-01). Butir aktif bergaris bawah, tidak diwarnai. Target sentuh 40×36 di ponsel. Menempel di atas saat kanvas digulir (di luar area gulir), tersembunyi di mode fokus, tidak mengambil fokus dari editor. Format hanya yang diizinkan STD-01, bukan toolbar lengkap ala Word.
+- **Mode fokus:** bilah, bilah format, dan sidebar hilang, hanya teks; jumlah kata dan indikator simpan tetap terlihat redup di pojok. `Esc` keluar.
 - **Drawer bantuan** (kit inspirasi, perpustakaan prompt): laci kanan 360px, tombol Salin per prompt.
 
 ### 6.4 Daftar dokumen Studio

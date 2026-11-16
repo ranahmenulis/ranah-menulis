@@ -1,11 +1,13 @@
 "use client";
 
+import type { Editor } from "@tiptap/react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useToast } from "@/components/ui/toast";
 import { postFromDocumentHref, STUDIO_HREF } from "@/features/app-shell/nav";
 import { cn } from "@/lib/cn";
 import { paragraphsOf } from "../diff-paragraphs";
+import { sameStats, type EditorStats } from "../editor-stats";
 import { useOnlineStatus } from "../hooks/use-online-status";
 import { useStudioDocument, type LoadState } from "../hooks/use-studio-document";
 import { studioStore as store } from "../storage/store";
@@ -16,12 +18,10 @@ import { EditorBar } from "./editor-bar";
 import { EditorCanvas } from "./editor-canvas";
 import { EditorError, EditorLoading, EditorMissing } from "./editor-states";
 import { FocusHud } from "./focus-hud";
+import { FormatBar } from "./format-bar";
 import { HelpDrawer } from "./help-drawer";
 import { SendToProjectDialog } from "./send-to-project-dialog";
 import { ShareDialog } from "./share-dialog";
-
-/** [konfirmasi] Back-link target until the Studio document list exists (step 4). */
-const STUDIO_HOME = "/";
 
 const FALLBACK_TITLE: Record<LoadState, string> = {
   loading: "",
@@ -31,8 +31,8 @@ const FALLBACK_TITLE: Record<LoadState, string> = {
 };
 
 function NotReady({ load, onRetry }: { load: LoadState; onRetry: () => void }) {
-  if (load === "error") return <EditorError onRetry={onRetry} backHref={STUDIO_HOME} />;
-  if (load === "missing") return <EditorMissing backHref={STUDIO_HOME} />;
+  if (load === "error") return <EditorError onRetry={onRetry} backHref={STUDIO_HREF} />;
+  if (load === "missing") return <EditorMissing backHref={STUDIO_HREF} />;
   return <EditorLoading />;
 }
 
@@ -48,7 +48,20 @@ export function StudioEditor({ documentId }: { documentId: string }) {
   const [helpOpen, setHelpOpen] = useState(false);
   const [focusMode, setFocusMode] = useState(false);
   const [dialog, setDialog] = useState<"share" | "send" | null>(null);
+  const [stats, setStats] = useState<EditorStats | null>(null);
+  const [selection, setSelection] = useState<EditorStats | null>(null);
+  const [editor, setEditor] = useState<Editor | null>(null);
   const router = useRouter();
+
+  // Equal values keep the previous object, so a cursor move does not re-render the editor screen.
+  const onStatsChange = useCallback(
+    (next: EditorStats) => setStats((prev) => (sameStats(prev, next) ? prev : next)),
+    [],
+  );
+  const onSelectionStatsChange = useCallback(
+    (next: EditorStats | null) => setSelection((prev) => (sameStats(prev, next) ? prev : next)),
+    [],
+  );
 
   const enterFocus = useCallback(() => {
     setHelpOpen(false);
@@ -75,8 +88,22 @@ export function StudioEditor({ documentId }: { documentId: string }) {
   const share = useCallback(async () => {
     if (!(await saveNow())) return false;
     router.push(postFromDocumentHref(getId()));
+    // This editor stays mounted in the background; coming back must not reopen the dialog.
+    setDialog(null);
     return true;
   }, [saveNow, getId, router]);
+
+  // Leaving writes out what was typed first; if the device refuses, stay so nothing is lost.
+  const goBack = useCallback(async () => {
+    if (await saveNow()) {
+      router.push(STUDIO_HREF);
+      return;
+    }
+    toast({
+      message: "Tulisanmu belum tersimpan di perangkat ini, jadi belum bisa ditutup. Coba lagi.",
+      tone: "error",
+    });
+  }, [saveNow, router, toast]);
 
   // Reversible: the document keeps its text in Sampah, and "Urungkan" opens it again.
   const moveToTrash = useCallback(async () => {
@@ -141,6 +168,9 @@ export function StudioEditor({ documentId }: { documentId: string }) {
       initialContent={doc.initial.content}
       onTitleChange={doc.setTitle}
       onContentChange={doc.onContentChange}
+      onStatsChange={onStatsChange}
+      onSelectionStatsChange={onSelectionStatsChange}
+      onEditorChange={setEditor}
       autoFocusTitle={documentId === "baru"}
     />
   ) : (
@@ -153,6 +183,8 @@ export function StudioEditor({ documentId }: { documentId: string }) {
         <EditorBar
           title={doc.title}
           words={doc.words}
+          stats={stats}
+          selection={selection}
           status={doc.status}
           savedAt={doc.savedAt}
           offline={!online}
@@ -163,11 +195,13 @@ export function StudioEditor({ documentId }: { documentId: string }) {
           ready={ready}
           fallbackTitle={FALLBACK_TITLE[doc.load]}
           menuItems={menuItems}
+          onBack={() => void goBack()}
           onShare={() => setDialog("share")}
           onToggleHelp={() => setHelpOpen((v) => !v)}
           onFocusMode={enterFocus}
         />
       )}
+      {!focusMode && editor && <FormatBar editor={editor} />}
 
       <main
         aria-label="Kanvas menulis"

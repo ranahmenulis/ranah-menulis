@@ -21,6 +21,7 @@ export type NavEntry = {
 /** [konfirmasi] Dummy account until sign-in exists; login is bypassed during slicing. */
 export const DUMMY_USER = { name: "Rinjani Putri" };
 
+export const HOME_HREF = "/beranda";
 export const STUDIO_HREF = "/studio";
 export const SAVED_HREF = "/tersimpan";
 export const NOTIFICATIONS_HREF = "/notifikasi";
@@ -32,7 +33,7 @@ export const NEW_POST_HREF = "/tulis";
 export const postFromDocumentHref = (documentId: string) =>
   `${NEW_POST_HREF}?dokumen=${encodeURIComponent(documentId)}`;
 
-const home: NavEntry = { id: "beranda", label: "Beranda", Icon: House, href: "/beranda" };
+const home: NavEntry = { id: "beranda", label: "Beranda", Icon: House, href: HOME_HREF };
 const discover: NavEntry = {
   id: "jelajahi",
   label: "Jelajahi",
@@ -87,5 +88,5 @@ export function mobileTitle(pathname: string): string | null {
 
 /** The round write button is shown on Beranda and the Studio document list only. */
 export function showsWriteButton(pathname: string): boolean {
-  return pathname === "/beranda" || pathname === STUDIO_HREF;
+  return pathname === HOME_HREF || pathname === STUDIO_HREF;
 }

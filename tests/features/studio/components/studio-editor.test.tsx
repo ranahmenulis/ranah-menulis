@@ -80,6 +80,17 @@ describe("StudioEditor, Bagikan", () => {
     expect(h.saveNow.mock.invocationCallOrder[0]).toBeLessThan(h.push.mock.invocationCallOrder[0]);
   });
 
+  it("closes the dialog when it hands over, so coming back to the editor does not reopen it", async () => {
+    renderEditor();
+    fireEvent.click(bagikan());
+    fireEvent.click(screen.getByRole("button", { name: "Pilih bagian untuk dibagikan" }));
+
+    await waitFor(() => expect(h.push).toHaveBeenCalled());
+    await waitFor(() =>
+      expect(screen.queryByRole("dialog", { name: "Bagikan sebagai postingan" })).toBeNull(),
+    );
+  });
+
   it("does not leave when the text could not be stored", async () => {
     h.saveNow.mockResolvedValue(false);
     renderEditor();
@@ -190,5 +201,32 @@ describe("StudioEditor, menu", () => {
 
     await screen.findByText(/belum bisa dipulihkan/);
     expect(h.push).not.toHaveBeenCalled();
+  });
+});
+
+describe("StudioEditor, back to Studio", () => {
+  const back = () => screen.getByRole("button", { name: "Kembali ke Studio" });
+
+  it("saves what was written, then opens the document list", async () => {
+    renderEditor();
+    fireEvent.click(back());
+
+    await waitFor(() => expect(h.push).toHaveBeenCalledWith("/studio"));
+    expect(h.saveNow.mock.invocationCallOrder[0]).toBeLessThan(h.push.mock.invocationCallOrder[0]);
+  });
+
+  it("stays and says why when the text could not be stored", async () => {
+    h.saveNow.mockResolvedValue(false);
+    renderEditor();
+    fireEvent.click(back());
+
+    await screen.findByText(/jadi belum bisa ditutup/);
+    expect(h.push).not.toHaveBeenCalled();
+  });
+
+  it("is there while the document is still opening, so the writer is never stuck", () => {
+    h.doc.load = "loading";
+    renderEditor();
+    expect(back()).toBeTruthy();
   });
 });

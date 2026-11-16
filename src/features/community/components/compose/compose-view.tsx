@@ -37,11 +37,21 @@ export function ComposeView({
 
   const { picking, review } = layoutOf(state);
 
-  const leave = () => (window.history.length > 1 ? router.back() : router.push(DISCOVER_HREF));
+  const leave = () => {
+    // This page stays mounted in the background; coming back must not reopen the dialog.
+    setLeaving(false);
+    if (window.history.length > 1) router.back();
+    else router.push(DISCOVER_HREF);
+  };
 
+  // Saving a draft is also a way out: the author lands where they came from, with the toast.
   async function saveDraft() {
-    if (await c.saveDraft()) toast({ message: "Draf disimpan di perangkat ini.", key: "draft" });
-    else toast({ message: "Draf belum tersimpan. Coba lagi.", tone: "error", key: "draft" });
+    if (await c.saveDraft()) {
+      toast({ message: "Draf disimpan di perangkat ini.", key: "draft" });
+      leave();
+    } else {
+      toast({ message: "Draf belum tersimpan. Coba lagi.", tone: "error", key: "draft" });
+    }
   }
 
   if (c.load === "loading" || c.sourceParam === "loading") return <ComposeLoading />;
@@ -52,11 +62,12 @@ export function ComposeView({
       name={c.done ? "Postingan terbit" : state.draftId ? "Draf postingan" : "Postingan baru"}
       isDraft={state.draftId !== null && !c.done}
       actions={!c.done}
-      backToText={review}
+      backToText={review && !c.done}
       draftDisabled={!canSaveDraft(state) || c.busy}
       publishDisabled={!canPublish(state) || picking}
       publishing={c.busy && !c.failed}
-      onClose={() => (c.dirty ? setLeaving(true) : leave())}
+      // A published post has nothing left to lose, so it closes without asking.
+      onClose={() => (c.dirty && !c.done ? setLeaving(true) : leave())}
       onBackToText={() => dispatch({ type: "review", on: false })}
       onDraft={() => void saveDraft()}
       onPublish={() => void c.publish()}
