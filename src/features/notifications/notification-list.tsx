@@ -58,7 +58,7 @@ function NotificationRow({
           {lead && <b className="font-medium">{lead}</b>} {item.text}
         </span>
         <span className="mt-0.5 block min-h-4 text-xs text-ink-muted">
-          {now > 0 && agoLabel(item.agoMs, now)}
+          {now > 0 && agoLabel(item, now)}
         </span>
       </span>
     </>

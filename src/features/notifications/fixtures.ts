@@ -6,8 +6,9 @@ const DAY = 24 * HOUR;
 
 /**
  * Dummy notifications, newest first. Links point to Community posts and author profiles that exist
- * in its fixtures; project events have no destination until Projects is built, so their href is
- * null.
+ * in its fixtures. Events about submissions are not here: they come from the stored submissions
+ * (src/features/projects/submission-notifications.ts). The payment line has no destination until
+ * QRIS exists (6f-6), so its href is null.
  */
 export const notificationFixtures: Notification[] = [
   {
@@ -38,15 +39,6 @@ export const notificationFixtures: Notification[] = [
     agoMs: 2 * HOUR + 30 * MINUTE,
   },
   {
-    id: "n-revisi",
-    kind: "project",
-    actorId: null,
-    others: 0,
-    text: "Editor meminta revisi untuk “Surat untuk Kakek di Pelabuhan” di Antologi Surat yang Tidak Pernah Terkirim. Tenggat revisi 18 Nov.",
-    href: null,
-    agoMs: 3 * HOUR,
-  },
-  {
     id: "n-ikuti",
     kind: "follow",
     actorId: "dimas-pratama",
@@ -74,16 +66,6 @@ export const notificationFixtures: Notification[] = [
     text: "menyebutmu dalam komentar di “Garam dan Pelabuhan”.",
     href: "/postingan/garam-dan-pelabuhan",
     agoMs: DAY + 6 * HOUR,
-    seen: true,
-  },
-  {
-    id: "n-lomba",
-    kind: "project",
-    actorId: null,
-    others: 0,
-    text: "Karyamu untuk Lomba Cerpen Hujan 2026 sudah diterima sistem.",
-    href: null,
-    agoMs: 3 * DAY,
     seen: true,
   },
 ];

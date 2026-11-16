@@ -2,7 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
-import { Button } from "@/components/ui/button";
+import { Button, ButtonLink } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/states";
 import {
   CATEGORIES,
@@ -12,6 +12,7 @@ import {
   parseFilters,
   toQuery,
 } from "../project-model";
+import { MY_PROJECTS_HREF } from "../submission-href";
 import { useProjects } from "../use-projects";
 import type { Filters, ProjectFixture } from "../types";
 import { CategoryBar, ProjectFilters } from "./project-filters";
@@ -64,9 +65,14 @@ export function ProjectsView({ source }: Props) {
 
   return (
     <div className="mx-auto max-w-260">
-      <h1 className="text-[22px] leading-[30px] font-semibold md:text-[28px] md:leading-9">
-        Projects
-      </h1>
+      <div className="flex items-center justify-between gap-4">
+        <h1 className="text-[22px] leading-[30px] font-semibold md:text-[28px] md:leading-9">
+          Projects
+        </h1>
+        <ButtonLink href={MY_PROJECTS_HREF} variant="text" size="sm" className="text-ink">
+          Proyek saya
+        </ButtonLink>
+      </div>
 
       <CategoryBar filters={filters} onChange={change} />
       <p className="mt-3 text-sm text-ink-muted md:mt-4">{description}</p>

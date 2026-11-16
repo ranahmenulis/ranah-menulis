@@ -33,6 +33,7 @@ describe("useSubmissions", () => {
     const store: SubmissionStore = {
       list: async () => (fail ? Promise.reject(new Error("idb")) : [submission()]),
       add: async () => "ok",
+      update: async () => "ok" as const,
     };
     const { result } = renderHook(() => useSubmissions(store));
     await waitFor(() => expect(result.current.status).toBe("error"));
@@ -57,6 +58,7 @@ describe("useSubmittedDocumentIds", () => {
     const store: SubmissionStore = {
       list: () => Promise.reject(new Error("x")),
       add: async () => "ok",
+      update: async () => "ok" as const,
     };
     const { result } = renderHook(() => useSubmittedDocumentIds(store));
     await new Promise((r) => setTimeout(r, 20));

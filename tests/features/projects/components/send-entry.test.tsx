@@ -78,7 +78,11 @@ describe("project page, the send button", () => {
 
   it("waits while the count is unknown, so it never offers a send the limit would refuse", async () => {
     register(ESAI);
-    const store = { list: () => new Promise<never>(() => {}), add: async () => "ok" as const };
+    const store = {
+      list: () => new Promise<never>(() => {}),
+      add: async () => "ok" as const,
+      update: async () => "ok" as const,
+    };
     render(<ProjectDetail slug={ESAI} store={store} />);
     const button = await screen.findByRole("button", { name: "Kirim karya" });
     expect((button as HTMLButtonElement).disabled).toBe(true);
@@ -90,6 +94,7 @@ describe("project page, the send button", () => {
     const store = {
       list: () => Promise.reject(new Error("idb")),
       add: async () => "ok" as const,
+      update: async () => "ok" as const,
     };
     render(<ProjectDetail slug={ESAI} store={store} />);
     expect(await screen.findByRole("link", { name: "Kirim karya" })).toBeTruthy();

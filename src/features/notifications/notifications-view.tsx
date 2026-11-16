@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/states";
 import { Tabs } from "@/components/ui/tabs";
+import type { SubmissionStore } from "@/features/projects/storage/submission-store";
 import { useViewer } from "@/lib/viewer";
 import { NOTIFICATION_TABS, inTab } from "./notification-model";
 import { NotificationList } from "./notification-list";
@@ -17,9 +18,9 @@ const number = new Intl.NumberFormat("id-ID");
  * dot. The list is dummy data with a read state kept on this device, so it has no loading or error
  * state until it comes from the server.
  */
-export function NotificationsView() {
+export function NotificationsView({ store }: { store?: SubmissionStore }) {
   const guest = useViewer() === "tamu";
-  const { items, unread, now, markRead, markAllRead } = useNotifications();
+  const { items, unread, now, markRead, markAllRead } = useNotifications(store);
   const [tab, setTab] = useState<NotificationTab>("semua");
 
   return (

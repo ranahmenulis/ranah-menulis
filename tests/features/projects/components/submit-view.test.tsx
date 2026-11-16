@@ -187,6 +187,7 @@ describe("SubmitView, sending", () => {
     const store: SubmissionStore = {
       list: async () => [],
       add: async () => Promise.reject(new Error("idb")),
+      update: async () => "ok" as const,
     };
     await open({ store });
     await fillAndSend();
@@ -258,6 +259,7 @@ describe("SubmitView, reading fails", () => {
     const store: SubmissionStore = {
       list: () => Promise.reject(new Error("idb")),
       add: async () => "ok",
+      update: async () => "ok" as const,
     };
     render(<SubmitView slug={ESAI} store={store} documents={documentsOf(docs)} />);
     expect(await screen.findByText(/belum bisa dibuka/)).toBeTruthy();

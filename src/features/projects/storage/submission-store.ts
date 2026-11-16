@@ -1,6 +1,13 @@
 import type { Submission } from "../submission-types";
 
 export type AddResult = "ok" | "duplicate" | "limit";
+export type UpdateResult = "ok" | "missing" | "rejected";
+
+/**
+ * Computes the next version of one submission from its current one and all the others. Returning
+ * `null` refuses the change and nothing is written.
+ */
+export type Change = (current: Submission, all: Submission[]) => Submission | null;
 
 /**
  * Where submissions live. Today: this device (IndexedDB). The Supabase store replaces it after the
@@ -13,6 +20,11 @@ export interface SubmissionStore {
    * sent twice to one project, or more works than the project allows. Checked and written together.
    */
   add(submission: Submission, maxWorks: number): Promise<AddResult>;
+  /**
+   * Changes one submission (a decision, a revision, a withdrawal). The current row is read, changed
+   * and written in one transaction, so two tabs cannot both act on the same old status.
+   */
+  update(id: string, change: Change): Promise<UpdateResult>;
 }
 
 /** Pure rule shared by every store; a withdrawn work no longer counts. */

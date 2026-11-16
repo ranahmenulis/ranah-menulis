@@ -1,14 +1,42 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import type { SubmissionStore } from "@/features/projects/storage/submission-store";
+import { submissionNotifications } from "@/features/projects/submission-notifications";
+import { useSubmissions } from "@/features/projects/use-submissions";
 import { notificationFixtures } from "./fixtures";
-import { type NotificationView, unreadCount, withReadState } from "./notification-model";
+import {
+  newestFirst,
+  type NotificationView,
+  unreadCount,
+  withReadState,
+} from "./notification-model";
 import { markRead, useReadIds } from "./read-state";
+import type { Notification } from "./types";
 
-/** Unread count only, for the bell in the top bar. Does not load anything else. */
-export function useUnreadCount(): number {
+/**
+ * The fixtures plus the events of the submissions on this device. A failed or slow read of
+ * submissions just leaves their events out: notifications are a hint, and everything else stays.
+ */
+function useAllNotifications(store?: SubmissionStore): Notification[] {
+  const { status, submissions } = useSubmissions(store);
+  return useMemo(
+    () =>
+      status === "ready"
+        ? [...submissionNotifications(submissions), ...notificationFixtures]
+        : notificationFixtures,
+    [status, submissions],
+  );
+}
+
+/**
+ * Unread count only, for the bell in the top bar. It reads the submissions on this device too, so
+ * their events count; nothing else is loaded.
+ */
+export function useUnreadCount(store?: SubmissionStore): number {
   const readIds = useReadIds();
-  return useMemo(() => unreadCount(withReadState(notificationFixtures, readIds)), [readIds]);
+  const all = useAllNotifications(store);
+  return useMemo(() => unreadCount(withReadState(all, readIds)), [all, readIds]);
 }
 
 export type NotificationsData = {
@@ -20,9 +48,10 @@ export type NotificationsData = {
   markAllRead: () => void;
 };
 
-/** What the Notifikasi screen and the Beranda line read. Fixtures plus this device's read state. */
-export function useNotifications(): NotificationsData {
+/** What the Notifikasi screen and the Beranda line read. Notifications plus this device's read state. */
+export function useNotifications(store?: SubmissionStore): NotificationsData {
   const readIds = useReadIds();
+  const all = useAllNotifications(store);
   const [now, setNow] = useState(0);
 
   // Reading the clock during render is refused by Next 16 prerender, so it happens after mount.
@@ -31,13 +60,13 @@ export function useNotifications(): NotificationsData {
     return () => clearTimeout(timer);
   }, []);
 
-  const items = useMemo(() => withReadState(notificationFixtures, readIds), [readIds]);
+  const items = useMemo(() => newestFirst(withReadState(all, readIds), now), [all, readIds, now]);
 
   return {
     items,
     unread: unreadCount(items),
     now,
     markRead: useCallback((id: string) => markRead([id]), []),
-    markAllRead: useCallback(() => markRead(notificationFixtures.map((n) => n.id)), []),
+    markAllRead: useCallback(() => markRead(all.map((n) => n.id)), [all]),
   };
 }

@@ -38,3 +38,37 @@ describe("createMemorySubmissionStore", () => {
     expect((await store.list()).map((s) => s.id)).toEqual(["a"]);
   });
 });
+
+describe("createMemorySubmissionStore, update", () => {
+  it("writes what the change returns and hands it the other submissions", async () => {
+    const store = createMemorySubmissionStore();
+    await store.add(submission({ id: "a", docId: "d1" }), 3);
+    await store.add(submission({ id: "b", docId: "d2" }), 3);
+    let seen: string[] = [];
+    const verdict = await store.update("a", (current, all) => {
+      seen = all.map((s) => s.id).sort();
+      return { ...current, title: "Judul baru" };
+    });
+    expect(verdict).toBe("ok");
+    expect(seen).toEqual(["a", "b"]);
+    expect((await store.list()).find((s) => s.id === "a")?.title).toBe("Judul baru");
+  });
+
+  it("writes nothing when the change refuses", async () => {
+    const store = createMemorySubmissionStore();
+    await store.add(submission({ id: "a" }), 3);
+    expect(await store.update("a", () => null)).toBe("rejected");
+    expect((await store.list())[0].title).toBe("Buku yang Mengubahku");
+  });
+
+  it("says so when there is no such submission, without calling the change", async () => {
+    const store = createMemorySubmissionStore();
+    let called = false;
+    const verdict = await store.update("nope", (current) => {
+      called = true;
+      return current;
+    });
+    expect(verdict).toBe("missing");
+    expect(called).toBe(false);
+  });
+});

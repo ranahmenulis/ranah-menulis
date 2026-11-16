@@ -9,12 +9,12 @@ const none = new Set<string>();
 
 describe("withReadState and unreadCount", () => {
   it("counts the notifications that were neither seen before nor read on this device", () => {
-    expect(unreadCount(withReadState(notificationFixtures, none))).toBe(4);
-    expect(unreadCount(withReadState(notificationFixtures, new Set(["n-revisi"])))).toBe(3);
+    expect(unreadCount(withReadState(notificationFixtures, none))).toBe(3);
+    expect(unreadCount(withReadState(notificationFixtures, new Set(["n-apresiasi"])))).toBe(2);
   });
 
   it("ignores ids that are not notifications", () => {
-    expect(unreadCount(withReadState(notificationFixtures, new Set(["tidak-ada"])))).toBe(4);
+    expect(unreadCount(withReadState(notificationFixtures, new Set(["tidak-ada"])))).toBe(3);
   });
 });
 
@@ -67,7 +67,7 @@ describe("leadOf", () => {
   });
 
   it("has no lead for events that come from the platform", () => {
-    expect(leadOf(notificationFixtures.find((n) => n.id === "n-revisi")!)).toBeNull();
+    expect(leadOf(notificationFixtures.find((n) => n.id === "n-pembayaran")!)).toBeNull();
   });
 });
 
@@ -75,12 +75,13 @@ describe("agoLabel", () => {
   const now = new Date(2026, 10, 15, 12).getTime();
   const MINUTE = 60_000;
   const HOUR = 60 * MINUTE;
+  const ago = (agoMs: number) => ({ ...notificationFixtures[0], agoMs });
 
   it("adds 'lalu' to counted units only", () => {
-    expect(agoLabel(25 * MINUTE, now)).toBe("25 menit lalu");
-    expect(agoLabel(3 * HOUR, now)).toBe("3 jam lalu");
-    expect(agoLabel(26 * HOUR, now)).toBe("kemarin");
-    expect(agoLabel(3 * 24 * HOUR, now)).toBe("3 hari lalu");
-    expect(agoLabel(10 * 60 * 24 * MINUTE, now)).toBe("5 Nov");
+    expect(agoLabel(ago(25 * MINUTE), now)).toBe("25 menit lalu");
+    expect(agoLabel(ago(3 * HOUR), now)).toBe("3 jam lalu");
+    expect(agoLabel(ago(26 * HOUR), now)).toBe("kemarin");
+    expect(agoLabel(ago(3 * 24 * HOUR), now)).toBe("3 hari lalu");
+    expect(agoLabel(ago(10 * 60 * 24 * MINUTE), now)).toBe("5 Nov");
   });
 });

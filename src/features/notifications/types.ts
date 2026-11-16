@@ -18,6 +18,11 @@ export type Notification = {
   href: string | null;
   /** How long before the screen opened it happened. Resolved at read time, never at render. */
   agoMs: number;
+  /**
+   * When it happened, for events that come from stored data (submissions). Wins over `agoMs`; the
+   * fixtures only know "how long ago".
+   */
+  at?: number;
   /** Already read before the reader ever opened the list. */
   seen?: boolean;
 };

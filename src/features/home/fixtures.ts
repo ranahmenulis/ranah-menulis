@@ -1,18 +1,13 @@
-import type { SubmissionStatus } from "@/components/ui/status-submission";
-
 /**
- * Dummy data for Beranda until Projects (R4) and the account screens exist. Everything here is
- * placeholder content written to look like real use; none of it comes from a database. The feed
- * itself comes from src/features/community, notifications from src/features/notifications.
+ * Dummy data for Beranda until the account screens exist. Everything here is placeholder content
+ * written to look like real use; none of it comes from a database. "Perlu perhatian" keeps the two
+ * items that are not about a project; the revision request and "Proyek saya" come from
+ * src/features/projects. The feed comes from src/features/community, notifications from
+ * src/features/notifications.
  */
 
 export type AttentionItem = { title: string; meta: string; actions: string[] };
 export const attention: AttentionItem[] = [
-  {
-    title: "Editor meminta revisi untuk “Surat untuk Kakek di Pelabuhan”",
-    meta: "Antologi Surat yang Tidak Pernah Terkirim · tenggat revisi 18 Nov",
-    actions: ["Baca catatan editor"],
-  },
   {
     title: "Pembayaran Kelas Menulis Puisi Dasar menunggu konfirmasi",
     meta: "Rp150.000 · kuotamu ditahan 1 jam 42 menit lagi",
@@ -22,20 +17,6 @@ export const attention: AttentionItem[] = [
     title: "Hafiz Rahman mengundangmu ke Grup Penulis Pesisir",
     meta: "Grup kecil, 14 anggota",
     actions: ["Terima", "Tolak"],
-  },
-];
-
-export type ProjectItem = { status: SubmissionStatus; name: string; meta: string };
-export const projects: ProjectItem[] = [
-  {
-    status: "perlu-revisi",
-    name: "Antologi Surat yang Tidak Pernah Terkirim",
-    meta: "“Surat untuk Kakek di Pelabuhan” · tenggat revisi 18 Nov",
-  },
-  {
-    status: "terkirim",
-    name: "Lomba Cerpen Hujan 2026",
-    meta: "“Yang Ditunggu Nenek di Bawah Jambu Air” · pengumuman finalis 30 Nov",
   },
 ];
 

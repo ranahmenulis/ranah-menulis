@@ -131,7 +131,11 @@ describe("SendToProjectDialog, with registrations", () => {
 
 describe("SendToProjectDialog, reading fails", () => {
   it("is an error with a retry, never an empty list", async () => {
-    const store = { list: () => Promise.reject(new Error("idb")), add: async () => "ok" as const };
+    const store = {
+      list: () => Promise.reject(new Error("idb")),
+      add: async () => "ok" as const,
+      update: async () => "ok" as const,
+    };
     open({ store });
     expect(await screen.findByText(/belum bisa dibaca dari perangkat ini/)).toBeTruthy();
     expect(screen.getByRole("button", { name: "Coba lagi" })).toBeTruthy();
