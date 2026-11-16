@@ -28,6 +28,12 @@ export const soloKelasFixtures: ProjectFixture[] = [
     quota: null,
     closesInMs: null,
     milestones: [],
+    terms: {
+      version: "2026-11-contoh",
+      special: [
+        "Kamu menyetujui atau meminta perubahan pada tahap persetujuan final, sebelum produksi dimulai.",
+      ],
+    },
     block: {
       kind: "solo",
       packages: [
@@ -78,6 +84,7 @@ export const soloKelasFixtures: ProjectFixture[] = [
       { label: "Kelas dimulai", inMs: days(12) },
       { label: "Pertemuan terakhir", inMs: days(40) },
     ],
+    terms: { version: "2026-11-contoh", special: [] },
     block: {
       kind: "kelas",
       teacher: {
@@ -108,6 +115,7 @@ export const soloKelasFixtures: ProjectFixture[] = [
     quota: { total: 50, taken: 38 },
     closesInMs: days(3),
     milestones: [{ label: "Kelas dimulai", inMs: days(5) }],
+    terms: { version: "2026-11-contoh", special: [] },
     block: {
       kind: "kelas",
       teacher: {

@@ -6,6 +6,7 @@ import { PROJECTS_HREF } from "@/features/app-shell/nav";
 import { useViewer } from "@/lib/viewer";
 import { categoryLabel, formatProjectDate, projectState } from "../project-model";
 import { deadlineText } from "../project-text";
+import { useRegistrations } from "../registration-store";
 import { useProjects } from "../use-projects";
 import type { Project, ProjectFixture, ProjectState } from "../types";
 import { CategoryBlockView, Section } from "./category-blocks";
@@ -55,6 +56,7 @@ type Props = {
 export function ProjectDetail({ slug, source }: Props) {
   const data = useProjects(source);
   const guest = useViewer() === "tamu";
+  const registrations = useRegistrations();
 
   if (data.status === "loading") return <ProjectDetailSkeleton />;
 
@@ -82,7 +84,13 @@ export function ProjectDetail({ slug, source }: Props) {
 
         <div className="max-lg:order-2 lg:col-start-2 lg:row-span-2 lg:row-start-1">
           <div className="lg:sticky lg:top-[calc(3.5rem+var(--safe-top)+1.5rem)]">
-            <ProjectAside project={project} state={state} now={data.now} guest={guest} />
+            <ProjectAside
+              project={project}
+              state={state}
+              now={data.now}
+              guest={guest}
+              registration={registrations[project.slug]}
+            />
           </div>
         </div>
 

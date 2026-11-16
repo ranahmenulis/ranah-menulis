@@ -1,0 +1,82 @@
+"use client";
+
+import { useState } from "react";
+import { useViewer } from "@/lib/viewer";
+import { projectState } from "../project-model";
+import { newRegistration } from "../registration-model";
+import { saveRegistration, useRegistrations } from "../registration-store";
+import { useProjects } from "../use-projects";
+import type { ProjectFixture } from "../types";
+import { RegisterForm } from "./register-form";
+import {
+  RegisterBlocked,
+  RegisterShell,
+  RegisterSkeleton,
+  RegisterStatus,
+} from "./register-states";
+import { ProjectGone } from "./projects-states";
+
+type Props = {
+  slug: string;
+  /** Replaces the dummy catalog in tests. */
+  source?: ProjectFixture[];
+};
+
+/**
+ * Pendaftaran (PRJ-02, PRD 17.5). Which screen you get depends on who you are and on the project:
+ * your own registration first, then why you cannot register (guest, full, closed), else the form.
+ * A draft or unknown address is "not found" like on the detail page.
+ */
+export function RegisterView({ slug, source }: Props) {
+  const data = useProjects(source);
+  const guest = useViewer() === "tamu";
+  const registrations = useRegistrations();
+  const [justNow, setJustNow] = useState(false);
+  // Set when the project turned out to be closed or full at the moment of submitting.
+  const [late, setLate] = useState<"kuota-penuh" | "ditutup" | null>(null);
+
+  if (data.status === "loading") return <RegisterSkeleton />;
+
+  const project = data.projects.find((p) => p.slug === slug && p.publication === "terbit");
+  if (!project) return <ProjectGone />;
+
+  const state = late ?? projectState(project, data.now);
+  const registration = guest ? undefined : registrations[slug];
+
+  if (registration) {
+    return <RegisterStatus project={project} registration={registration} justNow={justNow} />;
+  }
+  if (guest) {
+    return (
+      <RegisterBlocked project={project}>Masuk untuk mendaftar ke proyek ini.</RegisterBlocked>
+    );
+  }
+  if (state === "kuota-penuh") {
+    return <RegisterBlocked project={project}>Kuota proyek ini sudah penuh.</RegisterBlocked>;
+  }
+  if (state === "ditutup") {
+    return (
+      <RegisterBlocked project={project}>Pendaftaran proyek ini sudah ditutup.</RegisterBlocked>
+    );
+  }
+
+  return (
+    <RegisterShell project={project}>
+      <RegisterForm
+        project={project}
+        state={state}
+        onSubmit={(packageName) => {
+          // The clock was read when the page opened; check again before saving.
+          const now = Date.now();
+          const current = projectState(project, now);
+          if (current === "kuota-penuh" || current === "ditutup") {
+            setLate(current);
+            return;
+          }
+          saveRegistration(newRegistration(project, now, packageName));
+          setJustNow(true);
+        }}
+      />
+    </RegisterShell>
+  );
+}

@@ -6,7 +6,10 @@ import type { ProjectFixture } from "@/features/projects/types";
 
 configure({ asyncUtilTimeout: 5000 });
 
-beforeEach(() => sessionStorage.clear());
+beforeEach(() => {
+  sessionStorage.clear();
+  localStorage.clear();
+});
 afterEach(cleanup);
 
 const DAY = 24 * 60 * 60 * 1000;
@@ -37,10 +40,56 @@ describe("ProjectDetail", () => {
     expect(facts.getByText("21 hari lagi")).toBeTruthy();
   });
 
-  it("offers a disabled Daftar while registration does not exist yet", async () => {
+  it("sends Daftar to the registration page", async () => {
     await open("lomba-cerpen-hujan-2026");
-    const button = within(aside()).getByRole("button", { name: "Daftar" }) as HTMLButtonElement;
-    expect(button.disabled).toBe(true);
+    const link = within(aside()).getByRole("link", { name: "Daftar" });
+    expect(link.getAttribute("href")).toBe("/projects/lomba-cerpen-hujan-2026/daftar");
+  });
+
+  it("shows your own registration instead of Daftar, and fills a seat for a confirmed one", async () => {
+    const slug = "kelas-menulis-puisi-dasar";
+    localStorage.setItem(
+      "ranah.registrations",
+      JSON.stringify({
+        [slug]: {
+          slug,
+          registeredAt: Date.now(),
+          agreedAt: Date.now(),
+          termsVersion: "2026-11-contoh",
+          status: "terdaftar",
+        },
+      }),
+    );
+    await open(slug);
+    const facts = within(aside());
+    expect((facts.getByRole("button", { name: "Terdaftar" }) as HTMLButtonElement).disabled).toBe(
+      true,
+    );
+    expect(facts.queryByRole("link", { name: "Daftar" })).toBeNull();
+    expect(facts.getByText("Sisa 5 dari 30 kuota")).toBeTruthy();
+    expect(facts.getByText(/^Terdaftar pada /)).toBeTruthy();
+    expect(facts.getByRole("link", { name: "Lihat pendaftaran" }).getAttribute("href")).toBe(
+      `/projects/${slug}/daftar`,
+    );
+  });
+
+  it("shows a payment that is still waiting, without filling a seat", async () => {
+    const slug = "kelas-menulis-puisi-dasar";
+    localStorage.setItem(
+      "ranah.registrations",
+      JSON.stringify({
+        [slug]: {
+          slug,
+          registeredAt: Date.now(),
+          agreedAt: Date.now(),
+          termsVersion: "2026-11-contoh",
+          status: "menunggu-pembayaran",
+        },
+      }),
+    );
+    await open(slug);
+    expect(within(aside()).getByRole("button", { name: "Menunggu pembayaran" })).toBeTruthy();
+    expect(within(aside()).getByText("Sisa 6 dari 30 kuota")).toBeTruthy();
   });
 
   it("names a full project and a closed one instead of offering Daftar", async () => {

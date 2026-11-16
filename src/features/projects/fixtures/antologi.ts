@@ -39,6 +39,12 @@ export const antologiFixtures: ProjectFixture[] = [
       { label: "Seleksi dan feedback editor", inMs: days(30) },
       { label: "Pengumuman karya yang diterima", inMs: days(45) },
     ],
+    terms: {
+      version: "2026-11-contoh",
+      special: [
+        "Karya yang diterima tidak dipublikasikan ke Community atau tempat lain oleh pengelola tanpa persetujuanmu.",
+      ],
+    },
     block: { kind: "antologi", theme: "Surat yang tidak pernah terkirim", stages },
   },
   {
@@ -61,6 +67,12 @@ export const antologiFixtures: ProjectFixture[] = [
     quota: { total: 30, taken: 30 },
     closesInMs: -days(12),
     milestones: [{ label: "Pengumuman karya yang diterima", inMs: days(10) }],
+    terms: {
+      version: "2026-11-contoh",
+      special: [
+        "Karya yang diterima tidak dipublikasikan ke Community atau tempat lain oleh pengelola tanpa persetujuanmu.",
+      ],
+    },
     block: { kind: "antologi", theme: "Pulang ke kampung halaman di pesisir", stages },
   },
   {
@@ -78,6 +90,7 @@ export const antologiFixtures: ProjectFixture[] = [
     quota: { total: 40, taken: 0 },
     closesInMs: days(60),
     milestones: [],
+    terms: { version: "2026-11-contoh", special: [] },
     block: { kind: "antologi", theme: "Puisi yang ditulis lewat tengah malam", stages },
   },
 ];

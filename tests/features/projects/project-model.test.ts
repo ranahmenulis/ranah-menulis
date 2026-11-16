@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
 import {
-  actionFor,
   daysLeftLabel,
   feeLabel,
   filterProjects,
@@ -33,6 +32,7 @@ function fixture(over: Partial<ProjectFixture> = {}): ProjectFixture {
     quota: null,
     closesInMs: 20 * DAY,
     milestones: [],
+    terms: { version: "1", special: [] },
     block: { kind: "lomba", criteria: [], prizes: [], anonymous: false },
     ...over,
   };
@@ -211,16 +211,5 @@ describe("filters in the address", () => {
     expect(toQuery({ ...DEFAULT_FILTERS, category: "solo", fee: "berbayar" })).toBe(
       "?kategori=solo&biaya=berbayar",
     );
-  });
-});
-
-describe("actionFor", () => {
-  it("names the right label for each state and for guests", () => {
-    expect(actionFor("buka", false)).toBe("Daftar");
-    expect(actionFor("segera-tutup", false)).toBe("Daftar");
-    expect(actionFor("buka", true)).toBe("Masuk untuk mendaftar");
-    expect(actionFor("kuota-penuh", false)).toBe("Kuota penuh");
-    expect(actionFor("kuota-penuh", true)).toBe("Kuota penuh");
-    expect(actionFor("ditutup", false)).toBe("Pendaftaran ditutup");
   });
 });

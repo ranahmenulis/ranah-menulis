@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { cn } from "@/lib/cn";
-import { PROJECTS_HREF } from "@/features/app-shell/nav";
-import { categoryLabel, feeLabel, projectState } from "../project-model";
+import { categoryLabel, feeLabel, projectHref, projectState } from "../project-model";
 import { deadlineText, quotaText, stateLabel } from "../project-text";
 import type { Project } from "../types";
 
@@ -25,7 +24,7 @@ export function ProjectRow({ project, now }: { project: Project; now: number }) 
       </p>
       <h2 className="feed-title wrap-anywhere">
         <Link
-          href={`${PROJECTS_HREF}/${project.slug}`}
+          href={projectHref(project.slug)}
           className="text-ink no-underline after:absolute after:inset-0 hover:underline"
         >
           {project.title}

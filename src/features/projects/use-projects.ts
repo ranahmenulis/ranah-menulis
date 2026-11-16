@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { projectFixtures } from "./fixtures/all-projects";
 import { resolveProjects } from "./project-model";
+import { applyRegistrations } from "./registration-model";
+import { useRegistrations } from "./registration-store";
 import type { Project, ProjectFixture } from "./types";
 
 export type ProjectsData =
@@ -27,11 +29,18 @@ export function useProjects(source: ProjectFixture[] = projectFixtures): Project
     };
   }, []);
 
+  // Seats follow what was registered on this device, so every screen shows the same numbers.
+  const registrations = useRegistrations();
+  const resolved = useMemo(
+    () => (now === null ? null : resolveProjects(source, now)),
+    [now, source],
+  );
+
   return useMemo(
     () =>
-      now === null
+      now === null || resolved === null
         ? { status: "loading" }
-        : { status: "ready", now, projects: resolveProjects(source, now) },
-    [now, source],
+        : { status: "ready", now, projects: applyRegistrations(resolved, registrations) },
+    [now, resolved, registrations],
   );
 }

@@ -1,8 +1,10 @@
 import type { ReactNode } from "react";
-import { Button } from "@/components/ui/button";
-import { actionFor, daysLeftLabel, feeLines } from "../project-model";
+import { Button, ButtonLink } from "@/components/ui/button";
+import { TextLink } from "@/components/ui/text-link";
+import { daysLeftLabel, feeLines, formatProjectDate } from "../project-model";
 import { deadlineText, quotaText } from "../project-text";
-import type { Project, ProjectState } from "../types";
+import { registerAction, registerHref } from "../registration-model";
+import type { Project, ProjectState, Registration } from "../types";
 
 function Fact({ label, children }: { label: string; children: ReactNode }) {
   return (
@@ -13,14 +15,30 @@ function Fact({ label, children }: { label: string; children: ReactNode }) {
   );
 }
 
-type Props = { project: Project; state: ProjectState; now: number; guest: boolean };
+type Props = {
+  project: Project;
+  state: ProjectState;
+  now: number;
+  guest: boolean;
+  /** Your own registration, when signed in and you have one. */
+  registration?: Registration;
+};
+
+function registrationNote(project: Project, registration: Registration): string {
+  const pack = registration.packageName ? ` Paket ${registration.packageName}.` : "";
+  return registration.status === "terdaftar"
+    ? `Terdaftar pada ${formatProjectDate(registration.registeredAt, project.timeZone)}.${pack}`
+    : `Menunggu pembayaran. Cara pembayaran belum tersedia.${pack}`;
+}
 
 /**
  * Right column of the project page (DESIGN.md 6.7): fee, quota, deadline, and the one action for
- * the state. Registration does not exist yet (6f-2), so the button is disabled; it already says
- * what it will do. Below lg the column moves above the document so the action stays reachable.
+ * the state: Daftar leads to the registration page; everything else is a disabled button that
+ * says why (your own registration, full, closed, guest). Below lg the column moves above the
+ * document so the action stays reachable.
  */
-export function ProjectAside({ project, state, now, guest }: Props) {
+export function ProjectAside({ project, state, now, guest, registration }: Props) {
+  const action = registerAction(state, guest, registration);
   const lines = feeLines(project);
   const quota = project.quota;
   const open = state === "buka" || state === "segera-tutup";
@@ -69,11 +87,22 @@ export function ProjectAside({ project, state, now, guest }: Props) {
         </Fact>
       </dl>
       <div className="grid gap-2">
-        <Button disabled className="w-full">
-          {actionFor(state, guest)}
-        </Button>
-        {process.env.NODE_ENV !== "production" && (
-          <p className="text-xs text-ink-muted">Pendaftaran dibuka di langkah berikutnya.</p>
+        {action.enabled ? (
+          <ButtonLink href={registerHref(project.slug)} className="w-full">
+            {action.label}
+          </ButtonLink>
+        ) : (
+          <Button disabled className="w-full">
+            {action.label}
+          </Button>
+        )}
+        {registration && !guest && (
+          <>
+            <p className="text-xs text-ink-muted">{registrationNote(project, registration)}</p>
+            <TextLink href={registerHref(project.slug)} className="text-xs text-ink-muted">
+              Lihat pendaftaran
+            </TextLink>
+          </>
         )}
       </div>
     </aside>
