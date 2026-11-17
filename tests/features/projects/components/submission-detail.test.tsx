@@ -199,39 +199,6 @@ describe("SubmissionDetail, withdrawing", () => {
   });
 });
 
-describe("SubmissionDetail, the reviewer stand-in (development only)", () => {
-  const panel = () => screen.getByRole("complementary", { name: /hanya untuk pengembangan/ });
-
-  it("offers only the steps the table allows, and moves the status", async () => {
-    const store = await open(work());
-    expect(
-      within(panel())
-        .getAllByRole("button")
-        .map((b) => b.textContent),
-    ).toEqual(["Mulai tinjau"]);
-    fireEvent.click(within(panel()).getByRole("button", { name: "Mulai tinjau" }));
-    await screen.findByText("Karyamu sedang ditinjau.");
-    expect(
-      within(panel())
-        .getAllByRole("button")
-        .map((b) => b.textContent),
-    ).toEqual(["Minta revisi", "Terima", "Tolak"]);
-    expect((await store.list())[0].status).toBe("peninjauan");
-  });
-
-  it("asking for a revision gives the editor's note and a deadline on the page", async () => {
-    await open(work({ status: "peninjauan" }));
-    fireEvent.click(within(panel()).getByRole("button", { name: "Minta revisi" }));
-    expect(await screen.findByRole("link", { name: "Kirim revisi" })).toBeTruthy();
-    expect(screen.getByText(/Tenggat revisi/)).toBeTruthy();
-  });
-
-  it("is gone once the work is decided", async () => {
-    await open(work({ status: "diterima" }));
-    expect(screen.queryByRole("complementary", { name: /pengembangan/ })).toBeNull();
-  });
-});
-
 describe("SubmissionDetail, when it cannot show the work", () => {
   it("says a work is not found, with the way to Proyek saya", async () => {
     render(<SubmissionDetail slug={CERPEN} id="nope" store={createMemorySubmissionStore()} />);

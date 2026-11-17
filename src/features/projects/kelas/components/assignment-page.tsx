@@ -14,7 +14,6 @@ import { useHandIn } from "../hooks/use-hand-in";
 import type { AssignmentStore } from "../storage/assignment-store";
 import { AssignmentHistory } from "./assignment-history";
 import { HandInSection, JustSentNotice } from "./hand-in-section";
-import { DevMentorPanel } from "./dev-mentor-panel";
 import { StatusTugas } from "./status-tugas";
 
 type Ready = Extract<ClassData, { status: "ready" }>;
@@ -79,7 +78,6 @@ export function AssignmentPage({ data, row, docs, store, documents }: Props) {
       <HandInSection row={row} docs={docs} onSend={send} />
 
       {submission && <AssignmentHistory work={submission} />}
-      {submission && <DevMentorPanel work={submission} store={store} />}
     </MyShell>
   );
 }

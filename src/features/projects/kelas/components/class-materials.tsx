@@ -70,23 +70,25 @@ export function ClassMaterials({
           Materi dibuka saat kelas dimulai pada {formatProjectDate(content.startsAt, zone)}.
         </Notice>
       ) : (
-        content.modules.map((m) => (
-          <div key={m.title} className="grid gap-1">
-            <h3 className="text-sm font-medium wrap-anywhere text-ink-muted">{m.title}</h3>
-            {m.materials.length === 0 ? (
-              <p className="text-sm text-ink-muted">Belum ada materi di modul ini.</p>
-            ) : (
-              m.materials.map((material) => (
-                <Material
-                  key={material.id}
-                  slug={content.slug}
-                  material={material}
-                  done={done.has(material.id)}
-                />
-              ))
-            )}
-          </div>
-        ))
+        content.modules
+          .filter((m) => !m.custom)
+          .map((m) => (
+            <div key={m.title} className="grid gap-1">
+              <h3 className="text-sm font-medium wrap-anywhere text-ink-muted">{m.title}</h3>
+              {m.materials.length === 0 ? (
+                <p className="text-sm text-ink-muted">Belum ada materi di modul ini.</p>
+              ) : (
+                m.materials.map((material) => (
+                  <Material
+                    key={material.id}
+                    slug={content.slug}
+                    material={material}
+                    done={done.has(material.id)}
+                  />
+                ))
+              )}
+            </div>
+          ))
       )}
     </Section>
   );

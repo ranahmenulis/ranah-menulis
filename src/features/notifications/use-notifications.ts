@@ -10,7 +10,11 @@ import { useProjects } from "@/features/projects/use-projects";
 import { useSoloRows } from "@/features/projects/solo/hooks/use-solo-rows";
 import { soloNotifications } from "@/features/projects/solo/solo-notifications";
 import type { SoloStore } from "@/features/projects/solo/storage/solo-store";
-import { assignmentNotifications } from "@/features/projects/kelas/assignment-notifications";
+import {
+  assignmentNotifications,
+  newTaskNotifications,
+} from "@/features/projects/kelas/assignment-notifications";
+import { useMentorTasks } from "@/features/projects/kelas/mentor-task-store";
 import { useAssignments } from "@/features/projects/kelas/hooks/use-assignments";
 import type { AssignmentStore } from "@/features/projects/kelas/storage/assignment-store";
 import type { SubmissionStore } from "@/features/projects/storage/submission-store";
@@ -51,6 +55,7 @@ function useAllNotifications(
 ): Notification[] {
   const { status, submissions } = useSubmissions(store);
   const assignments = useAssignments(tasks);
+  const mentorTasks = useMentorTasks();
   const soloRows = useSoloRows(solo);
   const catalog = useProjects();
   const registrations = useRegistrations();
@@ -58,7 +63,10 @@ function useAllNotifications(
   return useMemo(
     () => [
       ...(status === "ready" ? submissionNotifications(submissions) : []),
-      ...(assignments.status === "ready" ? assignmentNotifications(assignments.submissions) : []),
+      ...(assignments.status === "ready"
+        ? assignmentNotifications(assignments.submissions, undefined, undefined, mentorTasks)
+        : []),
+      ...newTaskNotifications(mentorTasks, registrations),
       ...(soloRows.status === "ready" ? soloNotifications(soloRows.rows) : []),
       ...(catalog.status === "ready"
         ? contestNotifications({
@@ -81,6 +89,7 @@ function useAllNotifications(
       assignments.submissions,
       soloRows.status,
       soloRows.rows,
+      mentorTasks,
       catalog,
       registrations,
       overrides,

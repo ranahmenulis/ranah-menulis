@@ -1,0 +1,26 @@
+import type { ReactNode } from "react";
+import { TextLink } from "@/components/ui/text-link";
+
+/** One column with the way out always on top. */
+export function MentorShell({
+  back,
+  children,
+  wide = false,
+}: {
+  back: { href: string; label: string };
+  children: ReactNode;
+  wide?: boolean;
+}) {
+  return (
+    <div className={`mx-auto grid gap-6 ${wide ? "max-w-260" : "max-w-170"}`}>
+      <TextLink
+        href={back.href}
+        className="inline-flex items-center gap-1.5 text-sm text-ink-muted hover:text-ink"
+      >
+        <span aria-hidden>←</span>
+        {back.label}
+      </TextLink>
+      {children}
+    </div>
+  );
+}
