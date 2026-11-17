@@ -4,6 +4,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { isFollowing } from "../feed";
 import { ME_ID } from "../fixtures/authors";
 import { resolveFixtureComments, resolveFixturePosts } from "../post-model";
+import { removedIds } from "../moderation/removed";
+import { useModeration } from "../moderation/report-store";
 import { mark, toPost, type Marks, type PostStore, type StoredPost } from "../storage/post-store";
 import type { Comment, Post } from "../types";
 
@@ -38,7 +40,12 @@ function applyMarks(posts: Post[], marks: Marks): Post[] {
  * Everything Community screens read: fixtures plus what was written on this device, with the
  * reader's own marks applied. One load per screen; actions update state first and then store.
  */
-export function useCommunity(store: PostStore): CommunityData {
+export function useCommunity(
+  store: PostStore,
+  options: { includeRemoved?: boolean } = {},
+): CommunityData {
+  const includeRemoved = options.includeRemoved ?? false;
+  const decisions = useModeration();
   const [status, setStatus] = useState<CommunityData["status"]>("loading");
   const [now, setNow] = useState(0);
   const [stored, setStored] = useState<StoredPost[]>([]);
@@ -63,18 +70,22 @@ export function useCommunity(store: PostStore): CommunityData {
     };
   }, [store, attempt]);
 
+  const removed = useMemo(() => removedIds(decisions), [decisions]);
+
   const posts = useMemo(() => {
     if (status !== "ready") return [];
     const mine = stored.flatMap((s) => toPost(s) ?? []);
-    return applyMarks([...resolveFixturePosts(now), ...mine], marks);
-  }, [status, now, stored, marks]);
+    const all = applyMarks([...resolveFixturePosts(now), ...mine], marks);
+    return includeRemoved ? all : all.filter((p) => !removed.posts.has(p.id));
+  }, [status, now, stored, marks, includeRemoved, removed]);
 
   const comments = useMemo(() => {
     if (status !== "ready") return [];
     return [...resolveFixtureComments(now), ...storedComments]
       .filter((c) => !marks[mark.deleted(c.id)])
+      .filter((c) => includeRemoved || !(removed.comments.has(c.id) || removed.posts.has(c.postId)))
       .sort((a, b) => a.createdAt - b.createdAt);
-  }, [status, now, storedComments, marks]);
+  }, [status, now, storedComments, marks, includeRemoved, removed]);
 
   const toggle = useCallback(
     async (key: string, current: boolean) => {

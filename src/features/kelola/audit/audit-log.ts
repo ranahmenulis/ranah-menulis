@@ -15,6 +15,13 @@ const AUDIT_ACTIONS = [
   "account.restore",
   "staff.assign",
   "staff.unassign",
+  "report.dismiss",
+  "content.hide",
+  "content.restore",
+  "content.delete",
+  "contest.results.amend",
+  /** Not stored here: read from the judging log (BR-PRJ-09) when the log is shown. */
+  "contest.reopen",
 ] as const;
 
 export type AuditAction = (typeof AUDIT_ACTIONS)[number];
@@ -24,7 +31,10 @@ export type AuditEntry = {
   at: number;
   actorId: string;
   action: AuditAction;
-  targetId: string;
+  /** The person the action is about; none for an action on a contest. */
+  targetId?: string;
+  /** What else it is about: "post:<id>" or "comment:<id>" for moderation. */
+  ref?: string;
   /** The role granted, revoked or assigned. */
   role?: string;
   /** The project an assignment belongs to. */
@@ -42,7 +52,8 @@ const isEntry = (value: unknown): value is AuditEntry => {
     Number.isFinite(e.at) &&
     typeof e.actorId === "string" &&
     (AUDIT_ACTIONS as readonly string[]).includes(e.action as string) &&
-    typeof e.targetId === "string" &&
+    optionalText(e.targetId) &&
+    optionalText(e.ref) &&
     optionalText(e.role) &&
     optionalText(e.slug) &&
     optionalText(e.reason)
