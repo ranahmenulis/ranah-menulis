@@ -4,9 +4,17 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { ButtonLink } from "@/components/ui/button";
 import { ErrorBanner, Notice, RetryButton, Skeleton } from "@/components/ui/states";
 import { Tabs } from "@/components/ui/tabs";
+import type { SoloStore } from "@/features/projects/solo/storage/solo-store";
 import type { SubmissionStore } from "@/features/projects/storage/submission-store";
 import { BackShell } from "../../components/back-shell";
-import { MANAGE_TABS, ORGANIZER_HREF, manageHref, parseManageTab } from "../area-hrefs";
+import type { Project } from "@/features/projects/types";
+import {
+  MANAGE_TABS,
+  ORGANIZER_HREF,
+  manageHref,
+  parseManageTab,
+  type ManageTab,
+} from "../area-hrefs";
 import { allowedActions, statusLabel } from "../project-status";
 import { useOrganizerProject } from "../use-organizer-data";
 import { takesPayment } from "../payment-rows";
@@ -14,14 +22,29 @@ import { ParticipantsTab, WorksTab } from "./people-tabs";
 import { PaymentsTab } from "./payments-tab";
 import { ProjectForm } from "./project-form";
 import { StaffTab } from "./staff-tab";
+import { StageTab, hasStages } from "./stage-tab";
 import { StatusActions } from "./status-actions";
+
+/** The tabs that depend on the project: payments only when it costs money, stages only for Solo and Lomba. */
+function shown(tab: ManageTab, project: Project): boolean {
+  if (tab === "pembayaran") return takesPayment(project);
+  if (tab === "tahap") return hasStages(project);
+  return true;
+}
 
 const BACK = { href: ORGANIZER_HREF, label: "Proyek" };
 
 /** One project for its Organizer: the project itself, who is assigned, who joined, what was sent. */
-export function ManageView({ slug, store }: { slug: string; store?: SubmissionStore }) {
+export function ManageView({
+  slug,
+  store,
+  soloStore,
+}: {
+  slug: string;
+  store?: SubmissionStore;
+  soloStore?: SoloStore;
+}) {
   const data = useOrganizerProject(slug, { store });
-  const router = useRouter();
   const tab = parseManageTab(useSearchParams()?.get("tab"));
 
   if (data.status === "error") {
@@ -60,8 +83,8 @@ export function ManageView({ slug, store }: { slug: string; store?: SubmissionSt
     );
   }
 
-  const { row, works, registration, rawRegistration, fixture, now } = data;
-  const { project } = row;
+  const { project } = data.row;
+  const { row } = data;
   return (
     <BackShell back={BACK}>
       <header className="grid gap-1">
@@ -71,10 +94,35 @@ export function ManageView({ slug, store }: { slug: string; store?: SubmissionSt
       <Tabs
         label="Bagian proyek"
         value={tab}
-        items={MANAGE_TABS.filter((t) => t.id !== "pembayaran" || takesPayment(project)).map(
-          (t) => ({ ...t, href: manageHref(slug, t.id) }),
-        )}
+        items={MANAGE_TABS.filter((t) => shown(t.id, project)).map((t) => ({
+          ...t,
+          href: manageHref(slug, t.id),
+        }))}
       />
+      <TabBody tab={tab} slug={slug} data={data} soloStore={soloStore} />
+    </BackShell>
+  );
+}
+
+type ReadyData = Extract<ReturnType<typeof useOrganizerProject>, { status: "ready" }>;
+
+/** The body of the chosen tab. */
+function TabBody({
+  tab,
+  slug,
+  data,
+  soloStore,
+}: {
+  tab: ManageTab;
+  slug: string;
+  data: ReadyData;
+  soloStore?: SoloStore;
+}) {
+  const router = useRouter();
+  const { row, works, registration, rawRegistration, fixture, now } = data;
+  const { project } = row;
+  return (
+    <>
       {tab === "proyek" &&
         (fixture ? (
           <div className="grid gap-6">
@@ -104,7 +152,16 @@ export function ManageView({ slug, store }: { slug: string; store?: SubmissionSt
       {tab === "pembayaran" && (
         <PaymentsTab project={project} registration={rawRegistration} now={now} />
       )}
+      {tab === "tahap" && (
+        <StageTab
+          project={project}
+          works={works}
+          registration={rawRegistration}
+          now={now}
+          soloStore={soloStore}
+        />
+      )}
       {tab === "kiriman" && <WorksTab project={project} works={works} />}
-    </BackShell>
+    </>
   );
 }

@@ -1,4 +1,5 @@
 import {
+  act,
   cleanup,
   configure,
   fireEvent,
@@ -9,6 +10,7 @@ import {
 } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { SoloDashboard } from "@/features/projects/solo/components/solo-dashboard";
+import { advanceStage } from "@/features/projects/solo/solo-actions";
 import { createMemorySoloStore } from "@/features/projects/solo/storage/memory-solo-store";
 import { createMemorySubmissionStore } from "@/features/projects/storage/memory-submission-store";
 import type { Submission } from "@/features/projects/submission-types";
@@ -111,9 +113,11 @@ describe("Solo dashboard", () => {
     expect(screen.queryByRole("heading", { name: "Berkas pratinjau" })).toBeNull();
   });
 
-  it("moves with the development panel and then offers the final approval", async () => {
+  it("moves when the team moves it and then offers the final approval", async () => {
     const store = await open(accepted(), walked(FULL, "layout"));
-    fireEvent.click(screen.getByRole("button", { name: "Lanjut ke persetujuan final" }));
+    await act(async () => {
+      await advanceStage(store, { ...BASE, stages: FULL });
+    });
     await screen.findByRole("heading", { name: "Persetujuan final" });
     expect(stageNames()[5]).toContain("Sedang berjalan");
     expect((await store.list())[0].log.at(-1)?.stage).toBe("persetujuan-final");

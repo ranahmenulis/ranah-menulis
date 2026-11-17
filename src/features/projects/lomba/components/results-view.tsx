@@ -12,7 +12,6 @@ import { stageRank, stageLabel } from "../contest-model";
 import { useContest } from "../hooks/use-contest";
 import { stageSentence } from "../results-text";
 import type { ContestResults } from "../types";
-import { DevOrganizerPanel } from "./dev-organizer-panel";
 import { ResultsLists } from "./results-lists";
 import { ResultsCriteria, ResultsSchedule } from "./results-sections";
 
@@ -36,7 +35,7 @@ export function ResultsView({ slug, source, results, store }: Props) {
   if (data.status === "loading") return <MySkeleton label="Memuat hasil lomba" />;
   if (data.status === "gone") return <ProjectGone />;
 
-  const { project, stage, mine, hasWork } = data;
+  const { project, stage, mine } = data;
   const own =
     mine && stageRank(stage) >= stageRank("finalis")
       ? { title: mine.title, genre: mine.genre, authorId: ME_ID }
@@ -58,13 +57,6 @@ export function ResultsView({ slug, source, results, store }: Props) {
       <ResultsLists project={project} stage={stage} results={data.results} mine={own} />
       <ResultsSchedule project={project} stage={stage} />
       <ResultsCriteria project={project} />
-      <DevOrganizerPanel
-        slug={slug}
-        stage={stage}
-        hasWork={hasWork}
-        isFinalist={mine !== null}
-        onDone={() => titleRef.current?.focus()}
-      />
     </MyShell>
   );
 }

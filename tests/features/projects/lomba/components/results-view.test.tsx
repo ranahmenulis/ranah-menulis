@@ -1,5 +1,6 @@
-import { act, cleanup, configure, fireEvent, render, screen, within } from "@testing-library/react";
+import { act, cleanup, configure, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { advanceContest, markMineFinalist } from "@/features/projects/lomba/stage-store";
 import { ResultsView } from "@/features/projects/lomba/components/results-view";
 import { createMemorySubmissionStore } from "@/features/projects/storage/memory-submission-store";
 import type { SubmissionStore } from "@/features/projects/storage/submission-store";
@@ -24,8 +25,9 @@ async function open(slug: string, store: SubmissionStore = createMemorySubmissio
 }
 
 const back = () => screen.getByRole("link", { name: /Kembali ke proyek/ });
-const press = (name: string) =>
-  act(async () => fireEvent.click(screen.getByRole("button", { name })));
+/** What the Organizer's stage tab does: push the contest on (the screen re-reads on its own). */
+const push = (slug: string, stage: "dinilai" | "finalis" | "pemenang") =>
+  act(async () => advanceContest(slug, stage));
 
 describe("results of a finished contest", () => {
   it("shows the winners with prizes, names and the jury's note, and a way back", async () => {
@@ -87,49 +89,41 @@ describe("results before anything is announced", () => {
   });
 });
 
-describe("development Organizer panel", () => {
-  it("moves the stage on, hides names in an anonymous contest until the winners, and keeps focus on the title", async () => {
+describe("a contest pushed on by its Organizer", () => {
+  it("moves the stage on and hides names in an anonymous contest until the winners", async () => {
     await open(OPEN);
-    await press("Umumkan finalis");
+    await push(OPEN, "finalis");
     expect(screen.getByText("Finalis diumumkan")).toBeTruthy();
     const finalists = screen.getByRole("heading", { name: "Finalis" }).closest("section")!;
     expect(within(finalists).getByText(/Finalis 1/)).toBeTruthy();
     expect(within(finalists).queryByRole("link")).toBeNull();
-    expect(document.activeElement).toBe(screen.getByRole("heading", { level: 1 }));
 
-    await press("Umumkan pemenang");
+    await push(OPEN, "pemenang");
     expect(screen.getByText("Pemenang diumumkan")).toBeTruthy();
     expect(
       within(screen.getByRole("heading", { name: "Finalis" }).closest("section")!).getAllByRole(
         "link",
       ).length,
     ).toBeGreaterThan(0);
-    // Nothing is left to push: an announcement is not taken back.
-    expect(screen.queryByRole("complementary", { name: /Organizer/ })).toBeNull();
   });
 
   it("shows the names of a contest that is not anonymous from the finalists on", async () => {
     await open(NAMED);
-    await press("Umumkan finalis");
+    await push(NAMED, "finalis");
     const finalists = screen.getByRole("heading", { name: "Finalis" }).closest("section")!;
     expect(within(finalists).getByRole("link", { name: "Nur Aisyah" })).toBeTruthy();
   });
 
-  it("makes the reader's own work a finalist and says so", async () => {
+  it("says so when the reader's own work is a finalist", async () => {
     register(OPEN);
     const store = createMemorySubmissionStore();
     await store.add(submission({ id: "a", slug: OPEN, title: "Hujan di Atap", docId: "d1" }), 5);
     await open(OPEN, store);
-    await press("Umumkan finalis");
-    await press("Jadikan karyaku finalis");
+    await push(OPEN, "finalis");
+    await act(async () => markMineFinalist(OPEN));
     expect(await screen.findByText(/Karyamu “Hujan di Atap” masuk finalis/)).toBeTruthy();
     const finalists = screen.getByRole("heading", { name: "Finalis" }).closest("section")!;
     expect(within(finalists).getByText(/karyamu/)).toBeTruthy();
-  });
-
-  it("does not offer to mark a work the reader never sent", async () => {
-    await open(OPEN);
-    expect(screen.queryByRole("button", { name: "Jadikan karyaku finalis" })).toBeNull();
   });
 });
 

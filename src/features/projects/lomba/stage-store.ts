@@ -68,16 +68,26 @@ function overridesFor(raw: string | null): ContestOverrides {
 }
 
 /**
- * What a development-only Organizer panel did to each contest, by slug. Empty on the server and
- * during hydration. In production nothing ever writes here, so it stays empty.
+ * The stage each contest was pushed to by its Organizer (6g-3c), by slug. Empty on the server and
+ * during hydration. The "my work is a finalist" mark was only a development convenience (Juri
+ * picks finalists in 6g-4), so a production page never reads it.
  */
 export function useContestOverrides(): ContestOverrides {
   const map = overridesFor(useSyncExternalStore(subscribe, snapshot, () => null));
-  // Only the development panel writes here. A hand-edited key must not change a production page.
-  return process.env.NODE_ENV === "production" ? NONE : map;
+  return process.env.NODE_ENV === "production" ? withoutMarks(map) : map;
 }
 
-const NONE: ContestOverrides = {};
+const stripped = new WeakMap<ContestOverrides, ContestOverrides>();
+function withoutMarks(map: ContestOverrides): ContestOverrides {
+  let result = stripped.get(map);
+  if (!result) {
+    result = Object.fromEntries(
+      Object.entries(map).map(([slug, o]) => [slug, { ...o, mine: false }]),
+    );
+    stripped.set(map, result);
+  }
+  return result;
+}
 
 function write(map: ContestOverrides) {
   const next = JSON.stringify(map);
@@ -107,7 +117,7 @@ export function advanceContest(slug: string, stage: ContestStage) {
   write({ ...current, [slug]: { stage, times, mine: existing?.mine === true } });
 }
 
-/** Makes the reader's own work a finalist of this contest (only for the development panel). */
+/** Makes the reader's own work a finalist of this contest. No screen calls it until Juri exists (6g-4). */
 export function markMineFinalist(slug: string) {
   const current = parseOverrides(snapshot());
   const existing = current[slug];
