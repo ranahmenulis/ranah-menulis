@@ -13,6 +13,7 @@ import {
 import { advanceContest, useContestOverrides } from "@/features/projects/lomba/stage-store";
 import type { ContestStage } from "@/features/projects/lomba/types";
 import { formatProjectDate } from "@/features/projects/project-model";
+import { JudgingControls } from "./judging-controls";
 import type { Project } from "@/features/projects/types";
 
 const STEPS: { stage: ContestStage; label: string; body: string }[] = [
@@ -91,6 +92,7 @@ export function ContestStagePanel({ project, now }: { project: Project; now: num
           ))}
         </div>
       )}
+      <JudgingControls slug={project.slug} stage={stage} />
       {asking && (
         <Dialog
           open
