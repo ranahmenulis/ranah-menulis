@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   assignmentNotifications,
   newTaskNotifications,
@@ -119,6 +119,18 @@ describe("tasks as class content", () => {
     expect(a.id).not.toBe(b.id);
     expect(a.id.startsWith("mt-")).toBe(true);
   });
+
+  it("still gets an id where crypto.randomUUID does not exist (plain http)", () => {
+    vi.stubGlobal("crypto", {});
+    try {
+      const a = newTask(ok, CERPEN, NOW);
+      const b = newTask(ok, CERPEN, NOW);
+      expect(a.id.startsWith("mt-")).toBe(true);
+      expect(a.id).not.toBe(b.id);
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
 });
 
 describe("the task store", () => {
@@ -131,6 +143,15 @@ describe("the task store", () => {
     expect(parseTasks("bukan json")).toEqual([]);
     expect(parseTasks('{"a":1}')).toEqual([]);
     expect(parseTasks(null)).toEqual([]);
+  });
+
+  it("drops a task whose deadline is not a real day", () => {
+    const raw = JSON.stringify([
+      task(),
+      task({ id: "x", dueDate: "abc" }),
+      task({ id: "y", dueDate: "" }),
+    ]);
+    expect(parseTasks(raw).map((t) => t.id)).toEqual([task().id]);
   });
 
   it("adds, changes and removes a task", () => {

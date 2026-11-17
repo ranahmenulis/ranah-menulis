@@ -90,6 +90,7 @@ export function MentorClassView({ slug, store }: { slug: string; store?: Assignm
           content={content}
           tasks={tasks}
           submissions={submissions}
+          store={store}
         />
       )}
       {tab === "peserta" && (
