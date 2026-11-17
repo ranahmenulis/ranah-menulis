@@ -60,7 +60,13 @@ export type ClassContent = {
   /** First millisecond of the day the class started. */
   startsAt: number;
   sessions: ClassSession[];
-  modules: { title: string; materials: ClassMaterial[]; assignment: ClassAssignment }[];
+  modules: {
+    title: string;
+    materials: ClassMaterial[];
+    assignment: ClassAssignment;
+    /** Written by a mentor (a module with no materials), not part of the curriculum. */
+    custom?: boolean;
+  }[];
 };
 
 /** What the mentor decided; "dikumpulkan" is the state before a decision (and after a resubmission). */

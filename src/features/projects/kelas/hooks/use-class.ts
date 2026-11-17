@@ -17,6 +17,7 @@ import {
 } from "../class-model";
 import { classFixtures } from "../fixtures/all";
 import { useDoneMaterials } from "../material-progress";
+import { useMentorTasks } from "../mentor-task-store";
 import type { AssignmentStore } from "../storage/assignment-store";
 import type { AssignmentSubmission, ClassContent, ClassFixture } from "../types";
 import { useAssignments } from "./use-assignments";
@@ -54,6 +55,7 @@ export function useClass(slug: string, sources: Sources = {}): ClassData {
   const registrations = useRegistrations();
   const assignments = useAssignments(store);
   const done = useDoneMaterials(slug);
+  const tasks = useMentorTasks();
 
   return useMemo<ClassData>(() => {
     if (assignments.status === "error") return { status: "error", reload: assignments.reload };
@@ -66,7 +68,7 @@ export function useClass(slug: string, sources: Sources = {}): ClassData {
     const block = dashboardBlock({ project, guest, registration });
     if (block !== null) return { status: "blocked", project, block };
     const fixture = classes.find((c) => c.slug === slug);
-    const content = fixture ? resolveClass(fixture, project) : null;
+    const content = fixture ? resolveClass(fixture, project, tasks) : null;
     if (!content || !registration) return { status: "gone" };
     const mine = assignments.submissions.filter((s) => s.slug === slug);
     return {
@@ -80,5 +82,5 @@ export function useClass(slug: string, sources: Sources = {}): ClassData {
       done,
       progress: classProgress(content, done, mine),
     };
-  }, [catalog, guest, registrations, assignments, done, slug, classes]);
+  }, [catalog, guest, registrations, assignments, done, slug, classes, tasks]);
 }

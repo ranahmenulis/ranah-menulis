@@ -1,11 +1,11 @@
 import {
+  act,
   cleanup,
   configure,
   fireEvent,
   render,
   screen,
   waitFor,
-  within,
 } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { AssignmentView } from "@/features/projects/kelas/components/assignment-view";
@@ -115,17 +115,16 @@ describe("assignment page", () => {
     expect(screen.getByText("Versi 1")).toBeTruthy();
   });
 
-  it("lets the development panel play the mentor, then shows the decision", async () => {
+  it("shows the mentor's decision on the page once it is made, and closes the form", async () => {
     const store = createMemoryAssignmentStore();
     await store.add(handedIn({ id: "a1", assignmentId: "tugas-2" }));
     await open(CERPEN, "tugas-2", store);
-    const panel = await screen.findByRole("complementary", {
-      name: /Mentor, hanya untuk pengembangan/,
+    await act(async () => {
+      await reviewAssignment(store, "a1", "selesai");
     });
-    fireEvent.click(within(panel).getByRole("button", { name: "Tandai selesai" }));
     expect(await screen.findByText("Mentor menandai tugas ini selesai.")).toBeTruthy();
-    expect(screen.queryByRole("complementary", { name: /Mentor/ })).toBeNull();
     expect(screen.queryByRole("button", { name: /Kumpulkan/ })).toBeNull();
+    expect(screen.queryByRole("complementary", { name: /Mentor/ })).toBeNull();
   });
 
   it("says an unknown task is not in this class, with the way back", async () => {

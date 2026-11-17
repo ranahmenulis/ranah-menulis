@@ -1,4 +1,5 @@
 import { DAY, endOfDay, projectHref, startOfDay } from "../project-model";
+import { moduleOf, type MentorTask } from "./mentor-tasks";
 import type { Project, Registration } from "../types";
 import type {
   AssignmentState,
@@ -27,8 +28,13 @@ function minutesOf(time: string): number {
 /**
  * Fixture days become absolute times in the project's zone. `null` when the project has no start
  * date, which a class cannot do without. Assignment deadlines land on the end of their day [usulan].
+ * `extra` are the tasks mentors wrote, added after the curriculum's modules.
  */
-export function resolveClass(fixture: ClassFixture, project: Project): ClassContent | null {
+export function resolveClass(
+  fixture: ClassFixture,
+  project: Project,
+  extra: readonly MentorTask[] = [],
+): ClassContent | null {
   const start = project.milestones.find((m) => m.label === CLASS_START_LABEL)?.at;
   if (start === undefined) return null;
   const zone = project.timeZone;
@@ -45,17 +51,24 @@ export function resolveClass(fixture: ClassFixture, project: Project): ClassCont
         link: s.link,
       }))
       .sort((a, b) => a.at - b.at),
-    modules: fixture.modules.map((m) => ({
-      title: m.title,
-      materials: m.materials,
-      assignment: {
-        id: m.assignment.id,
-        title: m.assignment.title,
-        module: m.title,
-        instructions: m.assignment.instructions,
-        dueAt: endOfDay(day0 + m.assignment.dueDay * DAY, zone),
-      },
-    })),
+    modules: fixture.modules
+      .map((m) => ({
+        title: m.title,
+        materials: m.materials,
+        assignment: {
+          id: m.assignment.id,
+          title: m.assignment.title,
+          module: m.title,
+          instructions: m.assignment.instructions,
+          dueAt: endOfDay(day0 + m.assignment.dueDay * DAY, zone),
+        },
+      }))
+      .concat(
+        extra.flatMap((task) => {
+          const added = task.slug === fixture.slug ? moduleOf(task, zone) : null;
+          return added ? [added] : [];
+        }),
+      ),
   };
 }
 
