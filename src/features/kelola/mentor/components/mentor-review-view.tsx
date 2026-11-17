@@ -19,7 +19,7 @@ import { blockedClassMessage } from "../mentor-text";
 import { useMentorClass, type MentorClassData } from "../use-mentor-data";
 import { MentorDecisionPanel } from "./mentor-decision-panel";
 import { MentorHistory } from "./mentor-history";
-import { MentorShell } from "./mentor-shell";
+import { BackShell } from "../../components/back-shell";
 
 type Ready = Extract<MentorClassData, { status: "ready" }>;
 
@@ -71,7 +71,7 @@ function Body({
   const assignment = content.modules.find((m) => m.assignment.id === work.assignmentId)?.assignment;
   const title = useRef<HTMLHeadingElement>(null);
   return (
-    <MentorShell back={{ href: classHref(project.slug), label: project.title }}>
+    <BackShell back={{ href: classHref(project.slug), label: project.title }}>
       <header className="grid gap-2">
         <p className="text-xs wrap-anywhere text-ink-muted">{assignment?.module}</p>
         <h1 ref={title} tabIndex={-1} className="heading-lg wrap-anywhere outline-none">
@@ -106,7 +106,7 @@ function Body({
       )}
       <Text work={work} />
       <MentorHistory work={work} />
-    </MentorShell>
+    </BackShell>
   );
 }
 
@@ -129,11 +129,11 @@ export function MentorReviewView({
 
   if (data.status === "error") {
     return (
-      <MentorShell back={back}>
+      <BackShell back={back}>
         <ErrorBanner action={<RetryButton onClick={data.reload} />}>
           Tugas belum bisa dibuka karena data di perangkat ini tidak terbaca.
         </ErrorBanner>
-      </MentorShell>
+      </BackShell>
     );
   }
   if (data.status === "loading") {
@@ -149,7 +149,7 @@ export function MentorReviewView({
   if (data.status !== "ready" || !work) {
     const blocked = data.status === "blocked";
     return (
-      <MentorShell back={back}>
+      <BackShell back={back}>
         <h1 className="heading-lg">
           {blocked ? "Tidak bisa dibuka." : "Pengumpulan ini tidak ditemukan."}
         </h1>
@@ -161,7 +161,7 @@ export function MentorReviewView({
         <ButtonLink href={back.href} variant="secondary" className="justify-self-start">
           Kembali ke kelas
         </ButtonLink>
-      </MentorShell>
+      </BackShell>
     );
   }
   return <Body data={data} work={work} store={store} />;

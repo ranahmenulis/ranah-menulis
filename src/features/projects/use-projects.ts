@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { projectFixtures } from "./fixtures/all-projects";
+import { useCatalog } from "./use-catalog";
 import { resolveProjects } from "./project-model";
 import { applyRegistrations } from "./registration-model";
 import { useRegistrations } from "./registration-store";
@@ -15,7 +15,9 @@ export type ProjectsData =
  * because Next 16 prerender rejects `Date.now()` during render. The data itself is synchronous,
  * so there is no error state yet; add one when projects come from the server.
  */
-export function useProjects(source: ProjectFixture[] = projectFixtures): ProjectsData {
+export function useProjects(override?: ProjectFixture[]): ProjectsData {
+  const catalog = useCatalog();
+  const source = override ?? catalog;
   const [now, setNow] = useState<number | null>(null);
   useEffect(() => {
     // Read in a microtask: the clock must not be read during render, and React flags a

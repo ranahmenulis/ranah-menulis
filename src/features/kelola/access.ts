@@ -25,7 +25,7 @@ export const AREAS: readonly AreaInfo[] = [
     id: "organizer",
     label: "Proyek",
     href: `${KELOLA_HREF}/organizer`,
-    summary: "Buat dan ubah proyek, lihat peserta, konfirmasi pembayaran, dan majukan tahap.",
+    summary: "Buat dan ubah proyek, tugaskan tim, dan lihat peserta serta kiriman.",
     roles: ["organizer"],
   },
   {

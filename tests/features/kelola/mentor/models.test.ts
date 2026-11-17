@@ -1,9 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  ASSIGNED_CLASSES,
-  classAccess,
-  manageableClasses,
-} from "@/features/kelola/mentor/mentor-access";
+import { classAccess, manageableClasses } from "@/features/kelola/mentor/mentor-access";
 import {
   applyMentorFilter,
   countMentorFilters,
@@ -19,7 +15,6 @@ import { CERPEN, PUISI, classOf, handedIn } from "../../projects/kelas/helpers";
 
 describe("classAccess", () => {
   it("lets a Mentor manage only the classes assigned to them", () => {
-    expect(ASSIGNED_CLASSES).toContain(CERPEN);
     expect(classAccess(["mentor"], CERPEN)).toBe("ok");
     expect(classAccess(["mentor"], PUISI)).toBe("tidak-ditugaskan");
   });

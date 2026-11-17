@@ -2,9 +2,10 @@
 
 import { useMemo } from "react";
 import { useRoles } from "@/lib/viewer";
-import { projectFixtures } from "@/features/projects/fixtures/all-projects";
+import { useClassFixtures } from "@/features/projects/kelas/class-source";
+import { useStaffAssignments } from "../staff-assignments";
+import { useCatalog } from "@/features/projects/use-catalog";
 import { resolveClass } from "@/features/projects/kelas/class-model";
-import { classFixtures } from "@/features/projects/kelas/fixtures/all";
 import { useAssignments } from "@/features/projects/kelas/hooks/use-assignments";
 import { useMentorTasks } from "@/features/projects/kelas/mentor-task-store";
 import type { MentorTask } from "@/features/projects/kelas/mentor-tasks";
@@ -45,9 +46,14 @@ export type MentorClassData =
  * of the class. A failed read is an error with a retry, never an empty class.
  */
 export function useMentorClass(slug: string, sources: Sources = {}): MentorClassData {
-  const { source = projectFixtures, store, classes = classFixtures } = sources;
+  const { source: override, store, classes: overrideClasses } = sources;
+  const fixtures = useCatalog();
+  const source = override ?? fixtures;
+  const defaultClasses = useClassFixtures();
+  const classes = overrideClasses ?? defaultClasses;
   const catalog = useProjects(source);
   const roles = useRoles();
+  const assigned = useStaffAssignments();
   const assignments = useAssignments(store);
   const allTasks = useMentorTasks();
   const registrations = useRegistrations();
@@ -59,7 +65,7 @@ export function useMentorClass(slug: string, sources: Sources = {}): MentorClass
     }
     const project = catalog.projects.find((p) => p.slug === slug && p.publication === "terbit");
     if (!project || project.category !== "kelas") return { status: "gone" };
-    const access = classAccess(roles, slug, source);
+    const access = classAccess(roles, slug, source, assigned);
     if (access !== "ok") return { status: "blocked", project, reason: access };
     const tasks = allTasks.filter((t) => t.slug === slug);
     const fixture = classes.find((c) => c.slug === slug);
@@ -74,7 +80,7 @@ export function useMentorClass(slug: string, sources: Sources = {}): MentorClass
       tasks: [...tasks],
       registration: liveRegistration(registrations[slug], catalog.now),
     };
-  }, [catalog, assignments, roles, allTasks, registrations, slug, source, classes]);
+  }, [catalog, assignments, roles, assigned, allTasks, registrations, slug, source, classes]);
 }
 
 export type ClassSummary = {
@@ -92,9 +98,14 @@ export type MentorClassesData =
 
 /** The classes these roles may manage, with the numbers a Mentor looks at first. */
 export function useMentorClasses(sources: Sources = {}): MentorClassesData {
-  const { source = projectFixtures, store, classes = classFixtures } = sources;
+  const { source: override, store, classes: overrideClasses } = sources;
+  const fixtures = useCatalog();
+  const source = override ?? fixtures;
+  const defaultClasses = useClassFixtures();
+  const classes = overrideClasses ?? defaultClasses;
   const catalog = useProjects(source);
   const roles = useRoles();
+  const assigned = useStaffAssignments();
   const assignments = useAssignments(store);
   const allTasks = useMentorTasks();
   const registrations = useRegistrations();
@@ -104,7 +115,7 @@ export function useMentorClasses(sources: Sources = {}): MentorClassesData {
     if (catalog.status === "loading" || assignments.status === "loading") {
       return { status: "loading" };
     }
-    const allowed = new Set(manageableClasses(roles, source).map((p) => p.slug));
+    const allowed = new Set(manageableClasses(roles, source, assigned).map((p) => p.slug));
     const items = catalog.projects.flatMap((project) => {
       const fixture = classes.find((c) => c.slug === project.slug);
       if (!allowed.has(project.slug) || !fixture) return [];
@@ -129,5 +140,5 @@ export function useMentorClasses(sources: Sources = {}): MentorClassesData {
       ];
     });
     return { status: "ready", items };
-  }, [catalog, assignments, roles, allTasks, registrations, source, classes]);
+  }, [catalog, assignments, roles, assigned, allTasks, registrations, source, classes]);
 }

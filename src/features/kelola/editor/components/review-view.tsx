@@ -8,7 +8,8 @@ import { StatusSubmission } from "@/components/ui/status-submission";
 import { TextLink } from "@/components/ui/text-link";
 import { DUMMY_USER } from "@/features/app-shell/nav";
 import { StatusHistory } from "@/features/projects/components/submission-history";
-import { projectFixtures } from "@/features/projects/fixtures/all-projects";
+import { useCatalog } from "@/features/projects/use-catalog";
+import { useStaffAssignments } from "../../staff-assignments";
 import { categoryLabel, formatNumber, projectHref } from "@/features/projects/project-model";
 import { notifySubmissionsChanged } from "@/features/projects/storage/submission-events";
 import { submissionStore } from "@/features/projects/storage/store";
@@ -91,7 +92,7 @@ function Text({ work }: { work: Submission }) {
 }
 
 function Body({ work, store }: { work: Submission; store: SubmissionStore }) {
-  const project = projectFixtures.find((p) => p.slug === work.slug);
+  const project = useCatalog().find((p) => p.slug === work.slug);
   const title = useRef<HTMLHeadingElement>(null);
   const words = work.versions.at(-1)?.wordCount ?? 0;
   return (
@@ -144,6 +145,8 @@ export function ReviewView({
 }) {
   const submissions = useSubmissions(store);
   const roles = useRoles();
+  const catalog = useCatalog();
+  const assigned = useStaffAssignments();
 
   if (submissions.status === "error") {
     return (
@@ -163,7 +166,7 @@ export function ReviewView({
       </div>
     );
   }
-  const target = resolveReview(submissions.submissions, id, roles);
+  const target = resolveReview(submissions.submissions, id, roles, catalog, assigned);
   if (target.status === "gone") {
     return (
       <Shell>

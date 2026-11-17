@@ -79,6 +79,9 @@ function registrationsFor(raw: string | null): RegistrationMap {
   return cache.map;
 }
 
+/** The registrations now, outside React (button handlers read again at the moment of the click). */
+export const readRegistrations = (): RegistrationMap => registrationsFor(snapshot());
+
 /**
  * Saves one registration. A project is registered once: a second call for the same project (a
  * second tab, a repeated submit) keeps the first and changes nothing. The one exception is a

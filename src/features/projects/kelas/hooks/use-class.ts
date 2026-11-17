@@ -15,7 +15,7 @@ import {
   type DashboardBlock,
   type Progress,
 } from "../class-model";
-import { classFixtures } from "../fixtures/all";
+import { useClassFixtures } from "../class-source";
 import { useDoneMaterials } from "../material-progress";
 import { useMentorTasks } from "../mentor-task-store";
 import type { AssignmentStore } from "../storage/assignment-store";
@@ -49,7 +49,9 @@ type Sources = { source?: ProjectFixture[]; store?: AssignmentStore; classes?: C
  * are separate, so a failed read is never shown as "nothing handed in yet".
  */
 export function useClass(slug: string, sources: Sources = {}): ClassData {
-  const { source, store, classes = classFixtures } = sources;
+  const { source, store, classes: overrideClasses } = sources;
+  const defaultClasses = useClassFixtures();
+  const classes = overrideClasses ?? defaultClasses;
   const catalog = useProjects(source);
   const guest = useViewer() === "tamu";
   const registrations = useRegistrations();

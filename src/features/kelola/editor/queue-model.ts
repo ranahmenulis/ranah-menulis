@@ -5,6 +5,7 @@ import { revisionsSent } from "@/features/projects/submission-status";
 import type { Submission } from "@/features/projects/submission-types";
 import type { ProjectFixture } from "@/features/projects/types";
 import type { ManagerRole } from "@/lib/roles";
+import type { StaffAssignment } from "../staff-assignments";
 import { reviewAccess } from "./assignments";
 
 export type QueueFilter = "perlu-tindakan" | "ditinjau" | "menunggu-revisi" | "selesai" | "semua";
@@ -56,9 +57,11 @@ export function queueRows(
   submissions: readonly Submission[],
   roles: readonly ManagerRole[],
   catalog: readonly ProjectFixture[] = projectFixtures,
+  assigned?: readonly StaffAssignment[],
 ): QueueRow[] {
   return submissions.flatMap((work) => {
-    if (work.status === "draf" || reviewAccess(roles, work.slug, catalog) !== "ok") return [];
+    if (work.status === "draf" || reviewAccess(roles, work.slug, catalog, assigned) !== "ok")
+      return [];
     const project = catalog.find((p) => p.slug === work.slug);
     if (!project) return [];
     return [

@@ -10,7 +10,7 @@ import { MENTOR_HREF, classHref } from "../area-hrefs";
 import { blockedClassMessage } from "../mentor-text";
 import { TABS, parseTab } from "../mentor-queue";
 import { useMentorClass } from "../use-mentor-data";
-import { MentorShell } from "./mentor-shell";
+import { BackShell } from "../../components/back-shell";
 import { RosterTab } from "./roster-tab";
 import { SubmissionsTab } from "./submissions-tab";
 import { TasksTab } from "./tasks-tab";
@@ -25,11 +25,11 @@ export function MentorClassView({ slug, store }: { slug: string; store?: Assignm
 
   if (data.status === "error") {
     return (
-      <MentorShell back={BACK}>
+      <BackShell back={BACK}>
         <ErrorBanner action={<RetryButton onClick={data.reload} />}>
           Kelas belum bisa dibuka karena data di perangkat ini tidak terbaca.
         </ErrorBanner>
-      </MentorShell>
+      </BackShell>
     );
   }
   if (data.status === "loading") {
@@ -43,7 +43,7 @@ export function MentorClassView({ slug, store }: { slug: string; store?: Assignm
   }
   if (data.status === "gone" || data.status === "blocked") {
     return (
-      <MentorShell back={BACK}>
+      <BackShell back={BACK}>
         <h1 className="heading-lg">
           {data.status === "gone" ? "Kelas ini tidak ditemukan." : "Tidak bisa dibuka."}
         </h1>
@@ -55,14 +55,14 @@ export function MentorClassView({ slug, store }: { slug: string; store?: Assignm
         <ButtonLink href={MENTOR_HREF} variant="secondary" className="justify-self-start">
           Kembali ke daftar kelas
         </ButtonLink>
-      </MentorShell>
+      </BackShell>
     );
   }
 
   const { project, content, now, submissions, tasks, registration } = data;
   const started = now >= content.startsAt;
   return (
-    <MentorShell back={BACK} wide>
+    <BackShell back={BACK} wide>
       <header className="grid gap-1">
         <h1 className="heading-lg wrap-anywhere">{project.title}</h1>
         <p className="text-sm text-ink-muted">
@@ -102,6 +102,6 @@ export function MentorClassView({ slug, store }: { slug: string; store?: Assignm
           now={now}
         />
       )}
-    </MentorShell>
+    </BackShell>
   );
 }

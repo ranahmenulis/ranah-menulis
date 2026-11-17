@@ -96,10 +96,16 @@ export function categoryLabel(id: ProjectCategory): string {
  * lands on the end of its day in the project's zone [usulan], so "Tutup 25 Nov" means all of 25 Nov.
  */
 export function resolveProjects(fixtures: ProjectFixture[], now: number): Project[] {
-  return fixtures.map(({ closesInMs, milestones, ...rest }) => ({
+  return fixtures.map(({ closesInMs, milestones, absolute, ...rest }) => ({
     ...rest,
-    closesAt: closesInMs === null ? null : endOfDay(now + closesInMs, rest.timeZone),
-    milestones: milestones.map((m) => ({ label: m.label, at: now + m.inMs })),
+    closesAt: absolute
+      ? absolute.closesAt
+      : closesInMs === null
+        ? null
+        : endOfDay(now + closesInMs, rest.timeZone),
+    milestones: absolute
+      ? absolute.milestones
+      : milestones.map((m) => ({ label: m.label, at: now + m.inMs })),
   }));
 }
 
