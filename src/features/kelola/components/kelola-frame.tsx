@@ -6,7 +6,8 @@ import type { ReactNode } from "react";
 import { Skeleton } from "@/components/ui/states";
 import { useHydrated } from "@/features/account/hooks/use-hydrated";
 import { cn } from "@/lib/cn";
-import { useRoles, useViewer } from "@/lib/viewer";
+import { useViewer } from "@/lib/viewer";
+import { useEffectiveRoles } from "@/features/kelola/use-effective-roles";
 import { KELOLA_HREF, areaOf, areasFor, canAccess } from "../access";
 import { AccessDenied } from "./access-denied";
 
@@ -24,7 +25,7 @@ export function KelolaFrame({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const hydrated = useHydrated();
   const viewer = useViewer();
-  const roles = useRoles();
+  const roles = useEffectiveRoles();
 
   if (!hydrated) {
     return (
@@ -44,7 +45,7 @@ export function KelolaFrame({ children }: { children: ReactNode }) {
 
   const items = [{ id: "ringkasan", label: "Ringkasan", href: KELOLA_HREF }, ...areas];
   return (
-    <div className="mx-auto grid w-full max-w-260 gap-6 lg:grid-cols-[14rem_minmax(0,1fr)] lg:gap-10">
+    <div className="mx-auto grid w-full max-w-260 grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[14rem_minmax(0,1fr)] lg:gap-10">
       <nav
         aria-label="Bagian kelola"
         className={cn(

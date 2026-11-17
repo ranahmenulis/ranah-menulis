@@ -9,7 +9,8 @@ import { studioStore } from "@/features/studio/storage/store";
 import { cn } from "@/lib/cn";
 import { useT } from "@/lib/i18n/provider";
 import { areasFor } from "@/features/kelola/access";
-import { ViewerSync, useRoles, useViewer } from "@/lib/viewer";
+import { ViewerSync, useViewer } from "@/lib/viewer";
+import { useEffectiveRoles } from "@/features/kelola/use-effective-roles";
 import { GuestFrame } from "./guest-frame";
 import { NavLink } from "./nav-link";
 import {
@@ -36,7 +37,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const active = activeId(pathname);
   const [sidebar, setSidebar] = useState(true);
   const viewer = useViewer();
-  const roles = useRoles();
+  const roles = useEffectiveRoles();
   // Only a convenience: the screens refuse the wrong role themselves, and the database decides.
   const entries = areasFor(roles).length > 0 ? [...mainNav, kelolaNav] : mainNav;
   const onPost = isPostPage(pathname);

@@ -1,5 +1,6 @@
 import { stageRank } from "@/features/projects/lomba/contest-model";
 import type { ContestStage } from "@/features/projects/lomba/types";
+import { canonicalId } from "../identity";
 import { validateReason } from "../reason";
 import { isClosed, validateScores, type Criterion, type ScoreErrors } from "./judge-model";
 import { JUDGE_ID, judgingLog, juryScores, type JuryScore } from "./score-store";
@@ -33,7 +34,13 @@ export function saveJuryScore(
   };
   const rest = juryScores
     .read()
-    .filter((s) => !(s.submissionId === score.submissionId && s.judgeId === score.judgeId));
+    .filter(
+      (s) =>
+        !(
+          s.submissionId === score.submissionId &&
+          canonicalId(s.judgeId) === canonicalId(score.judgeId)
+        ),
+    );
   juryScores.write([...rest, score]);
   return { ok: true, score };
 }

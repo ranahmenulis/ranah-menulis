@@ -1,10 +1,10 @@
 "use client";
 
 import { createLocalListStore } from "@/lib/local-list-store";
-import { SELF_ID } from "../staff-assignments";
+import { ME_ID } from "../identity";
 
-/** The signed-in dummy Judge. Real accounts replace it (6g-5). */
-export const JUDGE_ID = SELF_ID.juri;
+/** The signed-in dummy account, as a Judge. Real accounts replace it. */
+export const JUDGE_ID = ME_ID;
 
 /** One Judge's scores for one work: a whole number per criterion, and an optional note. */
 export type JuryScore = {

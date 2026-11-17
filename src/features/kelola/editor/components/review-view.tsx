@@ -17,7 +17,7 @@ import type { SubmissionStore } from "@/features/projects/storage/submission-sto
 import { sentAtText } from "@/features/projects/submission-text";
 import type { Submission } from "@/features/projects/submission-types";
 import { useSubmissions } from "@/features/projects/use-submissions";
-import { useRoles } from "@/lib/viewer";
+import { useEffectiveRoles } from "@/features/kelola/use-effective-roles";
 import { FrozenText } from "../../components/frozen-text";
 import { EDITOR_HREF } from "../area-hrefs";
 import { blockedMessage, resolveReview, reviewerHint } from "../review-model";
@@ -144,7 +144,7 @@ export function ReviewView({
   store?: SubmissionStore;
 }) {
   const submissions = useSubmissions(store);
-  const roles = useRoles();
+  const roles = useEffectiveRoles();
   const catalog = useCatalog();
   const assigned = useStaffAssignments();
 

@@ -9,7 +9,7 @@ import { useJudgingLog } from "../../juri/score-store";
 import { ReasonDialog } from "../../components/reason-dialog";
 import type { ContestStage } from "@/features/projects/lomba/types";
 import { isPlatformAdmin } from "@/lib/roles";
-import { useRoles } from "@/lib/viewer";
+import { useEffectiveRoles } from "@/features/kelola/use-effective-roles";
 
 const failed = {
   "sudah-berubah": "Status penilaian sudah berubah, jadi tidak ada yang dilakukan.",
@@ -24,7 +24,7 @@ const failed = {
  */
 export function JudgingControls({ slug, stage }: { slug: string; stage: ContestStage }) {
   const log = useJudgingLog();
-  const admin = isPlatformAdmin(useRoles());
+  const admin = isPlatformAdmin(useEffectiveRoles());
   const status = judgingStatus(stage, log, slug);
   const [asking, setAsking] = useState<"tutup" | "buka" | null>(null);
   const [said, setSaid] = useState("");

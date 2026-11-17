@@ -19,6 +19,7 @@ import { reviewAccess } from "@/features/kelola/editor/assignments";
 import { ManageView } from "@/features/kelola/organizer/components/manage-view";
 import { NewProjectView } from "@/features/kelola/organizer/components/new-project-view";
 import { OrganizerView } from "@/features/kelola/organizer/components/organizer-view";
+import { ME_ID } from "@/features/kelola/identity";
 import { staffAssignments } from "@/features/kelola/staff-assignments";
 import { projectFixtures } from "@/features/projects/fixtures/all-projects";
 import { createMemorySubmissionStore } from "@/features/projects/storage/memory-submission-store";
@@ -164,7 +165,7 @@ describe("ManageView", () => {
 
   it("archives and ends the Editor's access", async () => {
     const slug = await openDraft();
-    staffAssignments.write([{ slug, role: "editor", staffId: "editor-kamu" }]);
+    staffAssignments.write([{ slug, role: "editor", staffId: ME_ID }]);
     expect(reviewAccess(["editor"], slug, storedProjects.read(), staffAssignments.read())).toBe(
       "ok",
     );
@@ -184,15 +185,15 @@ describe("ManageView", () => {
     const slug = "antologi-surat-yang-tidak-pernah-terkirim";
     window.history.replaceState(null, "", `/kelola/organizer/${slug}?tab=penugasan`);
     render(<ManageView slug={slug} store={store()} />);
-    const own = await screen.findByRole("checkbox", { name: "Editor (akunmu)" });
+    const own = await screen.findByRole("checkbox", { name: "Rinjani Putri (kamu)" });
     expect((own as HTMLInputElement).checked).toBe(true);
     fireEvent.click(own);
-    expect(await screen.findByText("Editor (akunmu) tidak lagi ditugaskan.")).toBeTruthy();
+    expect(await screen.findByText("Rinjani Putri (kamu) tidak lagi ditugaskan.")).toBeTruthy();
     expect(reviewAccess(["editor"], slug, undefined, staffAssignments.read())).toBe(
       "tidak-ditugaskan",
     );
-    fireEvent.click(screen.getByRole("checkbox", { name: "Rani, Editor" }));
-    expect(await screen.findByText("Rani, Editor ditugaskan.")).toBeTruthy();
+    fireEvent.click(screen.getByRole("checkbox", { name: "Hafiz Rahman" }));
+    expect(await screen.findByText("Hafiz Rahman ditugaskan.")).toBeTruthy();
   });
 
   it("says a sample project cannot be changed, and says nobody joined", async () => {

@@ -5,13 +5,15 @@ import { CheckChoice } from "@/components/ui/choice";
 import { Notice } from "@/components/ui/states";
 import type { ProjectCategory } from "@/features/projects/types";
 import {
-  STAFF,
   assigneesOf,
   setAssignees,
   staffRoleLabel,
   useStaffAssignments,
   type StaffRole,
 } from "../../staff-assignments";
+import { personLabel } from "../../admin/people";
+import { activeHolders } from "../../admin/role-rules";
+import { useRoleGrants, useSuspensions } from "../../admin/role-store";
 
 /** Who works on a project of this category: Editors read work, Mentors teach, Judges score. */
 export const staffRoleOf: Record<ProjectCategory, StaffRole> = {
@@ -35,9 +37,13 @@ export function StaffTab({
   archived: boolean;
 }) {
   const list = useStaffAssignments();
+  const grants = useRoleGrants();
+  const suspended = useSuspensions();
   const [said, setSaid] = useState("");
   const role = staffRoleOf[category];
   const current = assigneesOf(list, slug, role);
+  // Who holds the role (given on the Admin screen), plus anyone already assigned so they can be released.
+  const candidates = [...new Set([...activeHolders(grants, suspended, role), ...current])];
 
   function toggle(id: string, name: string, on: boolean) {
     const next = on ? [...current, id] : current.filter((c) => c !== id);
@@ -52,13 +58,18 @@ export function StaffTab({
       </h2>
       {archived && <Notice>Proyek diarsipkan, jadi penugasannya sudah dicabut.</Notice>}
       <div role="group" aria-labelledby="penugasan-title" className="grid gap-3">
-        {STAFF[role].map((person) => (
+        {candidates.length === 0 && (
+          <Notice>
+            Belum ada yang memegang role {staffRoleLabel[role]}. Administrator memberinya di Admin.
+          </Notice>
+        )}
+        {candidates.map((id) => (
           <CheckChoice
-            key={person.id}
-            label={person.name}
-            checked={!archived && current.includes(person.id)}
+            key={id}
+            label={personLabel(id)}
+            checked={!archived && current.includes(id)}
             disabled={archived}
-            onChange={(e) => toggle(person.id, person.name, e.target.checked)}
+            onChange={(e) => toggle(id, personLabel(id), e.target.checked)}
           />
         ))}
       </div>

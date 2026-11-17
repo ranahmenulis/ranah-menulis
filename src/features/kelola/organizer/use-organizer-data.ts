@@ -9,7 +9,7 @@ import type { Project, ProjectFixture, Registration } from "@/features/projects/
 import { useProjects } from "@/features/projects/use-projects";
 import { useSubmissions } from "@/features/projects/use-submissions";
 import type { Submission } from "@/features/projects/submission-types";
-import { useRoles } from "@/lib/viewer";
+import { useEffectiveRoles } from "@/features/kelola/use-effective-roles";
 import { manageAccess, manageableProjects, type ManageAccess } from "./organizer-access";
 import { organizerStatus, type OrganizerStatus } from "./project-status";
 
@@ -48,7 +48,7 @@ function rowsFor(
 /** The projects these roles may manage, with the numbers an Organizer looks at first. */
 export function useOrganizerList(sources: Sources = {}): OrganizerListData {
   const catalog = useProjects();
-  const roles = useRoles();
+  const roles = useEffectiveRoles();
   const submissions = useSubmissions(sources.store);
   const registrations = useRegistrations();
   const stored = storedProjects.use();
@@ -86,7 +86,7 @@ export type OrganizerProjectData =
 
 export function useOrganizerProject(slug: string, sources: Sources = {}): OrganizerProjectData {
   const catalog = useProjects();
-  const roles = useRoles();
+  const roles = useEffectiveRoles();
   const submissions = useSubmissions(sources.store);
   const registrations = useRegistrations();
   const stored = storedProjects.use();

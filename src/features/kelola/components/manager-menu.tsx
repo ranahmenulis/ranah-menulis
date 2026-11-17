@@ -6,7 +6,7 @@ import { useState } from "react";
 import { Drawer } from "@/components/ui/drawer";
 import { IconButton } from "@/components/ui/icon-button";
 import { cn } from "@/lib/cn";
-import { useRoles } from "@/lib/viewer";
+import { useEffectiveRoles } from "@/features/kelola/use-effective-roles";
 import { KELOLA_HREF, areasFor } from "../access";
 
 /**
@@ -14,7 +14,7 @@ import { KELOLA_HREF, areasFor } from "../access";
  * The bottom bar stays at five tabs for everyone else.
  */
 export function ManagerMenu({ className }: { className?: string }) {
-  const areas = areasFor(useRoles());
+  const areas = areasFor(useEffectiveRoles());
   const [open, setOpen] = useState(false);
   if (areas.length === 0) return null;
   const close = () => setOpen(false);

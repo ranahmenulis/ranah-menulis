@@ -9,7 +9,7 @@ import type { ContestStage } from "@/features/projects/lomba/types";
 import type { Project } from "@/features/projects/types";
 import { useProjects } from "@/features/projects/use-projects";
 import { useSubmissions } from "@/features/projects/use-submissions";
-import { useRoles } from "@/lib/viewer";
+import { useEffectiveRoles } from "@/features/kelola/use-effective-roles";
 import { useStaffAssignments } from "../staff-assignments";
 import { judgeAccess, type JudgeAccess } from "./judge-access";
 import {
@@ -20,6 +20,7 @@ import {
   type JudgeRow,
   type JudgingStatus,
 } from "./judge-model";
+import { canonicalId } from "../identity";
 import { JUDGE_ID, useJudgingLog, useJuryScores, type JuryScore } from "./score-store";
 
 type Sources = { store?: SubmissionStore };
@@ -44,7 +45,7 @@ const anonymousOf = (project: Project): boolean =>
 function useJudging(sources: Sources) {
   const catalog = useProjects();
   const submissions = useSubmissions(sources.store);
-  const roles = useRoles();
+  const roles = useEffectiveRoles();
   const assigned = useStaffAssignments();
   const scores = useJuryScores();
   const log = useJudgingLog();
@@ -73,7 +74,7 @@ export function useJudgeContests(sources: Sources = {}): JudgeContestsData {
           project,
           total: works.length,
           scored: works.filter((w) =>
-            scores.some((s) => s.submissionId === w.id && s.judgeId === JUDGE_ID),
+            scores.some((s) => s.submissionId === w.id && canonicalId(s.judgeId) === JUDGE_ID),
           ).length,
           judging: judgingStatus(stage, log, project.slug),
         },

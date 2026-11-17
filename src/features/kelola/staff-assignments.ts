@@ -1,33 +1,18 @@
 "use client";
 
 import { createLocalListStore } from "@/lib/local-list-store";
+import { appendAudit } from "./audit/audit-log";
+import { ME_ID, canonicalId, isSelf } from "./identity";
 
 /**
  * Who is assigned to a project (PRJ-03, Q-04): the Organizer of the project, or an Administrator,
- * assigns Editors, Mentors and Judges. [usulan] The people are a short fixed list until real
- * accounts exist (6g-5). The first of each role is the signed-in dummy account, so assigning
- * someone else makes the "not assigned to you" state reachable.
+ * assigns Editors, Mentors and Judges. The people to choose from are those who hold that role,
+ * which Administrators give on the Admin screen (`admin/role-store.ts`, 6g-5).
  */
 export type StaffRole = "editor" | "mentor" | "juri";
-export type StaffPerson = { id: string; name: string };
 export type StaffAssignment = { slug: string; role: StaffRole; staffId: string };
 
 export const STAFF_ROLES: readonly StaffRole[] = ["editor", "mentor", "juri"];
-
-export const STAFF: Record<StaffRole, readonly StaffPerson[]> = {
-  editor: [
-    { id: "editor-kamu", name: "Editor (akunmu)" },
-    { id: "editor-rani", name: "Rani, Editor" },
-  ],
-  mentor: [
-    { id: "mentor-kamu", name: "Mentor (akunmu)" },
-    { id: "mentor-bima", name: "Bima, Mentor" },
-  ],
-  juri: [
-    { id: "juri-kamu", name: "Juri (akunmu)" },
-    { id: "juri-sari", name: "Sari, Juri" },
-  ],
-};
 
 export const staffRoleLabel: Record<StaffRole, string> = {
   editor: "Editor",
@@ -35,19 +20,13 @@ export const staffRoleLabel: Record<StaffRole, string> = {
   juri: "Juri",
 };
 
-export const SELF_ID: Record<StaffRole, string> = {
-  editor: STAFF.editor[0].id,
-  mentor: STAFF.mentor[0].id,
-  juri: STAFF.juri[0].id,
-};
-
 /** What an untouched device starts with: the projects the first Editor and Mentor screens used. */
 export const SEED_ASSIGNMENTS: readonly StaffAssignment[] = [
-  { slug: "antologi-surat-yang-tidak-pernah-terkirim", role: "editor", staffId: SELF_ID.editor },
-  { slug: "antologi-pulang-ke-pesisir", role: "editor", staffId: SELF_ID.editor },
-  { slug: "solo-penerbitan-buku-sendiri", role: "editor", staffId: SELF_ID.editor },
-  { slug: "kelas-cerpen-untuk-pemula", role: "mentor", staffId: SELF_ID.mentor },
-  { slug: "lomba-cerpen-hujan-2026", role: "juri", staffId: SELF_ID.juri },
+  { slug: "antologi-surat-yang-tidak-pernah-terkirim", role: "editor", staffId: ME_ID },
+  { slug: "antologi-pulang-ke-pesisir", role: "editor", staffId: ME_ID },
+  { slug: "solo-penerbitan-buku-sendiri", role: "editor", staffId: ME_ID },
+  { slug: "kelas-cerpen-untuk-pemula", role: "mentor", staffId: ME_ID },
+  { slug: "lomba-cerpen-hujan-2026", role: "juri", staffId: ME_ID },
 ];
 
 const isAssignment = (value: unknown): value is StaffAssignment => {
@@ -71,15 +50,39 @@ export const isAssignedToSelf = (
   list: readonly StaffAssignment[],
   slug: string,
   role: StaffRole,
-): boolean => list.some((a) => a.slug === slug && a.role === role && a.staffId === SELF_ID[role]);
+): boolean => list.some((a) => a.slug === slug && a.role === role && isSelf(a.staffId));
 
+/** Who holds `role` on `slug`, by the id data is compared by. */
 export const assigneesOf = (list: readonly StaffAssignment[], slug: string, role: StaffRole) =>
-  list.filter((a) => a.slug === slug && a.role === role).map((a) => a.staffId);
+  list.filter((a) => a.slug === slug && a.role === role).map((a) => canonicalId(a.staffId));
 
-/** Replace who holds `role` on `slug`, leaving every other assignment as it is. */
+/** Replace who holds `role` on `slug`, leaving every other assignment as it is. Logged (PLT-05). */
 export function setAssignees(slug: string, role: StaffRole, staffIds: readonly string[]) {
+  const before = assigneesOf(staffAssignments.read(), slug, role);
   const rest = staffAssignments.read().filter((a) => !(a.slug === slug && a.role === role));
   staffAssignments.write([...rest, ...staffIds.map((staffId) => ({ slug, role, staffId }))]);
+  const entry = (action: "staff.assign" | "staff.unassign", targetId: string) => ({
+    action,
+    actorId: ME_ID,
+    targetId,
+    role,
+    slug,
+  });
+  appendAudit([
+    ...staffIds.filter((id) => !before.includes(id)).map((id) => entry("staff.assign", id)),
+    ...before.filter((id) => !staffIds.includes(id)).map((id) => entry("staff.unassign", id)),
+  ]);
+}
+
+/**
+ * Takes a person off every project where they hold `role` (their role was revoked). Returns what
+ * was removed so the caller can log it.
+ */
+export function removeAssignmentsOf(personId: string, role: StaffRole): StaffAssignment[] {
+  const all = staffAssignments.read();
+  const removed = all.filter((a) => a.role === role && canonicalId(a.staffId) === personId);
+  if (removed.length > 0) staffAssignments.write(all.filter((a) => !removed.includes(a)));
+  return removed;
 }
 
 export const useStaffAssignments = staffAssignments.use;
