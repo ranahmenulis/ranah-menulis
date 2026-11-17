@@ -1,7 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import type { MentorTask } from "./mentor-tasks";
+import { noonOf, type MentorTask } from "./mentor-tasks";
 
 const KEY = "ranah.mentorTasks";
 const NONE: readonly MentorTask[] = [];
@@ -38,6 +38,7 @@ const isTask = (value: unknown): value is MentorTask => {
     typeof t.title === "string" &&
     typeof t.instructions === "string" &&
     typeof t.dueDate === "string" &&
+    noonOf(t.dueDate) !== null &&
     Number.isFinite(t.createdAt)
   );
 };

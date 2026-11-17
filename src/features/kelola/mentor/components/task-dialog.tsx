@@ -26,6 +26,7 @@ export function TaskDialog({
   slug,
   zone,
   task,
+  dueLocked = false,
   onClose,
   onSaved,
 }: {
@@ -33,6 +34,8 @@ export function TaskDialog({
   zone: TimeZoneName;
   /** The task being changed; absent when writing a new one. */
   task?: MentorTask;
+  /** Hand-ins exist: the deadline stays, because their "late" marks were set against it. */
+  dueLocked?: boolean;
   onClose: () => void;
   onSaved: (task: MentorTask, created: boolean) => void;
 }) {
@@ -70,7 +73,10 @@ export function TaskDialog({
   const field = (key: keyof TaskInput) => ({
     id: `tugas-${key}`,
     "aria-invalid": errors[key] ? (true as const) : undefined,
-    "aria-describedby": describedBy(`tugas-${key}`, { error: errors[key] }),
+    "aria-describedby": describedBy(`tugas-${key}`, {
+      hint: key === "dueDate" && dueLocked,
+      error: errors[key],
+    }),
   });
 
   return (
@@ -118,10 +124,16 @@ export function TaskDialog({
             onChange={(e) => set("instructions")(e.target.value)}
           />
         </Field>
-        <Field id="tugas-dueDate" label="Tenggat" error={errors.dueDate}>
+        <Field
+          id="tugas-dueDate"
+          label="Tenggat"
+          hint={dueLocked ? "Tidak bisa diubah karena sudah ada pengumpulan." : undefined}
+          error={errors.dueDate}
+        >
           <Input
             {...field("dueDate")}
             type="date"
+            disabled={dueLocked}
             value={input.dueDate}
             onChange={(e) => set("dueDate")(e.target.value)}
           />

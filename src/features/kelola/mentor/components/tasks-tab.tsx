@@ -8,6 +8,8 @@ import { assignmentHref } from "@/features/projects/kelas/class-model";
 import { dueText } from "@/features/projects/kelas/class-text";
 import { removeTask } from "@/features/projects/kelas/mentor-task-store";
 import { canDeleteTask, type MentorTask } from "@/features/projects/kelas/mentor-tasks";
+import type { AssignmentStore } from "@/features/projects/kelas/storage/assignment-store";
+import { assignmentStore } from "@/features/projects/kelas/storage/store";
 import type { AssignmentSubmission, ClassContent } from "@/features/projects/kelas/types";
 import type { TimeZoneName } from "@/features/projects/types";
 import { TaskDialog } from "./task-dialog";
@@ -18,6 +20,7 @@ type Props = {
   content: ClassContent;
   tasks: MentorTask[];
   submissions: AssignmentSubmission[];
+  store?: AssignmentStore;
 };
 
 type Open =
@@ -28,12 +31,40 @@ type Open =
  * changed, and deleted only while nobody has handed one in (the work and its feedback would be
  * orphaned). The one filled button is "Buat tugas".
  */
-export function TasksTab({ slug, zone, content, tasks, submissions }: Props) {
+export function TasksTab({
+  slug,
+  zone,
+  content,
+  tasks,
+  submissions,
+  store = assignmentStore,
+}: Props) {
   const [open, setOpen] = useState<Open | null>(null);
   const [said, setSaid] = useState("");
   const newButton = useRef<HTMLButtonElement>(null);
 
   const close = () => setOpen(null);
+  /** Read the store again now: a hand-in may have arrived while the dialog was open. */
+  async function confirmDelete(task: MentorTask) {
+    let keep = true;
+    try {
+      keep = !canDeleteTask(task, await store.list());
+      if (!keep) removeTask(task.id);
+    } catch {
+      close();
+      setSaid(
+        `Tugas “${task.title}” belum bisa dihapus karena data di perangkat ini tidak terbaca.`,
+      );
+      return;
+    }
+    close();
+    setSaid(
+      keep
+        ? `Tugas “${task.title}” sudah punya pengumpulan, jadi tidak dihapus.`
+        : `Tugas “${task.title}” dihapus.`,
+    );
+    newButton.current?.focus();
+  }
   const countOf = (id: string) => submissions.filter((s) => s.assignmentId === id).length;
 
   return (
@@ -102,6 +133,7 @@ export function TasksTab({ slug, zone, content, tasks, submissions }: Props) {
           slug={slug}
           zone={zone}
           task={open.kind === "edit" ? open.task : undefined}
+          dueLocked={open.kind === "edit" && !canDeleteTask(open.task, submissions)}
           onClose={close}
           onSaved={(saved, created) => {
             close();
@@ -123,21 +155,7 @@ export function TasksTab({ slug, zone, content, tasks, submissions }: Props) {
               <Button variant="secondary" onClick={close}>
                 Batal
               </Button>
-              <Button
-                variant="danger"
-                onClick={() => {
-                  // Read again now: a hand-in may have arrived while the dialog was open.
-                  const keep = !canDeleteTask(open.task, submissions);
-                  if (!keep) removeTask(open.task.id);
-                  close();
-                  setSaid(
-                    keep
-                      ? `Tugas “${open.task.title}” sudah punya pengumpulan, jadi tidak dihapus.`
-                      : `Tugas “${open.task.title}” dihapus.`,
-                  );
-                  newButton.current?.focus();
-                }}
-              >
+              <Button variant="danger" onClick={() => void confirmDelete(open.task)}>
                 Hapus tugas
               </Button>
             </>

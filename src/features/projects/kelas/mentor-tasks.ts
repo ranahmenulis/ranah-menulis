@@ -30,7 +30,7 @@ export type TaskErrors = Partial<Record<keyof TaskInput, string>>;
 const DATE = /^(\d{4})-(\d{2})-(\d{2})$/;
 
 /** Noon UTC of the date is the same calendar day in WIB and MYT, so the zone helpers apply. */
-function noonOf(date: string): number | null {
+export function noonOf(date: string): number | null {
   const match = DATE.exec(date);
   if (!match) return null;
   const [, y, m, d] = match.map(Number);
@@ -108,9 +108,17 @@ export function moduleOf(
 export const canDeleteTask = (task: MentorTask, submissions: readonly AssignmentSubmission[]) =>
   !submissions.some((s) => s.slug === task.slug && s.assignmentId === task.id);
 
+/** `crypto.randomUUID` only exists in secure contexts; plain http on a LAN host must still work. */
+function idSuffix(): string {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+}
+
 export function newTask(input: TaskInput, slug: string, now: number): MentorTask {
   return {
-    id: `mt-${crypto.randomUUID()}`,
+    id: `mt-${idSuffix()}`,
     slug,
     title: input.title.trim(),
     instructions: input.instructions.trim(),
