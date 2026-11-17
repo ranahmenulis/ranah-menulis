@@ -69,8 +69,8 @@ export function CaseView({ caseKey, store }: { caseKey: string; store?: PostStor
   );
 
   function confirm(reason: string) {
-    if (!ask || !content) return;
-    const result = decideCase(row.kind, row.targetId, content.authorId, ask, reason);
+    if (!ask) return;
+    const result = decideCase(row.kind, row.targetId, ask, reason);
     setSaid(result);
     setAsk(null);
     requestAnimationFrame(() => status.current?.focus());

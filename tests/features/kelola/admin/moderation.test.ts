@@ -8,6 +8,7 @@ import {
   type Report,
 } from "@/features/community/moderation/report-store";
 import { contentState, removedIds } from "@/features/community/moderation/removed";
+import { contentAuthor } from "@/features/community/moderation/content-author";
 import { decideCase } from "@/features/kelola/admin/moderation/moderation-actions";
 import {
   allowedDecisions,
@@ -55,6 +56,14 @@ describe("filing reports", () => {
     expect(fileReport("post", "p1", "b", "hate")).toBe(true);
     expect(fileReport("comment", "p1", "a", "hate")).toBe(true);
     expect(reports.read()).toHaveLength(3);
+  });
+
+  it("lets the same person report again once a moderator has decided", () => {
+    reports.write([]);
+    expect(fileReport("post", "p1", "a", "spam", 100)).toBe(true);
+    moderation.write([entry({ at: 200 })]);
+    expect(fileReport("post", "p1", "a", "spam", 300)).toBe(true);
+    expect(fileReport("post", "p1", "a", "spam", 400)).toBe(false);
   });
 
   it("starts an untouched device with the example reports", () => {
@@ -166,30 +175,28 @@ describe("deciding a case", () => {
   it("refuses everyone who is not a platform admin", () => {
     seed();
     as("editor");
-    expect(decideCase("post", "toples-kerupuk", "laras", "abaikan")).toMatchObject({ ok: false });
+    expect(decideCase("post", "toples-kerupuk", "abaikan")).toMatchObject({ ok: false });
     expect(moderation.read()).toEqual([]);
   });
 
   it("refuses content that was never reported", () => {
     as("administrator");
-    expect(decideCase("post", "tidak-ada", "laras", "abaikan")).toMatchObject({ ok: false });
+    expect(decideCase("post", "tidak-ada", "abaikan")).toMatchObject({ ok: false });
   });
 
   it("asks for a reason to hide, hides, and writes the audit", () => {
     seed();
     as("administrator");
-    expect(decideCase("post", "toples-kerupuk", "laras", "sembunyikan")).toMatchObject({
+    expect(decideCase("post", "toples-kerupuk", "sembunyikan")).toMatchObject({
       ok: false,
     });
-    expect(decideCase("post", "toples-kerupuk", "laras", "sembunyikan", "Spam jelas").ok).toBe(
-      true,
-    );
+    expect(decideCase("post", "toples-kerupuk", "sembunyikan", "Spam jelas").ok).toBe(true);
     expect(contentState(moderation.read(), "post", "toples-kerupuk")).toBe("disembunyikan");
     expect(auditLog.read()).toMatchObject([
       {
         action: "content.hide",
         actorId: ME_ID,
-        targetId: "laras",
+        targetId: "hafiz-rahman",
         ref: "post:toples-kerupuk",
         reason: "Spam jelas",
       },
@@ -199,10 +206,10 @@ describe("deciding a case", () => {
   it("ignores a report without a reason and restores hidden content", () => {
     seed();
     as("administrator");
-    expect(decideCase("post", "toples-kerupuk", "laras", "abaikan").ok).toBe(true);
-    expect(decideCase("post", "toples-kerupuk", "laras", "pulihkan")).toMatchObject({ ok: false });
-    decideCase("post", "toples-kerupuk", "laras", "sembunyikan", "x");
-    expect(decideCase("post", "toples-kerupuk", "laras", "pulihkan").ok).toBe(true);
+    expect(decideCase("post", "toples-kerupuk", "abaikan").ok).toBe(true);
+    expect(decideCase("post", "toples-kerupuk", "pulihkan")).toMatchObject({ ok: false });
+    decideCase("post", "toples-kerupuk", "sembunyikan", "x");
+    expect(decideCase("post", "toples-kerupuk", "pulihkan").ok).toBe(true);
     expect(auditLog.read().map((e) => e.action)).toEqual([
       "report.dismiss",
       "content.hide",
@@ -213,20 +220,31 @@ describe("deciding a case", () => {
   it("cannot restore what was deleted", () => {
     seed();
     as("administrator");
-    expect(decideCase("post", "toples-kerupuk", "laras", "hapus", "Melanggar").ok).toBe(true);
-    expect(decideCase("post", "toples-kerupuk", "laras", "pulihkan")).toMatchObject({ ok: false });
+    expect(decideCase("post", "toples-kerupuk", "hapus", "Melanggar").ok).toBe(true);
+    expect(decideCase("post", "toples-kerupuk", "pulihkan")).toMatchObject({ ok: false });
     expect(contentState(moderation.read(), "post", "toples-kerupuk")).toBe("dihapus");
   });
 
+  it("finds the author from the content, so a stale screen cannot name someone else", () => {
+    expect(contentAuthor("post", "toples-kerupuk")).toBe("hafiz-rahman");
+    expect(contentAuthor("comment", "c-hujan-3")).toBe("farid-zulkifli");
+    expect(contentAuthor("post", "ditulis-di-perangkat-ini")).toBe(ME_ID);
+  });
+
   it("suspends the author through the account rules, and records nothing when that is refused", () => {
-    seed();
+    reports.write([
+      report({ targetId: "toples-kerupuk" }),
+      report({ targetId: "hujan-pertama-bulan-november" }),
+    ]);
     as("administrator");
-    expect(decideCase("post", "toples-kerupuk", ME_ID, "tangguhkan", "Berulang")).toMatchObject({
+    expect(
+      decideCase("post", "hujan-pertama-bulan-november", "tangguhkan", "Berulang"),
+    ).toMatchObject({
       ok: false,
     });
     expect(moderation.read()).toEqual([]);
-    expect(decideCase("post", "toples-kerupuk", "laras", "tangguhkan", "Berulang").ok).toBe(true);
-    expect(suspensions.read().map((s) => s.userId)).toEqual(["laras"]);
+    expect(decideCase("post", "toples-kerupuk", "tangguhkan", "Berulang").ok).toBe(true);
+    expect(suspensions.read().map((s) => s.userId)).toEqual(["hafiz-rahman"]);
     expect(moderation.read()).toMatchObject([{ decision: "tangguhkan" }]);
     expect(auditLog.read().map((e) => e.action)).toEqual(["account.suspend"]);
   });

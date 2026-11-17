@@ -1,8 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
 import { EmptyState, ErrorBanner, RetryButton, Skeleton } from "@/components/ui/states";
@@ -23,6 +22,7 @@ import {
   type CaseFilter,
   type CaseRow,
 } from "../moderation/moderation-model";
+import { useUrlFilter } from "../../use-url-filter";
 import { useCaseList } from "../moderation/use-moderation-data";
 import { sentAtText } from "@/features/projects/submission-text";
 
@@ -44,17 +44,11 @@ function QueueSkeleton() {
  */
 export function ModerationQueueView({ store }: { store?: PostStore }) {
   const list = useCaseList(store);
-  const asked = useSearchParams()?.get("status") ?? null;
-  const [filter, setFilter] = useState(() => parseCaseFilter(asked));
-  const [seen, setSeen] = useState(asked);
-  if (seen !== asked) {
-    setSeen(asked);
-    setFilter(parseCaseFilter(asked));
-  }
-  function change(next: CaseFilter) {
-    setFilter(next);
-    window.history.replaceState(null, "", `${MODERATION_HREF}${caseQuery(next)}`);
-  }
+  const [filter, change] = useUrlFilter(
+    "status",
+    parseCaseFilter,
+    (f: CaseFilter) => `${MODERATION_HREF}${caseQuery(f)}`,
+  );
 
   const rows = list.status === "ready" ? list.rows : NO_ROWS;
   const counts = useMemo(() => countCases(rows), [rows]);

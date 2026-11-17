@@ -4,14 +4,12 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { RadioChoice } from "@/components/ui/choice";
+import { REPORT_REASON_LABEL } from "../../moderation/reasons";
 import type { ReportReason } from "../../types";
 
-const REASONS: { id: ReportReason; label: string }[] = [
-  { id: "spam", label: "Spam atau iklan" },
-  { id: "hate", label: "Ujaran kebencian atau pelecehan" },
-  { id: "copyright", label: "Melanggar hak cipta" },
-  { id: "other", label: "Alasan lain" },
-];
+const REASONS = (Object.entries(REPORT_REASON_LABEL) as [ReportReason, string][]).map(
+  ([id, label]) => ({ id, label }),
+);
 
 type Props = {
   /** What is being reported: "tulisan" or "komentar Farid Zulkifli". */

@@ -46,6 +46,8 @@ export type JudgingEntry = {
   at: number;
   /** Why it was reopened; required for a reopening. */
   note?: string;
+  /** Who reopened it; entries written before 6g-6 do not say. */
+  by?: string;
 };
 
 const isEntry = (value: unknown): value is JudgingEntry => {
@@ -55,7 +57,8 @@ const isEntry = (value: unknown): value is JudgingEntry => {
     typeof e.slug === "string" &&
     (e.state === "ditutup" || e.state === "dibuka") &&
     Number.isFinite(e.at) &&
-    (e.note === undefined || typeof e.note === "string")
+    (e.note === undefined || typeof e.note === "string") &&
+    (e.by === undefined || typeof e.by === "string")
   );
 };
 
