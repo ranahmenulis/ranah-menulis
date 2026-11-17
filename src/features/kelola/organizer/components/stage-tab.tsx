@@ -25,7 +25,8 @@ export function StageTab({
   now: number;
   soloStore?: SoloStore;
 }) {
-  if (project.category === "lomba") return <ContestStagePanel project={project} now={now} />;
+  if (project.category === "lomba")
+    return <ContestStagePanel project={project} now={now} works={works} />;
   if (project.category !== "solo") {
     return <Notice>Proyek ini tidak punya tahap yang dijalankan di sini.</Notice>;
   }

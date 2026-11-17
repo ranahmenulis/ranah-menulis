@@ -8,7 +8,7 @@ import type { Project, ProjectFixture } from "../../types";
 import { useProjects } from "../../use-projects";
 import { useSubmissions } from "../../use-submissions";
 import { contestStage } from "../contest-model";
-import { contestResults } from "../fixtures";
+import { mergeResults, storedResults } from "../results-store";
 import { useContestOverrides } from "../stage-store";
 import type { ContestResults, ContestStage } from "../types";
 
@@ -38,7 +38,9 @@ type Sources = { source?: ProjectFixture[]; store?: SubmissionStore; results?: C
  * the reader's submissions only leaves their own highlight out: the results are public.
  */
 export function useContest(slug: string, sources: Sources = {}): ContestData {
-  const { source, store, results = contestResults } = sources;
+  const { source, store, results: override } = sources;
+  const stored = storedResults.use();
+  const results = useMemo(() => override ?? mergeResults(stored), [override, stored]);
   const catalog = useProjects(source);
   const overrides = useContestOverrides();
   const submissions = useSubmissions(store);

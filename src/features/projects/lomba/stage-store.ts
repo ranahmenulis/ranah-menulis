@@ -100,6 +100,9 @@ function write(map: ContestOverrides) {
   listeners.forEach((listener) => listener());
 }
 
+/** The pushed stages now, outside React (a button reads them again at the moment of the click). */
+export const readOverrides = (): ContestOverrides => overridesFor(snapshot());
+
 /**
  * Pushes a contest on to `stage`. An announcement is never taken back (PRD 17.5), so a stage that
  * is not later than the one already pushed changes nothing. The clock is read here, when pressed.
