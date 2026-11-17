@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useViewer } from "@/lib/viewer";
 import { projectState } from "../project-model";
+import { isExpired } from "../payment-model";
 import { newRegistration } from "../registration-model";
 import { saveRegistration, useRegistrations } from "../registration-store";
 import { useProjects } from "../use-projects";
@@ -41,7 +42,9 @@ export function RegisterView({ slug, source }: Props) {
   if (!project) return <ProjectGone />;
 
   const state = late ?? projectState(project, data.now);
-  const registration = guest ? undefined : registrations[slug];
+  // A registration whose payment hold ran out no longer counts: the form is offered again.
+  const own = guest ? undefined : registrations[slug];
+  const registration = own && !isExpired(own, data.now) ? own : undefined;
 
   if (registration) {
     return <RegisterStatus project={project} registration={registration} justNow={justNow} />;

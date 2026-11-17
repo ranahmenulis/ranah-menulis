@@ -88,7 +88,7 @@ describe("Notifikasi with submissions", () => {
     expect(link.getAttribute("href")).toBe(`/projects/${CERPEN}/kiriman/a`);
     expect(screen.getByText("4 belum dibaca.")).toBeTruthy();
     // The work was sent "now" in the test clock, far in the past of the real one: it is not first.
-    expect(within(screen.getByRole("list")).getAllByRole("listitem")).toHaveLength(7);
+    expect(within(screen.getByRole("list")).getAllByRole("listitem")).toHaveLength(6);
   });
 
   it("marks the event read when opened, and remembers it", async () => {

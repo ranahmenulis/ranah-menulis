@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import { useViewer } from "@/lib/viewer";
+import { liveRegistration } from "../../payment-model";
 import { useRegistrations } from "../../registration-store";
 import type { Project, ProjectFixture, Registration } from "../../types";
 import { useProjects } from "../../use-projects";
@@ -61,7 +62,7 @@ export function useClass(slug: string, sources: Sources = {}): ClassData {
     }
     const project = catalog.projects.find((p) => p.slug === slug && p.publication === "terbit");
     if (!project) return { status: "gone" };
-    const registration = guest ? undefined : registrations[slug];
+    const registration = guest ? undefined : liveRegistration(registrations[slug], catalog.now);
     const block = dashboardBlock({ project, guest, registration });
     if (block !== null) return { status: "blocked", project, block };
     const fixture = classes.find((c) => c.slug === slug);

@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { notificationFixtures } from "@/features/notifications/fixtures";
+import type { Notification } from "@/features/notifications/types";
 import { inTab, unreadCount, withReadState } from "@/features/notifications/notification-model";
 import { agoLabel, leadOf } from "@/features/notifications/notification-text";
 import { authors } from "@/features/community/fixtures/authors";
@@ -18,8 +19,19 @@ describe("withReadState and unreadCount", () => {
   });
 });
 
+// The fixtures hold no project event any more (they come from stored data), so one is made here.
+const projectEvent: Notification = {
+  id: "p1",
+  kind: "project",
+  actorId: null,
+  others: 0,
+  text: "Pembayaran Contoh diterima.",
+  href: null,
+  agoMs: 0,
+};
+
 describe("inTab", () => {
-  const all = withReadState(notificationFixtures, none);
+  const all = withReadState([...notificationFixtures, projectEvent], none);
 
   it("shows everything on Semua, in the order given", () => {
     expect(inTab(all, "semua").map((n) => n.id)).toEqual(all.map((n) => n.id));
@@ -67,7 +79,7 @@ describe("leadOf", () => {
   });
 
   it("has no lead for events that come from the platform", () => {
-    expect(leadOf(notificationFixtures.find((n) => n.id === "n-pembayaran")!)).toBeNull();
+    expect(leadOf(projectEvent)).toBeNull();
   });
 });
 

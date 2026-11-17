@@ -89,8 +89,8 @@ describe("ProjectDetail", () => {
       }),
     );
     await open(slug);
-    expect(within(aside()).getByRole("button", { name: "Menunggu pembayaran" })).toBeTruthy();
-    expect(within(aside()).getByText("Sisa 6 dari 30 kuota")).toBeTruthy();
+    expect(within(aside()).getByRole("link", { name: "Bayar sekarang" })).toBeTruthy();
+    expect(within(aside()).getByText("Sisa 5 dari 30 kuota")).toBeTruthy();
   });
 
   it("names a full project and a closed one instead of offering Daftar", async () => {

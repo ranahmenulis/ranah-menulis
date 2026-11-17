@@ -73,7 +73,7 @@ describe("canRegister", () => {
 
 describe("registerAction", () => {
   const call = (state: Parameters<typeof registerAction>[0], guest: boolean, r?: Registration) =>
-    registerAction(state, guest, r);
+    registerAction(state, guest, r, NOW);
 
   it("offers Daftar while the project is open", () => {
     expect(call("buka", false)).toEqual({ label: "Daftar", enabled: true });
@@ -89,10 +89,17 @@ describe("registerAction", () => {
 
   it("shows your own registration, even after the project closed or filled up", () => {
     expect(call("ditutup", false, reg())).toEqual({ label: "Terdaftar", enabled: false });
+    // Waiting for payment leads to the payment page, even when the project filled up meanwhile.
     expect(call("kuota-penuh", false, reg({ status: "menunggu-pembayaran" }))).toEqual({
-      label: "Menunggu pembayaran",
-      enabled: false,
+      label: "Bayar sekarang",
+      enabled: true,
     });
+  });
+
+  it("offers Daftar again once the payment hold ran out", () => {
+    const old = reg({ status: "menunggu-pembayaran", registeredAt: NOW - 25 * 3_600_000 });
+    expect(call("buka", false, old)).toEqual({ label: "Daftar", enabled: true });
+    expect(call("kuota-penuh", false, old).label).toBe("Kuota penuh");
   });
 
   it("ignores a registration stored on this device when signed out", () => {
@@ -105,25 +112,40 @@ describe("applyRegistrations", () => {
 
   it("fills one seat for a confirmed registration", () => {
     const before = get(slug).quota?.taken as number;
-    const after = applyRegistrations(projects, { [slug]: reg({ slug }) }).find(
+    const after = applyRegistrations(projects, { [slug]: reg({ slug }) }, NOW).find(
       (p) => p.slug === slug,
     );
     expect(after?.quota?.taken).toBe(before + 1);
   });
 
-  it("does not fill a seat while payment is pending", () => {
+  it("holds a seat while payment is pending", () => {
+    const before = get(slug).quota?.taken as number;
+    const after = applyRegistrations(
+      projects,
+      { [slug]: reg({ slug, status: "menunggu-pembayaran" }) },
+      NOW,
+    ).find((p) => p.slug === slug);
+    expect(after?.quota?.taken).toBe(before + 1);
+  });
+
+  it("gives the seat back once the hold ran out", () => {
     const before = get(slug).quota?.taken;
-    const after = applyRegistrations(projects, {
-      [slug]: reg({ slug, status: "menunggu-pembayaran" }),
-    }).find((p) => p.slug === slug);
+    const expired = reg({
+      slug,
+      status: "menunggu-pembayaran",
+      registeredAt: NOW - 25 * 3_600_000,
+    });
+    const after = applyRegistrations(projects, { [slug]: expired }, NOW).find(
+      (p) => p.slug === slug,
+    );
     expect(after?.quota?.taken).toBe(before);
   });
 
   it("leaves projects without a quota, and the input list, untouched", () => {
     const solo = "solo-penerbitan-buku-sendiri";
-    const result = applyRegistrations(projects, { [solo]: reg({ slug: solo }) });
+    const result = applyRegistrations(projects, { [solo]: reg({ slug: solo }) }, NOW);
     expect(result.find((p) => p.slug === solo)?.quota).toBeNull();
-    expect(applyRegistrations(projects, {})).toBe(projects);
+    expect(applyRegistrations(projects, {}, NOW)).toBe(projects);
     expect(get(slug).quota?.taken).toBe(24);
   });
 
@@ -132,7 +154,7 @@ describe("applyRegistrations", () => {
       [{ ...projectFixtures[0], slug: "x", quota: { total: 5, taken: 5 } }],
       NOW,
     );
-    expect(applyRegistrations(full, { x: reg({ slug: "x" }) })[0].quota).toEqual({
+    expect(applyRegistrations(full, { x: reg({ slug: "x" }) }, NOW)[0].quota).toEqual({
       total: 5,
       taken: 5,
     });
@@ -143,7 +165,7 @@ describe("applyRegistrations", () => {
       [{ ...projectFixtures[0], slug: "x", quota: { total: 5, taken: 4 } }],
       NOW,
     );
-    const after = applyRegistrations(full, { x: reg({ slug: "x" }) });
+    const after = applyRegistrations(full, { x: reg({ slug: "x" }) }, NOW);
     expect(after[0].quota).toEqual({ total: 5, taken: 5 });
   });
 });

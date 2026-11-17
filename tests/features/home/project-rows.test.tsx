@@ -58,7 +58,7 @@ describe("Beranda, Perlu perhatian", () => {
 
   it("keeps the other items when nothing needs a revision", async () => {
     render(<ProjectRows store={createMemorySubmissionStore()} />);
-    expect(await screen.findByText(/Pembayaran Kelas Menulis Puisi Dasar/)).toBeTruthy();
+    expect(await screen.findByText(/mengundangmu ke Grup Penulis Pesisir/)).toBeTruthy();
     expect(screen.queryByRole("link", { name: "Baca catatan editor" })).toBeNull();
   });
 
@@ -68,7 +68,30 @@ describe("Beranda, Perlu perhatian", () => {
       list: () => Promise.reject(new Error("idb")),
     };
     render(<ProjectRows store={store} />);
-    expect(await screen.findByText(/Pembayaran Kelas Menulis Puisi Dasar/)).toBeTruthy();
+    expect(await screen.findByText(/mengundangmu ke Grup Penulis Pesisir/)).toBeTruthy();
+  });
+});
+
+describe("Beranda, pembayaran", () => {
+  it("asks to pay a registration that waits, linking to the payment page", async () => {
+    const now = Date.now();
+    localStorage.setItem(
+      "ranah.registrations",
+      JSON.stringify({
+        [CERPEN]: {
+          slug: CERPEN,
+          registeredAt: now - 1000,
+          agreedAt: now - 1000,
+          termsVersion: "1",
+          status: "menunggu-pembayaran",
+        },
+      }),
+    );
+    render(<ProjectRows store={createMemorySubmissionStore()} />);
+    expect(await screen.findByText("Pembayaran Lomba Cerpen Hujan 2026 menunggu")).toBeTruthy();
+    expect(screen.getByRole("link", { name: "Bayar sekarang" }).getAttribute("href")).toBe(
+      `/projects/${CERPEN}/bayar`,
+    );
   });
 });
 
@@ -97,7 +120,7 @@ describe("Beranda, Proyek saya", () => {
 
   it("is not drawn when nothing was joined", async () => {
     render(<ProjectRows store={createMemorySubmissionStore()} />);
-    await screen.findByText(/Pembayaran Kelas Menulis Puisi Dasar/);
+    await screen.findByText(/mengundangmu ke Grup Penulis Pesisir/);
     expect(screen.queryByText("Proyek saya")).toBeNull();
   });
 

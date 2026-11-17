@@ -1,3 +1,4 @@
+import { holdsSeat, paymentState } from "./payment-model";
 import { isFreeMoney, effectiveFee, projectHref } from "./project-model";
 import type { Money, Project, ProjectState, Registration, RegistrationMap } from "./types";
 
@@ -26,8 +27,7 @@ export function canRegister(
 }
 
 /**
- * A free project registers straight away; a paid one waits for payment, which does not exist yet
- * (6f-6). [usulan] The terms version shown at that moment is stored with the time (BR-PRJ-02).
+ * A free project registers straight away; a paid one waits for payment (see `payment-model.ts`). [usulan] The terms version shown at that moment is stored with the time (BR-PRJ-02).
  */
 export function newRegistration(project: Project, now: number, packageName?: string): Registration {
   const paid = !isFreeMoney(registrationFee(project, packageName));
@@ -48,13 +48,14 @@ export function newRegistration(project: Project, now: number, packageName?: str
 export function registerAction(
   state: ProjectState,
   guest: boolean,
-  registration?: Registration,
+  registration: Registration | undefined,
+  now: number,
 ): { label: string; enabled: boolean } {
   if (!guest && registration) {
-    return {
-      label: registration.status === "terdaftar" ? "Terdaftar" : "Menunggu pembayaran",
-      enabled: false,
-    };
+    const paying = paymentState(registration, now);
+    if (paying === "lunas") return { label: "Terdaftar", enabled: false };
+    if (paying === "menunggu") return { label: "Bayar sekarang", enabled: true };
+    // The hold ran out: the seat is free again, so registering again is offered below.
   }
   if (state === "kuota-penuh") return { label: "Kuota penuh", enabled: false };
   if (state === "ditutup") return { label: "Pendaftaran ditutup", enabled: false };
@@ -63,11 +64,15 @@ export function registerAction(
 }
 
 /**
- * Seats follow registrations: a confirmed one fills a seat. One waiting for payment does not
- * [usulan, Q-20: how long a seat is held is undecided]. Returns the same list when nothing changes.
+ * Seats follow registrations: a confirmed one fills a seat, and so does one waiting for payment
+ * until its hold runs out [usulan, Q-20]. Returns the same list when nothing changes.
  */
-export function applyRegistrations(projects: Project[], registrations: RegistrationMap): Project[] {
-  const confirmed = Object.values(registrations).filter((r) => r.status === "terdaftar");
+export function applyRegistrations(
+  projects: Project[],
+  registrations: RegistrationMap,
+  now: number,
+): Project[] {
+  const confirmed = Object.values(registrations).filter((r) => holdsSeat(r, now));
   if (confirmed.length === 0) return projects;
   const slugs = new Set(confirmed.map((r) => r.slug));
   return projects.map((p) =>

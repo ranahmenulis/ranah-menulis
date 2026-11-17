@@ -50,7 +50,7 @@ function registrationNote(project: Project, registration: Registration): string 
   const pack = registration.packageName ? ` Paket ${registration.packageName}.` : "";
   return registration.status === "terdaftar"
     ? `Terdaftar pada ${formatProjectDate(registration.registeredAt, project.timeZone)}.${pack}`
-    : `Menunggu pembayaran. Cara pembayaran belum tersedia.${pack}`;
+    : `Menunggu pembayaran; kuotamu ditahan.${pack}`;
 }
 
 /**

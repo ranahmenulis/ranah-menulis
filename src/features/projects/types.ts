@@ -92,7 +92,7 @@ export type StateFilter = "semua" | "buka" | "segera-tutup" | "ditutup";
 export type FeeFilter = "semua" | "gratis" | "berbayar";
 export type Filters = { category: CategoryFilter; state: StateFilter; fee: FeeFilter };
 
-/** `menunggu-pembayaran` until payment exists (6f-6); free projects register straight away. */
+/** `menunggu-pembayaran` until payment is confirmed (a hold that ran out is derived from time, see `payment-model.ts`); free projects register straight away. */
 export type RegistrationStatus = "menunggu-pembayaran" | "terdaftar";
 
 /** A registration kept on this device. Becomes a database row when the backend exists. */
@@ -105,6 +105,8 @@ export type Registration = {
   /** Solo only: the package chosen at registration. */
   packageName?: string;
   status: RegistrationStatus;
+  /** When payment was confirmed; set only by `confirmPayment`. */
+  paidAt?: number;
 };
 
 export type RegistrationMap = Record<string, Registration>;

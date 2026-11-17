@@ -1,11 +1,11 @@
 import type { ReactNode } from "react";
-import { Button, ButtonLink } from "@/components/ui/button";
+import { ButtonLink } from "@/components/ui/button";
 import { Notice, Skeleton } from "@/components/ui/states";
 import { TextLink } from "@/components/ui/text-link";
 import { SignInButton } from "@/features/account/components/auth-buttons";
+import { payHref } from "../payment-model";
 import { formatProjectDate, moneyLabel, projectHref } from "../project-model";
 import { registrationFee } from "../registration-model";
-import { confirmRegistration } from "../registration-store";
 import { kirimHref } from "../submission-model";
 import type { Project, Registration } from "../types";
 
@@ -107,8 +107,7 @@ export function RegisterStatus({
         </p>
         {!confirmed && (
           <p className="text-sm text-ink-muted">
-            Biaya {fee}. Cara pembayaran belum tersedia; pendaftaranmu tercatat dan kuota belum
-            terisi.
+            Biaya {fee}. Kuotamu ditahan sampai pembayaran masuk atau waktunya habis.
           </p>
         )}
       </div>
@@ -120,20 +119,17 @@ export function RegisterStatus({
               Lihat proyek
             </ButtonLink>
           </>
-        ) : (
+        ) : confirmed ? (
           <ButtonLink href={projectHref(project.slug)}>Lihat proyek</ButtonLink>
+        ) : (
+          <>
+            <ButtonLink href={payHref(project.slug)}>Bayar sekarang</ButtonLink>
+            <ButtonLink href={projectHref(project.slug)} variant="secondary">
+              Lihat proyek
+            </ButtonLink>
+          </>
         )}
       </div>
-      {!confirmed && process.env.NODE_ENV !== "production" && (
-        // Payment arrives with QRIS (6f-6). Until then this is the only way to try sending work to
-        // a paid project, so it exists in development and never in production.
-        <div className="grid justify-items-start gap-1 border-t border-line pt-4">
-          <Button variant="text" onClick={() => confirmRegistration(project.slug)}>
-            Tandai lunas
-          </Button>
-          <p className="text-xs text-ink-muted">Hanya ada di pengembangan, sampai QRIS dibuat.</p>
-        </div>
-      )}
     </RegisterShell>
   );
 }

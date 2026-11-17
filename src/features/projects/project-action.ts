@@ -1,5 +1,6 @@
 import { dashboardHref } from "./kelas/class-model";
 import { soloDashboardHref } from "./solo/solo-model";
+import { payHref, paymentState } from "./payment-model";
 import { registerAction, registerHref } from "./registration-model";
 import { kirimHref, submitAction, submitBlock } from "./submission-model";
 import { worksText } from "./submission-text";
@@ -59,6 +60,17 @@ function dashboardAction(
   );
 }
 
+/** Registering, or paying when a registration still holds its seat. */
+function nextHref(
+  project: Project,
+  guest: boolean,
+  registration: Registration | undefined,
+  now: number,
+) {
+  const paying = !guest && registration && paymentState(registration, now) === "menunggu";
+  return paying ? payHref(project.slug) : registerHref(project.slug);
+}
+
 /**
  * The one action of a project page for this reader. Registering comes first; once registered and
  * active, categories that take work turn it into "Kirim karya" (or say why that is closed). A class
@@ -84,10 +96,10 @@ export function projectAction(input: {
   // Until the count is known the button waits, so it never offers a send the limit would refuse.
   const waiting = sentCount === null && block === null;
   const send = sending ? (waiting ? WAITING : submitAction(block)) : null;
-  const action = send ?? registerAction(state, guest, registration);
+  const action = send ?? registerAction(state, guest, registration, now);
   return {
     ...action,
-    href: send ? kirimHref(project.slug) : registerHref(project.slug),
+    href: send ? kirimHref(project.slug) : nextHref(project, guest, registration, now),
     sentLine:
       sending?.registration.status === "terdaftar"
         ? `${sentCount ?? 0} dari ${worksText(sending.rules.maxWorks)}`
