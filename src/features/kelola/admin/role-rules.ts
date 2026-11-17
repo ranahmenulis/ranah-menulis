@@ -5,8 +5,7 @@ import type { RoleGrant, Suspension } from "./role-store";
  * Who may change whose roles (PRD 15.1 to 15.3, AC-SA1 to AC-SA3). Pure, so the screen and the
  * action that writes use the same rules. Not access control: Row Level Security is.
  */
-export const isAdminTier = (role: ManagerRole) =>
-  role === "administrator" || role === "super-admin";
+const isAdminTier = (role: ManagerRole) => role === "administrator" || role === "super-admin";
 
 export type RoleChange = "grant" | "revoke";
 export type AccountChange = "suspend" | "restore";
@@ -85,6 +84,8 @@ export function roleChangeBlock(
     return isAdminTier(role) && ctx.actorId === ctx.targetId ? "diri-sendiri" : null;
   }
   if (!holds) return "tidak-memegang";
+  // Nobody takes the Administrator tier from themselves: the account would lose its way back.
+  if (isAdminTier(role) && ctx.actorId === ctx.targetId) return "diri-sendiri";
   return role === "super-admin" ? lastSuperAdmin(ctx) : null;
 }
 

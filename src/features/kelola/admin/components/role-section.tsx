@@ -1,10 +1,10 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { MANAGER_ROLES, type ManagerRole } from "@/lib/roles";
+import { MANAGER_ROLES, roleLabel, type ManagerRole } from "@/lib/roles";
 import { blockMessage, roleChangeBlock, type RuleBlock } from "../role-rules";
-import { useRoleGrants, useSuspensions } from "../role-store";
-import { roleLabel, type UserRow } from "../user-model";
+import type { RoleGrant, Suspension } from "../role-store";
+import type { UserRow } from "../user-model";
 import { ME_ID } from "../../identity";
 
 export type RoleAsk = { change: "grant" | "revoke"; role: ManagerRole };
@@ -24,14 +24,16 @@ const shortBlock: Partial<Record<RuleBlock, string>> = {
 export function RoleSection({
   user,
   actorRoles,
+  grants,
+  suspensions,
   onAsk,
 }: {
   user: UserRow;
   actorRoles: readonly ManagerRole[];
+  grants: readonly RoleGrant[];
+  suspensions: readonly Suspension[];
   onAsk: (ask: RoleAsk) => void;
 }) {
-  const grants = useRoleGrants();
-  const suspended = useSuspensions();
   return (
     <section aria-labelledby="role-title" className="grid gap-2">
       <h2 id="role-title" className="heading-md">
@@ -42,7 +44,7 @@ export function RoleSection({
           const holds = user.roles.includes(role);
           const change = holds ? "revoke" : "grant";
           const block = roleChangeBlock(
-            { actorRoles, actorId: ME_ID, grants, suspensions: suspended, targetId: user.id },
+            { actorRoles, actorId: ME_ID, grants, suspensions, targetId: user.id },
             role,
             change,
           );

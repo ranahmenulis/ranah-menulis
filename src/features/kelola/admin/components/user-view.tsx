@@ -2,12 +2,14 @@
 
 import { useRef, useState } from "react";
 import { EmptyState } from "@/components/ui/states";
+import { roleLabel } from "@/lib/roles";
 import { BackShell } from "../../components/back-shell";
 import { ReasonDialog } from "../../components/reason-dialog";
 import { ME_ID } from "../../identity";
 import { useEffectiveRoles } from "../../use-effective-roles";
 import { ADMIN_HREF } from "../area-hrefs";
 import {
+  REASON_EMPTY,
   restoreUser,
   revokeRole,
   grantRole,
@@ -17,7 +19,6 @@ import {
 import { accountChangeBlock, needsReason } from "../role-rules";
 import { useRoleGrants, useSuspensions } from "../role-store";
 import { useAdminUser } from "../use-admin-data";
-import { roleLabel } from "../user-model";
 import { RoleSection, type RoleAsk } from "./role-section";
 import { AccountSection, AssignmentsSection, HistorySection } from "./user-sections";
 
@@ -119,7 +120,13 @@ export function UserView({ id }: { id: string }) {
       >
         {said?.message}
       </p>
-      <RoleSection user={user} actorRoles={roles} onAsk={setAsk} />
+      <RoleSection
+        user={user}
+        actorRoles={roles}
+        grants={grants}
+        suspensions={suspended}
+        onAsk={setAsk}
+      />
       <AccountSection
         suspended={user.suspended}
         block={accountBlock}
@@ -133,7 +140,7 @@ export function UserView({ id }: { id: string }) {
           hint={text.hint}
           fieldLabel="Alasan"
           required={needsReason(ask.role ?? null, ask.change)}
-          emptyMessage="Tulis alasannya. Alasan tercatat di log."
+          emptyMessage={REASON_EMPTY}
           confirmLabel={text.ok}
           busy={false}
           onConfirm={confirm}

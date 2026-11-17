@@ -17,7 +17,7 @@ export function useAdminUsers(): UserRow[] {
 
 export type UserAssignment = { slug: string; title: string; role: StaffRole };
 
-export type AdminUserState =
+type AdminUserState =
   | { status: "gone" }
   | {
       status: "ready";

@@ -8,13 +8,16 @@ import { createLocalListStore } from "@/lib/local-list-store";
  * until the backend exists, where it becomes a table nobody can update or delete. The screen that
  * reads it is 6g-6.
  */
-export type AuditAction =
-  | "role.grant"
-  | "role.revoke"
-  | "account.suspend"
-  | "account.restore"
-  | "staff.assign"
-  | "staff.unassign";
+const AUDIT_ACTIONS = [
+  "role.grant",
+  "role.revoke",
+  "account.suspend",
+  "account.restore",
+  "staff.assign",
+  "staff.unassign",
+] as const;
+
+export type AuditAction = (typeof AUDIT_ACTIONS)[number];
 
 export type AuditEntry = {
   id: string;
@@ -29,15 +32,6 @@ export type AuditEntry = {
   reason?: string;
 };
 
-const ACTIONS: readonly string[] = [
-  "role.grant",
-  "role.revoke",
-  "account.suspend",
-  "account.restore",
-  "staff.assign",
-  "staff.unassign",
-];
-
 const optionalText = (value: unknown) => value === undefined || typeof value === "string";
 
 const isEntry = (value: unknown): value is AuditEntry => {
@@ -47,7 +41,7 @@ const isEntry = (value: unknown): value is AuditEntry => {
     typeof e.id === "string" &&
     Number.isFinite(e.at) &&
     typeof e.actorId === "string" &&
-    ACTIONS.includes(e.action as string) &&
+    (AUDIT_ACTIONS as readonly string[]).includes(e.action as string) &&
     typeof e.targetId === "string" &&
     optionalText(e.role) &&
     optionalText(e.slug) &&

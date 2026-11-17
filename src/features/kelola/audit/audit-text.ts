@@ -1,6 +1,5 @@
 import { personLabel } from "../admin/people";
-import { roleLabel } from "../admin/user-model";
-import type { ManagerRole } from "@/lib/roles";
+import { roleLabel, type ManagerRole } from "@/lib/roles";
 import type { AuditEntry } from "./audit-log";
 
 const roleName = (role: string | undefined) =>

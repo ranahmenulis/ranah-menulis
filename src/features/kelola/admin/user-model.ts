@@ -11,21 +11,15 @@ export type UserRow = {
   suspended: boolean;
 };
 
-export const roleLabel: Record<ManagerRole, string> = {
-  organizer: "Organizer",
-  editor: "Editor",
-  juri: "Juri",
-  mentor: "Mentor",
-  administrator: "Administrator",
-  "super-admin": "Super Admin",
-};
-
 export function userRows(grants: readonly RoleGrant[], list: readonly Suspension[]): UserRow[] {
-  return people.map((p) => ({
-    ...p,
-    roles: MANAGER_ROLES.filter((role) => rolesOf(grants, p.id).includes(role)),
-    suspended: isSuspended(list, p.id),
-  }));
+  return people.map((p) => {
+    const held = rolesOf(grants, p.id);
+    return {
+      ...p,
+      roles: MANAGER_ROLES.filter((role) => held.includes(role)),
+      suspended: isSuspended(list, p.id),
+    };
+  });
 }
 
 /** "peran" in the address: one role, or nothing for everyone. */
