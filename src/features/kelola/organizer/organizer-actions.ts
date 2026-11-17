@@ -1,4 +1,4 @@
-import { readRegistrations } from "@/features/projects/registration-store";
+import { readRegistrations, settlePayment } from "@/features/projects/registration-store";
 import { mergeCatalog } from "@/features/projects/use-catalog";
 import { storedProjects } from "@/features/projects/stored-projects";
 import { liveRegistration } from "@/features/projects/payment-model";
@@ -73,3 +73,10 @@ export function applyAction(
   storedProjects.write(stored.map((p) => (p.slug === slug ? { ...p, publication: next } : p)));
   return "ok";
 }
+
+/**
+ * An Organizer or Administrator confirms that payment arrived (PLT-07). Reads the registration again
+ * now: refused when it is already paid or its hold ran out (the seat may be gone).
+ */
+export const confirmPaymentFor = (slug: string, now: number): boolean =>
+  settlePayment(slug, now, "organizer");

@@ -4,7 +4,6 @@ import { idrLabel, paymentDueAt, remainingLabel } from "../payment-model";
 import { registerHref, registrationFee } from "../registration-model";
 import { kirimHref } from "../submission-model";
 import type { Project, Registration } from "../types";
-import { DevPaymentPanel } from "./dev-payment-panel";
 import { RegisterShell } from "./register-states";
 
 /** Placeholder for the QRIS code: the real one comes with the payment service [konfirmasi Q-19]. */
@@ -59,7 +58,6 @@ export function PayWaiting({
       <ButtonLink href={projectHref(project.slug)} className="justify-self-start">
         Lihat proyek
       </ButtonLink>
-      <DevPaymentPanel slug={project.slug} />
     </RegisterShell>
   );
 }

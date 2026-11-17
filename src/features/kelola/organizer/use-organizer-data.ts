@@ -79,6 +79,8 @@ export type OrganizerProjectData =
       /** Non-draft submissions of this project, newest first. */
       works: Submission[];
       registration: Registration | undefined;
+      /** As stored, even when its payment hold ran out (the payments tab shows that too). */
+      rawRegistration: Registration | undefined;
       fixture: ProjectFixture | undefined;
     };
 
@@ -106,6 +108,7 @@ export function useOrganizerProject(slug: string, sources: Sources = {}): Organi
       row,
       works,
       registration: liveRegistration(registrations[slug], catalog.now),
+      rawRegistration: registrations[slug],
       fixture: stored.find((p) => p.slug === slug),
     };
   }, [catalog, submissions, roles, stored, registrations, slug]);

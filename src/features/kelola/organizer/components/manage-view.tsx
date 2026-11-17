@@ -9,7 +9,9 @@ import { BackShell } from "../../components/back-shell";
 import { MANAGE_TABS, ORGANIZER_HREF, manageHref, parseManageTab } from "../area-hrefs";
 import { allowedActions, statusLabel } from "../project-status";
 import { useOrganizerProject } from "../use-organizer-data";
+import { takesPayment } from "../payment-rows";
 import { ParticipantsTab, WorksTab } from "./people-tabs";
+import { PaymentsTab } from "./payments-tab";
 import { ProjectForm } from "./project-form";
 import { StaffTab } from "./staff-tab";
 import { StatusActions } from "./status-actions";
@@ -58,7 +60,7 @@ export function ManageView({ slug, store }: { slug: string; store?: SubmissionSt
     );
   }
 
-  const { row, works, registration, fixture, now } = data;
+  const { row, works, registration, rawRegistration, fixture, now } = data;
   const { project } = row;
   return (
     <BackShell back={BACK}>
@@ -69,7 +71,9 @@ export function ManageView({ slug, store }: { slug: string; store?: SubmissionSt
       <Tabs
         label="Bagian proyek"
         value={tab}
-        items={MANAGE_TABS.map((t) => ({ ...t, href: manageHref(slug, t.id) }))}
+        items={MANAGE_TABS.filter((t) => t.id !== "pembayaran" || takesPayment(project)).map(
+          (t) => ({ ...t, href: manageHref(slug, t.id) }),
+        )}
       />
       {tab === "proyek" &&
         (fixture ? (
@@ -96,6 +100,9 @@ export function ManageView({ slug, store }: { slug: string; store?: SubmissionSt
       )}
       {tab === "peserta" && (
         <ParticipantsTab project={project} registration={registration} now={now} />
+      )}
+      {tab === "pembayaran" && (
+        <PaymentsTab project={project} registration={rawRegistration} now={now} />
       )}
       {tab === "kiriman" && <WorksTab project={project} works={works} />}
     </BackShell>

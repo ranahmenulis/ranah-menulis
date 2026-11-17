@@ -32,9 +32,13 @@ export const isExpired = (registration: Registration, now: number): boolean =>
  * Payment arrives: what the QRIS webhook, and later an Organizer, will call. `null` = refused,
  * because it is already paid or the hold ran out (the seat may be gone).
  */
-export function confirmPayment(registration: Registration, now: number): Registration | null {
+export function confirmPayment(
+  registration: Registration,
+  now: number,
+  by: Registration["paidBy"] = "sistem",
+): Registration | null {
   if (paymentState(registration, now) !== "menunggu") return null;
-  return { ...registration, status: "terdaftar", paidAt: now };
+  return { ...registration, status: "terdaftar", paidAt: now, paidBy: by };
 }
 
 /** Amount to pay in rupiah (QRIS is IDR only, PRD 19); `null` when the price is only in ringgit. */
