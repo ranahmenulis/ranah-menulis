@@ -113,10 +113,10 @@ Aplikasi lama punya masalah penyimpanan yang bisa membuat tulisan hilang. Karena
 | Termasuk                                                                     | Belum termasuk (menyusul)                                          |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------------ |
 | Registrasi, login, profil, hak akses, notifikasi, admin, moderasi, audit log | Login sosial tambahan, notifikasi dorong                           |
-| Studio dengan Streak, kit inspirasi, ekspor TXT dan PDF                      | Template, manuskrip multi-bab, ekspor DOCX, kartu pencapaian       |
-| Community berupa postingan, apresiasi, komentar, follow, laporan             | Karya penuh, chat, cerita berseri, Highlight, rekomendasi lanjutan |
+| Studio dengan Streak, kit inspirasi, ekspor TXT dan PDF, riwayat versi, timer sprint, target per dokumen                      | Template, manuskrip multi-bab, ekspor dan impor DOCX, kartu pencapaian       |
+| Community berupa postingan, apresiasi, komentar, follow, laporan, Event, tautan komunitas luar             | Karya penuh, chat realtime (tidak dibangun), cerita berseri, Highlight, rekomendasi lanjutan |
 | Projects keempat kategori dengan pembayaran QRIS                             | Pemesanan buku, pembayaran MYR, sertifikat otomatis                |
-| Grup Penulis dengan admin grup                                               | Logo grup, aturan grup lanjutan                                    |
+| Grup Penulis (dibuat penulis atau Administrator) dengan admin grup                                               | Logo grup, aturan grup lanjutan                                    |
 |                                                                              | Marketplace, aplikasi di store, langganan, fitur AI                |
 
 ## 10. Jadwal dan cara kerja
@@ -180,3 +180,9 @@ Urutan kerja:
 - Teknologi ditetapkan: Next.js satu proyek dengan Supabase, dan rencana pindah database ke VPS.
 - Pembayaran memakai QRIS buatan sendiri.
 - Fitur AI di dalam aplikasi tidak dibangun.
+- **Keputusan 17 November 2026 (Lembar Novlr):**
+  - Ditambah di versi pertama: target per dokumen, riwayat versi 3 hari, timer sprint, pencarian cepat, arsip dan duplikat, jenis dokumen dan tag, gambar kutipan dan kartu progres, Event umum, tautan komunitas luar, batal daftar proyek gratis, kelas yang sedang berjalan, salin latihan ke Studio, testimoni, pengaturan notifikasi dan email progres mingguan.
+  - Penulis boleh membuat grup sendiri.
+  - Menyusul di Fase 2: impor .docx, catatan riset dan papan alur (bersama manuskrip multi-bab).
+  - Tidak dibangun: chat realtime (diarahkan ke platform lain), kursus mandiri, tautan baca publik, kolaborasi di dalam teks, tema tambahan.
+  - Marketplace dikonfirmasi di luar versi pertama. Butir yang masih dibahas: pemeriksa tata bahasa, cadangan ke Drive dan Dropbox, pemutar materi, situs penulis, undang teman, chat dukungan.

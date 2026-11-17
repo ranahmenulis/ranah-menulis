@@ -6,19 +6,19 @@ MVP memuat tiga modul inti (Studio dengan Streak, Community, Projects) dan Grup 
 
 | Area | Termasuk di MVP | Ditunda |
 | --- | --- | --- |
-| Fondasi | Registrasi dan login, profil, RBAC dengan tingkat Super Admin dan Administrator, notifikasi dalam aplikasi dan email, admin dasar, moderasi, audit log, keamanan dan privasi, desain responsif, blok Dashboard "Hari ini" di Beranda (PLT-10, sementara, Q-49) | Login sosial (Q-05), notifikasi dorong |
-| Ranah Streak (di dalam Studio) | Target harian, pelacakan kata berbasis delta, kalender, streak, statistik dasar, milestone dasar | Kartu pencapaian |
-| Ranah Studio | Editor, simpan otomatis, offline dan konflik, dokumen dan folder, penghitung, ekspor TXT dan PDF, kirim ke Projects, bagikan ke Community | Template, manuskrip multi-bab, ekspor DOCX |
-| Ranah Community | Postingan (prolog atau cuplikan karya yang diatur publik, tanpa DM), feed, Apresiasi, komentar, bookmark, follow, Discover kategori dasar, profil dan portofolio, laporan | Karya penuh, chat atau DM antarpenulis, cerita berseri, Highlight, kartu tulisan, rekomendasi kompleks |
-| Grup Penulis | Grup dibuat Administrator, undangan anggota, satu atau lebih admin grup, tulisan yang dibagikan ke grup terlihat anggota, audit log keanggotaan | Logo grup (PLT-09, Fase 2); aturan lanjutan sesuai jawaban Q-38, Q-41, dan Q-48 |
-| Marketplace | Tidak ada | Seluruhnya setelah MVP; isi belum ditentukan (Q-39) |
+| Fondasi | Registrasi dan login, profil, RBAC dengan tingkat Super Admin dan Administrator, notifikasi dalam aplikasi dan email, admin dasar, moderasi, audit log, keamanan dan privasi, desain responsif, blok Dashboard "Hari ini" di Beranda (PLT-10, sementara, Q-49), pengaturan notifikasi dan email progres mingguan (PLT-11), tautan komunitas luar (PLT-12) | Login sosial (Q-05), notifikasi dorong |
+| Ranah Streak (di dalam Studio) | Target harian (dan target per dokumen), pelacakan kata berbasis delta, kalender, streak, riwayat streak, statistik dasar, milestone dasar, kartu progres | Kartu pencapaian, target mingguan |
+| Ranah Studio | Editor, simpan otomatis, offline dan konflik, dokumen dan folder, penghitung, ekspor TXT dan PDF, riwayat versi 3 hari, timer sprint, pencarian cepat, arsip dan duplikat, jenis dokumen dan tag, pengaturan menulis dan pintasan, gambar kutipan, kirim ke Projects, bagikan ke Community | Template, manuskrip multi-bab, catatan riset dan profil tokoh, papan alur, ekspor DOCX, impor DOCX |
+| Ranah Community | Postingan (prolog atau cuplikan karya yang diatur publik, tanpa DM), feed, Apresiasi, komentar, bookmark, follow, Discover kategori dasar, profil dan portofolio, laporan, Event umum, satu tautan komunitas luar | Karya penuh, chat atau DM realtime antarpenulis (tidak akan dibangun; percakapan diarahkan ke platform lain), cerita berseri, Highlight, kartu tulisan, rekomendasi kompleks |
+| Grup Penulis | Grup dibuat penulis atau Administrator, undangan anggota, berbagi progres ke grup, satu atau lebih admin grup, tulisan yang dibagikan ke grup terlihat anggota, audit log keanggotaan | Logo grup (PLT-09, Fase 2); aturan lanjutan sesuai jawaban Q-38, Q-41, dan Q-48 |
+| Marketplace | Tidak ada (dikonfirmasi client 17 November 2026: di luar MVP, Fase 3) | Seluruhnya setelah MVP; acuan dari produk lain dicari nanti (Q-39) |
 | Aplikasi di Play Store dan App Store | Tidak ada; MVP berupa web responsif | Pembungkusan dari versi web setelah web stabil, bila disetujui (Q-40) |
-| Projects: keempat kategori | Katalog dan detail, ketentuan hak cipta, pendaftaran, biaya tampil, pembayaran QRIS (semi-manual), pengiriman karya, status submission, pengelolaan proyek oleh Organizer | Pemesanan buku, pembayaran online |
+| Projects: keempat kategori | Katalog dan detail, ketentuan hak cipta, pendaftaran, biaya tampil, pembayaran QRIS (semi-manual), pengiriman karya, status submission, pembatalan pendaftaran proyek gratis, pengelolaan proyek oleh Organizer | Pemesanan buku, pembayaran online |
 | Antologi | Seleksi, feedback editor, revisi, persetujuan, status tahap produksi manual | Alat produksi dan layout di dalam platform |
 | Solo | Paket, pengajuan, dasbor tahap penerbitan manual | Pratinjau layout interaktif |
-| Kelas Menulis | Kelas, kurikulum, jadwal, materi, tugas, feedback, progres | Sertifikat otomatis |
+| Kelas Menulis | Kelas (jadwal dan mentor), kurikulum, materi, tugas, feedback, progres, kelas yang sedang berjalan, salin latihan ke Studio, testimoni | Kursus mandiri (rekaman), sertifikat otomatis |
 | Lomba | Pengiriman, juri, kriteria, penilaian anonim, pengumuman finalis dan pemenang | Sertifikat otomatis |
-| Di luar cakupan | Fitur AI di dalam aplikasi (keputusan founder), algoritma rekomendasi kompleks, monetisasi lanjutan, aplikasi native yang dibangun terpisah dari versi web | Sesuai brief founder |
+| Di luar cakupan | Fitur AI di dalam aplikasi (keputusan founder), tautan baca publik untuk naskah, kolaborasi dan komentar di dalam teks naskah, pilihan font dan jarak baris per dokumen, mode ramah disleksia, tema tambahan selain terang dan gelap, konten editorial di Beranda, Beranda yang bisa diatur, penawaran mitra, algoritma rekomendasi kompleks, monetisasi lanjutan, aplikasi native yang dibangun terpisah dari versi web | Sesuai brief founder |
 
 **Prinsip pemotongan.** Bila waktu terbatas, yang dikorbankan adalah kedalaman fitur, bukan keberadaan modul. Studio, Streak, Community, dan keempat kategori Projects tetap hadir dengan alur inti.
 

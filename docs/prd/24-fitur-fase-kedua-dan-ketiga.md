@@ -18,6 +18,9 @@ Tiap fitur di bawah punya hubungan jelas dengan visi produk. Tidak ada tanggal k
 | Sertifikat kelas dan lomba (KLS-04, LMB-03) | Projects | Nilai tambah bagi peserta |
 | Alat bantu produksi dalam platform (pratinjau layout, persetujuan berkas) | Projects | Memperkuat Solo dan Antologi |
 | Pengaturan Discover lebih halus dan statistik penulis | Community | Meningkatkan penemuan |
+| Impor naskah .docx (STD-20) | Studio | Memudahkan pindah dari Word (keputusan client 17 November 2026) |
+| Catatan riset, profil tokoh, struktur buku (bagian), dan papan alur | Studio | Ikut manuskrip multi-bab (STD-06); keputusan client 17 November 2026 |
+| Mode ramah disleksia | Platform | Ditunda (keputusan client 17 November 2026) |
 
 ### 24.2 Fase 3: pertumbuhan dan monetisasi lanjutan
 

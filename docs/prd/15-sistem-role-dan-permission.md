@@ -62,7 +62,7 @@ Grup Penulis adalah kumpulan penulis yang dapat saling melihat tulisan dan dikel
 
 | Hal | Aturan (usulan) |
 | --- | --- |
-| Pembuatan dan keanggotaan | Administrator (atau Super Admin) membuat grup dan mengundang anggota; grup berada di bawah Administrator yang membuatnya (diskusi 9 November 2026). Administrator menunjuk Admin Grup, dan satu grup boleh memiliki lebih dari satu Admin Grup. Admin Grup juga dapat mengundang atau menerima anggota. Satu penulis boleh ikut lebih dari satu grup (Q-41). Hubungan Administrator pembuat grup dengan Admin Grup: Q-48 |
+| Pembuatan dan keanggotaan | Administrator (atau Super Admin) atau penulis (BR-COM-12, Q-57) membuat grup dan mengundang anggota; grup berada di bawah Administrator yang membuatnya (diskusi 9 November 2026). Administrator menunjuk Admin Grup, dan satu grup boleh memiliki lebih dari satu Admin Grup. Admin Grup juga dapat mengundang atau menerima anggota. Satu penulis boleh ikut lebih dari satu grup (Q-41). Hubungan Administrator pembuat grup dengan Admin Grup: Q-48 |
 | Identitas grup | Nama, deskripsi, dan logo. Logo grup dapat diunggah oleh Admin Grup atau Administrator; fitur ini masuk Fase 2 (PLT-09), dan format serta ukuran berkas ditetapkan saat desain |
 | Isolasi antar grup | Anggota hanya dapat masuk dan melihat data di grupnya sendiri, tidak dapat melihat grup lain. Admin Grup mengelola anggota di dalam grupnya saja dan tidak membawa wewenang administratif platform (rapat 8 November 2026) |
 | Visibilitas tulisan | Anggota grup melihat tulisan sesama anggota. Usulan: hanya dokumen yang penulisnya bagikan ke grup, karena dokumen Studio bersifat pribadi (bagian 14.2). Ruang lingkup final: Q-38 |

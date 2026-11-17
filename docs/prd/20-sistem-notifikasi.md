@@ -23,5 +23,9 @@ Notifikasi hadir dalam aplikasi (MVP) dan melalui email untuk peristiwa penting 
 | Karya ditugaskan untuk dinilai | Juri | Ya | Ya | Tidak |
 | Pengumuman finalis dan pemenang | Peserta lomba | Ya | Ya | Tidak |
 | Laporan baru, konten disembunyikan | Administrator, pemilik konten | Ya | Ya | Tidak |
+| Email progres menulis mingguan | Pengguna | - | Ya | Ya |
+| Notifikasi penyemangat saat menulis | Pengguna | Ya | Tidak | Ya |
+| Tenggat target dokumen mendekat | Pengguna | Ya | Tidak | Ya |
+| Event dimulai atau berubah | Peserta Event | Ya | Tidak | Ya |
 
 Aturan: notifikasi sejenis dari banyak orang dalam waktu singkat digabung (misalnya "12 orang mengapresiasi karya Anda"); setiap notifikasi menautkan ke objek terkait; waktu ditampilkan menurut zona waktu pengguna; frekuensi email dibatasi agar tidak mengganggu. Zona waktu pengingat dan jam tenang: Q-33.

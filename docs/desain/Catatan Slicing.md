@@ -94,9 +94,11 @@ Prinsip client: MVP = ATM (amati, tiru, modifikasi dari Novlr). Perbandingan mem
 - [ ] **N16. Kartu Beranda bisa diatur ulang dan disembunyikan** (M): bertabrakan dengan Beranda sebagai feed; putuskan apakah Beranda dipecah menjadi dasbor menulis dan feed.
 - [ ] **N17. Tantangan menulis bersama ala Draftsgiving** (L): baru bermakna setelah Grup (6g).
 
+**Keputusan client 17 November 2026 untuk butir di atas** (`catatan-keputusan-client.md` bagian 8): N6 diambil, riwayat 3 hari; N8, N9, N10, N11 diambil; N12 target mingguan **tidak** (harian saja); N13 target per dokumen **diambil**, boleh lebih dari satu; N14 statistik tambahan diambil; N15 catatan riset dan profil tokoh **Fase 2**; N16 Beranda tetap satu susunan, tidak bisa diatur; N17 diambil sebagai **Event umum** (COM-13, tantangan pertama jadi contoh, sprint bersama bagian Event, peserta hanya jumlah). Tambahan: penulis boleh membuat grup sendiri; **tanpa chat realtime**, satu tautan komunitas luar; batal daftar hanya proyek gratis; kelas berjalan, salin latihan, dan testimoni diambil. Nama "Roast My Writing" diganti nanti, tunggu client.
+
 **Dari 6g:** untuk Grup Penulis ambil dari Novlr: kode undangan, label publik/privat, dan peringatan privasi "anggota melihat username, judul proyek, dan progres".
 
-**Sengaja dilewati:** pemeriksa tata bahasa, Sites/penerbitan, cadangan Drive/Dropbox, impor Scrivener, player kursus mengambang, undang teman, upsell dengan data contoh buram (model bisnis kita berbeda: yang berbayar adalah Projects).
+**Sengaja dilewati sampai dibahas dengan client** (status 17 November 2026: "perlu dibahas"): pemeriksa tata bahasa, situs penulis, cadangan Drive/Dropbox, pemutar materi mengambang, undang teman, kartu paket dengan data contoh buram, chat dukungan (model bisnis kita berbeda: yang berbayar adalah Projects). Impor Scrivener tidak ditanyakan; tetap dilewati.
 
 Urutan rilis dan ketergantungan data: `docs/produk/MVP Scope RanahMenulis.md`. Backend mengikuti rilis R1 dst.; jangan membangun tabel di luar yang dibutuhkan layar yang sedang dikerjakan.
 

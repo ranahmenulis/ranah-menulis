@@ -21,6 +21,8 @@ Untuk setiap halaman: tujuan, siapa yang mengakses, isi utama, aksi utama, dan k
 | Dialog konflik | Pemilik | Perbandingan dua versi dan pilihan memakai salah satu atau menggabungkan | Wajib diselesaikan sebelum menyimpan |
 | Manuskrip | Pemilik (Fase 2) | Susunan bab, catatan, riset, total kata, urutkan, ekspor | Bab kosong |
 | Sampah | Pemilik | Dokumen terhapus, pulihkan, hapus permanen | Kosong |
+| Riwayat versi | Pemilik | Daftar versi 3 hari terakhir, bandingkan, pulihkan | Tanpa versi |
+| Pengaturan menulis dan pintasan | Pemilik | Pengaturan menulis, daftar pintasan keyboard | - |
 
 ### 17.3 Studio, area Streak
 
@@ -42,6 +44,7 @@ Untuk setiap halaman: tujuan, siapa yang mengakses, isi utama, aksi utama, dan k
 | Profil penulis | Publik | Nama, username, foto, bio, negara, genre, portofolio, karya, followers, following, tombol ikuti | Profil pribadi sebagian |
 | Bookmark | Pemilik | Daftar karya tersimpan, hapus bookmark | Kosong |
 | Pembuat kartu tulisan | Writer (Fase 2) | Pilih bagian teks, gaya kartu, pratinjau, unduh atau bagikan | Teks terlalu panjang |
+| Event | Publik (bergabung perlu akun) | Daftar kartu Event, detail, jumlah peserta, bergabung; tautan komunitas luar | Event penuh atau selesai |
 
 ### 17.5 Projects
 
