@@ -18,7 +18,6 @@ import { acceptedAt } from "../solo-model";
 import { currentStage, timeline } from "../stage-model";
 import { soloStore } from "../storage/store";
 import type { SoloStore } from "../storage/solo-store";
-import { DevOrganizerPanel } from "./dev-organizer-panel";
 import { FinalApproval } from "./final-approval";
 import { PreviewFiles } from "./preview-files";
 import { backToProject, SoloBlocked } from "./solo-states";
@@ -178,7 +177,6 @@ function SoloReady({ data, slug, store }: { data: Ready; slug: string; store: So
           onDecided={focusTitle}
         />
       )}
-      {target && <DevOrganizerPanel target={target} progress={progress} store={store} />}
     </MyShell>
   );
 }

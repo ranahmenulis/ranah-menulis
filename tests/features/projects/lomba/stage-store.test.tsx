@@ -44,14 +44,14 @@ describe("advanceContest", () => {
     expect(result.current["lomba-a"].times).toEqual({ finalis: 1000, pemenang: 2000 });
   });
 
-  it("is empty in production, whatever is stored", () => {
+  it("keeps the stage in production but never the finalist mark", () => {
     localStorage.setItem(
       "ranah.contestStages",
       JSON.stringify({ "lomba-a": { stage: "pemenang", times: {}, mine: true } }),
     );
     vi.stubEnv("NODE_ENV", "production");
     const { result } = renderHook(() => useContestOverrides());
-    expect(result.current).toEqual({});
+    expect(result.current["lomba-a"]).toMatchObject({ stage: "pemenang", mine: false });
     vi.unstubAllEnvs();
   });
 

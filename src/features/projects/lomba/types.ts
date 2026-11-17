@@ -25,9 +25,8 @@ export type ContestResults = {
 };
 
 /**
- * What a development-only panel did to a contest, kept on this device: the furthest stage it
- * pushed the contest to, and whether the reader's own work was made a finalist. Never read as
- * truth about a real contest.
+ * What the Organizer did to a contest, kept on this device: the furthest stage it was pushed to,
+ * and (development only) whether the reader's own work was made a finalist.
  */
 export type ContestOverride = {
   stage: ContestStage;
