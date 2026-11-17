@@ -1,6 +1,5 @@
 import { authors } from "@/features/community/fixtures/authors";
-import { ME_ID } from "../identity";
-import { SETUP_ID } from "./role-store";
+import { ME_ID, SETUP_ID } from "../identity";
 
 /**
  * The people the Admin screen manages [usulan]: the dummy Community authors, the signed-in account
@@ -14,7 +13,9 @@ export const people: readonly Person[] = authors.map(({ id, name, handle }) => (
   handle,
 }));
 
-export const personById = (id: string): Person | undefined => people.find((p) => p.id === id);
+const byId = new Map(people.map((p) => [p.id, p]));
+
+export const personById = (id: string): Person | undefined => byId.get(id);
 
 /** A name to show for an id: "(kamu)" marks the signed-in account; unknown ids are shown as is. */
 export function personLabel(id: string): string {

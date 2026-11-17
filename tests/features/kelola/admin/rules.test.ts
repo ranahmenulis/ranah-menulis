@@ -123,3 +123,21 @@ describe("reason and effective roles", () => {
     expect(effectiveRoles(["editor"], grants, suspensions, "aku", false)).toEqual([]);
   });
 });
+
+describe("taking your own tier away", () => {
+  it("refuses revoking the Administrator tier from yourself", () => {
+    const ctx = {
+      ...asSuper,
+      targetId: "aku",
+      grants: [...base.grants, grant("aku", "administrator")],
+    };
+    expect(roleChangeBlock(ctx, "administrator", "revoke")).toBe("diri-sendiri");
+    expect(
+      roleChangeBlock(
+        { ...ctx, grants: [...ctx.grants, grant("aku", "editor")] },
+        "editor",
+        "revoke",
+      ),
+    ).toBeNull();
+  });
+});

@@ -1,9 +1,9 @@
 import { appendAudit, type NewAuditEntry } from "../audit/audit-log";
 import { ME_ID } from "../identity";
 import { readEffectiveRoles } from "../use-effective-roles";
-import { validateReason } from "../reason";
+import { reasonMessage, validateReason } from "../reason";
 import { STAFF_ROLES, removeAssignmentsOf, type StaffRole } from "../staff-assignments";
-import type { ManagerRole } from "@/lib/roles";
+import { roleLabel, type ManagerRole } from "@/lib/roles";
 import {
   accountChangeBlock,
   blockMessage,
@@ -14,7 +14,9 @@ import {
 } from "./role-rules";
 import { roleGrants, suspensions } from "./role-store";
 import { personById } from "./people";
-import { roleLabel } from "./user-model";
+
+/** Said when a required reason is left empty, by the dialog and by the action alike. */
+export const REASON_EMPTY = "Tulis alasannya. Alasan tercatat di log.";
 
 export type AdminResult = { ok: true; message: string } | { ok: false; message: string };
 
@@ -32,10 +34,9 @@ function context(targetId: string) {
 }
 
 function reasonProblem(role: ManagerRole | null, change: RoleChange | AccountChange, text: string) {
-  const required = needsReason(role, change);
-  return validateReason(text, required) === null
-    ? null
-    : "Tulis alasannya (paling banyak 1.000 karakter).";
+  const found = validateReason(text, needsReason(role, change));
+  if (found === null) return null;
+  return found === "kosong" ? REASON_EMPTY : reasonMessage[found];
 }
 
 const asStaffRole = (role: ManagerRole): StaffRole | null =>

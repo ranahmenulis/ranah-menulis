@@ -1,6 +1,7 @@
 "use client";
 
 import { createLocalListStore } from "@/lib/local-list-store";
+import { SETUP_ID } from "../identity";
 import { MANAGER_ROLES, type ManagerRole } from "@/lib/roles";
 
 /** A management role given to a person (PRD 15.3). Who gave it and when are kept for the audit. */
@@ -14,9 +15,6 @@ export type RoleGrant = {
 
 /** A suspended account (PLT-05). Without sign-in this only marks the person and ends their roles. */
 export type Suspension = { userId: string; by: string; at: number; reason: string };
-
-/** Who gave the first roles: the initial setup, not a sign-up (PRD 15.3). */
-export const SETUP_ID = "penyiapan-awal";
 
 /**
  * What an untouched device starts with [usulan]: one Super Admin and one holder of each role that is

@@ -20,7 +20,7 @@ import {
   type JudgeRow,
   type JudgingStatus,
 } from "./judge-model";
-import { canonicalId } from "../identity";
+import { isSelf } from "../identity";
 import { JUDGE_ID, useJudgingLog, useJuryScores, type JuryScore } from "./score-store";
 
 type Sources = { store?: SubmissionStore };
@@ -74,7 +74,7 @@ export function useJudgeContests(sources: Sources = {}): JudgeContestsData {
           project,
           total: works.length,
           scored: works.filter((w) =>
-            scores.some((s) => s.submissionId === w.id && canonicalId(s.judgeId) === JUDGE_ID),
+            scores.some((s) => s.submissionId === w.id && isSelf(s.judgeId)),
           ).length,
           judging: judgingStatus(stage, log, project.slug),
         },

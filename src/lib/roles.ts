@@ -17,6 +17,15 @@ export const MANAGER_ROLES = [
 
 export type ManagerRole = (typeof MANAGER_ROLES)[number];
 
+export const roleLabel: Record<ManagerRole, string> = {
+  organizer: "Organizer",
+  editor: "Editor",
+  juri: "Juri",
+  mentor: "Mentor",
+  administrator: "Administrator",
+  "super-admin": "Super Admin",
+};
+
 export const NO_ROLES: readonly ManagerRole[] = [];
 
 const isRole = (value: string): value is ManagerRole =>

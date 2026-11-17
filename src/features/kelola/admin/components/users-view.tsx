@@ -6,16 +6,10 @@ import { useMemo, useState } from "react";
 import { Chip } from "@/components/ui/chip";
 import { Field, Input } from "@/components/ui/field";
 import { EmptyState } from "@/components/ui/states";
-import { MANAGER_ROLES } from "@/lib/roles";
+import { MANAGER_ROLES, roleLabel } from "@/lib/roles";
 import { ADMIN_HREF, userHref } from "../area-hrefs";
 import { useAdminUsers } from "../use-admin-data";
-import {
-  filterUsers,
-  parseRoleFilter,
-  roleLabel,
-  usersQuery,
-  type RoleFilter,
-} from "../user-model";
+import { filterUsers, parseRoleFilter, usersQuery, type RoleFilter } from "../user-model";
 
 /**
  * Admin: users and roles (PLT-05). Search and the role filter live in the address so a view can be
@@ -24,15 +18,15 @@ import {
 export function UsersView() {
   const rows = useAdminUsers();
   const params = useSearchParams();
-  const askedQ = params?.get("q") ?? "";
   const askedRole = params?.get("peran") ?? null;
-  const [q, setQ] = useState(askedQ);
+  // The text is only read from the address when the screen opens: while typing, the address lags
+  // behind the box and would overwrite fast keystrokes. The role filter is one click, so it syncs.
+  const [q, setQ] = useState(() => params?.get("q") ?? "");
   const [role, setRole] = useState<RoleFilter>(() => parseRoleFilter(askedRole));
-  const [seen, setSeen] = useState(`${askedQ}|${askedRole}`);
-  // The address is the source of truth: Next keeps the previous page mounted.
-  if (seen !== `${askedQ}|${askedRole}`) {
-    setSeen(`${askedQ}|${askedRole}`);
-    setQ(askedQ);
+  const [seen, setSeen] = useState(askedRole);
+  // The address is the source of truth for the role: Next keeps the previous page mounted.
+  if (seen !== askedRole) {
+    setSeen(askedRole);
     setRole(parseRoleFilter(askedRole));
   }
   function change(nextQ: string, nextRole: RoleFilter) {

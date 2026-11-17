@@ -1,6 +1,7 @@
 "use client";
 
 import { createLocalListStore } from "@/lib/local-list-store";
+import { roleLabel } from "@/lib/roles";
 import { appendAudit } from "./audit/audit-log";
 import { ME_ID, canonicalId, isSelf } from "./identity";
 
@@ -15,9 +16,9 @@ export type StaffAssignment = { slug: string; role: StaffRole; staffId: string }
 export const STAFF_ROLES: readonly StaffRole[] = ["editor", "mentor", "juri"];
 
 export const staffRoleLabel: Record<StaffRole, string> = {
-  editor: "Editor",
-  mentor: "Mentor",
-  juri: "Juri",
+  editor: roleLabel.editor,
+  mentor: roleLabel.mentor,
+  juri: roleLabel.juri,
 };
 
 /** What an untouched device starts with: the projects the first Editor and Mentor screens used. */

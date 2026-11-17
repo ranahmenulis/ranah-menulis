@@ -14,6 +14,9 @@ const LEGACY_SELF_IDS: readonly string[] = [
   "organizer-kamu",
 ];
 
+/** Who gave the first roles: the initial setup, not a sign-up (PRD 15.3). */
+export const SETUP_ID = "penyiapan-awal";
+
 /** The id data is compared by: the old per-role ids of the dummy account become `ME_ID`. */
 export const canonicalId = (id: string): string => (LEGACY_SELF_IDS.includes(id) ? ME_ID : id);
 
