@@ -47,6 +47,7 @@ export const SEED_ASSIGNMENTS: readonly StaffAssignment[] = [
   { slug: "antologi-pulang-ke-pesisir", role: "editor", staffId: SELF_ID.editor },
   { slug: "solo-penerbitan-buku-sendiri", role: "editor", staffId: SELF_ID.editor },
   { slug: "kelas-cerpen-untuk-pemula", role: "mentor", staffId: SELF_ID.mentor },
+  { slug: "lomba-cerpen-hujan-2026", role: "juri", staffId: SELF_ID.juri },
 ];
 
 const isAssignment = (value: unknown): value is StaffAssignment => {
