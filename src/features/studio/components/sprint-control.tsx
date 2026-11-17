@@ -139,7 +139,7 @@ export function SprintControl({ sprint, words, open, onOpenChange }: SprintContr
   const { state, nowMs } = sprint;
   const label =
     state.phase === "running"
-      ? formatRemaining(remainingMs(state.startedAt, state.minutes, nowMs))
+      ? `Sprint ${formatRemaining(remainingMs(state.startedAt, state.minutes, nowMs))}`
       : state.phase === "done"
         ? "Sprint selesai"
         : "Sprint";
