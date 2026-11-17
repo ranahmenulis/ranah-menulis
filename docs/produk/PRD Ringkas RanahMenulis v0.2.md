@@ -2,7 +2,7 @@
 
 Versi 0.2, revisi 9 November 2026 · Penyusun: Aditya Imam Zuhdi
 
-Dokumen ini ringkasan dari [PRD lengkap](PRD%20RanahMenulis%20v0.2.md). Isinya cukup untuk memahami apa yang akan dibangun, apa yang belum, dan keputusan apa yang masih ditunggu. Detail teknis, aturan bisnis, dan kriteria uji ada di PRD lengkap.
+Dokumen ini ringkasan dari [PRD lengkap](../PRD%20RanahMenulis%20v0.2.md). Isinya cukup untuk memahami apa yang akan dibangun, apa yang belum, dan keputusan apa yang masih ditunggu. Detail teknis, aturan bisnis, dan kriteria uji ada di PRD lengkap.
 
 ## 1. Produk dalam satu paragraf
 

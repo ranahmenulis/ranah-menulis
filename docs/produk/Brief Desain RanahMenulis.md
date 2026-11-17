@@ -14,11 +14,11 @@ Pembaca dokumen ini: desainer atau Claude Design. Bagian 8 berisi prompt siap te
 
 **Pengguna utama (hipotesis, PRD 4):** penulis pemula, penulis aktif, calon penulis buku, peserta kelas/lomba, pembaca, serta sisi kerja (Organizer, Editor, Juri/Mentor, Admin). Dua dunia berbeda: **dunia penulis** (tenang, fokus, hangat) dan **dunia kerja pengelola** (padat, jelas, cepat dipindai). Keduanya harus terasa satu keluarga, tetapi kepadatannya boleh berbeda.
 
-**Yang sudah diputuskan (November 2026):** client memilih **hitam putih, netral, mendekati Medium** (aplikasi Medium setelah masuk, bukan halaman depannya). Merah disetujui client untuk galat dan tindakan berbahaya; mode gelap wajib. Wafi juga memberi referensi aplikasi Substack di ponsel; yang diambil hanya pola tata letaknya (DESIGN.md bagian 2.1). Rinciannya ada di [DESIGN.md](../DESIGN.md), yang menjadi sumber utama token dan komponen. **Belum ada:** logo; huruf final menunggu uji spesimen.
+**Yang sudah diputuskan (November 2026):** client memilih **hitam putih, netral, mendekati Medium** (aplikasi Medium setelah masuk, bukan halaman depannya). Merah disetujui client untuk galat dan tindakan berbahaya; mode gelap wajib. Wafi juga memberi referensi aplikasi Substack di ponsel; yang diambil hanya pola tata letaknya (DESIGN.md bagian 2.1). Rinciannya ada di [DESIGN.md](../../DESIGN.md), yang menjadi sumber utama token dan komponen. **Belum ada:** logo; huruf final menunggu uji spesimen.
 
 ## 2. Arah visual (diputuskan)
 
-Pegangan: tipografi bacaan adalah pahlawannya, bukan kartu dan ikon. Detail lengkap ada di [DESIGN.md](../DESIGN.md). Ringkasnya:
+Pegangan: tipografi bacaan adalah pahlawannya, bukan kartu dan ikon. Detail lengkap ada di [DESIGN.md](../../DESIGN.md). Ringkasnya:
 
 - **Rasa:** seperti membaca di Medium: tenang, netral, tulisan menjadi pusat layar. Bukan dasbor SaaS, bukan media sosial umum.
 - **Tipografi:** Source Serif 4 untuk judul dan teks karya; sans grotesk untuk antarmuka (usulan Schibsted Grotesk). Teks bacaan 20/32, kolom maksimal 680px (NFR-10). Uji dengan teks Indonesia sungguhan.

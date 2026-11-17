@@ -1,4 +1,4 @@
-// Landing copy, Indonesian (source of the dictionary shape). Source: docs/Copy Landing
+// Landing copy, Indonesian (source of the dictionary shape). Source: docs/produk/Copy Landing
 // RanahMenulis.md, section 5 (v3, the client's landing brief of 15 Nov 2026). Eyebrows, headlines,
 // subheadlines, tiles, and pillars follow the client's six images word for word, without the word
 // "Muslim". Items marked [konfirmasi] must not go live before the client agrees:

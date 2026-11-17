@@ -6,7 +6,7 @@ import { countries, type WaitlistState, type WaitlistValues } from "./state";
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const INTERESTS = ["Menulis rutin", "Antologi", "Buku solo", "Kelas", "Lomba", "Membaca"];
 
-/** Pesan galat dari docs/Copy Landing RanahMenulis.md: pendek, spesifik, memberi langkah berikutnya. */
+/** Pesan galat dari docs/produk/Copy Landing RanahMenulis.md: pendek, spesifik, memberi langkah berikutnya. */
 export async function joinWaitlist(
   _prev: WaitlistState,
   formData: FormData,
