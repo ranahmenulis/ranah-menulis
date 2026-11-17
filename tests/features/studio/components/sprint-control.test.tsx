@@ -46,7 +46,7 @@ describe("SprintControl", () => {
     );
     render(<SprintControl sprint={sprint} words={250} open onOpenChange={() => {}} />);
 
-    expect(screen.getByRole("button", { name: "24:00" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Sprint 24:00" })).toBeTruthy();
     expect(screen.getByText("150 kata sejauh ini")).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "Hentikan sprint" }));
     expect(sprint.stop).toHaveBeenCalled();
