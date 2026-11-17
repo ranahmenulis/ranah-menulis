@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { StatusSubmission } from "@/components/ui/status-submission";
 import { TextLink } from "@/components/ui/text-link";
+import { payHref } from "../payment-model";
 import { categoryLabel, formatNumber, formatProjectDate, projectHref } from "../project-model";
 import { dashboardHref } from "../kelas/class-model";
 import { soloDashboardHref } from "../solo/solo-model";
@@ -32,7 +33,12 @@ function EmptyLine({ row }: { row: MyProject }) {
   if (!project.submission) {
     if (registration.status !== "terdaftar") {
       return (
-        <p className="text-sm text-ink-muted">Dasbor kelas terbuka setelah pembayaran selesai.</p>
+        <p className="text-sm text-ink-muted">
+          Dasbor kelas terbuka setelah pembayaran selesai.{" "}
+          <TextLink href={payHref(project.slug)} className="text-ink underline">
+            Bayar sekarang
+          </TextLink>
+        </p>
       );
     }
     return (
@@ -45,7 +51,14 @@ function EmptyLine({ row }: { row: MyProject }) {
     );
   }
   if (registration.status !== "terdaftar") {
-    return <p className="text-sm text-ink-muted">Karya bisa dikirim setelah pembayaran selesai.</p>;
+    return (
+      <p className="text-sm text-ink-muted">
+        Karya bisa dikirim setelah pembayaran selesai.{" "}
+        <TextLink href={payHref(project.slug)} className="text-ink underline">
+          Bayar sekarang
+        </TextLink>
+      </p>
+    );
   }
   return (
     <p className="text-sm text-ink-muted">

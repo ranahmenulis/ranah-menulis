@@ -1,3 +1,4 @@
+import { paymentDueAt, paymentState, payHref, remainingLabel } from "./payment-model";
 import { revisionDueAt } from "./submission-status";
 import type { Submission } from "./submission-types";
 import type { Project, Registration, RegistrationMap } from "./types";
@@ -58,4 +59,19 @@ export function revisionItems(rows: MyProject[]): { project: Project; work: Subm
         (revisionDueAt(a.work) ?? Infinity) - (revisionDueAt(b.work) ?? Infinity) ||
         a.work.id.localeCompare(b.work.id),
     );
+}
+
+/** Payments still waiting, the one closest to losing its seat first: Beranda's "Perlu perhatian". */
+export function paymentItems(
+  rows: MyProject[],
+  now: number,
+): { project: Project; href: string; remaining: string }[] {
+  return rows
+    .filter((row) => paymentState(row.registration, now) === "menunggu")
+    .sort((a, b) => paymentDueAt(a.registration) - paymentDueAt(b.registration))
+    .map(({ project, registration }) => ({
+      project,
+      href: payHref(project.slug),
+      remaining: remainingLabel(paymentDueAt(registration), now),
+    }));
 }

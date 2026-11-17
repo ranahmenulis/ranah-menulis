@@ -105,3 +105,17 @@ describe("useRegistrations and saveRegistration", () => {
     expect(result.current["memory-only"]).toBeTruthy();
   });
 });
+
+describe("saveRegistration over an expired hold", () => {
+  const read = () => JSON.parse(localStorage.getItem("ranah.registrations") ?? "{}");
+
+  it("replaces a registration whose payment hold ran out, and keeps one that still holds", () => {
+    const old = { ...sample, status: "menunggu-pembayaran" as const, registeredAt: 1000 };
+    saveRegistration(old);
+    const fresh = { ...old, registeredAt: 1000 + 25 * 3_600_000, agreedAt: 1000 + 25 * 3_600_000 };
+    saveRegistration(fresh);
+    expect(read()[sample.slug].registeredAt).toBe(fresh.registeredAt);
+    saveRegistration({ ...fresh, registeredAt: fresh.registeredAt + 1000 });
+    expect(read()[sample.slug].registeredAt).toBe(fresh.registeredAt);
+  });
+});

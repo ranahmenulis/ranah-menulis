@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import { useViewer } from "@/lib/viewer";
 import { myProjects, type MyProject } from "../my-projects";
+import { liveRegistrations } from "../payment-model";
 import { useRegistrations } from "../registration-store";
 import type { SubmissionStore } from "../storage/submission-store";
 import type { Submission } from "../submission-types";
@@ -35,7 +36,11 @@ export function useMyProjects(source?: ProjectFixture[], store?: SubmissionStore
   const rows = useMemo(
     () =>
       catalog.status === "ready" && submissions.status === "ready" && !guest
-        ? myProjects(catalog.projects, registrations, submissions.submissions)
+        ? myProjects(
+            catalog.projects,
+            liveRegistrations(registrations, catalog.now),
+            submissions.submissions,
+          )
         : [],
     [catalog, submissions.status, submissions.submissions, registrations, guest],
   );

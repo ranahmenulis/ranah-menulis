@@ -5,6 +5,7 @@ import { useDocumentList } from "@/features/studio/hooks/use-document-list";
 import type { DocumentStore } from "@/features/studio/storage/document-store";
 import { studioStore } from "@/features/studio/storage/store";
 import { useViewer } from "@/lib/viewer";
+import { liveRegistration } from "../payment-model";
 import { useRegistrations } from "../registration-store";
 import { submissionStore } from "../storage/store";
 import type { SubmissionStore } from "../storage/submission-store";
@@ -73,7 +74,7 @@ export function SubmitView({
   }
   if (submissions.status === "loading" || list.status === "loading") return <SubmitSkeleton />;
 
-  const registration = guest ? undefined : registrations[slug];
+  const registration = guest ? undefined : liveRegistration(registrations[slug], data.now);
   const mine = activeSubmissions(submissions.submissions, slug);
   const block = submitBlock({ project, guest, registration, now: data.now, sent: mine.length });
 

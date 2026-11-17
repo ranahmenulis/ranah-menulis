@@ -7,7 +7,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { cn } from "@/lib/cn";
 import { useMyProjects, type MyProjectsData } from "@/features/projects/hooks/use-my-projects";
 import type { MyProject } from "@/features/projects/my-projects";
-import { revisionItems } from "@/features/projects/my-projects";
+import { paymentItems, revisionItems } from "@/features/projects/my-projects";
 import { formatProjectDate, projectHref } from "@/features/projects/project-model";
 import type { SubmissionStore } from "@/features/projects/storage/submission-store";
 import { MY_PROJECTS_HREF, submissionHref } from "@/features/projects/submission-href";
@@ -26,8 +26,8 @@ const MORE = "max-md:hidden";
 
 /**
  * "Perlu perhatian" (PLT-10): what waits for you. A revision an editor asked for comes from your
- * real submissions and links to its note; the payment and group-invite lines are dummy until
- * payment (6f-6) and groups exist. Nothing is drawn when there is nothing.
+ * real submissions and links to its note; a payment that waits comes from your
+ * registrations; the group-invite line is dummy until groups exist. Nothing is drawn when there is nothing.
  */
 export function Attention({ my }: { my: MyProjectsData }) {
   const real: Item[] =
@@ -42,8 +42,18 @@ export function Attention({ my }: { my: MyProjectsData }) {
           };
         })
       : [];
+  const paying: Item[] =
+    my.status === "ready"
+      ? paymentItems(my.rows, my.now).map(({ project, href, remaining }) => ({
+          key: `bayar-${project.slug}`,
+          title: `Pembayaran ${project.title} menunggu`,
+          meta: `Kuotamu ditahan, ${remaining}`,
+          actions: [{ label: "Bayar sekarang", href }],
+        }))
+      : [];
   const items: Item[] = [
     ...real,
+    ...paying,
     ...attention.map((a) => ({
       key: a.title,
       title: a.title,

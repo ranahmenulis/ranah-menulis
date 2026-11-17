@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import { useViewer } from "@/lib/viewer";
+import { liveRegistration } from "../../payment-model";
 import { useRegistrations } from "../../registration-store";
 import type { SubmissionStore } from "../../storage/submission-store";
 import { activeSubmissions } from "../../submission-model";
@@ -53,7 +54,7 @@ export function useSolo(slug: string, sources: Sources = {}): SoloData {
     }
     const project = catalog.projects.find((p) => p.slug === slug && p.publication === "terbit");
     if (!project) return { status: "gone" };
-    const registration = guest ? undefined : registrations[slug];
+    const registration = guest ? undefined : liveRegistration(registrations[slug], catalog.now);
     const block = soloBlock({ project, guest, registration });
     if (block === "bukan-solo") return { status: "gone" };
     if (block !== null || !registration) {

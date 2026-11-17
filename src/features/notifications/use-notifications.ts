@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { contestNotifications } from "@/features/projects/lomba/contest-notifications";
 import { useContestOverrides } from "@/features/projects/lomba/stage-store";
+import { paymentNotifications } from "@/features/projects/payment-notifications";
 import { useRegistrations } from "@/features/projects/registration-store";
 import { activeSubmissions } from "@/features/projects/submission-model";
 import { useProjects } from "@/features/projects/use-projects";
@@ -67,6 +68,9 @@ function useAllNotifications(
             now: catalog.now,
             ownWorks: ownWorksOf(overrides, status === "ready" ? submissions : []),
           })
+        : []),
+      ...(catalog.status === "ready"
+        ? paymentNotifications(catalog.projects, registrations, catalog.now)
         : []),
       ...notificationFixtures,
     ],

@@ -40,7 +40,7 @@ export function useProjects(source: ProjectFixture[] = projectFixtures): Project
     () =>
       now === null || resolved === null
         ? { status: "loading" }
-        : { status: "ready", now, projects: applyRegistrations(resolved, registrations) },
+        : { status: "ready", now, projects: applyRegistrations(resolved, registrations, now) },
     [now, resolved, registrations],
   );
 }

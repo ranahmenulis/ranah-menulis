@@ -76,7 +76,9 @@ describe("RegisterView, registering", () => {
   it("holds a paid project at waiting for payment and says what it costs", async () => {
     await open("lomba-cerpen-hujan-2026");
     expect(
-      screen.getByText("Biaya dibayar setelah mendaftar. Cara pembayaran belum tersedia."),
+      screen.getByText(
+        "Biaya dibayar lewat QRIS setelah mendaftar; kuotamu ditahan 24 jam [usulan].",
+      ),
     ).toBeTruthy();
     agree();
     fireEvent.click(submit());

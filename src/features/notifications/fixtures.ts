@@ -49,16 +49,6 @@ export const notificationFixtures: Notification[] = [
     seen: true,
   },
   {
-    id: "n-pembayaran",
-    kind: "project",
-    actorId: null,
-    others: 0,
-    text: "Pembayaran Kelas Menulis Puisi Dasar menunggu konfirmasi. Kuotamu ditahan sampai 1 jam 42 menit lagi.",
-    href: null,
-    agoMs: DAY + 2 * HOUR,
-    seen: true,
-  },
-  {
     id: "n-sebut",
     kind: "comment",
     actorId: "hafiz-rahman",

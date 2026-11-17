@@ -2,6 +2,7 @@
 
 import { useViewer } from "@/lib/viewer";
 import { sendTargets, type SendTarget } from "../send-targets";
+import { liveRegistrations } from "../payment-model";
 import { useRegistrations } from "../registration-store";
 import type { SubmissionStore } from "../storage/submission-store";
 import { useProjects } from "../use-projects";
@@ -27,7 +28,7 @@ export function useSendTargets(docId: string | null, store?: SubmissionStore): S
   }
   const targets = sendTargets({
     projects: data.projects,
-    registrations,
+    registrations: liveRegistrations(registrations, data.now),
     submissions: submissions.submissions,
     docId,
     now: data.now,

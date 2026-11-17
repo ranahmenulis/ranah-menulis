@@ -1,6 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
+import { confirmPayment, isExpired } from "./payment-model";
 import type { Registration, RegistrationMap } from "./types";
 
 const KEY = "ranah.registrations";
@@ -38,6 +39,7 @@ function isRegistration(value: unknown, key: string): value is Registration {
     Number.isFinite(r.registeredAt) &&
     Number.isFinite(r.agreedAt) &&
     typeof r.termsVersion === "string" &&
+    (r.paidAt === undefined || Number.isFinite(r.paidAt)) &&
     (r.status === "terdaftar" || r.status === "menunggu-pembayaran")
   );
 }
@@ -79,25 +81,29 @@ function registrationsFor(raw: string | null): RegistrationMap {
 
 /**
  * Saves one registration. A project is registered once: a second call for the same project (a
- * second tab, a repeated submit) keeps the first and changes nothing. There is no way to cancel,
- * the PRD defines none and refunds are undecided (BR-PRJ-11, Q-30).
+ * second tab, a repeated submit) keeps the first and changes nothing. The one exception is a
+ * registration whose payment hold ran out: it is replaced, so the reader can try again [usulan].
+ * Cancelling is a separate step (PRJ-06, free projects only) and does not exist yet.
  */
 export function saveRegistration(registration: Registration) {
   const current = parseRegistrations(snapshot());
-  if (current[registration.slug]) return;
+  const existing = current[registration.slug];
+  if (existing && !isExpired(existing, registration.registeredAt)) return;
   write({ ...current, [registration.slug]: registration });
 }
 
 /**
- * Turns a registration that waits for payment into a confirmed one. Payment does not exist yet
- * (6f-6), so for now only a development-only button calls it; QRIS confirmation will call it later.
- * Does nothing when there is no such registration or it is already confirmed.
+ * Payment arrived (the QRIS webhook will call this, an Organizer panel later; today a development
+ * panel). Returns whether anything changed: false when there is no such registration, it is
+ * already paid, or its hold ran out.
  */
-export function confirmRegistration(slug: string) {
+export function settlePayment(slug: string, now: number): boolean {
   const current = parseRegistrations(snapshot());
   const registration = current[slug];
-  if (!registration || registration.status === "terdaftar") return;
-  write({ ...current, [slug]: { ...registration, status: "terdaftar" } });
+  const paid = registration ? confirmPayment(registration, now) : null;
+  if (!paid) return false;
+  write({ ...current, [slug]: paid });
+  return true;
 }
 
 function write(map: RegistrationMap) {

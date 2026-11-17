@@ -6,6 +6,7 @@ import { PROJECTS_HREF } from "@/features/app-shell/nav";
 import { useViewer } from "@/lib/viewer";
 import { categoryLabel, formatProjectDate, projectState } from "../project-model";
 import { deadlineText } from "../project-text";
+import { liveRegistration } from "../payment-model";
 import { useRegistrations } from "../registration-store";
 import { activeSubmissions } from "../submission-model";
 import type { SubmissionStore } from "../storage/submission-store";
@@ -100,7 +101,7 @@ export function ProjectDetail({ slug, source, store }: Props) {
               state={state}
               now={data.now}
               guest={guest}
-              registration={registrations[project.slug]}
+              registration={liveRegistration(registrations[project.slug], data.now)}
               sentCount={sentCount}
             />
           </div>

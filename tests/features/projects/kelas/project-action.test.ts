@@ -29,11 +29,12 @@ describe("projectAction for a class", () => {
     });
   });
 
-  it("keeps the payment wording while the registration waits", () => {
+  it("leads to the payment page while the registration waits", () => {
     const waiting = registration(PUISI, { status: "menunggu-pembayaran" });
     expect(action(PUISI, { registration: waiting })).toMatchObject({
-      label: "Menunggu pembayaran",
-      enabled: false,
+      label: "Bayar sekarang",
+      enabled: true,
+      href: `/projects/${PUISI}/bayar`,
     });
   });
 

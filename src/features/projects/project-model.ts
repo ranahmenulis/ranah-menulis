@@ -190,6 +190,18 @@ export function formatProjectDate(timestamp: number, zone: TimeZoneName): string
   }).format(timestamp);
 }
 
+/** "25 Nov 2026, 14.30" in the project's zone: a payment hold ends at a time, not a day. */
+export function formatProjectDateTime(timestamp: number, zone: TimeZoneName): string {
+  return new Intl.DateTimeFormat("id-ID", {
+    timeZone: ZONES[zone].iana,
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(timestamp);
+}
+
 export function daysLeftLabel(closesAt: number, now: number, zone: TimeZoneName): string {
   const days = Math.max(0, daysLeft(closesAt, now, zone));
   return days === 0 ? "Hari ini hari terakhir" : `${days} hari lagi`;

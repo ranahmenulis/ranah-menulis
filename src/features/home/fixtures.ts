@@ -1,18 +1,13 @@
 /**
  * Dummy data for Beranda until the account screens exist. Everything here is placeholder content
- * written to look like real use; none of it comes from a database. "Perlu perhatian" keeps the two
- * items that are not about a project; the revision request and "Proyek saya" come from
+ * written to look like real use; none of it comes from a database. "Perlu perhatian" keeps the one
+ * item that is not about a project; the revision and payment items and "Proyek saya" come from
  * src/features/projects. The feed comes from src/features/community, notifications from
  * src/features/notifications.
  */
 
 export type AttentionItem = { title: string; meta: string; actions: string[] };
 export const attention: AttentionItem[] = [
-  {
-    title: "Pembayaran Kelas Menulis Puisi Dasar menunggu konfirmasi",
-    meta: "Rp150.000 · kuotamu ditahan 1 jam 42 menit lagi",
-    actions: ["Lihat pembayaran"],
-  },
   {
     title: "Hafiz Rahman mengundangmu ke Grup Penulis Pesisir",
     meta: "Grup kecil, 14 anggota",

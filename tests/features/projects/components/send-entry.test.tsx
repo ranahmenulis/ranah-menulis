@@ -1,9 +1,9 @@
-import { act, cleanup, configure, fireEvent, render, screen } from "@testing-library/react";
+import { act, cleanup, configure, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { ProjectDetail } from "@/features/projects/components/project-detail";
 import { RegisterView } from "@/features/projects/components/register-view";
 import { createMemorySubmissionStore } from "@/features/projects/storage/memory-submission-store";
-import { confirmRegistration } from "@/features/projects/registration-store";
+import { settlePayment } from "@/features/projects/registration-store";
 import { registration, submission } from "../helpers";
 
 configure({ asyncUtilTimeout: 5000 });
@@ -66,7 +66,7 @@ describe("project page, the send button", () => {
   it("does not offer it while payment is pending, and not for a class", async () => {
     register(CERPEN, { status: "menunggu-pembayaran" });
     await detail(CERPEN);
-    expect(screen.getByRole("button", { name: "Menunggu pembayaran" })).toBeTruthy();
+    expect(screen.getByRole("link", { name: "Bayar sekarang" })).toBeTruthy();
     expect(screen.queryByRole("link", { name: "Kirim karya" })).toBeNull();
     cleanup();
 
@@ -133,31 +133,47 @@ describe("registration status, the way on to sending", () => {
     expect(screen.queryByRole("link", { name: "Kirim karya" })).toBeNull();
   });
 
-  it("has a development-only way to mark payment done, which then opens sending", async () => {
-    register(CERPEN, { status: "menunggu-pembayaran" });
+  it("sends a registration that waits for payment to the payment page, not to sending", async () => {
+    register(CERPEN, { status: "menunggu-pembayaran", registeredAt: Date.now() - 1000 });
     await status(CERPEN);
     expect(screen.queryByRole("link", { name: "Kirim karya" })).toBeNull();
-
-    fireEvent.click(screen.getByRole("button", { name: "Tandai lunas" }));
-    expect(await screen.findByRole("link", { name: "Kirim karya" })).toBeTruthy();
+    expect(screen.getByRole("link", { name: "Bayar sekarang" }).getAttribute("href")).toBe(
+      `/projects/${CERPEN}/bayar`,
+    );
     expect(screen.queryByRole("button", { name: "Tandai lunas" })).toBeNull();
   });
 });
 
-describe("confirmRegistration", () => {
+describe("settlePayment", () => {
   const read = () => JSON.parse(localStorage.getItem("ranah.registrations") ?? "{}");
 
   it("confirms one that waits, keeping the rest of the record", () => {
-    register(CERPEN, { status: "menunggu-pembayaran", packageName: undefined });
-    act(() => confirmRegistration(CERPEN));
+    register(CERPEN, { status: "menunggu-pembayaran", registeredAt: Date.now() - 1000 });
+    act(() => {
+      expect(settlePayment(CERPEN, Date.now())).toBe(true);
+    });
     expect(read()[CERPEN]).toMatchObject({ status: "terdaftar", termsVersion: "2026-11-contoh" });
+    expect(read()[CERPEN].paidAt).toBeGreaterThan(0);
   });
 
   it("changes nothing for an unknown project or one already confirmed", () => {
     register(ESAI);
     const before = localStorage.getItem("ranah.registrations");
-    act(() => confirmRegistration("tidak-ada"));
-    act(() => confirmRegistration(ESAI));
+    act(() => {
+      expect(settlePayment("tidak-ada", Date.now())).toBe(false);
+      expect(settlePayment(ESAI, Date.now())).toBe(false);
+    });
+    expect(localStorage.getItem("ranah.registrations")).toBe(before);
+  });
+});
+
+describe("settlePayment after the hold", () => {
+  it("refuses a payment that arrives after the seat was released", () => {
+    register(CERPEN, { status: "menunggu-pembayaran", registeredAt: Date.now() - 25 * 3_600_000 });
+    const before = localStorage.getItem("ranah.registrations");
+    act(() => {
+      expect(settlePayment(CERPEN, Date.now())).toBe(false);
+    });
     expect(localStorage.getItem("ranah.registrations")).toBe(before);
   });
 });

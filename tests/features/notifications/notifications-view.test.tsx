@@ -18,7 +18,7 @@ const readIds = () => JSON.parse(localStorage.getItem("ranah.notificationsRead")
 describe("NotificationsView", () => {
   it("lists every notification with how many are unread", async () => {
     render(<NotificationsView />);
-    expect(rows()).toHaveLength(6);
+    expect(rows()).toHaveLength(5);
     expect(screen.getByText("3 belum dibaca.")).toBeTruthy();
     expect(await screen.findByText("25 menit lalu")).toBeTruthy();
   });
@@ -35,9 +35,10 @@ describe("NotificationsView", () => {
     fireEvent.click(screen.getByRole("tab", { name: "Komentar" }));
     expect(rows()).toHaveLength(3);
     fireEvent.click(screen.getByRole("tab", { name: "Proyek" }));
-    expect(rows()).toHaveLength(1);
+    // No project event is stored on this device, so the tab is empty.
+    expect(screen.queryAllByRole("listitem")).toHaveLength(0);
     fireEvent.click(screen.getByRole("tab", { name: "Semua" }));
-    expect(rows()).toHaveLength(6);
+    expect(rows()).toHaveLength(5);
   });
 
   it("links a line to its post and still marks it read", () => {

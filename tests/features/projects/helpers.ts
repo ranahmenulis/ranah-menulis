@@ -29,10 +29,13 @@ export function textOf(words: number): JSONContent {
 }
 
 export function registration(slug: string, over: Partial<Registration> = {}): Registration {
+  // A registration that waits for payment is judged against the real clock by the screens (its
+  // seat is held for a day), so it is made "just now"; the others keep the fixed test time.
+  const at = over.status === "menunggu-pembayaran" ? Date.now() - 1000 : NOW - 1000;
   return {
     slug,
-    registeredAt: NOW - 1000,
-    agreedAt: NOW - 1000,
+    registeredAt: at,
+    agreedAt: at,
     termsVersion: "2026-11-contoh",
     status: "terdaftar",
     ...over,
