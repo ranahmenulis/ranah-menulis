@@ -14,7 +14,10 @@ const h = vi.hoisted(() => ({
 
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: h.push, back: vi.fn() }) }));
 vi.mock("@/features/studio/storage/store", () => ({
-  studioStore: { updateMeta: (...args: unknown[]) => h.updateMeta(...args) },
+  studioStore: {
+    updateMeta: (...args: unknown[]) => h.updateMeta(...args),
+    listVersions: async () => [],
+  },
 }));
 vi.mock("@/features/projects/storage/store", async () => {
   const { createMemorySubmissionStore } =
@@ -33,6 +36,7 @@ vi.mock("@/features/studio/hooks/use-studio-document", () => ({
     words: h.doc.words,
     targets: [],
     setTargets: vi.fn(),
+    restoreVersion: vi.fn(),
     onContentChange: vi.fn(),
     status: "saved",
     savedAt: null,
@@ -218,6 +222,24 @@ describe("StudioEditor, menu", () => {
     openMenu();
     fireEvent.click(screen.getByRole("menuitem", { name: /Target dokumen/ }));
     expect(screen.getByRole("dialog", { name: "Target dokumen" })).toBeTruthy();
+  });
+
+  it("offers Riwayat versi only for a document with content, and opens the panel", () => {
+    h.doc.words = 0;
+    h.doc.title = "";
+    const { unmount } = renderEditor();
+    openMenu();
+    expect(
+      (screen.getByRole("menuitem", { name: /Riwayat versi/ }) as HTMLButtonElement).disabled,
+    ).toBe(true);
+    unmount();
+
+    h.doc.words = 120;
+    h.doc.title = "Yang Ditunggu Nenek";
+    renderEditor();
+    openMenu();
+    fireEvent.click(screen.getByRole("menuitem", { name: /Riwayat versi/ }));
+    expect(screen.getByRole("dialog", { name: "Riwayat versi" })).toBeTruthy();
   });
 
   it("moves the document to Sampah after storing it, then returns to the Studio list", async () => {

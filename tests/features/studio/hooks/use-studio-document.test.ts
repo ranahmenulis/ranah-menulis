@@ -41,6 +41,8 @@ function makeStore(over: Partial<DocumentStore> = {}) {
     importHistory: vi.fn(async () => {}),
     createFolder: vi.fn(async (name) => ({ id: "f", name, createdAt: 0 })),
     renameFolder: vi.fn(async () => {}),
+    listVersions: vi.fn(async () => []),
+    addVersion: vi.fn(async () => {}),
     ...over,
   };
   return { store, save };
@@ -395,5 +397,82 @@ describe("useStudioDocument: document targets", () => {
       await result.current.resolveConflict("remote");
     });
     expect(result.current.targets).toEqual([remoteTarget]);
+  });
+});
+
+describe("useStudioDocument: restoring a version", () => {
+  const old = {
+    id: "doc-1:v1",
+    docId: "doc-1",
+    savedAt: 500,
+    title: "Surat lama",
+    content: {
+      type: "doc",
+      content: [{ type: "paragraph", content: [{ type: "text", text: "dulu" }] }],
+    },
+    wordCount: 1,
+    reason: "berkala" as const,
+  };
+
+  it("keeps the current text as a version first, then loads the old one and saves it without a conflict", async () => {
+    const { store, save } = makeStore();
+    const { result } = renderHook(() => useStudioDocument("doc-1", store));
+    await advance(0);
+    const keyBefore = result.current.editorKey;
+
+    let ok = false;
+    await act(async () => {
+      ok = await result.current.restoreVersion(old);
+    });
+
+    expect(ok).toBe(true);
+    expect(store.addVersion).toHaveBeenCalledWith(
+      expect.objectContaining({
+        docId: "doc-1",
+        reason: "pemulihan",
+        title: "Surat",
+        wordCount: 10,
+      }),
+    );
+    expect(result.current.title).toBe("Surat lama");
+    expect(result.current.words).toBe(1);
+    expect(result.current.initial.content).toEqual(old.content);
+    expect(result.current.editorKey).toBe(keyBefore + 1);
+
+    await advance(900);
+    expect(save).toHaveBeenCalledTimes(1);
+    expect(save.mock.calls[0][0]).toMatchObject({ title: "Surat lama", wordCount: 1 });
+    expect(save.mock.calls[0][1]).toBe(2); // the version this tab opened, so no conflict
+    expect(result.current.conflict).toBeNull();
+  });
+
+  it("changes nothing when the current text cannot be kept first", async () => {
+    const { store, save } = makeStore({
+      addVersion: vi.fn(async () => Promise.reject(new Error("full"))),
+    });
+    const { result } = renderHook(() => useStudioDocument("doc-1", store));
+    await advance(0);
+
+    let ok = true;
+    await act(async () => {
+      ok = await result.current.restoreVersion(old);
+    });
+
+    expect(ok).toBe(false);
+    expect(result.current.title).toBe("Surat");
+    await advance(900);
+    expect(save).not.toHaveBeenCalled();
+  });
+
+  it("refuses for a draft that was never stored", async () => {
+    const { store } = makeStore();
+    const { result } = renderHook(() => useStudioDocument("baru", store));
+    await advance(0);
+    let ok = true;
+    await act(async () => {
+      ok = await result.current.restoreVersion(old);
+    });
+    expect(ok).toBe(false);
+    expect(store.addVersion).not.toHaveBeenCalled();
   });
 });

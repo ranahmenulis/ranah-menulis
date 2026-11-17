@@ -1,5 +1,6 @@
 import type { JSONContent } from "@tiptap/react";
 import type { DocumentTarget } from "../document-targets";
+import type { DocumentVersion } from "../versions";
 import { applyWordDelta, type DailyLog } from "../daily-progress";
 
 export type StudioDocument = {
@@ -58,6 +59,10 @@ export interface DocumentStore {
   importHistory(logs: DailyLog[]): Promise<void>;
   createFolder(name: string): Promise<StudioFolder>;
   renameFolder(id: string, name: string): Promise<void>;
+  /** Kept versions of one document, newest first. Versions older than 3 days are not returned. */
+  listVersions(docId: string): Promise<DocumentVersion[]>;
+  /** Keeps one more version (a restore keeps the current text first). Idempotent per id. */
+  addVersion(version: DocumentVersion): Promise<void>;
 }
 
 /** Pure meta rule shared by every store. */
