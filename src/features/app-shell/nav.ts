@@ -4,6 +4,7 @@ import {
   Compass,
   House,
   Notebook,
+  ShieldCheck,
   User,
   CalendarDots,
 } from "@phosphor-icons/react/dist/ssr";
@@ -29,6 +30,7 @@ export const STREAK_HREF = "/studio/streak";
 export const NEW_DOCUMENT_HREF = "/studio/baru";
 export const DISCOVER_HREF = "/jelajahi";
 export const PROJECTS_HREF = "/projects";
+export const KELOLA_NAV_HREF = "/kelola";
 export const NEW_POST_HREF = "/tulis";
 /** Opens "Tulis postingan" with a Studio document already chosen as the source (STD-10). */
 export const postFromDocumentHref = (documentId: string) =>
@@ -55,6 +57,13 @@ const saved: NavEntry = {
   Icon: BookmarkSimple,
   href: SAVED_HREF,
 };
+/** Shown only to people who hold a management role (see `useRoles`). */
+export const kelolaNav: NavEntry = {
+  id: "kelola",
+  label: "Kelola",
+  Icon: ShieldCheck,
+  href: KELOLA_NAV_HREF,
+};
 const profile: NavEntry = { id: "profil", label: "Profil", Icon: User, href: OWN_PROFILE_HREF };
 
 /**
@@ -73,6 +82,7 @@ export function activeId(pathname: string): string | null {
   if (pathname.startsWith("/beranda")) return "beranda";
   if (pathname.startsWith(DISCOVER_HREF)) return "jelajahi";
   if (pathname.startsWith(PROJECTS_HREF)) return "projects";
+  if (pathname.startsWith(KELOLA_NAV_HREF)) return "kelola";
   if (pathname.startsWith(SAVED_HREF)) return "tersimpan";
   if (pathname.startsWith(NOTIFICATIONS_HREF)) return "notifikasi";
   // Only your own profile is "Profil"; another author's page belongs to no navigation entry.

@@ -8,7 +8,8 @@ import { useLastDocument } from "@/features/studio/hooks/use-last-document";
 import { studioStore } from "@/features/studio/storage/store";
 import { cn } from "@/lib/cn";
 import { useT } from "@/lib/i18n/provider";
-import { ViewerSync, useViewer } from "@/lib/viewer";
+import { areasFor } from "@/features/kelola/access";
+import { ViewerSync, useRoles, useViewer } from "@/lib/viewer";
 import { GuestFrame } from "./guest-frame";
 import { NavLink } from "./nav-link";
 import {
@@ -16,6 +17,7 @@ import {
   activeId,
   bottomNav,
   isPostPage,
+  kelolaNav,
   mainNav,
   mobileTitle,
   showsWriteButton,
@@ -34,6 +36,9 @@ export function AppShell({ children }: { children: ReactNode }) {
   const active = activeId(pathname);
   const [sidebar, setSidebar] = useState(true);
   const viewer = useViewer();
+  const roles = useRoles();
+  // Only a convenience: the screens refuse the wrong role themselves, and the database decides.
+  const entries = areasFor(roles).length > 0 ? [...mainNav, kelolaNav] : mainNav;
   const onPost = isPostPage(pathname);
   // One read for both navigations (sidebar and rail are both in the DOM).
   const lastDocument = useLastDocument(studioStore, pathname);
@@ -64,7 +69,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             aria-label={nav.label}
             className="sticky top-[calc(3.5rem+var(--safe-top))] hidden h-[calc(100dvh-3.5rem-var(--safe-top))] w-60 shrink-0 content-start gap-0.5 overflow-y-auto border-r border-line px-3 py-4 lg:grid"
           >
-            {mainNav.map((entry) => (
+            {entries.map((entry) => (
               <div key={entry.id} className="grid">
                 <NavLink entry={entry} variant="sidebar" active={active === entry.id} />
                 {entry.id === "studio" && (
@@ -80,7 +85,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           aria-label={nav.label}
           className="sticky top-[calc(3.5rem+var(--safe-top))] hidden h-[calc(100dvh-3.5rem-var(--safe-top))] w-18 shrink-0 content-start gap-1 border-r border-line py-3 md:grid lg:hidden"
         >
-          {mainNav.map((entry) => (
+          {entries.map((entry) => (
             <NavLink
               key={entry.id}
               entry={entry}
