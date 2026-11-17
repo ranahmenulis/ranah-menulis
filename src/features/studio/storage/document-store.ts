@@ -1,4 +1,5 @@
 import type { JSONContent } from "@tiptap/react";
+import type { DocumentTarget } from "../document-targets";
 import { applyWordDelta, type DailyLog } from "../daily-progress";
 
 export type StudioDocument = {
@@ -13,6 +14,8 @@ export type StudioDocument = {
   folderId?: string | null;
   /** Set when moved to Sampah. The document keeps its content and can be restored. */
   deletedAt?: number | null;
+  /** Word targets of this document (STK-08). Absent on documents saved before they existed. */
+  targets?: DocumentTarget[];
 };
 
 export type StudioFolder = { id: string; name: string; createdAt: number };
@@ -25,6 +28,8 @@ export type SaveInput = {
   title: string;
   content: JSONContent;
   wordCount: number;
+  /** Targets travel with the text, like the title, so setting one never causes a version clash. */
+  targets?: DocumentTarget[];
 };
 
 export type SaveResult =

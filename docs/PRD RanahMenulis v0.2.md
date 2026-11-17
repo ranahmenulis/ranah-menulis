@@ -355,7 +355,7 @@ Kolom "Pemicu dan perilaku sistem" menjelaskan apa yang terjadi saat pengguna be
 | STK-05 | Halaman statistik menampilkan kata per hari, minggu, dan bulan, rata-rata, hari terbaik, dan perbandingan dengan target | Agregat dari catatan aktivitas | Data belum cukup tampil sebagai keadaan kosong |
 | STK-06 | Milestone dibuka otomatis bila syarat terpenuhi (contoh: streak 7 hari, total 10.000 kata). Daftar milestone dan syaratnya ditetapkan produk (Q-10) | Definisi milestone, milestone pengguna, tanggal diraih | Milestone dibuka dua kali dicegah |
 | STK-07 | Pengguna membuat kartu pencapaian (gambar) dengan nama dan milestone, lalu membagikannya ke Instagram, Threads, atau WhatsApp | Gambar kartu, tautan | Pembagian dibatalkan; ukuran gambar per platform |
-| STK-08 | Pengguna menambahkan satu atau lebih target pada sebuah dokumen: target kata dan tenggat. Progres dihitung dari kata dokumen itu. Target dokumen terpisah dari target harian | Target dokumen (dokumen, target kata, tenggat) | Tenggat lewat: target ditandai terlewat, tidak dihapus; dokumen dihapus: target ikut ke Sampah |
+| STK-08 | Pengguna menambahkan satu atau lebih target (maksimal 5, usulan) pada sebuah dokumen: target kata (1 sampai 500.000, usulan) dan tenggat opsional. Progres adalah total kata dokumen itu dan dihitung langsung. Target dokumen terpisah dari target harian | Target dokumen (dokumen, target kata, tenggat) | Tenggat lewat: target ditandai terlewat, tidak dihapus; dokumen dihapus: target ikut ke Sampah |
 | STK-09 | Pengguna melihat riwayat streak sebelumnya (rentang, panjang, dan kapan putus) | Riwayat streak | Belum pernah putus: hanya streak berjalan |
 | STK-10 | Pengguna membuat kartu progres (gambar: kata, streak, target) dan membagikannya. Hanya angka yang pengguna pilih yang tampil | Gambar kartu | Pembagian dibatalkan; data streak privat tidak ikut kecuali dipilih (BR-STK-09) |
 
@@ -1170,6 +1170,7 @@ Format Given-When-Then agar dapat langsung dipakai QA. Semua kriteria berstatus 
 | AC-32 | STD-12 | Given dokumen dengan versi berusia 4 hari, then versi itu tidak tersedia; versi berusia 2 hari dapat dipulihkan dan pemulihan membuat versi baru |
 | AC-33 | STK-08 | Given dokumen dengan dua target, then progres tiap target dihitung dari kata dokumen itu dan tidak mengubah streak |
 | AC-34 | BR-STD-07 | Given akun gratis di batas dokumen, when membuat dokumen baru, then ditolak dengan penjelasan dan dokumen lama tetap utuh |
+| AC-39 | STD-07 | Given dokumen berisi teks, when pengguna mengekspor ke TXT atau PDF, then berkas terunduh dengan judul sebagai nama berkas dan isi tulisan; given dokumen tanpa teks, then menu Ekspor tidak aktif |
 
 ### 26.3 Community
 

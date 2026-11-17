@@ -13,6 +13,25 @@ function stored(over: Partial<StudioDocument> = {}): StudioDocument {
   return { ...input, version: 3, updatedAt: 1, ...over };
 }
 
+describe("commitSave: document targets", () => {
+  const targets = [{ id: "t1", words: 1000, due: "2026-12-01" }];
+
+  it("stores the targets sent with the text and keeps them when a later save sends none", () => {
+    const first = commitSave(null, { ...input, targets }, 0, emptyLog(), 100);
+    expect(first.ok && first.doc.targets).toEqual(targets);
+    if (!first.ok) return;
+
+    const later = commitSave(first.doc, { ...input, wordCount: 130 }, 1, emptyLog(), 200);
+    expect(later.ok && later.doc.targets).toEqual(targets);
+  });
+
+  it("does not change the day's word log", () => {
+    const withTargets = commitSave(null, { ...input, targets }, 0, emptyLog(), 100);
+    const without = commitSave(null, input, 0, emptyLog(), 100);
+    expect(withTargets.ok && withTargets.progress).toEqual(without.ok && without.progress);
+  });
+});
+
 describe("commitSave", () => {
   it("creates a document at version 1 and records today's words", () => {
     const result = commitSave(null, input, 0, emptyLog(), 100);

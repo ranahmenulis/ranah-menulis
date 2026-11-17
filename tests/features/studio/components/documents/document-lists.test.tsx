@@ -1,6 +1,8 @@
 import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { ToastProvider } from "@/components/ui/toast";
+import { dayKey } from "@/features/studio/daily-progress";
+import { addDays } from "@/features/studio/streak";
 import { LiveList } from "@/features/studio/components/documents/document-lists";
 import { PendingDialogs } from "@/features/studio/components/documents/pending-dialogs";
 import type { DocumentList } from "@/features/studio/hooks/use-document-list";
@@ -155,5 +157,29 @@ describe("Dokumen list, Kirim ke proyek", () => {
     expect(screen.getByRole("dialog", { name: "Kirim ke proyek" })).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "Batal" }));
     expect(onClose).toHaveBeenCalled();
+  });
+});
+
+describe("LiveList: document targets", () => {
+  it("adds the nearest open target to a document's meta line", () => {
+    const due = addDays(dayKey(new Date(5000)), 5);
+    const withTarget: StudioDocument = {
+      ...doc("a", "Yang Ditunggu Nenek"),
+      targets: [{ id: "t1", words: 1000, due }],
+    };
+    render(
+      <ToastProvider>
+        <LiveList
+          list={listOf([withTarget, doc("b", "Catatan Pasar")])}
+          folderId={null}
+          folderName={null}
+          onOpenFolder={() => {}}
+          onPending={vi.fn()}
+        />
+      </ToastProvider>,
+    );
+
+    expect(screen.getByText(/120 \/ 1\.000 kata · 5 hari lagi/)).toBeTruthy();
+    expect(screen.getAllByText(/Diubah/)).toHaveLength(2);
   });
 });
