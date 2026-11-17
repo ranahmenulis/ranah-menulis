@@ -10,7 +10,10 @@ vi.mock("next/navigation", () => ({
 
 import { AppShell } from "@/features/app-shell/app-shell";
 
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  sessionStorage.clear();
+});
 
 function renderAt(path: string) {
   pathname.value = path;
@@ -111,5 +114,18 @@ describe("AppShell", () => {
 
     renderAt("/tersimpan");
     expect(new Set(current().filter(Boolean))).toEqual(new Set(["Tersimpan"]));
+  });
+
+  it("adds Kelola, and the phone menu, only for someone who holds a management role", () => {
+    renderAt("/beranda");
+    expect(screen.queryByText("Kelola")).toBeNull();
+    expect(screen.queryByRole("button", { name: "Buka menu kelola" })).toBeNull();
+    cleanup();
+
+    sessionStorage.setItem("rm-roles", "editor");
+    renderAt("/kelola");
+    const kelola = screen.getAllByText("Kelola").map((el) => el.closest("a"));
+    expect(kelola.filter(Boolean).every((a) => a?.getAttribute("href") === "/kelola")).toBe(true);
+    expect(screen.getByRole("button", { name: "Buka menu kelola" })).toBeTruthy();
   });
 });

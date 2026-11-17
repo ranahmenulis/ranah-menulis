@@ -3,6 +3,7 @@ import {
   activeId,
   bottomNav,
   isPostPage,
+  kelolaNav,
   mainNav,
   mobileTitle,
   showsWriteButton,
@@ -69,5 +70,13 @@ describe("navigation", () => {
       "profil",
     ]);
     expect(mainNav.some((n) => n.id === "streak")).toBe(false);
+  });
+
+  it("keeps Kelola out of the default lists; it is added only for people who hold a role", () => {
+    expect(mainNav.some((n) => n.id === "kelola")).toBe(false);
+    expect(bottomNav.some((n) => n.id === "kelola")).toBe(false);
+    expect(kelolaNav.href).toBe("/kelola");
+    expect(activeId("/kelola")).toBe("kelola");
+    expect(activeId("/kelola/editor")).toBe("kelola");
   });
 });

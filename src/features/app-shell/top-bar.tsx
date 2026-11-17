@@ -18,6 +18,7 @@ import { cn } from "@/lib/cn";
 import { format, useT } from "@/lib/i18n/provider";
 import { useAccount } from "@/features/account/account-store";
 import { SETTINGS_HREF } from "@/features/account/redirect";
+import { ManagerMenu } from "@/features/kelola/components/manager-menu";
 import { useUnreadCount } from "@/features/notifications/use-notifications";
 import { DISCOVER_HREF, DUMMY_USER, NEW_DOCUMENT_HREF, NOTIFICATIONS_HREF } from "./nav";
 
@@ -74,6 +75,7 @@ export function TopBar({
       >
         <List size={24} aria-hidden />
       </IconButton>
+      <ManagerMenu className={cn("md:hidden", phoneOnly)} />
       {back && <BackButton className="md:hidden" />}
       <Monogram
         href="/beranda"
