@@ -1,6 +1,6 @@
 export const ORGANIZER_HREF = "/kelola/organizer";
 export const NEW_PROJECT_HREF = `${ORGANIZER_HREF}/baru`;
-export type ManageTab = "proyek" | "penugasan" | "peserta" | "kiriman";
+export type ManageTab = "proyek" | "penugasan" | "peserta" | "pembayaran" | "kiriman";
 
 export const manageHref = (slug: string, tab?: ManageTab) =>
   `${ORGANIZER_HREF}/${encodeURIComponent(slug)}${tab && tab !== "proyek" ? `?tab=${tab}` : ""}`;
@@ -9,6 +9,7 @@ export const MANAGE_TABS: { id: ManageTab; label: string }[] = [
   { id: "proyek", label: "Proyek" },
   { id: "penugasan", label: "Penugasan" },
   { id: "peserta", label: "Peserta" },
+  { id: "pembayaran", label: "Pembayaran" },
   { id: "kiriman", label: "Kiriman" },
 ];
 

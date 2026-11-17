@@ -41,7 +41,12 @@ describe("confirmPayment", () => {
       ...waiting,
       status: "terdaftar",
       paidAt: NOW + 1000,
+      paidBy: "sistem",
     });
+  });
+
+  it("records who confirmed it when a person does", () => {
+    expect(confirmPayment(waiting, NOW + 1000, "organizer")?.paidBy).toBe("organizer");
   });
 
   it("refuses one already paid or whose hold ran out", () => {

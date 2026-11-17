@@ -119,6 +119,8 @@ export type Registration = {
   status: RegistrationStatus;
   /** When payment was confirmed; set only by `confirmPayment`. */
   paidAt?: number;
+  /** Who confirmed it: "sistem" for the QRIS webhook, "organizer" for a person (PLT-07). */
+  paidBy?: "sistem" | "organizer";
 };
 
 export type RegistrationMap = Record<string, Registration>;

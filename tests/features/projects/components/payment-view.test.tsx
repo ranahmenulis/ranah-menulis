@@ -1,5 +1,6 @@
-import { cleanup, configure, fireEvent, render, screen } from "@testing-library/react";
+import { act, cleanup, configure, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { settlePayment } from "@/features/projects/registration-store";
 import { PaymentView } from "@/features/projects/components/payment-view";
 import { projectFixtures } from "@/features/projects/fixtures/all-projects";
 import type { ProjectFixture } from "@/features/projects/types";
@@ -44,10 +45,11 @@ describe("PaymentView", () => {
   it("turns into the paid screen when payment arrives, with the way to send work", async () => {
     register(CERPEN, { status: "menunggu-pembayaran" });
     await open(CERPEN);
-    fireEvent.click(screen.getByRole("button", { name: "Simulasikan pembayaran masuk" }));
+    act(() => {
+      settlePayment(CERPEN, Date.now());
+    });
     expect(await screen.findByRole("heading", { name: "Pembayaran diterima." })).toBeTruthy();
     expect(screen.getByRole("link", { name: "Kirim karya" })).toBeTruthy();
-    expect(screen.queryByRole("button", { name: "Simulasikan pembayaran masuk" })).toBeNull();
   });
 
   it("says the time ran out, and offers registering again while the project is open", async () => {

@@ -96,14 +96,18 @@ export function saveRegistration(registration: Registration) {
 }
 
 /**
- * Payment arrived (the QRIS webhook will call this, an Organizer panel later; today a development
- * panel). Returns whether anything changed: false when there is no such registration, it is
+ * Payment arrived (the QRIS webhook will call this; an Organizer or Administrator calls it with
+ * `by: "organizer"`, PLT-07). Returns whether anything changed: false when there is no such registration, it is
  * already paid, or its hold ran out.
  */
-export function settlePayment(slug: string, now: number): boolean {
+export function settlePayment(
+  slug: string,
+  now: number,
+  by: Registration["paidBy"] = "sistem",
+): boolean {
   const current = parseRegistrations(snapshot());
   const registration = current[slug];
-  const paid = registration ? confirmPayment(registration, now) : null;
+  const paid = registration ? confirmPayment(registration, now, by) : null;
   if (!paid) return false;
   write({ ...current, [slug]: paid });
   return true;
