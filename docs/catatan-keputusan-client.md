@@ -174,6 +174,74 @@ Yang masih perlu Mas putuskan:
 
 - PRD RanahMenulis v0.2 (sumber yang dirawat): `PRD RanahMenulis v0.2.md` di folder proyek
 - PRD RanahMenulis v0.1 (arsip, kini ikut diperbarui jadi v0.2 di claude.ai): https://claude.ai/artifact/7peCWVDK2nhM2iTQGdu4cq
+- Lembar Keputusan Novlr (jawaban di bagian 8): https://claude.ai/artifact/GzmNiosgKgkyVUxkRRttap
 - Audit dan Roadmap RanahMenulis: https://claude.ai/artifact/9XQYbgvLmodhruWvRS3XJp
-- Presentasi ke client: `RanahMenulis - Kondisi dan Rencana.pptx` (17 slide, sudah memuat keputusan di atas)
+- Presentasi ke client: `docs/arsip/RanahMenulis - Kondisi dan Rencana.pptx` (17 slide, sudah memuat keputusan di atas)
 - Repo yang diaudit: `ranahmenulis/` di workspace (commit `ce2be12`, tidak diubah selama audit).
+
+## 8. Jawaban Lembar Keputusan Novlr (17 November 2026)
+
+Dari: Wafiy. Lembar: https://claude.ai/artifact/GzmNiosgKgkyVUxkRRttap. Kode butir (h, s, p, c, m, a) mengikuti lembar itu. Ini keputusan client: butir Novlr yang berstatus `[usulan]` di dokumen lain dan dijawab "Setuju, diambil" di sini kini disetujui. Keputusan yang mengubah PRD (mis. target per dokumen, pembatalan proyek gratis, batas dokumen gratis, Event umum, grup buatan penulis) belum dimasukkan ke PRD; perlu pembaruan PRD dan `prd/CHANGELOG.md`.
+
+### Setuju, diambil
+
+| Butir | Keputusan |
+| --- | --- |
+| h1, h3, h4, h5 | Ringkasan mingguan di Beranda; kartu panduan awal yang bisa ditutup; kartu proyek dan kelas yang sedang dibuka; tiga angka kata (minggu ini, bulan ini, tahun ini) |
+| s1, s4, s5, s6, s7 | Dialog target dengan pilihan cepat; riwayat streak sebelumnya; timer sprint di editor; ekspor naskah; riwayat versi tulisan |
+| s9, s10, s11, s12, s13 | Pencarian cepat dan pencarian di daftar dokumen; pengaturan menulis di akun; daftar pintasan keyboard; statistik tambahan; arsip dan duplikat dokumen |
+| s20, s25 | Gambar kutipan untuk dibagikan; angka kata yang bisa disematkan di editor |
+| p3, p4, p5 | Bagian "Kelas yang sedang berjalan" dengan tombol Lanjutkan; salin latihan menulis ke Studio; testimoni peserta di halaman kelas |
+| c4, c5, c6 | Berbagi progres ke grup sebagai pilihan terpisah; peringatan privasi di grup; kartu progres yang bisa dibagikan |
+| a1, a2 | Pengaturan notifikasi; email progres menulis mingguan |
+
+### Diambil dengan syarat atau bentuk tertentu
+
+- **s3** Target per dokumen: target kata dan tenggat per dokumen, boleh lebih dari satu.
+- **s8** Riwayat versi disimpan **3 hari**, seperti paket Free Novlr.
+- **s14** Tambah jenis dokumen dan tag (status tidak disebut).
+- **s15** Impor `.docx` saja, setelah MVP.
+- **s24** Notifikasi penyemangat saat menulis: ya, sederhana.
+- **p2** Pendaftaran proyek hanya bisa dibatalkan untuk proyek **gratis** (BR-PRJ-11 / Q-30 untuk yang berbayar tetap terbuka).
+- **c1** Event dibangun sebagai fitur umum; tantangan pertama menjadi contoh.
+- **c2** Penulis boleh membuat grup sendiri.
+- **c3** Timer sprint pribadi dulu; sesi bersama menjadi bagian Event.
+- **c7** Daftar peserta event: hanya jumlah peserta; nama hanya terlihat oleh anggota grup yang sama.
+- **c8** Tampilan acara cukup daftar kartu, tanpa kalender.
+- **c9** Satu tautan komunitas luar resmi (Discord atau WhatsApp).
+- **a4** Ada batas dokumen untuk akun gratis (angkanya belum ditentukan).
+
+### Tidak diambil atau ditunda
+
+- **h2** Kartu Beranda yang bisa diatur: belum, Beranda tetap satu susunan.
+- **h6** Konten editorial di Beranda: tidak.
+- **s2** Target mingguan: harian saja di MVP.
+- **s16** Catatan riset dan profil tokoh: Fase 2, bersama manuskrip multi-bab.
+- **s17** Struktur buku (bagian dan papan alur): Fase 2 sesuai PRD, papan alur ikut di sana.
+- **s18** Kolaborasi naskah dan komentar di dalam teks: tidak di MVP; umpan balik lewat Projects (editor, mentor) dan komentar Community.
+- **s19** Tautan baca publik untuk naskah: tidak; berbagi lewat Bagikan ke Community (cuplikan maks 500 kata).
+- **s21** Pilihan font dan jarak baris per dokumen: tetap satu gaya tulis.
+- **s22** Kamus diksi terhubung ke kata terpilih: tetap daftar statis di panel bantuan.
+- **s23** Mode ramah disleksia: tunda.
+- **p1** Kursus mandiri (rekaman): tidak; kelas tetap hidup dengan jadwal dan mentor.
+- **p6** Sertifikat kelas: tetap Fase 2.
+- **m1** Marketplace: tetap Fase 3, acuan dari produk lain dicari nanti.
+- **m2** Penawaran dan diskon mitra: tidak perlu.
+- **a3** Tema tambahan: tidak, cukup terang dan gelap.
+
+### Perlu dibahas dulu (belum diputuskan)
+
+- **s26** Pemeriksa tata bahasa
+- **s27** Cadangan otomatis ke Google Drive dan Dropbox
+- **p7** Pemutar materi mengambang
+- **p8** Situs penulis dengan domain sendiri
+- **a5** Kartu paket dan data contoh buram di tiap halaman
+- **a6** Undang teman dengan hadiah
+- **a7** Chat dukungan dan alat diagnostik
+
+Catatan Wafiy: "Kita bahas yang perlu dibahas."
+
+### Pesan tambahan dari Wafiy (WhatsApp, 17 November 2026)
+
+- **Penamaan ulang "Roast My Writing":** namanya akan diganti. Jangan diganti sekarang; client ingin menunggu sampai pekerjaan selesai supaya semua revisi dikerjakan sekaligus. Nama penggantinya belum diberikan.
+- **Community tanpa chat realtime:** jangan membangun chat realtime di bagian Community. Dibuat seperti Novlr; percakapan diarahkan ke platform lain lewat satu tautan komunitas resmi (selaras dengan c9). Chat/DM tetap di luar cakupan.

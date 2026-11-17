@@ -31,7 +31,7 @@ Sumber: diskusi tim dan tambahan dari Agile Fahmi (WhatsApp).
 
 ## v0.2 (8 November 2026)
 
-Sumber: diskusi lanjutan dan rapat 8 November 2026 (transkrip di `transrip.md`).
+Sumber: diskusi lanjutan dan rapat 8 November 2026 (transkrip di `docs/arsip/transkrip-rapat-client.md`).
 
 **Struktur produk**
 - Ranah Streak digabung ke Studio: satu modul, satu alur data. Sub-bagian dipisah menjadi area Streak dan area Menulis, nomor bagian dipertahankan, ID fitur STK dan STD tetap.

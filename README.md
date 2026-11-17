@@ -3,7 +3,7 @@
 Ekosistem digital untuk menulis, komunitas literasi, dan penerbitan buku (Indonesia dan Malaysia).
 Next.js 16 (monolith, App Router) + TypeScript + Tailwind CSS v4 + Supabase.
 
-Dokumen produk ada di [`docs/`](docs): PRD (sumber di `docs/prd/`), roadmap MVP, dan brief desain.
+Dokumen ada di [`docs/`](docs) (peta isi: [`docs/README.md`](docs/README.md)): PRD (sumber di `docs/prd/`), dokumen produk di `docs/produk/`, arsip desain, referensi, dan arsip mentah.
 Aturan desain ada di [`DESIGN.md`](DESIGN.md). Aturan kerja untuk pengembang dan agen AI ada di [`CLAUDE.md`](CLAUDE.md).
 
 ## Mulai

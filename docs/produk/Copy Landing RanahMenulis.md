@@ -3,7 +3,7 @@
 **Status:** usulan, 14 November 2026. Menggantikan teks di prototipe landing (`Main.dc.html`). Semua klaim dicocokkan dengan PRD v0.2; butir yang belum pasti ditandai **[konfirmasi]**.
 **Pembaruan 15 November 2026:** client meminta landing "jangan terlalu banyak teks, simpel tapi menjelaskan". Versi ringkas ada di [bagian 4](#4-versi-ringkas-v2-15-november-2026) dan menggantikan bagian 2 untuk teks yang tampil. Bagian 2 tetap menjadi dasar klaimnya.
 **Pembaruan 15 November 2026 (v3):** client mengirim brief landing baru. Teks yang tampil kini [bagian 5](#5-versi-v3-brief-landing-client-15-november-2026); v2 tetap sebagai arsip.
-**Dasar:** [DESIGN.md](../DESIGN.md) bagian 12 (Suara dan nada), [Brief bagian 6](Brief%20Desain%20RanahMenulis.md).
+**Dasar:** [DESIGN.md](../../DESIGN.md) bagian 12 (Suara dan nada), [Brief bagian 6](Brief%20Desain%20RanahMenulis.md).
 
 ---
 

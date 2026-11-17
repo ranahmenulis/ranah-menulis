@@ -4,7 +4,7 @@
 
 **Status:** draf v0.2 (14 November 2026), sudah memuat referensi Medium dan Substack dari client. Bagian berlabel **Usulan** belum disetujui client dan boleh direvisi setelah ditinjau.
 **Pembaca:** desainer, Claude Design, dan developer yang membangun UI di Next.js + Tailwind v4.
-**Sumber:** keputusan client di WhatsApp, [Brief Desain](docs/Brief%20Desain%20RanahMenulis.md), PRD v0.2. Referensi Medium mentah (hanya halaman depan) ada di [docs/referensi/](docs/referensi/medium-homepage-style-reference.md).
+**Sumber:** keputusan client di WhatsApp, [Brief Desain](docs/produk/Brief%20Desain%20RanahMenulis.md), PRD v0.2. Referensi Medium mentah (hanya halaman depan) ada di [docs/referensi/](docs/referensi/medium-homepage-style-reference.md).
 
 ---
 
@@ -591,7 +591,7 @@ const serif = Merriweather({
 
 ## 12. Suara dan nada
 
-Teks RanahMenulis ditulis seperti penulis yang rapi dan jujur: yakin tanpa berseru, spesifik tanpa memamerkan diri. Kartu suara lengkap, daftar kata yang tidak dipakai, dan teks landing yang sudah ditulis ulang ada di [docs/Copy Landing RanahMenulis.md](docs/Copy%20Landing%20RanahMenulis.md). Ringkasnya:
+Teks RanahMenulis ditulis seperti penulis yang rapi dan jujur: yakin tanpa berseru, spesifik tanpa memamerkan diri. Kartu suara lengkap, daftar kata yang tidak dipakai, dan teks landing yang sudah ditulis ulang ada di [docs/produk/Copy Landing RanahMenulis.md](docs/produk/Copy%20Landing%20RanahMenulis.md). Ringkasnya:
 
 - Kata ganti "kamu". Kalimat 8-16 kata. Tanpa tanda seru dan tanpa humor.
 - Istilah tetap: Studio, Streak, Community, Projects; draf (belum dikirim), naskah (sudah dikirim ke proyek), tulisan (umum).
