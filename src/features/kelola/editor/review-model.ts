@@ -7,6 +7,8 @@ import {
   type Decision,
 } from "@/features/projects/submission-status";
 import type { ManagerRole } from "@/lib/roles";
+import type { ProjectFixture } from "@/features/projects/types";
+import type { StaffAssignment } from "../staff-assignments";
 import { reviewAccess, type ReviewAccess } from "./assignments";
 
 export type Step = {
@@ -64,10 +66,12 @@ export function resolveReview(
   submissions: readonly Submission[],
   id: string,
   roles: readonly ManagerRole[],
+  catalog?: readonly ProjectFixture[],
+  assigned?: readonly StaffAssignment[],
 ): ReviewTarget {
   const work = submissions.find((s) => s.id === id && s.status !== "draf");
   if (!work) return { status: "gone" };
-  const access = reviewAccess(roles, work.slug);
+  const access = reviewAccess(roles, work.slug, catalog, assigned);
   return access === "ok" ? { status: "ready", work } : { status: "blocked", reason: access };
 }
 

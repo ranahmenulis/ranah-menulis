@@ -11,9 +11,7 @@ export async function generateMetadata({
   const { slug } = await params;
   const project = projectFixtures.find((p) => p.slug === slug && p.publication === "terbit");
   return {
-    title: project
-      ? `${project.title} · Projects · RanahMenulis`
-      : "Proyek tidak ditemukan · RanahMenulis",
+    title: project ? `${project.title} · Projects · RanahMenulis` : "Projects · RanahMenulis",
   };
 }
 

@@ -12,7 +12,7 @@ export async function generateMetadata({
   return {
     title: project
       ? `Kirim karya: ${project.title} · Projects · RanahMenulis`
-      : "Proyek tidak ditemukan · RanahMenulis",
+      : "Projects · RanahMenulis",
     robots: { index: false },
   };
 }

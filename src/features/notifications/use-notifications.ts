@@ -6,6 +6,9 @@ import { useContestOverrides } from "@/features/projects/lomba/stage-store";
 import { paymentNotifications } from "@/features/projects/payment-notifications";
 import { useRegistrations } from "@/features/projects/registration-store";
 import { activeSubmissions } from "@/features/projects/submission-model";
+import { useCatalog } from "@/features/projects/use-catalog";
+import { termsNotifications } from "@/features/projects/terms-notifications";
+import { useClassFixtures } from "@/features/projects/kelas/class-source";
 import { useProjects } from "@/features/projects/use-projects";
 import { useSoloRows } from "@/features/projects/solo/hooks/use-solo-rows";
 import { soloNotifications } from "@/features/projects/solo/solo-notifications";
@@ -58,16 +61,18 @@ function useAllNotifications(
   const mentorTasks = useMentorTasks();
   const soloRows = useSoloRows(solo);
   const catalog = useProjects();
+  const fixtures = useCatalog();
+  const classes = useClassFixtures();
   const registrations = useRegistrations();
   const overrides = useContestOverrides();
   return useMemo(
     () => [
-      ...(status === "ready" ? submissionNotifications(submissions) : []),
+      ...(status === "ready" ? submissionNotifications(submissions, fixtures) : []),
       ...(assignments.status === "ready"
-        ? assignmentNotifications(assignments.submissions, undefined, undefined, mentorTasks)
+        ? assignmentNotifications(assignments.submissions, fixtures, classes, mentorTasks)
         : []),
-      ...newTaskNotifications(mentorTasks, registrations),
-      ...(soloRows.status === "ready" ? soloNotifications(soloRows.rows) : []),
+      ...newTaskNotifications(mentorTasks, registrations, fixtures),
+      ...(soloRows.status === "ready" ? soloNotifications(soloRows.rows, fixtures) : []),
       ...(catalog.status === "ready"
         ? contestNotifications({
             projects: catalog.projects,
@@ -80,6 +85,9 @@ function useAllNotifications(
       ...(catalog.status === "ready"
         ? paymentNotifications(catalog.projects, registrations, catalog.now)
         : []),
+      ...(catalog.status === "ready"
+        ? termsNotifications(catalog.projects, registrations, catalog.now)
+        : []),
       ...notificationFixtures,
     ],
     [
@@ -91,6 +99,8 @@ function useAllNotifications(
       soloRows.rows,
       mentorTasks,
       catalog,
+      fixtures,
+      classes,
       registrations,
       overrides,
     ],

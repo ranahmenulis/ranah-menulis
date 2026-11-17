@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
 import { TextLink } from "@/components/ui/text-link";
 
-/** One column with the way out always on top. */
-export function MentorShell({
+/** One column with the way out always on top (Organizer and Mentor screens). */
+export function BackShell({
   back,
   children,
   wide = false,

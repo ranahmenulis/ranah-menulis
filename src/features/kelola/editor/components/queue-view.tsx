@@ -7,8 +7,10 @@ import { Chip } from "@/components/ui/chip";
 import { EmptyState, ErrorBanner, RetryButton, Skeleton } from "@/components/ui/states";
 import { submissionStore } from "@/features/projects/storage/store";
 import type { SubmissionStore } from "@/features/projects/storage/submission-store";
+import { useCatalog } from "@/features/projects/use-catalog";
 import { useSubmissions } from "@/features/projects/use-submissions";
 import { useRoles } from "@/lib/viewer";
+import { useStaffAssignments } from "../../staff-assignments";
 import { EDITOR_HREF } from "../area-hrefs";
 import {
   QUEUE_FILTERS,
@@ -41,6 +43,8 @@ function QueueSkeleton() {
 export function QueueView({ store = submissionStore }: { store?: SubmissionStore }) {
   const submissions = useSubmissions(store);
   const roles = useRoles();
+  const catalog = useCatalog();
+  const assigned = useStaffAssignments();
 
   // The address is the source of truth (see ProjectsView): Next keeps the previous page mounted.
   const search = useSearchParams()?.get("status") ?? null;
@@ -56,8 +60,8 @@ export function QueueView({ store = submissionStore }: { store?: SubmissionStore
   }
 
   const all = useMemo(
-    () => queueRows(submissions.submissions, roles),
-    [submissions.submissions, roles],
+    () => queueRows(submissions.submissions, roles, catalog, assigned),
+    [submissions.submissions, roles, catalog, assigned],
   );
   const counts = useMemo(() => countByFilter(all), [all]);
   const shown = useMemo(() => applyFilter(all, filter), [all, filter]);

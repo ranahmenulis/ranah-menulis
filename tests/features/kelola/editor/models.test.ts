@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { ASSIGNED_PROJECTS, reviewAccess } from "@/features/kelola/editor/assignments";
+import { reviewAccess } from "@/features/kelola/editor/assignments";
 import {
   applyFilter,
   countByFilter,
@@ -22,7 +22,6 @@ function work(over: Partial<Submission> = {}) {
 
 describe("reviewAccess", () => {
   it("lets an Editor review only the projects assigned to them", () => {
-    expect(ASSIGNED_PROJECTS).toContain(ASSIGNED);
     expect(reviewAccess(["editor"], ASSIGNED)).toBe("ok");
     expect(reviewAccess(["editor"], OTHER)).toBe("tidak-ditugaskan");
   });

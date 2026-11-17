@@ -13,7 +13,7 @@ let fallback: string | null = null;
 
 function snapshot(): string | null {
   try {
-    return window.localStorage.getItem(KEY) ?? fallback;
+    return fallback ?? window.localStorage.getItem(KEY);
   } catch {
     return fallback;
   }

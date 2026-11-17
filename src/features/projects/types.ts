@@ -1,8 +1,11 @@
 /** Projects (PRD 8.4, BR-PRJ-01): exactly four categories. A new one needs the founder's approval. */
 export type ProjectCategory = "antologi" | "solo" | "kelas" | "lomba";
 
-/** Drafts are never shown to the public (PRJ-01). */
-export type Publication = "terbit" | "draf";
+/**
+ * Drafts are never shown to the public (PRJ-01). An archived project (BR-PRJ-07) is hidden like a
+ * draft, and every screen that only serves published projects drops its assignments with it (Q-04).
+ */
+export type Publication = "terbit" | "draf" | "arsip";
 
 /** [konfirmasi] Project time zone is set by the Organizer and always shown (BR-PRJ-04, Q-29). */
 export type TimeZoneName = "WIB" | "MYT";
@@ -60,6 +63,10 @@ type ProjectBase = {
   submission: SubmissionRules | null;
   /** [usulan] Team members only in the MVP (Q-31). */
   organizer: string;
+  /** Who manages it (BR-PRJ-06); absent on the sample projects, which belong to the team. */
+  ownerId?: string;
+  /** When the Organizer last changed the terms after the first publication (PRJ-03). */
+  termsUpdatedAt?: number;
   timeZone: TimeZoneName;
   fee: Money;
   /** `null` = no quota (open-ended services such as Solo). */
@@ -76,6 +83,11 @@ type ProjectBase = {
 export type ProjectFixture = ProjectBase & {
   closesInMs: number | null;
   milestones: { label: string; inMs: number }[];
+  /**
+   * A project an Organizer wrote has real dates, not offsets. When present these win over
+   * `closesInMs` and `milestones`, so every reader of the catalog keeps taking `ProjectFixture`s.
+   */
+  absolute?: { closesAt: number | null; milestones: { label: string; at: number }[] };
 };
 
 /** Resolved form used by screens: absolute timestamps. */
