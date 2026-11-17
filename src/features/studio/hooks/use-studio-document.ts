@@ -3,6 +3,7 @@
 import type { JSONContent } from "@tiptap/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { emptyLog, type DailyLog } from "../daily-progress";
+import { sanitizeTargets, type DocumentTarget } from "../document-targets";
 import type { DocumentStore, SaveInput, StudioDocument } from "../storage/document-store";
 
 const AUTOSAVE_DELAY_MS = 800;
@@ -34,6 +35,7 @@ export function useStudioDocument(documentId: string, store: DocumentStore) {
   const [editorKey, setEditorKey] = useState(0);
   const [title, setTitleState] = useState("");
   const [words, setWords] = useState(0);
+  const [targets, setTargetsState] = useState<DocumentTarget[]>([]);
   const [status, setStatus] = useState<SaveStatus>("draft");
   const [savedAt, setSavedAt] = useState<Date | null>(null);
   const [progress, setProgress] = useState<DailyLog>(emptyLog());
@@ -41,11 +43,12 @@ export function useStudioDocument(documentId: string, store: DocumentStore) {
 
   const id = useRef(isNew ? "" : documentId);
   const version = useRef(0);
-  const latest = useRef<{ title: string; content: JSONContent; words: number }>({
-    title: "",
-    content: EMPTY_DOC,
-    words: 0,
-  });
+  const latest = useRef<{
+    title: string;
+    content: JSONContent;
+    words: number;
+    targets: DocumentTarget[];
+  }>({ title: "", content: EMPTY_DOC, words: 0, targets: [] });
   const dirty = useRef(false);
   const inFlight = useRef(false);
   const blocked = useRef(false);
@@ -55,7 +58,7 @@ export function useStudioDocument(documentId: string, store: DocumentStore) {
 
   const flush = useCallback(async () => {
     window.clearTimeout(timer.current);
-    const { title: t, content, words: w } = latest.current;
+    const { title: t, content, words: w, targets: tg } = latest.current;
     if (!dirty.current || inFlight.current || blocked.current) return;
     if (t.trim() === "" && w === 0) return; // an untouched new draft is not stored
 
@@ -64,7 +67,13 @@ export function useStudioDocument(documentId: string, store: DocumentStore) {
     let failed = false;
     setStatus("saving");
     try {
-      const input: SaveInput = { id: id.current, title: t, content, wordCount: w };
+      const input: SaveInput = {
+        id: id.current,
+        title: t,
+        content,
+        wordCount: w,
+        targets: tg,
+      };
       const result = await store.save(input, version.current);
       if (result.ok) {
         version.current = result.doc.version;
@@ -117,10 +126,17 @@ export function useStudioDocument(documentId: string, store: DocumentStore) {
         if (isNew) return;
         if (!doc) return setLoad("missing");
         version.current = doc.version;
-        latest.current = { title: doc.title, content: doc.content, words: doc.wordCount };
+        const stored = sanitizeTargets(doc.targets);
+        latest.current = {
+          title: doc.title,
+          content: doc.content,
+          words: doc.wordCount,
+          targets: stored,
+        };
         setInitial({ title: doc.title, content: doc.content });
         setTitleState(doc.title);
         setWords(doc.wordCount);
+        setTargetsState(stored);
         setSavedAt(new Date(doc.updatedAt));
         setStatus("saved");
         setEditorKey((k) => k + 1);
@@ -180,6 +196,15 @@ export function useStudioDocument(documentId: string, store: DocumentStore) {
     [schedule],
   );
 
+  const setTargets = useCallback(
+    (next: DocumentTarget[]) => {
+      latest.current.targets = next;
+      setTargetsState(next);
+      schedule();
+    },
+    [schedule],
+  );
+
   const onContentChange = useCallback(
     (content: JSONContent, wordCount: number) => {
       latest.current.content = content;
@@ -202,10 +227,17 @@ export function useStudioDocument(documentId: string, store: DocumentStore) {
       setConflict(null);
       if (choice === "remote") {
         dirty.current = false;
-        latest.current = { title: remote.title, content: remote.content, words: remote.wordCount };
+        const remoteTargets = sanitizeTargets(remote.targets);
+        latest.current = {
+          title: remote.title,
+          content: remote.content,
+          words: remote.wordCount,
+          targets: remoteTargets,
+        };
         setInitial({ title: remote.title, content: remote.content });
         setTitleState(remote.title);
         setWords(remote.wordCount);
+        setTargetsState(remoteTargets);
         setSavedAt(new Date(remote.updatedAt));
         setEditorKey((k) => k + 1);
       } else {
@@ -226,6 +258,8 @@ export function useStudioDocument(documentId: string, store: DocumentStore) {
     title,
     setTitle,
     words,
+    targets,
+    setTargets,
     onContentChange,
     status: status === "draft" && (title.trim() !== "" || words > 0) ? "saving" : status,
     savedAt,

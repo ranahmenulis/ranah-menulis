@@ -13,6 +13,8 @@ type WordCountProps = {
   stats: EditorStats | null;
   /** Counts for the selected text, or `null` while nothing is selected. */
   selection: EditorStats | null;
+  /** Nearest open target of this document (STK-08), shown under the table. */
+  targetSummary?: string | null;
   className?: string;
 };
 
@@ -49,7 +51,7 @@ function rowsOf(words: number, stats: EditorStats | null, selection: EditorStats
  * time, with a column for the selection when there is one. Characters and paragraphs are counted
  * live from the text and are not stored. [konfirmasi] Reading time (Q-52): 200 words a minute.
  */
-export function WordCount({ words, stats, selection, className }: WordCountProps) {
+export function WordCount({ words, stats, selection, targetSummary, className }: WordCountProps) {
   const [open, setOpen] = useState(false);
   const rows = rowsOf(words, stats, selection);
   const label = selection
@@ -105,6 +107,11 @@ export function WordCount({ words, stats, selection, className }: WordCountProps
           ))}
         </tbody>
       </table>
+      {targetSummary && (
+        <p className="mt-3 border-t border-line pt-3 text-xs text-ink-muted tabular-nums">
+          Target dokumen · {targetSummary}
+        </p>
+      )}
     </Popover>
   );
 }

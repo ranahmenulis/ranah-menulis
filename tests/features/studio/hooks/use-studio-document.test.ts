@@ -342,3 +342,58 @@ describe("useStudioDocument: saveNow", () => {
     expect(save.mock.calls[0][0].id).toBe(result.current.getId());
   });
 });
+
+describe("useStudioDocument: document targets", () => {
+  const target = { id: "t1", words: 1000, due: "2026-12-01" };
+
+  it("loads the stored targets and drops invalid ones", async () => {
+    const { store } = makeStore({
+      get: vi.fn(async () =>
+        stored({ targets: [target, { id: 5, words: -1 }] as unknown as StudioDocument["targets"] }),
+      ),
+    });
+    const { result } = renderHook(() => useStudioDocument("doc-1", store));
+    await advance(0);
+    expect(result.current.targets).toEqual([target]);
+  });
+
+  it("saves new targets with the text on the next autosave, on the version it opened, with no conflict", async () => {
+    const { store, save } = makeStore();
+    const { result } = renderHook(() => useStudioDocument("doc-1", store));
+    await advance(0);
+
+    act(() => result.current.setTargets([target]));
+    await advance(900);
+
+    expect(save).toHaveBeenCalledTimes(1);
+    expect(save.mock.calls[0][0].targets).toEqual([target]);
+    expect(save.mock.calls[0][1]).toBe(2);
+    expect(result.current.conflict).toBeNull();
+    expect(result.current.status).toBe("saved");
+
+    // The next edit builds on the new version instead of clashing with it.
+    act(() => result.current.setTitle("Surat baru"));
+    await advance(900);
+    expect(save).toHaveBeenCalledTimes(2);
+    expect(save.mock.calls[1][1]).toBe(3);
+    expect(result.current.conflict).toBeNull();
+  });
+
+  it("adopts the other version's targets when 'remote' is chosen in a conflict", async () => {
+    const remoteTarget = { id: "r1", words: 500, due: null };
+    const remote = stored({ version: 5, targets: [remoteTarget] });
+    const { store } = makeStore({
+      save: vi.fn(async () => ({ ok: false as const, conflict: remote })),
+    });
+    const { result } = renderHook(() => useStudioDocument("doc-1", store));
+    await advance(0);
+    act(() => result.current.setTitle("Lokal"));
+    await advance(900);
+    expect(result.current.conflict).not.toBeNull();
+
+    await act(async () => {
+      await result.current.resolveConflict("remote");
+    });
+    expect(result.current.targets).toEqual([remoteTarget]);
+  });
+});

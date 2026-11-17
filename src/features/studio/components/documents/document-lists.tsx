@@ -8,6 +8,8 @@ import { ButtonLink } from "@/components/ui/button";
 import { listEntries, trashed } from "../../documents";
 import type { DocumentList } from "../../hooks/use-document-list";
 import { formatChanged } from "../../relative-time";
+import { targetSummary } from "../../document-targets";
+import { dayKey } from "../../daily-progress";
 import type { StudioDocument } from "../../storage/document-store";
 import { Row } from "./document-row";
 import type { Pending } from "./pending";
@@ -18,6 +20,12 @@ const NO_IDS: ReadonlySet<string> = new Set();
 
 const meta = (doc: StudioDocument, verb: string, at: number, now: number) =>
   `${verb} ${formatChanged(at, now)} · ${number.format(doc.wordCount)} kata`;
+/** Nearest open document target for the meta line; nothing before the list has loaded. */
+const targetPart = (doc: StudioDocument, loadedAt: number) => {
+  const line =
+    loadedAt > 0 ? targetSummary(doc.targets, doc.wordCount, dayKey(new Date(loadedAt))) : null;
+  return line ? ` · ${line}` : "";
+};
 const nameOf = (doc: StudioDocument) => doc.title || "Tanpa judul";
 
 type ListProps = {
@@ -114,7 +122,7 @@ export function LiveList({
             kind="document"
             title={nameOf(entry.doc)}
             href={`/studio/${entry.doc.id}`}
-            meta={meta(entry.doc, "Diubah", entry.doc.updatedAt, now)}
+            meta={meta(entry.doc, "Diubah", entry.doc.updatedAt, now) + targetPart(entry.doc, now)}
             tags={[
               ...(sharedIds.has(entry.doc.id) ? ["Dibagikan"] : []),
               ...(submittedIds.has(entry.doc.id) ? ["Dikirim ke proyek"] : []),

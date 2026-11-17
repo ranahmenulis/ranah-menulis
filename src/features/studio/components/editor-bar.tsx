@@ -8,7 +8,9 @@ import { VisibilityTag } from "@/components/ui/visibility-tag";
 import type { DailyLog } from "../daily-progress";
 import type { EditorStats } from "../editor-stats";
 import type { SaveStatus } from "../hooks/use-studio-document";
+import type { SprintApi } from "../hooks/use-sprint";
 import { SaveIndicator } from "./save-indicator";
+import { SprintControl } from "./sprint-control";
 import { TargetIndicator } from "./target-indicator";
 import { WordCount } from "./word-count";
 
@@ -32,6 +34,11 @@ type EditorBarProps = {
   /** Name shown in place of the title when the document is not ready. */
   fallbackTitle: string;
   menuItems: MenuEntry[];
+  /** Nearest open document target, e.g. "320 / 1.000 kata · 5 hari lagi", or null. */
+  targetSummary: string | null;
+  sprint: SprintApi;
+  sprintOpen: boolean;
+  onSprintOpenChange: (open: boolean) => void;
   /** Back to the document list; the screen saves first so nothing written is left behind. */
   onBack: () => void;
   onShare: () => void;
@@ -59,6 +66,10 @@ export function EditorBar({
   ready,
   fallbackTitle,
   menuItems,
+  targetSummary,
+  sprint,
+  sprintOpen,
+  onSprintOpenChange,
   onBack,
   onShare,
   onToggleHelp,
@@ -93,7 +104,18 @@ export function EditorBar({
           </div>
 
           <div className="order-7 ml-auto flex items-center gap-3 pb-2 md:order-4 md:pb-0">
-            <WordCount words={words} stats={stats} selection={selection} />
+            <SprintControl
+              sprint={sprint}
+              words={words}
+              open={sprintOpen}
+              onOpenChange={onSprintOpenChange}
+            />
+            <WordCount
+              words={words}
+              stats={stats}
+              selection={selection}
+              targetSummary={targetSummary}
+            />
             <TargetIndicator progress={progress} target={target} pending={offline} />
           </div>
         </>

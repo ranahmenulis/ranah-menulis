@@ -5,6 +5,8 @@ import {
   DownloadSimple,
   Lightbulb,
   PaperPlaneTilt,
+  Target,
+  Timer,
   Trash,
 } from "@phosphor-icons/react/dist/ssr";
 import { useMemo } from "react";
@@ -15,14 +17,33 @@ type Actions = {
   canTrash: boolean;
   /** Nothing to send until the document has text. */
   canSend: boolean;
+  /** Nothing to export until the document has text. */
+  canExport: boolean;
+  /** Targets need a stored document, so an empty draft cannot have any. */
+  canTarget: boolean;
   onHelp: () => void;
   onFocus: () => void;
   onSend: () => void;
+  onExport: () => void;
+  onTargets: () => void;
+  onSprint: () => void;
   onTrash: () => void;
 };
 
 /** The ⋯ menu of the editor bar (DESIGN.md 6.3). Help and focus mode only appear on phones. */
-export function useEditorMenu({ canTrash, canSend, onHelp, onFocus, onSend, onTrash }: Actions) {
+export function useEditorMenu({
+  canTrash,
+  canSend,
+  canExport,
+  canTarget,
+  onHelp,
+  onFocus,
+  onSend,
+  onExport,
+  onTargets,
+  onSprint,
+  onTrash,
+}: Actions) {
   return useMemo<MenuEntry[]>(
     () => [
       {
@@ -39,6 +60,13 @@ export function useEditorMenu({ canTrash, canSend, onHelp, onFocus, onSend, onTr
         mobileOnly: true,
         onSelect: onFocus,
       },
+      {
+        id: "sprint",
+        label: "Timer sprint",
+        icon: <Timer />,
+        mobileOnly: true,
+        onSelect: onSprint,
+      },
       { id: "sep-mobile", type: "separator", mobileOnly: true },
       {
         id: "send",
@@ -48,13 +76,19 @@ export function useEditorMenu({ canTrash, canSend, onHelp, onFocus, onSend, onTr
         onSelect: onSend,
       },
       {
-        // Export is not decided yet (STD-07).
+        id: "targets",
+        label: "Target dokumen",
+        icon: <Target />,
+        disabled: !canTarget,
+        onSelect: onTargets,
+      },
+      {
         id: "export",
         label: "Ekspor",
         icon: <DownloadSimple />,
-        hint: "Segera",
-        disabled: true,
-        onSelect: () => {},
+        hint: "TXT, PDF",
+        disabled: !canExport,
+        onSelect: onExport,
       },
       { id: "sep", type: "separator" },
       {
@@ -67,6 +101,18 @@ export function useEditorMenu({ canTrash, canSend, onHelp, onFocus, onSend, onTr
         onSelect: onTrash,
       },
     ],
-    [canTrash, canSend, onHelp, onFocus, onSend, onTrash],
+    [
+      canTrash,
+      canSend,
+      canExport,
+      canTarget,
+      onHelp,
+      onFocus,
+      onSend,
+      onExport,
+      onTargets,
+      onSprint,
+      onTrash,
+    ],
   );
 }

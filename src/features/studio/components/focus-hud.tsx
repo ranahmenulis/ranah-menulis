@@ -4,7 +4,9 @@ import { Button } from "@/components/ui/button";
 import type { DailyLog } from "../daily-progress";
 import { totalWords } from "../daily-progress";
 import { formatClock } from "../count-words";
+import type { SprintApi } from "../hooks/use-sprint";
 import type { SaveStatus } from "../hooks/use-studio-document";
+import { formatRemaining, remainingMs, resultText } from "../sprint";
 
 type FocusHudProps = {
   status: SaveStatus;
@@ -12,6 +14,7 @@ type FocusHudProps = {
   words: number;
   progress: DailyLog;
   target: number;
+  sprint: SprintApi;
   onExit: () => void;
 };
 
@@ -26,7 +29,15 @@ function saveText(status: SaveStatus, savedAt: Date | null) {
  * Focus mode leaves only the text plus two quiet corners: the way out, and one dim line with save
  * state, word count, and today's target (DESIGN.md 6.3). No lines, no filled buttons.
  */
-export function FocusHud({ status, savedAt, words, progress, target, onExit }: FocusHudProps) {
+export function FocusHud({
+  status,
+  savedAt,
+  words,
+  progress,
+  target,
+  sprint,
+  onExit,
+}: FocusHudProps) {
   const number = new Intl.NumberFormat("id-ID");
   return (
     <>
@@ -39,6 +50,15 @@ export function FocusHud({ status, savedAt, words, progress, target, onExit }: F
         role="status"
         className="fixed right-4 bottom-4 z-20 flex flex-wrap justify-end gap-x-3 text-xs text-ink-faint md:right-8 md:bottom-6"
       >
+        {sprint.state.phase === "running" && (
+          <span className="tabular-nums" aria-hidden>
+            Sprint{" "}
+            {formatRemaining(
+              remainingMs(sprint.state.startedAt, sprint.state.minutes, sprint.nowMs),
+            )}
+          </span>
+        )}
+        {sprint.state.phase === "done" && <span>Sprint: {resultText(sprint.state)}</span>}
         <span>{saveText(status, savedAt)}</span>
         <span>{number.format(words)} kata</span>
         <span>

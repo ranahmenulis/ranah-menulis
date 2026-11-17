@@ -39,6 +39,7 @@ Format Given-When-Then agar dapat langsung dipakai QA. Semua kriteria berstatus 
 | AC-32 | STD-12 | Given dokumen dengan versi berusia 4 hari, then versi itu tidak tersedia; versi berusia 2 hari dapat dipulihkan dan pemulihan membuat versi baru |
 | AC-33 | STK-08 | Given dokumen dengan dua target, then progres tiap target dihitung dari kata dokumen itu dan tidak mengubah streak |
 | AC-34 | BR-STD-07 | Given akun gratis di batas dokumen, when membuat dokumen baru, then ditolak dengan penjelasan dan dokumen lama tetap utuh |
+| AC-39 | STD-07 | Given dokumen berisi teks, when pengguna mengekspor ke TXT atau PDF, then berkas terunduh dengan judul sebagai nama berkas dan isi tulisan; given dokumen tanpa teks, then menu Ekspor tidak aktif |
 
 ### 26.3 Community
 

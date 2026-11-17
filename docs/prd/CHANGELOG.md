@@ -10,7 +10,7 @@ Sumber: jawaban Wafiy atas Lembar Keputusan Novlr dan pesan WhatsApp lanjutan (r
 - **Tidak dibangun** (bagian 23, "Di luar cakupan"): kursus mandiri, tautan baca publik, kolaborasi di dalam teks, pilihan font dan jarak baris, tema tambahan, konten editorial dan Beranda yang bisa diatur, penawaran mitra, chat atau DM realtime.
 - **Aturan baru atau berubah** (bagian 14): BR-STK-10, BR-STD-06 (versi 3 hari), BR-STD-07 (batas dokumen gratis, angka [konfirmasi]), BR-COM-09 sampai BR-COM-12, BR-PRJ-11 (batal hanya proyek gratis).
 - **Perubahan peran:** penulis boleh membuat grup sendiri (BR-COM-12), menggantikan sebagian Q-41; AC-G4 dan bagian 01, 10, 15, 16 diberi penanda. Rincian aturan grup masih terbuka (Q-57).
-- **Acceptance criteria:** AC-32 sampai AC-38. **Pertanyaan baru:** Q-53 sampai Q-58 (butir "perlu dibahas" dan nama pengganti Roast My Writing, yang sengaja belum diganti).
+- **Acceptance criteria:** AC-32 sampai AC-39. **Pertanyaan baru:** Q-53 sampai Q-58 (butir "perlu dibahas" dan nama pengganti Roast My Writing, yang sengaja belum diganti).
 - PRD Ringkas ikut diperbarui.
 
 ## v0.2, tambahan sementara 14 November 2026

@@ -81,4 +81,24 @@ describe("WordCount", () => {
     fireEvent.keyDown(document, { key: "Escape" });
     expect(screen.queryByRole("dialog")).toBeNull();
   });
+
+  it("shows the nearest document target under the table, and nothing without one", () => {
+    const { unmount } = render(
+      <WordCount
+        words={320}
+        stats={stats}
+        selection={null}
+        targetSummary="320 / 1.000 kata · 5 hari lagi"
+      />,
+    );
+    open();
+    expect(
+      within(dialog()).getByText("Target dokumen · 320 / 1.000 kata · 5 hari lagi"),
+    ).toBeTruthy();
+    unmount();
+
+    render(<WordCount words={320} stats={stats} selection={null} targetSummary={null} />);
+    open();
+    expect(within(dialog()).queryByText(/Target dokumen/)).toBeNull();
+  });
 });

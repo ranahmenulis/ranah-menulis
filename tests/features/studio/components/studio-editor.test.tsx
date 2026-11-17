@@ -31,6 +31,8 @@ vi.mock("@/features/studio/hooks/use-studio-document", () => ({
     title: h.doc.title,
     setTitle: vi.fn(),
     words: h.doc.words,
+    targets: [],
+    setTargets: vi.fn(),
     onContentChange: vi.fn(),
     status: "saved",
     savedAt: null,
@@ -184,12 +186,38 @@ describe("StudioEditor, menu", () => {
     expect(h.push).not.toHaveBeenCalled();
   });
 
-  it("keeps Ekspor off until its format is decided", () => {
-    renderEditor();
+  it("offers Ekspor only when the document has text, and opens the export dialog", () => {
+    h.doc.words = 0;
+    const { unmount } = renderEditor();
     openMenu();
     expect((screen.getByRole("menuitem", { name: /Ekspor/ }) as HTMLButtonElement).disabled).toBe(
       true,
     );
+    unmount();
+
+    h.doc.words = 120;
+    renderEditor();
+    openMenu();
+    fireEvent.click(screen.getByRole("menuitem", { name: /Ekspor/ }));
+    expect(screen.getByRole("dialog", { name: "Ekspor dokumen" })).toBeTruthy();
+  });
+
+  it("offers Target dokumen only for a document with content, and opens its dialog", () => {
+    h.doc.words = 0;
+    h.doc.title = "";
+    const { unmount } = renderEditor();
+    openMenu();
+    expect(
+      (screen.getByRole("menuitem", { name: /Target dokumen/ }) as HTMLButtonElement).disabled,
+    ).toBe(true);
+    unmount();
+
+    h.doc.words = 120;
+    h.doc.title = "Yang Ditunggu Nenek";
+    renderEditor();
+    openMenu();
+    fireEvent.click(screen.getByRole("menuitem", { name: /Target dokumen/ }));
+    expect(screen.getByRole("dialog", { name: "Target dokumen" })).toBeTruthy();
   });
 
   it("moves the document to Sampah after storing it, then returns to the Studio list", async () => {

@@ -10,6 +10,9 @@ import { paragraphsOf } from "../diff-paragraphs";
 import { sameStats, type EditorStats } from "../editor-stats";
 import { useOnlineStatus } from "../hooks/use-online-status";
 import { useSendFromEditor } from "../hooks/use-send-from-editor";
+import { useDocumentTargets } from "../hooks/use-document-targets";
+import { useSprint } from "../hooks/use-sprint";
+import { useSprintPanel } from "../hooks/use-sprint-panel";
 import { useStudioDocument, type LoadState } from "../hooks/use-studio-document";
 import { studioStore as store } from "../storage/store";
 import { useDailyTarget } from "../hooks/use-daily-target";
@@ -17,12 +20,15 @@ import { useEditorMenu } from "../hooks/use-editor-menu";
 import { ConflictDialog, type ConflictVersion } from "./conflict-dialog";
 import { EditorBar } from "./editor-bar";
 import { EditorCanvas } from "./editor-canvas";
+import { DocumentTargetsDialog } from "./document-targets-dialog";
+import { ExportDialog } from "./export-dialog";
 import { EditorError, EditorLoading, EditorMissing } from "./editor-states";
 import { FocusHud } from "./focus-hud";
 import { FormatBar } from "./format-bar";
 import { HelpDrawer } from "./help-drawer";
 import { SendToProjectDialog } from "./send-to-project-dialog";
 import { ShareDialog } from "./share-dialog";
+import { SprintAnnouncer } from "./sprint-control";
 
 const FALLBACK_TITLE: Record<LoadState, string> = {
   loading: "",
@@ -51,7 +57,9 @@ export function StudioEditor({ documentId }: { documentId: string }) {
   const toast = useToast();
   const [helpOpen, setHelpOpen] = useState(false);
   const [focusMode, setFocusMode] = useState(false);
-  const [dialog, setDialog] = useState<"share" | "send" | null>(null);
+  const sprint = useSprint(doc.words);
+  const sprintPanel = useSprintPanel(sprint);
+  const [dialog, setDialog] = useState<"share" | "send" | "export" | "targets" | null>(null);
   const [stats, setStats] = useState<EditorStats | null>(null);
   const [selection, setSelection] = useState<EditorStats | null>(null);
   const [editor, setEditor] = useState<Editor | null>(null);
@@ -85,9 +93,15 @@ export function StudioEditor({ documentId }: { documentId: string }) {
   const isEmpty = doc.title.trim() === "" && doc.words === 0;
   const ready = doc.load === "ready";
   const { saveNow, getId } = doc;
+  /** Opened and not empty: something is stored that can be trashed or given targets. */
+  const stored = ready && !isEmpty;
 
   const openHelp = useCallback(() => setHelpOpen(true), []);
   const openSend = useCallback(() => setDialog("send"), []);
+  const openExport = useCallback(() => setDialog("export"), []);
+  const openTargets = useCallback(() => setDialog("targets"), []);
+  const docTargets = useDocumentTargets(doc.targets, doc.words);
+  const getContent = useCallback(() => editor?.getJSON() ?? null, [editor]);
 
   const share = useCallback(async () => {
     if (!(await saveNow())) return false;
@@ -142,11 +156,16 @@ export function StudioEditor({ documentId }: { documentId: string }) {
   }, [saveNow, getId, router, toast]);
 
   const menuItems = useEditorMenu({
-    canTrash: ready && !isEmpty,
+    canTrash: stored,
     canSend: doc.words > 0,
+    canExport: doc.words > 0,
+    canTarget: stored,
     onHelp: openHelp,
     onFocus: enterFocus,
     onSend: openSend,
+    onExport: openExport,
+    onTargets: openTargets,
+    onSprint: sprintPanel.show,
     onTrash: () => void moveToTrash(),
   });
 
@@ -203,6 +222,10 @@ export function StudioEditor({ documentId }: { documentId: string }) {
           ready={ready}
           fallbackTitle={FALLBACK_TITLE[doc.load]}
           menuItems={menuItems}
+          targetSummary={docTargets.summary}
+          sprint={sprint}
+          sprintOpen={sprintPanel.open}
+          onSprintOpenChange={sprintPanel.setOpen}
           onBack={() => void goBack()}
           onShare={() => setDialog("share")}
           onToggleHelp={() => setHelpOpen((v) => !v)}
@@ -230,15 +253,31 @@ export function StudioEditor({ documentId }: { documentId: string }) {
           words={doc.words}
           progress={doc.progress}
           target={target}
+          sprint={sprint}
           onExit={() => setFocusMode(false)}
         />
       )}
+      <SprintAnnouncer state={sprint.state} />
       <HelpDrawer open={helpOpen && !focusMode} onClose={() => setHelpOpen(false)} />
       <ShareDialog
         open={dialog === "share"}
         onClose={() => setDialog(null)}
         documentTitle={doc.title}
         onContinue={share}
+      />
+      <DocumentTargetsDialog
+        open={dialog === "targets"}
+        onClose={closeDialog}
+        words={doc.words}
+        targets={doc.targets}
+        today={docTargets.today}
+        onChange={doc.setTargets}
+      />
+      <ExportDialog
+        open={dialog === "export"}
+        onClose={closeDialog}
+        title={doc.title}
+        getContent={getContent}
       />
       <SendToProjectDialog
         open={dialog === "send"}
