@@ -1,6 +1,7 @@
 import { stageRank } from "@/features/projects/lomba/contest-model";
 import type { ContestStage } from "@/features/projects/lomba/types";
 import type { Submission } from "@/features/projects/submission-types";
+import { canonicalId } from "../identity";
 import type { JudgingEntry, JuryScore } from "./score-store";
 
 export const SCORE_MIN = 1;
@@ -141,7 +142,9 @@ export function judgeRows(
     title: work.title,
     genre: work.genre,
     words: work.versions.at(-1)?.wordCount ?? 0,
-    mine: scores.find((s) => s.submissionId === work.id && s.judgeId === judgeId),
+    mine: scores.find(
+      (s) => s.submissionId === work.id && canonicalId(s.judgeId) === canonicalId(judgeId),
+    ),
   }));
 }
 

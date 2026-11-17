@@ -2,8 +2,10 @@ import type { ManagerRole } from "@/lib/roles";
 import { isPlatformAdmin } from "@/lib/roles";
 import type { ProjectFixture } from "@/features/projects/types";
 
-/** The signed-in dummy Organizer. Real accounts replace it (6g-5). */
-export const OWNER_ID = "organizer-kamu";
+import { ME_ID, isSelf } from "../identity";
+
+/** The signed-in dummy account, as an Organizer. Real accounts replace it. */
+export const OWNER_ID = ME_ID;
 
 export type ManageAccess = "ok" | "bukan-milikmu" | "tidak-ada";
 
@@ -20,7 +22,7 @@ export function manageAccess(
   if (!project) return "tidak-ada";
   if (isPlatformAdmin(roles)) return "ok";
   if (!roles.includes("organizer")) return "bukan-milikmu";
-  return project.ownerId === undefined || project.ownerId === OWNER_ID ? "ok" : "bukan-milikmu";
+  return project.ownerId === undefined || isSelf(project.ownerId) ? "ok" : "bukan-milikmu";
 }
 
 export const manageableProjects = <T extends Pick<ProjectFixture, "ownerId">>(

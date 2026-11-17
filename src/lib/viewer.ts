@@ -50,6 +50,12 @@ export function useRoles(): readonly ManagerRole[] {
   return useMemo(() => (viewer === "tamu" ? NO_ROLES : parseRoles(raw)), [raw, viewer]);
 }
 
+/** The viewer and the roles chosen with `?sebagai=` right now, for button handlers. */
+export function readViewerNow(): { viewer: Viewer; roles: readonly ManagerRole[] } {
+  const viewer = read();
+  return { viewer, roles: viewer === "tamu" ? NO_ROLES : parseRoles(readRoles()) };
+}
+
 function store(viewer: Viewer, roles: string | null): boolean {
   try {
     sessionStorage.setItem(KEY, viewer);

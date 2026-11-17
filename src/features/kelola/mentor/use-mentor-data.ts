@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { useRoles } from "@/lib/viewer";
+import { useEffectiveRoles } from "@/features/kelola/use-effective-roles";
 import { useClassFixtures } from "@/features/projects/kelas/class-source";
 import { useStaffAssignments } from "../staff-assignments";
 import { useCatalog } from "@/features/projects/use-catalog";
@@ -52,7 +52,7 @@ export function useMentorClass(slug: string, sources: Sources = {}): MentorClass
   const defaultClasses = useClassFixtures();
   const classes = overrideClasses ?? defaultClasses;
   const catalog = useProjects(source);
-  const roles = useRoles();
+  const roles = useEffectiveRoles();
   const assigned = useStaffAssignments();
   const assignments = useAssignments(store);
   const allTasks = useMentorTasks();
@@ -104,7 +104,7 @@ export function useMentorClasses(sources: Sources = {}): MentorClassesData {
   const defaultClasses = useClassFixtures();
   const classes = overrideClasses ?? defaultClasses;
   const catalog = useProjects(source);
-  const roles = useRoles();
+  const roles = useEffectiveRoles();
   const assigned = useStaffAssignments();
   const assignments = useAssignments(store);
   const allTasks = useMentorTasks();

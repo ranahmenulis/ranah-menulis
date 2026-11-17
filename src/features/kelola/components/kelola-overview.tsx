@@ -1,12 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useRoles } from "@/lib/viewer";
+import { useEffectiveRoles } from "@/features/kelola/use-effective-roles";
 import { areasFor } from "../access";
 
 /** /kelola: one line per area the viewer can open. The frame has already refused everyone else. */
 export function KelolaOverview() {
-  const areas = areasFor(useRoles());
+  const areas = areasFor(useEffectiveRoles());
   return (
     <section aria-labelledby="kelola-title" className="max-w-170">
       <h1 id="kelola-title" className="heading-lg">

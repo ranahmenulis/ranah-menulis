@@ -17,6 +17,7 @@ export function ReasonDialog({
   fieldLabel = "Alasan",
   required = true,
   confirmLabel,
+  emptyMessage,
   busy,
   onConfirm,
   onClose,
@@ -26,6 +27,8 @@ export function ReasonDialog({
   fieldLabel?: string;
   required?: boolean;
   confirmLabel: string;
+  /** Replaces the default text when a required note is left empty. */
+  emptyMessage?: string;
   busy: boolean;
   onConfirm: (reason: string) => void;
   onClose: () => void;
@@ -33,7 +36,12 @@ export function ReasonDialog({
   const [text, setText] = useState("");
   const [problem, setProblem] = useState<ReasonProblem | null>(null);
   const field = useRef<HTMLTextAreaElement>(null);
-  const error = problem ? reasonMessage[problem] : undefined;
+  const error =
+    problem === "kosong" && emptyMessage
+      ? emptyMessage
+      : problem
+        ? reasonMessage[problem]
+        : undefined;
   const id = "alasan-keputusan";
 
   function submit() {
