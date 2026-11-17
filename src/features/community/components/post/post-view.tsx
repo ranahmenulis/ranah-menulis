@@ -16,6 +16,7 @@ import { PostActionBar, PostMobileBar } from "./post-action-bar";
 import { PostArticle } from "./post-article";
 import { GuestAside, PostError, PostGone, PostSkeleton } from "./post-states";
 import { RelatedPosts } from "./related-posts";
+import { fileReport } from "../../moderation/report-store";
 import { ReportDialog } from "./report-dialog";
 
 /**
@@ -110,7 +111,8 @@ export function PostView({ postId }: { postId: string }) {
       <ReportDialog
         subject={reportingPost ? "tulisan" : null}
         onClose={() => setReportingPost(false)}
-        onSubmit={() => {
+        onSubmit={(reason) => {
+          fileReport("post", postId, ME_ID, reason);
           setReportingPost(false);
           toast({ message: "Laporan terkirim. Terima kasih." });
         }}

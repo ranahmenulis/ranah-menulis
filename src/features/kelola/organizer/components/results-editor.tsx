@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { isPlatformAdmin } from "@/lib/roles";
 import { Button } from "@/components/ui/button";
 import { CheckChoice } from "@/components/ui/choice";
 import { Field, Input, Textarea, describedBy } from "@/components/ui/field";
@@ -9,7 +10,9 @@ import { storedResults } from "@/features/projects/lomba/results-store";
 import type { ContestStage } from "@/features/projects/lomba/types";
 import type { Submission } from "@/features/projects/submission-types";
 import type { Project } from "@/features/projects/types";
+import { ReasonDialog } from "../../components/reason-dialog";
 import { judgingStatus, scoreText } from "../../juri/judge-model";
+import { useEffectiveRoles } from "../../use-effective-roles";
 import { useJudgingLog, useJuryScores } from "../../juri/score-store";
 import { saveContestResults } from "../results-actions";
 import {
@@ -46,21 +49,32 @@ export function ResultsEditor({
   const rows = rankRows(works, scores, criteria, project.slug);
   const lock = resultsLock(stage, judgingStatus(stage, log, project.slug));
   const saved = stored.find((r) => r.slug === project.slug);
+  // After the winners are announced an Administrator can still correct them, with a reason that is
+  // logged. Only results the Organizer recorded can be corrected; sample results are fixed.
+  const admin = isPlatformAdmin(useEffectiveRoles());
+  const amend = lock === "terkunci" && admin && saved !== undefined;
 
   return (
     <section aria-labelledby="hasil-title" className="grid gap-3 border-t border-line pt-5">
       <h3 id="hasil-title" className="heading-sm">
         Finalis dan pemenang
       </h3>
-      {lock !== "terbuka" && <Notice>{lockText[lock]}</Notice>}
+      {lock !== "terbuka" && (
+        <Notice>
+          {amend
+            ? "Pemenang sudah diumumkan. Sebagai Administrator kamu masih bisa mengubahnya dengan alasan yang tercatat di audit log."
+            : lockText[lock]}
+        </Notice>
+      )}
       {rows.length === 0 ? (
         <EmptyState>Belum ada karya yang dikirim ke lomba ini di perangkat ini.</EmptyState>
       ) : (
         <Form
-          key={`${project.slug}-${lock}-${rows.map((r) => r.id).join(",")}`}
+          key={`${project.slug}-${lock}-${amend}-${rows.map((r) => r.id).join(",")}`}
           project={project}
           rows={rows}
           lock={lock}
+          amend={amend}
           prizes={prizes}
           initial={inputOf(saved, rows)}
         />
@@ -69,16 +83,27 @@ export function ResultsEditor({
   );
 }
 
+/** What to say when a save did not go through and no row carries the message. */
+function failureText(result: { reason: string; message?: string }): string {
+  if (result.reason === "salah") return "";
+  if (result.reason === "bukan-admin")
+    return "Hanya Administrator yang bisa mengubah hasil yang sudah diumumkan.";
+  if (result.reason === "alasan") return result.message ?? "";
+  return lockText[result.reason === "terkunci" ? "terkunci" : "belum-ditutup"];
+}
+
 function Form({
   project,
   rows,
   lock,
+  amend,
   prizes,
   initial,
 }: {
   project: Project;
   rows: RankRow[];
   lock: ReturnType<typeof resultsLock>;
+  amend: boolean;
   prizes: number;
   initial: ResultsInput;
 }) {
@@ -86,11 +111,18 @@ function Form({
   const [errors, setErrors] = useState<ResultsErrors>({});
   const [said, setSaid] = useState("");
   const line = useRef<HTMLParagraphElement>(null);
-  const readOnly = lock === "belum-ditutup" || lock === "terkunci";
-  const finalistsFixed = lock === "finalis-tetap";
+  const [asking, setAsking] = useState(false);
+  const readOnly = lock === "belum-ditutup" || (lock === "terkunci" && !amend);
+  const finalistsFixed = lock === "finalis-tetap" || amend;
 
-  function submit() {
-    const result = saveContestResults(project, rows, input, Date.now());
+  function submit(reason?: string) {
+    const result = saveContestResults(
+      project,
+      rows,
+      input,
+      Date.now(),
+      reason === undefined ? undefined : { reason },
+    );
     if (result.ok) {
       setErrors({});
       setSaid(
@@ -98,11 +130,7 @@ function Form({
       );
     } else {
       setErrors(result.errors);
-      setSaid(
-        result.reason === "salah"
-          ? ""
-          : lockText[result.reason === "terkunci" ? "terkunci" : "belum-ditutup"],
-      );
+      setSaid(failureText(result));
       const first = Object.keys(result.errors)[0];
       if (first && first !== FINALISTS_KEY) document.getElementById(`hasil-${first}`)?.focus();
     }
@@ -118,7 +146,8 @@ function Form({
       className="grid gap-4"
       onSubmit={(e) => {
         e.preventDefault();
-        submit();
+        if (amend) setAsking(true);
+        else submit();
       }}
     >
       {errors[FINALISTS_KEY] && (
@@ -145,8 +174,23 @@ function Form({
       </p>
       {!readOnly && (
         <Button type="submit" className="justify-self-start">
-          Simpan hasil
+          {amend ? "Ubah pemenang" : "Simpan hasil"}
         </Button>
+      )}
+      {asking && (
+        <ReasonDialog
+          title="Ubah pemenang setelah diumumkan"
+          hint="Pengumuman berubah untuk semua pembaca. Perubahan dan alasannya tercatat di audit log."
+          fieldLabel="Alasan perubahan"
+          emptyMessage="Tulis alasan perubahannya. Alasan tercatat di audit log."
+          confirmLabel="Ubah pemenang"
+          busy={false}
+          onConfirm={(reason) => {
+            setAsking(false);
+            submit(reason);
+          }}
+          onClose={() => setAsking(false)}
+        />
       )}
     </form>
   );

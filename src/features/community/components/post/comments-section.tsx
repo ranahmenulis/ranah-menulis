@@ -14,6 +14,7 @@ import { mark } from "../../storage/post-store";
 import type { Comment, Post, ReportReason } from "../../types";
 import { CommentComposer } from "./comment-composer";
 import { CommentItem, type CommentView } from "./comment-item";
+import { fileReport } from "../../moderation/report-store";
 import { ReportDialog } from "./report-dialog";
 
 const FIRST_THREADS = 3;
@@ -71,8 +72,10 @@ export function CommentsSection({ post, data, guest, actions }: Props) {
   }
 
   function submitReport(reason: ReportReason) {
-    void reason; // the reason is only collected for now; it goes to moderation with the backend
-    if (reporting) void flag(mark.reported(reporting.id), true, "Laporan belum tersimpan.");
+    if (reporting) {
+      fileReport("comment", reporting.id, ME_ID, reason);
+      void flag(mark.reported(reporting.id), true, "Laporan belum tersimpan.");
+    }
     setReporting(null);
     toast({ message: "Laporan terkirim. Terima kasih." });
   }
