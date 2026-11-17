@@ -13,7 +13,7 @@ RanahMenulis adalah aplikasi web responsif yang mengantar seseorang dari menulis
 | Platform | Aplikasi web responsif (desktop, tablet, smartphone). Aplikasi Android dan iOS untuk Play Store dan App Store dibungkus dari versi web setelah web stabil; waktunya mengikuti Q-40 |
 | Target pasar | Indonesia dan Malaysia |
 | Teknologi terencana | Next.js dalam satu proyek (monolith untuk tampilan dan backend), TypeScript, Tailwind CSS, shadcn/ui; Supabase (PostgreSQL, Auth, Storage) untuk MVP, dengan rencana memindahkan database (bukan login) ke VPS saat sudah penuh dipakai (bagian 19.3). Pembayaran QRIS memakai layanan sendiri di VPS kecil sejak MVP (bagian 19.2) |
-| Status dokumen | Draf v0.2, revisi 9 November 2026, untuk ditinjau founder. Memuat keputusan diskusi lanjutan dan rapat 8 November 2026 (Streak menyatu dengan Studio, Grup Penulis, Marketplace setelah MVP, Next.js monolith dengan Supabase, dan rencana migrasi ke VPS), serta revisi 9 November 2026: tingkat Super Admin yang memberikan role Administrator, grup dibuat Administrator dengan lebih dari satu admin grup, dan logo grup di Fase 2. Belum ada kode atau implementasi |
+| Status dokumen | Draf v0.2, revisi 9 November 2026, untuk ditinjau founder. Memuat keputusan diskusi lanjutan dan rapat 8 November 2026 (Streak menyatu dengan Studio, Grup Penulis, Marketplace setelah MVP, Next.js monolith dengan Supabase, dan rencana migrasi ke VPS), serta revisi 9 November 2026: tingkat Super Admin yang memberikan role Administrator, grup dibuat Administrator dengan lebih dari satu admin grup (penulis kini boleh membuat grup sendiri: BR-COM-12, Q-57), dan logo grup di Fase 2. Belum ada kode atau implementasi |
 
 Produk memiliki **tiga modul inti**. Ranah Streak kini menjadi bagian dari Ranah Studio. Marketplace ditambahkan setelah MVP. Modul lain tidak ditambah tanpa persetujuan founder.
 
@@ -237,19 +237,24 @@ Setiap fitur memiliki ID yang dipakai di seluruh dokumen (kebutuhan fungsional, 
 | PLT-07 | Pembayaran: informasi biaya, pembayaran QRIS (konfirmasi lewat webhook; awalnya semi-manual dengan dashboard admin), dan konfirmasi manual | Peserta, Organizer | MVP (Q-19) |
 | PLT-08 | Pembayaran online MYR dan gateway resmi lintas mata uang | Peserta | Fase 2 |
 | PLT-09 | Logo grup: Admin Grup atau Administrator mengunggah gambar sebagai logo Grup Penulis | Admin Grup, Administrator | Fase 2 |
-| PLT-10 | Dashboard di Beranda: blok ringkasan "Hari ini" di atas feed (lanjutkan menulis, progres harian, hal yang perlu perhatian, proyek saya, notifikasi baru) | Registered User ke atas | MVP (sementara, ditinjau ulang setelah desain; Q-49) |
+| PLT-10 | Dashboard di Beranda: blok ringkasan "Hari ini" di atas feed (lanjutkan menulis, progres harian, hal yang perlu perhatian, proyek saya, notifikasi baru, ringkasan mingguan, tiga angka kata, kartu panduan awal yang bisa ditutup, kartu proyek dan kelas yang sedang dibuka) | Registered User ke atas | MVP (sementara, ditinjau ulang setelah desain; Q-49) |
+| PLT-11 | Pengaturan notifikasi, email progres menulis mingguan, dan notifikasi penyemangat sederhana saat menulis | Registered User ke atas | MVP (keputusan client 17 November 2026) |
+| PLT-12 | Satu tautan komunitas luar resmi (Discord atau WhatsApp) tempat percakapan diarahkan, pengganti chat realtime | Semua | MVP (keputusan client 17 November 2026) |
 
 ### 9.2 Studio, area Streak
 
 | ID | Fitur | Pengguna utama | Fase |
 | --- | --- | --- | --- |
-| STK-01 | Target menulis harian | Writer | MVP |
+| STK-01 | Target menulis harian (dialog dengan pilihan cepat; harian saja, tanpa target mingguan) | Writer | MVP |
 | STK-02 | Pelacakan jumlah kata (berbasis perubahan) | Writer | MVP |
 | STK-03 | Kalender aktivitas menulis | Writer | MVP |
 | STK-04 | Penghitungan streak | Writer | MVP |
-| STK-05 | Statistik harian, mingguan, bulanan | Writer | MVP (dasar) |
+| STK-05 | Statistik harian, mingguan, bulanan, ditambah tiga angka kata (minggu, bulan, tahun ini) | Writer | MVP (dasar) |
 | STK-06 | Pencapaian atau milestone | Writer | MVP (daftar dasar) |
 | STK-07 | Kartu pencapaian yang dapat dibagikan | Writer | Fase 2 |
+| STK-08 | Target per dokumen: target kata dan tenggat, boleh lebih dari satu per dokumen | Writer | MVP (keputusan client 17 November 2026) |
+| STK-09 | Riwayat streak sebelumnya | Writer | MVP (keputusan client 17 November 2026) |
+| STK-10 | Kartu progres yang dapat dibagikan | Writer | MVP (keputusan client 17 November 2026) |
 
 ### 9.3 Studio, area Menulis
 
@@ -266,6 +271,15 @@ Setiap fitur memiliki ID yang dipakai di seluruh dokumen (kebutuhan fungsional, 
 | STD-09 | Kirim dokumen ke Projects sebagai versi submission | Writer | MVP |
 | STD-10 | Bagikan prolog atau cuplikan dokumen ke Community | Writer | MVP |
 | STD-11 | Kit inspirasi dan tab bantuan di dalam editor (ide cerita, kalimat pembuka, kamus diksi, pertanyaan refleksi, ide judul, kalimat penutup, kamus transisi, perpustakaan prompt) | Writer | MVP |
+| STD-12 | Riwayat versi tulisan, disimpan 3 hari | Writer | MVP (keputusan client 17 November 2026) |
+| STD-13 | Timer sprint pribadi di editor | Writer | MVP (keputusan client 17 November 2026) |
+| STD-14 | Pencarian cepat dan pencarian di daftar dokumen | Writer | MVP (keputusan client 17 November 2026) |
+| STD-15 | Arsip dan duplikat dokumen | Writer | MVP (keputusan client 17 November 2026) |
+| STD-16 | Jenis dokumen dan tag | Writer | MVP (keputusan client 17 November 2026) |
+| STD-17 | Pengaturan menulis di akun dan daftar pintasan keyboard | Writer | MVP (keputusan client 17 November 2026) |
+| STD-18 | Angka kata yang dapat disematkan di editor | Writer | MVP (keputusan client 17 November 2026) |
+| STD-19 | Gambar kutipan untuk dibagikan | Writer | MVP (keputusan client 17 November 2026) |
+| STD-20 | Impor naskah dari Word (.docx saja) | Writer | Fase 2 (keputusan client 17 November 2026) |
 
 ### 9.4 Ranah Community
 
@@ -283,6 +297,8 @@ Setiap fitur memiliki ID yang dipakai di seluruh dokumen (kebutuhan fungsional, 
 | COM-10 | Profil penulis publik dan portofolio | Semua | MVP |
 | COM-11 | Kartu tulisan yang dapat dibagikan | Writer | Fase 2 |
 | COM-12 | Publikasi karya penuh (tulisan pendek dan tulisan panjang) | Writer | Fase 2 (Q-14) |
+| COM-13 | Event: fitur umum (tantangan menulis bersama; tantangan pertama jadi contoh), tampil sebagai daftar kartu, peserta hanya berupa jumlah | Semua | MVP (keputusan client 17 November 2026) |
+| COM-14 | Berbagi progres ke grup sebagai pilihan terpisah, dengan peringatan privasi | Anggota Grup | MVP (keputusan client 17 November 2026) |
 
 ### 9.5 Projects
 
@@ -304,6 +320,10 @@ Setiap fitur memiliki ID yang dipakai di seluruh dokumen (kebutuhan fungsional, 
 | LMB-01 | Kriteria dan sistem penilaian juri (termasuk anonim) | Lomba | Judge | MVP |
 | LMB-02 | Pengumuman finalis dan pemenang | Lomba | Semua | MVP |
 | LMB-03 | Sertifikat lomba | Lomba | Pemenang, peserta | Fase 2 |
+| PRJ-06 | Pembatalan pendaftaran oleh peserta, hanya untuk proyek gratis | Semua | Writer | MVP (keputusan client 17 November 2026) |
+| KLS-05 | Bagian "Kelas yang sedang berjalan" dengan tombol Lanjutkan | Kelas Menulis | Writer | MVP (keputusan client 17 November 2026) |
+| KLS-06 | Salin latihan menulis dari kelas ke Studio | Kelas Menulis | Writer | MVP (keputusan client 17 November 2026) |
+| KLS-07 | Testimoni peserta di halaman kelas | Kelas Menulis | Semua | MVP (keputusan client 17 November 2026) |
 
 ## 10. Kebutuhan Fungsional Setiap Fitur
 
@@ -315,12 +335,14 @@ Kolom "Pemicu dan perilaku sistem" menjelaskan apa yang terjadi saat pengguna be
 | --- | --- | --- | --- |
 | PLT-01 | Pengguna mendaftar dengan email dan kata sandi; sistem mengirim email verifikasi; akun aktif penuh setelah verifikasi. Login, logout, dan reset kata sandi tersedia. Setiap akun baru otomatis berperan Registered User; peran lain tidak dapat dipilih saat mendaftar. Metode login sosial: Q-05 | Email, hash kata sandi (dikelola Supabase Auth), status verifikasi, waktu daftar | Email sudah terdaftar; tautan verifikasi kedaluwarsa (kirim ulang); kata sandi lemah ditolak; percobaan login berulang dibatasi |
 | PLT-02 | Pengguna melengkapi profil: nama, username unik, foto, bio, negara (Indonesia atau Malaysia), zona waktu, genre. Zona waktu terisi otomatis dari perangkat dan dapat diubah | Profil, username, negara, zona waktu, pengaturan privasi | Username dipakai orang lain; foto melebihi ukuran; perubahan zona waktu memengaruhi perhitungan streak (aturan di bagian 14) |
-| PLT-03 | Sistem memeriksa role dan penugasan pada setiap aksi yang dilindungi, di antarmuka maupun di basis data. Role Administrator dan Super Admin hanya dapat diberikan atau dicabut oleh Super Admin. Administrator atau Super Admin membuat grup, mengundang anggota, dan menunjuk Admin Grup (satu grup boleh lebih dari satu Admin Grup; aturan di bagian 15.4) | Role, penugasan per proyek, submission, atau grup | Pengguna tanpa hak mendapat pesan akses ditolak; Administrator yang mencoba memberi role Administrator ditolak; pencabutan Super Admin terakhir ditolak; perubahan role dicatat di audit log |
+| PLT-03 | Sistem memeriksa role dan penugasan pada setiap aksi yang dilindungi, di antarmuka maupun di basis data. Role Administrator dan Super Admin hanya dapat diberikan atau dicabut oleh Super Admin. Administrator, Super Admin, atau penulis (BR-COM-12, Q-57) membuat grup, mengundang anggota, dan menunjuk Admin Grup (satu grup boleh lebih dari satu Admin Grup; aturan di bagian 15.4) | Role, penugasan per proyek, submission, atau grup | Pengguna tanpa hak mendapat pesan akses ditolak; Administrator yang mencoba memberi role Administrator ditolak; pencabutan Super Admin terakhir ditolak; perubahan role dicatat di audit log |
 | PLT-04 | Peristiwa penting (lihat bagian 20) membuat notifikasi dalam aplikasi dan, bila berlaku, email. Pengguna mengatur preferensi | Notifikasi, status baca, preferensi | Email gagal terkirim (coba ulang); notifikasi duplikat dicegah |
 | PLT-05 | Administrator mengelola pengguna (di bawah tingkat Administrator), grup, proyek, konten yang dikurasi, dan melihat audit log. Super Admin memiliki semua wewenang itu, ditambah memberi dan mencabut role Administrator dan mengubah pengaturan tingkat sistem | Audit log (siapa, apa, kapan) | Tindakan sensitif memerlukan konfirmasi; tidak ada pengguna, termasuk Super Admin, yang dapat mengubah atau menghapus log |
 | PLT-06 | Pengguna melaporkan karya atau komentar; laporan masuk antrean; admin memutuskan (abaikan, sembunyikan, hapus, tindak pada akun) | Laporan, alasan, status, keputusan | Laporan ganda pada konten sama digabung; pelapor tidak terlihat oleh pihak terlapor |
 | PLT-07 | Halaman proyek menampilkan biaya per mata uang. Peserta membayar lewat QRIS dan sistem mengonfirmasi lewat webhook; bila konfirmasi otomatis belum tersedia, peserta mengirim bukti dan Organizer atau Administrator mengonfirmasi. Setelah itu pendaftaran menjadi aktif | Biaya, mata uang, status pembayaran, bukti | Bukti ditolak; kuota habis sebelum konfirmasi (aturan penahanan kuota: Q-20) |
 | PLT-10 | **Sementara, ditinjau ulang setelah desain (Q-49).** Pengguna yang masuk melihat blok "Hari ini" di atas feed Beranda, berurutan: Lanjutkan menulis (dokumen yang terakhir diubah, tombol membukanya); Progres hari ini (kata hari ini terhadap target dan streak, tautan ke Dasbor Streak); Perlu perhatian (paling banyak tiga butir: Perlu Revisi, pembayaran menunggu konfirmasi dengan sisa waktu penahanan kuota, tugas kelas mendekati deadline, undangan grup; untuk Organizer, Editor, Judge, Mentor, dan Administrator berisi pekerjaan yang menunggu mereka); Proyek saya (satu sampai dua pendaftaran aktif beserta status dan deadline berikutnya); Notifikasi baru. Blok tanpa isi tidak ditampilkan. Pengguna baru melihat tiga langkah awal: lengkapi profil, tetapkan target harian, tulis dokumen pertama; langkah hilang setelah selesai. Guest tidak melihat blok ini | Tidak ada data baru; dibaca dari Studio, Streak, Projects, dan notifikasi milik pengguna sendiri | Satu blok gagal dimuat tidak mematikan blok lain maupun feed; pemegang beberapa peran melihat butir gabungan paling banyak tiga dengan tautan ke Kelola atau Admin; belum ada target harian: ajakan menetapkan target |
+| PLT-11 | Pengguna mengatur jenis notifikasi dalam aplikasi dan email per peristiwa (bagian 20). Email progres menulis mingguan memuat kata minggu itu, streak, dan target; dapat dimatikan. Notifikasi penyemangat saat menulis sederhana (misalnya saat target hampir tercapai), dapat dimatikan | Preferensi notifikasi, jadwal email | Pesan yang wajib (verifikasi, reset sandi, pembayaran) tidak dapat dimatikan |
+| PLT-12 | Aplikasi menampilkan satu tautan komunitas luar resmi (Discord atau WhatsApp) yang ditetapkan Administrator. Tidak ada chat atau DM realtime di dalam aplikasi | Tautan | Tautan belum diatur: bagian tidak tampil |
 
 ### 10.2 Studio, area Streak
 
@@ -333,6 +355,9 @@ Kolom "Pemicu dan perilaku sistem" menjelaskan apa yang terjadi saat pengguna be
 | STK-05 | Halaman statistik menampilkan kata per hari, minggu, dan bulan, rata-rata, hari terbaik, dan perbandingan dengan target | Agregat dari catatan aktivitas | Data belum cukup tampil sebagai keadaan kosong |
 | STK-06 | Milestone dibuka otomatis bila syarat terpenuhi (contoh: streak 7 hari, total 10.000 kata). Daftar milestone dan syaratnya ditetapkan produk (Q-10) | Definisi milestone, milestone pengguna, tanggal diraih | Milestone dibuka dua kali dicegah |
 | STK-07 | Pengguna membuat kartu pencapaian (gambar) dengan nama dan milestone, lalu membagikannya ke Instagram, Threads, atau WhatsApp | Gambar kartu, tautan | Pembagian dibatalkan; ukuran gambar per platform |
+| STK-08 | Pengguna menambahkan satu atau lebih target pada sebuah dokumen: target kata dan tenggat. Progres dihitung dari kata dokumen itu. Target dokumen terpisah dari target harian | Target dokumen (dokumen, target kata, tenggat) | Tenggat lewat: target ditandai terlewat, tidak dihapus; dokumen dihapus: target ikut ke Sampah |
+| STK-09 | Pengguna melihat riwayat streak sebelumnya (rentang, panjang, dan kapan putus) | Riwayat streak | Belum pernah putus: hanya streak berjalan |
+| STK-10 | Pengguna membuat kartu progres (gambar: kata, streak, target) dan membagikannya. Hanya angka yang pengguna pilih yang tampil | Gambar kartu | Pembagian dibatalkan; data streak privat tidak ikut kecuali dipilih (BR-STK-09) |
 
 ### 10.3 Studio, area Menulis
 
@@ -348,6 +373,15 @@ Kolom "Pemicu dan perilaku sistem" menjelaskan apa yang terjadi saat pengguna be
 | STD-09 | Dari halaman proyek, peserta memilih dokumen atau manuskrip. Sistem membuat **versi submission** (salinan beku) lalu menautkannya ke pendaftaran. Mengedit dokumen asli tidak mengubah versi itu. Detail alur di 10.5 | Versi submission (isi, hash, waktu), tautan ke dokumen asal | Dokumen kosong atau di luar batas kata ditolak validasi |
 | STD-10 | Dari dokumen, pengguna memilih bagian (prolog atau cuplikan) untuk dibagikan ke Community. Sistem membuat postingan (salinan publik dari bagian yang dipilih) setelah pengguna memeriksa pratinjau dan mengaturnya sebagai publik. Dokumen pribadi tetap pribadi | Karya komunitas, tautan ke dokumen asal | Mengedit dokumen asal tidak otomatis memperbarui karya publik; pembaruan harus disengaja (Q-16) |
 | STD-11 | Di editor tersedia tab atau drawer bantuan berisi kit inspirasi (ide cerita, kalimat pembuka, kamus diksi, pertanyaan refleksi, ide judul, kalimat penutup, kamus transisi) dan perpustakaan prompt dengan tombol salin. Tab bantuan menjelaskan bagian yang sedang dibuka | Konten kit (statis), favorit pengguna | Konten kit tidak memanggil model AI |
+| STD-12 | Editor menyimpan versi tulisan secara berkala dan sebelum perubahan besar. Pengguna melihat daftar versi, membandingkan, dan memulihkan. Versi disimpan 3 hari (BR-STD-06) | Versi dokumen | Memulihkan membuat versi baru, tidak menimpa; versi lewat 3 hari dihapus |
+| STD-13 | Pengguna menjalankan timer sprint (durasi pilihan) di editor; kata yang ditulis selama sprint ditampilkan di akhir. Sesi sprint bersama menjadi bagian Event (COM-13) | Sesi sprint | Halaman ditutup saat berjalan: sesi berhenti dan kata tetap tersimpan |
+| STD-14 | Pencarian cepat membuka dokumen atau folder dari mana saja di Studio; daftar dokumen dapat dicari berdasarkan judul dan isi | Indeks pencarian pribadi | Tanpa hasil: keadaan kosong; dokumen di Sampah tidak muncul |
+| STD-15 | Pengguna mengarsipkan dokumen (keluar dari daftar utama, tidak dihapus) dan menduplikat dokumen | Status arsip, salinan | Duplikat tidak membawa riwayat versi atau target |
+| STD-16 | Pengguna memberi jenis dokumen (misalnya cerpen, puisi, esai) dan tag, lalu menyaring daftar dengannya. Status dokumen tidak termasuk | Jenis, tag | Tag dihapus dari dokumen tidak menghapus dokumen |
+| STD-17 | Pengaturan menulis di akun (tampilan editor yang tersedia, perilaku dasar) dan halaman daftar pintasan keyboard. Gaya tulis tetap satu; tidak ada pilihan font atau jarak baris per dokumen | Pengaturan pengguna | Pintasan bentrok dengan peramban: tidak dipakai |
+| STD-18 | Pengguna menyematkan angka kata (dokumen, sesi, atau target) di editor | Pengaturan sematan | Mode fokus tetap menampilkan jumlah kata |
+| STD-19 | Pengguna memilih kutipan dari tulisannya dan membuat gambar untuk dibagikan, memuat nama penulis | Gambar kutipan | Hanya teks yang pengguna pilih yang masuk gambar (BR-COM-01) |
+| STD-20 | **Fase 2.** Pengguna mengimpor berkas .docx menjadi dokumen baru. Format lain tidak didukung | Dokumen hasil impor | Berkas rusak atau terlalu besar ditolak dengan alasan |
 
 ### 10.4 Ranah Community
 
@@ -365,6 +399,8 @@ Kolom "Pemicu dan perilaku sistem" menjelaskan apa yang terjadi saat pengguna be
 | COM-10 | Profil publik berisi nama, username, foto, bio, negara, genre, portofolio, karya terbit, followers, following. Pengguna mengatur apa yang tampil | Profil, portofolio | Akun dinonaktifkan: profil tidak tampil |
 | COM-11 | Penulis memilih bagian teks dari karyanya, memilih tampilan kartu, dan mengunduh atau membagikan gambar ke Instagram, Threads, atau WhatsApp. Kartu memuat nama penulis dan tautan karya asli | Kartu (teks terpilih, gaya, tautan) | Teks terlalu panjang untuk kartu dibatasi; karya asli ditarik: tautan menuju halaman tidak tersedia |
 | COM-12 | Penulis memilih dokumen, jenis (pendek atau panjang), judul, genre, dan menerbitkan karya penuh sebagai salinan publik. Batas kata tulisan pendek dan tulisan panjang ditetapkan saat fitur ini dikerjakan (Q-14). Muncul di Fase 2 | Karya (jenis, isi, genre, status, tanggal terbit) | Melebihi batas: pesan jelas dan saran mengubah jenis; draf dapat disimpan sebelum terbit |
+| COM-13 | Penyelenggara membuat Event (judul, deskripsi, jadwal, aturan) dan pengguna bergabung. Event tampil sebagai daftar kartu, tanpa tampilan kalender. Jumlah peserta tampil untuk semua; nama peserta hanya terlihat oleh anggota grup yang sama. Tantangan menulis bersama adalah contoh pertama; sesi sprint bersama menjadi bagian Event | Event, peserta | Event penuh atau selesai: tombol bergabung nonaktif; keluar dari Event menghapus pendaftaran |
+| COM-14 | Anggota grup membagikan progres menulis ke grupnya lewat pilihan terpisah dari pembagian karya. Sebelum dibagikan, peringatan privasi menyebut siapa yang akan melihat | Progres yang dibagikan | Keluar dari grup mencabut akses ke progres yang pernah dibagikan |
 
 ### 10.5 Projects: fondasi bersama empat kategori
 
@@ -375,6 +411,7 @@ Kolom "Pemicu dan perilaku sistem" menjelaskan apa yang terjadi saat pengguna be
 | PRJ-03 | Organizer membuat proyek (kategori, judul, deskripsi, ketentuan, biaya, kuota, jadwal), menugaskan Editor atau Judge/Mentor, mempublikasikan, menutup, dan melihat daftar peserta serta submission | Proyek, penugasan, jadwal | Organizer hanya mengakses proyek miliknya; proyek yang sudah punya peserta tidak dapat dihapus, hanya diarsipkan; perubahan ketentuan setelah ada peserta memerlukan pemberitahuan |
 | PRJ-04 | Alur pengiriman karya (rinci di bawah) | Submission, versi, status | Lihat tabel status |
 | PRJ-05 | Pembeli memesan buku terbit melalui halaman buku; sistem menyimpan pesanan dan statusnya | Pesanan | Ditunda ke Fase 3; model penjualan (cetak, pre-order, pengiriman) (Q-25) |
+| PRJ-06 | Peserta membatalkan pendaftaran hanya untuk proyek gratis; kuota dikembalikan dan status tercatat. Proyek berbayar tidak punya pembatalan (Q-30 untuk pengembalian dana) | Status pendaftaran | Karya sudah dikirim: pembatalan menarik submission lebih dulu atau ditolak [konfirmasi] |
 
 **Alur pengiriman karya (berlaku untuk Antologi, Solo, dan Lomba).**
 
@@ -416,6 +453,9 @@ Aturan: perubahan status dicatat dengan siapa, kapan, dan alasan; peserta tidak 
 | LMB-01 | Admin atau Organizer menetapkan kriteria dan bobot. Juri yang ditugaskan menilai tiap karya per kriteria dan memberi catatan. Bila lomba anonim, nama dan profil peserta disembunyikan dari juri sampai penilaian ditutup. Skor digabung menurut aturan (rata-rata atau lainnya (Q-28)) | Kriteria, bobot, penugasan, skor, catatan | Juri tidak dapat mengubah skor setelah penilaian ditutup; konflik kepentingan (juri mengenal peserta): Q-28; karya anonim tidak boleh memuat identitas di isi karya |
 | LMB-02 | Organizer menetapkan finalis lalu pemenang berdasarkan hasil; pengumuman dipublikasikan di halaman lomba dan notifikasi dikirim ke peserta | Finalis, pemenang, peringkat, tanggal umum | Hasil seri; pengumuman tidak dapat diubah tanpa catatan audit |
 | LMB-03 | Sertifikat peserta, finalis, dan pemenang dibuat dengan format yang berbeda | Sertifikat | Fase 2 |
+| KLS-05 | Peserta melihat bagian "Kelas yang sedang berjalan" dengan tombol Lanjutkan menuju materi atau tugas berikutnya | Pendaftaran, progres | Tanpa kelas berjalan: bagian tidak tampil |
+| KLS-06 | Peserta menyalin latihan menulis dari materi kelas ke Studio sebagai dokumen baru | Dokumen baru | Dokumen tidak menjadi submission tugas dengan sendirinya |
+| KLS-07 | Halaman kelas menampilkan testimoni peserta yang disetujui pemiliknya dan dikurasi pengelola | Testimoni | Tanpa testimoni: bagian tidak tampil |
 
 ## 11. Kebutuhan Nonfungsional
 
@@ -488,6 +528,19 @@ Format: sebagai peran, saya ingin tujuan, agar manfaat. Kolom Fitur menunjuk ke 
 | US-40 | Admin Grup | Saya ingin memasang logo pada grup saya, agar grup punya identitas | PLT-09 | Fase 2 |
 | US-41 | Writer | Saya ingin langsung melihat dokumen terakhir, progres target hari ini, dan hal yang menunggu tindakanku saat membuka Beranda, agar tahu apa yang harus kulakukan sekarang | PLT-10 | MVP (sementara, Q-49) |
 | US-42 | Organizer, Editor, Judge/Mentor, Administrator | Saya ingin melihat pekerjaan yang menunggu saya di Beranda, agar tidak perlu membuka tiap panel satu per satu | PLT-10 | MVP (sementara, Q-49) |
+| US-43 | Writer | Saya ingin menetapkan target kata dan tenggat per dokumen, agar tiap naskah punya tujuan sendiri | STK-08 | MVP |
+| US-44 | Writer | Saya ingin memulihkan versi tulisan dalam 3 hari terakhir, agar salah hapus tidak fatal | STD-12 | MVP |
+| US-45 | Writer | Saya ingin menjalankan timer sprint, agar menulis lebih fokus | STD-13 | MVP |
+| US-46 | Writer | Saya ingin mencari, mengarsipkan, menduplikat, dan memberi tag dokumen, agar daftar tetap rapi | STD-14, STD-15, STD-16 | MVP |
+| US-47 | Writer | Saya ingin membuat gambar kutipan dan kartu progres, agar bisa berbagi tanpa membuka karya penuh | STD-19, STK-10 | MVP |
+| US-48 | Writer | Saya ingin mengimpor naskah dari Word, agar tidak mengetik ulang | STD-20 | Fase 2 |
+| US-49 | Registered User | Saya ingin mengatur notifikasi dan menerima email progres mingguan, agar tetap termotivasi tanpa diganggu | PLT-11 | MVP |
+| US-50 | Writer | Saya ingin bergabung ke Event menulis dan melihat jumlah pesertanya, agar punya teman menulis | COM-13 | MVP |
+| US-51 | Anggota Grup | Saya ingin membagikan progres ke grup sebagai pilihan terpisah, dengan peringatan privasi | COM-14 | MVP |
+| US-52 | Registered User | Saya ingin menuju tautan komunitas luar resmi, agar bisa ngobrol di platform lain | PLT-12 | MVP |
+| US-53 | Peserta | Saya ingin membatalkan pendaftaran proyek gratis, agar kuota bisa dipakai orang lain | PRJ-06 | MVP |
+| US-54 | Peserta kelas | Saya ingin melanjutkan kelas yang sedang berjalan dan menyalin latihan ke Studio, agar belajar tidak terputus | KLS-05, KLS-06 | MVP |
+| US-55 | Penulis | Saya ingin membuat grup menulis sendiri, agar tidak menunggu Administrator | PLT-03 (Grup Penulis) | MVP |
 
 ## 13. User Flows
 
@@ -570,6 +623,7 @@ Aturan bertanda **Usulan** adalah rekomendasi untuk dikonfirmasi. Aturan tanpa t
 | BR-STK-07 | Streak putus bila satu hari penuh berakhir tanpa memenuhi syarat. Mekanisme pemulihan (misalnya hari libur atau freeze) tidak ada di MVP. (Q-09) |
 | BR-STK-08 | Aktivitas di dokumen yang kemudian dihapus tetap dihitung untuk hari itu. **Usulan** |
 | BR-STK-09 | Data streak bersifat pribadi. Menampilkannya di profil adalah pilihan pengguna |
+| BR-STK-10 | Target mingguan tidak ada; yang ada target harian (BR-STK-03) dan target per dokumen (STK-08). Target dokumen tidak memengaruhi streak |
 
 ### 14.2 Studio, area Menulis: keterkaitan dokumen
 
@@ -580,6 +634,8 @@ Aturan bertanda **Usulan** adalah rekomendasi untuk dikonfirmasi. Aturan tanpa t
 | BR-STD-03 | Pengiriman ke Projects membuat **versi submission beku** yang tidak berubah walau dokumen asal diedit. Revisi membuat versi baru; versi lama tetap tersimpan |
 | BR-STD-04 | Konflik penyimpanan tidak pernah diselesaikan dengan menimpa diam-diam; pengguna selalu diberi pilihan |
 | BR-STD-05 | Hanya pemilik yang dapat membaca dan mengubah dokumen. Administrator dan Super Admin tidak membaca dokumen pribadi kecuali ada alasan hukum atau moderasi yang dicatat (Q-03) |
+| BR-STD-06 | Riwayat versi tulisan disimpan 3 hari, lalu dihapus. Pemulihan membuat versi baru |
+| BR-STD-07 | Akun gratis punya batas jumlah dokumen. Angkanya belum ditetapkan [konfirmasi]; dokumen di Sampah dan arsip ikut dihitung atau tidak: [konfirmasi]. Dokumen yang melewati batas tidak dihapus, hanya pembuatan baru ditahan |
 
 ### 14.3 Community
 
@@ -593,6 +649,10 @@ Aturan bertanda **Usulan** adalah rekomendasi untuk dikonfirmasi. Aturan tanpa t
 | BR-COM-06 | Indonesia Writers dan Malaysia Writers ditentukan oleh negara di profil penulis |
 | BR-COM-07 | Pengguna mengakui karya yang diterbitkan adalah miliknya atau ia berhak menerbitkannya; pelanggaran hak cipta ditangani lewat prosedur laporan dan penurunan konten |
 | BR-COM-08 | Kartu tulisan wajib memuat nama penulis dan tautan karya asli; hanya penulis yang dapat membuat kartu dari karyanya, atau pembaca dari Highlight dengan atribusi penuh (Q-15) |
+| BR-COM-09 | Di Event, jumlah peserta tampil untuk semua; nama peserta hanya terlihat oleh anggota grup yang sama |
+| BR-COM-10 | Tidak ada chat atau DM realtime di Community. Percakapan diarahkan ke satu tautan komunitas luar resmi (PLT-12) |
+| BR-COM-11 | Berbagi progres ke grup adalah pilihan terpisah dari berbagi karya dan selalu disertai peringatan privasi |
+| BR-COM-12 | Penulis boleh membuat grup sendiri (menggantikan "hanya Administrator" di Q-41). Pembuat grup menjadi Admin Grup; Administrator tetap dapat memoderasi |
 
 ### 14.4 Projects, submission, dan hak cipta
 
@@ -608,7 +668,7 @@ Aturan bertanda **Usulan** adalah rekomendasi untuk dikonfirmasi. Aturan tanpa t
 | BR-PRJ-08 | Pada lomba anonim, identitas peserta disembunyikan dari juri selama penilaian. Siapa yang masih dapat melihat identitas (Organizer, Admin): Q-28 |
 | BR-PRJ-09 | Juri tidak dapat mengubah skor setelah penilaian ditutup; pembukaan kembali hanya oleh Administrator dengan catatan audit |
 | BR-PRJ-10 | Biaya disimpan per mata uang dalam satuan terkecil. Harga di IDR dan MYR ditetapkan terpisah, bukan dikonversi otomatis |
-| BR-PRJ-11 | Kebijakan pengembalian dana saat peserta mundur atau proyek dibatalkan: Q-30 |
+| BR-PRJ-11 | Peserta boleh membatalkan pendaftaran hanya untuk proyek **gratis** (keputusan client 17 November 2026). Pembatalan proyek berbayar dan kebijakan pengembalian dana saat peserta mundur atau proyek dibatalkan: Q-30 |
 | BR-PRJ-12 | Karya Diterima pada Antologi tidak dipublikasikan ke Community atau tempat lain oleh pengelola tanpa persetujuan penulis sesuai ketentuan proyek |
 
 ## 15. Sistem Role dan Permission
@@ -675,7 +735,7 @@ Grup Penulis adalah kumpulan penulis yang dapat saling melihat tulisan dan dikel
 
 | Hal | Aturan (usulan) |
 | --- | --- |
-| Pembuatan dan keanggotaan | Administrator (atau Super Admin) membuat grup dan mengundang anggota; grup berada di bawah Administrator yang membuatnya (diskusi 9 November 2026). Administrator menunjuk Admin Grup, dan satu grup boleh memiliki lebih dari satu Admin Grup. Admin Grup juga dapat mengundang atau menerima anggota. Satu penulis boleh ikut lebih dari satu grup (Q-41). Hubungan Administrator pembuat grup dengan Admin Grup: Q-48 |
+| Pembuatan dan keanggotaan | Administrator (atau Super Admin) atau penulis (BR-COM-12, Q-57) membuat grup dan mengundang anggota; grup berada di bawah Administrator yang membuatnya (diskusi 9 November 2026). Administrator menunjuk Admin Grup, dan satu grup boleh memiliki lebih dari satu Admin Grup. Admin Grup juga dapat mengundang atau menerima anggota. Satu penulis boleh ikut lebih dari satu grup (Q-41). Hubungan Administrator pembuat grup dengan Admin Grup: Q-48 |
 | Identitas grup | Nama, deskripsi, dan logo. Logo grup dapat diunggah oleh Admin Grup atau Administrator; fitur ini masuk Fase 2 (PLT-09), dan format serta ukuran berkas ditetapkan saat desain |
 | Isolasi antar grup | Anggota hanya dapat masuk dan melihat data di grupnya sendiri, tidak dapat melihat grup lain. Admin Grup mengelola anggota di dalam grupnya saja dan tidak membawa wewenang administratif platform (rapat 8 November 2026) |
 | Visibilitas tulisan | Anggota grup melihat tulisan sesama anggota. Usulan: hanya dokumen yang penulisnya bagikan ke grup, karena dokumen Studio bersifat pribadi (bagian 14.2). Ruang lingkup final: Q-38 |
@@ -690,11 +750,11 @@ Navigasi utama mengikuti tiga modul inti, dengan Streak tampil sebagai bagian St
 
 | Menu utama | Tujuan | Isi | Terlihat untuk |
 | --- | --- | --- | --- |
-| Beranda (Dashboard dan Community) | Pintu masuk membaca dan ringkasan pribadi | Blok "Hari ini" di bagian atas (PLT-10, sementara, Q-49; hanya untuk pengguna masuk), lalu Feed, Discover, Bookmark, pencarian penulis dan karya | Semua (interaksi perlu akun; blok "Hari ini" untuk Registered User ke atas) |
+| Beranda (Dashboard dan Community) | Pintu masuk membaca dan ringkasan pribadi | Blok "Hari ini" di bagian atas (PLT-10, sementara, Q-49; hanya untuk pengguna masuk), lalu Feed, Discover, Event, Bookmark, pencarian penulis dan karya | Semua (interaksi perlu akun; blok "Hari ini" untuk Registered User ke atas) |
 | Studio | Menulis | Daftar dokumen dan folder, editor, manuskrip, sampah, dan Streak | Registered User ke atas |
 | Streak (di dalam Studio) | Kebiasaan | Target, kalender, statistik, milestone | Registered User ke atas |
 | Projects | Peluang | Antologi, Solo, Kelas Menulis, Lomba, Proyek Saya | Semua (daftar perlu akun) |
-| Grup | Kolaborasi | Grup saya, tulisan anggota, kelola anggota (admin grup), buat grup (Administrator) | Anggota grup; admin grup dan Administrator untuk pengelolaan |
+| Grup | Kolaborasi | Grup saya, tulisan anggota, kelola anggota (admin grup), buat grup (penulis atau Administrator) | Anggota grup; admin grup dan Administrator untuk pengelolaan |
 | Marketplace (setelah MVP) | Transaksi | Belum ditentukan (Q-39) | Belum ditentukan |
 | Profil | Identitas | Profil publik, portofolio, pengaturan, notifikasi | Registered User ke atas |
 | Kelola | Pekerjaan pengelola | Proyek yang dikelola, antrean submission, penilaian, tugas mentor | Organizer, Editor, Judge/Mentor |
@@ -736,6 +796,8 @@ Untuk setiap halaman: tujuan, siapa yang mengakses, isi utama, aksi utama, dan k
 | Dialog konflik | Pemilik | Perbandingan dua versi dan pilihan memakai salah satu atau menggabungkan | Wajib diselesaikan sebelum menyimpan |
 | Manuskrip | Pemilik (Fase 2) | Susunan bab, catatan, riset, total kata, urutkan, ekspor | Bab kosong |
 | Sampah | Pemilik | Dokumen terhapus, pulihkan, hapus permanen | Kosong |
+| Riwayat versi | Pemilik | Daftar versi 3 hari terakhir, bandingkan, pulihkan | Tanpa versi |
+| Pengaturan menulis dan pintasan | Pemilik | Pengaturan menulis, daftar pintasan keyboard | - |
 
 ### 17.3 Studio, area Streak
 
@@ -757,6 +819,7 @@ Untuk setiap halaman: tujuan, siapa yang mengakses, isi utama, aksi utama, dan k
 | Profil penulis | Publik | Nama, username, foto, bio, negara, genre, portofolio, karya, followers, following, tombol ikuti | Profil pribadi sebagian |
 | Bookmark | Pemilik | Daftar karya tersimpan, hapus bookmark | Kosong |
 | Pembuat kartu tulisan | Writer (Fase 2) | Pilih bagian teks, gaya kartu, pratinjau, unduh atau bagikan | Teks terlalu panjang |
+| Event | Publik (bergabung perlu akun) | Daftar kartu Event, detail, jumlah peserta, bergabung; tautan komunitas luar | Event penuh atau selesai |
 
 ### 17.5 Projects
 
@@ -917,6 +980,10 @@ Notifikasi hadir dalam aplikasi (MVP) dan melalui email untuk peristiwa penting 
 | Karya ditugaskan untuk dinilai | Juri | Ya | Ya | Tidak |
 | Pengumuman finalis dan pemenang | Peserta lomba | Ya | Ya | Tidak |
 | Laporan baru, konten disembunyikan | Administrator, pemilik konten | Ya | Ya | Tidak |
+| Email progres menulis mingguan | Pengguna | - | Ya | Ya |
+| Notifikasi penyemangat saat menulis | Pengguna | Ya | Tidak | Ya |
+| Tenggat target dokumen mendekat | Pengguna | Ya | Tidak | Ya |
+| Event dimulai atau berubah | Peserta Event | Ya | Tidak | Ya |
 
 Aturan: notifikasi sejenis dari banyak orang dalam waktu singkat digabung (misalnya "12 orang mengapresiasi karya Anda"); setiap notifikasi menautkan ke objek terkait; waktu ditampilkan menurut zona waktu pengguna; frekuensi email dibatasi agar tidak mengganggu. Zona waktu pengingat dan jam tenang: Q-33.
 
@@ -979,19 +1046,19 @@ MVP memuat tiga modul inti (Studio dengan Streak, Community, Projects) dan Grup 
 
 | Area | Termasuk di MVP | Ditunda |
 | --- | --- | --- |
-| Fondasi | Registrasi dan login, profil, RBAC dengan tingkat Super Admin dan Administrator, notifikasi dalam aplikasi dan email, admin dasar, moderasi, audit log, keamanan dan privasi, desain responsif, blok Dashboard "Hari ini" di Beranda (PLT-10, sementara, Q-49) | Login sosial (Q-05), notifikasi dorong |
-| Ranah Streak (di dalam Studio) | Target harian, pelacakan kata berbasis delta, kalender, streak, statistik dasar, milestone dasar | Kartu pencapaian |
-| Ranah Studio | Editor, simpan otomatis, offline dan konflik, dokumen dan folder, penghitung, ekspor TXT dan PDF, kirim ke Projects, bagikan ke Community | Template, manuskrip multi-bab, ekspor DOCX |
-| Ranah Community | Postingan (prolog atau cuplikan karya yang diatur publik, tanpa DM), feed, Apresiasi, komentar, bookmark, follow, Discover kategori dasar, profil dan portofolio, laporan | Karya penuh, chat atau DM antarpenulis, cerita berseri, Highlight, kartu tulisan, rekomendasi kompleks |
-| Grup Penulis | Grup dibuat Administrator, undangan anggota, satu atau lebih admin grup, tulisan yang dibagikan ke grup terlihat anggota, audit log keanggotaan | Logo grup (PLT-09, Fase 2); aturan lanjutan sesuai jawaban Q-38, Q-41, dan Q-48 |
-| Marketplace | Tidak ada | Seluruhnya setelah MVP; isi belum ditentukan (Q-39) |
+| Fondasi | Registrasi dan login, profil, RBAC dengan tingkat Super Admin dan Administrator, notifikasi dalam aplikasi dan email, admin dasar, moderasi, audit log, keamanan dan privasi, desain responsif, blok Dashboard "Hari ini" di Beranda (PLT-10, sementara, Q-49), pengaturan notifikasi dan email progres mingguan (PLT-11), tautan komunitas luar (PLT-12) | Login sosial (Q-05), notifikasi dorong |
+| Ranah Streak (di dalam Studio) | Target harian (dan target per dokumen), pelacakan kata berbasis delta, kalender, streak, riwayat streak, statistik dasar, milestone dasar, kartu progres | Kartu pencapaian, target mingguan |
+| Ranah Studio | Editor, simpan otomatis, offline dan konflik, dokumen dan folder, penghitung, ekspor TXT dan PDF, riwayat versi 3 hari, timer sprint, pencarian cepat, arsip dan duplikat, jenis dokumen dan tag, pengaturan menulis dan pintasan, gambar kutipan, kirim ke Projects, bagikan ke Community | Template, manuskrip multi-bab, catatan riset dan profil tokoh, papan alur, ekspor DOCX, impor DOCX |
+| Ranah Community | Postingan (prolog atau cuplikan karya yang diatur publik, tanpa DM), feed, Apresiasi, komentar, bookmark, follow, Discover kategori dasar, profil dan portofolio, laporan, Event umum, satu tautan komunitas luar | Karya penuh, chat atau DM realtime antarpenulis (tidak akan dibangun; percakapan diarahkan ke platform lain), cerita berseri, Highlight, kartu tulisan, rekomendasi kompleks |
+| Grup Penulis | Grup dibuat penulis atau Administrator, undangan anggota, berbagi progres ke grup, satu atau lebih admin grup, tulisan yang dibagikan ke grup terlihat anggota, audit log keanggotaan | Logo grup (PLT-09, Fase 2); aturan lanjutan sesuai jawaban Q-38, Q-41, dan Q-48 |
+| Marketplace | Tidak ada (dikonfirmasi client 17 November 2026: di luar MVP, Fase 3) | Seluruhnya setelah MVP; acuan dari produk lain dicari nanti (Q-39) |
 | Aplikasi di Play Store dan App Store | Tidak ada; MVP berupa web responsif | Pembungkusan dari versi web setelah web stabil, bila disetujui (Q-40) |
-| Projects: keempat kategori | Katalog dan detail, ketentuan hak cipta, pendaftaran, biaya tampil, pembayaran QRIS (semi-manual), pengiriman karya, status submission, pengelolaan proyek oleh Organizer | Pemesanan buku, pembayaran online |
+| Projects: keempat kategori | Katalog dan detail, ketentuan hak cipta, pendaftaran, biaya tampil, pembayaran QRIS (semi-manual), pengiriman karya, status submission, pembatalan pendaftaran proyek gratis, pengelolaan proyek oleh Organizer | Pemesanan buku, pembayaran online |
 | Antologi | Seleksi, feedback editor, revisi, persetujuan, status tahap produksi manual | Alat produksi dan layout di dalam platform |
 | Solo | Paket, pengajuan, dasbor tahap penerbitan manual | Pratinjau layout interaktif |
-| Kelas Menulis | Kelas, kurikulum, jadwal, materi, tugas, feedback, progres | Sertifikat otomatis |
+| Kelas Menulis | Kelas (jadwal dan mentor), kurikulum, materi, tugas, feedback, progres, kelas yang sedang berjalan, salin latihan ke Studio, testimoni | Kursus mandiri (rekaman), sertifikat otomatis |
 | Lomba | Pengiriman, juri, kriteria, penilaian anonim, pengumuman finalis dan pemenang | Sertifikat otomatis |
-| Di luar cakupan | Fitur AI di dalam aplikasi (keputusan founder), algoritma rekomendasi kompleks, monetisasi lanjutan, aplikasi native yang dibangun terpisah dari versi web | Sesuai brief founder |
+| Di luar cakupan | Fitur AI di dalam aplikasi (keputusan founder), tautan baca publik untuk naskah, kolaborasi dan komentar di dalam teks naskah, pilihan font dan jarak baris per dokumen, mode ramah disleksia, tema tambahan selain terang dan gelap, konten editorial di Beranda, Beranda yang bisa diatur, penawaran mitra, algoritma rekomendasi kompleks, monetisasi lanjutan, aplikasi native yang dibangun terpisah dari versi web | Sesuai brief founder |
 
 **Prinsip pemotongan.** Bila waktu terbatas, yang dikorbankan adalah kedalaman fitur, bukan keberadaan modul. Studio, Streak, Community, dan keempat kategori Projects tetap hadir dengan alur inti.
 
@@ -1022,6 +1089,9 @@ Tiap fitur di bawah punya hubungan jelas dengan visi produk. Tidak ada tanggal k
 | Sertifikat kelas dan lomba (KLS-04, LMB-03) | Projects | Nilai tambah bagi peserta |
 | Alat bantu produksi dalam platform (pratinjau layout, persetujuan berkas) | Projects | Memperkuat Solo dan Antologi |
 | Pengaturan Discover lebih halus dan statistik penulis | Community | Meningkatkan penemuan |
+| Impor naskah .docx (STD-20) | Studio | Memudahkan pindah dari Word (keputusan client 17 November 2026) |
+| Catatan riset, profil tokoh, struktur buku (bagian), dan papan alur | Studio | Ikut manuskrip multi-bab (STD-06); keputusan client 17 November 2026 |
+| Mode ramah disleksia | Platform | Ditunda (keputusan client 17 November 2026) |
 
 ### 24.2 Fase 3: pertumbuhan dan monetisasi lanjutan
 
@@ -1073,7 +1143,7 @@ Format Given-When-Then agar dapat langsung dipakai QA. Semua kriteria berstatus 
 | AC-G1 | PLT-03 (Grup Penulis) | Given penulis A anggota grup X dan penulis C bukan anggota, when C meminta tulisan yang A bagikan ke grup X lewat tautan langsung atau API, then akses ditolak; anggota grup X dapat membacanya |
 | AC-G2 | PLT-03 (Grup Penulis) | Given admin grup X, when mencoba membaca dokumen anggota yang tidak dibagikan ke grup atau mengubah isi tulisan anggota, then permintaan ditolak |
 | AC-G3 | PLT-03 (Grup Penulis) | Given penulis keluar dari grup X, when anggota lain membuka tulisannya, then akses dicabut |
-| AC-G4 | PLT-03 (Grup Penulis) | Given Administrator membuat grup X dan menunjuk dua Admin Grup, when keduanya mengelola anggota, then kedua Admin Grup berhasil mengelola grup X dan ditolak saat mencoba mengelola grup lain |
+| AC-G4 | PLT-03 (Grup Penulis) | Given Administrator (atau penulis, BR-COM-12) membuat grup X dan menunjuk dua Admin Grup, when keduanya mengelola anggota, then kedua Admin Grup berhasil mengelola grup X dan ditolak saat mencoba mengelola grup lain |
 | AC-SA1 | PLT-01, PLT-03 | Given pengguna baru, when mendaftar, then akunnya berperan Registered User dan ia tidak dapat memilih atau memberi dirinya role Administrator atau Super Admin lewat antarmuka maupun API |
 | AC-SA2 | PLT-03 | Given Administrator yang bukan Super Admin, when mencoba memberi atau mencabut role Administrator lewat antarmuka atau API, then permintaan ditolak; dan given Super Admin, when memberi role Administrator kepada pengguna, then berhasil dan tercatat di audit log (siapa, kepada siapa, kapan) |
 | AC-SA3 | PLT-03 | Given hanya tersisa satu Super Admin aktif, when pencabutan role Super Admin itu dicoba, then permintaan ditolak |
@@ -1097,6 +1167,9 @@ Format Given-When-Then agar dapat langsung dipakai QA. Semua kriteria berstatus 
 | AC-11 | STK-04 | Given target 300 kata dan pengguna menulis 320 kata hari ini menurut zona waktunya, then hari ditandai selesai dan streak bertambah satu |
 | AC-12 | STK-04 | Given pengguna di Kuala Lumpur menulis pukul 23.30 waktunya, then aktivitas dihitung ke tanggal Kuala Lumpur, bukan tanggal UTC |
 | AC-13 | STK-04 | Given pengguna tidak memenuhi target sepanjang satu hari penuh, then streak kembali ke nol setelah pergantian hari, dan streak terpanjang tetap |
+| AC-32 | STD-12 | Given dokumen dengan versi berusia 4 hari, then versi itu tidak tersedia; versi berusia 2 hari dapat dipulihkan dan pemulihan membuat versi baru |
+| AC-33 | STK-08 | Given dokumen dengan dua target, then progres tiap target dihitung dari kata dokumen itu dan tidak mengubah streak |
+| AC-34 | BR-STD-07 | Given akun gratis di batas dokumen, when membuat dokumen baru, then ditolak dengan penjelasan dan dokumen lama tetap utuh |
 
 ### 26.3 Community
 
@@ -1108,6 +1181,8 @@ Format Given-When-Then agar dapat langsung dipakai QA. Semua kriteria berstatus 
 | AC-17 | COM-05 | Given komentar milik orang lain, then pengguna biasa tidak melihat tombol Hapus dan permintaan hapus langsung ditolak |
 | AC-18 | COM-09 | Given penulis berprofil negara Malaysia, then karyanya masuk kategori Malaysia Writers di Discover |
 | AC-19 | Guest | Given Guest, when membuka karya publik, then dapat membaca; when menekan Apresiasi, then diarahkan masuk lalu kembali ke karya yang sama |
+| AC-35 | COM-13 | Given Event dengan peserta, then pengunjung melihat jumlah peserta saja; anggota grup yang sama melihat nama sesama anggota |
+| AC-36 | COM-14 | Given anggota grup membagikan progres, then peringatan privasi tampil sebelum dibagikan; keluar dari grup mencabut akses |
 
 ### 26.4 Projects
 
@@ -1125,6 +1200,8 @@ Format Given-When-Then agar dapat langsung dipakai QA. Semua kriteria berstatus 
 | AC-29 | SOL-02 | Given pengajuan Solo yang disetujui, then dasbor penulis menampilkan tahap saat ini dan riwayat tahap dengan tanggal |
 | AC-30 | KLS-03 | Given tugas kelas dikumpulkan, then mentor kelas itu menerima notifikasi dan dapat memberi feedback; mentor lain tidak dapat melihatnya |
 | AC-31 | KLS-04 | **Fase 2.** Given peserta memenuhi syarat kelulusan, then sertifikat terbit dengan kode verifikasi |
+| AC-37 | PRJ-06 | Given proyek gratis, when peserta membatalkan, then pendaftaran dicabut dan kuota kembali; given proyek berbayar, then tombol batal tidak tersedia |
+| AC-38 | KLS-05, KLS-06 | Given peserta kelas berjalan, then Lanjutkan membuka materi atau tugas berikutnya dan latihan dapat disalin ke Studio sebagai dokumen baru |
 
 ## 27. Risiko dan Ketergantungan Teknis
 
@@ -1196,9 +1273,9 @@ Semua butir di bawah belum diputuskan dalam brief dan tidak diputuskan sepihak d
 | Q-36 | Bisnis | Target angka untuk setiap KPI di bagian 25, dan anggaran serta jadwal MVP? | Founder menetapkan | Ya |
 | Q-37 | Studio | Apakah Studio dapat dipakai penuh tanpa verifikasi email, dan adakah batas jumlah dokumen untuk pengguna gratis? | Verifikasi dulu; batas ditetapkan tim | Tidak |
 | Q-38 | Role | Grup Penulis: anggota melihat semua dokumen sesama anggota, atau hanya yang dibagikan ke grup? | Hanya yang dibagikan ke grup, karena dokumen Studio bersifat pribadi | Ya |
-| Q-39 | Marketplace | Apa yang dijual atau dipertukarkan di Marketplace (karya digital, buku, jasa seperti editor dan desain cover, atau lainnya), dan apakah ia disetujui sebagai modul resmi di luar tiga modul inti? | Dari rapat 8 November 2026: jual-beli karya atau buku hasil lomba dan penerbitan, dipisah dari Community; rincian ditentukan setelah MVP | Tidak |
+| Q-39 | Marketplace | (Dikonfirmasi client 17 November 2026: Marketplace di luar MVP, Fase 3.) Apa yang dijual atau dipertukarkan di Marketplace (karya digital, buku, jasa seperti editor dan desain cover, atau lainnya), dan apakah ia disetujui sebagai modul resmi di luar tiga modul inti? | Dari rapat 8 November 2026: jual-beli karya atau buku hasil lomba dan penerbitan, dipisah dari Community; rincian ditentukan setelah MVP | Tidak |
 | Q-40 | Platform | Apakah aplikasi harus ada di Play Store dan App Store sejak rilis pertama, atau web dulu lalu dibungkus jadi aplikasi? | Web dulu, dibungkus setelah web stabil | Ya |
-| Q-41 | Role | Grup Penulis: siapa yang boleh membuat grup dan mengundang anggota, dan apakah satu penulis boleh ikut banyak grup? | Dari diskusi 9 November 2026: Administrator membuat grup dan mengundang anggota, dan satu grup boleh punya lebih dari satu admin. Usulan: admin grup juga dapat mengundang; satu penulis boleh ikut banyak grup | Tidak |
+| Q-41 | Role | (Sebagian diganti Q-57, 17 November 2026: penulis boleh membuat grup.) Grup Penulis: siapa yang boleh membuat grup dan mengundang anggota, dan apakah satu penulis boleh ikut banyak grup? | Dari diskusi 9 November 2026: Administrator membuat grup dan mengundang anggota, dan satu grup boleh punya lebih dari satu admin. Usulan: admin grup juga dapat mengundang; satu penulis boleh ikut banyak grup | Tidak |
 | Q-42 | Teknis | Pemicu pindah dari Supabase ke VPS (biaya, performa, lokasi data) dan di mana penyimpanan file berada setelah pindah (tetap di Supabase atau penyimpanan S3)? | Tetapkan setelah ada data pemakaian | Tidak |
 | Q-43 | Monetisasi | Apakah bantuan ejaan atau parsing teks (yang menimbulkan biaya pemrosesan) boleh menjadi fitur berbayar setelah MVP, mengingat keputusan tanpa fitur AI di dalam aplikasi? | Tidak di MVP; putuskan bersama saat memilih fitur berbayar | Tidak |
 | Q-44 | Jadwal | Target pengerjaan satu bulan (Desember 2026) disepakati di rapat. Apakah seluruh cakupan MVP (bagian 23) dapat selesai dalam waktu itu, atau cakupan dikecilkan atau dirilis bertahap per modul? | Tinjau setelah desain disetujui; rilis bertahap per modul dengan review di setiap tahap | Ya |
@@ -1207,9 +1284,15 @@ Semua butir di bawah belum diputuskan dalam brief dan tidak diputuskan sepihak d
 | Q-47 | Teknis | Penyedia layanan luar: email transaksional, analitik produk, pemantauan galat, dan cara berbagi ke media sosial | Tim teknis mengusulkan saat desain teknis | Tidak |
 | Q-48 | Role | Grup Penulis: apakah "admin" pada satu grup adalah Administrator platform yang membuat grup, atau Admin Grup terpisah yang ditunjuknya? Apakah Admin Grup boleh menunjuk atau mencabut Admin Grup lain, dan adakah batas jumlah admin per grup? | Administrator membuat grup dan menunjuk satu atau lebih Admin Grup; hanya Administrator dan Super Admin yang dapat menunjuk atau mencabut Admin Grup; tanpa batas jumlah | Tidak |
 | Q-49 | Platform | Dashboard / Beranda (diminta client untuk MVP, tidak ada di brief awal): apakah berupa blok "Hari ini" di atas feed Beranda atau halaman Ringkasan terpisah, dan apa isi blok serta variasi per peran? **Spesifikasi PLT-10 bersifat sementara dan akan ditinjau ulang setelah desain jadi** | Blok di atas feed Beranda, bukan halaman terpisah, karena bilah bawah ponsel tidak punya tab Community lain; isi sesuai PLT-10 | Tidak |
-| Q-50 | Community | Brief landing client (15 November 2026) menyebut tiga program Community: Writer Battle, Roast My Writing, dan The Writers Confess. Ketiganya belum ada di PRD. Apa isi dan aturan tiap program (tantangan bertema, permintaan kritik, cerita proses menulis), dan masuk MVP atau fase berikutnya? | Fase 2. Di MVP cukup tampil di landing dengan label "Menyusul". Bila ingin lebih cepat, Roast My Writing dan The Writers Confess bisa dimulai sebagai kategori postingan (pola COM-01), sedangkan Writer Battle mendekati Lomba di Projects | Tidak |
+| Q-50 | Community | (Nama Roast My Writing akan diganti: Q-58.) Brief landing client (15 November 2026) menyebut tiga program Community: Writer Battle, Roast My Writing, dan The Writers Confess. Ketiganya belum ada di PRD. Apa isi dan aturan tiap program (tantangan bertema, permintaan kritik, cerita proses menulis), dan masuk MVP atau fase berikutnya? | Fase 2. Di MVP cukup tampil di landing dengan label "Menyusul". Bila ingin lebih cepat, Roast My Writing dan The Writers Confess bisa dimulai sebagai kategori postingan (pola COM-01), sedangkan Writer Battle mendekati Lomba di Projects | Tidak |
 | Q-51 | Marketplace | Brief landing memperluas isi Marketplace di luar Q-39: selain jual beli buku dan ebook, juga jasa kepenulisan, informasi pekerjaan, dan event literasi. Apakah keempatnya disetujui sebagai isi Marketplace? | Dicatat sebagai lingkup Marketplace setelah MVP; rincian (siapa boleh memasang, moderasi, pembayaran) diputuskan bersama Q-39 | Tidak |
 | Q-52 | Studio | Brief landing menampilkan waktu baca (reading time) di Studio. Fitur ini belum ada di STD-04. Apakah ditambahkan, dan dengan kecepatan baca berapa? | Ditambahkan ke STD-04 di MVP: waktu baca = jumlah kata dibagi 200 kata per menit, dibulatkan ke atas, minimal 1 menit; tampil di samping jumlah kata dan karakter | Tidak |
+| Q-53 | Studio | Keputusan client 17 November 2026 menyisakan butir yang perlu dibahas: pemeriksa tata bahasa (s26), cadangan otomatis ke Google Drive dan Dropbox (s27). Apakah dan kapan? | Belum diputuskan; dibahas bersama client | Tidak |
+| Q-54 | Projects | Butir yang perlu dibahas: pemutar materi mengambang (p7) dan situs penulis dengan domain sendiri (p8) | Belum diputuskan; dibahas bersama client | Tidak |
+| Q-55 | Platform | Butir yang perlu dibahas: kartu paket dan data contoh buram di tiap halaman (a5), undang teman dengan hadiah (a6), chat dukungan dan alat diagnostik (a7) | Belum diputuskan; dibahas bersama client | Tidak |
+| Q-56 | Studio | Angka batas dokumen untuk akun gratis (a4), apakah Sampah dan arsip dihitung, dan apakah status dokumen (selain jenis dan tag, s14) diambil | Angka ditetapkan founder; status dokumen tidak diambil | Tidak |
+| Q-57 | Role | Penulis boleh membuat grup sendiri (c2). Apakah ada batas jumlah grup per penulis dan persetujuan Administrator untuk grup baru, dan bagaimana AC-G1 sampai AC-G4 menyesuaikan? Menggantikan sebagian Q-41 dan Q-48 | Penulis membuat langsung, pembuat jadi Admin Grup, Administrator dapat memoderasi | Ya |
+| Q-58 | Community | Nama "Roast My Writing" (Q-50) akan diganti, tetapi client minta ditunda sampai pekerjaan selesai agar revisi sekaligus. Nama pengganti belum ada | Jangan diganti sekarang; tunggu nama dari client | Tidak |
 
 ### 28.2 Hasil evaluasi konsistensi
 

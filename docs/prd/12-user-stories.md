@@ -46,3 +46,16 @@ Format: sebagai peran, saya ingin tujuan, agar manfaat. Kolom Fitur menunjuk ke 
 | US-40 | Admin Grup | Saya ingin memasang logo pada grup saya, agar grup punya identitas | PLT-09 | Fase 2 |
 | US-41 | Writer | Saya ingin langsung melihat dokumen terakhir, progres target hari ini, dan hal yang menunggu tindakanku saat membuka Beranda, agar tahu apa yang harus kulakukan sekarang | PLT-10 | MVP (sementara, Q-49) |
 | US-42 | Organizer, Editor, Judge/Mentor, Administrator | Saya ingin melihat pekerjaan yang menunggu saya di Beranda, agar tidak perlu membuka tiap panel satu per satu | PLT-10 | MVP (sementara, Q-49) |
+| US-43 | Writer | Saya ingin menetapkan target kata dan tenggat per dokumen, agar tiap naskah punya tujuan sendiri | STK-08 | MVP |
+| US-44 | Writer | Saya ingin memulihkan versi tulisan dalam 3 hari terakhir, agar salah hapus tidak fatal | STD-12 | MVP |
+| US-45 | Writer | Saya ingin menjalankan timer sprint, agar menulis lebih fokus | STD-13 | MVP |
+| US-46 | Writer | Saya ingin mencari, mengarsipkan, menduplikat, dan memberi tag dokumen, agar daftar tetap rapi | STD-14, STD-15, STD-16 | MVP |
+| US-47 | Writer | Saya ingin membuat gambar kutipan dan kartu progres, agar bisa berbagi tanpa membuka karya penuh | STD-19, STK-10 | MVP |
+| US-48 | Writer | Saya ingin mengimpor naskah dari Word, agar tidak mengetik ulang | STD-20 | Fase 2 |
+| US-49 | Registered User | Saya ingin mengatur notifikasi dan menerima email progres mingguan, agar tetap termotivasi tanpa diganggu | PLT-11 | MVP |
+| US-50 | Writer | Saya ingin bergabung ke Event menulis dan melihat jumlah pesertanya, agar punya teman menulis | COM-13 | MVP |
+| US-51 | Anggota Grup | Saya ingin membagikan progres ke grup sebagai pilihan terpisah, dengan peringatan privasi | COM-14 | MVP |
+| US-52 | Registered User | Saya ingin menuju tautan komunitas luar resmi, agar bisa ngobrol di platform lain | PLT-12 | MVP |
+| US-53 | Peserta | Saya ingin membatalkan pendaftaran proyek gratis, agar kuota bisa dipakai orang lain | PRJ-06 | MVP |
+| US-54 | Peserta kelas | Saya ingin melanjutkan kelas yang sedang berjalan dan menyalin latihan ke Studio, agar belajar tidak terputus | KLS-05, KLS-06 | MVP |
+| US-55 | Penulis | Saya ingin membuat grup menulis sendiri, agar tidak menunggu Administrator | PLT-03 (Grup Penulis) | MVP |

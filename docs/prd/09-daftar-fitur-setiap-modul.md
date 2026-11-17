@@ -15,19 +15,24 @@ Setiap fitur memiliki ID yang dipakai di seluruh dokumen (kebutuhan fungsional, 
 | PLT-07 | Pembayaran: informasi biaya, pembayaran QRIS (konfirmasi lewat webhook; awalnya semi-manual dengan dashboard admin), dan konfirmasi manual | Peserta, Organizer | MVP (Q-19) |
 | PLT-08 | Pembayaran online MYR dan gateway resmi lintas mata uang | Peserta | Fase 2 |
 | PLT-09 | Logo grup: Admin Grup atau Administrator mengunggah gambar sebagai logo Grup Penulis | Admin Grup, Administrator | Fase 2 |
-| PLT-10 | Dashboard di Beranda: blok ringkasan "Hari ini" di atas feed (lanjutkan menulis, progres harian, hal yang perlu perhatian, proyek saya, notifikasi baru) | Registered User ke atas | MVP (sementara, ditinjau ulang setelah desain; Q-49) |
+| PLT-10 | Dashboard di Beranda: blok ringkasan "Hari ini" di atas feed (lanjutkan menulis, progres harian, hal yang perlu perhatian, proyek saya, notifikasi baru, ringkasan mingguan, tiga angka kata, kartu panduan awal yang bisa ditutup, kartu proyek dan kelas yang sedang dibuka) | Registered User ke atas | MVP (sementara, ditinjau ulang setelah desain; Q-49) |
+| PLT-11 | Pengaturan notifikasi, email progres menulis mingguan, dan notifikasi penyemangat sederhana saat menulis | Registered User ke atas | MVP (keputusan client 17 November 2026) |
+| PLT-12 | Satu tautan komunitas luar resmi (Discord atau WhatsApp) tempat percakapan diarahkan, pengganti chat realtime | Semua | MVP (keputusan client 17 November 2026) |
 
 ### 9.2 Studio, area Streak
 
 | ID | Fitur | Pengguna utama | Fase |
 | --- | --- | --- | --- |
-| STK-01 | Target menulis harian | Writer | MVP |
+| STK-01 | Target menulis harian (dialog dengan pilihan cepat; harian saja, tanpa target mingguan) | Writer | MVP |
 | STK-02 | Pelacakan jumlah kata (berbasis perubahan) | Writer | MVP |
 | STK-03 | Kalender aktivitas menulis | Writer | MVP |
 | STK-04 | Penghitungan streak | Writer | MVP |
-| STK-05 | Statistik harian, mingguan, bulanan | Writer | MVP (dasar) |
+| STK-05 | Statistik harian, mingguan, bulanan, ditambah tiga angka kata (minggu, bulan, tahun ini) | Writer | MVP (dasar) |
 | STK-06 | Pencapaian atau milestone | Writer | MVP (daftar dasar) |
 | STK-07 | Kartu pencapaian yang dapat dibagikan | Writer | Fase 2 |
+| STK-08 | Target per dokumen: target kata dan tenggat, boleh lebih dari satu per dokumen | Writer | MVP (keputusan client 17 November 2026) |
+| STK-09 | Riwayat streak sebelumnya | Writer | MVP (keputusan client 17 November 2026) |
+| STK-10 | Kartu progres yang dapat dibagikan | Writer | MVP (keputusan client 17 November 2026) |
 
 ### 9.3 Studio, area Menulis
 
@@ -44,6 +49,15 @@ Setiap fitur memiliki ID yang dipakai di seluruh dokumen (kebutuhan fungsional, 
 | STD-09 | Kirim dokumen ke Projects sebagai versi submission | Writer | MVP |
 | STD-10 | Bagikan prolog atau cuplikan dokumen ke Community | Writer | MVP |
 | STD-11 | Kit inspirasi dan tab bantuan di dalam editor (ide cerita, kalimat pembuka, kamus diksi, pertanyaan refleksi, ide judul, kalimat penutup, kamus transisi, perpustakaan prompt) | Writer | MVP |
+| STD-12 | Riwayat versi tulisan, disimpan 3 hari | Writer | MVP (keputusan client 17 November 2026) |
+| STD-13 | Timer sprint pribadi di editor | Writer | MVP (keputusan client 17 November 2026) |
+| STD-14 | Pencarian cepat dan pencarian di daftar dokumen | Writer | MVP (keputusan client 17 November 2026) |
+| STD-15 | Arsip dan duplikat dokumen | Writer | MVP (keputusan client 17 November 2026) |
+| STD-16 | Jenis dokumen dan tag | Writer | MVP (keputusan client 17 November 2026) |
+| STD-17 | Pengaturan menulis di akun dan daftar pintasan keyboard | Writer | MVP (keputusan client 17 November 2026) |
+| STD-18 | Angka kata yang dapat disematkan di editor | Writer | MVP (keputusan client 17 November 2026) |
+| STD-19 | Gambar kutipan untuk dibagikan | Writer | MVP (keputusan client 17 November 2026) |
+| STD-20 | Impor naskah dari Word (.docx saja) | Writer | Fase 2 (keputusan client 17 November 2026) |
 
 ### 9.4 Ranah Community
 
@@ -61,6 +75,8 @@ Setiap fitur memiliki ID yang dipakai di seluruh dokumen (kebutuhan fungsional, 
 | COM-10 | Profil penulis publik dan portofolio | Semua | MVP |
 | COM-11 | Kartu tulisan yang dapat dibagikan | Writer | Fase 2 |
 | COM-12 | Publikasi karya penuh (tulisan pendek dan tulisan panjang) | Writer | Fase 2 (Q-14) |
+| COM-13 | Event: fitur umum (tantangan menulis bersama; tantangan pertama jadi contoh), tampil sebagai daftar kartu, peserta hanya berupa jumlah | Semua | MVP (keputusan client 17 November 2026) |
+| COM-14 | Berbagi progres ke grup sebagai pilihan terpisah, dengan peringatan privasi | Anggota Grup | MVP (keputusan client 17 November 2026) |
 
 ### 9.5 Projects
 
@@ -82,3 +98,7 @@ Setiap fitur memiliki ID yang dipakai di seluruh dokumen (kebutuhan fungsional, 
 | LMB-01 | Kriteria dan sistem penilaian juri (termasuk anonim) | Lomba | Judge | MVP |
 | LMB-02 | Pengumuman finalis dan pemenang | Lomba | Semua | MVP |
 | LMB-03 | Sertifikat lomba | Lomba | Pemenang, peserta | Fase 2 |
+| PRJ-06 | Pembatalan pendaftaran oleh peserta, hanya untuk proyek gratis | Semua | Writer | MVP (keputusan client 17 November 2026) |
+| KLS-05 | Bagian "Kelas yang sedang berjalan" dengan tombol Lanjutkan | Kelas Menulis | Writer | MVP (keputusan client 17 November 2026) |
+| KLS-06 | Salin latihan menulis dari kelas ke Studio | Kelas Menulis | Writer | MVP (keputusan client 17 November 2026) |
+| KLS-07 | Testimoni peserta di halaman kelas | Kelas Menulis | Semua | MVP (keputusan client 17 November 2026) |

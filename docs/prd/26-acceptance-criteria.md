@@ -12,7 +12,7 @@ Format Given-When-Then agar dapat langsung dipakai QA. Semua kriteria berstatus 
 | AC-G1 | PLT-03 (Grup Penulis) | Given penulis A anggota grup X dan penulis C bukan anggota, when C meminta tulisan yang A bagikan ke grup X lewat tautan langsung atau API, then akses ditolak; anggota grup X dapat membacanya |
 | AC-G2 | PLT-03 (Grup Penulis) | Given admin grup X, when mencoba membaca dokumen anggota yang tidak dibagikan ke grup atau mengubah isi tulisan anggota, then permintaan ditolak |
 | AC-G3 | PLT-03 (Grup Penulis) | Given penulis keluar dari grup X, when anggota lain membuka tulisannya, then akses dicabut |
-| AC-G4 | PLT-03 (Grup Penulis) | Given Administrator membuat grup X dan menunjuk dua Admin Grup, when keduanya mengelola anggota, then kedua Admin Grup berhasil mengelola grup X dan ditolak saat mencoba mengelola grup lain |
+| AC-G4 | PLT-03 (Grup Penulis) | Given Administrator (atau penulis, BR-COM-12) membuat grup X dan menunjuk dua Admin Grup, when keduanya mengelola anggota, then kedua Admin Grup berhasil mengelola grup X dan ditolak saat mencoba mengelola grup lain |
 | AC-SA1 | PLT-01, PLT-03 | Given pengguna baru, when mendaftar, then akunnya berperan Registered User dan ia tidak dapat memilih atau memberi dirinya role Administrator atau Super Admin lewat antarmuka maupun API |
 | AC-SA2 | PLT-03 | Given Administrator yang bukan Super Admin, when mencoba memberi atau mencabut role Administrator lewat antarmuka atau API, then permintaan ditolak; dan given Super Admin, when memberi role Administrator kepada pengguna, then berhasil dan tercatat di audit log (siapa, kepada siapa, kapan) |
 | AC-SA3 | PLT-03 | Given hanya tersisa satu Super Admin aktif, when pencabutan role Super Admin itu dicoba, then permintaan ditolak |
@@ -36,6 +36,9 @@ Format Given-When-Then agar dapat langsung dipakai QA. Semua kriteria berstatus 
 | AC-11 | STK-04 | Given target 300 kata dan pengguna menulis 320 kata hari ini menurut zona waktunya, then hari ditandai selesai dan streak bertambah satu |
 | AC-12 | STK-04 | Given pengguna di Kuala Lumpur menulis pukul 23.30 waktunya, then aktivitas dihitung ke tanggal Kuala Lumpur, bukan tanggal UTC |
 | AC-13 | STK-04 | Given pengguna tidak memenuhi target sepanjang satu hari penuh, then streak kembali ke nol setelah pergantian hari, dan streak terpanjang tetap |
+| AC-32 | STD-12 | Given dokumen dengan versi berusia 4 hari, then versi itu tidak tersedia; versi berusia 2 hari dapat dipulihkan dan pemulihan membuat versi baru |
+| AC-33 | STK-08 | Given dokumen dengan dua target, then progres tiap target dihitung dari kata dokumen itu dan tidak mengubah streak |
+| AC-34 | BR-STD-07 | Given akun gratis di batas dokumen, when membuat dokumen baru, then ditolak dengan penjelasan dan dokumen lama tetap utuh |
 
 ### 26.3 Community
 
@@ -47,6 +50,8 @@ Format Given-When-Then agar dapat langsung dipakai QA. Semua kriteria berstatus 
 | AC-17 | COM-05 | Given komentar milik orang lain, then pengguna biasa tidak melihat tombol Hapus dan permintaan hapus langsung ditolak |
 | AC-18 | COM-09 | Given penulis berprofil negara Malaysia, then karyanya masuk kategori Malaysia Writers di Discover |
 | AC-19 | Guest | Given Guest, when membuka karya publik, then dapat membaca; when menekan Apresiasi, then diarahkan masuk lalu kembali ke karya yang sama |
+| AC-35 | COM-13 | Given Event dengan peserta, then pengunjung melihat jumlah peserta saja; anggota grup yang sama melihat nama sesama anggota |
+| AC-36 | COM-14 | Given anggota grup membagikan progres, then peringatan privasi tampil sebelum dibagikan; keluar dari grup mencabut akses |
 
 ### 26.4 Projects
 
@@ -64,3 +69,5 @@ Format Given-When-Then agar dapat langsung dipakai QA. Semua kriteria berstatus 
 | AC-29 | SOL-02 | Given pengajuan Solo yang disetujui, then dasbor penulis menampilkan tahap saat ini dan riwayat tahap dengan tanggal |
 | AC-30 | KLS-03 | Given tugas kelas dikumpulkan, then mentor kelas itu menerima notifikasi dan dapat memberi feedback; mentor lain tidak dapat melihatnya |
 | AC-31 | KLS-04 | **Fase 2.** Given peserta memenuhi syarat kelulusan, then sertifikat terbit dengan kode verifikasi |
+| AC-37 | PRJ-06 | Given proyek gratis, when peserta membatalkan, then pendaftaran dicabut dan kuota kembali; given proyek berbayar, then tombol batal tidak tersedia |
+| AC-38 | KLS-05, KLS-06 | Given peserta kelas berjalan, then Lanjutkan membuka materi atau tugas berikutnya dan latihan dapat disalin ke Studio sebagai dokumen baru |

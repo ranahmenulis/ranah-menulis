@@ -15,6 +15,7 @@ Aturan bertanda **Usulan** adalah rekomendasi untuk dikonfirmasi. Aturan tanpa t
 | BR-STK-07 | Streak putus bila satu hari penuh berakhir tanpa memenuhi syarat. Mekanisme pemulihan (misalnya hari libur atau freeze) tidak ada di MVP. (Q-09) |
 | BR-STK-08 | Aktivitas di dokumen yang kemudian dihapus tetap dihitung untuk hari itu. **Usulan** |
 | BR-STK-09 | Data streak bersifat pribadi. Menampilkannya di profil adalah pilihan pengguna |
+| BR-STK-10 | Target mingguan tidak ada; yang ada target harian (BR-STK-03) dan target per dokumen (STK-08). Target dokumen tidak memengaruhi streak |
 
 ### 14.2 Studio, area Menulis: keterkaitan dokumen
 
@@ -25,6 +26,8 @@ Aturan bertanda **Usulan** adalah rekomendasi untuk dikonfirmasi. Aturan tanpa t
 | BR-STD-03 | Pengiriman ke Projects membuat **versi submission beku** yang tidak berubah walau dokumen asal diedit. Revisi membuat versi baru; versi lama tetap tersimpan |
 | BR-STD-04 | Konflik penyimpanan tidak pernah diselesaikan dengan menimpa diam-diam; pengguna selalu diberi pilihan |
 | BR-STD-05 | Hanya pemilik yang dapat membaca dan mengubah dokumen. Administrator dan Super Admin tidak membaca dokumen pribadi kecuali ada alasan hukum atau moderasi yang dicatat (Q-03) |
+| BR-STD-06 | Riwayat versi tulisan disimpan 3 hari, lalu dihapus. Pemulihan membuat versi baru |
+| BR-STD-07 | Akun gratis punya batas jumlah dokumen. Angkanya belum ditetapkan [konfirmasi]; dokumen di Sampah dan arsip ikut dihitung atau tidak: [konfirmasi]. Dokumen yang melewati batas tidak dihapus, hanya pembuatan baru ditahan |
 
 ### 14.3 Community
 
@@ -38,6 +41,10 @@ Aturan bertanda **Usulan** adalah rekomendasi untuk dikonfirmasi. Aturan tanpa t
 | BR-COM-06 | Indonesia Writers dan Malaysia Writers ditentukan oleh negara di profil penulis |
 | BR-COM-07 | Pengguna mengakui karya yang diterbitkan adalah miliknya atau ia berhak menerbitkannya; pelanggaran hak cipta ditangani lewat prosedur laporan dan penurunan konten |
 | BR-COM-08 | Kartu tulisan wajib memuat nama penulis dan tautan karya asli; hanya penulis yang dapat membuat kartu dari karyanya, atau pembaca dari Highlight dengan atribusi penuh (Q-15) |
+| BR-COM-09 | Di Event, jumlah peserta tampil untuk semua; nama peserta hanya terlihat oleh anggota grup yang sama |
+| BR-COM-10 | Tidak ada chat atau DM realtime di Community. Percakapan diarahkan ke satu tautan komunitas luar resmi (PLT-12) |
+| BR-COM-11 | Berbagi progres ke grup adalah pilihan terpisah dari berbagi karya dan selalu disertai peringatan privasi |
+| BR-COM-12 | Penulis boleh membuat grup sendiri (menggantikan "hanya Administrator" di Q-41). Pembuat grup menjadi Admin Grup; Administrator tetap dapat memoderasi |
 
 ### 14.4 Projects, submission, dan hak cipta
 
@@ -53,5 +60,5 @@ Aturan bertanda **Usulan** adalah rekomendasi untuk dikonfirmasi. Aturan tanpa t
 | BR-PRJ-08 | Pada lomba anonim, identitas peserta disembunyikan dari juri selama penilaian. Siapa yang masih dapat melihat identitas (Organizer, Admin): Q-28 |
 | BR-PRJ-09 | Juri tidak dapat mengubah skor setelah penilaian ditutup; pembukaan kembali hanya oleh Administrator dengan catatan audit |
 | BR-PRJ-10 | Biaya disimpan per mata uang dalam satuan terkecil. Harga di IDR dan MYR ditetapkan terpisah, bukan dikonversi otomatis |
-| BR-PRJ-11 | Kebijakan pengembalian dana saat peserta mundur atau proyek dibatalkan: Q-30 |
+| BR-PRJ-11 | Peserta boleh membatalkan pendaftaran hanya untuk proyek **gratis** (keputusan client 17 November 2026). Pembatalan proyek berbayar dan kebijakan pengembalian dana saat peserta mundur atau proyek dibatalkan: Q-30 |
 | BR-PRJ-12 | Karya Diterima pada Antologi tidak dipublikasikan ke Community atau tempat lain oleh pengelola tanpa persetujuan penulis sesuai ketentuan proyek |

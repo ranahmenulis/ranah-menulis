@@ -1,5 +1,18 @@
 # Riwayat Perubahan PRD RanahMenulis
 
+## v0.2, keputusan Lembar Novlr 17 November 2026
+
+Sumber: jawaban Wafiy atas Lembar Keputusan Novlr dan pesan WhatsApp lanjutan (rincian per butir di `docs/catatan-keputusan-client.md`, bagian 8). Marketplace dikonfirmasi di luar MVP.
+
+- **Fitur baru MVP** (bagian 9, 10, 12): PLT-11 (pengaturan notifikasi, email progres mingguan, notifikasi penyemangat), PLT-12 (tautan komunitas luar), STK-08 (target per dokumen), STK-09 (riwayat streak), STK-10 (kartu progres), STD-12 sampai STD-19 (riwayat versi 3 hari, timer sprint, pencarian cepat, arsip dan duplikat, jenis dokumen dan tag, pengaturan menulis dan pintasan, angka kata disematkan, gambar kutipan), COM-13 (Event umum), COM-14 (berbagi progres ke grup), PRJ-06 (batal daftar proyek gratis), KLS-05 sampai KLS-07 (kelas berjalan, salin latihan, testimoni). User story US-43 sampai US-55.
+- **Diperluas:** STK-01 (dialog pilihan cepat, harian saja), STK-05 (tiga angka kata), PLT-10 (ringkasan mingguan, tiga angka kata, kartu panduan awal, kartu proyek dan kelas berjalan).
+- **Fase 2:** impor .docx (STD-20); catatan riset, profil tokoh, struktur buku, dan papan alur ikut manuskrip multi-bab (STD-06); mode ramah disleksia ditunda; sertifikat kelas tetap Fase 2.
+- **Tidak dibangun** (bagian 23, "Di luar cakupan"): kursus mandiri, tautan baca publik, kolaborasi di dalam teks, pilihan font dan jarak baris, tema tambahan, konten editorial dan Beranda yang bisa diatur, penawaran mitra, chat atau DM realtime.
+- **Aturan baru atau berubah** (bagian 14): BR-STK-10, BR-STD-06 (versi 3 hari), BR-STD-07 (batas dokumen gratis, angka [konfirmasi]), BR-COM-09 sampai BR-COM-12, BR-PRJ-11 (batal hanya proyek gratis).
+- **Perubahan peran:** penulis boleh membuat grup sendiri (BR-COM-12), menggantikan sebagian Q-41; AC-G4 dan bagian 01, 10, 15, 16 diberi penanda. Rincian aturan grup masih terbuka (Q-57).
+- **Acceptance criteria:** AC-32 sampai AC-38. **Pertanyaan baru:** Q-53 sampai Q-58 (butir "perlu dibahas" dan nama pengganti Roast My Writing, yang sengaja belum diganti).
+- PRD Ringkas ikut diperbarui.
+
 ## v0.2, tambahan sementara 14 November 2026
 
 Sumber: daftar MVP dari client (Dashboard / Beranda masuk Supporting Platform). **Seluruh perubahan di bawah bersifat sementara dan ditinjau ulang setelah desain jadi.**

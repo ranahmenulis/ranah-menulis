@@ -4,11 +4,11 @@ Navigasi utama mengikuti tiga modul inti, dengan Streak tampil sebagai bagian St
 
 | Menu utama | Tujuan | Isi | Terlihat untuk |
 | --- | --- | --- | --- |
-| Beranda (Dashboard dan Community) | Pintu masuk membaca dan ringkasan pribadi | Blok "Hari ini" di bagian atas (PLT-10, sementara, Q-49; hanya untuk pengguna masuk), lalu Feed, Discover, Bookmark, pencarian penulis dan karya | Semua (interaksi perlu akun; blok "Hari ini" untuk Registered User ke atas) |
+| Beranda (Dashboard dan Community) | Pintu masuk membaca dan ringkasan pribadi | Blok "Hari ini" di bagian atas (PLT-10, sementara, Q-49; hanya untuk pengguna masuk), lalu Feed, Discover, Event, Bookmark, pencarian penulis dan karya | Semua (interaksi perlu akun; blok "Hari ini" untuk Registered User ke atas) |
 | Studio | Menulis | Daftar dokumen dan folder, editor, manuskrip, sampah, dan Streak | Registered User ke atas |
 | Streak (di dalam Studio) | Kebiasaan | Target, kalender, statistik, milestone | Registered User ke atas |
 | Projects | Peluang | Antologi, Solo, Kelas Menulis, Lomba, Proyek Saya | Semua (daftar perlu akun) |
-| Grup | Kolaborasi | Grup saya, tulisan anggota, kelola anggota (admin grup), buat grup (Administrator) | Anggota grup; admin grup dan Administrator untuk pengelolaan |
+| Grup | Kolaborasi | Grup saya, tulisan anggota, kelola anggota (admin grup), buat grup (penulis atau Administrator) | Anggota grup; admin grup dan Administrator untuk pengelolaan |
 | Marketplace (setelah MVP) | Transaksi | Belum ditentukan (Q-39) | Belum ditentukan |
 | Profil | Identitas | Profil publik, portofolio, pengaturan, notifikasi | Registered User ke atas |
 | Kelola | Pekerjaan pengelola | Proyek yang dikelola, antrean submission, penilaian, tugas mentor | Organizer, Editor, Judge/Mentor |
