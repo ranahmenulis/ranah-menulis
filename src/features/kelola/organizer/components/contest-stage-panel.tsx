@@ -14,6 +14,8 @@ import { advanceContest, useContestOverrides } from "@/features/projects/lomba/s
 import type { ContestStage } from "@/features/projects/lomba/types";
 import { formatProjectDate } from "@/features/projects/project-model";
 import { JudgingControls } from "./judging-controls";
+import { ResultsEditor } from "./results-editor";
+import type { Submission } from "@/features/projects/submission-types";
 import type { Project } from "@/features/projects/types";
 
 const STEPS: { stage: ContestStage; label: string; body: string }[] = [
@@ -39,7 +41,16 @@ const STEPS: { stage: ContestStage; label: string; body: string }[] = [
  * move is forward and the dialog says so. The result is said beside the button, because the button
  * for that step is gone afterwards. Who the finalists and winners are comes from the Juri (6g-4).
  */
-export function ContestStagePanel({ project, now }: { project: Project; now: number }) {
+export function ContestStagePanel({
+  project,
+  now,
+  works = [],
+}: {
+  project: Project;
+  now: number;
+  /** The non-draft works of the project, for the results below. */
+  works?: Submission[];
+}) {
   const overrides = useContestOverrides();
   const stage = contestStage(project, now, overrides[project.slug]?.stage);
   const next = STEPS.filter((s) => stageRank(s.stage) > stageRank(stage));
@@ -93,6 +104,7 @@ export function ContestStagePanel({ project, now }: { project: Project; now: num
         </div>
       )}
       <JudgingControls slug={project.slug} stage={stage} />
+      <ResultsEditor project={project} stage={stage} works={works} />
       {asking && (
         <Dialog
           open

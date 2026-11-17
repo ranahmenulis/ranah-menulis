@@ -137,7 +137,7 @@ describe("contest stages", () => {
 
   it("has nothing left to do once the winners were announced", async () => {
     openContest(DONE);
-    expect(await screen.findByText(/Pemenang sudah diumumkan/)).toBeTruthy();
+    expect((await screen.findAllByText(/Pemenang sudah diumumkan/)).length).toBeGreaterThan(0);
     expect(screen.queryByRole("button", { name: /Umumkan/ })).toBeNull();
   });
 
