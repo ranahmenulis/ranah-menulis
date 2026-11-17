@@ -4,7 +4,7 @@ const KEY = "ranah.dailyTarget";
 
 /** [konfirmasi] STK-01: shown until the writer picks their own. */
 export const DEFAULT_TARGET = 500;
-export const TARGET_PRESETS = [250, 500, 750, 1000];
+export const TARGET_PRESETS = [250, 500, 1000, 2000, 5000];
 
 type Storage = Pick<globalThis.Storage, "getItem" | "setItem">;
 

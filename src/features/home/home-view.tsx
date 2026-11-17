@@ -20,6 +20,7 @@ import { FeedItem } from "./feed-item";
 import { FollowRow } from "./follow-row";
 import { FirstSteps } from "./steps";
 import { TodayBlock } from "./today-block";
+import { WeekSummary } from "./week-summary";
 
 const dateFormat = new Intl.DateTimeFormat("id-ID", {
   weekday: "long",
@@ -62,12 +63,15 @@ export function HomeView() {
           Tulis postingan
         </ButtonLink>
       </div>
-      <h1 className="mt-1 mb-4 heading-lg">Hari ini</h1>
+      <h1 id="beranda-title" tabIndex={-1} className="mt-1 mb-4 heading-lg outline-none">
+        Hari ini
+      </h1>
 
       {isNew && (
         <FirstSteps hasTarget={data.target !== null} hasDocument={data.lastDocument !== null} />
       )}
       <TodayBlock data={data} showDummy={ready && !isNew} />
+      {ready && !isNew && <WeekSummary data={data} />}
 
       {ready && !isNew && <FollowRow items={followed} />}
 
