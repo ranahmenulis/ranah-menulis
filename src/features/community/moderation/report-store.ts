@@ -2,6 +2,8 @@
 
 import { createLocalListStore } from "@/lib/local-list-store";
 import type { ReportReason } from "../types";
+import { REPORT_REASON_LABEL } from "./reasons";
+import { lastDecision } from "./removed";
 
 /**
  * Reports and moderation decisions (COM-05, PLT-06), kept in localStorage until the backend exists.
@@ -30,7 +32,7 @@ export type ModerationEntry = {
   reason?: string;
 };
 
-const REASONS: readonly string[] = ["spam", "hate", "copyright", "other"];
+const REASONS: readonly string[] = Object.keys(REPORT_REASON_LABEL);
 const DECISIONS: readonly string[] = ["abaikan", "sembunyikan", "hapus", "pulihkan", "tangguhkan"];
 const KINDS: readonly string[] = ["post", "comment"];
 
@@ -103,7 +105,10 @@ export const moderation = createLocalListStore<ModerationEntry>("ranah.moderatio
 export const useReports = reports.use;
 export const useModeration = moderation.use;
 
-/** Files a report. One report per person per content: a second one is merged, not added. */
+/**
+ * Files a report. One report per person per content until a moderator decides: a second one is
+ * merged, not added. After a decision the person can report the content again.
+ */
 export function fileReport(
   kind: ReportKind,
   targetId: string,
@@ -112,9 +117,16 @@ export function fileReport(
   at = Date.now(),
 ): boolean {
   const all = reports.read();
-  if (all.some((r) => r.kind === kind && r.targetId === targetId && r.reporterId === reporterId)) {
-    return false;
-  }
+  // A decision closes the case: the same person may report the content again after it.
+  const decidedAt = lastDecision(moderation.read(), kind, targetId)?.at;
+  const again = all.some(
+    (r) =>
+      r.kind === kind &&
+      r.targetId === targetId &&
+      r.reporterId === reporterId &&
+      (decidedAt === undefined || r.at > decidedAt),
+  );
+  if (again) return false;
   reports.write([...all, { kind, targetId, reporterId, reason, at }]);
   return true;
 }

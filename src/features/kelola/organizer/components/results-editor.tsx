@@ -89,6 +89,7 @@ function failureText(result: { reason: string; message?: string }): string {
   if (result.reason === "bukan-admin")
     return "Hanya Administrator yang bisa mengubah hasil yang sudah diumumkan.";
   if (result.reason === "alasan") return result.message ?? "";
+  if (result.reason === "tidak-berubah") return "Tidak ada perubahan pada pemenang.";
   return lockText[result.reason === "terkunci" ? "terkunci" : "belum-ditutup"];
 }
 

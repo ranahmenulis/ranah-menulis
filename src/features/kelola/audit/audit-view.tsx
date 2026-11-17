@@ -1,12 +1,12 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
 import { EmptyState, Notice } from "@/components/ui/states";
 import { sentAtText } from "@/features/projects/submission-text";
 import { ADMIN_HREF } from "../admin/area-hrefs";
+import { useUrlFilter } from "../use-url-filter";
 import { useJudgingLog } from "../juri/score-store";
 import { useAuditLog } from "./audit-log";
 import {
@@ -25,20 +25,14 @@ const AUDIT_HREF = `${ADMIN_HREF}/audit`;
 export function AuditView() {
   const entries = useAuditLog();
   const judging = useJudgingLog();
-  const asked = useSearchParams()?.get("jenis") ?? null;
-  const [kind, setKind] = useState(() => parseAuditKind(asked));
-  const [seen, setSeen] = useState(asked);
-  const [shown, setShown] = useState(PAGE_SIZE);
-  if (seen !== asked) {
-    setSeen(asked);
-    setKind(parseAuditKind(asked));
-    setShown(PAGE_SIZE);
-  }
-  function change(next: AuditKind) {
-    setKind(next);
-    setShown(PAGE_SIZE);
-    window.history.replaceState(null, "", `${AUDIT_HREF}${auditQuery(next)}`);
-  }
+  const [kind, change] = useUrlFilter(
+    "jenis",
+    parseAuditKind,
+    (k: AuditKind) => `${AUDIT_HREF}${auditQuery(k)}`,
+  );
+  // How many rows are shown belongs to the kind it was set for; another kind starts again.
+  const [page, setPage] = useState({ kind, size: PAGE_SIZE });
+  const shown = page.kind === kind ? page.size : PAGE_SIZE;
 
   const rows = useMemo(() => logRows(entries, judging, kind), [entries, judging, kind]);
 
@@ -79,7 +73,7 @@ export function AuditView() {
             <Button
               variant="secondary"
               className="justify-self-start"
-              onClick={() => setShown((n) => n + PAGE_SIZE)}
+              onClick={() => setPage({ kind, size: shown + PAGE_SIZE })}
             >
               Muat lebih banyak
             </Button>

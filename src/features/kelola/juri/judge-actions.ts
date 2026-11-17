@@ -1,6 +1,6 @@
 import { stageRank } from "@/features/projects/lomba/contest-model";
 import type { ContestStage } from "@/features/projects/lomba/types";
-import { canonicalId } from "../identity";
+import { ME_ID, canonicalId } from "../identity";
 import { validateReason } from "../reason";
 import { isClosed, validateScores, type Criterion, type ScoreErrors } from "./judge-model";
 import { JUDGE_ID, judgingLog, juryScores, type JuryScore } from "./score-store";
@@ -64,6 +64,6 @@ export function reopenJudging(slug: string, note: string, now: number): ClosureR
   const log = judgingLog.read();
   if (!isClosed(log, slug)) return "sudah-berubah";
   if (validateReason(note, true) !== null) return "catatan";
-  judgingLog.write([...log, { slug, state: "dibuka", at: now, note: note.trim() }]);
+  judgingLog.write([...log, { slug, state: "dibuka", at: now, note: note.trim(), by: ME_ID }]);
   return "ok";
 }

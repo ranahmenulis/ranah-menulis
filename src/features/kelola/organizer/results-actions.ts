@@ -23,7 +23,7 @@ export type SaveResultsOutcome =
   | { ok: true; results: ContestResults }
   | {
       ok: false;
-      reason: "terkunci" | "belum-ditutup" | "salah" | "bukan-admin" | "alasan";
+      reason: "terkunci" | "belum-ditutup" | "salah" | "bukan-admin" | "alasan" | "tidak-berubah";
       errors: ResultsErrors;
       message?: string;
     };
@@ -42,6 +42,25 @@ function fixFinalists(
   return { ...input, finalists };
 }
 
+/**
+ * Records a correction of announced winners in the audit log, before anything is stored, so a
+ * change is never left without a note. Returns a refusal when nothing would change.
+ */
+function logAmendment(
+  slug: string,
+  kept: ContestResults,
+  results: ContestResults,
+  amend: { reason: string },
+): SaveResultsOutcome | null {
+  if (JSON.stringify(kept.winners) === JSON.stringify(results.winners)) {
+    return { ok: false, reason: "tidak-berubah", errors: {} };
+  }
+  appendAudit([
+    { action: "contest.results.amend", actorId: ME_ID, slug, reason: amend.reason.trim() },
+  ]);
+  return null;
+}
+
 /** Why a correction after the announcement may not go ahead: not an Administrator, or no reason. */
 function amendRefusal(reason: string): SaveResultsOutcome | null {
   if (!isPlatformAdmin(readEffectiveRoles())) {
@@ -51,6 +70,22 @@ function amendRefusal(reason: string): SaveResultsOutcome | null {
   if (!problem) return null;
   const message = problem === "kosong" ? "Tulis alasan perubahannya." : reasonMessage[problem];
   return { ok: false, reason: "alasan", errors: {}, message };
+}
+
+/**
+ * Whether results may be saved now. Before judging closes nothing can; after the winners are
+ * announced only a correction of results the Organizer recorded can, by an Administrator, with a
+ * reason.
+ */
+function gate(
+  lock: ReturnType<typeof resultsLock>,
+  amendment: { reason: string } | undefined,
+  kept: ContestResults | undefined,
+): SaveResultsOutcome | null {
+  if (lock === "belum-ditutup") return { ok: false, reason: lock, errors: {} };
+  if (lock !== "terkunci") return null;
+  if (!amendment || !kept) return { ok: false, reason: "terkunci", errors: {} };
+  return amendRefusal(amendment.reason);
 }
 
 /**
@@ -70,31 +105,19 @@ export function saveContestResults(
   const stage = contestStage(project, now, readOverrides()[project.slug]?.stage);
   const judging = judgingStatus(stage, judgingLog.read(), project.slug);
   const lock = resultsLock(stage, judging);
-  const amending = lock === "terkunci" && amend !== undefined;
-  if (lock === "belum-ditutup" || (lock === "terkunci" && !amending)) {
-    return { ok: false, reason: lock, errors: {} };
-  }
-  const refused = amending && amend ? amendRefusal(amend.reason) : null;
-  if (refused) return refused;
-
+  const amendment = lock === "terkunci" ? amend : undefined;
   const kept = storedResults.read().find((r) => r.slug === project.slug);
-  const effective = fixFinalists(input, rows, kept, lock === "finalis-tetap" || amending);
+  const blocked = gate(lock, amendment, kept);
+  if (blocked) return blocked;
+  const effective = fixFinalists(input, rows, kept, lock === "finalis-tetap" || !!amendment);
   const prizes = project.block.kind === "lomba" ? project.block.prizes.length : 0;
   const errors = validateResults(effective, rows, prizes);
   if (Object.keys(errors).length > 0) return { ok: false, reason: "salah", errors };
 
   const results = buildResults(project.slug, rows, effective);
   const rest = storedResults.read().filter((r) => r.slug !== project.slug);
+  const unchanged = amendment && kept ? logAmendment(project.slug, kept, results, amendment) : null;
+  if (unchanged) return unchanged;
   storedResults.write([...rest, results]);
-  if (amend && amending) {
-    appendAudit([
-      {
-        action: "contest.results.amend",
-        actorId: ME_ID,
-        slug: project.slug,
-        reason: amend.reason.trim(),
-      },
-    ]);
-  }
   return { ok: true, results };
 }

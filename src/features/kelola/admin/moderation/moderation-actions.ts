@@ -4,6 +4,7 @@ import {
   type Decision,
   type ReportKind,
 } from "@/features/community/moderation/report-store";
+import { contentAuthor } from "@/features/community/moderation/content-author";
 import { contentState } from "@/features/community/moderation/removed";
 import { isPlatformAdmin } from "@/lib/roles";
 import { appendAudit, type AuditAction } from "../../audit/audit-log";
@@ -26,12 +27,11 @@ const AUDIT_OF: Record<Exclude<Decision, "tangguhkan">, AuditAction> = {
  * Decides a case (PLT-06). Everything is read again when the button is pressed: who is pressing,
  * whether the content was reported at all, and what a moderator already did to it. Suspending the
  * author goes through the same rules as on the Admin screen and is only recorded when it worked.
- * `authorId` is the author of the content, which a fixture or a stored post fixes once and for all.
+ * The author is found from the content here, not taken from the screen.
  */
 export function decideCase(
   kind: ReportKind,
   targetId: string,
-  authorId: string,
   decision: Decision,
   reason = "",
 ): AdminResult {
@@ -49,6 +49,7 @@ export function decideCase(
   if (found) return refuse(found === "kosong" ? REASON_EMPTY : reasonMessage[found]);
 
   const note = reason.trim();
+  const authorId = contentAuthor(kind, targetId);
   if (decision === "tangguhkan") {
     const suspended = suspendUser(authorId, note);
     if (!suspended.ok) return suspended;

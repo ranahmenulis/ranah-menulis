@@ -43,16 +43,22 @@ export function logRows(
   judging: readonly JudgingEntry[],
   kind: AuditKind,
 ): AuditEntry[] {
-  const reopened = judging
-    .filter((j) => j.state === "dibuka")
-    .map((j): AuditEntry => ({
-      id: `jl-${j.slug}-${j.at}`,
-      at: j.at,
-      actorId: "",
-      action: "contest.reopen",
-      slug: j.slug,
-      reason: j.note,
-    }));
+  // A reopening is a "dibuka" that follows a "ditutup" of the same contest; the log is in time order.
+  const closed = new Set<string>();
+  const reopened: AuditEntry[] = [];
+  for (const j of judging) {
+    if (j.state === "ditutup") closed.add(j.slug);
+    else if (closed.has(j.slug)) {
+      reopened.push({
+        id: `jl-${j.slug}-${j.at}`,
+        at: j.at,
+        actorId: j.by ?? "",
+        action: "contest.reopen",
+        slug: j.slug,
+        reason: j.note,
+      });
+    }
+  }
   return [...entries, ...reopened]
     .filter((e) => kind === "semua" || KIND_OF[e.action] === kind)
     .sort((a, b) => b.at - a.at);

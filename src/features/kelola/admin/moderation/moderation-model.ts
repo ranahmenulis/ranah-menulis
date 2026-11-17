@@ -1,4 +1,5 @@
-import { contentState, type ContentState } from "@/features/community/moderation/removed";
+import { REPORT_REASON_LABEL } from "@/features/community/moderation/reasons";
+import { applyDecision, type ContentState } from "@/features/community/moderation/removed";
 import type {
   Decision,
   ModerationEntry,
@@ -18,12 +19,7 @@ export const caseKey = (kind: ReportKind, targetId: string) => `${kind}:${target
 export const caseHref = (kind: ReportKind, targetId: string) =>
   `${MODERATION_HREF}/${encodeURIComponent(caseKey(kind, targetId))}`;
 
-export const reasonLabel: Record<ReportReason, string> = {
-  spam: "Spam atau iklan",
-  hate: "Ujaran kebencian atau pelecehan",
-  copyright: "Melanggar hak cipta",
-  other: "Alasan lain",
-};
+export const reasonLabel = REPORT_REASON_LABEL;
 
 export type CaseStatus = "baru" | "selesai";
 
@@ -41,10 +37,6 @@ export type CaseRow = {
   last: ModerationEntry | null;
 };
 
-function lastEntry(entries: readonly ModerationEntry[], kind: ReportKind, id: string) {
-  return entries.findLast((e) => e.kind === kind && e.targetId === id) ?? null;
-}
-
 export function buildCases(
   reports: readonly Report[],
   entries: readonly ModerationEntry[],
@@ -52,12 +44,23 @@ export function buildCases(
   const groups = new Map<string, Report[]>();
   for (const r of reports) {
     const key = caseKey(r.kind, r.targetId);
-    groups.set(key, [...(groups.get(key) ?? []), r]);
+    const group = groups.get(key);
+    if (group) group.push(r);
+    else groups.set(key, [r]);
+  }
+  // One pass over the decisions: the last one and the resulting state, per content.
+  const last = new Map<string, ModerationEntry>();
+  const states = new Map<string, ContentState>();
+  for (const e of entries) {
+    const key = caseKey(e.kind, e.targetId);
+    last.set(key, e);
+    states.set(key, applyDecision(states.get(key) ?? "tampil", e.decision));
   }
   const rows = [...groups.values()].map((list): CaseRow => {
     const { kind, targetId } = list[0];
-    const last = lastEntry(entries, kind, targetId);
-    const open = list.filter((r) => last === null || r.at > last.at);
+    const key = caseKey(kind, targetId);
+    const decided = last.get(key) ?? null;
+    const open = list.filter((r) => decided === null || r.at > decided.at);
     const reasons: CaseRow["reasons"] = {};
     for (const r of list) reasons[r.reason] = (reasons[r.reason] ?? 0) + 1;
     const top = (Object.entries(reasons) as [ReportReason, number][]).sort(
@@ -71,8 +74,8 @@ export function buildCases(
       topReason: top,
       since: Math.min(...(open.length > 0 ? open : list).map((r) => r.at)),
       status: open.length > 0 ? "baru" : "selesai",
-      state: contentState(entries, kind, targetId),
-      last,
+      state: states.get(key) ?? "tampil",
+      last: decided,
     };
   });
   // New cases first, the one waiting longest on top; closed ones by their latest decision.

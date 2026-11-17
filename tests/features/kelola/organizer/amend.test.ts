@@ -78,4 +78,27 @@ describe("correcting winners after the announcement", () => {
       { action: "contest.results.amend", slug: SLUG, reason: "Salah hitung" },
     ]);
   });
+
+  it("refuses a change that changes nothing, and logs nothing", () => {
+    sessionStorage.setItem("rm-roles", "administrator");
+    expect(
+      saveContestResults(project, rows, form({ a: "1" }), NOW, { reason: "Cek" }),
+    ).toMatchObject({
+      ok: false,
+      reason: "tidak-berubah",
+    });
+    expect(auditLog.read()).toEqual([]);
+  });
+
+  it("refuses when the Organizer recorded no results to correct", () => {
+    sessionStorage.setItem("rm-roles", "administrator");
+    storedResults.reset();
+    expect(
+      saveContestResults(project, rows, form({ b: "1" }), NOW, { reason: "Cek" }),
+    ).toMatchObject({
+      ok: false,
+      reason: "terkunci",
+    });
+    expect(auditLog.read()).toEqual([]);
+  });
 });

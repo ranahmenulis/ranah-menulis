@@ -140,12 +140,16 @@ describe("the audit log", () => {
         reason: "Spam",
       },
     ]);
-    judgingLog.write([{ slug: "lomba-x", state: "dibuka", at: 200, note: "Skor salah" }]);
+    judgingLog.write([
+      { slug: "lomba-x", state: "ditutup", at: 150 },
+      { slug: "lomba-x", state: "dibuka", at: 200, note: "Skor salah", by: "rinjani-putri" },
+      { slug: "lomba-y", state: "dibuka", at: 250 },
+    ]);
     render(<AuditView />);
     const items = within(screen.getByRole("list", { name: "Catatan" })).getAllByRole("listitem");
     expect(items.map((li) => li.textContent)).toEqual([
       expect.stringContaining("menyembunyikan tulisan Laras"),
-      expect.stringContaining("membuka kembali penilaian lomba lomba-x"),
+      expect.stringContaining("Rinjani Putri (kamu) membuka kembali penilaian lomba lomba-x"),
       expect.stringContaining("memberi role Editor kepada Laras"),
     ]);
     expect(items[1].textContent).toContain("Skor salah");
