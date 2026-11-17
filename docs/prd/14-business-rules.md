@@ -26,7 +26,7 @@ Aturan bertanda **Usulan** adalah rekomendasi untuk dikonfirmasi. Aturan tanpa t
 | BR-STD-03 | Pengiriman ke Projects membuat **versi submission beku** yang tidak berubah walau dokumen asal diedit. Revisi membuat versi baru; versi lama tetap tersimpan |
 | BR-STD-04 | Konflik penyimpanan tidak pernah diselesaikan dengan menimpa diam-diam; pengguna selalu diberi pilihan |
 | BR-STD-05 | Hanya pemilik yang dapat membaca dan mengubah dokumen. Administrator dan Super Admin tidak membaca dokumen pribadi kecuali ada alasan hukum atau moderasi yang dicatat (Q-03) |
-| BR-STD-06 | Riwayat versi tulisan disimpan 3 hari, lalu dihapus. Pemulihan membuat versi baru |
+| BR-STD-06 | Riwayat versi tulisan disimpan 3 hari, lalu dihapus. Pemulihan membuat versi baru dan menyimpan teks sekarang sebagai versi lebih dulu. **Usulan:** potret otomatis paling sering tiap 10 menit; potret tambahan bila satu simpanan menghapus sedikitnya 100 kata dan 30% isi; paling banyak 100 versi per dokumen. Versi bersifat pribadi seperti dokumennya (BR-STD-05) |
 | BR-STD-07 | Akun gratis punya batas jumlah dokumen. Angkanya belum ditetapkan [konfirmasi]; dokumen di Sampah dan arsip ikut dihitung atau tidak: [konfirmasi]. Dokumen yang melewati batas tidak dihapus, hanya pembuatan baru ditahan |
 
 ### 14.3 Community

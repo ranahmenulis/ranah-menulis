@@ -4,6 +4,7 @@ import type { JSONContent } from "@tiptap/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { emptyLog, type DailyLog } from "../daily-progress";
 import { sanitizeTargets, type DocumentTarget } from "../document-targets";
+import { versionId, type DocumentVersion } from "../versions";
 import type { DocumentStore, SaveInput, StudioDocument } from "../storage/document-store";
 
 const AUTOSAVE_DELAY_MS = 800;
@@ -215,6 +216,45 @@ export function useStudioDocument(documentId: string, store: DocumentStore) {
     [schedule],
   );
 
+  /**
+   * Puts an older version back. What is written now is stored as a version first, so the restore
+   * can itself be undone; then the editor is rebuilt from the old text and the normal autosave
+   * stores it on the version this tab already holds (no conflict). False when it could not start.
+   */
+  const restoreVersion = useCallback(
+    async (target: DocumentVersion) => {
+      if (!id.current || blocked.current || !(await saveNow())) return false;
+      if (version.current === 0) return false; // a draft that was never stored has no history
+      const { title: t, content, words: w, targets: tg } = latest.current;
+      try {
+        await store.addVersion({
+          id: versionId(id.current, version.current),
+          docId: id.current,
+          savedAt: Date.now(),
+          title: t,
+          content,
+          wordCount: w,
+          reason: "pemulihan",
+        });
+      } catch {
+        return false; // Nothing was changed; the text is still safe.
+      }
+      latest.current = {
+        title: target.title,
+        content: target.content,
+        words: target.wordCount,
+        targets: tg,
+      };
+      setInitial({ title: target.title, content: target.content });
+      setTitleState(target.title);
+      setWords(target.wordCount);
+      setEditorKey((k) => k + 1);
+      schedule();
+      return true;
+    },
+    [store, saveNow, schedule],
+  );
+
   const resolveConflict = useCallback(
     async (choice: ConflictChoice) => {
       if (!conflict) return;
@@ -268,5 +308,6 @@ export function useStudioDocument(documentId: string, store: DocumentStore) {
     resolveConflict,
     saveNow,
     getId,
+    restoreVersion,
   };
 }

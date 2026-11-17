@@ -1,4 +1,5 @@
 import { dayKey, emptyLog, type DailyLog } from "../daily-progress";
+import { planSnapshots, versionsToPrune, visibleVersions, type DocumentVersion } from "../versions";
 import {
   applyMeta,
   commitSave,
@@ -11,10 +12,11 @@ import {
 } from "./document-store";
 
 const DB_NAME = "ranah-studio";
-const DB_VERSION = 2;
+const DB_VERSION = 3;
 const DOCS = "documents";
 const DAILY = "daily";
 const FOLDERS = "folders";
+const VERSIONS = "versions";
 
 function request<T>(req: IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
@@ -23,7 +25,7 @@ function request<T>(req: IDBRequest<T>): Promise<T> {
   });
 }
 
-function open(): Promise<IDBDatabase> {
+function open(onStale: () => void): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
     const req = indexedDB.open(DB_NAME, DB_VERSION);
     req.onupgradeneeded = (event) => {
@@ -33,8 +35,20 @@ function open(): Promise<IDBDatabase> {
         db.createObjectStore(DAILY, { keyPath: "day" });
       }
       if (event.oldVersion < 2) db.createObjectStore(FOLDERS, { keyPath: "id" });
+      if (event.oldVersion < 3) {
+        // Version history (STD-12): only adds a store, so existing documents are untouched.
+        db.createObjectStore(VERSIONS, { keyPath: "id" }).createIndex("docId", "docId");
+      }
     };
-    req.onsuccess = () => resolve(req.result);
+    req.onsuccess = () => {
+      const db = req.result;
+      // A newer tab is upgrading the schema: step aside instead of blocking it.
+      db.onversionchange = () => {
+        db.close();
+        onStale();
+      };
+      resolve(db);
+    };
     req.onerror = () => reject(req.error);
   });
 }
@@ -54,7 +68,10 @@ function done(tx: IDBTransaction): Promise<void> {
  */
 export function createIndexedDbStore(): DocumentStore {
   let dbPromise: Promise<IDBDatabase> | null = null;
-  const db = () => (dbPromise ??= open());
+  const db = () =>
+    (dbPromise ??= open(() => {
+      dbPromise = null;
+    }));
 
   return {
     async get(id) {
@@ -63,9 +80,10 @@ export function createIndexedDbStore(): DocumentStore {
     },
 
     async save(input: SaveInput, baseVersion: number): Promise<SaveResult> {
-      const tx = (await db()).transaction([DOCS, DAILY], "readwrite");
+      const tx = (await db()).transaction([DOCS, DAILY, VERSIONS], "readwrite");
       const docs = tx.objectStore(DOCS);
       const daily = tx.objectStore(DAILY);
+      const versions = tx.objectStore(VERSIONS);
       const today = dayKey(new Date());
 
       const existing = ((await request(docs.get(input.id))) as StudioDocument | undefined) ?? null;
@@ -75,6 +93,12 @@ export function createIndexedDbStore(): DocumentStore {
       if (result.ok) {
         docs.put(result.doc);
         daily.put(result.progress);
+        // Version history is kept in the same transaction, so a save and its snapshot go together.
+        const kept = (await request(versions.index("docId").getAll(input.id))) as DocumentVersion[];
+        const now = Date.now();
+        const plan = planSnapshots(existing, result.doc, kept, now);
+        for (const version of plan) versions.put(version);
+        for (const id of versionsToPrune([...kept, ...plan], now)) versions.delete(id);
       }
       await new Promise<void>((resolve, reject) => {
         tx.oncomplete = () => resolve();
@@ -136,8 +160,28 @@ export function createIndexedDbStore(): DocumentStore {
     },
 
     async deletePermanently(id: string) {
-      const tx = (await db()).transaction(DOCS, "readwrite");
+      const tx = (await db()).transaction([DOCS, VERSIONS], "readwrite");
       tx.objectStore(DOCS).delete(id);
+      const versions = tx.objectStore(VERSIONS);
+      const keys = (await request(versions.index("docId").getAllKeys(id))) as IDBValidKey[];
+      for (const key of keys) versions.delete(key);
+      await done(tx);
+    },
+
+    async listVersions(docId: string) {
+      const tx = (await db()).transaction(VERSIONS, "readonly");
+      const all = (await request(
+        tx.objectStore(VERSIONS).index("docId").getAll(docId),
+      )) as DocumentVersion[];
+      return visibleVersions(all, Date.now());
+    },
+
+    async addVersion(version: DocumentVersion) {
+      const tx = (await db()).transaction(VERSIONS, "readwrite");
+      const store = tx.objectStore(VERSIONS);
+      store.put(version);
+      const kept = (await request(store.index("docId").getAll(version.docId))) as DocumentVersion[];
+      for (const id of versionsToPrune(kept, Date.now())) store.delete(id);
       await done(tx);
     },
 

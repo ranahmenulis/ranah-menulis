@@ -2,6 +2,7 @@
 
 import {
   ArrowsOut,
+  ClockCounterClockwise,
   DownloadSimple,
   Lightbulb,
   PaperPlaneTilt,
@@ -21,10 +22,13 @@ type Actions = {
   canExport: boolean;
   /** Targets need a stored document, so an empty draft cannot have any. */
   canTarget: boolean;
+  /** Versions belong to a stored document, so an empty draft has none. */
+  canHistory: boolean;
   onHelp: () => void;
   onFocus: () => void;
   onSend: () => void;
   onExport: () => void;
+  onHistory: () => void;
   onTargets: () => void;
   onSprint: () => void;
   onTrash: () => void;
@@ -36,10 +40,12 @@ export function useEditorMenu({
   canSend,
   canExport,
   canTarget,
+  canHistory,
   onHelp,
   onFocus,
   onSend,
   onExport,
+  onHistory,
   onTargets,
   onSprint,
   onTrash,
@@ -76,6 +82,14 @@ export function useEditorMenu({
         onSelect: onSend,
       },
       {
+        id: "history",
+        label: "Riwayat versi",
+        icon: <ClockCounterClockwise />,
+        hint: "3 hari",
+        disabled: !canHistory,
+        onSelect: onHistory,
+      },
+      {
         id: "targets",
         label: "Target dokumen",
         icon: <Target />,
@@ -106,10 +120,12 @@ export function useEditorMenu({
       canSend,
       canExport,
       canTarget,
+      canHistory,
       onHelp,
       onFocus,
       onSend,
       onExport,
+      onHistory,
       onTargets,
       onSprint,
       onTrash,

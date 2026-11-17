@@ -11,6 +11,8 @@ import { sameStats, type EditorStats } from "../editor-stats";
 import { useOnlineStatus } from "../hooks/use-online-status";
 import { useSendFromEditor } from "../hooks/use-send-from-editor";
 import { useDocumentTargets } from "../hooks/use-document-targets";
+import { useRestoreVersion } from "../hooks/use-restore-version";
+import { useSidePanel } from "../hooks/use-side-panel";
 import { useSprint } from "../hooks/use-sprint";
 import { useSprintPanel } from "../hooks/use-sprint-panel";
 import { useStudioDocument, type LoadState } from "../hooks/use-studio-document";
@@ -29,6 +31,7 @@ import { HelpDrawer } from "./help-drawer";
 import { SendToProjectDialog } from "./send-to-project-dialog";
 import { ShareDialog } from "./share-dialog";
 import { SprintAnnouncer } from "./sprint-control";
+import { VersionHistoryDrawer } from "./version-history-drawer";
 
 const FALLBACK_TITLE: Record<LoadState, string> = {
   loading: "",
@@ -36,6 +39,16 @@ const FALLBACK_TITLE: Record<LoadState, string> = {
   error: "Dokumen tidak terbuka",
   missing: "Dokumen tidak ditemukan",
 };
+
+/** The writing area makes room for an open side panel, and sits lower in focus mode. */
+function canvasClass(panelOpen: boolean, focusMode: boolean) {
+  return cn(
+    "min-h-0 flex-1 overflow-auto px-4 pt-8 pb-32 md:px-12 md:pt-24 md:pb-40",
+    "transition-[padding] duration-200 ease-out",
+    panelOpen && !focusMode && "md:pr-100",
+    focusMode && "md:pt-36",
+  );
+}
 
 /** A new document has no id until it is first stored. */
 const storedId = (id: string) => (id === "baru" ? null : id);
@@ -55,7 +68,7 @@ export function StudioEditor({ documentId }: { documentId: string }) {
   const online = useOnlineStatus();
   const target = useDailyTarget();
   const toast = useToast();
-  const [helpOpen, setHelpOpen] = useState(false);
+  const side = useSidePanel();
   const [focusMode, setFocusMode] = useState(false);
   const sprint = useSprint(doc.words);
   const sprintPanel = useSprintPanel(sprint);
@@ -75,10 +88,11 @@ export function StudioEditor({ documentId }: { documentId: string }) {
     [],
   );
 
+  const closePanel = side.close;
   const enterFocus = useCallback(() => {
-    setHelpOpen(false);
+    closePanel();
     setFocusMode(true);
-  }, []);
+  }, [closePanel]);
 
   // Escape leaves focus mode. A keyboard exit is instant, with no animation.
   useEffect(() => {
@@ -96,7 +110,7 @@ export function StudioEditor({ documentId }: { documentId: string }) {
   /** Opened and not empty: something is stored that can be trashed or given targets. */
   const stored = ready && !isEmpty;
 
-  const openHelp = useCallback(() => setHelpOpen(true), []);
+  const openHelp = side.openHelp;
   const openSend = useCallback(() => setDialog("send"), []);
   const openExport = useCallback(() => setDialog("export"), []);
   const openTargets = useCallback(() => setDialog("targets"), []);
@@ -112,6 +126,7 @@ export function StudioEditor({ documentId }: { documentId: string }) {
   }, [saveNow, getId, router]);
 
   const closeDialog = useCallback(() => setDialog(null), []);
+  const restoreVersion = useRestoreVersion(doc.restoreVersion, closePanel);
   const sendTo = useSendFromEditor({ saveNow, getId, closeDialog });
 
   // Leaving writes out what was typed first; if the device refuses, stay so nothing is lost.
@@ -160,11 +175,13 @@ export function StudioEditor({ documentId }: { documentId: string }) {
     canSend: doc.words > 0,
     canExport: doc.words > 0,
     canTarget: stored,
+    canHistory: stored,
     onHelp: openHelp,
     onFocus: enterFocus,
     onSend: openSend,
     onExport: openExport,
     onTargets: openTargets,
+    onHistory: side.openVersions,
     onSprint: sprintPanel.show,
     onTrash: () => void moveToTrash(),
   });
@@ -217,7 +234,7 @@ export function StudioEditor({ documentId }: { documentId: string }) {
           offline={!online}
           progress={doc.progress}
           target={target}
-          helpOpen={helpOpen}
+          helpOpen={side.panel === "help"}
           empty={isEmpty}
           ready={ready}
           fallbackTitle={FALLBACK_TITLE[doc.load]}
@@ -228,21 +245,13 @@ export function StudioEditor({ documentId }: { documentId: string }) {
           onSprintOpenChange={sprintPanel.setOpen}
           onBack={() => void goBack()}
           onShare={() => setDialog("share")}
-          onToggleHelp={() => setHelpOpen((v) => !v)}
+          onToggleHelp={side.toggleHelp}
           onFocusMode={enterFocus}
         />
       )}
       {!focusMode && editor && <FormatBar editor={editor} />}
 
-      <main
-        aria-label="Kanvas menulis"
-        className={cn(
-          "min-h-0 flex-1 overflow-auto px-4 pt-8 pb-32 md:px-12 md:pt-24 md:pb-40",
-          "transition-[padding] duration-200 ease-out",
-          helpOpen && !focusMode && "md:pr-100",
-          focusMode && "md:pt-36",
-        )}
-      >
+      <main aria-label="Kanvas menulis" className={canvasClass(side.panel !== null, focusMode)}>
         {body}
       </main>
 
@@ -258,7 +267,15 @@ export function StudioEditor({ documentId }: { documentId: string }) {
         />
       )}
       <SprintAnnouncer state={sprint.state} />
-      <HelpDrawer open={helpOpen && !focusMode} onClose={() => setHelpOpen(false)} />
+      <HelpDrawer open={side.panel === "help" && !focusMode} onClose={side.close} />
+      <VersionHistoryDrawer
+        open={side.panel === "versions" && !focusMode}
+        onClose={side.close}
+        store={store}
+        docId={getId()}
+        currentWords={doc.words}
+        onRestore={restoreVersion}
+      />
       <ShareDialog
         open={dialog === "share"}
         onClose={() => setDialog(null)}
