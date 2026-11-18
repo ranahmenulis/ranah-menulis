@@ -5,7 +5,9 @@ import { RadioChoice } from "@/components/ui/choice";
 import { Field, Input, Select } from "@/components/ui/field";
 import { Notice } from "@/components/ui/states";
 import type { ComposeAction, ComposeState } from "../../compose-state";
-import { MY_GROUPS } from "../../fixtures/authors";
+import { groupsFor } from "../../groups/group-model";
+import { writingGroups } from "../../groups/group-store";
+import { useGroupReader } from "../../groups/group-viewer";
 import { GENRES, type Genre } from "../../types";
 
 type Props = {
@@ -21,8 +23,9 @@ type Props = {
  * this text becomes public. Visibility has no default and the notice cannot be closed (AC-14, AC-15).
  */
 export function SettingsPanel({ state, dispatch, showTitle, hint }: Props) {
-  // [konfirmasi] Which groups offer this option, and who can read a group post (Q-38).
-  const group = MY_GROUPS[0];
+  const groups = groupsFor(writingGroups.use(), useGroupReader());
+  const lostGroup =
+    state.visibility === "grup" && !groups.some((group) => group.id === state.groupId);
   return (
     <div className="grid gap-6">
       {showTitle && (
@@ -81,14 +84,20 @@ export function SettingsPanel({ state, dispatch, showTitle, hint }: Props) {
           checked={state.visibility === "publik"}
           onChange={() => dispatch({ type: "visibility", value: "publik" })}
         />
-        {group && (
+        {groups.map((group) => (
           <RadioChoice
+            key={group.id}
             name="post-visibility"
-            label={group}
-            hint="Hanya anggota grup ini. Tampil karena kamu anggotanya."
-            checked={state.visibility === "grup"}
-            onChange={() => dispatch({ type: "visibility", value: "grup" })}
+            label={group.name}
+            hint="Hanya anggota grup ini."
+            checked={state.visibility === "grup" && state.groupId === group.id}
+            onChange={() => dispatch({ type: "visibility", value: "grup", groupId: group.id })}
           />
+        ))}
+        {lostGroup && (
+          <p className="text-sm text-danger">
+            Grup sebelumnya tidak tersedia. Pilih siapa yang bisa membaca.
+          </p>
         )}
         {state.visibility === null && (
           <p className="text-xs text-ink-muted">
@@ -98,8 +107,11 @@ export function SettingsPanel({ state, dispatch, showTitle, hint }: Props) {
       </fieldset>
 
       <Notice>
-        Yang menjadi publik hanya teks ini. Dokumenmu di Studio tetap pribadi. Mengubah dokumen
-        tidak mengubah postingan ini kecuali kamu memperbaruinya sendiri.
+        {state.visibility === "grup"
+          ? "Hanya anggota grup pilihanmu yang bisa membaca cuplikan ini."
+          : "Yang menjadi publik hanya teks ini."}{" "}
+        Dokumenmu di Studio tetap pribadi. Mengubah dokumen tidak mengubah postingan ini kecuali
+        kamu memperbaruinya sendiri.
       </Notice>
 
       {hint && <p className="text-sm text-ink-muted">{hint}</p>}

@@ -9,10 +9,11 @@ type Props = {
   genre: Genre | "";
   blocks: PostBlock[];
   sourceTitle: string | null;
+  groupOnly: boolean;
 };
 
 /** The post exactly as a reader sees it, in the same typography as the post page (STD-10). */
-export function PreviewPanel({ title, kind, genre, blocks, sourceTitle }: Props) {
+export function PreviewPanel({ title, kind, genre, blocks, sourceTitle, groupOnly }: Props) {
   const { profile } = useAccount();
   const mark = `${kind === "prolog" ? "Prolog" : "Cuplikan"}${genre ? ` · ${genre}` : ""}`;
   return (
@@ -27,7 +28,7 @@ export function PreviewPanel({ title, kind, genre, blocks, sourceTitle }: Props)
           <Avatar name={profile.name} src={profile.avatar} size={32} />
           {profile.name}
         </div>
-        <ScopeLine kind={kind} sourceTitle={sourceTitle} />
+        <ScopeLine kind={kind} sourceTitle={sourceTitle} groupOnly={groupOnly} />
         <div className="pt-4 text-[17px] [&_.read-body]:text-[17px]! [&_.read-body]:leading-7!">
           {blocks.length > 0 ? (
             <PostText blocks={blocks} kind={kind} />

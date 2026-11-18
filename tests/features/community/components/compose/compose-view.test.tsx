@@ -118,6 +118,25 @@ describe("ComposeView, from a Studio document", () => {
     expect(within(preview).queryByText("Hujan pertama datang sore.")).toBeNull();
   });
 
+  it("previews and stores a group-only excerpt under the selected membership", async () => {
+    await pickDocument();
+    fireEvent.click(screen.getAllByRole("checkbox")[0]);
+    fireEvent.change(screen.getByLabelText("Genre"), { target: { value: "Cerpen" } });
+    fireEvent.click(screen.getByRole("radio", { name: /Grup Penulis Pesisir/ }));
+    const preview = screen.getByRole("region", { name: "Pratinjau untuk pembaca" });
+    expect(within(preview).getByText(/hanya bagian ini yang dibagikan ke grup/)).toBeTruthy();
+
+    fireEvent.click(publish());
+    await screen.findByText(/Anggota Grup Penulis Pesisir bisa membacanya/);
+    const [stored] = await holder.store.listPosts();
+    expect(stored).toMatchObject({
+      visibility: "grup",
+      groupId: "penulis-pesisir",
+      groupMembershipId: "pesisir:rinjani-putri",
+      blocks: [{ type: "paragraph", text: "Hujan pertama datang sore." }],
+    });
+  });
+
   it("publishes a copy of the ticked text, leaves the document alone, and shows the success page", async () => {
     await pickDocument();
     fireEvent.click(screen.getAllByRole("checkbox")[0]);

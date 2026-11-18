@@ -1,4 +1,5 @@
 import { MAX_POST_WORDS, wordsOf } from "./post-model";
+import { groupIdOf } from "./groups/group-model";
 import type { StoredPost } from "./storage/post-store";
 import type { Genre, PostBlock, PostKind, Visibility } from "./types";
 
@@ -16,6 +17,7 @@ export type ComposeState = {
   genre: Genre | "";
   /** No default: nothing is public until the author picks (BR-COM-01). */
   visibility: Visibility | null;
+  groupId: string | null;
   directBlocks: PostBlock[];
   pick: Pick | null;
   /** Where a reopened draft's text came from; kept so the notice about a trashed source works. */
@@ -30,6 +32,7 @@ export const initialCompose: ComposeState = {
   kind: "prolog",
   genre: "",
   visibility: null,
+  groupId: null,
   directBlocks: [],
   pick: null,
   draftSource: null,
@@ -42,7 +45,8 @@ export type ComposeAction =
   | { type: "title"; value: string }
   | { type: "kind"; value: PostKind }
   | { type: "genre"; value: Genre | "" }
-  | { type: "visibility"; value: Visibility }
+  | { type: "visibility"; value: "publik" }
+  | { type: "visibility"; value: "grup"; groupId: string }
   | { type: "direct"; blocks: PostBlock[] }
   | { type: "pick"; pick: Pick }
   | { type: "unpick" }
@@ -63,7 +67,11 @@ export function composeReducer(state: ComposeState, action: ComposeAction): Comp
     case "genre":
       return { ...state, genre: action.value };
     case "visibility":
-      return { ...state, visibility: action.value };
+      return {
+        ...state,
+        visibility: action.value,
+        groupId: action.value === "grup" ? action.groupId : null,
+      };
     case "direct":
       return { ...state, directBlocks: action.blocks };
     case "pick":
@@ -103,6 +111,7 @@ function loadDraft(p: StoredPost): ComposeState {
     kind: p.kind,
     genre: p.genre ?? "",
     visibility: p.visibility,
+    groupId: p.visibility === "grup" ? (groupIdOf(p) ?? null) : null,
     directBlocks: p.blocks,
     draftSource:
       p.sourceDocId && p.sourceTitle ? { docId: p.sourceDocId, title: p.sourceTitle } : null,
@@ -132,7 +141,8 @@ export function missingFor(state: ComposeState): Missing[] {
   if (!state.title.trim()) missing.push("title");
   if (publicBlocks(state).length === 0) missing.push("text");
   if (!state.genre) missing.push("genre");
-  if (!state.visibility) missing.push("visibility");
+  if (!state.visibility || (state.visibility === "grup" && !state.groupId))
+    missing.push("visibility");
   return missing;
 }
 
@@ -160,9 +170,17 @@ export function toStored(
   id: string,
   status: StoredPost["status"],
   now: number,
-  group: string,
+  group?: { name: string; membershipId: string },
 ): StoredPost {
   const fromDoc = state.tab === "doc" && state.pick;
+  const audience =
+    state.visibility === "grup"
+      ? {
+          groupId: state.groupId ?? undefined,
+          groupName: group?.name,
+          groupMembershipId: group?.membershipId,
+        }
+      : {};
   return {
     id,
     status,
@@ -173,7 +191,7 @@ export function toStored(
     sourceTitle: fromDoc ? state.pick!.docTitle : (state.draftSource?.title ?? null),
     sourceDocId: fromDoc ? state.pick!.docId : (state.draftSource?.docId ?? null),
     visibility: state.visibility,
-    groupName: state.visibility === "grup" ? group : undefined,
+    ...audience,
     updatedAt: now,
     publishedAt: status === "published" ? now : undefined,
   };

@@ -12,14 +12,13 @@ import { formatProjectDate, projectHref } from "@/features/projects/project-mode
 import type { SubmissionStore } from "@/features/projects/storage/submission-store";
 import { MY_PROJECTS_HREF, submissionHref } from "@/features/projects/submission-href";
 import { revisionDueAt } from "@/features/projects/submission-status";
-import { attention } from "./fixtures";
 import { Row } from "./today-row";
 
 type Item = {
   key: string;
   title: string;
   meta: string;
-  actions: { label: string; href?: string }[];
+  action: { label: string; href: string };
 };
 
 const MORE = "max-md:hidden";
@@ -27,7 +26,7 @@ const MORE = "max-md:hidden";
 /**
  * "Perlu perhatian" (PLT-10): what waits for you. A revision an editor asked for comes from your
  * real submissions and links to its note; a payment that waits comes from your
- * registrations; the group-invite line is dummy until groups exist. Nothing is drawn when there is nothing.
+ * registrations. Nothing is drawn when there is nothing.
  */
 export function Attention({ my }: { my: MyProjectsData }) {
   const real: Item[] =
@@ -38,7 +37,7 @@ export function Attention({ my }: { my: MyProjectsData }) {
             key: `revisi-${work.id}`,
             title: `Editor meminta revisi untuk “${work.title}”`,
             meta: `${project.title}${due ? ` · tenggat revisi ${formatProjectDate(due, project.timeZone)}` : ""}`,
-            actions: [{ label: "Baca catatan editor", href: submissionHref(work.slug, work.id) }],
+            action: { label: "Baca catatan editor", href: submissionHref(work.slug, work.id) },
           };
         })
       : [];
@@ -48,19 +47,11 @@ export function Attention({ my }: { my: MyProjectsData }) {
           key: `bayar-${project.slug}`,
           title: `Pembayaran ${project.title} menunggu`,
           meta: `Kuotamu ditahan, ${remaining}`,
-          actions: [{ label: "Bayar sekarang", href }],
+          action: { label: "Bayar sekarang", href },
         }))
       : [];
-  const items: Item[] = [
-    ...real,
-    ...paying,
-    ...attention.map((a) => ({
-      key: a.title,
-      title: a.title,
-      meta: a.meta,
-      actions: a.actions.map((label) => ({ label })),
-    })),
-  ];
+  const items = [...real, ...paying];
+  if (!items.length) return null;
 
   return (
     <Row label="Perlu perhatian">
@@ -74,26 +65,14 @@ export function Attention({ my }: { my: MyProjectsData }) {
               <b className="font-medium wrap-anywhere">{item.title}</b>
               <span className="mt-0.5 block text-xs wrap-anywhere text-ink-muted">{item.meta}</span>
             </span>
-            <span className="flex shrink-0 gap-1">
-              {item.actions.map(({ label, href }) =>
-                href ? (
-                  <ButtonLink key={label} href={href} variant="text" size="sm" className="text-ink">
-                    {label}
-                  </ButtonLink>
-                ) : (
-                  <Button
-                    key={label}
-                    variant="text"
-                    size="sm"
-                    className="text-ink"
-                    disabled
-                    title="Segera"
-                  >
-                    {label}
-                  </Button>
-                ),
-              )}
-            </span>
+            <ButtonLink
+              href={item.action.href}
+              variant="text"
+              size="sm"
+              className="shrink-0 text-ink"
+            >
+              {item.action.label}
+            </ButtonLink>
           </li>
         ))}
         {items.length > 1 && (

@@ -7,6 +7,8 @@ import { useViewer } from "@/lib/viewer";
 import { SignInButton } from "@/features/account/components/auth-buttons";
 import { DISCOVER_HREF } from "@/features/app-shell/nav";
 import { useCommunity } from "@/features/community/hooks/use-community";
+import { writingGroups } from "@/features/community/groups/group-store";
+import { useGroupReader } from "@/features/community/groups/group-viewer";
 import { usePostActions } from "@/features/community/hooks/use-post-actions";
 import { mark } from "@/features/community/storage/post-store";
 import { commentCounts } from "@/features/community/post-model";
@@ -24,6 +26,8 @@ const number = new Intl.NumberFormat("id-ID");
 export function SavedView() {
   const guest = useViewer() === "tamu";
   const data = useCommunity(postStore);
+  const groups = writingGroups.use();
+  const reader = useGroupReader();
   const actions = usePostActions(data, guest);
 
   const saved = savedPostIds(data.marks);
@@ -31,8 +35,8 @@ export function SavedView() {
   if (saved.some((id) => !kept.has(id))) setKept(new Set([...kept, ...saved]));
 
   const { available, unavailable } = useMemo(
-    () => splitSaved([...kept], data.posts),
-    [kept, data.posts],
+    () => splitSaved([...kept], data.posts, groups, reader),
+    [kept, data.posts, groups, reader],
   );
   const counts = useMemo(() => commentCounts(data.comments), [data.comments]);
 

@@ -6,9 +6,6 @@ import type { Author } from "../types";
  */
 export const ME_ID = "rinjani-putri";
 
-/** [konfirmasi] Group membership and group visibility options (Q-38). */
-export const MY_GROUPS: readonly string[] = ["Grup Penulis Pesisir"];
-
 export const authors: Author[] = [
   { id: ME_ID, name: "Rinjani Putri", handle: "rinjaniputri", country: "ID" },
   { id: "hafiz-rahman", name: "Hafiz Rahman", handle: "hafizrahman", country: "ID" },

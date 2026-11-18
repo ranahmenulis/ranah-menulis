@@ -118,7 +118,7 @@ describe("PostView", () => {
 
   it("shows the withdrawn page for an unknown post", async () => {
     renderPost("tidak-ada");
-    await screen.findByText("Tulisan ini sudah ditarik penulisnya.");
+    await screen.findByText("Tulisan ini tidak tersedia.");
   });
 });
 
@@ -143,6 +143,7 @@ describe("PostView as a signed-out reader", () => {
 
   it("cannot open a group post", async () => {
     renderPost("garam-dan-pelabuhan");
-    await screen.findByText("Tulisan ini hanya untuk anggota grup.");
+    await screen.findByText("Tulisan ini tidak tersedia.");
+    expect(screen.queryByRole("heading", { name: /Garam dan Pelabuhan/i })).toBeNull();
   });
 });

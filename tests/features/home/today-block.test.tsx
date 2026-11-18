@@ -67,12 +67,12 @@ describe("TodayBlock", () => {
     expect(screen.queryByRole("link", { name: /Progres hari ini/ })).toBeNull();
   });
 
-  it("draws the dummy rows only when asked, and never more than one filled button", () => {
+  it("keeps one filled button when project and notification rows are enabled", () => {
     const { rerender } = render(<TodayBlock data={data()} showDummy={false} />);
     expect(screen.queryByText("Perlu perhatian")).toBeNull();
 
     rerender(<TodayBlock data={data()} showDummy submissions={createMemorySubmissionStore()} />);
-    expect(screen.getByText("Perlu perhatian")).toBeTruthy();
+    expect(screen.queryByText("Perlu perhatian")).toBeNull();
     const filled = screen.getAllByRole("link").filter((a) => a.className.includes("bg-ink"));
     expect(filled).toHaveLength(1);
   });

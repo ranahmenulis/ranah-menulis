@@ -30,7 +30,7 @@ type Props = {
   state: ComposeState;
   dispatch: Dispatch<ComposeAction>;
   drafts: StoredPost[];
-  failed: "publish" | "draft" | null;
+  failed: "publish" | "draft" | "group" | null;
   sourceGone: boolean;
   /** What became of the document named in the address, if any. */
   sourceParam: SourceParam;
@@ -58,6 +58,11 @@ function Notices({ state, failed, sourceGone, sourceParam, onPublish }: Props) {
         >
           Postingan belum terbit karena koneksi terputus saat mengirim. Teks dan pengaturanmu tetap
           di sini.
+        </ErrorBanner>
+      )}
+      {failed === "group" && state.visibility === "grup" && (
+        <ErrorBanner>
+          Grup yang dipilih sudah tidak tersedia. Pilih audiens lain untuk menerbitkan.
         </ErrorBanner>
       )}
       {SOURCE_PARAM_NOTICE[sourceParam] && state.pick === null && (
@@ -215,6 +220,7 @@ export function ComposeForm(props: Props) {
                   genre={state.genre}
                   blocks={blocks}
                   sourceTitle={sourceTitle}
+                  groupOnly={state.visibility === "grup"}
                 />
               </aside>
             )}

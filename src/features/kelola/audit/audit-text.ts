@@ -37,6 +37,16 @@ const SENTENCES: Record<AuditAction, (p: Parts) => string> = {
   "featured.remove": (p) => `${p.actor} melepas ${p.project} dari proyek unggulan.`,
   "setting.communityLink.set": (p) => `${p.actor} mengatur tautan komunitas.`,
   "setting.communityLink.clear": (p) => `${p.actor} menghapus tautan komunitas.`,
+  "group.create": (p) => `${p.actor} membuat grup ${p.label}.`,
+  "group.update": (p) => `${p.actor} mengubah pengaturan grup ${p.label}.`,
+  "group.invite": (p) => `${p.actor} mengundang ${p.target} ke ${p.label}.`,
+  "group.join": (p) => `${p.actor} bergabung dengan ${p.label}.`,
+  "group.leave": (p) => `${p.actor} keluar dari ${p.label}.`,
+  "group.remove": (p) => `${p.actor} mengeluarkan ${p.target} dari ${p.label}.`,
+  "group.admin.grant": (p) => `${p.actor} menunjuk ${p.target} sebagai Admin Grup ${p.label}.`,
+  "group.admin.revoke": (p) => `${p.actor} mencabut peran Admin Grup ${p.label} dari ${p.target}.`,
+  "group.code": (p) => `${p.actor} mengganti kode undangan grup ${p.label}.`,
+  "group.post.hide": (p) => `${p.actor} menyembunyikan tulisan ${p.target} dari ${p.label}.`,
 };
 
 /** One sentence per entry, from the actor's side: "Super Admin memberi Editor kepada Hafiz". */

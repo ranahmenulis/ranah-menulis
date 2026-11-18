@@ -17,6 +17,8 @@ export type StoredPost = {
   /** Null until the author chooses; a post is never public by default (BR-COM-01). */
   visibility: Visibility | null;
   groupName?: string;
+  groupId?: string;
+  groupMembershipId?: string;
   updatedAt: number;
   publishedAt?: number;
 };
@@ -65,6 +67,8 @@ export function toPost(stored: StoredPost): Post | null {
     sourceTitle: stored.sourceTitle,
     visibility: stored.visibility,
     groupName: stored.groupName,
+    groupId: stored.groupId,
+    groupMembershipId: stored.groupMembershipId,
     appreciations: 0,
     saves: 0,
     publishedAt: stored.publishedAt ?? stored.updatedAt,

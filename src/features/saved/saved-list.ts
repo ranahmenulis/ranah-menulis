@@ -1,4 +1,5 @@
 import { canRead } from "@/features/community/feed";
+import type { WritingGroup } from "@/features/community/groups/group-model";
 import { mark, type Marks } from "@/features/community/storage/post-store";
 import type { Post } from "@/features/community/types";
 
@@ -19,13 +20,15 @@ export function savedPostIds(marks: Marks): string[] {
 export function splitSaved(
   ids: readonly string[],
   posts: readonly Post[],
+  groups: readonly WritingGroup[] = [],
+  readerId: string | null = null,
 ): { available: Post[]; unavailable: string[] } {
   const byId = new Map(posts.map((p) => [p.id, p]));
   const available: Post[] = [];
   const unavailable: string[] = [];
   for (const id of ids) {
     const post = byId.get(id);
-    if (post && canRead(post, true)) available.push(post);
+    if (post && canRead(post, groups, readerId)) available.push(post);
     else unavailable.push(id);
   }
   available.sort((a, b) => b.publishedAt - a.publishedAt || a.id.localeCompare(b.id));

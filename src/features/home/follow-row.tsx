@@ -2,14 +2,12 @@ import { Plus } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import { Avatar } from "@/components/ui/avatar";
 import { cn } from "@/lib/cn";
-import { profileHref } from "@/features/profile/profile-href";
-import type { Followed } from "./fixtures";
 
 /**
  * Phones only: authors and groups you follow, scrolling sideways, with an ink dot when there is
  * new work (DESIGN.md 2.1). The last entry leads to Jelajahi.
  */
-export function FollowRow({ items }: { items: Followed[] }) {
+export function FollowRow({ items }: { items: { name: string; fresh: boolean; href: string }[] }) {
   return (
     <ul
       aria-label="Penulis dan grup yang kamu ikuti"
@@ -19,7 +17,9 @@ export function FollowRow({ items }: { items: Followed[] }) {
         const content = (
           <>
             <span className="relative">
-              <Avatar name={f.name} size={56} />
+              <span aria-hidden="true">
+                <Avatar name={f.name} size={56} />
+              </span>
               {f.fresh && (
                 <i
                   role="img"
@@ -35,14 +35,10 @@ export function FollowRow({ items }: { items: Followed[] }) {
         );
         const cell = "grid w-16 justify-items-center gap-1.5";
         return (
-          <li key={f.name} className="shrink-0 snap-start">
-            {f.handle ? (
-              <Link href={profileHref(f.handle)} className={cn(cell, "text-ink no-underline")}>
-                {content}
-              </Link>
-            ) : (
-              <div className={cell}>{content}</div>
-            )}
+          <li key={f.href} className="shrink-0 snap-start">
+            <Link href={f.href} className={cn(cell, "text-ink no-underline")}>
+              {content}
+            </Link>
           </li>
         );
       })}

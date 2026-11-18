@@ -98,17 +98,19 @@ describe("picking from a Studio document", () => {
   it("copies the text and remembers the source when stored", () => {
     const ticked = run([{ type: "toggle", index: 1 }], picked);
     const stored = toStored(
-      { ...ticked, genre: "Cerpen", visibility: "grup" },
+      { ...ticked, genre: "Cerpen", visibility: "grup", groupId: "penulis-pesisir" },
       "x",
       "published",
       1000,
-      "Grup Penulis Pesisir",
+      { name: "Grup Penulis Pesisir", membershipId: "member-1" },
     );
     expect(stored).toMatchObject({
       blocks: [para("dua")],
       sourceTitle: "Yang Ditunggu Nenek",
       sourceDocId: "d1",
       groupName: "Grup Penulis Pesisir",
+      groupId: "penulis-pesisir",
+      groupMembershipId: "member-1",
       publishedAt: 1000,
     });
   });

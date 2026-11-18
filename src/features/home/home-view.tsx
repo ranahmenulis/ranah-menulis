@@ -8,10 +8,15 @@ import { Tabs } from "@/components/ui/tabs";
 import { CommunityLink } from "@/features/app-shell/community-link";
 import { DISCOVER_HREF, NEW_POST_HREF } from "@/features/app-shell/nav";
 import { feedFor } from "@/features/community/feed";
+import { GROUPS_HREF, groupHref, groupsFor } from "@/features/community/groups/group-model";
+import { writingGroups } from "@/features/community/groups/group-store";
+import { useGroupReader } from "@/features/community/groups/group-viewer";
+import { GroupInvitations } from "@/features/community/groups/components/group-invitations";
 import { useCommunity } from "@/features/community/hooks/use-community";
 import { usePostActions } from "@/features/community/hooks/use-post-actions";
 import { mark } from "@/features/community/storage/post-store";
 import { postStore } from "@/features/community/storage/store";
+import { profileHref } from "@/features/profile/profile-href";
 import { useStreakData } from "@/features/studio/hooks/use-streak-data";
 import { parseDay } from "@/features/studio/streak";
 import { capitalizeFirst } from "@/features/studio/streak-copy";
@@ -39,10 +44,12 @@ export function HomeView() {
   const community = useCommunity(postStore);
   const actions = usePostActions(community, false);
   const router = useRouter();
+  const groups = writingGroups.use();
+  const reader = useGroupReader();
 
   const entries = useMemo(
-    () => feedFor(community.posts, community.marks),
-    [community.posts, community.marks],
+    () => feedFor(community.posts, community.marks, groups, reader),
+    [community.posts, community.marks, groups, reader],
   );
   const commentCounts = useMemo(() => {
     const counts = new Map<string, number>();
@@ -55,14 +62,19 @@ export function HomeView() {
 
   return (
     <div className="max-w-182">
-      <div className="flex min-h-5 items-center justify-between gap-4">
+      <div className="flex min-h-5 flex-wrap items-center justify-between gap-x-3 gap-y-1">
         <p className="text-sm text-ink-muted">
           {data.today && capitalizeFirst(dateFormat.format(parseDay(data.today)))}
         </p>
-        <ButtonLink href={NEW_POST_HREF} variant="text" size="sm" className="-my-2">
-          <PencilSimpleLine size={20} aria-hidden />
-          Tulis postingan
-        </ButtonLink>
+        <div className="flex flex-wrap gap-x-3">
+          <ButtonLink href={GROUPS_HREF} variant="text" size="sm" className="px-0">
+            Grup Penulis
+          </ButtonLink>
+          <ButtonLink href={NEW_POST_HREF} variant="text" size="sm" className="px-0">
+            <PencilSimpleLine size={20} aria-hidden />
+            Tulis postingan
+          </ButtonLink>
+        </div>
       </div>
       <h1 id="beranda-title" tabIndex={-1} className="mt-1 mb-4 heading-lg outline-none">
         Hari ini
@@ -72,9 +84,21 @@ export function HomeView() {
         <FirstSteps hasTarget={data.target !== null} hasDocument={data.lastDocument !== null} />
       )}
       <TodayBlock data={data} showDummy={ready && !isNew} />
+      <GroupInvitations groups={groups} reader={reader} />
       {ready && !isNew && <WeekSummary data={data} />}
 
-      {ready && !isNew && <FollowRow items={followed} />}
+      {ready && !isNew && (
+        <FollowRow
+          items={[
+            ...followed.map((item) => ({ ...item, href: profileHref(item.handle) })),
+            ...groupsFor(groups, reader).map((group) => ({
+              name: group.name,
+              fresh: false,
+              href: groupHref(group.id),
+            })),
+          ]}
+        />
+      )}
       <CommunityLink variant="row" />
 
       <Tabs

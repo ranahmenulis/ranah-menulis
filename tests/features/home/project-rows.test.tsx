@@ -56,19 +56,20 @@ describe("Beranda, Perlu perhatian", () => {
     expect(first.textContent).toMatch(/Lomba Cerpen Hujan 2026 · tenggat revisi \d+ \w+ 2026/);
   });
 
-  it("keeps the other items when nothing needs a revision", async () => {
+  it("omits the row when no project needs attention", () => {
     render(<ProjectRows store={createMemorySubmissionStore()} />);
-    expect(await screen.findByText(/mengundangmu ke Grup Penulis Pesisir/)).toBeTruthy();
+    expect(screen.queryByText("Perlu perhatian")).toBeNull();
     expect(screen.queryByRole("link", { name: "Baca catatan editor" })).toBeNull();
   });
 
-  it("still shows the other items when submissions cannot be read", async () => {
+  it("shows the project error when submissions cannot be read", async () => {
+    register(CERPEN);
     const store: SubmissionStore = {
       ...createMemorySubmissionStore(),
       list: () => Promise.reject(new Error("idb")),
     };
     render(<ProjectRows store={store} />);
-    expect(await screen.findByText(/mengundangmu ke Grup Penulis Pesisir/)).toBeTruthy();
+    expect(await screen.findByRole("alert")).toBeTruthy();
   });
 });
 
@@ -118,9 +119,8 @@ describe("Beranda, Proyek saya", () => {
     expect(items[0].textContent).toContain("Belum ada karya terkirim");
   });
 
-  it("is not drawn when nothing was joined", async () => {
+  it("is not drawn when nothing was joined", () => {
     render(<ProjectRows store={createMemorySubmissionStore()} />);
-    await screen.findByText(/mengundangmu ke Grup Penulis Pesisir/);
     expect(screen.queryByText("Proyek saya")).toBeNull();
   });
 

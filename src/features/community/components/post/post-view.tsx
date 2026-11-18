@@ -3,7 +3,6 @@
 import { useMemo, useState } from "react";
 import { useToast } from "@/components/ui/toast";
 import { useViewer } from "@/lib/viewer";
-import { canRead } from "../../feed";
 import { formatAbsolute } from "../../format-time";
 import { ME_ID } from "../../fixtures/authors";
 import { useCommunity } from "../../hooks/use-community";
@@ -45,8 +44,7 @@ export function PostView({ postId }: { postId: string }) {
 
   if (data.status === "loading") return <PostSkeleton />;
   if (data.status === "error") return <PostError onRetry={data.reload} />;
-  if (!post) return <PostGone reason="gone" />;
-  if (!canRead(post, !guest)) return <PostGone reason="group" />;
+  if (!post) return <PostGone />;
 
   const author = authorOf(post.authorId);
 
