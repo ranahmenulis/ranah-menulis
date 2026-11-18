@@ -24,7 +24,11 @@ const EMPTY_DOC: JSONContent = { type: "doc", content: [{ type: "paragraph" }] }
  * version stops autosaving and raises a conflict; nothing is overwritten until the writer chooses.
  * "baru" opens an empty draft that is only stored once something is written.
  */
-export function useStudioDocument(documentId: string, store: DocumentStore) {
+export function useStudioDocument(
+  documentId: string,
+  store: DocumentStore,
+  onSaved?: (doc: StudioDocument) => void,
+) {
   const isNew = documentId === "baru";
   const [load, setLoad] = useState<LoadState>(isNew ? "ready" : "loading");
   const [attempt, setAttempt] = useState(0);
@@ -81,6 +85,7 @@ export function useStudioDocument(documentId: string, store: DocumentStore) {
         setProgress(result.progress);
         setSavedAt(new Date(result.doc.updatedAt));
         setStatus(dirty.current ? "saving" : "saved");
+        onSaved?.(result.doc);
         if (isNew && window.location.pathname !== `/studio/${id.current}`) {
           window.history.replaceState(null, "", `/studio/${id.current}`);
         }
@@ -100,7 +105,7 @@ export function useStudioDocument(documentId: string, store: DocumentStore) {
       // Typing during the save left more to write; a failed save waits for its retry timer.
       if (dirty.current && !blocked.current && !failed) flushAgain.current();
     }
-  }, [store, isNew]);
+  }, [store, isNew, onSaved]);
 
   useEffect(() => {
     flushAgain.current = () => void flush();

@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useToast } from "@/components/ui/toast";
 import { postFromDocumentHref, STUDIO_HREF } from "@/features/app-shell/nav";
+import { EventEditorPanel } from "@/features/community/events/components/event-editor-panel";
+import { useEventSave } from "@/features/community/events/use-event-save";
 import { cn } from "@/lib/cn";
 import { paragraphsOf } from "../diff-paragraphs";
 import { sameStats, type EditorStats } from "../editor-stats";
@@ -63,8 +65,9 @@ function NotReady({ load, onRetry }: { load: LoadState; onRetry: () => void }) {
  * Studio editor screen. Documents live on this device for now (step 3a/3b); the same
  * `useStudioDocument` contract will be backed by Supabase in 3c.
  */
-export function StudioEditor({ documentId }: { documentId: string }) {
-  const doc = useStudioDocument(documentId, store);
+export function StudioEditor({ documentId, eventId }: { documentId: string; eventId?: string }) {
+  const { onSaved, flush: saveEventProgress } = useEventSave();
+  const doc = useStudioDocument(documentId, store, onSaved);
   const online = useOnlineStatus();
   const target = useDailyTarget();
   const toast = useToast();
@@ -110,7 +113,6 @@ export function StudioEditor({ documentId }: { documentId: string }) {
   /** Opened and not empty: something is stored that can be trashed or given targets. */
   const stored = ready && !isEmpty;
 
-  const openHelp = side.openHelp;
   const openSend = useCallback(() => setDialog("send"), []);
   const openExport = useCallback(() => setDialog("export"), []);
   const openTargets = useCallback(() => setDialog("targets"), []);
@@ -130,16 +132,20 @@ export function StudioEditor({ documentId }: { documentId: string }) {
   const sendTo = useSendFromEditor({ saveNow, getId, closeDialog });
 
   // Leaving writes out what was typed first; if the device refuses, stay so nothing is lost.
-  const goBack = useCallback(async () => {
-    if (await saveNow()) {
-      router.push(STUDIO_HREF);
-      return;
-    }
-    toast({
-      message: "Tulisanmu belum tersimpan di perangkat ini, jadi belum bisa ditutup. Coba lagi.",
-      tone: "error",
-    });
-  }, [saveNow, router, toast]);
+  const goBack = useCallback(
+    async (href = STUDIO_HREF) => {
+      if (await saveNow()) {
+        if (href !== STUDIO_HREF) await saveEventProgress();
+        router.push(href);
+        return;
+      }
+      toast({
+        message: "Tulisanmu belum tersimpan di perangkat ini, jadi belum bisa ditutup. Coba lagi.",
+        tone: "error",
+      });
+    },
+    [saveNow, saveEventProgress, router, toast],
+  );
 
   // Reversible: the document keeps its text in Sampah, and "Urungkan" opens it again.
   const moveToTrash = useCallback(async () => {
@@ -176,7 +182,7 @@ export function StudioEditor({ documentId }: { documentId: string }) {
     canExport: doc.words > 0,
     canTarget: stored,
     canHistory: stored,
-    onHelp: openHelp,
+    onHelp: side.openHelp,
     onFocus: enterFocus,
     onSend: openSend,
     onExport: openExport,
@@ -247,6 +253,13 @@ export function StudioEditor({ documentId }: { documentId: string }) {
           onShare={() => setDialog("share")}
           onToggleHelp={side.toggleHelp}
           onFocusMode={enterFocus}
+        />
+      )}
+      {eventId && (
+        <EventEditorPanel
+          eventId={eventId}
+          documentId={documentId}
+          onBack={(href) => void goBack(href)}
         />
       )}
       {!focusMode && editor && <FormatBar editor={editor} />}

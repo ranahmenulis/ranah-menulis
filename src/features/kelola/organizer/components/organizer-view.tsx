@@ -19,6 +19,7 @@ import {
 } from "../area-hrefs";
 import { countByList, listEmptyText, matchesList } from "../list-model";
 import { statusLabel } from "../project-status";
+import { MANAGE_EVENTS_HREF } from "../events/event-access";
 import { useOrganizerList, type OrganizerRow } from "../use-organizer-data";
 
 function ListSkeleton() {
@@ -82,7 +83,12 @@ export function OrganizerView({ store }: { store?: SubmissionStore }) {
           </h1>
           <p className="text-sm text-ink-muted">Proyek yang kamu kelola.</p>
         </div>
-        <ButtonLink href={NEW_PROJECT_HREF}>Buat proyek</ButtonLink>
+        <div className="flex flex-wrap gap-2">
+          <ButtonLink variant="secondary" href={MANAGE_EVENTS_HREF}>
+            Kelola Event
+          </ButtonLink>
+          <ButtonLink href={NEW_PROJECT_HREF}>Buat proyek</ButtonLink>
+        </div>
       </div>
 
       {data.status === "error" ? (

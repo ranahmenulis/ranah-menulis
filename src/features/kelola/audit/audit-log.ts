@@ -37,6 +37,8 @@ const AUDIT_ACTIONS = [
   "group.admin.revoke",
   "group.code",
   "group.post.hide",
+  "event.create",
+  "event.update",
   /** Not stored here: read from the judging log (BR-PRJ-09) when the log is shown. */
   "contest.reopen",
 ] as const;

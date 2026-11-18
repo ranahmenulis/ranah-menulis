@@ -7,6 +7,7 @@ import { ButtonLink } from "@/components/ui/button";
 import { Tabs } from "@/components/ui/tabs";
 import { CommunityLink } from "@/features/app-shell/community-link";
 import { DISCOVER_HREF, NEW_POST_HREF } from "@/features/app-shell/nav";
+import { EVENTS_HREF } from "@/features/community/events/event-model";
 import { feedFor } from "@/features/community/feed";
 import { GROUPS_HREF, groupHref, groupsFor } from "@/features/community/groups/group-model";
 import { writingGroups } from "@/features/community/groups/group-store";
@@ -67,6 +68,9 @@ export function HomeView() {
           {data.today && capitalizeFirst(dateFormat.format(parseDay(data.today)))}
         </p>
         <div className="flex flex-wrap gap-x-3">
+          <ButtonLink href={EVENTS_HREF} variant="text" size="sm" className="px-0">
+            Event
+          </ButtonLink>
           <ButtonLink href={GROUPS_HREF} variant="text" size="sm" className="px-0">
             Grup Penulis
           </ButtonLink>

@@ -8,13 +8,13 @@ export const metadata: Metadata = {
   robots: { index: false },
 };
 
-async function EditorRoute({ params }: Pick<PageProps<"/studio/[id]">, "params">) {
-  const { id } = await params;
-  return <StudioEditor documentId={id} />;
+async function EditorRoute({ params, searchParams }: PageProps<"/studio/[id]">) {
+  const [{ id }, { event }] = await Promise.all([params, searchParams]);
+  return <StudioEditor documentId={id} eventId={typeof event === "string" ? event : undefined} />;
 }
 
 /** Thin route: the editor itself is a client component that reads documents from this device. */
-export default function Page({ params }: PageProps<"/studio/[id]">) {
+export default function Page(props: PageProps<"/studio/[id]">) {
   return (
     <Suspense
       fallback={
@@ -23,7 +23,7 @@ export default function Page({ params }: PageProps<"/studio/[id]">) {
         </main>
       }
     >
-      <EditorRoute params={params} />
+      <EditorRoute {...props} />
     </Suspense>
   );
 }
