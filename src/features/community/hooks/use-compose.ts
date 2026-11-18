@@ -11,14 +11,16 @@ import {
   toStored,
   type ComposeState,
 } from "../compose-state";
-import { MY_GROUPS } from "../fixtures/authors";
+import { memberOf } from "../groups/group-model";
+import { writingGroups } from "../groups/group-store";
+import { readGroupReader } from "../groups/group-viewer";
 import type { PostStore, StoredPost } from "../storage/post-store";
 import { useSourceParam } from "./use-source-param";
 
 export type ComposeLoad = "loading" | "ready" | "missing" | "error";
 
 const snapshot = (s: ComposeState) =>
-  JSON.stringify([s.title.trim(), s.kind, s.genre, s.visibility, publicBlocks(s)]);
+  JSON.stringify([s.title.trim(), s.kind, s.genre, s.visibility, s.groupId, publicBlocks(s)]);
 
 /**
  * State and actions of the compose screen. A draft is a post kept on this device with whatever is
@@ -38,7 +40,7 @@ export function useCompose(
   const [load, setLoad] = useState<ComposeLoad>(draftId ? "loading" : "ready");
   const [saved, setSaved] = useState(() => snapshot(initialCompose));
   const [busy, setBusy] = useState(false);
-  const [failed, setFailed] = useState<"publish" | "draft" | null>(null);
+  const [failed, setFailed] = useState<"publish" | "draft" | "group" | null>(null);
   const [done, setDone] = useState<StoredPost | null>(null);
   const [sourceGone, setSourceGone] = useState(false);
 
@@ -76,10 +78,27 @@ export function useCompose(
 
   const write = useCallback(
     async (status: StoredPost["status"]) => {
+      const group =
+        state.visibility === "grup"
+          ? writingGroups.read().find((item) => item.id === state.groupId)
+          : undefined;
+      const membership = group && memberOf(group, readGroupReader());
+      if (status === "published" && state.visibility === "grup" && !membership) {
+        setFailed("group");
+        return null;
+      }
       setBusy(true);
       setFailed(null);
       const id = state.draftId ?? crypto.randomUUID();
-      const post = toStored(state, id, status, Date.now(), MY_GROUPS[0] ?? "");
+      const post = toStored(
+        state,
+        id,
+        status,
+        Date.now(),
+        group && membership
+          ? { name: group.name, membershipId: membership.membershipId }
+          : undefined,
+      );
       try {
         await store.putPost(post);
       } catch {

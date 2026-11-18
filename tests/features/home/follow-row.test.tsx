@@ -9,12 +9,15 @@ describe("FollowRow", () => {
     render(
       <FollowRow
         items={[
-          { name: "Rinjani", fresh: true },
-          { name: "Grup Senja", fresh: false },
+          { name: "Rinjani", fresh: true, href: "/penulis/rinjani" },
+          { name: "Grup Senja", fresh: false, href: "/grup/senja" },
         ]}
       />,
     );
     const list = screen.getByRole("list");
+    expect(screen.getByRole("link", { name: "Grup Senja" }).getAttribute("href")).toBe(
+      "/grup/senja",
+    );
     expect(list.className).toContain("scroll-edge-fade");
     expect(list.className).toContain("snap-x");
     for (const item of screen.getAllByRole("listitem")) {

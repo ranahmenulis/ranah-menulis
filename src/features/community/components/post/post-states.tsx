@@ -44,19 +44,13 @@ export function PostError({ onRetry }: { onRetry: () => void }) {
   );
 }
 
-/** Withdrawn, missing, or readable only by a group: one sentence and a way out (DESIGN.md 8). */
-export function PostGone({ reason }: { reason: "gone" | "group" }) {
+/** Withdrawn, missing, or inaccessible posts share a message so a private post is not disclosed. */
+export function PostGone() {
   return (
     <div className="mx-auto grid w-full max-w-170 justify-items-start gap-4 py-12">
-      <p className="font-serif text-xl leading-7 font-semibold">
-        {reason === "gone"
-          ? "Tulisan ini sudah ditarik penulisnya."
-          : "Tulisan ini hanya untuk anggota grup."}
-      </p>
+      <p className="font-serif text-xl leading-7 font-semibold">Tulisan ini tidak tersedia.</p>
       <p className="max-w-130 text-sm text-ink-muted">
-        {reason === "gone"
-          ? "Isinya tidak lagi tampil di Community. Kalau kamu menyimpannya, tulisan ini tetap ada di Tersimpan dengan tanda tidak tersedia."
-          : "Masuk sebagai anggota grup untuk membacanya."}
+        Kalau kamu menyimpannya, tautannya tetap ada di Tersimpan dengan tanda tidak tersedia.
       </p>
       <ButtonLink href={DISCOVER_HREF} variant="secondary">
         Kembali ke Jelajahi

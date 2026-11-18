@@ -2,7 +2,7 @@ import type { JudgingEntry } from "../juri/score-store";
 import type { AuditAction, AuditEntry } from "./audit-log";
 
 /** Groups the audit log can be narrowed to (PLT-05). */
-export type AuditKind = "semua" | "role" | "penugasan" | "moderasi" | "lomba" | "kurasi";
+export type AuditKind = "semua" | "role" | "penugasan" | "moderasi" | "lomba" | "kurasi" | "grup";
 
 export const AUDIT_KINDS: readonly { id: AuditKind; label: string }[] = [
   { id: "semua", label: "Semua" },
@@ -11,6 +11,7 @@ export const AUDIT_KINDS: readonly { id: AuditKind; label: string }[] = [
   { id: "moderasi", label: "Moderasi" },
   { id: "lomba", label: "Lomba" },
   { id: "kurasi", label: "Kurasi dan pengaturan" },
+  { id: "grup", label: "Grup" },
 ];
 
 const KIND_OF: Record<AuditAction, Exclude<AuditKind, "semua">> = {
@@ -33,6 +34,16 @@ const KIND_OF: Record<AuditAction, Exclude<AuditKind, "semua">> = {
   "featured.remove": "kurasi",
   "setting.communityLink.set": "kurasi",
   "setting.communityLink.clear": "kurasi",
+  "group.create": "grup",
+  "group.update": "grup",
+  "group.invite": "grup",
+  "group.join": "grup",
+  "group.leave": "grup",
+  "group.remove": "grup",
+  "group.admin.grant": "grup",
+  "group.admin.revoke": "grup",
+  "group.code": "grup",
+  "group.post.hide": "grup",
 };
 
 export const parseAuditKind = (raw: string | null): AuditKind =>

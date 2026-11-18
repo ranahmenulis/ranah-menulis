@@ -1,6 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { canRead } from "@/features/community/feed";
+import { writingGroups } from "@/features/community/groups/group-store";
+import { useGroupReader } from "@/features/community/groups/group-viewer";
+import { resolveFixturePosts } from "@/features/community/post-model";
 import { contestNotifications } from "@/features/projects/lomba/contest-notifications";
 import { useContestOverrides } from "@/features/projects/lomba/stage-store";
 import { paymentNotifications } from "@/features/projects/payment-notifications";
@@ -32,6 +36,10 @@ import {
 } from "./notification-model";
 import { markRead, useReadIds } from "./read-state";
 import type { Notification } from "./types";
+
+const fixturePostsByHref = new Map(
+  resolveFixturePosts(0).map((post) => [`/postingan/${post.id}`, post]),
+);
 
 /** The title of the reader's own work in each contest a panel made them a finalist of. */
 function ownWorksOf(
@@ -65,6 +73,8 @@ function useAllNotifications(
   const classes = useClassFixtures();
   const registrations = useRegistrations();
   const overrides = useContestOverrides();
+  const groups = writingGroups.use();
+  const reader = useGroupReader();
   return useMemo(
     () => [
       ...(status === "ready" ? submissionNotifications(submissions, fixtures) : []),
@@ -88,7 +98,10 @@ function useAllNotifications(
       ...(catalog.status === "ready"
         ? termsNotifications(catalog.projects, registrations, catalog.now)
         : []),
-      ...notificationFixtures,
+      ...notificationFixtures.filter(({ href }) => {
+        const post = href ? fixturePostsByHref.get(href) : undefined;
+        return !post || canRead(post, groups, reader);
+      }),
     ],
     [
       status,
@@ -103,6 +116,8 @@ function useAllNotifications(
       classes,
       registrations,
       overrides,
+      groups,
+      reader,
     ],
   );
 }

@@ -1,7 +1,10 @@
-import { cleanup, configure, fireEvent, render, screen, within } from "@testing-library/react";
+import { act, cleanup, configure, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { NotificationList } from "@/features/notifications/notification-list";
 import { NotificationsView } from "@/features/notifications/notifications-view";
+import { removeGroupMember } from "@/features/community/groups/group-actions";
+import { COASTAL_GROUP_ID } from "@/features/community/groups/group-model";
+import { ME_ID } from "@/features/kelola/identity";
 
 // Several jsdom files run at once; the time label appears after mount and can be slow under load.
 configure({ asyncUtilTimeout: 5000 });
@@ -48,6 +51,18 @@ describe("NotificationsView", () => {
     link.addEventListener("click", (e) => e.preventDefault()); // jsdom cannot navigate
     fireEvent.click(link);
     expect(readIds()).toContain("n-balasan-maya");
+  });
+
+  it("drops the private post notification when its reader leaves the group", () => {
+    render(<NotificationsView />);
+    expect(screen.getByRole("link", { name: /Garam dan Pelabuhan/ })).toBeTruthy();
+
+    act(() => {
+      expect(removeGroupMember(COASTAL_GROUP_ID, ME_ID).ok).toBe(true);
+    });
+
+    expect(screen.queryByText(/Garam dan Pelabuhan/)).toBeNull();
+    expect(rows()).toHaveLength(4);
   });
 
   it("marks everything read at once and disables the button after", () => {

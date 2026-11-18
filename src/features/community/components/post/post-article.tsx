@@ -43,13 +43,13 @@ export function PostText({ blocks, kind }: { blocks: PostBlock[]; kind: PostKind
 export function ScopeLine({
   kind,
   sourceTitle,
-  group,
+  groupOnly = false,
 }: {
   kind: PostKind;
   sourceTitle: string | null;
-  group?: string;
+  groupOnly?: boolean;
 }) {
-  const Icon = group ? UsersThree : Globe;
+  const Icon = groupOnly ? UsersThree : Globe;
   const name = kind === "prolog" ? "Prolog" : "Cuplikan";
   return (
     <p className="flex items-start gap-2.5 border-b border-line py-3 text-sm text-ink-muted">
@@ -62,7 +62,7 @@ export function ScopeLine({
         ) : (
           name
         )}{" "}
-        · hanya bagian ini yang {group ? "dibagikan ke grup" : "publik"}
+        · hanya bagian ini yang {groupOnly ? "dibagikan ke grup" : "publik"}
       </span>
     </p>
   );
@@ -123,7 +123,7 @@ export function PostArticle({ post, now, showFollow, following, onFollow }: Prop
       <ScopeLine
         kind={post.kind}
         sourceTitle={post.sourceTitle}
-        group={post.visibility === "grup" ? post.groupName : undefined}
+        groupOnly={post.visibility === "grup"}
       />
       <div className="mt-8">
         <PostText blocks={post.blocks} kind={post.kind} />

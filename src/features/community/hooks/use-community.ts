@@ -1,8 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { isFollowing } from "../feed";
+import { canRead, isFollowing } from "../feed";
 import { ME_ID } from "../fixtures/authors";
+import { groupIdOf, postMembershipId } from "../groups/group-model";
+import { writingGroups } from "../groups/group-store";
+import { useGroupReader } from "../groups/group-viewer";
 import { resolveFixtureComments, resolveFixturePosts } from "../post-model";
 import { removedIds } from "../moderation/removed";
 import { useModeration } from "../moderation/report-store";
@@ -13,7 +16,7 @@ export type CommunityData = {
   status: "loading" | "ready" | "error";
   /** When the data was read; relative times ("2 jam") are measured from here. */
   now: number;
-  /** Every published post you may know about, marks applied. Callers filter by visibility. */
+  /** Published posts visible to this reader, with marks applied. */
   posts: Post[];
   drafts: StoredPost[];
   /** Comments that are not deleted, in time order. */
@@ -46,6 +49,8 @@ export function useCommunity(
 ): CommunityData {
   const includeRemoved = options.includeRemoved ?? false;
   const decisions = useModeration();
+  const reader = useGroupReader();
+  const groups = writingGroups.use();
   const [status, setStatus] = useState<CommunityData["status"]>("loading");
   const [now, setNow] = useState(0);
   const [stored, setStored] = useState<StoredPost[]>([]);
@@ -76,16 +81,31 @@ export function useCommunity(
     if (status !== "ready") return [];
     const mine = stored.flatMap((s) => toPost(s) ?? []);
     const all = applyMarks([...resolveFixturePosts(now), ...mine], marks);
-    return includeRemoved ? all : all.filter((p) => !removed.posts.has(p.id));
-  }, [status, now, stored, marks, includeRemoved, removed]);
+    if (includeRemoved) return all;
+    return all
+      .filter((p) => !removed.posts.has(p.id) && canRead(p, groups, reader))
+      .map((p) =>
+        p.visibility === "grup"
+          ? {
+              ...p,
+              groupId: groupIdOf(p),
+              groupMembershipId: postMembershipId(p),
+              groupName: groups.find((group) => group.id === groupIdOf(p))?.name,
+            }
+          : p,
+      );
+  }, [status, now, stored, marks, includeRemoved, removed, groups, reader]);
 
   const comments = useMemo(() => {
     if (status !== "ready") return [];
+    const visiblePostIds = new Set(posts.map((p) => p.id));
     return [...resolveFixtureComments(now), ...storedComments]
       .filter((c) => !marks[mark.deleted(c.id)])
-      .filter((c) => includeRemoved || !(removed.comments.has(c.id) || removed.posts.has(c.postId)))
+      .filter(
+        (c) => includeRemoved || (visiblePostIds.has(c.postId) && !removed.comments.has(c.id)),
+      )
       .sort((a, b) => a.createdAt - b.createdAt);
-  }, [status, now, storedComments, marks, includeRemoved, removed]);
+  }, [status, now, storedComments, marks, includeRemoved, removed, posts]);
 
   const toggle = useCallback(
     async (key: string, current: boolean) => {

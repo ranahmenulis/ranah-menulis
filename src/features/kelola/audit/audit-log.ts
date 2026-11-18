@@ -27,6 +27,16 @@ const AUDIT_ACTIONS = [
   "featured.remove",
   "setting.communityLink.set",
   "setting.communityLink.clear",
+  "group.create",
+  "group.update",
+  "group.invite",
+  "group.join",
+  "group.leave",
+  "group.remove",
+  "group.admin.grant",
+  "group.admin.revoke",
+  "group.code",
+  "group.post.hide",
   /** Not stored here: read from the judging log (BR-PRJ-09) when the log is shown. */
   "contest.reopen",
 ] as const;

@@ -138,7 +138,7 @@ function Loading() {
 /**
  * "Hari ini" (PLT-10, Brief 4A): the answer to "what should I do now", as lines, not widgets. Blocks
  * that have nothing are not drawn. Writing blocks use this device's data and notifications come
- * from src/features/notifications; the payment and group-invite items are dummy; the revision request and "Proyek saya" come from Projects.
+ * from src/features/notifications. Payment, revision requests, and "Proyek saya" come from Projects.
  * One filled button only.
  */
 export function TodayBlock({

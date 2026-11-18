@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { canRead, feedFor, isFollowing } from "@/features/community/feed";
+import { ME_ID } from "@/features/community/fixtures/authors";
+import { groupSeeds } from "@/features/community/groups/group-store";
 import {
   MAX_POST_WORDS,
   postLabel,
@@ -49,7 +51,7 @@ describe("relatedPosts", () => {
 
 describe("feedFor", () => {
   it("has followed authors, own posts, and group posts", () => {
-    const ids = feedFor(posts, {}).map((p) => p.id);
+    const ids = feedFor(posts, {}, groupSeeds, ME_ID).map((p) => p.id);
     expect(ids).toContain("toples-kerupuk"); // Hafiz is followed by default
     expect(ids).toContain("hujan-pertama-bulan-november"); // own post
     expect(ids).toContain("garam-dan-pelabuhan"); // group post
@@ -65,9 +67,9 @@ describe("feedFor", () => {
   });
 
   it("keeps group posts away from signed-out readers", () => {
-    expect(canRead(byId("garam-dan-pelabuhan"), false)).toBe(false);
-    expect(canRead(byId("garam-dan-pelabuhan"), true)).toBe(true);
-    expect(canRead(byId("toples-kerupuk"), false)).toBe(true);
+    expect(canRead(byId("garam-dan-pelabuhan"), groupSeeds, null)).toBe(false);
+    expect(canRead(byId("garam-dan-pelabuhan"), groupSeeds, ME_ID)).toBe(true);
+    expect(canRead(byId("toples-kerupuk"), groupSeeds, null)).toBe(true);
   });
 });
 

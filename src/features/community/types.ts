@@ -32,6 +32,8 @@ export type PostCore = {
   sourceTitle: string | null;
   visibility: Visibility;
   groupName?: string;
+  groupId?: string;
+  groupMembershipId?: string;
   appreciations: number;
   saves: number;
   /** Fixture posts only: a photo the author attached. Shown as a labelled placeholder. */
