@@ -104,6 +104,35 @@ describe("management inbox", () => {
     );
   });
 
+  it("only opens the latest row when two access checks complete out of order", async () => {
+    sessionStorage.setItem("rm-roles", "editor");
+    const data = stores();
+    const other = submission({ ...WORK, id: "other", docId: "other", title: "Surat Kedua" });
+    await data.store.add(WORK, 5);
+    await data.store.add(other, 5);
+    render(<NotificationsView {...data} />);
+    const first = await screen.findByRole("link", { name: /Kiriman.*Surat Bulan Juli/ });
+    const second = screen.getByRole("link", { name: /Kiriman.*Surat Kedua/ });
+    for (const link of [first, second]) {
+      vi.spyOn(link, "getClientRects").mockReturnValue({ length: 1 } as DOMRectList);
+    }
+    let finishFirst!: () => void;
+    const deferred = new Promise<(typeof WORK)[]>((resolve) => {
+      finishFirst = () => resolve([WORK, other]);
+    });
+    vi.spyOn(data.store, "list").mockReturnValueOnce(deferred).mockResolvedValue([WORK, other]);
+
+    fireEvent.click(first);
+    fireEvent.click(second);
+    await waitFor(() => expect(push).toHaveBeenCalledWith("/kelola/editor/other"));
+    await act(async () => finishFirst());
+
+    expect(push).toHaveBeenCalledTimes(1);
+    expect(JSON.parse(localStorage.getItem("ranah.notificationsRead") ?? "[]")).toEqual([
+      "staff-editor:other:initial",
+    ]);
+  });
+
   it("removes fixture and curated links immediately when moderation hides their post", async () => {
     const data = stores();
     editorPicks.write([{ postId: POST, at: 12 }]);

@@ -38,6 +38,22 @@ afterEach(() => {
 });
 
 describe("event participation", () => {
+  it("does not hold event writes while Studio is still loading a document", async () => {
+    const read = Promise.withResolvers<StudioDocument>();
+    const get = vi.fn(() => read.promise);
+    const joining = joinEvent(id, doc.id, { get }, () => start);
+    await vi.waitFor(() => expect(get).toHaveBeenCalledOnce());
+    try {
+      await withEvents((events) => writeEvent(events, { ...events[0], capacity: 2 }));
+    } finally {
+      read.resolve(doc);
+    }
+    expect(await joining).toMatchObject({
+      ok: false,
+      message: expect.stringContaining("Kuota penuh"),
+    });
+  });
+
   it("serializes concurrent joins and frees a seat without deleting the document", async () => {
     await withEvents((events) => writeEvent(events, { ...events[0], capacity: 3 }));
     const results = await Promise.all([

@@ -1,7 +1,14 @@
 import { ME_ID } from "@/features/kelola/identity";
 import type { DocumentStore, StudioDocument } from "@/features/studio/storage/document-store";
 import { readGroupReader } from "../groups/group-viewer";
-import { entryAfterSave, entryOf, eventState, eventStatus, type EventEntry } from "./event-model";
+import {
+  entryAfterSave,
+  entryOf,
+  eventState,
+  eventStatus,
+  type EventEntry,
+  type WritingEvent,
+} from "./event-model";
 import { withEvents, writeEvent, writeEvents } from "./event-store";
 
 const inactive = "Akun aktif diperlukan untuk mengikuti event.";
@@ -13,6 +20,15 @@ type Result = { ok: true; message: string } | { ok: false; message: string };
 const fail = (message: string): Result => ({ ok: false, message });
 const done = (message: string): Result => ({ ok: true, message });
 
+function replaceEntry(event: WritingEvent, authorId: string, entry: EventEntry): WritingEvent {
+  return {
+    ...event,
+    participants: event.participants.map((participant) =>
+      participant.authorId === authorId ? { authorId, entry } : participant,
+    ),
+  };
+}
+
 export async function joinEvent(
   id: string,
   documentId: string,
@@ -22,8 +38,8 @@ export async function joinEvent(
   const actor = readGroupReader();
   if (!actor) return fail(inactive);
   try {
-    return await withEvents(async (events) => {
-      const doc = await store.get(documentId);
+    const doc = await store.get(documentId);
+    return await withEvents((events) => {
       const now = clock();
       if (readGroupReader() !== actor) return fail(inactive);
       const event = events.find((item) => item.id === id);
@@ -82,16 +98,23 @@ export async function beginEventSprint(
   store: Pick<DocumentStore, "get">,
   clock = Date.now,
 ): Promise<Result> {
+  const actor = readGroupReader();
+  if (!actor) return fail(inactive);
   try {
-    return await withEvents(async (events) => {
-      const actor = readGroupReader();
-      if (!actor) return fail(inactive);
+    const initial = await withEvents((events) => {
+      const event = events.find((item) => item.id === id);
+      return event?.sprint ? entryOf(event, actor) : null;
+    });
+    if (initial?.id !== entryId) return fail("Sesi sprint tidak tersedia.");
+    const doc = await store.get(initial.documentId);
+    return await withEvents((events) => {
+      if (readGroupReader() !== actor) return fail(inactive);
       const event = events.find((item) => item.id === id);
       const entry = event && entryOf(event, actor);
-      if (!event?.sprint || entry?.id !== entryId) return fail("Sesi sprint tidak tersedia.");
-      const doc = await store.get(entry.documentId);
+      if (!event?.sprint || entry?.id !== entryId || entry.documentId !== initial.documentId) {
+        return fail("Sesi sprint tidak tersedia.");
+      }
       const now = clock();
-      if (readGroupReader() !== actor) return fail(inactive);
       if (now < event.sprint.startsAt || now >= event.sprint.endsAt) {
         return fail("Sesi sprint sedang tidak berlangsung.");
       }
@@ -101,12 +124,7 @@ export async function beginEventSprint(
         ...entry,
         sprint: { joinedAt: now, baseline: doc.wordCount, version: doc.version, words: 0 },
       };
-      writeEvent(events, {
-        ...event,
-        participants: event.participants.map((participant) =>
-          participant.authorId === actor ? { authorId: actor, entry: next } : participant,
-        ),
-      });
+      writeEvent(events, replaceEntry(event, actor, next));
       return done("Kamu bergabung dengan sprint.");
     });
   } catch {
@@ -115,7 +133,12 @@ export async function beginEventSprint(
 }
 
 /** Called after Studio commits a save; the event side never modifies the document. */
-export function recordEventSave(doc: StudioDocument) {
+export type EventSaveSnapshot = Pick<
+  StudioDocument,
+  "id" | "version" | "updatedAt" | "wordCount" | "deletedAt"
+>;
+
+export function recordEventSave(doc: EventSaveSnapshot) {
   if (readGroupReader() !== ME_ID || doc.deletedAt != null) return Promise.resolve();
   return withEvents((events) => {
     if (readGroupReader() !== ME_ID) return;
@@ -125,12 +148,7 @@ export function recordEventSave(doc: StudioDocument) {
       const updated = entry && entryAfterSave(event, entry, doc);
       if (!updated || updated === entry) return event;
       changed = true;
-      return {
-        ...event,
-        participants: event.participants.map((participant) =>
-          participant.authorId === ME_ID ? { authorId: ME_ID, entry: updated } : participant,
-        ),
-      };
+      return replaceEntry(event, ME_ID, updated);
     });
     if (changed) writeEvents(next);
   });

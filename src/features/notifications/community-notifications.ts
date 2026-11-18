@@ -7,7 +7,7 @@ import type {
   Report,
   ReportKind,
 } from "@/features/community/moderation/report-store";
-import { contentState, removedIds } from "@/features/community/moderation/removed";
+import { applyDecision, contentState, removedIds } from "@/features/community/moderation/removed";
 import { mark, toPost, type PostStore } from "@/features/community/storage/post-store";
 import type { Post } from "@/features/community/types";
 import { buildCases, caseHref, caseKey } from "@/features/kelola/admin/moderation/moderation-model";
@@ -92,17 +92,19 @@ export function pickNotification(
 
 export function activeHides(entries: readonly ModerationEntry[]) {
   const lastHide = new Map<string, ModerationEntry>();
-  const removed = removedIds(entries);
+  const deleted = new Set<string>();
   for (const entry of entries) {
-    if (entry.decision === "sembunyikan") {
-      lastHide.set(caseKey(entry.kind, entry.targetId), entry);
+    const key = caseKey(entry.kind, entry.targetId);
+    const before = deleted.has(key) ? "dihapus" : lastHide.has(key) ? "disembunyikan" : "tampil";
+    const after = applyDecision(before, entry.decision);
+    if (after === "disembunyikan") {
+      if (entry.decision === "sembunyikan") lastHide.set(key, entry);
+      continue;
     }
+    lastHide.delete(key);
+    if (after === "dihapus") deleted.add(key);
   }
-  return [...lastHide.values()].filter(
-    ({ kind, targetId }) =>
-      (kind === "post" ? removed.posts : removed.comments).has(targetId) &&
-      contentState(entries, kind, targetId) === "disembunyikan",
-  );
+  return [...lastHide.values()];
 }
 
 const fixtureOwner = (kind: ReportKind, id: string) =>

@@ -74,6 +74,7 @@ export function EventParticipation({
   }, [documentId, store, attempt]);
 
   async function sprint() {
+    if (pending || confirm) return;
     setPending("sprint");
     setError("");
     const result = await beginEventSprint(event.id, entry.id, store);
@@ -83,6 +84,7 @@ export function EventParticipation({
   }
 
   async function leave() {
+    if (pending) return;
     setPending("leave");
     setError("");
     const result = await leaveEvent(event.id, entry.id);
@@ -124,6 +126,7 @@ export function EventParticipation({
           ))}
         <Button
           variant="text"
+          disabled={pending !== null}
           onClick={() => {
             setError("");
             setConfirm(true);

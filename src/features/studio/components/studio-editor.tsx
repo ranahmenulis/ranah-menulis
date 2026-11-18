@@ -66,7 +66,7 @@ function NotReady({ load, onRetry }: { load: LoadState; onRetry: () => void }) {
  * `useStudioDocument` contract will be backed by Supabase in 3c.
  */
 export function StudioEditor({ documentId, eventId }: { documentId: string; eventId?: string }) {
-  const { onSaved, flush: saveEventProgress } = useEventSave();
+  const { onSaved, flush: saveEventProgress } = useEventSave(eventId);
   const doc = useStudioDocument(documentId, store, onSaved);
   const online = useOnlineStatus();
   const target = useDailyTarget();

@@ -3,7 +3,13 @@
 import { Bell, Books } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useRef, type ComponentProps, type MouseEvent, type ReactNode } from "react";
+import {
+  useRef,
+  type ComponentProps,
+  type MouseEvent,
+  type ReactNode,
+  type RefObject,
+} from "react";
 import { Avatar } from "@/components/ui/avatar";
 import { ButtonLink } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/states";
@@ -31,13 +37,17 @@ function checkLink(
 
 function VerifiedLink({
   item,
+  href,
+  intent,
   confirmOpen,
   onUnavailable,
   onOpen,
   className,
   children,
 }: {
-  item: NotificationView & { href: string };
+  item: NotificationView;
+  href: string;
+  intent: RefObject<number>;
   confirmOpen: NonNullable<LinkActions["confirmOpen"]>;
   onUnavailable: LinkActions["onUnavailable"];
   onOpen: (id: string) => void;
@@ -45,7 +55,6 @@ function VerifiedLink({
   children: ReactNode;
 }) {
   const router = useRouter();
-  const pending = useRef(false);
 
   function open(event: MouseEvent<HTMLAnchorElement>) {
     if (!checkLink(event, item, onUnavailable)) return;
@@ -56,23 +65,22 @@ function VerifiedLink({
     }
 
     event.preventDefault();
-    if (pending.current) return;
-    pending.current = true;
+    const activation = intent.current;
     const link = event.currentTarget;
     void confirmOpen(item)
       .catch(() => false)
       .then((allowed) => {
-        pending.current = false;
+        if (activation !== intent.current) return;
         if (!link.isConnected || !link.getClientRects().length) return;
         if (!allowed || !mayActivateNotification(item)) return onUnavailable?.(item);
         onOpen(item.id);
-        router.push(item.href);
+        router.push(href);
       });
   }
 
   return (
     <Link
-      href={item.href}
+      href={href}
       prefetch={false}
       className={className}
       onClick={open}
@@ -90,12 +98,14 @@ function VerifiedLink({
  */
 function NotificationRow({
   item,
+  intent,
   now,
   onOpen,
   confirmOpen,
   onUnavailable,
 }: {
   item: NotificationView;
+  intent: RefObject<number>;
   now: number;
   onOpen: (id: string) => void;
 } & LinkActions) {
@@ -155,7 +165,9 @@ function NotificationRow({
   if (confirmOpen && item.target && item.target.kind !== "report") {
     return (
       <VerifiedLink
-        item={{ ...item, href: item.href }}
+        item={item}
+        href={item.href}
+        intent={intent}
         className={row}
         confirmOpen={confirmOpen}
         onOpen={onOpen}
@@ -192,6 +204,7 @@ export function NotificationList({
   onOpen: (id: string) => void;
   onFocusCapture?: ComponentProps<"ul">["onFocusCapture"];
 } & LinkActions) {
+  const intent = useRef(0);
   if (items.length === 0) {
     return (
       <EmptyState
@@ -206,10 +219,18 @@ export function NotificationList({
     );
   }
   return (
-    <ul onFocusCapture={onFocusCapture}>
+    <ul
+      onFocusCapture={onFocusCapture}
+      onClickCapture={() => {
+        intent.current += 1;
+      }}
+      onAuxClickCapture={() => {
+        intent.current += 1;
+      }}
+    >
       {items.map((item) => (
         <li key={item.id} data-notification-id={item.id} className="border-b border-line">
-          <NotificationRow item={item} now={now} onOpen={onOpen} {...actions} />
+          <NotificationRow item={item} intent={intent} now={now} onOpen={onOpen} {...actions} />
         </li>
       ))}
     </ul>
