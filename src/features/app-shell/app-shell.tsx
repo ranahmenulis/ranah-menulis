@@ -24,6 +24,7 @@ import {
   showsWriteButton,
   sidebarSub,
 } from "./nav";
+import { CommunityLink } from "./community-link";
 import { ResumeWriting } from "./resume-writing";
 import { TopBar } from "./top-bar";
 
@@ -79,6 +80,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               </div>
             ))}
             <ResumeWriting variant="card" doc={lastDocument} />
+            <CommunityLink variant="sidebar" />
           </nav>
         )}
 

@@ -16,6 +16,8 @@ import { MY_PROJECTS_HREF } from "../submission-href";
 import { useProjects } from "../use-projects";
 import type { Filters, ProjectFixture } from "../types";
 import { CategoryBar, ProjectFilters } from "./project-filters";
+import { narrowedBy, useFeaturedSplit } from "../hooks/use-featured-split";
+import { FeaturedBlock } from "./featured-block";
 import { ProjectRow } from "./project-row";
 import { ProjectsSkeleton } from "./projects-states";
 
@@ -30,8 +32,8 @@ type Props = {
 /**
  * Pusat Projects and the per-category lists (PRJ-01, PRD 17.5) as one page: category chips, then
  * status and fee filters. The filters live in the address (`?kategori=&status=&biaya=`) so a view
- * can be linked. "Proyek
- * unggulan" is Administrator curation and comes with the admin screens (6g).
+ * can be linked. "Unggulan" (PRD 17.5, marked on the Admin curation screen) leads the page, only
+ * while no filter narrows it.
  */
 export function ProjectsView({ source }: Props) {
   const data = useProjects(source);
@@ -58,10 +60,12 @@ export function ProjectsView({ source }: Props) {
     [data, filters],
   );
 
+  const { featured, rest } = useFeaturedSplit(list, filters);
+
   if (data.status === "loading") return <ProjectsSkeleton />;
 
   const description = CATEGORIES.find((c) => c.id === filters.category)?.description;
-  const narrowed = filters.state !== "semua" || filters.fee !== "semua";
+  const narrowed = narrowedBy(filters);
 
   return (
     <div className="mx-auto max-w-260">
@@ -107,11 +111,14 @@ export function ProjectsView({ source }: Props) {
               : "Belum ada proyek yang dibuka."}
         </EmptyState>
       ) : (
-        <div className="grid gap-x-10 lg:grid-cols-2">
-          {list.map((project) => (
-            <ProjectRow key={project.slug} project={project} now={data.now} />
-          ))}
-        </div>
+        <>
+          <FeaturedBlock featured={featured} showsRest={rest.length > 0} now={data.now} />
+          <div className="grid gap-x-10 lg:grid-cols-2">
+            {rest.map((project) => (
+              <ProjectRow key={project.slug} project={project} now={data.now} />
+            ))}
+          </div>
+        </>
       )}
     </div>
   );

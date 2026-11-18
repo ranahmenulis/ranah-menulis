@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 import { ButtonLink } from "@/components/ui/button";
 import { Tabs } from "@/components/ui/tabs";
+import { CommunityLink } from "@/features/app-shell/community-link";
 import { DISCOVER_HREF, NEW_POST_HREF } from "@/features/app-shell/nav";
 import { feedFor } from "@/features/community/feed";
 import { useCommunity } from "@/features/community/hooks/use-community";
@@ -74,6 +75,7 @@ export function HomeView() {
       {ready && !isNew && <WeekSummary data={data} />}
 
       {ready && !isNew && <FollowRow items={followed} />}
+      <CommunityLink variant="row" />
 
       <Tabs
         label="Feed"

@@ -8,7 +8,14 @@ const roleName = (role: string | undefined) =>
 const contentName = (ref: string | undefined) =>
   ref?.startsWith("comment:") ? "komentar" : "tulisan";
 
-type Parts = { actor: string; target: string; role: string; project: string; content: string };
+type Parts = {
+  actor: string;
+  target: string;
+  role: string;
+  project: string;
+  content: string;
+  label: string;
+};
 
 const SENTENCES: Record<AuditAction, (p: Parts) => string> = {
   "role.grant": (p) => `${p.actor} memberi role ${p.role} kepada ${p.target}.`,
@@ -23,6 +30,13 @@ const SENTENCES: Record<AuditAction, (p: Parts) => string> = {
   "content.delete": (p) => `${p.actor} menghapus ${p.content} ${p.target}.`,
   "contest.results.amend": (p) => `${p.actor} mengubah hasil lomba ${p.project} setelah diumumkan.`,
   "contest.reopen": (p) => `${p.actor} membuka kembali penilaian lomba ${p.project}.`,
+  "pick.add": (p) => `${p.actor} menambahkan "${p.label}" ke Editor's Picks.`,
+  "pick.remove": (p) => `${p.actor} mencabut "${p.label}" dari Editor's Picks.`,
+  "pick.move": (p) => `${p.actor} mengubah urutan "${p.label}" di Editor's Picks.`,
+  "featured.add": (p) => `${p.actor} menandai ${p.project} sebagai proyek unggulan.`,
+  "featured.remove": (p) => `${p.actor} melepas ${p.project} dari proyek unggulan.`,
+  "setting.communityLink.set": (p) => `${p.actor} mengatur tautan komunitas.`,
+  "setting.communityLink.clear": (p) => `${p.actor} menghapus tautan komunitas.`,
 };
 
 /** One sentence per entry, from the actor's side: "Super Admin memberi Editor kepada Hafiz". */
@@ -34,5 +48,6 @@ export function auditSentence(entry: AuditEntry): string {
     role: roleName(entry.role),
     project: entry.slug ?? "proyek",
     content: contentName(entry.ref),
+    label: entry.label ?? "tulisan",
   });
 }

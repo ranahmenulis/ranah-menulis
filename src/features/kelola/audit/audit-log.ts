@@ -20,6 +20,13 @@ const AUDIT_ACTIONS = [
   "content.restore",
   "content.delete",
   "contest.results.amend",
+  "pick.add",
+  "pick.remove",
+  "pick.move",
+  "featured.add",
+  "featured.remove",
+  "setting.communityLink.set",
+  "setting.communityLink.clear",
   /** Not stored here: read from the judging log (BR-PRJ-09) when the log is shown. */
   "contest.reopen",
 ] as const;
@@ -35,6 +42,8 @@ export type AuditEntry = {
   targetId?: string;
   /** What else it is about: "post:<id>" or "comment:<id>" for moderation. */
   ref?: string;
+  /** A name for what the action is about, kept when the thing itself can be gone (a post title). */
+  label?: string;
   /** The role granted, revoked or assigned. */
   role?: string;
   /** The project an assignment belongs to. */
@@ -54,6 +63,7 @@ const isEntry = (value: unknown): value is AuditEntry => {
     (AUDIT_ACTIONS as readonly string[]).includes(e.action as string) &&
     optionalText(e.targetId) &&
     optionalText(e.ref) &&
+    optionalText(e.label) &&
     optionalText(e.role) &&
     optionalText(e.slug) &&
     optionalText(e.reason)
