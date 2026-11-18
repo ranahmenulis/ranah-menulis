@@ -8,6 +8,7 @@ import { ErrorBanner, RetryButton } from "@/components/ui/states";
 import { StickyChipBar } from "@/components/ui/sticky-chip-bar";
 import { useViewer } from "@/lib/viewer";
 import { NEW_POST_HREF } from "@/features/app-shell/nav";
+import { editorPicks } from "../../curation/picks-store";
 import { PAGE_SIZE, categoryById, postsForCategory, visibleCategories } from "../../categories";
 import { usePostActions } from "../../hooks/use-post-actions";
 import { useCommunity } from "../../hooks/use-community";
@@ -29,11 +30,16 @@ export function DiscoverView() {
   const [picked, setPicked] = useState<CategoryId>("semua");
   const [shown, setShown] = useState({ id: "semua" as CategoryId, count: PAGE_SIZE });
 
-  const categories = useMemo(() => visibleCategories(data.posts), [data.posts]);
+  const picks = editorPicks.use();
+  const editorIds = useMemo(() => picks.map((p) => p.postId), [picks]);
+  const categories = useMemo(
+    () => visibleCategories(data.posts, editorIds),
+    [data.posts, editorIds],
+  );
   const current = categories.find((c) => c.id === picked) ?? categories[0];
   const list = useMemo(
-    () => (current ? postsForCategory(current.id, data.posts) : []),
-    [current, data.posts],
+    () => (current ? postsForCategory(current.id, data.posts, editorIds) : []),
+    [current, data.posts, editorIds],
   );
   const commentCounts = useMemo(() => {
     const counts = new Map<string, number>();

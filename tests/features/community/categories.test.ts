@@ -73,3 +73,19 @@ describe("paging", () => {
     expect(postsForCategory("semua", fixtures).length).toBeGreaterThan(PAGE_SIZE);
   });
 });
+
+describe("Editor's Picks from a curated list", () => {
+  it("follows the given ids in their order and hides the category when the list is empty", () => {
+    const [a, b] = fixtures.filter((p) => p.visibility === "publik");
+    expect(postsForCategory("editor", fixtures, [b.id, a.id]).map((p) => p.id)).toEqual([
+      b.id,
+      a.id,
+    ]);
+    expect(visibleCategories(fixtures, []).some((c) => c.id === "editor")).toBe(false);
+  });
+
+  it("skips a pick that is not public", () => {
+    const group = fixtures.find((p) => p.visibility === "grup")!;
+    expect(postsForCategory("editor", fixtures, [group.id])).toEqual([]);
+  });
+});

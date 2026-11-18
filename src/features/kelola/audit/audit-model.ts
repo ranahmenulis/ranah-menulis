@@ -2,7 +2,7 @@ import type { JudgingEntry } from "../juri/score-store";
 import type { AuditAction, AuditEntry } from "./audit-log";
 
 /** Groups the audit log can be narrowed to (PLT-05). */
-export type AuditKind = "semua" | "role" | "penugasan" | "moderasi" | "lomba";
+export type AuditKind = "semua" | "role" | "penugasan" | "moderasi" | "lomba" | "kurasi";
 
 export const AUDIT_KINDS: readonly { id: AuditKind; label: string }[] = [
   { id: "semua", label: "Semua" },
@@ -10,6 +10,7 @@ export const AUDIT_KINDS: readonly { id: AuditKind; label: string }[] = [
   { id: "penugasan", label: "Penugasan" },
   { id: "moderasi", label: "Moderasi" },
   { id: "lomba", label: "Lomba" },
+  { id: "kurasi", label: "Kurasi dan pengaturan" },
 ];
 
 const KIND_OF: Record<AuditAction, Exclude<AuditKind, "semua">> = {
@@ -25,6 +26,13 @@ const KIND_OF: Record<AuditAction, Exclude<AuditKind, "semua">> = {
   "content.delete": "moderasi",
   "contest.results.amend": "lomba",
   "contest.reopen": "lomba",
+  "pick.add": "kurasi",
+  "pick.remove": "kurasi",
+  "pick.move": "kurasi",
+  "featured.add": "kurasi",
+  "featured.remove": "kurasi",
+  "setting.communityLink.set": "kurasi",
+  "setting.communityLink.clear": "kurasi",
 };
 
 export const parseAuditKind = (raw: string | null): AuditKind =>

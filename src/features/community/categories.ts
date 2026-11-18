@@ -1,3 +1,4 @@
+import { SEED_PICK_IDS } from "./curation/seed-picks";
 import { authorOf } from "./post-model";
 import type { CategoryId, Post } from "./types";
 
@@ -71,12 +72,6 @@ const PICKS: Partial<Record<CategoryId, string[]>> = {
     "nasi-lemak-pukul-enam",
     "kereta-malam-ke-bandung",
   ],
-  editor: [
-    "hujan-pertama-bulan-november",
-    "jam-dinding-kedai-kopi-ah-seng",
-    "resep-yang-tidak-pernah-ditulis",
-    "pasar-malam-selepas-hujan",
-  ],
   hidden: [
     "anak-tangga-rumah-tok-wan",
     "resep-yang-tidak-pernah-ditulis",
@@ -94,7 +89,11 @@ const newestFirst = (a: Post, b: Post) => b.publishedAt - a.publishedAt || a.id.
  * Appreciated is ordered by appreciations (DESIGN.md 6.8 #6). A post written on this device leads
  * the lists a new public post belongs to: Semua, Trending Today, and its country.
  */
-export function postsForCategory(id: CategoryId, all: Post[]): Post[] {
+export function postsForCategory(
+  id: CategoryId,
+  all: Post[],
+  editorIds: readonly string[] = SEED_PICK_IDS,
+): Post[] {
   const pool = all.filter((p) => p.visibility === "publik");
   const mine = pool.filter((p) => p.local).sort(newestFirst);
   const theirs = pool.filter((p) => !p.local);
@@ -108,6 +107,8 @@ export function postsForCategory(id: CategoryId, all: Post[]): Post[] {
       return [...pool].sort((a, b) => b.appreciations - a.appreciations || newestFirst(a, b));
     case "saved":
       return [...pool].sort((a, b) => b.saves - a.saves || newestFirst(a, b)).slice(0, SAVED_LIMIT);
+    case "editor":
+      return pick(editorIds, pool);
     case "id":
     case "my": {
       const country = id === "id" ? "ID" : "MY";
@@ -118,14 +119,17 @@ export function postsForCategory(id: CategoryId, all: Post[]): Post[] {
   }
 }
 
-function pick(ids: string[] | undefined, pool: Post[]): Post[] {
+function pick(ids: readonly string[] | undefined, pool: Post[]): Post[] {
   const byId = new Map(pool.map((p) => [p.id, p]));
   return (ids ?? []).flatMap((id) => byId.get(id) ?? []);
 }
 
 /** Categories without any post are not listed at all (COM-09). */
-export function visibleCategories(all: Post[]): Category[] {
-  return CATEGORIES.filter((c) => postsForCategory(c.id, all).length > 0);
+export function visibleCategories(
+  all: Post[],
+  editorIds: readonly string[] = SEED_PICK_IDS,
+): Category[] {
+  return CATEGORIES.filter((c) => postsForCategory(c.id, all, editorIds).length > 0);
 }
 
 export const categoryById = (id: string): Category | undefined =>
