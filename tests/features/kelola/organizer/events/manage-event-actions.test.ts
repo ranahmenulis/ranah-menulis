@@ -35,6 +35,19 @@ afterEach(() => {
 });
 
 describe("event management", () => {
+  it("rejects a stale timezone change even when the sprint instant would remain the same", async () => {
+    sessionStorage.setItem("rm-roles", "administrator");
+    const seed = await withEvents((events) => events[0]);
+    const event = { ...seed, scheduleLocked: false, participants: [] };
+    await withEvents((events) => writeEvent(events, event));
+    const changed = inputOf({ ...event, zone: "MYT" });
+    expect(await saveWritingEvent(changed, event, () => event.sprint!.startsAt)).toMatchObject({
+      ok: false,
+      message: expect.stringContaining("zona waktu terkunci"),
+    });
+    expect(auditLog.read()).toHaveLength(0);
+  });
+
   it("validates a real local datetime and keeps the complete sprint inside the event", () => {
     expect(buildEvent({ ...input, start: "2026-11-31T07:00" })).toMatchObject({
       ok: false,

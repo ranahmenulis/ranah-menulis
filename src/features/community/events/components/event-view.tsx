@@ -43,6 +43,7 @@ function EventDetail({
   const [message, setMessage] = useState("");
   const statusRef = useRef<HTMLParagraphElement>(null);
   const [join, setJoin] = useState(false);
+  if (join && (entry || !actor)) setJoin(false);
   const state = eventState(event, now);
   const participants = visibleParticipantIds(event.participants, groups, actor);
   const { sprint, zone } = event;
@@ -128,7 +129,7 @@ function EventDetail({
         </section>
       )}
       <CommunityLink variant="row" />
-      {join && actor && (
+      {join && actor && !entry && (
         <EventJoin
           eventId={event.id}
           store={store}

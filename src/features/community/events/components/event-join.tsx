@@ -62,7 +62,7 @@ export function EventJoin({
   return (
     <Dialog
       open
-      onClose={pending ? () => undefined : close}
+      onClose={close}
       title="Gabung event"
       description="Pilih dokumen Studio untuk menghitung progresmu. Judul dan isi dokumen tetap pribadi."
       dismissible={!pending}

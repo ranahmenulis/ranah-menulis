@@ -2,13 +2,15 @@
 
 import { useCallback, useRef } from "react";
 import { useToast } from "@/components/ui/toast";
-import type { StudioDocument } from "@/features/studio/storage/document-store";
-import { recordEventSave } from "./event-actions";
+import { readGroupReader } from "../groups/group-viewer";
+import { recordEventSave, type EventSaveSnapshot } from "./event-actions";
+import { tracksEventDocument } from "./event-store";
 
-export function useEventSave() {
+export function useEventSave(eventId?: string) {
   const toast = useToast();
-  const pending = useRef<StudioDocument[]>([]);
+  const pending = useRef<EventSaveSnapshot[]>([]);
   const running = useRef<Promise<void> | null>(null);
+  const trackedDocuments = useRef(new Set<string>());
 
   const flush = useCallback(
     function flushPending(): Promise<void> {
@@ -23,6 +25,7 @@ export function useEventSave() {
       running.current = run()
         .catch(() => {
           toast({
+            key: "event-progress-error",
             message: "Progres event belum tersimpan. Coba lagi.",
             tone: "error",
             action: { label: "Coba lagi", onSelect: () => void flushPending() },
@@ -37,11 +40,17 @@ export function useEventSave() {
   );
 
   const onSaved = useCallback(
-    (doc: StudioDocument) => {
-      pending.current.push(doc);
+    ({ id, version, updatedAt, wordCount, deletedAt }: EventSaveSnapshot) => {
+      const actor = readGroupReader();
+      if (!actor || deletedAt != null) return;
+      const tracked = tracksEventDocument(actor, id);
+      if (tracked === false) trackedDocuments.current.delete(id);
+      if (tracked === true) trackedDocuments.current.add(id);
+      if (!(tracked ?? (Boolean(eventId) || trackedDocuments.current.has(id)))) return;
+      pending.current.push({ id, version, updatedAt, wordCount, deletedAt });
       void flush();
     },
-    [flush],
+    [eventId, flush],
   );
 
   return { onSaved, flush };

@@ -1,7 +1,13 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import type { EventEntry, EventParticipant, EventSprint, WritingEvent } from "./event-model";
+import {
+  entryOf,
+  type EventEntry,
+  type EventParticipant,
+  type EventSprint,
+  type WritingEvent,
+} from "./event-model";
 
 const KEY = "ranah.events";
 const CHANGED = "ranah:events";
@@ -44,7 +50,7 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 const isCount = (value: unknown): value is number =>
   typeof value === "number" && Number.isSafeInteger(value) && value >= 0;
 const isTime = (value: unknown): value is number =>
-  isCount(value) && value <= 8_640_000_000_000_000;
+  isCount(value) && value <= 8_640_000_000_000_000 - 8 * 3_600_000;
 
 function isSprint(value: unknown): value is EventSprint {
   return (
@@ -145,6 +151,13 @@ function subscribe(listener: () => void) {
 
 export function useEvents() {
   return useSyncExternalStore<Read | typeof loading>(subscribe, read, () => loading);
+}
+
+export function tracksEventDocument(authorId: string, documentId: string) {
+  const snapshot = read();
+  return snapshot.status === "ready"
+    ? snapshot.events.some((event) => entryOf(event, authorId)?.documentId === documentId)
+    : undefined;
 }
 
 export function refreshEvents() {

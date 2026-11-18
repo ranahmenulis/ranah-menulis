@@ -160,8 +160,12 @@ export function settingsBlock(
   ) {
     return "Jadwal, zona waktu, dan target kata terkunci setelah ada peserta.";
   }
-  if (event.sprint && now >= event.sprint.startsAt && !sameSprint(event.sprint, settings.sprint)) {
-    return "Jadwal sprint terkunci setelah sesi mulai.";
+  if (
+    event.sprint &&
+    now >= event.sprint.startsAt &&
+    (event.zone !== settings.zone || !sameSprint(event.sprint, settings.sprint))
+  ) {
+    return "Jadwal sprint dan zona waktu terkunci setelah sesi mulai.";
   }
   return null;
 }
