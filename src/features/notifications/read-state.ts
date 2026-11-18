@@ -11,7 +11,7 @@ let fallback: string | null = null;
 
 function snapshot(): string | null {
   try {
-    return window.localStorage.getItem(KEY) ?? fallback;
+    return fallback ?? window.localStorage.getItem(KEY);
   } catch {
     return fallback;
   }
@@ -20,7 +20,7 @@ function snapshot(): string | null {
 function subscribe(listener: () => void) {
   listeners.add(listener);
   // Another tab changed the read state.
-  const onStorage = (e: StorageEvent) => e.key === KEY && listener();
+  const onStorage = (e: StorageEvent) => (e.key === KEY || e.key === null) && listener();
   window.addEventListener("storage", onStorage);
   return () => {
     listeners.delete(listener);

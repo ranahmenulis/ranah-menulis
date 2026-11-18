@@ -34,7 +34,13 @@ function done(tx: IDBTransaction): Promise<void> {
 /** Assignments handed in from this device, with their frozen versions. */
 export function createIndexedDbAssignmentStore(): AssignmentStore {
   let dbPromise: Promise<IDBDatabase> | null = null;
-  const db = () => (dbPromise ??= open());
+  const db = () => {
+    dbPromise ??= open().catch((error) => {
+      dbPromise = null;
+      throw error;
+    });
+    return dbPromise;
+  };
 
   return {
     async list() {

@@ -34,7 +34,13 @@ function done(tx: IDBTransaction): Promise<void> {
 /** Submissions sent from this device, with their frozen versions. */
 export function createIndexedDbSubmissionStore(): SubmissionStore {
   let dbPromise: Promise<IDBDatabase> | null = null;
-  const db = () => (dbPromise ??= open());
+  const db = () => {
+    dbPromise ??= open().catch((error) => {
+      dbPromise = null;
+      throw error;
+    });
+    return dbPromise;
+  };
 
   return {
     async list() {

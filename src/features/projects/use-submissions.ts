@@ -26,17 +26,19 @@ export function useSubmissions(store: SubmissionStore = submissionStore): Submis
 
   useEffect(() => {
     let cancelled = false;
+    let latestRead = 0;
     const load = () => {
+      const read = ++latestRead;
       store.list().then(
         (list) => {
-          if (cancelled) return;
+          if (cancelled || read !== latestRead) return;
           setState({
             status: "ready",
             submissions: [...list].sort((a, b) => b.submittedAt - a.submittedAt),
           });
         },
         () => {
-          if (!cancelled) setState((prev) => ({ ...prev, status: "error" }));
+          if (!cancelled && read === latestRead) setState((prev) => ({ ...prev, status: "error" }));
         },
       );
     };

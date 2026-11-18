@@ -30,5 +30,7 @@ export const ageOf = (n: Notification, now: number) =>
 
 /** Newest first. Equal ages keep their order, so fixtures stay as they were written. */
 export function newestFirst<T extends Notification>(list: readonly T[], now: number): T[] {
-  return [...list].sort((a, b) => ageOf(a, now) - ageOf(b, now));
+  return [...list].sort((a, b) =>
+    a.at !== undefined && b.at !== undefined ? b.at - a.at : ageOf(a, now) - ageOf(b, now),
+  );
 }
