@@ -2,7 +2,8 @@ import type { JudgingEntry } from "../juri/score-store";
 import type { AuditAction, AuditEntry } from "./audit-log";
 
 /** Groups the audit log can be narrowed to (PLT-05). */
-export type AuditKind = "semua" | "role" | "penugasan" | "moderasi" | "lomba" | "kurasi" | "grup";
+export type AuditKind =
+  "semua" | "role" | "penugasan" | "moderasi" | "lomba" | "kurasi" | "grup" | "event";
 
 export const AUDIT_KINDS: readonly { id: AuditKind; label: string }[] = [
   { id: "semua", label: "Semua" },
@@ -12,6 +13,7 @@ export const AUDIT_KINDS: readonly { id: AuditKind; label: string }[] = [
   { id: "lomba", label: "Lomba" },
   { id: "kurasi", label: "Kurasi dan pengaturan" },
   { id: "grup", label: "Grup" },
+  { id: "event", label: "Event" },
 ];
 
 const KIND_OF: Record<AuditAction, Exclude<AuditKind, "semua">> = {
@@ -44,6 +46,8 @@ const KIND_OF: Record<AuditAction, Exclude<AuditKind, "semua">> = {
   "group.admin.revoke": "grup",
   "group.code": "grup",
   "group.post.hide": "grup",
+  "event.create": "event",
+  "event.update": "event",
 };
 
 export const parseAuditKind = (raw: string | null): AuditKind =>

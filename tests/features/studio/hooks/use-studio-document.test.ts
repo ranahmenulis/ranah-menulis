@@ -64,6 +64,26 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
+describe("useStudioDocument: accepted saves", () => {
+  it("reports only committed snapshots to a progress consumer", async () => {
+    const { store, save } = makeStore();
+    const onSaved = vi.fn();
+    save.mockResolvedValueOnce({ ok: false, conflict: stored({ version: 3 }) });
+    const { result } = renderHook(() => useStudioDocument("doc-1", store, onSaved));
+    await advance(0);
+    act(() => result.current.setTitle("Perubahan lokal"));
+    await advance(900);
+    expect(onSaved).not.toHaveBeenCalled();
+    expect(result.current.conflict).not.toBeNull();
+    await act(async () => {
+      await result.current.resolveConflict("local");
+    });
+    expect(onSaved).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({ id: "doc-1", title: "Perubahan lokal", version: 4 }),
+    );
+  });
+});
+
 describe("useStudioDocument: opening", () => {
   it("loads an existing document with its title, word count and saved state", async () => {
     const { store } = makeStore();

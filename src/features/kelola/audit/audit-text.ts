@@ -47,6 +47,8 @@ const SENTENCES: Record<AuditAction, (p: Parts) => string> = {
   "group.admin.revoke": (p) => `${p.actor} mencabut peran Admin Grup ${p.label} dari ${p.target}.`,
   "group.code": (p) => `${p.actor} mengganti kode undangan grup ${p.label}.`,
   "group.post.hide": (p) => `${p.actor} menyembunyikan tulisan ${p.target} dari ${p.label}.`,
+  "event.create": (p) => `${p.actor} membuat event ${p.label}.`,
+  "event.update": (p) => `${p.actor} mengubah pengaturan event ${p.label}.`,
 };
 
 /** One sentence per entry, from the actor's side: "Super Admin memberi Editor kepada Hafiz". */
