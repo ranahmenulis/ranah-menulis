@@ -5,6 +5,9 @@ import { NotificationsView } from "@/features/notifications/notifications-view";
 import { removeGroupMember } from "@/features/community/groups/group-actions";
 import { COASTAL_GROUP_ID } from "@/features/community/groups/group-model";
 import { ME_ID } from "@/features/kelola/identity";
+import { createMemoryAssignmentStore } from "@/features/projects/kelas/storage/memory-assignment-store";
+import { createMemorySoloStore } from "@/features/projects/solo/storage/memory-solo-store";
+import { createMemorySubmissionStore } from "@/features/projects/storage/memory-submission-store";
 
 // Several jsdom files run at once; the time label appears after mount and can be slow under load.
 configure({ asyncUtilTimeout: 5000 });
@@ -65,11 +68,17 @@ describe("NotificationsView", () => {
     expect(rows()).toHaveLength(4);
   });
 
-  it("marks everything read at once and disables the button after", () => {
-    render(<NotificationsView />);
+  it("marks everything read at once and disables the button after", async () => {
+    render(
+      <NotificationsView
+        store={createMemorySubmissionStore()}
+        tasks={createMemoryAssignmentStore()}
+        solo={createMemorySoloStore()}
+      />,
+    );
     const all = screen.getByRole("button", { name: "Tandai semua dibaca" });
     fireEvent.click(all);
-    expect(screen.getByText("Semua sudah dibaca.")).toBeTruthy();
+    expect(await screen.findByText("Semua sudah dibaca.")).toBeTruthy();
     expect((all as HTMLButtonElement).disabled).toBe(true);
     expect(screen.queryByText("Belum dibaca.", { selector: ".sr-only", exact: false })).toBeNull();
   });

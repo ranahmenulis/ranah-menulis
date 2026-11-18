@@ -322,7 +322,7 @@ Desktop: kolom kiri (nama `heading-lg`, tab Karya · Tentang · Proyek, lalu daf
 ### 6.6 Tersimpan, Notifikasi, Statistik
 
 - **Tersimpan:** daftar pola feed.
-- **Notifikasi:** tab Semua · Komentar · Proyek. Butir: avatar/ikon 32, kalimat (`text-sm`, nama pelaku 500), waktu. Belum dibaca: titik ink 6px di kiri + teks `ink`; sudah dibaca: `ink-muted`.
+- **Notifikasi:** tab Semua · Komentar · Proyek. Butir: avatar/ikon 32, kalimat (`text-sm`, nama pelaku 500), waktu. Belum dibaca: titik ink 6px di kiri + teks `ink`; sudah dibaca: `ink-muted`. Tugas Editor, Mentor, dan Juri masuk Proyek. Moderasi dan Editor’s Picks masuk Semua. Baris pengelola mengikuti pekerjaan aktif **[usulan]**. Juri lomba anonim hanya melihat label “Karya N” dan nama lomba. Pesan konten yang disembunyikan bisa ditandai dibaca melalui tombol berteks generik. Kerangka memuat bergaris dan galat sebagian mengikuti bagian 8. Jika baris yang sedang difokuskan hilang karena akses atau status berubah, fokus berpindah ke baris status inbox.
 - **Statistik:** angka `figure` dengan label `text-xs`; grafik batang monokrom (batang `ink`, sumbu `line`), tanpa gradien.
 
 ### 6.7 Halaman di luar pola Medium

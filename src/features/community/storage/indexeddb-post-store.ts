@@ -41,7 +41,13 @@ function done(tx: IDBTransaction): Promise<void> {
 /** Community data on this device: posts and drafts written here, comments, and the reader's marks. */
 export function createIndexedDbPostStore(): PostStore {
   let dbPromise: Promise<IDBDatabase> | null = null;
-  const db = () => (dbPromise ??= open());
+  const db = () => {
+    dbPromise ??= open().catch((error) => {
+      dbPromise = null;
+      throw error;
+    });
+    return dbPromise;
+  };
 
   async function getAll<T>(name: string): Promise<T[]> {
     const tx = (await db()).transaction(name, "readonly");

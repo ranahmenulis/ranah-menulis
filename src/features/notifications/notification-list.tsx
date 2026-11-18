@@ -1,14 +1,87 @@
 "use client";
 
-import { Books } from "@phosphor-icons/react/dist/ssr";
+import { Bell, Books } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useRef, type ComponentProps, type MouseEvent, type ReactNode } from "react";
 import { Avatar } from "@/components/ui/avatar";
 import { ButtonLink } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/states";
 import { cn } from "@/lib/cn";
 import { authorOf } from "@/features/community/post-model";
+import { mayActivateNotification } from "./notification-access";
 import type { NotificationView } from "./notification-model";
 import { agoLabel, leadOf } from "./notification-text";
+
+type LinkActions = {
+  confirmOpen?: (item: NotificationView) => Promise<boolean>;
+  onUnavailable?: (item: NotificationView) => void;
+};
+
+function checkLink(
+  event: MouseEvent<HTMLAnchorElement>,
+  item: NotificationView,
+  onUnavailable: LinkActions["onUnavailable"],
+) {
+  if (mayActivateNotification(item)) return true;
+  event.preventDefault();
+  onUnavailable?.(item);
+  return false;
+}
+
+function VerifiedLink({
+  item,
+  confirmOpen,
+  onUnavailable,
+  onOpen,
+  className,
+  children,
+}: {
+  item: NotificationView & { href: string };
+  confirmOpen: NonNullable<LinkActions["confirmOpen"]>;
+  onUnavailable: LinkActions["onUnavailable"];
+  onOpen: (id: string) => void;
+  className: string;
+  children: ReactNode;
+}) {
+  const router = useRouter();
+  const pending = useRef(false);
+
+  function open(event: MouseEvent<HTMLAnchorElement>) {
+    if (!checkLink(event, item, onUnavailable)) return;
+    if (event.defaultPrevented) return;
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+      onOpen(item.id);
+      return;
+    }
+
+    event.preventDefault();
+    if (pending.current) return;
+    pending.current = true;
+    const link = event.currentTarget;
+    void confirmOpen(item)
+      .catch(() => false)
+      .then((allowed) => {
+        pending.current = false;
+        if (!link.isConnected || !link.getClientRects().length) return;
+        if (!allowed || !mayActivateNotification(item)) return onUnavailable?.(item);
+        onOpen(item.id);
+        router.push(item.href);
+      });
+  }
+
+  return (
+    <Link
+      href={item.href}
+      prefetch={false}
+      className={className}
+      onClick={open}
+      onAuxClick={(event) => checkLink(event, item, onUnavailable)}
+    >
+      {children}
+    </Link>
+  );
+}
 
 /**
  * One line (DESIGN.md 6.6): ink dot while unread, avatar or project icon at 32, a sentence with the
@@ -19,11 +92,13 @@ function NotificationRow({
   item,
   now,
   onOpen,
+  confirmOpen,
+  onUnavailable,
 }: {
   item: NotificationView;
   now: number;
   onOpen: (id: string) => void;
-}) {
+} & LinkActions) {
   const lead = leadOf(item);
   const unread = !item.read;
   const row = cn(
@@ -44,7 +119,7 @@ function NotificationRow({
           aria-hidden
           className="grid size-8 shrink-0 place-items-center rounded-full bg-subtle text-ink"
         >
-          <Books size={18} />
+          {item.kind === "project" ? <Books size={18} /> : <Bell size={18} />}
         </span>
       )}
       <span className="min-w-0 flex-1">
@@ -64,18 +139,44 @@ function NotificationRow({
     </>
   );
 
+  if (!item.href) {
+    return (
+      <button
+        type="button"
+        className={row}
+        onClick={() => {
+          if (mayActivateNotification(item)) onOpen(item.id);
+        }}
+      >
+        {content}
+      </button>
+    );
+  }
+  if (confirmOpen && item.target && item.target.kind !== "report") {
+    return (
+      <VerifiedLink
+        item={{ ...item, href: item.href }}
+        className={row}
+        confirmOpen={confirmOpen}
+        onOpen={onOpen}
+        onUnavailable={onUnavailable}
+      >
+        {content}
+      </VerifiedLink>
+    );
+  }
   return (
-    <li className="border-b border-line">
-      {item.href ? (
-        <Link href={item.href} className={row} onClick={() => onOpen(item.id)}>
-          {content}
-        </Link>
-      ) : (
-        <button type="button" className={row} onClick={() => onOpen(item.id)}>
-          {content}
-        </button>
-      )}
-    </li>
+    <Link
+      href={item.href}
+      prefetch={item.target ? false : undefined}
+      className={row}
+      onClick={(event) => {
+        if (checkLink(event, item, onUnavailable)) onOpen(item.id);
+      }}
+      onAuxClick={(event) => checkLink(event, item, onUnavailable)}
+    >
+      {content}
+    </Link>
   );
 }
 
@@ -83,11 +184,14 @@ export function NotificationList({
   items,
   now,
   onOpen,
+  onFocusCapture,
+  ...actions
 }: {
   items: NotificationView[];
   now: number;
   onOpen: (id: string) => void;
-}) {
+  onFocusCapture?: ComponentProps<"ul">["onFocusCapture"];
+} & LinkActions) {
   if (items.length === 0) {
     return (
       <EmptyState
@@ -102,9 +206,11 @@ export function NotificationList({
     );
   }
   return (
-    <ul>
+    <ul onFocusCapture={onFocusCapture}>
       {items.map((item) => (
-        <NotificationRow key={item.id} item={item} now={now} onOpen={onOpen} />
+        <li key={item.id} data-notification-id={item.id} className="border-b border-line">
+          <NotificationRow item={item} now={now} onOpen={onOpen} {...actions} />
+        </li>
       ))}
     </ul>
   );

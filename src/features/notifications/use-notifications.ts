@@ -1,10 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { canRead } from "@/features/community/feed";
-import { writingGroups } from "@/features/community/groups/group-store";
-import { useGroupReader } from "@/features/community/groups/group-viewer";
-import { resolveFixturePosts } from "@/features/community/post-model";
+import type { PostStore } from "@/features/community/storage/post-store";
+import { postStore } from "@/features/community/storage/store";
+import { useEffectiveRoles } from "@/features/kelola/use-effective-roles";
 import { contestNotifications } from "@/features/projects/lomba/contest-notifications";
 import { useContestOverrides } from "@/features/projects/lomba/stage-store";
 import { paymentNotifications } from "@/features/projects/payment-notifications";
@@ -24,10 +23,14 @@ import {
 import { useMentorTasks } from "@/features/projects/kelas/mentor-task-store";
 import { useAssignments } from "@/features/projects/kelas/hooks/use-assignments";
 import type { AssignmentStore } from "@/features/projects/kelas/storage/assignment-store";
+import { assignmentStore } from "@/features/projects/kelas/storage/store";
+import { notifyAssignmentsChanged } from "@/features/projects/kelas/storage/assignment-events";
 import type { SubmissionStore } from "@/features/projects/storage/submission-store";
+import { submissionStore } from "@/features/projects/storage/store";
+import { notifySubmissionsChanged } from "@/features/projects/storage/submission-events";
 import { submissionNotifications } from "@/features/projects/submission-notifications";
 import { useSubmissions } from "@/features/projects/use-submissions";
-import { notificationFixtures } from "./fixtures";
+import { useViewer } from "@/lib/viewer";
 import {
   newestFirst,
   type NotificationView,
@@ -35,11 +38,12 @@ import {
   withReadState,
 } from "./notification-model";
 import { markRead, useReadIds } from "./read-state";
+import { mayActivateNotification, verifyNotification } from "./notification-access";
 import type { Notification } from "./types";
+import { useCommunityNotifications } from "./use-community-notifications";
+import { useStaffNotifications } from "./use-staff-notifications";
 
-const fixturePostsByHref = new Map(
-  resolveFixturePosts(0).map((post) => [`/postingan/${post.id}`, post]),
-);
+const NO_NOTIFICATIONS: readonly Notification[] = [];
 
 /** The title of the reader's own work in each contest a panel made them a finalist of. */
 function ownWorksOf(
@@ -54,55 +58,65 @@ function ownWorksOf(
   return titles;
 }
 
-/**
- * The fixtures plus the events of the submissions and class assignments on this device. A failed
- * or slow read of either just leaves its events out: notifications are a hint, and everything else
- * stays.
- */
+/** Every surface uses this audience-filtered inbox. Each local source can load or fail independently. */
 function useAllNotifications(
-  store?: SubmissionStore,
-  tasks?: AssignmentStore,
+  store: SubmissionStore = submissionStore,
+  tasks: AssignmentStore = assignmentStore,
   solo?: SoloStore,
-): Notification[] {
-  const { status, submissions } = useSubmissions(store);
+  posts: PostStore = postStore,
+) {
+  const works = useSubmissions(store);
+  const { status, submissions } = works;
   const assignments = useAssignments(tasks);
   const mentorTasks = useMentorTasks();
   const soloRows = useSoloRows(solo);
-  const catalog = useProjects();
   const fixtures = useCatalog();
+  const catalog = useProjects(fixtures);
   const classes = useClassFixtures();
   const registrations = useRegistrations();
   const overrides = useContestOverrides();
-  const groups = writingGroups.use();
-  const reader = useGroupReader();
-  return useMemo(
-    () => [
-      ...(status === "ready" ? submissionNotifications(submissions, fixtures) : []),
-      ...(assignments.status === "ready"
-        ? assignmentNotifications(assignments.submissions, fixtures, classes, mentorTasks)
-        : []),
-      ...newTaskNotifications(mentorTasks, registrations, fixtures),
-      ...(soloRows.status === "ready" ? soloNotifications(soloRows.rows, fixtures) : []),
-      ...(catalog.status === "ready"
-        ? contestNotifications({
-            projects: catalog.projects,
-            registrations,
-            overrides,
-            now: catalog.now,
-            ownWorks: ownWorksOf(overrides, status === "ready" ? submissions : []),
-          })
-        : []),
-      ...(catalog.status === "ready"
-        ? paymentNotifications(catalog.projects, registrations, catalog.now)
-        : []),
-      ...(catalog.status === "ready"
-        ? termsNotifications(catalog.projects, registrations, catalog.now)
-        : []),
-      ...notificationFixtures.filter(({ href }) => {
-        const post = href ? fixturePostsByHref.get(href) : undefined;
-        return !post || canRead(post, groups, reader);
-      }),
-    ],
+  const viewer = useViewer();
+  const roles = useEffectiveRoles();
+  const community = useCommunityNotifications(posts, roles);
+  const staff = useStaffNotifications({
+    roles,
+    catalog: fixtures,
+    projects: catalog,
+    submissions: status === "ready" ? submissions : undefined,
+    handIns: assignments.status === "ready" ? assignments.submissions : undefined,
+    classes,
+    tasks: mentorTasks,
+    overrides,
+  });
+  const items = useMemo(
+    () =>
+      viewer === "tamu"
+        ? NO_NOTIFICATIONS
+        : [
+            ...(status === "ready" ? submissionNotifications(submissions, fixtures) : []),
+            ...(assignments.status === "ready"
+              ? assignmentNotifications(assignments.submissions, fixtures, classes, mentorTasks)
+              : []),
+            ...newTaskNotifications(mentorTasks, registrations, fixtures),
+            ...(soloRows.status === "ready" ? soloNotifications(soloRows.rows, fixtures) : []),
+            ...(catalog.status === "ready"
+              ? contestNotifications({
+                  projects: catalog.projects,
+                  registrations,
+                  overrides,
+                  now: catalog.now,
+                  ownWorks: ownWorksOf(overrides, status === "ready" ? submissions : []),
+                })
+              : []),
+            ...(catalog.status === "ready"
+              ? paymentNotifications(catalog.projects, registrations, catalog.now)
+              : []),
+            ...(catalog.status === "ready"
+              ? termsNotifications(catalog.projects, registrations, catalog.now)
+              : []),
+            ...staff,
+            ...community.items,
+          ],
     [
       status,
       submissions,
@@ -116,23 +130,48 @@ function useAllNotifications(
       classes,
       registrations,
       overrides,
-      groups,
-      reader,
+      staff,
+      community.items,
+      viewer,
     ],
   );
+  const states = [works, assignments, soloRows, community];
+  const loading = states.some((source) => source.status === "loading");
+  const failed = states.some((source) => source.status === "error");
+  const retry = () =>
+    states.forEach((source) => {
+      if (source.status === "error") source.reload();
+    });
+  const confirmOpen = (item: Notification) =>
+    verifyNotification(
+      item,
+      {
+        submissions: store,
+        assignments: tasks,
+        community: posts,
+      },
+      catalog.status === "ready" ? catalog.now : 0,
+    );
+  const refreshTarget = (item: Notification) => {
+    const kind = item.target?.kind;
+    if (kind === "editor" || kind === "juri") notifySubmissionsChanged();
+    if (kind === "mentor") notifyAssignmentsChanged();
+    if (kind === "pick") community.reload();
+  };
+  return { items, loading, failed, retry, confirmOpen, refreshTarget };
 }
 
 /**
- * Unread count only, for the bell in the top bar. It reads the submissions on this device too, so
- * their events count; nothing else is loaded.
+ * Unread count only, for the bell in the top bar. Its audience and the inbox always match.
  */
 export function useUnreadCount(
   store?: SubmissionStore,
   tasks?: AssignmentStore,
   solo?: SoloStore,
+  posts?: PostStore,
 ): number {
   const readIds = useReadIds();
-  const all = useAllNotifications(store, tasks, solo);
+  const { items: all } = useAllNotifications(store, tasks, solo, posts);
   return useMemo(() => unreadCount(withReadState(all, readIds)), [all, readIds]);
 }
 
@@ -143,6 +182,11 @@ export type NotificationsData = {
   now: number;
   markRead: (id: string) => void;
   markAllRead: () => void;
+  loading: boolean;
+  failed: boolean;
+  retry: () => void;
+  confirmOpen: (item: Notification) => Promise<boolean>;
+  refreshTarget: (item: Notification) => void;
 };
 
 /** What the Notifikasi screen and the Beranda line read. Notifications plus this device's read state. */
@@ -150,9 +194,10 @@ export function useNotifications(
   store?: SubmissionStore,
   tasks?: AssignmentStore,
   solo?: SoloStore,
+  posts?: PostStore,
 ): NotificationsData {
   const readIds = useReadIds();
-  const all = useAllNotifications(store, tasks, solo);
+  const { items: all, ...state } = useAllNotifications(store, tasks, solo, posts);
   const [now, setNow] = useState(0);
 
   // Reading the clock during render is refused by Next 16 prerender, so it happens after mount.
@@ -164,10 +209,14 @@ export function useNotifications(
   const items = useMemo(() => newestFirst(withReadState(all, readIds), now), [all, readIds, now]);
 
   return {
+    ...state,
     items,
     unread: unreadCount(items),
     now,
     markRead: useCallback((id: string) => markRead([id]), []),
-    markAllRead: useCallback(() => markRead(all.map((n) => n.id)), [all]),
+    markAllRead: useCallback(
+      () => markRead(all.filter(mayActivateNotification).map((n) => n.id)),
+      [all],
+    ),
   };
 }

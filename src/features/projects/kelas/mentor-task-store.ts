@@ -57,7 +57,7 @@ export function parseTasks(raw: string | null): readonly MentorTask[] {
 
 let cached: { raw: string | null; tasks: readonly MentorTask[] } = { raw: null, tasks: NONE };
 
-function read(): readonly MentorTask[] {
+export function readMentorTasks(): readonly MentorTask[] {
   const raw = snapshot();
   if (raw !== cached.raw) cached = { raw, tasks: parseTasks(raw) };
   return cached.tasks;
@@ -65,7 +65,7 @@ function read(): readonly MentorTask[] {
 
 /** The tasks mentors wrote on this device. Same list on every call until something changes. */
 export function useMentorTasks(): readonly MentorTask[] {
-  return useSyncExternalStore(subscribe, read, () => NONE);
+  return useSyncExternalStore(subscribe, readMentorTasks, () => NONE);
 }
 
 function write(tasks: readonly MentorTask[]) {
@@ -79,9 +79,9 @@ function write(tasks: readonly MentorTask[]) {
   listeners.forEach((l) => l());
 }
 
-export const addTask = (task: MentorTask) => write([...read(), task]);
+export const addTask = (task: MentorTask) => write([...readMentorTasks(), task]);
 
 export const updateTask = (id: string, change: (task: MentorTask) => MentorTask) =>
-  write(read().map((t) => (t.id === id ? change(t) : t)));
+  write(readMentorTasks().map((t) => (t.id === id ? change(t) : t)));
 
-export const removeTask = (id: string) => write(read().filter((t) => t.id !== id));
+export const removeTask = (id: string) => write(readMentorTasks().filter((t) => t.id !== id));

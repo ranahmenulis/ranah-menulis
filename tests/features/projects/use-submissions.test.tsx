@@ -1,8 +1,9 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { useSubmittedDocumentIds } from "@/features/projects/hooks/use-submitted-documents";
 import { createMemorySubmissionStore } from "@/features/projects/storage/memory-submission-store";
 import type { SubmissionStore } from "@/features/projects/storage/submission-store";
+import type { Submission } from "@/features/projects/submission-types";
 import { notifySubmissionsChanged } from "@/features/projects/storage/submission-events";
 import { useSubmissions } from "@/features/projects/use-submissions";
 import { submission } from "./helpers";
@@ -13,7 +14,8 @@ describe("useSubmissions", () => {
     await store.add(submission({ id: "old", docId: "a", submittedAt: 1 }), 5);
     await store.add(submission({ id: "new", docId: "b", submittedAt: 9 }), 5);
     const { result } = renderHook(() => useSubmissions(store));
-    await waitFor(() => expect(result.current.status).toBe("ready"));
+    await act(async () => {});
+    expect(result.current.status).toBe("ready");
     expect(result.current.submissions.map((s) => s.id)).toEqual(["new", "old"]);
   });
 
@@ -26,6 +28,23 @@ describe("useSubmissions", () => {
     await store.add(submission({ id: "a" }), 5);
     act(() => notifySubmissionsChanged());
     await waitFor(() => expect(result.current.submissions).toHaveLength(1));
+  });
+
+  it("keeps the newer read when an older read finishes after a change signal", async () => {
+    let finishFirst!: (works: Submission[]) => void;
+    const first = new Promise<Submission[]>((resolve) => {
+      finishFirst = resolve;
+    });
+    const store = createMemorySubmissionStore();
+    const newer = submission({ id: "newer" });
+    vi.spyOn(store, "list").mockReturnValueOnce(first).mockResolvedValue([newer]);
+    const { result } = renderHook(() => useSubmissions(store));
+
+    await act(async () => notifySubmissionsChanged());
+    expect(result.current.submissions).toEqual([newer]);
+
+    await act(async () => finishFirst([submission({ id: "older" })]));
+    expect(result.current.submissions).toEqual([newer]);
   });
 
   it("is an error, not an empty list, when the read fails, and retries", async () => {

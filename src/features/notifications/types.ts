@@ -1,9 +1,14 @@
 /** In-app notifications (PRD section 20). Dummy data and a local read state for now. */
 
 /** What happened. It decides the tab: comments go to "Komentar", project events to "Proyek". */
-export type NotificationKind = "comment" | "reaction" | "follow" | "project";
+export type NotificationKind = "comment" | "reaction" | "follow" | "project" | "community";
 
 export type NotificationTab = "semua" | "komentar" | "proyek";
+
+export type NotificationTarget =
+  | { kind: "editor" | "mentor" | "juri"; slug: string }
+  | { kind: "report" }
+  | { kind: "pick"; postId: string };
 
 export type Notification = {
   id: string;
@@ -14,8 +19,10 @@ export type Notification = {
   others: number;
   /** The sentence after the actor's name. */
   text: string;
-  /** The object it points to; null while that screen does not exist yet. */
+  /** The object it points to, when there is a destination the reader may open. */
   href: string | null;
+  /** Local objects whose access must be checked again when the notification is opened. */
+  target?: NotificationTarget;
   /** How long before the screen opened it happened. Resolved at read time, never at render. */
   agoMs: number;
   /**
