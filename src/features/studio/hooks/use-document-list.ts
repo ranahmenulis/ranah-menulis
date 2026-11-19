@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import type { DocumentStore, StudioDocument, StudioFolder } from "../storage/document-store";
+import { onDocumentListChanged } from "../storage/document-events";
 
 export type DocumentList = {
   status: "loading" | "ready" | "error";
@@ -11,8 +12,11 @@ export type DocumentList = {
   folders: StudioFolder[];
   reload: () => void;
   rename: (id: string, title: string) => Promise<void>;
+  updateClassification: DocumentStore["updateClassification"];
+  duplicateActive: DocumentStore["duplicateActive"];
+  setArchived: DocumentStore["setArchived"];
   moveTo: (id: string, folderId: string | null) => Promise<void>;
-  trash: (id: string) => Promise<void>;
+  trash: (id: string) => Promise<boolean>;
   restore: (id: string) => Promise<void>;
   deleteForever: (id: string) => Promise<void>;
   createFolder: (name: string) => Promise<void>;
@@ -47,6 +51,17 @@ export function useDocumentList(store: DocumentStore): DocumentList {
 
   // Actions write, then reload: the list is small and this keeps one source of truth.
   const refresh = useCallback(() => setAttempt((n) => n + 1), []);
+  useEffect(() => onDocumentListChanged(refresh), [refresh]);
+
+  function reflect(doc: StudioDocument | null) {
+    if (doc) {
+      setDocs((current) => [...current.filter(({ id }) => id !== doc.id), doc]);
+    } else {
+      refresh();
+    }
+    return doc;
+  }
+
   const act = useCallback(
     <A extends unknown[]>(fn: (...args: A) => Promise<unknown>) =>
       async (...args: A) => {
@@ -66,8 +81,22 @@ export function useDocumentList(store: DocumentStore): DocumentList {
       refresh();
     },
     rename: act((id: string, title: string) => store.updateMeta(id, { title })),
+    updateClassification: async (id, expected, changes) => {
+      const result = await store.updateClassification(id, expected, changes);
+      if (result.status === "saved") {
+        setDocs((current) => current.map((doc) => (doc.id === id ? result.doc : doc)));
+        refresh();
+      }
+      return result;
+    },
+    duplicateActive: async (id) => reflect(await store.duplicateActive(id)),
+    setArchived: async (id, archived) => reflect(await store.setArchived(id, archived)),
     moveTo: act((id: string, folderId: string | null) => store.updateMeta(id, { folderId })),
-    trash: act((id: string) => store.updateMeta(id, { deletedAt: nowMs() })),
+    trash: async (id) => {
+      const doc = await store.updateMeta(id, { deletedAt: nowMs() });
+      refresh();
+      return doc !== null;
+    },
     restore: act((id: string) => store.updateMeta(id, { deletedAt: null })),
     deleteForever: act((id: string) => store.deletePermanently(id)),
     createFolder: act((name: string) => store.createFolder(name)),

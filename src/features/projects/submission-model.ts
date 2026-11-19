@@ -1,6 +1,7 @@
 import type { JSONContent } from "@tiptap/react";
 import { GENRES } from "@/features/community/types";
 import { docStats } from "@/features/studio/editor-stats";
+import { isActiveDocument, RESTORE_ARCHIVED_MESSAGE } from "@/features/studio/document-archive";
 import { formatNumber, projectHref } from "./project-model";
 import {
   BOOK_TYPES,
@@ -101,6 +102,7 @@ export type SubmitDoc = {
   title: string;
   content: JSONContent;
   deletedAt?: number | null;
+  archivedAt?: number | null;
 };
 
 export type ProblemField =
@@ -111,7 +113,7 @@ export const wordsOf = (doc: SubmitDoc) => docStats(doc.content).words;
 
 /**
  * The form when the screen opens: the saved draft, then the document named in the address on top
- * of it. A document that is gone or in Sampah is dropped, the title starts from the document's, and
+ * of it. An unavailable document is dropped, the title starts from the document's, and
  * a genre that the project does not offer is cleared.
  */
 export function initialForm(input: {
@@ -122,7 +124,7 @@ export function initialForm(input: {
 }): SubmitForm {
   const { project, draft, docs, documentId } = input;
   const form: SubmitForm = { ...emptyForm, ...draft };
-  const usable = (id: string | null) => docs.find((d) => d.id === id && !d.deletedAt);
+  const usable = (id: string | null) => docs.find((d) => d.id === id && isActiveDocument(d));
   const chosen = usable(documentId) ?? usable(form.docId);
   form.docId = chosen?.id ?? null;
   // A draft title belongs to the draft's document: a different one from the address brings its own.
@@ -138,6 +140,7 @@ function docProblem(project: Project, form: SubmitForm, doc: SubmitDoc | null, s
   const rules = project.submission;
   if (!rules || !form.docId) return form.docId === null ? "Pilih dokumen dari Studio." : null;
   if (!doc || doc.deletedAt) return "Dokumen ini tidak ada lagi di Studio.";
+  if (doc.archivedAt != null) return RESTORE_ARCHIVED_MESSAGE;
   const words = wordsOf(doc);
   if (words === 0) return "Dokumen ini masih kosong.";
   if (sent.some((s) => s.docId === doc.id)) return "Dokumen ini sudah dikirim ke proyek ini.";

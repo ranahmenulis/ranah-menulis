@@ -6,6 +6,7 @@ import { Notice } from "@/components/ui/states";
 import { StatusSubmission } from "@/components/ui/status-submission";
 import { TextLink } from "@/components/ui/text-link";
 import { useDocumentList } from "@/features/studio/hooks/use-document-list";
+import { isActiveDocument } from "@/features/studio/document-archive";
 import type { DocumentStore } from "@/features/studio/storage/document-store";
 import { studioStore } from "@/features/studio/storage/store";
 import { useViewer } from "@/lib/viewer";
@@ -129,7 +130,7 @@ export function ReviseView({
         project={project}
         work={work}
         all={submissions.submissions}
-        docs={list.docs.filter((d) => !d.deletedAt).sort((a, b) => b.updatedAt - a.updatedAt)}
+        docs={list.docs.filter(isActiveDocument).sort((a, b) => b.updatedAt - a.updatedAt)}
         now={catalog.now}
         onSend={async (docId, note) => {
           const result = await sendRevision({

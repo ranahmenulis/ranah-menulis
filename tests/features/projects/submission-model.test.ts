@@ -130,6 +130,12 @@ describe("validateSubmission", () => {
     expect(messages({ ...base, project: cerpen, doc: doc(1000), sent: other })).toEqual([]);
   });
 
+  it("asks the participant to restore a document archived after selection", () => {
+    expect(messages({ ...base, doc: doc(800, { archivedAt: 5 }) })).toEqual([
+      "doc: Dokumen ini ada di Arsip. Pulihkan dulu untuk memakainya.",
+    ]);
+  });
+
   it("reports the limit and the deadline as their own rules", () => {
     const sent = [submission({ slug: esai.slug, docId: "x" })];
     expect(messages({ ...base, sent })).toContain(

@@ -11,6 +11,7 @@ import {
   type TargetChange,
 } from "../streak";
 import type { DocumentStore, StudioDocument } from "../storage/document-store";
+import { onDocumentListChanged } from "../storage/document-events";
 import { readTargets, saveTargets, withTarget } from "../target-setting";
 
 export type StreakData = {
@@ -25,7 +26,7 @@ export type StreakData = {
   target: number | null;
   todayWords: number;
   summary: StreakSummary;
-  /** Most recently edited document that is not in Sampah. */
+  /** Most recently edited active document. */
   lastDocument: StudioDocument | null;
   reload: () => void;
   setTarget: (value: number) => void;
@@ -65,6 +66,8 @@ export function useStreakData(store: DocumentStore): StreakData {
       cancelled = true;
     };
   }, [store, attempt]);
+
+  useEffect(() => onDocumentListChanged(() => setAttempt((value) => value + 1)), []);
 
   const reload = useCallback(() => {
     setStatus("loading");

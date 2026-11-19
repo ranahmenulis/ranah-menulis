@@ -31,6 +31,9 @@ function listOf(docs: StudioDocument[]): DocumentList {
     folders: [],
     reload: vi.fn(),
     rename: vi.fn(),
+    updateClassification: vi.fn(),
+    duplicateActive: vi.fn(),
+    setArchived: vi.fn(),
     moveTo: vi.fn(),
     trash: vi.fn(),
     restore: vi.fn(),
@@ -54,6 +57,7 @@ function renderList(
         folderName={null}
         onOpenFolder={() => {}}
         onPending={onPending}
+        onArchiveAction={vi.fn()}
         sharedIds={sharedIds}
         submittedIds={submittedIds}
       />
@@ -87,6 +91,7 @@ describe("Dokumen list, Dibagikan tag", () => {
           folderId={null}
           folderName={null}
           onOpenFolder={() => {}}
+          onArchiveAction={vi.fn()}
           onPending={() => {}}
           sharedIds={new Set(["a"])}
         />
@@ -125,6 +130,7 @@ describe("Dokumen list, Kirim ke proyek", () => {
           folderId={null}
           folderName={null}
           onOpenFolder={() => {}}
+          onArchiveAction={vi.fn()}
           onPending={() => {}}
         />
       </ToastProvider>,
@@ -174,6 +180,7 @@ describe("LiveList: document targets", () => {
           folderId={null}
           folderName={null}
           onOpenFolder={() => {}}
+          onArchiveAction={vi.fn()}
           onPending={vi.fn()}
         />
       </ToastProvider>,

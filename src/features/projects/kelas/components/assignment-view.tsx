@@ -2,6 +2,7 @@
 
 import { Notice } from "@/components/ui/states";
 import { useDocumentList } from "@/features/studio/hooks/use-document-list";
+import { isActiveDocument } from "@/features/studio/document-archive";
 import type { DocumentStore } from "@/features/studio/storage/document-store";
 import { studioStore } from "@/features/studio/storage/store";
 import { MyError, MyShell, MySkeleton } from "../../components/my-states";
@@ -73,7 +74,7 @@ export function AssignmentView({
     <AssignmentPage
       data={data}
       row={row}
-      docs={docs.filter((d) => !d.deletedAt).sort((a, b) => b.updatedAt - a.updatedAt)}
+      docs={docs.filter(isActiveDocument).sort((a, b) => b.updatedAt - a.updatedAt)}
       store={store}
       documents={documents}
     />

@@ -2,14 +2,17 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { ErrorBanner, FeedItemSkeleton, Notice, RetryButton } from "@/components/ui/states";
 import type { DocumentStore } from "@/features/studio/storage/document-store";
+import { ARCHIVE_HREF, isArchivedDocument } from "@/features/studio/document-archive";
+import { onDocumentListChanged } from "@/features/studio/storage/document-events";
 import { beginEventSprint, leaveEvent } from "../event-actions";
 import { eventStudioHref, type EventEntry, type WritingEvent } from "../event-model";
 
-type DocumentState = "loading" | "ready" | "missing" | "error";
+type DocumentState = "loading" | "ready" | "missing" | "archived" | "error";
 const number = new Intl.NumberFormat("id-ID");
 
 function DocumentNotice({ state, retry }: { state: DocumentState; retry: () => void }) {
@@ -24,6 +27,15 @@ function DocumentNotice({ state, retry }: { state: DocumentState; retry: () => v
     return (
       <Notice>
         Dokumen tantangan tidak tersedia. Pulihkan dokumen yang sama dari Sampah untuk melanjutkan.
+      </Notice>
+    );
+  if (state === "archived")
+    return (
+      <Notice>
+        Dokumen tantangan ada di Arsip. Pulihkan untuk melanjutkan.{" "}
+        <Link href={ARCHIVE_HREF} className="underline">
+          Buka Arsip
+        </Link>
       </Notice>
     );
   return null;
@@ -55,20 +67,26 @@ export function EventParticipation({
 
   useEffect(() => {
     let live = true;
+    let latest = 0;
     function check() {
+      const request = ++latest;
       void store.get(documentId).then(
         (doc) => {
-          if (live) setDocState(doc && doc.deletedAt == null ? "ready" : "missing");
+          if (!live || request !== latest) return;
+          if (!doc || doc.deletedAt != null) setDocState("missing");
+          else setDocState(isArchivedDocument(doc) ? "archived" : "ready");
         },
         () => {
-          if (live) setDocState("error");
+          if (live && request === latest) setDocState("error");
         },
       );
     }
+    const unsubscribe = onDocumentListChanged(check);
     check();
     window.addEventListener("focus", check);
     return () => {
       live = false;
+      unsubscribe();
       window.removeEventListener("focus", check);
     };
   }, [documentId, store, attempt]);

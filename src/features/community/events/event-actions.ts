@@ -1,4 +1,5 @@
 import { ME_ID } from "@/features/kelola/identity";
+import { isActiveDocument, RESTORE_ARCHIVED_MESSAGE } from "@/features/studio/document-archive";
 import type { DocumentStore, StudioDocument } from "@/features/studio/storage/document-store";
 import { readGroupReader } from "../groups/group-viewer";
 import {
@@ -50,6 +51,7 @@ export async function joinEvent(
       const state = eventState(event, now);
       if (state !== "open") return fail(`Pendaftaran tidak tersedia. ${eventStatus[state]}.`);
       if (!doc || doc.deletedAt != null) return fail(missingDocument);
+      if (doc.archivedAt != null) return fail(RESTORE_ARCHIVED_MESSAGE);
       const entry: EventEntry = {
         id: crypto.randomUUID(),
         documentId: doc.id,
@@ -119,6 +121,7 @@ export async function beginEventSprint(
         return fail("Sesi sprint sedang tidak berlangsung.");
       }
       if (!doc || doc.deletedAt != null) return fail(missingDocument);
+      if (doc.archivedAt != null) return fail(RESTORE_ARCHIVED_MESSAGE);
       if (entry.sprint) return done("Sesi sprint sudah diikuti.");
       const next = {
         ...entry,
@@ -135,11 +138,11 @@ export async function beginEventSprint(
 /** Called after Studio commits a save; the event side never modifies the document. */
 export type EventSaveSnapshot = Pick<
   StudioDocument,
-  "id" | "version" | "updatedAt" | "wordCount" | "deletedAt"
+  "id" | "version" | "updatedAt" | "wordCount" | "deletedAt" | "archivedAt"
 >;
 
 export function recordEventSave(doc: EventSaveSnapshot) {
-  if (readGroupReader() !== ME_ID || doc.deletedAt != null) return Promise.resolve();
+  if (readGroupReader() !== ME_ID || !isActiveDocument(doc)) return Promise.resolve();
   return withEvents((events) => {
     if (readGroupReader() !== ME_ID) return;
     let changed = false;

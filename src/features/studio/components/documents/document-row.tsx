@@ -16,6 +16,7 @@ export function Row({
   items,
   extra,
   tags,
+  details,
 }: {
   kind: "folder" | "document";
   title: string;
@@ -23,11 +24,12 @@ export function Row({
   onOpen?: () => void;
   meta: string;
   menuLabel: string;
-  items: MenuEntry[];
+  items?: MenuEntry[];
   /** e.g. "Pulihkan" for items in Sampah. */
   extra?: ReactNode;
   /** Short publishing statuses beside the meta, e.g. "Dibagikan", "Dikirim ke proyek" (DESIGN.md 6.4). */
   tags?: string[];
+  details?: ReactNode;
 }) {
   const Icon = kind === "folder" ? FolderSimple : FileText;
   const heading =
@@ -35,7 +37,7 @@ export function Row({
       <Link href={href} className="hover:underline hover:underline-offset-3">
         {title}
       </Link>
-    ) : (
+    ) : onOpen ? (
       <button
         type="button"
         onClick={onOpen}
@@ -43,13 +45,15 @@ export function Row({
       >
         {title}
       </button>
+    ) : (
+      title
     );
   return (
     <li className="grid grid-cols-[20px_minmax(0,1fr)_auto] items-start gap-x-3 border-b border-line py-4 md:grid-cols-[24px_minmax(0,1fr)_auto] md:gap-x-4 md:py-5">
       <Icon size={24} aria-hidden className="mt-0.5 text-ink-muted max-md:size-5" />
       <div className="min-w-0">
         <h2 className="heading-sm [overflow-wrap:anywhere] text-ink">{heading}</h2>
-        <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-ink-muted">
+        <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs [overflow-wrap:anywhere] text-ink-muted">
           {meta}
           {tags?.map((tag) => (
             <span key={tag} className="rounded-full border border-line px-2 py-px text-ink">
@@ -57,10 +61,11 @@ export function Row({
             </span>
           ))}
         </p>
+        {details}
       </div>
       <div className="-mt-1.5 flex items-center gap-1 max-md:-mr-2.5">
         {extra}
-        <Menu label={menuLabel} items={items} />
+        {items && <Menu label={menuLabel} items={items} />}
       </div>
     </li>
   );

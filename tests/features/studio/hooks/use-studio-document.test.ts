@@ -33,10 +33,13 @@ function makeStore(over: Partial<DocumentStore> = {}) {
     save,
     today: vi.fn(async () => emptyLog()),
     duplicate: vi.fn(async (source, title) => ({ ...source, id: "copy", title, version: 1 })),
+    duplicateActive: vi.fn(async () => null),
+    setArchived: vi.fn(async () => null),
     list: vi.fn(async () => []),
     listFolders: vi.fn(async () => []),
     history: vi.fn(async () => []),
     updateMeta: vi.fn(async () => null),
+    updateClassification: vi.fn(async () => ({ status: "unavailable" as const })),
     deletePermanently: vi.fn(async () => {}),
     importHistory: vi.fn(async () => {}),
     createFolder: vi.fn(async (name) => ({ id: "f", name, createdAt: 0 })),
@@ -102,6 +105,15 @@ describe("useStudioDocument: opening", () => {
     await advance(0);
 
     expect(result.current.load).toBe("missing");
+  });
+
+  it("reports an archived document without starting an editor session", async () => {
+    const { store, save } = makeStore({ get: vi.fn(async () => stored({ archivedAt: 50 })) });
+    const { result } = renderHook(() => useStudioDocument("doc-1", store));
+    await advance(0);
+    expect(result.current.load).toBe("archived");
+    expect(result.current.initial.title).toBe("");
+    expect(save).not.toHaveBeenCalled();
   });
 
   it("reports an error when the store fails to open", async () => {

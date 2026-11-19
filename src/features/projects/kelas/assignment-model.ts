@@ -1,5 +1,6 @@
 import type { JSONContent } from "@tiptap/react";
 import { docStats } from "@/features/studio/editor-stats";
+import { RESTORE_ARCHIVED_MESSAGE } from "@/features/studio/document-archive";
 import type { SubmissionVersion } from "../submission-types";
 import type { AssignmentSource, AssignmentSubmission } from "./types";
 
@@ -21,6 +22,7 @@ export type AssignmentDoc = {
   title: string;
   content: JSONContent;
   deletedAt?: number | null;
+  archivedAt?: number | null;
 };
 
 export type AssignmentProblem = { field: "doc" | "text" | "closed"; message: string };
@@ -69,6 +71,7 @@ export function validateAssignment(input: {
   if (!doc || doc.deletedAt) {
     return [{ field: "doc", message: "Dokumen ini tidak ada lagi di Studio." }];
   }
+  if (doc.archivedAt != null) return [{ field: "doc", message: RESTORE_ARCHIVED_MESSAGE }];
   if (wordsInDoc(doc) === 0) return [{ field: "doc", message: "Dokumen ini masih kosong." }];
   return [];
 }
