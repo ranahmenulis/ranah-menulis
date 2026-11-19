@@ -2,7 +2,7 @@ import type { JSONContent } from "@tiptap/react";
 import type { DocumentTarget } from "../document-targets";
 import type { DocumentVersion } from "../versions";
 import { isActiveDocument } from "../document-archive";
-import { applyWordDelta, type DailyLog } from "../daily-progress";
+import { applyWordDelta, recordWritingActivity, type DailyLog } from "../daily-progress";
 import {
   sameClassification,
   validateClassification,
@@ -74,6 +74,11 @@ export type SaveInput = {
 export type SaveResult =
   { ok: true; doc: StudioDocument; progress: DailyLog } | { ok: false; conflict: StudioDocument };
 
+export type SaveOptions = {
+  /** Use the restored word count as the baseline, or null to skip conflict resolution. */
+  activityBaseWords?: number | null;
+};
+
 export type ClassificationResult =
   { status: "saved" | "conflict"; doc: StudioDocument } | { status: "unavailable" | "invalid" };
 
@@ -84,7 +89,7 @@ export type ClassificationResult =
 export interface DocumentStore {
   get(id: string): Promise<StudioDocument | null>;
   /** Fails with a conflict when `baseVersion` is not the stored version. Never overwrites silently. */
-  save(input: SaveInput, baseVersion: number): Promise<SaveResult>;
+  save(input: SaveInput, baseVersion: number, options?: SaveOptions): Promise<SaveResult>;
   today(): Promise<DailyLog>;
   /** Copy a version into a new document (conflict resolution "keep both"). */
   duplicate(source: StudioDocument, title: string): Promise<StudioDocument>;
@@ -97,7 +102,7 @@ export interface DocumentStore {
   /** Scan metadata without collecting document bodies. */
   listSummaries(signal?: AbortSignal): Promise<DocumentSummary[]>;
   listFolders(): Promise<StudioFolder[]>;
-  /** One log per day that has words, oldest first. Streak and statistics are derived from this. */
+  /** Daily writing records, oldest first. Streak and statistics are derived from these logs. */
   history(): Promise<DailyLog[]>;
   /** Rename, move, trash, or restore. Counts as a change: the version increases. */
   updateMeta(id: string, patch: DocumentMeta): Promise<StudioDocument | null>;
@@ -143,6 +148,7 @@ export function commitSave(
   baseVersion: number,
   log: DailyLog,
   now: number,
+  activity?: SaveOptions & { hour: number },
 ): SaveResult {
   if (existing && existing.version !== baseVersion) return { ok: false, conflict: existing };
 
@@ -152,6 +158,16 @@ export function commitSave(
     version: (existing?.version ?? 0) + 1,
     updatedAt: now,
   };
-  const progress = applyWordDelta(log, input, existing?.wordCount ?? 0, input.wordCount);
-  return { ok: true, doc, progress };
+  const previousWords = existing?.wordCount ?? 0;
+  const progress = applyWordDelta(log, input, previousWords, input.wordCount);
+  const baseline = activity?.activityBaseWords;
+  const measured =
+    activity && baseline !== null && baseline !== input.wordCount
+      ? recordWritingActivity(
+          progress,
+          input.wordCount - (baseline ?? previousWords),
+          activity.hour,
+        )
+      : progress;
+  return { ok: true, doc, progress: measured };
 }

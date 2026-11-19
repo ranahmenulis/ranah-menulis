@@ -158,6 +158,10 @@ function subscribe(listener: () => void) {
 }
 
 /** The saved account on this device; the dummy reader until something is saved. */
+export function readAccount(): Account {
+  return parseAccount(snapshot());
+}
+
 export function useAccount(): Account {
   const raw = useSyncExternalStore(subscribe, snapshot, () => null);
   return useMemo(() => parseAccount(raw), [raw]);
@@ -165,7 +169,7 @@ export function useAccount(): Account {
 
 /** Returns false when the browser would not keep it (storage full): the caller should say so. */
 export function saveAccount(patch: AccountPatch): boolean {
-  const next = JSON.stringify(mergeAccount(parseAccount(snapshot()), patch));
+  const next = JSON.stringify(mergeAccount(readAccount(), patch));
   let kept = true;
   try {
     window.localStorage.setItem(KEY, next);

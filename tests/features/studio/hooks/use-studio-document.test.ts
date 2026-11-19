@@ -241,6 +241,7 @@ describe("useStudioDocument: conflicts", () => {
     expect(save).toHaveBeenCalledTimes(2);
     expect(save.mock.calls[1][1]).toBe(5);
     expect(save.mock.calls[1][0].title).toBe("Versi saya");
+    expect(save.mock.calls[1][2]).toEqual({ activityBaseWords: null });
     expect(result.current.conflict).toBeNull();
   });
 
@@ -268,10 +269,24 @@ describe("useStudioDocument: conflicts", () => {
     expect(store.duplicate).toHaveBeenCalledWith(remote, "Dari tab lain (versi lain)");
     expect(save).toHaveBeenCalledTimes(2);
     expect(save.mock.calls[1][1]).toBe(5);
+    expect(save.mock.calls[1][2]).toEqual({ activityBaseWords: null });
   });
 });
 
 describe("useStudioDocument: saveNow", () => {
+  it("saves the last word removed from an existing untitled document", async () => {
+    const { store, save } = makeStore({
+      get: vi.fn(async () => stored({ title: "", wordCount: 1 })),
+    });
+    const { result } = renderHook(() => useStudioDocument("doc-1", store));
+    await advance(0);
+    act(() => result.current.onContentChange(content, 0));
+    await act(async () => {
+      expect(await result.current.saveNow()).toBe(true);
+    });
+    expect(save.mock.calls[0][0]).toMatchObject({ title: "", wordCount: 0 });
+  });
+
   it("stores pending text straight away and reports it safe", async () => {
     const { store, save } = makeStore();
     const { result } = renderHook(() => useStudioDocument("doc-1", store));
@@ -476,6 +491,7 @@ describe("useStudioDocument: restoring a version", () => {
     expect(save).toHaveBeenCalledTimes(1);
     expect(save.mock.calls[0][0]).toMatchObject({ title: "Surat lama", wordCount: 1 });
     expect(save.mock.calls[0][1]).toBe(2); // the version this tab opened, so no conflict
+    expect(save.mock.calls[0][2]).toEqual({ activityBaseWords: 1 });
     expect(result.current.conflict).toBeNull();
   });
 

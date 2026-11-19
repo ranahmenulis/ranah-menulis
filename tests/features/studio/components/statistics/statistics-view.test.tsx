@@ -82,8 +82,30 @@ describe("StatisticsView", () => {
   it("shows one written day as a chart, not as the empty state", () => {
     data = make({ words: new Map([["2026-11-15", 1]]), todayWords: 1 });
     render(<StatisticsView />);
-    expect(screen.queryByText(/Belum cukup data/)).toBeNull();
+    expect(screen.queryByText(/Belum cukup data untuk statistik/)).toBeNull();
+    const metrics = screen.getByRole("region", { name: "Metrik menulis" });
+    expect(within(metrics).getAllByText("Belum cukup data")).toHaveLength(2);
+    expect(within(metrics).getByText("1 kata per hari menulis")).toBeTruthy();
     expect(screen.getByRole("group", { name: /^Kata per hari/ })).toBeTruthy();
+  });
+
+  it("shows reduction even without positive daily progress and filters it with the chart range", () => {
+    data = make({
+      words: new Map(),
+      history: [
+        { day: "2026-10-01", docs: {}, activity: { wordsReduced: 5, wordsAddedByHour: {} } },
+        { day: "2026-11-15", docs: {}, activity: { wordsReduced: 3, wordsAddedByHour: {} } },
+      ],
+    });
+    render(<StatisticsView />);
+    const metrics = screen.getByRole("region", { name: "Metrik menulis" });
+    expect(within(metrics).getByText("Kata berkurang")).toBeTruthy();
+    expect(within(metrics).getByText("3")).toBeTruthy();
+    expect(
+      within(metrics).getByText(/Penggantian dengan jumlah kata yang sama bernilai nol/),
+    ).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "Mingguan" }));
+    expect(within(metrics).getByText("8")).toBeTruthy();
   });
 
   it("without a target compares nothing and does not draw the target key", () => {
