@@ -153,6 +153,23 @@ export const account = {
       warning:
         "Mengubah zona waktu memengaruhi kapan harimu berganti. Perubahan hanya berlaku ke depan; hari yang sudah lewat dan streak yang sudah tercatat tidak berubah.",
     },
+    writing: {
+      title: "Menulis",
+      description: "Berlaku untuk semua dokumen yang kamu buka di Editor Studio.",
+      textSize: "Ukuran teks",
+      sizes: { small: "Kecil", standard: "Standar", large: "Besar" },
+      mode: "Mode tulis",
+      modes: { standard: "Standar", typewriter: "Mesin Tik" },
+      typewriterPosition: "Posisi baris saat mengetik",
+      positions: { high: "Atas", middle: "Tengah", low: "Bawah" },
+      curlyQuotes: "Kutip melengkung",
+      curlyQuotesHint: "Ubah kutip tunggal dan ganda saat diketik.",
+      substitutions: "Tanda baca otomatis",
+      substitutionsHint:
+        "Ubah -- menjadi — dan ... menjadi …. Tekan Backspace tepat setelahnya untuk membatalkan.",
+      failed: "Preferensi menulis belum tersimpan di perangkat ini.",
+      retry: "Coba lagi",
+    },
     privacy: {
       title: "Privasi",
       streakLabel: "Tampilkan streak di profil publik",

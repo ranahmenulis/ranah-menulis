@@ -154,6 +154,23 @@ export const account: typeof source = {
       warning:
         "Changing your time zone changes when your day rolls over. It only applies going forward; past days and streaks already recorded do not change.",
     },
+    writing: {
+      title: "Writing",
+      description: "Applies to every document you open in the Studio editor.",
+      textSize: "Text size",
+      sizes: { small: "Small", standard: "Standard", large: "Large" },
+      mode: "Writing mode",
+      modes: { standard: "Standard", typewriter: "Typewriter" },
+      typewriterPosition: "Typing line position",
+      positions: { high: "High", middle: "Middle", low: "Low" },
+      curlyQuotes: "Curly quotes",
+      curlyQuotesHint: "Curve single and double quotes as you type.",
+      substitutions: "Automatic punctuation",
+      substitutionsHint:
+        "Change -- to — and ... to …. Press Backspace immediately after a change to undo it.",
+      failed: "Writing preferences have not been saved on this device.",
+      retry: "Try again",
+    },
     privacy: {
       title: "Privacy",
       streakLabel: "Show my streak on my public profile",

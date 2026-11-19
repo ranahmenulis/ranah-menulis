@@ -120,13 +120,13 @@ Tiga kesimpulan dari peta ini:
 | 2.31 | Widget bawah: **timer sprint** (Time +mins, Words +words, Pace 0wpm, pin, play) | Tidak ada | RENCANA (N5) | |
 | 2.32 | Widget bawah: **tata bahasa** ("Ready to check grammar", "Run Check") | Tidak ada | DILEWATI | Sengaja tidak dibangun |
 | 2.33 | Mode layar penuh (ikon di bilah atas, F11) dan keluar dengan Esc | Mode fokus dengan HUD, bilah format tersembunyi | ADA | Verifikasi: kode `focus-hud.tsx` dan `editor-bar.tsx` ada |
-| 2.34 | Mode tulis: Typewriter atau Word Processor, posisi typewriter High/Middle/Low | Tidak ada | RENCANA (N8) | |
-| 2.35 | Tipografi otomatis: `--` jadi em-dash, `...` jadi elipsis, `->` jadi panah, pintasan ©, ™, pecahan | Tidak ada | RENCANA (N8) | |
-| 2.36 | Kutip melengkung (opsi) | Tidak ada | RENCANA (N8) | |
+| 2.34 | Mode tulis: Typewriter atau Word Processor, posisi typewriter High/Middle/Low | Standar (bawaan) dan Mesin Tik, dengan posisi Atas · Tengah · Bawah (bawaan Tengah) | ADA (N8, [usulan] untuk slicing) | Editor Studio |
+| 2.35 | Tipografi otomatis: `--` jadi em-dash, `...` jadi elipsis, `->` jadi panah, pintasan ©, ™, pecahan | Sakelar bawaan mati untuk `--` menjadi `—` dan `...` menjadi `…`. Backspace memulihkan urutan asli | SEBAGIAN (N8, [usulan] untuk slicing) | Hanya ketikan baru di isi Editor Studio. Panah, pecahan, ©, dan ™ di luar slicing |
+| 2.36 | Kutip melengkung (opsi) | Sakelar terpisah untuk kutip tunggal dan ganda, bawaan mati | ADA (N8, [usulan] untuk slicing) | Hanya ketikan baru di isi Editor Studio |
 | 2.37 | Fitur ramah disleksia (kotak centang) | Tidak ada | TIDAK ADA | |
 | 2.38 | Proofreader per manuskrip dengan bahasa (English (British)) dan "Saved words" | Tidak ada | DILEWATI | Teks Indonesia belum ada pemeriksa |
-| 2.39 | Pintasan keyboard (daftar: Ctrl+K cari, Ctrl+M menu, Ctrl+\ sidebar, format, tipografi) | Pintasan bawaan Tiptap; tidak ada daftar | RENCANA (N10) | |
-| 2.40 | Ukuran font bawaan (16pt) per akun | Tidak ada | RENCANA (N8) | |
+| 2.39 | Pintasan keyboard (daftar: Ctrl+K cari, Ctrl+M menu, Ctrl+\ sidebar, format, tipografi) | Pintasan bawaan Tiptap; Ctrl+K/⌘K cari sudah ada (N7); tidak ada daftar | RENCANA (N10) | Daftar belum ada |
+| 2.40 | Ukuran font bawaan (16pt) per akun | Kecil · Standar · Besar, bawaan Standar mengikuti ukuran responsif Editor Studio | ADA (N8, [usulan] untuk slicing) | Ukuran teks per akun masih menunggu jawaban client |
 | 2.41 | (tidak ada di Novlr) Kit inspirasi dan perpustakaan prompt di Laci bantuan | Laci bantuan: Ide cerita, Kalimat pembuka, Kamus diksi, Pertanyaan refleksi, Ide judul, Kalimat penutup, plus lima prompt (STD-11; terverifikasi di kode) | ADA | Kelebihan RanahMenulis. Teks isi masih placeholder [konfirmasi] |
 
 ### 2D. Panel samping editor
@@ -136,7 +136,7 @@ Tiga kesimpulan dari peta ini:
 | 2.42 | **Notes**: "Take Note", "Create Note" (profil tokoh, world building, riset) | Tidak ada | RENCANA (N15) | |
 | 2.43 | **Comments**: "No comments yet", komentar inline, setelan "Every comment" | Tidak ada | TIDAK ADA | |
 | 2.44 | **Versions**: "Current Version", daftar versi per jam dengan kata, pin per versi, "Showing last 3 days. Go unlimited with Studio." | Tidak ada panel; `DocumentStore.history` ada | RENCANA (N6) | Cek dulu apakah history menyimpan isi atau hanya jumlah kata |
-| 2.45 | Pencarian global "Find Anything" (Ctrl+K): Project, Section, Collection, Note; filter tag, status, koleksi | Ikon pencarian di bilah atas nonaktif ("searchSoon"); terverifikasi di kode | RENCANA (N7) | |
+| 2.45 | Pencarian global "Find Anything" (Ctrl+K): Project, Section, Collection, Note; filter tag, status, koleksi | Dialog "Cari di Studio" (Ctrl+K/⌘K dan ikon di bilah Studio dan Editor): dokumen aktif dan folder, label jenis; pencarian judul dan isi di daftar Dokumen. Di luar Studio ikon masih nonaktif ("searchSoon") | SEBAGIAN (N7, `2e58bdb`) | Tanpa postingan Community [usulan] dan tanpa kotak centang jenis atau filter tag, status, koleksi |
 
 ### 2E. Berbagi dan ekspor
 
@@ -283,7 +283,7 @@ Novlr tidak punya program penerbitan. Yang bisa dipadankan hanya Academy dan, se
 | --- | --- | --- | --- | --- |
 | 6.1 | Menu avatar: nama, "Account settings", Account, Preferences, Support, Log out | Avatar menuju Pengaturan; Keluar | ADA | |
 | 6.2 | Account > **Preferences**: tema Light, Dark, System, Evening, Parchment, Airy (tiga terakhir STUDIO) | Tema terang dan gelap; tanpa "sistem" di UI | SEBAGIAN | Tiga tema premium tidak ada |
-| 6.3 | Preferences > "Editor behaviour": font size, curly quotes, Writing mode, Typewriter position, Proofreader | Tidak ada | RENCANA (N8) | |
+| 6.3 | Preferences > "Editor behaviour": font size, curly quotes, Writing mode, Typewriter position, Proofreader | Pengaturan → Menulis menyimpan ukuran teks, mode, posisi Mesin Tik, dan dua sakelar tipografi | SEBAGIAN (N8, [usulan] untuk slicing) | Hanya Editor Studio. Editor Tulis langsung (`/tulis`) memakai perilaku bawaannya. Pemeriksa tata bahasa di luar slicing |
 | 6.4 | Preferences > "Commenting" (sembunyikan komentar inline) | Tidak ada | TIDAK ADA | |
 | 6.5 | Preferences > "Keyboard shortcuts" (tabel) | Tidak ada | RENCANA (N10) | |
 | 6.6 | **Backups**: Google Drive, Dropbox, Local Export | Tidak ada | DILEWATI | |

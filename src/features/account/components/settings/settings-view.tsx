@@ -14,9 +14,10 @@ import { DangerSection } from "./danger-section";
 import { PersonalSection } from "./personal-section";
 import { LanguageSection, PreferenceSections } from "./preference-sections";
 import { SecuritySection } from "./security-section";
+import { WritingSection } from "./writing-section";
 
 /**
- * Pengaturan akun (PRD 17): personal information, language, privacy, email notifications,
+ * Account settings (PRD 17): personal information, language, writing, privacy, email notifications,
  * security, and the danger zone. One column of 680 in the app frame. The only filled button is
  * "Simpan perubahan"; everything else saves at once or sits in a dialog.
  */
@@ -40,6 +41,7 @@ export function SettingsView() {
         <>
           <PersonalSection account={account} />
           <LanguageSection />
+          <WritingSection prefs={account.prefs.writing} />
           <PreferenceSections prefs={account.prefs} />
           <SecuritySection account={account} />
           <DangerSection />

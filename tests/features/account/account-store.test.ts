@@ -6,6 +6,7 @@ import {
   resetAccount,
   saveAccount,
 } from "@/features/account/account-store";
+import { DEFAULT_WRITING_PREFERENCES } from "@/features/account/writing-preferences";
 
 beforeEach(() => localStorage.clear());
 afterEach(() => resetAccount());
@@ -44,6 +45,29 @@ describe("parseAccount", () => {
   it("keeps a photo that is an image data URL", () => {
     const avatar = "data:image/jpeg;base64,AAAA";
     expect(parseAccount(JSON.stringify({ profile: { avatar } })).profile.avatar).toBe(avatar);
+  });
+
+  it("uses writing defaults for old accounts and validates each saved preference", () => {
+    expect(parseAccount('{"prefs":{"emailComments":false}}').prefs.writing).toEqual(
+      DEFAULT_WRITING_PREFERENCES,
+    );
+    const raw = JSON.stringify({
+      prefs: {
+        writing: {
+          textSize: "huge",
+          mode: "typewriter",
+          typewriterPosition: "low",
+          curlyQuotes: true,
+          substitutions: "true",
+        },
+      },
+    });
+    expect(parseAccount(raw).prefs.writing).toEqual({
+      ...DEFAULT_WRITING_PREFERENCES,
+      mode: "typewriter",
+      typewriterPosition: "low",
+      curlyQuotes: true,
+    });
   });
 });
 
@@ -110,5 +134,17 @@ describe("saveAccount and resetAccount", () => {
     saveAccount({ profile: { name: "Laras" } });
     resetAccount();
     expect(localStorage.getItem("ranah.account")).toBeNull();
+  });
+
+  it("merges separate writing changes without overwriting other account preferences", () => {
+    saveAccount({ prefs: { emailComments: false, writing: { textSize: "large" } } });
+    saveAccount({ prefs: { writing: { curlyQuotes: true } } });
+    const account = parseAccount(localStorage.getItem("ranah.account"));
+    expect(account.prefs.emailComments).toBe(false);
+    expect(account.prefs.writing).toEqual({
+      ...DEFAULT_WRITING_PREFERENCES,
+      textSize: "large",
+      curlyQuotes: true,
+    });
   });
 });

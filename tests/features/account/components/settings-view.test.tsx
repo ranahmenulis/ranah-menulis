@@ -34,6 +34,7 @@ describe("SettingsView", () => {
     for (const name of [
       "Informasi pribadi",
       "Bahasa",
+      "Menulis",
       "Privasi",
       "Notifikasi email",
       "Keamanan",
@@ -108,6 +109,55 @@ describe("SettingsView", () => {
     const select = screen.getByLabelText("Bahasa tampilan");
     fireEvent.change(select, { target: { value: "en" } });
     expect(setLocale).toHaveBeenCalledWith("en");
+  });
+
+  it("saves writing choices immediately and keeps the chosen position when switching modes", () => {
+    wrap(<SettingsView />);
+    const size = screen.getByLabelText<HTMLSelectElement>("Ukuran teks");
+    const quotes = screen.getByRole<HTMLInputElement>("checkbox", { name: /^Kutip melengkung/ });
+    const substitutions = screen.getByRole<HTMLInputElement>("checkbox", {
+      name: /^Tanda baca otomatis/,
+    });
+    expect(size.value).toBe("standard");
+    expect(quotes.checked).toBe(false);
+    expect(substitutions.checked).toBe(false);
+    expect(screen.queryByLabelText("Posisi baris saat mengetik")).toBeNull();
+    type("Ukuran teks", "large");
+    type("Mode tulis", "typewriter");
+    expect(screen.getByLabelText<HTMLSelectElement>("Posisi baris saat mengetik").value).toBe(
+      "middle",
+    );
+    type("Posisi baris saat mengetik", "low");
+    type("Mode tulis", "standard");
+    expect(screen.queryByLabelText("Posisi baris saat mengetik")).toBeNull();
+    fireEvent.click(quotes);
+    fireEvent.click(substitutions);
+    expect(saved().prefs.writing).toEqual({
+      textSize: "large",
+      mode: "standard",
+      typewriterPosition: "low",
+      curlyQuotes: true,
+      substitutions: true,
+    });
+  });
+
+  it("keeps an unsaved writing choice visible and retries without losing it", () => {
+    wrap(<SettingsView />);
+    const blocked = vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
+      throw new DOMException("full", "QuotaExceededError");
+    });
+    try {
+      type("Ukuran teks", "large");
+      expect(screen.getByLabelText<HTMLSelectElement>("Ukuran teks").value).toBe("large");
+      expect(saved().prefs.writing.textSize).toBe("standard");
+      expect(screen.getByRole("alert").textContent).toContain("Preferensi menulis belum tersimpan");
+    } finally {
+      blocked.mockRestore();
+    }
+    fireEvent.click(screen.getByRole("button", { name: "Coba lagi" }));
+    expect(screen.queryByRole("alert")).toBeNull();
+    expect(saved().prefs.writing.textSize).toBe("large");
+    expect(document.activeElement).toBe(screen.getByLabelText("Ukuran teks"));
   });
 });
 
