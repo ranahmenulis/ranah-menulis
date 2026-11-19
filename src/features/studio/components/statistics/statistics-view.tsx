@@ -6,12 +6,14 @@ import { Chip } from "@/components/ui/chip";
 import { EmptyState, ErrorBanner, RetryButton, Skeleton } from "@/components/ui/states";
 import { useStreakData } from "../../hooks/use-streak-data";
 import { statistics, type Period } from "../../statistics";
+import { writingMetrics } from "../../statistics-activity";
 import { NO_STATISTICS, PERIOD_LABEL, rangeName } from "../../statistics-copy";
 import { studioStore } from "../../storage/store";
 import { StudioTabs } from "../studio-tabs";
 import { BarChart } from "./bar-chart";
 import { ChartTable } from "./chart-table";
 import { StatisticsCards } from "./statistics-cards";
+import { WritingMetricsSection } from "./writing-metrics-section";
 
 const PERIODS: Period[] = ["day", "week", "month"];
 
@@ -37,12 +39,21 @@ function LoadingBlocks() {
 export function StatisticsView() {
   const data = useStreakData(studioStore);
   const [period, setPeriod] = useState<Period>("day");
-  const { status, today, words, changes, lastDocument } = data;
+  const { status, today, words, changes, history, lastDocument } = data;
 
-  const hasWriting = useMemo(() => [...words.values()].some((w) => w > 0), [words]);
+  const hasWriting = useMemo(
+    () =>
+      [...words.values()].some((w) => w > 0) ||
+      history.some(({ activity }) => activity !== undefined),
+    [words, history],
+  );
   const stats = useMemo(
     () => (status === "ready" ? statistics(words, changes, today, period) : null),
     [status, words, changes, today, period],
+  );
+  const metrics = useMemo(
+    () => (stats ? writingMetrics(words, history, stats.buckets[0].start, today) : null),
+    [stats, words, history, today],
   );
   const startHref = lastDocument ? `/studio/${lastDocument.id}` : "/studio/baru";
 
@@ -90,6 +101,7 @@ export function StatisticsView() {
           )}
 
           <BarChart key={period} buckets={stats.buckets} period={period} />
+          {metrics && <WritingMetricsSection metrics={metrics} />}
           <ChartTable buckets={stats.buckets} period={period} />
         </div>
       )}

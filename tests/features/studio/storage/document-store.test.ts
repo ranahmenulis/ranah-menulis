@@ -126,6 +126,56 @@ describe("commitSave keeps filing state", () => {
   });
 });
 
+describe("commitSave: writing metrics", () => {
+  const hour = 23;
+  const previous = stored();
+  const shorter = { ...input, wordCount: 115 };
+
+  it("records net reduction even when the removed words were written on an older day", () => {
+    const result = commitSave(previous, shorter, 3, emptyLog(), 300, { hour });
+    expect(result.ok && result.progress.activity).toEqual({
+      wordsReduced: 5,
+      wordsAddedByHour: {},
+    });
+    expect(result.ok && totalWords(result.progress)).toBe(0);
+  });
+
+  it("records additions in the account hour and a same-size save contributes zero reduction", () => {
+    const result = commitSave(previous, { ...input, wordCount: 122 }, 3, emptyLog(), 300, { hour });
+    expect(result.ok && result.progress.activity).toEqual({
+      wordsReduced: 0,
+      wordsAddedByHour: { 23: 2 },
+    });
+    const replacement = commitSave(previous, input, 3, emptyLog(), 300, { hour });
+    expect(replacement.ok && replacement.progress.activity?.wordsReduced).toBe(0);
+  });
+
+  it("excludes a restored version and measures only typing after the restore", () => {
+    const restore = commitSave(previous, shorter, 3, emptyLog(), 300, {
+      hour,
+      activityBaseWords: 115,
+    });
+    expect(restore.ok && restore.progress.activity).toBeUndefined();
+    const edited = commitSave(previous, { ...shorter, wordCount: 114 }, 3, emptyLog(), 300, {
+      hour,
+      activityBaseWords: 115,
+    });
+    expect(edited.ok && edited.progress.activity?.wordsReduced).toBe(1);
+  });
+
+  it("does not record rejected saves or saves that reconcile a conflict", () => {
+    expect(commitSave(previous, shorter, 2, emptyLog(), 300, { hour })).toEqual({
+      ok: false,
+      conflict: previous,
+    });
+    const result = commitSave(previous, shorter, 3, emptyLog(), 300, {
+      hour,
+      activityBaseWords: null,
+    });
+    expect(result.ok && result.progress.activity).toBeUndefined();
+  });
+});
+
 describe("applyMeta", () => {
   it("changes only the given fields, bumps the version, and keeps the content", () => {
     const doc = stored();

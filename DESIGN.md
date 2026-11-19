@@ -333,6 +333,7 @@ Desktop: kolom kiri (nama `heading-lg`, tab Karya · Tentang · Proyek, lalu daf
 - **Tersimpan:** daftar pola feed.
 - **Notifikasi:** tab Semua · Komentar · Proyek. Butir: avatar/ikon 32, kalimat (`text-sm`, nama pelaku 500), waktu. Belum dibaca: titik ink 6px di kiri + teks `ink`; sudah dibaca: `ink-muted`. Tugas Editor, Mentor, dan Juri masuk Proyek. Moderasi dan Editor’s Picks masuk Semua. Baris pengelola mengikuti pekerjaan aktif **[usulan]**. Juri lomba anonim hanya melihat label “Karya N” dan nama lomba. Pesan konten yang disembunyikan bisa ditandai dibaca melalui tombol berteks generik. Kerangka memuat bergaris dan galat sebagian mengikuti bagian 8. Jika baris yang sedang difokuskan hilang karena akses atau status berubah, fokus berpindah ke baris status inbox.
 - **Statistik:** angka `figure` dengan label `text-xs`; grafik batang monokrom (batang `ink`, sumbu `line`), tanpa gradien.
+- **Metrik menulis (N14):** bagian bergaris tipis setelah grafik dan sebelum tabel, dengan Tempo, Hari favorit, Jam favorit, dan Kata berkurang. Keempatnya mengikuti rentang Statistik. Tempo diberi satuan kata per hari menulis. Keterangan menjelaskan bahwa Kata berkurang menjumlahkan selisih ketika jumlah kata turun antarsimpanan, dan penggantian dengan jumlah kata yang sama bernilai nol. Nilai tanpa data menampilkan “Belum cukup data”. Jam memakai zona akun saat penyimpanan. Teks Statistik sengaja hanya Bahasa Indonesia.
 
 ### 6.7 Halaman di luar pola Medium
 

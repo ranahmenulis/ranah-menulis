@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { dayKey, totalWords, type DailyLog } from "../daily-progress";
+import { useAccount } from "@/features/account/account-store";
+import { totalWords, type DailyLog } from "../daily-progress";
 import { pickLastDocument } from "../documents";
 import {
   summarizeStreak,
@@ -13,6 +14,7 @@ import {
 import type { DocumentStore, DocumentSummary } from "../storage/document-store";
 import { onDocumentListChanged } from "../storage/document-events";
 import { readTargets, saveTargets, withTarget } from "../target-setting";
+import { writingTime } from "../writing-time";
 
 export type StreakData = {
   status: "loading" | "ready" | "error";
@@ -39,6 +41,7 @@ const noStorage = () => (typeof window === "undefined" ? null : window.localStor
  * daily logs (steps 4a–c). Becomes server data when the backend exists.
  */
 export function useStreakData(store: DocumentStore): StreakData {
+  const { timeZone } = useAccount().profile;
   const [status, setStatus] = useState<StreakData["status"]>("loading");
   const [history, setHistory] = useState<DailyLog[]>([]);
   const [lastDocument, setLastDocument] = useState<DocumentSummary | null>(null);
@@ -46,8 +49,8 @@ export function useStreakData(store: DocumentStore): StreakData {
   const [attempt, setAttempt] = useState(0);
   // Read in the effect, not during render: Next prerenders client components, and the date must
   // be the visitor's, not the build's.
-  const [today, setToday] = useState("");
   const [nowMs, setNowMs] = useState(0);
+  const today = nowMs ? writingTime(nowMs, timeZone).day : "";
 
   useEffect(() => {
     const controller = new AbortController();
@@ -55,7 +58,6 @@ export function useStreakData(store: DocumentStore): StreakData {
     Promise.all([store.history(), store.listSummaries(signal)])
       .then(([logs, list]) => {
         if (signal.aborted) return;
-        setToday(dayKey(new Date()));
         setNowMs(Date.now());
         setHistory(logs);
         setLastDocument(pickLastDocument(list));
@@ -73,13 +75,16 @@ export function useStreakData(store: DocumentStore): StreakData {
     setAttempt((n) => n + 1);
   }, []);
 
-  const setTarget = useCallback((value: number) => {
-    setChanges((current) => {
-      const next = withTarget(current, value, dayKey(new Date()));
-      saveTargets(noStorage(), next);
-      return next;
-    });
-  }, []);
+  const setTarget = useCallback(
+    (value: number) => {
+      setChanges((current) => {
+        const next = withTarget(current, value, writingTime(Date.now(), timeZone).day);
+        saveTargets(noStorage(), next);
+        return next;
+      });
+    },
+    [timeZone],
+  );
 
   return useMemo(() => {
     const words = wordsByDay(history);

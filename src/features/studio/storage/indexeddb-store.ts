@@ -1,7 +1,9 @@
-import { dayKey, emptyLog, type DailyLog } from "../daily-progress";
+import { readAccount } from "@/features/account/account-store";
+import type { DailyLog } from "../daily-progress";
 import { changeDocumentArchive, copyActiveDocument, isArchivedDocument } from "../document-archive";
 import { notifyDocumentListChanged } from "./document-events";
 import { planSnapshots, versionsToPrune, visibleVersions, type DocumentVersion } from "../versions";
+import { writingTime } from "../writing-time";
 import {
   applyClassification,
   applyMeta,
@@ -11,6 +13,7 @@ import {
   type DocumentStore,
   type DocumentSummary,
   type SaveInput,
+  type SaveOptions,
   type SaveResult,
   type StudioDocument,
   type StudioFolder,
@@ -66,6 +69,35 @@ function done(tx: IDBTransaction): Promise<void> {
   });
 }
 
+function accountWritingTime(now: number) {
+  return writingTime(now, readAccount().profile.timeZone);
+}
+
+async function writeSave(
+  tx: IDBTransaction,
+  input: SaveInput,
+  baseVersion: number,
+  options?: SaveOptions,
+): Promise<SaveResult> {
+  const docs = tx.objectStore(DOCS);
+  const daily = tx.objectStore(DAILY);
+  const versions = tx.objectStore(VERSIONS);
+  const now = Date.now();
+  const { day, hour } = accountWritingTime(now);
+  const existing = ((await request(docs.get(input.id))) as StudioDocument | undefined) ?? null;
+  const log = ((await request(daily.get(day))) as DailyLog | undefined) ?? { day, docs: {} };
+  const result = commitSave(existing, input, baseVersion, log, now, { ...options, hour });
+  if (!result.ok) return result;
+
+  docs.put(result.doc);
+  daily.put(result.progress);
+  const kept = (await request(versions.index("docId").getAll(input.id))) as DocumentVersion[];
+  const plan = planSnapshots(existing, result.doc, kept, now);
+  for (const version of plan) versions.put(version);
+  for (const id of versionsToPrune([...kept, ...plan], now)) versions.delete(id);
+  return result;
+}
+
 function scanSummaries(db: IDBDatabase, signal?: AbortSignal): Promise<DocumentSummary[]> {
   signal?.throwIfAborted();
   return new Promise((resolve, reject) => {
@@ -108,31 +140,18 @@ export function createIndexedDbStore(): DocumentStore {
       return ((await request(tx.objectStore(DOCS).get(id))) as StudioDocument | undefined) ?? null;
     },
 
-    async save(input: SaveInput, baseVersion: number): Promise<SaveResult> {
+    async save(input, baseVersion, options) {
       const tx = (await db()).transaction([DOCS, DAILY, VERSIONS], "readwrite");
-      const docs = tx.objectStore(DOCS);
-      const daily = tx.objectStore(DAILY);
-      const versions = tx.objectStore(VERSIONS);
-      const today = dayKey(new Date());
-
-      const existing = ((await request(docs.get(input.id))) as StudioDocument | undefined) ?? null;
-      const log = ((await request(daily.get(today))) as DailyLog | undefined) ?? emptyLog();
-      const result = commitSave(existing, input, baseVersion, log, Date.now());
-
-      if (result.ok) {
-        docs.put(result.doc);
-        daily.put(result.progress);
-        // Version history is kept in the same transaction, so a save and its snapshot go together.
-        const kept = (await request(versions.index("docId").getAll(input.id))) as DocumentVersion[];
-        const now = Date.now();
-        const plan = planSnapshots(existing, result.doc, kept, now);
-        for (const version of plan) versions.put(version);
-        for (const id of versionsToPrune([...kept, ...plan], now)) versions.delete(id);
-      }
-      await new Promise<void>((resolve, reject) => {
-        tx.oncomplete = () => resolve();
-        tx.onerror = () => reject(tx.error);
-        tx.onabort = () => reject(tx.error);
+      const [result] = await Promise.all([
+        writeSave(tx, input, baseVersion, options),
+        done(tx),
+      ]).catch((error: unknown) => {
+        try {
+          tx.abort();
+        } catch {
+          // IndexedDB may already have aborted on a request error.
+        }
+        throw error;
       });
       if (result.ok) notifyDocumentListChanged();
       return result;
@@ -140,9 +159,9 @@ export function createIndexedDbStore(): DocumentStore {
 
     async today() {
       const tx = (await db()).transaction(DAILY, "readonly");
-      const log = (await request(tx.objectStore(DAILY).get(dayKey(new Date())))) as
-        DailyLog | undefined;
-      return log ?? emptyLog();
+      const { day } = accountWritingTime(Date.now());
+      const log = (await request(tx.objectStore(DAILY).get(day))) as DailyLog | undefined;
+      return log ?? { day, docs: {} };
     },
 
     async duplicate(source, title) {

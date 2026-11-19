@@ -19,6 +19,10 @@ export type Conflict = { local: SaveInput; remote: StudioDocument };
 
 const EMPTY_DOC: JSONContent = { type: "doc", content: [{ type: "paragraph" }] };
 
+function isBlankDraft(version: number, title: string, words: number): boolean {
+  return version === 0 && title.trim() === "" && words === 0;
+}
+
 /**
  * Loads one document and keeps it saved. Saving happens after a short typing pause, never twice at
  * once, and is flushed when the tab is hidden or the editor unmounts. A save that finds a newer
@@ -56,6 +60,7 @@ export function useStudioDocument(
     targets: DocumentTarget[];
   }>({ title: "", content: EMPTY_DOC, words: 0, targets: [] });
   const dirty = useRef(false);
+  const activityBaseWords = useRef<number | null | undefined>(undefined);
   const inFlight = useRef(false);
   const blocked = useRef(false);
   const timer = useRef<number | undefined>(undefined);
@@ -66,7 +71,7 @@ export function useStudioDocument(
     window.clearTimeout(timer.current);
     const { title: t, content, words: w, targets: tg } = latest.current;
     if (!dirty.current || inFlight.current || blocked.current) return;
-    if (t.trim() === "" && w === 0) return; // an untouched new draft is not stored
+    if (isBlankDraft(version.current, t, w)) return;
 
     inFlight.current = true;
     dirty.current = false;
@@ -80,8 +85,11 @@ export function useStudioDocument(
         wordCount: w,
         targets: tg,
       };
-      const result = await store.save(input, version.current);
+      const result = await store.save(input, version.current, {
+        activityBaseWords: activityBaseWords.current,
+      });
       if (result.ok) {
+        activityBaseWords.current = undefined;
         version.current = result.doc.version;
         setProgress(result.progress);
         setSavedAt(new Date(result.doc.updatedAt));
@@ -185,7 +193,7 @@ export function useStudioDocument(
         continue;
       }
       const { title: t, words: w } = latest.current;
-      if (!dirty.current || (t.trim() === "" && w === 0)) return true; // untouched drafts are never stored
+      if (!dirty.current || isBlankDraft(version.current, t, w)) return true;
       if (writes++ >= 3) return false; // the device keeps refusing; its retry timer takes over
       await flush();
     }
@@ -252,6 +260,7 @@ export function useStudioDocument(
         words: target.wordCount,
         targets: tg,
       };
+      activityBaseWords.current = target.wordCount;
       setInitial({ title: target.title, content: target.content });
       setTitleState(target.title);
       setWords(target.wordCount);
@@ -273,6 +282,7 @@ export function useStudioDocument(
       blocked.current = false;
       setConflict(null);
       if (choice === "remote") {
+        activityBaseWords.current = undefined;
         dirty.current = false;
         const remoteTargets = sanitizeTargets(remote.targets);
         latest.current = {
@@ -288,6 +298,7 @@ export function useStudioDocument(
         setSavedAt(new Date(remote.updatedAt));
         setEditorKey((k) => k + 1);
       } else {
+        activityBaseWords.current = null;
         await flush();
       }
     },

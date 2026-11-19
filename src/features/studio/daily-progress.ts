@@ -7,9 +7,10 @@
  */
 
 export type DailyLog = {
-  /** Local calendar day, "YYYY-MM-DD". [konfirmasi] Should follow the profile time zone. */
+  /** "YYYY-MM-DD" as recorded at the time. Older rows used the device zone. */
   day: string;
   docs: Record<string, { title: string; words: number }>;
+  activity?: { wordsReduced: number; wordsAddedByHour: Partial<Record<number, number>> };
 };
 
 export function dayKey(date: Date): string {
@@ -47,4 +48,23 @@ export function applyWordDelta(
   const words = Math.max(0, current + delta);
   if (words === 0 && !(doc.id in log.docs)) return log;
   return { ...log, docs: { ...log.docs, [doc.id]: { title: doc.title, words } } };
+}
+
+/** Record a net change from an accepted writing save, without altering daily progress. */
+export function recordWritingActivity(log: DailyLog, delta: number, hour: number): DailyLog {
+  if (delta === 0) {
+    return log.activity ? log : { ...log, activity: { wordsReduced: 0, wordsAddedByHour: {} } };
+  }
+  const { wordsReduced, wordsAddedByHour } = log.activity ?? {
+    wordsReduced: 0,
+    wordsAddedByHour: {},
+  };
+  const activity =
+    delta < 0
+      ? { wordsReduced: wordsReduced - delta, wordsAddedByHour }
+      : {
+          wordsReduced,
+          wordsAddedByHour: { ...wordsAddedByHour, [hour]: (wordsAddedByHour[hour] ?? 0) + delta },
+        };
+  return { ...log, activity };
 }
