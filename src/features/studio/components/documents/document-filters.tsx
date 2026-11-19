@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useId, type Ref } from "react";
+import { useId, useMemo, type Ref } from "react";
 import { Field, Select } from "@/components/ui/field";
 import {
   DOCUMENT_KINDS,
@@ -13,20 +13,26 @@ import {
 export function useDocumentFilters() {
   const params = useSearchParams();
   const rawTag = params.get("tag");
-  const filters = { kind: parseKind(params.get("jenis")), tag: parseTag(rawTag) };
+  const kind = parseKind(params.get("jenis"));
+  const tag = parseTag(rawTag);
+  const filters = useMemo(() => ({ kind, tag }), [kind, tag]);
   const tabParam = params.get("tab");
   const tab = tabParam === "arsip" || tabParam === "sampah" ? tabParam : "semua";
 
-  function changeFilters(changes: Partial<Record<"jenis" | "tag" | "tab", string>>) {
+  function changeFilters(
+    changes: Partial<Record<"jenis" | "tag" | "tab" | "folder", string>>,
+    history: "pushState" | "replaceState" = "replaceState",
+  ) {
     const url = new URL(window.location.href);
     for (const [key, value] of Object.entries(changes)) {
       if (value) url.searchParams.set(key, value);
       else url.searchParams.delete(key);
     }
-    window.history.replaceState(null, "", `${url.pathname}${url.search}${url.hash}`);
+    window.history[history](null, "", `${url.pathname}${url.search}${url.hash}`);
   }
 
-  return { filters, rawTag, changeFilters, tab };
+  const requestedFolder = tab === "semua" ? params.get("folder") : null;
+  return { filters, rawTag, changeFilters, tab, requestedFolder };
 }
 
 export function DocumentFilterFields({

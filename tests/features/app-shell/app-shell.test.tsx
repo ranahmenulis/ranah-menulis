@@ -1,5 +1,6 @@
-import { cleanup, render, screen, within } from "@testing-library/react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
+import { installDialogShim } from "@/test/dialog-shim";
 
 const pathname = vi.hoisted(() => ({ value: "/studio" }));
 vi.mock("next/navigation", () => ({
@@ -10,6 +11,7 @@ vi.mock("next/navigation", () => ({
 
 import { AppShell } from "@/features/app-shell/app-shell";
 
+beforeAll(installDialogShim);
 afterEach(() => {
   cleanup();
   sessionStorage.clear();
@@ -31,6 +33,28 @@ const current = () =>
     .map((a) => a.textContent);
 
 describe("AppShell", () => {
+  it.each(["/studio", "/studio/streak", "/studio/statistik"])(
+    "opens Studio search with the shortcut on %s",
+    async (path) => {
+      renderAt(path);
+      expect(screen.getByRole("button", { name: "Cari di Studio" })).toBeTruthy();
+      fireEvent.keyDown(window, { key: "k", ctrlKey: true });
+      expect(await screen.findByRole("dialog", { name: "Cari di Studio" })).toBeTruthy();
+    },
+  );
+
+  it("does not register Studio search on Beranda or in the guest frame", () => {
+    renderAt("/beranda");
+    fireEvent.keyDown(window, { key: "k", ctrlKey: true });
+    expect(screen.queryByRole("dialog", { name: "Cari di Studio" })).toBeNull();
+    cleanup();
+    sessionStorage.setItem("rm-viewer", "tamu");
+    renderAt("/studio");
+    expect(screen.queryByRole("button", { name: "Cari di Studio" })).toBeNull();
+    fireEvent.keyDown(window, { key: "k", metaKey: true });
+    expect(screen.queryByRole("dialog", { name: "Cari di Studio" })).toBeNull();
+  });
+
   it("renders the page inside a main landmark", () => {
     renderAt("/beranda");
     expect(within(screen.getByRole("main")).getByText("isi halaman")).toBeTruthy();

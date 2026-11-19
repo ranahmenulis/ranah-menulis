@@ -36,6 +36,7 @@ function makeStore(over: Partial<DocumentStore> = {}) {
     duplicateActive: vi.fn(async () => null),
     setArchived: vi.fn(async () => null),
     list: vi.fn(async () => []),
+    listSummaries: vi.fn(async () => []),
     listFolders: vi.fn(async () => []),
     history: vi.fn(async () => []),
     updateMeta: vi.fn(async () => null),

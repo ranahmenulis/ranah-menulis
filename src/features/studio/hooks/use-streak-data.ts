@@ -10,7 +10,7 @@ import {
   type StreakSummary,
   type TargetChange,
 } from "../streak";
-import type { DocumentStore, StudioDocument } from "../storage/document-store";
+import type { DocumentStore, DocumentSummary } from "../storage/document-store";
 import { onDocumentListChanged } from "../storage/document-events";
 import { readTargets, saveTargets, withTarget } from "../target-setting";
 
@@ -27,7 +27,7 @@ export type StreakData = {
   todayWords: number;
   summary: StreakSummary;
   /** Most recently edited active document. */
-  lastDocument: StudioDocument | null;
+  lastDocument: DocumentSummary | null;
   reload: () => void;
   setTarget: (value: number) => void;
 };
@@ -41,7 +41,7 @@ const noStorage = () => (typeof window === "undefined" ? null : window.localStor
 export function useStreakData(store: DocumentStore): StreakData {
   const [status, setStatus] = useState<StreakData["status"]>("loading");
   const [history, setHistory] = useState<DailyLog[]>([]);
-  const [docs, setDocs] = useState<StudioDocument[]>([]);
+  const [lastDocument, setLastDocument] = useState<DocumentSummary | null>(null);
   const [changes, setChanges] = useState<TargetChange[]>([]);
   const [attempt, setAttempt] = useState(0);
   // Read in the effect, not during render: Next prerenders client components, and the date must
@@ -50,21 +50,20 @@ export function useStreakData(store: DocumentStore): StreakData {
   const [nowMs, setNowMs] = useState(0);
 
   useEffect(() => {
-    let cancelled = false;
-    Promise.all([store.history(), store.list()])
+    const controller = new AbortController();
+    const { signal } = controller;
+    Promise.all([store.history(), store.listSummaries(signal)])
       .then(([logs, list]) => {
-        if (cancelled) return;
+        if (signal.aborted) return;
         setToday(dayKey(new Date()));
         setNowMs(Date.now());
         setHistory(logs);
-        setDocs(list);
+        setLastDocument(pickLastDocument(list));
         setChanges(readTargets(noStorage()));
         setStatus("ready");
       })
-      .catch(() => !cancelled && setStatus("error"));
-    return () => {
-      cancelled = true;
-    };
+      .catch(() => !signal.aborted && setStatus("error"));
+    return () => controller.abort();
   }, [store, attempt]);
 
   useEffect(() => onDocumentListChanged(() => setAttempt((value) => value + 1)), []);
@@ -85,7 +84,6 @@ export function useStreakData(store: DocumentStore): StreakData {
   return useMemo(() => {
     const words = wordsByDay(history);
     const todayLog = history.find((l) => l.day === today);
-    const lastDocument = pickLastDocument(docs);
     return {
       status,
       today,
@@ -100,5 +98,5 @@ export function useStreakData(store: DocumentStore): StreakData {
       reload,
       setTarget,
     };
-  }, [status, today, nowMs, history, docs, changes, reload, setTarget]);
+  }, [status, today, nowMs, history, lastDocument, changes, reload, setTarget]);
 }

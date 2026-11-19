@@ -14,10 +14,14 @@ import {
   parseKind,
   type DocumentClassification,
 } from "../../document-classification";
-import type { ClassificationResult, StudioDocument } from "../../storage/document-store";
+import type {
+  ClassificationResult,
+  DocumentSummary,
+  StudioDocument,
+} from "../../storage/document-store";
 
 type Props = {
-  doc: StudioDocument;
+  doc: DocumentSummary;
   onSave: (
     expected: DocumentClassification,
     changes: DocumentClassification,

@@ -17,6 +17,9 @@ vi.mock("@/features/studio/storage/store", () => ({
   studioStore: {
     updateMeta: (...args: unknown[]) => h.updateMeta(...args),
     listVersions: async () => [],
+    listFolders: async () => [],
+    listSummaries: async () => [{ id: "doc-2", title: "Catatan Pasar" }],
+    get: async (id: string) => ({ id }),
   },
 }));
 vi.mock("@/features/projects/storage/store", async () => {
@@ -84,6 +87,20 @@ function registerEsai() {
 
 const openMenu = () => fireEvent.click(screen.getByRole("button", { name: "Menu dokumen" }));
 const bagikan = () => screen.getByRole("button", { name: "Bagikan" }) as HTMLButtonElement;
+
+describe("StudioEditor, quick search", () => {
+  it("saves first and navigates to a different document from the editor shortcut", async () => {
+    renderEditor();
+    fireEvent.keyDown(window, { key: "k", metaKey: true });
+    const input = screen.getByRole("combobox", { name: "Kata kunci" });
+    fireEvent.change(input, { target: { value: "pasar" } });
+    await screen.findByRole("option", { name: /Catatan Pasar/ });
+    fireEvent.keyDown(input, { key: "Enter" });
+    await waitFor(() => expect(h.push).toHaveBeenCalledWith("/studio/doc-2"));
+    expect(h.saveNow.mock.invocationCallOrder[0]).toBeLessThan(h.push.mock.invocationCallOrder[0]);
+    expect(screen.queryByRole("dialog", { name: "Cari di Studio" })).toBeNull();
+  });
+});
 
 describe("StudioEditor, Bagikan", () => {
   it("opens a dialog that keeps the document Pribadi, without leaving the editor", () => {
