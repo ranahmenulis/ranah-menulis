@@ -14,7 +14,8 @@ import {
 import type { DocumentList } from "../../hooks/use-document-list";
 import { formatChanged } from "../../relative-time";
 import { targetSummary } from "../../document-targets";
-import { dayKey } from "../../daily-progress";
+import { useAccount } from "@/features/account/account-store";
+import { writingTime } from "../../writing-time";
 import type { DocumentSummary } from "../../storage/document-store";
 import { Row } from "./document-row";
 import type { Pending } from "./pending";
@@ -26,9 +27,8 @@ const NO_IDS: ReadonlySet<string> = new Set();
 const meta = (doc: DocumentSummary, verb: string, at: number, now: number) =>
   `${verb} ${formatChanged(at, now)} · ${number.format(doc.wordCount)} kata`;
 /** Nearest open document target for the meta line; nothing before the list has loaded. */
-const targetPart = (doc: DocumentSummary, loadedAt: number) => {
-  const line =
-    loadedAt > 0 ? targetSummary(doc.targets, doc.wordCount, dayKey(new Date(loadedAt))) : null;
+const targetPart = (doc: DocumentSummary, today: string) => {
+  const line = today ? targetSummary(doc.targets, doc.wordCount, today) : null;
   return line ? ` · ${line}` : "";
 };
 const nameOf = (doc: DocumentSummary) => doc.title || "Tanpa judul";
@@ -85,6 +85,8 @@ export function LiveList({
 }) {
   const toast = useToast();
   const now = list.loadedAt;
+  const { timeZone } = useAccount().profile;
+  const today = now > 0 ? writingTime(now, timeZone).day : "";
   const entries = listEntries(list.docs, list.folders, folderId, filters, searchMatches);
   const filtering = hasDocumentFilters(filters) || searchMatches !== null;
   const folderNames =
@@ -209,7 +211,9 @@ export function LiveList({
             kind="document"
             title={nameOf(entry.doc)}
             href={`/studio/${entry.doc.id}`}
-            meta={meta(entry.doc, "Diubah", entry.doc.updatedAt, now) + targetPart(entry.doc, now)}
+            meta={
+              meta(entry.doc, "Diubah", entry.doc.updatedAt, now) + targetPart(entry.doc, today)
+            }
             details={
               <ClassificationDetails
                 doc={entry.doc}
