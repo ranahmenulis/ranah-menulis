@@ -213,7 +213,7 @@ export function StudioEditor({ documentId, eventId }: { documentId: string; even
           ready={ready}
           fallbackTitle={FALLBACK_TITLE[doc.load]}
           menuItems={menuItems}
-          targetSummary={docTargets.summary}
+          counterTarget={docTargets.counter}
           sprint={sprint}
           sprintOpen={sprintPanel.open}
           onSprintOpenChange={sprintPanel.setOpen}

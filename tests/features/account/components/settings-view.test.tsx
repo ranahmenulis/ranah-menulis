@@ -138,6 +138,7 @@ describe("SettingsView", () => {
       typewriterPosition: "low",
       curlyQuotes: true,
       substitutions: true,
+      wordCountPin: null,
     });
   });
 

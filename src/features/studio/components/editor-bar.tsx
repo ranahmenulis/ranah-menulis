@@ -9,6 +9,7 @@ import type { DailyLog } from "../daily-progress";
 import type { EditorStats } from "../editor-stats";
 import type { SaveStatus } from "../hooks/use-studio-document";
 import type { SprintApi } from "../hooks/use-sprint";
+import type { WordCountTarget } from "../word-count-pin";
 import { SaveIndicator } from "./save-indicator";
 import { SprintControl } from "./sprint-control";
 import { TargetIndicator } from "./target-indicator";
@@ -34,8 +35,7 @@ type EditorBarProps = {
   /** Name shown in place of the title when the document is not ready. */
   fallbackTitle: string;
   menuItems: MenuEntry[];
-  /** Nearest open document target, e.g. "320 / 1.000 kata · 5 hari lagi", or null. */
-  targetSummary: string | null;
+  counterTarget: WordCountTarget | null | undefined;
   sprint: SprintApi;
   sprintOpen: boolean;
   onSprintOpenChange: (open: boolean) => void;
@@ -67,7 +67,7 @@ export function EditorBar({
   ready,
   fallbackTitle,
   menuItems,
-  targetSummary,
+  counterTarget,
   sprint,
   sprintOpen,
   onSprintOpenChange,
@@ -116,7 +116,7 @@ export function EditorBar({
             <SaveIndicator status={empty ? "draft" : status} savedAt={savedAt} offline={offline} />
           </div>
 
-          <div className="order-7 ml-auto flex items-center gap-3 pb-2 md:order-4 md:pb-0">
+          <div className="order-7 ml-auto flex items-center gap-3 pb-2 max-md:max-w-full max-md:flex-wrap max-md:justify-end max-md:gap-x-2 max-md:gap-y-0 md:order-4 md:pb-0">
             <SprintControl
               sprint={sprint}
               words={words}
@@ -127,7 +127,8 @@ export function EditorBar({
               words={words}
               stats={stats}
               selection={selection}
-              targetSummary={targetSummary}
+              sprint={sprint.state}
+              target={counterTarget}
             />
             <TargetIndicator progress={progress} target={target} pending={offline} />
           </div>

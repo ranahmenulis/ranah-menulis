@@ -69,6 +69,15 @@ describe("parseAccount", () => {
       curlyQuotes: true,
     });
   });
+
+  it("falls back to no word count pin for a missing or invalid value", () => {
+    expect(
+      parseAccount('{"prefs":{"writing":{"wordCountPin":"daily"}}}').prefs.writing.wordCountPin,
+    ).toBeNull();
+    expect(
+      parseAccount('{"prefs":{"writing":{"curlyQuotes":true}}}').prefs.writing.wordCountPin,
+    ).toBeNull();
+  });
 });
 
 describe("mergeAccount", () => {
@@ -138,6 +147,7 @@ describe("saveAccount and resetAccount", () => {
 
   it("merges separate writing changes without overwriting other account preferences", () => {
     saveAccount({ prefs: { emailComments: false, writing: { textSize: "large" } } });
+    saveAccount({ prefs: { writing: { wordCountPin: "target" } } });
     saveAccount({ prefs: { writing: { curlyQuotes: true } } });
     const account = parseAccount(localStorage.getItem("ranah.account"));
     expect(account.prefs.emailComments).toBe(false);
@@ -145,6 +155,7 @@ describe("saveAccount and resetAccount", () => {
       ...DEFAULT_WRITING_PREFERENCES,
       textSize: "large",
       curlyQuotes: true,
+      wordCountPin: "target",
     });
   });
 });

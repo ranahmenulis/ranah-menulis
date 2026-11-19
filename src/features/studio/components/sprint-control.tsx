@@ -1,5 +1,6 @@
 "use client";
 
+import { Timer } from "@phosphor-icons/react/dist/ssr";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Field, Input, describedBy } from "@/components/ui/field";
@@ -137,12 +138,13 @@ function Done({
  */
 export function SprintControl({ sprint, words, open, onOpenChange }: SprintControlProps) {
   const { state, nowMs } = sprint;
-  const label =
+  const mobileLabel =
     state.phase === "running"
-      ? `Sprint ${formatRemaining(remainingMs(state.startedAt, state.minutes, nowMs))}`
+      ? formatRemaining(remainingMs(state.startedAt, state.minutes, nowMs))
       : state.phase === "done"
-        ? "Sprint selesai"
-        : "Sprint";
+        ? "selesai"
+        : "";
+  const label = mobileLabel ? `Sprint ${mobileLabel}` : "Sprint";
 
   const closeAndFocusTrigger = () => {
     onOpenChange(false);
@@ -161,6 +163,7 @@ export function SprintControl({ sprint, words, open, onOpenChange }: SprintContr
           {...props}
           id={SPRINT_TRIGGER_ID}
           type="button"
+          aria-label={label}
           title="Timer sprint"
           className={cn(
             "inline-flex min-h-8 cursor-pointer items-center text-xs whitespace-nowrap text-ink-muted tabular-nums hover:text-ink hover:underline hover:underline-offset-3 aria-expanded:text-ink aria-expanded:underline aria-expanded:underline-offset-3",
@@ -168,7 +171,11 @@ export function SprintControl({ sprint, words, open, onOpenChange }: SprintContr
             state.phase === "running" && "font-medium text-ink",
           )}
         >
-          {label}
+          <span className="max-md:hidden">{label}</span>
+          <span className="inline-flex items-center gap-1 md:hidden" aria-hidden>
+            <Timer size={14} />
+            {mobileLabel}
+          </span>
         </button>
       )}
     >

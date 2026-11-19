@@ -56,15 +56,20 @@ export function TargetIndicator({ progress, target, pending, className }: Target
           type="button"
           title="Kata hari ini dari semua dokumen"
           aria-label={`Kata hari ini dari semua dokumen: ${total} dari target ${target}${pending ? ", sebagian tercatat saat tersambung" : ""}. Buka rincian`}
-          className="group inline-flex min-h-8 cursor-pointer flex-wrap items-center justify-end gap-x-1.5 text-xs text-ink-muted tabular-nums"
+          className="group inline-flex min-h-8 cursor-pointer flex-wrap items-center justify-end gap-x-1.5 text-xs text-ink-muted tabular-nums max-md:grid max-md:grid-cols-[auto_auto] max-md:content-center max-md:leading-tight"
         >
           <Dot reached={reached} fresh={justReached} />
           <b className="font-medium whitespace-nowrap text-ink group-hover:underline group-hover:underline-offset-3 group-aria-expanded:underline">
             {number.format(total)} / {number.format(target)}
           </b>
-          <span className="whitespace-nowrap">hari ini</span>
+          <span className="whitespace-nowrap max-md:col-start-2 max-md:justify-self-end">
+            hari ini
+          </span>
           {pending && (
-            <span className="max-md:basis-full max-md:text-right">· tercatat saat tersambung</span>
+            <>
+              <span className="max-md:hidden">· tercatat saat tersambung</span>
+              <span className="col-start-2 justify-self-end md:hidden">· Luring</span>
+            </>
           )}
         </button>
       )}
