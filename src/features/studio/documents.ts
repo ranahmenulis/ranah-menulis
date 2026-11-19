@@ -1,4 +1,4 @@
-import type { StudioDocument, StudioFolder } from "./storage/document-store";
+import type { DocumentSummary, StudioFolder } from "./storage/document-store";
 import { isActiveDocument, isArchivedDocument } from "./document-archive";
 import {
   hasDocumentFilters,
@@ -7,9 +7,9 @@ import {
   type DocumentFilters,
 } from "./document-classification";
 
-export type ListEntry =
+export type ListEntry<T extends DocumentSummary> =
   | { kind: "folder"; folder: StudioFolder; count: number; changedAt: number }
-  | { kind: "document"; doc: StudioDocument };
+  | { kind: "document"; doc: T };
 
 const byName = (a: StudioFolder, b: StudioFolder) => a.name.localeCompare(b.name, "id");
 export const NO_DOCUMENT_FILTERS: DocumentFilters = { kind: null, tag: null };
@@ -18,23 +18,23 @@ export const NO_DOCUMENT_FILTERS: DocumentFilters = { kind: null, tag: null };
  * What the Dokumen tab lists: at the top level, folders then loose documents; inside a folder, its
  * documents. Newest change first. Archive and Sampah have their own lists.
  */
-export function listEntries(
-  docs: StudioDocument[],
+export function listEntries<T extends DocumentSummary>(
+  docs: T[],
   folders: StudioFolder[],
   folderId: string | null,
   filters = NO_DOCUMENT_FILTERS,
-): ListEntry[] {
-  const live = docs.filter(isActiveDocument);
-  const filtering = hasDocumentFilters(filters);
-  const items: ListEntry[] = live
-    .filter((doc) => (filtering && folderId === null) || (doc.folderId ?? null) === folderId)
-    .filter((doc) => matchesDocumentFilters(doc, filters))
+  searchMatches: ReadonlySet<string> | null = null,
+): ListEntry<T>[] {
+  const filtering = hasDocumentFilters(filters) || searchMatches !== null;
+  const items: ListEntry<T>[] = documentsInScope(docs, folderId, filters, filtering)
+    .filter(({ id }) => searchMatches === null || searchMatches.has(id))
     .sort((a, b) => b.updatedAt - a.updatedAt)
     .map((doc) => ({ kind: "document", doc }));
   if (folderId !== null || filtering) return items;
 
-  const folderItems: ListEntry[] = [...folders].sort(byName).map((folder) => {
-    const inside = live.filter((d) => d.folderId === folder.id);
+  const live = docs.filter(isActiveDocument);
+  const folderItems: ListEntry<T>[] = [...folders].sort(byName).map((folder) => {
+    const inside = live.filter((doc) => doc.folderId === folder.id);
     return {
       kind: "folder",
       folder,
@@ -45,8 +45,22 @@ export function listEntries(
   return [...folderItems, ...items];
 }
 
+export function documentsInScope<T extends DocumentSummary>(
+  docs: T[],
+  folderId: string | null,
+  filters: DocumentFilters,
+  acrossFolders: boolean,
+): T[] {
+  return docs.filter(
+    (doc) =>
+      isActiveDocument(doc) &&
+      ((acrossFolders && folderId === null) || (doc.folderId ?? null) === folderId) &&
+      matchesDocumentFilters(doc, filters),
+  );
+}
+
 /** All tags available in the current scope, with one display label per filter value. */
-export function documentTagOptions(docs: StudioDocument[], folderId: string | null) {
+export function documentTagOptions(docs: DocumentSummary[], folderId: string | null) {
   const labels = new Map<string, string>();
   for (const doc of docs) {
     if (!isActiveDocument(doc) || (folderId !== null && doc.folderId !== folderId)) continue;
@@ -62,8 +76,8 @@ export function documentTagOptions(docs: StudioDocument[], folderId: string | nu
  * The document to resume writing in: the most recently edited active document. Shared by
  * Beranda and the app frame so "last" means one thing. Ties keep the stored order.
  */
-export function pickLastDocument(docs: StudioDocument[]): StudioDocument | null {
-  let last: StudioDocument | null = null;
+export function pickLastDocument<T extends DocumentSummary>(docs: T[]): T | null {
+  let last: T | null = null;
   for (const doc of docs) {
     if (!isActiveDocument(doc)) continue;
     if (!last || doc.updatedAt > last.updatedAt) last = doc;
@@ -72,11 +86,11 @@ export function pickLastDocument(docs: StudioDocument[]): StudioDocument | null 
 }
 
 /** Documents in Archive, most recently archived first. */
-export function archived(docs: StudioDocument[]): StudioDocument[] {
+export function archived<T extends DocumentSummary>(docs: T[]): T[] {
   return docs.filter(isArchivedDocument).sort((a, b) => (b.archivedAt ?? 0) - (a.archivedAt ?? 0));
 }
 
 /** Documents in Sampah, most recently trashed first. */
-export function trashed(docs: StudioDocument[]): StudioDocument[] {
+export function trashed<T extends DocumentSummary>(docs: T[]): T[] {
   return docs.filter((d) => d.deletedAt).sort((a, b) => (b.deletedAt ?? 0) - (a.deletedAt ?? 0));
 }

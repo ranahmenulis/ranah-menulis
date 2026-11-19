@@ -20,7 +20,10 @@ import { useAccount } from "@/features/account/account-store";
 import { SETTINGS_HREF } from "@/features/account/redirect";
 import { ManagerMenu } from "@/features/kelola/components/manager-menu";
 import { useUnreadCount } from "@/features/notifications/use-notifications";
+import { StudioTopBarSearch } from "@/features/studio/components/studio-top-bar-search";
 import { DISCOVER_HREF, DUMMY_USER, NEW_DOCUMENT_HREF, NOTIFICATIONS_HREF } from "./nav";
+
+const studioSearchPaths = new Set(["/studio", "/studio/streak", "/studio/statistik"]);
 
 /** Back to where the reader came from; Jelajahi when the page was opened directly. */
 export function BackButton({ className }: { className?: string }) {
@@ -40,7 +43,7 @@ export function BackButton({ className }: { className?: string }) {
 /**
  * Top bar. Phones (52px): monogram, page title, search, bell, avatar. md and up (56px): wordmark,
  * search pill, "Tulis", bell, avatar; the sidebar toggle appears from lg where the sidebar exists.
- * On phones the search icon opens Jelajahi (there is no text search yet). On a post page the phone
+ * On phones outside Studio the search icon opens Jelajahi. On a post page the phone
  * bar is just a back arrow and the bell and avatar.
  */
 export function TopBar({
@@ -59,7 +62,9 @@ export function TopBar({
 }) {
   const { topBar } = useT().shell;
   const account = useAccount();
-  const settingsActive = usePathname() === SETTINGS_HREF;
+  const pathname = usePathname();
+  const settingsActive = pathname === SETTINGS_HREF;
+  const studioSearch = studioSearchPaths.has(pathname);
   const unread = useUnreadCount();
   const unreadLabel =
     unread > 0
@@ -85,27 +90,33 @@ export function TopBar({
       />
       <Wordmark href="/beranda" label={topBar.home} height={28} className="max-md:hidden" />
       {title && <span className={cn("ml-2 heading-sm md:hidden", phoneOnly)}>{title}</span>}
-      <div
-        aria-disabled="true"
-        title={topBar.searchSoon}
-        className="ml-4 flex h-9 w-60 items-center gap-2 rounded-full bg-subtle px-3.5 text-sm text-ink-muted max-md:hidden"
-      >
-        <MagnifyingGlass size={20} aria-hidden />
-        {topBar.searchPlaceholder}
-      </div>
-      <span className="flex-1" />
+      {studioSearch ? (
+        <StudioTopBarSearch key={pathname} />
+      ) : (
+        <div
+          aria-disabled="true"
+          title={topBar.searchSoon}
+          className="ml-4 flex h-9 w-60 items-center gap-2 rounded-full bg-subtle px-3.5 text-sm text-ink-muted max-md:hidden"
+        >
+          <MagnifyingGlass size={20} aria-hidden />
+          {topBar.searchPlaceholder}
+        </div>
+      )}
+      <span className={cn("flex-1", studioSearch && "max-md:hidden")} />
       <ButtonLink href={NEW_DOCUMENT_HREF} variant="text" className="max-md:hidden">
         <PencilSimpleLine size={20} aria-hidden />
         {topBar.write}
       </ButtonLink>
-      <Link
-        href={DISCOVER_HREF}
-        aria-label={topBar.searchAndDiscover}
-        aria-current={discoverActive ? "page" : undefined}
-        className={cn(iconButtonClass, "md:hidden", phoneOnly)}
-      >
-        <MagnifyingGlass size={24} aria-hidden />
-      </Link>
+      {!studioSearch && (
+        <Link
+          href={DISCOVER_HREF}
+          aria-label={topBar.searchAndDiscover}
+          aria-current={discoverActive ? "page" : undefined}
+          className={cn(iconButtonClass, "md:hidden", phoneOnly)}
+        >
+          <MagnifyingGlass size={24} aria-hidden />
+        </Link>
+      )}
       <DisplayControls />
       <Link
         href={NOTIFICATIONS_HREF}

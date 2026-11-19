@@ -309,6 +309,7 @@ Urutan dari atas, satu kolom 680px:
 - **Kanvas** 680px: placeholder judul "Judul" (`read-title`, `ink-faint`), placeholder isi "Mulai dari satu kalimat." (`read-body`, `ink-faint`).
 - **Bilah format** tetap terlihat di bawah bilah editor (diubah 16 November 2026 mengikuti mockup landing dan permintaan user; sebelumnya pil `ink` melayang saat teks dipilih): satu pil bergaris 1px (`line`, latar kanvas, tidak terisi karena Bagikan adalah satu-satunya tombol terisi) di tengah kolom, ikon `ink`: Tebal, Miring, Judul, Kutipan, Daftar berpoin, Daftar bernomor (enam format STD-01). Butir aktif bergaris bawah, tidak diwarnai. Target sentuh 40×36 di ponsel. Menempel di atas saat kanvas digulir (di luar area gulir), tersembunyi di mode fokus, tidak mengambil fokus dari editor. Format hanya yang diizinkan STD-01, bukan toolbar lengkap ala Word.
 - **Mode fokus:** bilah, bilah format, dan sidebar hilang, hanya teks; jumlah kata dan indikator simpan tetap terlihat redup di pojok. `Esc` keluar.
+- **Pencarian cepat (STD-14):** ikon kaca pembesar di bilah Studio dan Editor serta `Ctrl+K` / `⌘K` membuka dialog **Cari di Studio**. Pintasan tetap tersedia di mode fokus. Fokus awal pada kolom. Panah memilih hasil, Enter membuka, Escape menutup dan memulihkan fokus. Hasil berlabel Dokumen atau Folder, dengan baris bergaris tipis dan tombol **Tampilkan lagi** sesudah 20 hasil. Dialog memakai panel di desktop dan lembar bawah di ponsel. Saat berpindah dari Editor, simpan lebih dulu dan tutup dialog sebelum navigasi.
 - **Drawer bantuan** (kit inspirasi, perpustakaan prompt): laci kanan 360px, tombol Salin per prompt.
 
 ### 6.4 Daftar dokumen Studio
@@ -318,6 +319,8 @@ Tab Semua · Arsip · Sampah. Folder tampil di tab Semua. Butir: judul `heading-
 Jenis dokumen opsional tampil sebagai teks kecil. Tag tampil sebagai pil monokrom yang berbaris ulang saat ruang sempit. Menu ⋯ membuka dialog **Jenis dan tag**, dengan pemilih jenis, satu isian untuk menambah tag, dan tombol lepas per tag. Tombol Simpan menjadi satu-satunya aksi terisi di dialog. Daftar aktif memiliki pemilih Jenis dokumen dan Tag yang tersimpan di alamat. Saat disaring dari tingkat teratas, hasil lintas folder menyebut nama folder pada barisnya. Di dalam folder, penyaring hanya berlaku pada folder itu. Hasil kosong memberi aksi **Hapus penyaring**. Bila baris keluar dari hasil setelah simpan, fokus berpindah ke pesan hasil. **[usulan]**
 
 Aksi Arsipkan dan Duplikat ada di menu ⋯ dokumen aktif. Tab Arsip memakai baris yang sama dengan waktu pengarsipan, jumlah kata, dan nama folder bila ada. Pulihkan berupa tombol teks. Saat kosong, tampilkan “Arsip kosong.” dan “Lihat semua dokumen”. Status aksi menerima fokus setelah baris hilang. Setelah duplikat berhasil, tampilkan tautan Buka salinan. Tautan editor ke dokumen arsip menampilkan pesan singkat dan Buka Arsip.
+
+Tab Semua menyediakan **Cari judul atau isi**. Hasil lintas folder menyebut foldernya. Di dalam folder, pencarian mengikuti cakupan folder terbuka. Jenis dan Tag tetap berlaku bersama kata kunci. Hasil kosong menyediakan **Hapus pencarian** dan memfokuskan kembali kolom. Saat berhasil membuka folder dari dialog pencarian, fokus berpindah ke nama folder.
 
 ### 6.5 Profil penulis
 

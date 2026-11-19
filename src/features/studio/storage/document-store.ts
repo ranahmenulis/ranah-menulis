@@ -28,6 +28,36 @@ export type StudioDocument = DocumentClassification & {
 };
 
 export type StudioFolder = { id: string; name: string; createdAt: number };
+export type DocumentSummary = Omit<StudioDocument, "content">;
+
+export function summarizeDocument(doc: StudioDocument): DocumentSummary {
+  const {
+    id,
+    title,
+    wordCount,
+    version,
+    updatedAt,
+    folderId,
+    deletedAt,
+    archivedAt,
+    targets,
+    kind,
+    tags,
+  } = doc;
+  return {
+    id,
+    title,
+    wordCount,
+    version,
+    updatedAt,
+    folderId,
+    deletedAt,
+    archivedAt,
+    targets,
+    kind,
+    tags,
+  };
+}
 
 /** Fields that change without touching the text: renaming, filing, trashing. */
 export type DocumentMeta = Partial<Pick<StudioDocument, "title" | "folderId" | "deletedAt">>;
@@ -64,6 +94,8 @@ export interface DocumentStore {
   setArchived(id: string, archived: boolean): Promise<StudioDocument | null>;
   /** Every document, including those in Archive and Sampah. */
   list(): Promise<StudioDocument[]>;
+  /** Scan metadata without collecting document bodies. */
+  listSummaries(signal?: AbortSignal): Promise<DocumentSummary[]>;
   listFolders(): Promise<StudioFolder[]>;
   /** One log per day that has words, oldest first. Streak and statistics are derived from this. */
   history(): Promise<DailyLog[]>;

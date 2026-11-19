@@ -2,13 +2,12 @@
 
 import type { Editor } from "@tiptap/react";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useToast } from "@/components/ui/toast";
 import { postFromDocumentHref, STUDIO_HREF } from "@/features/app-shell/nav";
 import { EventEditorPanel } from "@/features/community/events/components/event-editor-panel";
 import { useEventSave } from "@/features/community/events/use-event-save";
 import { cn } from "@/lib/cn";
-import { paragraphsOf } from "../diff-paragraphs";
 import { sameStats, type EditorStats } from "../editor-stats";
 import { useOnlineStatus } from "../hooks/use-online-status";
 import { useSendFromEditor } from "../hooks/use-send-from-editor";
@@ -21,7 +20,9 @@ import { useStudioDocument, type LoadState } from "../hooks/use-studio-document"
 import { studioStore as store } from "../storage/store";
 import { useDailyTarget } from "../hooks/use-daily-target";
 import { useEditorMenu } from "../hooks/use-editor-menu";
-import { ConflictDialog, type ConflictVersion } from "./conflict-dialog";
+import { useLeaveEditor } from "../hooks/use-leave-editor";
+import { useEditorSearchShortcut } from "../hooks/use-studio-search-shortcut";
+import { EditorConflictDialog } from "./conflict-dialog";
 import { EditorBar } from "./editor-bar";
 import { EditorCanvas } from "./editor-canvas";
 import { DocumentTargetsDialog } from "./document-targets-dialog";
@@ -33,6 +34,7 @@ import { HelpDrawer } from "./help-drawer";
 import { SendToProjectDialog } from "./send-to-project-dialog";
 import { ShareDialog } from "./share-dialog";
 import { SprintAnnouncer } from "./sprint-control";
+import { StudioSearchDialog } from "./studio-search-dialog";
 import { VersionHistoryDrawer } from "./version-history-drawer";
 
 const FALLBACK_TITLE: Record<LoadState, string> = {
@@ -70,11 +72,15 @@ export function StudioEditor({ documentId, eventId }: { documentId: string; even
   const [focusMode, setFocusMode] = useState(false);
   const sprint = useSprint(doc.words);
   const sprintPanel = useSprintPanel(sprint);
-  const [dialog, setDialog] = useState<"share" | "send" | "export" | "targets" | null>(null);
+  const [dialog, setDialog] = useState<"share" | "send" | "export" | "targets" | "search" | null>(
+    null,
+  );
   const [stats, setStats] = useState<EditorStats | null>(null);
   const [selection, setSelection] = useState<EditorStats | null>(null);
   const [editor, setEditor] = useState<Editor | null>(null);
   const router = useRouter();
+  const openSearch = useCallback(() => setDialog("search"), []);
+  const search = useEditorSearchShortcut(dialog, Boolean(doc.conflict), openSearch);
 
   // Equal values keep the previous object, so a cursor move does not re-render the editor screen.
   const onStatsChange = useCallback(
@@ -96,7 +102,7 @@ export function StudioEditor({ documentId, eventId }: { documentId: string; even
   useEffect(() => {
     if (!focusMode) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setFocusMode(false);
+      if (e.key === "Escape" && !document.querySelector("dialog[open]")) setFocusMode(false);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -126,21 +132,7 @@ export function StudioEditor({ documentId, eventId }: { documentId: string; even
   const restoreVersion = useRestoreVersion(doc.restoreVersion, closePanel);
   const sendTo = useSendFromEditor({ saveNow, getId, closeDialog });
 
-  // Leaving writes out what was typed first; if the device refuses, stay so nothing is lost.
-  const goBack = useCallback(
-    async (href = STUDIO_HREF) => {
-      if (await saveNow()) {
-        if (href !== STUDIO_HREF) await saveEventProgress();
-        router.push(href);
-        return;
-      }
-      toast({
-        message: "Tulisanmu belum tersimpan di perangkat ini, jadi belum bisa ditutup. Coba lagi.",
-        tone: "error",
-      });
-    },
-    [saveNow, saveEventProgress, router, toast],
-  );
+  const { goBack, saveBeforeLeaving } = useLeaveEditor(saveNow, saveEventProgress);
 
   // Reversible: the document keeps its text in Sampah, and "Urungkan" opens it again.
   const moveToTrash = useCallback(async () => {
@@ -187,25 +179,6 @@ export function StudioEditor({ documentId, eventId }: { documentId: string; even
     onTrash: () => void moveToTrash(),
   });
 
-  const versions = useMemo<{ local: ConflictVersion; remote: ConflictVersion } | null>(() => {
-    if (!doc.conflict) return null;
-    const { local, remote } = doc.conflict;
-    return {
-      local: {
-        title: local.title,
-        savedAt: new Date(),
-        words: local.wordCount,
-        paragraphs: paragraphsOf(local.content),
-      },
-      remote: {
-        title: remote.title,
-        savedAt: new Date(remote.updatedAt),
-        words: remote.wordCount,
-        paragraphs: paragraphsOf(remote.content),
-      },
-    };
-  }, [doc.conflict]);
-
   const body = ready ? (
     <EditorCanvas
       key={doc.editorKey}
@@ -245,6 +218,7 @@ export function StudioEditor({ documentId, eventId }: { documentId: string; even
           sprintOpen={sprintPanel.open}
           onSprintOpenChange={sprintPanel.setOpen}
           onBack={() => void goBack()}
+          onSearch={search.onOpen}
           onShare={() => setDialog("share")}
           onToggleHelp={side.toggleHelp}
           onFocusMode={enterFocus}
@@ -275,6 +249,12 @@ export function StudioEditor({ documentId, eventId }: { documentId: string; even
         />
       )}
       <SprintAnnouncer state={sprint.state} />
+      {search.isOpen && (
+        <StudioSearchDialog
+          onClose={closeDialog}
+          beforeNavigate={() => saveBeforeLeaving(!!eventId)}
+        />
+      )}
       <HelpDrawer open={side.panel === "help" && !focusMode} onClose={side.close} />
       <VersionHistoryDrawer
         open={side.panel === "versions" && !focusMode}
@@ -311,19 +291,7 @@ export function StudioEditor({ documentId, eventId }: { documentId: string; even
         onPick={sendTo}
       />
 
-      {versions && (
-        <ConflictDialog
-          open
-          local={versions.local}
-          remote={versions.remote}
-          onResolve={async (choice) => {
-            await doc.resolveConflict(choice);
-            if (choice === "both") {
-              toast({ message: "Versi dari tempat lain disimpan sebagai dokumen baru." });
-            }
-          }}
-        />
-      )}
+      <EditorConflictDialog conflict={doc.conflict} resolveConflict={doc.resolveConflict} />
     </div>
   );
 }

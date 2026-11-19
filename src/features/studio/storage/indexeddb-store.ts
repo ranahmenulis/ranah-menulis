@@ -6,8 +6,10 @@ import {
   applyClassification,
   applyMeta,
   commitSave,
+  summarizeDocument,
   type DocumentMeta,
   type DocumentStore,
+  type DocumentSummary,
   type SaveInput,
   type SaveResult,
   type StudioDocument,
@@ -64,6 +66,27 @@ function done(tx: IDBTransaction): Promise<void> {
   });
 }
 
+function scanSummaries(db: IDBDatabase, signal?: AbortSignal): Promise<DocumentSummary[]> {
+  signal?.throwIfAborted();
+  return new Promise((resolve, reject) => {
+    const summaries: DocumentSummary[] = [];
+    const cursor = db.transaction(DOCS, "readonly").objectStore(DOCS).openCursor();
+    cursor.onerror = () => reject(cursor.error);
+    cursor.onsuccess = () => {
+      if (signal?.aborted) {
+        reject(signal.reason);
+        return;
+      }
+      if (!cursor.result) {
+        resolve(summaries);
+        return;
+      }
+      summaries.push(summarizeDocument(cursor.result.value as StudioDocument));
+      cursor.result.continue();
+    };
+  });
+}
+
 /**
  * Documents on this device. `save` reads, checks the version, and writes inside one readwrite
  * transaction, so two tabs (standing in for two devices) cannot both win: the second one gets a
@@ -74,6 +97,9 @@ export function createIndexedDbStore(): DocumentStore {
   const db = () =>
     (dbPromise ??= open(() => {
       dbPromise = null;
+    }).catch((error: unknown) => {
+      dbPromise = null;
+      throw error;
     }));
 
   return {
@@ -108,6 +134,7 @@ export function createIndexedDbStore(): DocumentStore {
         tx.onerror = () => reject(tx.error);
         tx.onabort = () => reject(tx.error);
       });
+      if (result.ok) notifyDocumentListChanged();
       return result;
     },
 
@@ -133,6 +160,7 @@ export function createIndexedDbStore(): DocumentStore {
         tx.oncomplete = () => resolve();
         tx.onerror = () => reject(tx.error);
       });
+      notifyDocumentListChanged();
       return copy;
     },
 
@@ -167,6 +195,10 @@ export function createIndexedDbStore(): DocumentStore {
       return (await request(tx.objectStore(DOCS).getAll())) as StudioDocument[];
     },
 
+    async listSummaries(signal) {
+      return scanSummaries(await db(), signal);
+    },
+
     async listFolders() {
       const tx = (await db()).transaction(FOLDERS, "readonly");
       return (await request(tx.objectStore(FOLDERS).getAll())) as StudioFolder[];
@@ -186,6 +218,7 @@ export function createIndexedDbStore(): DocumentStore {
       const next = applyMeta(existing, patch, Date.now());
       store.put(next);
       await done(tx);
+      notifyDocumentListChanged();
       return next;
     },
 
@@ -196,6 +229,7 @@ export function createIndexedDbStore(): DocumentStore {
       const result = applyClassification(current, expected, changes);
       if (result.status === "saved") store.put(result.doc);
       await done(tx);
+      if (result.status === "saved") notifyDocumentListChanged();
       return result;
     },
 
@@ -211,6 +245,7 @@ export function createIndexedDbStore(): DocumentStore {
         for (const key of keys) versions.delete(key);
       }
       await done(tx);
+      if (current?.deletedAt != null) notifyDocumentListChanged();
     },
 
     async listVersions(docId: string) {
@@ -241,6 +276,7 @@ export function createIndexedDbStore(): DocumentStore {
       const tx = (await db()).transaction(FOLDERS, "readwrite");
       tx.objectStore(FOLDERS).put(folder);
       await done(tx);
+      notifyDocumentListChanged();
       return folder;
     },
 
@@ -250,6 +286,7 @@ export function createIndexedDbStore(): DocumentStore {
       const folder = (await request(store.get(id))) as StudioFolder | undefined;
       if (folder) store.put({ ...folder, name });
       await done(tx);
+      if (folder) notifyDocumentListChanged();
     },
   };
 }

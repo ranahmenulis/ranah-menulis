@@ -15,7 +15,7 @@ import type { DocumentList } from "../../hooks/use-document-list";
 import { formatChanged } from "../../relative-time";
 import { targetSummary } from "../../document-targets";
 import { dayKey } from "../../daily-progress";
-import type { StudioDocument } from "../../storage/document-store";
+import type { DocumentSummary } from "../../storage/document-store";
 import { Row } from "./document-row";
 import type { Pending } from "./pending";
 
@@ -23,17 +23,17 @@ const number = new Intl.NumberFormat("id-ID");
 const soon = { hint: "Segera", disabled: true, onSelect: () => {} } as const;
 const NO_IDS: ReadonlySet<string> = new Set();
 
-const meta = (doc: StudioDocument, verb: string, at: number, now: number) =>
+const meta = (doc: DocumentSummary, verb: string, at: number, now: number) =>
   `${verb} ${formatChanged(at, now)} · ${number.format(doc.wordCount)} kata`;
 /** Nearest open document target for the meta line; nothing before the list has loaded. */
-const targetPart = (doc: StudioDocument, loadedAt: number) => {
+const targetPart = (doc: DocumentSummary, loadedAt: number) => {
   const line =
     loadedAt > 0 ? targetSummary(doc.targets, doc.wordCount, dayKey(new Date(loadedAt))) : null;
   return line ? ` · ${line}` : "";
 };
-const nameOf = (doc: StudioDocument) => doc.title || "Tanpa judul";
+const nameOf = (doc: DocumentSummary) => doc.title || "Tanpa judul";
 
-function ClassificationDetails({ doc, folder }: { doc: StudioDocument; folder?: string }) {
+function ClassificationDetails({ doc, folder }: { doc: DocumentSummary; folder?: string }) {
   if (!doc.kind && !doc.tags?.length && !folder) return null;
   return (
     <p className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs [overflow-wrap:anywhere] text-ink-muted">
@@ -65,7 +65,9 @@ export function LiveList({
   sharedIds = NO_IDS,
   submittedIds = NO_IDS,
   filters = NO_DOCUMENT_FILTERS,
+  searchMatches = null,
   onClearFilters,
+  onClearSearch,
 }: ListProps & {
   /** Documents that have a published post copied from them. */
   sharedIds?: ReadonlySet<string>;
@@ -75,18 +77,34 @@ export function LiveList({
   folderName: string | null;
   onOpenFolder: (id: string) => void;
   filters?: DocumentFilters;
+  searchMatches?: ReadonlySet<string> | null;
   onClearFilters?: () => void;
+  onClearSearch?: () => void;
   onArchiveAction: (action: "archive" | "duplicate", id: string) => void;
   archiveBusy?: boolean;
 }) {
   const toast = useToast();
   const now = list.loadedAt;
-  const entries = listEntries(list.docs, list.folders, folderId, filters);
-  const filtering = hasDocumentFilters(filters);
+  const entries = listEntries(list.docs, list.folders, folderId, filters, searchMatches);
+  const filtering = hasDocumentFilters(filters) || searchMatches !== null;
   const folderNames =
     filtering && folderId === null ? new Map(list.folders.map(({ id, name }) => [id, name])) : null;
 
   if (entries.length === 0) {
+    if (searchMatches !== null) {
+      return (
+        <EmptyState
+          className="pt-14"
+          action={
+            <Button variant="secondary" onClick={onClearSearch}>
+              Hapus pencarian
+            </Button>
+          }
+        >
+          <span role="status">Tidak ada dokumen yang cocok dengan pencarian.</span>
+        </EmptyState>
+      );
+    }
     if (filtering) {
       return (
         <EmptyState
@@ -115,7 +133,7 @@ export function LiveList({
     );
   }
 
-  const docMenu = (doc: StudioDocument): MenuEntry[] => [
+  const docMenu = (doc: DocumentSummary): MenuEntry[] => [
     { id: "rename", label: "Ganti nama", onSelect: () => onPending({ kind: "rename", doc }) },
     {
       id: "classification",

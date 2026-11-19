@@ -1,7 +1,7 @@
 "use client";
 
 import { FolderSimplePlus } from "@phosphor-icons/react/dist/ssr";
-import { Suspense, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { ErrorBanner, RetryButton, Skeleton } from "@/components/ui/states";
 import { Tabs } from "@/components/ui/tabs";
@@ -11,12 +11,14 @@ import { postStore } from "@/features/community/storage/store";
 import { hasDocumentFilters } from "../../document-classification";
 import { isActiveDocument } from "../../document-archive";
 import { documentTagOptions, listEntries } from "../../documents";
-import { useDocumentList } from "../../hooks/use-document-list";
+import { useDocumentSummaryList } from "../../hooks/use-document-list";
+import { useDocumentListSearch } from "../../hooks/use-document-search";
 import type { StudioDocument } from "../../storage/document-store";
 import { studioStore } from "../../storage/store";
 import { StudioTabs } from "../studio-tabs";
 import { ArchiveList } from "./archive-list";
 import { DocumentFilterFields, useDocumentFilters } from "./document-filters";
+import { DocumentSearchField } from "./document-search-field";
 import { LiveList, TrashList } from "./document-lists";
 import type { Pending } from "./pending";
 import { PendingDialogs } from "./pending-dialogs";
@@ -84,10 +86,9 @@ export function DocumentsView() {
 }
 
 function DocumentListContent() {
-  const list = useDocumentList(studioStore);
+  const list = useDocumentSummaryList(studioStore);
   const sharedIds = useSharedDocumentIds(postStore);
   const submittedIds = useSubmittedDocumentIds();
-  const [folderId, setFolderId] = useState<string | null>(null);
   const [pending, setPending] = useState<Pending | null>(null);
   const [notice, setNotice] = useState<ListNotice | null>(null);
   const [busy, setBusy] = useState(false);
@@ -95,16 +96,30 @@ function DocumentListContent() {
   const statusRef = useRef<HTMLParagraphElement>(null);
   const kindFilterRef = useRef<HTMLSelectElement>(null);
   const tabBarRef = useRef<HTMLDivElement>(null);
-  const { filters, rawTag, changeFilters, tab } = useDocumentFilters();
+  const folderHeadingRef = useRef<HTMLSpanElement>(null);
+  const { filters, rawTag, changeFilters, tab, requestedFolder } = useDocumentFilters();
 
   const activeReady = list.status === "ready" && tab === "semua";
-  const folder = activeReady ? list.folders.find((f) => f.id === folderId) : undefined;
+  const folder = list.folders.find((f) => f.id === requestedFolder);
+  const folderId = folder?.id ?? null;
+  const search = useDocumentListSearch(list.docs, folderId, filters, activeReady);
+  useEffect(() => {
+    if (folderId) folderHeadingRef.current?.focus();
+  }, [folderId]);
+
   const hasActiveDocuments = list.docs.some(isActiveDocument);
   const hasFilterOptions = hasDocumentFilters(filters) || hasActiveDocuments;
 
+  function openFolder(id: string | null) {
+    search.setQuery("");
+    setNotice(null);
+    changeFilters({ folder: id ?? "" }, "pushState");
+    if (!id) search.inputRef.current?.focus();
+  }
+
   function selectTab(next: string) {
-    changeFilters({ tab: next === "semua" ? "" : next });
-    setFolderId(null);
+    changeFilters({ tab: next === "semua" ? "" : next, folder: "" });
+    search.setQuery("");
     setNotice(null);
   }
 
@@ -114,7 +129,7 @@ function DocumentListContent() {
 
   function classified(doc: StudioDocument) {
     setNotice({ text: "Jenis dan tag disimpan." });
-    if (listEntries([doc], [], folderId, filters).length === 0) {
+    if (listEntries([doc], [], folderId, filters, search.matches).length === 0) {
       focusNotice();
     }
   }
@@ -143,28 +158,37 @@ function DocumentListContent() {
   }
 
   function renderList() {
-    return list.status !== "ready" ? (
-      <ListFeedback status={list.status} onRetry={list.reload} />
-    ) : tab === "sampah" ? (
-      <TrashList list={list} onPending={setPending} />
-    ) : tab === "arsip" ? (
-      <ArchiveList
-        list={list}
-        busy={busy}
-        onRestore={(id) => void runArchiveAction("restore", id)}
-        onShowAll={() => {
-          selectTab("semua");
-          requestAnimationFrame(() =>
-            tabBarRef.current?.querySelector<HTMLElement>("#tab-semua")?.focus(),
-          );
-        }}
-      />
-    ) : (
+    if (list.status !== "ready") return <ListFeedback status={list.status} onRetry={list.reload} />;
+    if (tab === "sampah") return <TrashList list={list} onPending={setPending} />;
+    if (tab === "arsip") {
+      return (
+        <ArchiveList
+          list={list}
+          busy={busy}
+          onRestore={(id) => void runArchiveAction("restore", id)}
+          onShowAll={() => {
+            selectTab("semua");
+            requestAnimationFrame(() =>
+              tabBarRef.current?.querySelector<HTMLElement>("#tab-semua")?.focus(),
+            );
+          }}
+        />
+      );
+    }
+    if (search.state.status === "loading") return <ListSkeleton />;
+    if (search.state.status === "error") {
+      return (
+        <ErrorBanner className="mt-4" action={<RetryButton onClick={search.state.retry} />}>
+          Pencarian dokumen gagal. Coba lagi.
+        </ErrorBanner>
+      );
+    }
+    return (
       <LiveList
         list={list}
         folderId={folderId}
         folderName={folder?.name ?? null}
-        onOpenFolder={setFolderId}
+        onOpenFolder={openFolder}
         onPending={(action) => {
           setNotice(null);
           setPending(action);
@@ -174,6 +198,8 @@ function DocumentListContent() {
         sharedIds={sharedIds}
         submittedIds={submittedIds}
         filters={filters}
+        searchMatches={search.matches}
+        onClearSearch={search.clear}
         onClearFilters={() => {
           changeFilters({ jenis: "", tag: "" });
           const target = hasActiveDocuments
@@ -221,17 +247,28 @@ function DocumentListContent() {
       </div>
 
       {folder && (
-        <p className="mt-4 text-sm">
+        <p className="mt-4 text-sm [overflow-wrap:anywhere]">
           <button
             type="button"
             className="cursor-pointer text-ink-muted hover:text-ink"
-            onClick={() => setFolderId(null)}
+            onClick={() => openFolder(null)}
           >
             Semua dokumen
           </button>
           <span className="text-ink-muted"> / </span>
-          <span className="font-medium">{folder.name}</span>
+          <span ref={folderHeadingRef} tabIndex={-1} className="font-medium">
+            {folder.name}
+          </span>
         </p>
+      )}
+
+      {search.enabled && (
+        <DocumentSearchField
+          value={search.query}
+          inputRef={search.inputRef}
+          onChange={search.setQuery}
+          onClear={search.clear}
+        />
       )}
 
       {activeReady && hasFilterOptions && (

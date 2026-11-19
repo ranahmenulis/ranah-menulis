@@ -10,7 +10,13 @@ export const metadata: Metadata = {
 
 async function EditorRoute({ params, searchParams }: PageProps<"/studio/[id]">) {
   const [{ id }, { event }] = await Promise.all([params, searchParams]);
-  return <StudioEditor documentId={id} eventId={typeof event === "string" ? event : undefined} />;
+  return (
+    <StudioEditor
+      key={id}
+      documentId={id}
+      eventId={typeof event === "string" ? event : undefined}
+    />
+  );
 }
 
 /** Thin route: the editor itself is a client component that reads documents from this device. */

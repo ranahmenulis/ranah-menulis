@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
+import { useToast } from "@/components/ui/toast";
 import { cn } from "@/lib/cn";
 import { formatClock } from "../count-words";
-import { diffParagraphs } from "../diff-paragraphs";
-import type { ConflictChoice } from "../hooks/use-studio-document";
+import { diffParagraphs, paragraphsOf } from "../diff-paragraphs";
+import type { Conflict, ConflictChoice } from "../hooks/use-studio-document";
 
 export type ConflictVersion = {
   title: string;
@@ -22,6 +23,48 @@ type ConflictDialogProps = {
   /** Resolves when the choice has been applied; the button shows a loading state meanwhile. */
   onResolve: (choice: ConflictChoice) => Promise<void> | void;
 };
+
+export function EditorConflictDialog({
+  conflict,
+  resolveConflict,
+}: {
+  conflict: Conflict | null;
+  resolveConflict: (choice: ConflictChoice) => Promise<void>;
+}) {
+  const toast = useToast();
+  const versions = useMemo(() => {
+    if (!conflict) return null;
+    const { local, remote } = conflict;
+    return {
+      local: {
+        title: local.title,
+        savedAt: new Date(),
+        words: local.wordCount,
+        paragraphs: paragraphsOf(local.content),
+      },
+      remote: {
+        title: remote.title,
+        savedAt: new Date(remote.updatedAt),
+        words: remote.wordCount,
+        paragraphs: paragraphsOf(remote.content),
+      },
+    };
+  }, [conflict]);
+
+  if (!versions) return null;
+  return (
+    <ConflictDialog
+      open
+      {...versions}
+      onResolve={async (choice) => {
+        await resolveConflict(choice);
+        if (choice === "both") {
+          toast({ message: "Versi dari tempat lain disimpan sebagai dokumen baru." });
+        }
+      }}
+    />
+  );
+}
 
 const radio =
   "mt-px grid size-[18px] shrink-0 appearance-none place-items-center rounded-full border-[1.5px] border-ink bg-transparent " +

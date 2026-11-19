@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, ArrowsOut, Lightbulb } from "@phosphor-icons/react/dist/ssr";
+import { ArrowLeft, ArrowsOut, Lightbulb, MagnifyingGlass } from "@phosphor-icons/react/dist/ssr";
 import { Button } from "@/components/ui/button";
 import { IconButton } from "@/components/ui/icon-button";
 import { Menu, type MenuEntry } from "@/components/ui/menu";
@@ -41,6 +41,7 @@ type EditorBarProps = {
   onSprintOpenChange: (open: boolean) => void;
   /** Back to the document list; the screen saves first so nothing written is left behind. */
   onBack: () => void;
+  onSearch?: () => void;
   onShare: () => void;
   onToggleHelp: () => void;
   onFocusMode: () => void;
@@ -48,7 +49,7 @@ type EditorBarProps = {
 
 /**
  * Editor bar (DESIGN.md 6.3). One DOM for both layouts: on phones it wraps into two rows (title and
- * actions, then visibility, save state, counts) because 390px fits only four controls; from md up
+ * actions, then visibility, save state, counts); from md up
  * it is a single 56px row. Help and focus mode move into the ⋯ menu on phones.
  */
 export function EditorBar({
@@ -71,6 +72,7 @@ export function EditorBar({
   sprintOpen,
   onSprintOpenChange,
   onBack,
+  onSearch,
   onShare,
   onToggleHelp,
   onFocusMode,
@@ -83,6 +85,17 @@ export function EditorBar({
       <span className="order-2 min-w-0 flex-1 truncate text-sm font-medium md:order-2 md:max-w-85 md:flex-none">
         {ready ? title.trim() || "Tanpa judul" : fallbackTitle}
       </span>
+      {onSearch && (
+        <IconButton
+          label="Cari di Studio"
+          aria-haspopup="dialog"
+          aria-keyshortcuts="Control+K Meta+K"
+          onClick={onSearch}
+          className="order-3 shrink-0 md:order-6"
+        >
+          <MagnifyingGlass size={20} aria-hidden />
+        </IconButton>
+      )}
       <Button
         size="sm"
         disabled={!ready || words === 0}

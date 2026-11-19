@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { pickLastDocument } from "../documents";
-import type { DocumentStore, StudioDocument } from "../storage/document-store";
+import type { DocumentStore, DocumentSummary } from "../storage/document-store";
 import { onDocumentListChanged } from "../storage/document-events";
 
 /**
@@ -11,23 +11,27 @@ import { onDocumentListChanged } from "../storage/document-events";
  * leads nowhere is worse than none. Reads again whenever `reloadKey` changes (the route), so the
  * title is not stale after coming back from the editor. Becomes server data with the backend.
  */
-export function useLastDocument(store: DocumentStore, reloadKey: string): StudioDocument | null {
-  const [doc, setDoc] = useState<StudioDocument | null>(null);
+export function useLastDocument(
+  store: Pick<DocumentStore, "listSummaries">,
+  reloadKey: string,
+): DocumentSummary | null {
+  const [doc, setDoc] = useState<DocumentSummary | null>(null);
 
   useEffect(() => {
-    let cancelled = false;
-    let latest = 0;
+    let request: AbortController | undefined;
     function read() {
-      const request = ++latest;
+      request?.abort();
+      request = new AbortController();
+      const { signal } = request;
       store
-        .list()
-        .then((docs) => !cancelled && request === latest && setDoc(pickLastDocument(docs)))
-        .catch(() => !cancelled && request === latest && setDoc(null));
+        .listSummaries(signal)
+        .then((docs) => !signal.aborted && setDoc(pickLastDocument(docs)))
+        .catch(() => !signal.aborted && setDoc(null));
     }
     const unsubscribe = onDocumentListChanged(read);
     read();
     return () => {
-      cancelled = true;
+      request?.abort();
       unsubscribe();
     };
   }, [store, reloadKey]);

@@ -1,14 +1,20 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import type { DocumentStore, StudioDocument, StudioFolder } from "../storage/document-store";
+import {
+  summarizeDocument,
+  type DocumentStore,
+  type DocumentSummary,
+  type StudioDocument,
+  type StudioFolder,
+} from "../storage/document-store";
 import { onDocumentListChanged } from "../storage/document-events";
 
-export type DocumentList = {
+export type DocumentList<T extends DocumentSummary = DocumentSummary> = {
   status: "loading" | "ready" | "error";
   /** When the list was read; relative times ("2 jam lalu") are measured from here. */
   loadedAt: number;
-  docs: StudioDocument[];
+  docs: T[];
   folders: StudioFolder[];
   reload: () => void;
   rename: (id: string, title: string) => Promise<void>;
@@ -25,29 +31,50 @@ export type DocumentList = {
 
 const nowMs = () => Date.now();
 
-/** The Dokumen tab's data: every document and folder on this device, plus the actions on them. */
-export function useDocumentList(store: DocumentStore): DocumentList {
+const fullDocuments = {
+  read: (store: DocumentStore) => store.list(),
+  project: (doc: StudioDocument) => doc,
+};
+const documentSummaries = {
+  read: (store: DocumentStore, signal: AbortSignal) => store.listSummaries(signal),
+  project: summarizeDocument,
+};
+
+export function useDocumentList(store: DocumentStore) {
+  return useList(store, fullDocuments);
+}
+
+export function useDocumentSummaryList(store: DocumentStore) {
+  return useList(store, documentSummaries);
+}
+
+function useList<T extends DocumentSummary>(
+  store: DocumentStore,
+  source: {
+    read: (store: DocumentStore, signal: AbortSignal) => Promise<T[]>;
+    project: (doc: StudioDocument) => T;
+  },
+): DocumentList<T> {
   const [status, setStatus] = useState<DocumentList["status"]>("loading");
-  const [docs, setDocs] = useState<StudioDocument[]>([]);
+  const [docs, setDocs] = useState<T[]>([]);
   const [folders, setFolders] = useState<StudioFolder[]>([]);
   const [loadedAt, setLoadedAt] = useState(0);
   const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
-    let cancelled = false;
-    Promise.all([store.list(), store.listFolders()])
+    const controller = new AbortController();
+    const { signal } = controller;
+    Promise.all([source.read(store, signal), store.listFolders()])
       .then(([list, folderList]) => {
-        if (cancelled) return;
+        if (signal.aborted) return;
         setDocs(list);
         setFolders(folderList);
         setLoadedAt(Date.now());
         setStatus("ready");
       })
-      .catch(() => !cancelled && setStatus("error"));
-    return () => {
-      cancelled = true;
-    };
-  }, [store, attempt]);
+      .catch(() => !signal.aborted && setStatus("error"));
+    return () => controller.abort();
+  }, [store, source, attempt]);
 
   // Actions write, then reload: the list is small and this keeps one source of truth.
   const refresh = useCallback(() => setAttempt((n) => n + 1), []);
@@ -55,7 +82,7 @@ export function useDocumentList(store: DocumentStore): DocumentList {
 
   function reflect(doc: StudioDocument | null) {
     if (doc) {
-      setDocs((current) => [...current.filter(({ id }) => id !== doc.id), doc]);
+      setDocs((current) => [...current.filter(({ id }) => id !== doc.id), source.project(doc)]);
     } else {
       refresh();
     }
@@ -84,7 +111,9 @@ export function useDocumentList(store: DocumentStore): DocumentList {
     updateClassification: async (id, expected, changes) => {
       const result = await store.updateClassification(id, expected, changes);
       if (result.status === "saved") {
-        setDocs((current) => current.map((doc) => (doc.id === id ? result.doc : doc)));
+        setDocs((current) =>
+          current.map((doc) => (doc.id === id ? source.project(result.doc) : doc)),
+        );
         refresh();
       }
       return result;

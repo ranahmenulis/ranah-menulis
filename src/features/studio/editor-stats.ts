@@ -9,7 +9,7 @@ export type EditorStats = { words: number; characters: number; paragraphs: numbe
  * quote's paragraph). A line break inside a block stays in the string as "\n". The schema only has
  * `text` and `hardBreak` as inline nodes; revisit this when an inline atom (mention) is added.
  */
-function blockTexts(nodes: readonly JSONContent[], out: string[] = []): string[] {
+export function blockTexts(nodes: readonly JSONContent[], out: string[] = []): string[] {
   for (const node of nodes) {
     const children = node.content ?? [];
     if (children.some((c) => c.type === "text" || c.type === "hardBreak")) {

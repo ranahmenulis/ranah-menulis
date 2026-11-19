@@ -1,7 +1,7 @@
 import { renderHook, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { useLastDocument } from "@/features/studio/hooks/use-last-document";
-import type { DocumentStore, StudioDocument } from "@/features/studio/storage/document-store";
+import type { StudioDocument } from "@/features/studio/storage/document-store";
 
 const doc = (id: string, updatedAt: number): StudioDocument => ({
   id,
@@ -12,7 +12,7 @@ const doc = (id: string, updatedAt: number): StudioDocument => ({
   updatedAt,
 });
 
-const storeWith = (list: () => Promise<StudioDocument[]>) => ({ list }) as unknown as DocumentStore;
+const storeWith = (listSummaries: () => Promise<StudioDocument[]>) => ({ listSummaries });
 
 describe("useLastDocument", () => {
   it("is null while loading, then the newest document", async () => {
