@@ -1,6 +1,7 @@
 import { cleanup, configure, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { ToastProvider } from "@/components/ui/toast";
+import { saveAccount } from "@/features/account/account-store";
 import { emptyLog } from "@/features/studio/daily-progress";
 import { StudioEditor } from "@/features/studio/components/studio-editor";
 import { installDialogShim } from "@/test/dialog-shim";
@@ -87,6 +88,23 @@ function registerEsai() {
 
 const openMenu = () => fireEvent.click(screen.getByRole("button", { name: "Menu dokumen" }));
 const bagikan = () => screen.getByRole("button", { name: "Bagikan" }) as HTMLButtonElement;
+
+describe("StudioEditor, word count pin", () => {
+  it("keeps the document total in focus mode even during a pinned sprint", () => {
+    saveAccount({ prefs: { writing: { wordCountPin: "sprint" } } });
+    renderEditor();
+    fireEvent.click(screen.getByRole("button", { name: "Sprint" }));
+    fireEvent.click(screen.getByRole("button", { name: "Mulai sprint" }));
+    expect(screen.getByRole("button", { name: "Sprint: +0 kata" })).toBeTruthy();
+
+    fireEvent.click(screen.getByRole("button", { name: "Mode fokus" }));
+    expect(screen.getByText("120 kata")).toBeTruthy();
+    expect(screen.queryByRole("button", { name: "Sprint: +0 kata" })).toBeNull();
+
+    fireEvent.keyDown(window, { key: "Escape" });
+    expect(screen.getByRole("button", { name: "Sprint: +0 kata" })).toBeTruthy();
+  });
+});
 
 describe("StudioEditor, quick search", () => {
   it("saves first and navigates to a different document from the editor shortcut", async () => {
