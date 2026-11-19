@@ -4,7 +4,12 @@ import Placeholder from "@tiptap/extension-placeholder";
 import { EditorContent, useEditor, type Editor, type JSONContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { useEffect, useLayoutEffect, useRef } from "react";
+import { useAccount } from "@/features/account/account-store";
+import { useHydrated } from "@/features/account/hooks/use-hydrated";
 import { docStats, selectionStats, type EditorStats } from "../editor-stats";
+import { useTypewriterScroll } from "../hooks/use-typewriter-scroll";
+import { StudioTypography } from "../studio-typography";
+import { EditorLoading } from "./editor-states";
 import "./editor.css";
 
 type EditorCanvasProps = {
@@ -22,12 +27,31 @@ type EditorCanvasProps = {
   autoFocusTitle?: boolean;
 };
 
+const EDITOR_EXTENSIONS = [
+  StarterKit.configure({
+    heading: { levels: [2] },
+    code: false,
+    codeBlock: false,
+    strike: false,
+    horizontalRule: false,
+    link: false,
+    underline: false,
+  }),
+  Placeholder.configure({ placeholder: "Mulai dari satu kalimat." }),
+  StudioTypography,
+];
+
+export function EditorCanvas(props: EditorCanvasProps) {
+  const hydrated = useHydrated();
+  return hydrated ? <HydratedEditorCanvas {...props} /> : <EditorLoading />;
+}
+
 /**
  * The writing surface: a title, then the body. Only the formats STD-01 allows are enabled:
  * bold, italic, heading, blockquote, bullet and numbered lists. Code, links, strikethrough, and
  * rules are switched off so nothing Word-like sneaks in.
  */
-export function EditorCanvas({
+function HydratedEditorCanvas({
   initialTitle,
   initialContent,
   onTitleChange,
@@ -38,22 +62,14 @@ export function EditorCanvas({
   autoFocusTitle,
 }: EditorCanvasProps) {
   const titleRef = useRef<HTMLTextAreaElement>(null);
+  const pageRef = useRef<HTMLElement>(null);
+  const { writing } = useAccount().prefs;
+  const { curlyQuotes, substitutions } = writing;
 
   const editor = useEditor({
     immediatelyRender: false,
     content: initialContent,
-    extensions: [
-      StarterKit.configure({
-        heading: { levels: [2] },
-        code: false,
-        codeBlock: false,
-        strike: false,
-        horizontalRule: false,
-        link: false,
-        underline: false,
-      }),
-      Placeholder.configure({ placeholder: "Mulai dari satu kalimat." }),
-    ],
+    extensions: EDITOR_EXTENSIONS,
     editorProps: {
       attributes: { class: "studio-prose", "aria-label": "Isi tulisan" },
     },
@@ -74,6 +90,17 @@ export function EditorCanvas({
     onSelectionUpdate: ({ editor: e }) => onSelectionStatsChange?.(selectionStats(e)),
   });
 
+  useTypewriterScroll(
+    editor,
+    pageRef,
+    writing.mode === "typewriter" ? writing.typewriterPosition : null,
+  );
+
+  useLayoutEffect(() => {
+    if (!editor) return;
+    Object.assign(editor.storage.studioTypography, { curlyQuotes, substitutions });
+  }, [editor, curlyQuotes, substitutions]);
+
   // The format bar lives outside the scrolling canvas, so the screen needs the editor instance.
   useEffect(() => {
     onEditorChange?.(editor);
@@ -89,7 +116,11 @@ export function EditorCanvas({
   });
 
   return (
-    <article className="mx-auto w-full max-w-170">
+    <article
+      ref={pageRef}
+      className="studio-editor-page mx-auto w-full max-w-170"
+      data-studio-text-size={writing.textSize}
+    >
       <textarea
         ref={titleRef}
         rows={1}

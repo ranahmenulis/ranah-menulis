@@ -3,6 +3,11 @@
 import { useMemo, useSyncExternalStore } from "react";
 import { GENRES, type Genre } from "@/features/community/types";
 import { DEFAULT_TIME_ZONE, isTimeZone, type Country } from "./timezones";
+import {
+  DEFAULT_WRITING_PREFERENCES,
+  parseWritingPreferences,
+  type WritingPreferences,
+} from "./writing-preferences";
 
 const KEY = "ranah.account";
 
@@ -24,6 +29,7 @@ export type AccountPrefs = {
   emailProjects: boolean;
   /** Whether the streak shows on the public profile. Private is the default (Brief). */
   showStreak: boolean;
+  writing: WritingPreferences;
 };
 
 export type Account = {
@@ -41,7 +47,7 @@ export type AccountPatch = {
   memberSince?: string;
   passwordChangedAt?: string | null;
   profile?: Partial<AccountProfile>;
-  prefs?: Partial<AccountPrefs>;
+  prefs?: Partial<Omit<AccountPrefs, "writing">> & { writing?: Partial<WritingPreferences> };
 };
 
 /**
@@ -61,7 +67,12 @@ export const DEFAULT_ACCOUNT: Account = {
     genres: ["Cerpen", "Esai"],
     avatar: null,
   },
-  prefs: { emailComments: true, emailProjects: true, showStreak: false },
+  prefs: {
+    emailComments: true,
+    emailProjects: true,
+    showStreak: false,
+    writing: DEFAULT_WRITING_PREFERENCES,
+  },
 };
 
 const text = (value: unknown, fallback: string) => (typeof value === "string" ? value : fallback);
@@ -103,6 +114,7 @@ export function parseAccount(raw: string | null): Account {
       emailComments: flag(f.emailComments, d.prefs.emailComments),
       emailProjects: flag(f.emailProjects, d.prefs.emailProjects),
       showStreak: flag(f.showStreak, d.prefs.showStreak),
+      writing: parseWritingPreferences(f.writing),
     },
   };
 }
@@ -114,7 +126,11 @@ export function mergeAccount(current: Account, patch: AccountPatch): Account {
     passwordChangedAt:
       patch.passwordChangedAt === undefined ? current.passwordChangedAt : patch.passwordChangedAt,
     profile: { ...current.profile, ...patch.profile },
-    prefs: { ...current.prefs, ...patch.prefs },
+    prefs: {
+      ...current.prefs,
+      ...patch.prefs,
+      writing: { ...current.prefs.writing, ...patch.prefs?.writing },
+    },
   };
 }
 

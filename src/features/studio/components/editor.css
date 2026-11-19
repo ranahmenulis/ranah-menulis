@@ -1,6 +1,18 @@
 /* Writing surface (DESIGN.md 4.2 and 6.3): Merriweather, sized like read-body and read-h2 so the
    editor and the published post match. Text uses ink-read so dark mode is easier on the eyes. */
 
+.studio-editor-page {
+  margin-block: var(--studio-typewriter-before, 0px) var(--studio-typewriter-after, 0px);
+}
+
+[data-studio-text-size="small"] {
+  --studio-font-adjustment: -0.125rem;
+}
+
+[data-studio-text-size="large"] {
+  --studio-font-adjustment: 0.125rem;
+}
+
 .studio-prose {
   color: var(--ink-read);
   caret-color: var(--ink);
@@ -12,7 +24,7 @@
 .studio-prose p {
   margin: 0 0 1.4em;
   font-family: var(--font-serif);
-  font-size: 1rem;
+  font-size: calc(1rem + var(--studio-font-adjustment, 0rem));
   line-height: 1.75rem;
   text-wrap: pretty;
 }
@@ -20,7 +32,7 @@
 .studio-prose h2 {
   margin: 1.6em 0 0.6em;
   font-family: var(--font-serif);
-  font-size: 1.25rem;
+  font-size: calc(1.25rem + var(--studio-font-adjustment, 0rem));
   line-height: 1.75rem;
   font-weight: 600;
   text-wrap: balance;
@@ -38,7 +50,7 @@
   margin: 0 0 1.4em;
   padding-left: 1.5em;
   font-family: var(--font-serif);
-  font-size: 1rem;
+  font-size: calc(1rem + var(--studio-font-adjustment, 0rem));
   line-height: 1.75rem;
 }
 
@@ -66,12 +78,12 @@
   .studio-prose p,
   .studio-prose ul,
   .studio-prose ol {
-    font-size: 1.125rem;
+    font-size: calc(1.125rem + var(--studio-font-adjustment, 0rem));
     line-height: 1.875rem;
   }
 
   .studio-prose h2 {
-    font-size: 1.4375rem;
+    font-size: calc(1.4375rem + var(--studio-font-adjustment, 0rem));
     line-height: 2rem;
   }
 }
