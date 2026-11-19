@@ -7,6 +7,11 @@ import { ErrorBanner, Notice } from "@/components/ui/states";
 import { Tabs } from "@/components/ui/tabs";
 import { NEW_POST_HREF } from "@/features/app-shell/nav";
 import { useDocumentList } from "@/features/studio/hooks/use-document-list";
+import {
+  isActiveDocument,
+  isArchivedDocument,
+  RESTORE_ARCHIVED_MESSAGE,
+} from "@/features/studio/document-archive";
 import { studioStore } from "@/features/studio/storage/store";
 import {
   canSaveDraft,
@@ -40,6 +45,7 @@ type Props = {
 };
 
 const SOURCE_PARAM_NOTICE: Partial<Record<SourceParam, string>> = {
+  archived: RESTORE_ARCHIVED_MESSAGE,
   gone: "Dokumen yang ingin kamu bagikan tidak ditemukan atau sudah ada di Sampah. Pilih dokumen lain di bawah.",
   empty: "Dokumen itu belum ada isinya. Tulis dulu di Studio, atau pilih dokumen lain di bawah.",
   error: "Dokumen itu gagal dibuka. Pilih dari daftar di bawah.",
@@ -128,22 +134,34 @@ export function ComposeForm(props: Props) {
   const { state, dispatch } = props;
   const docs = useDocumentList(studioStore);
   const [selectedDoc, setSelectedDoc] = useState<string | null>(null);
+  const [pickError, setPickError] = useState("");
 
   const blocks = publicBlocks(state);
   const words = wordsOf(blocks);
   const { fromDoc, picking, review, blocksOnly, sourceTitle } = layoutOf(state);
-  const usable = docs.docs.filter((d) => !d.deletedAt && d.wordCount > 0);
+  const usable = docs.docs.filter((d) => isActiveDocument(d) && d.wordCount > 0);
 
-  function choose() {
-    const doc = usable.find((d) => d.id === selectedDoc);
-    if (!doc) return;
-    const pick = {
-      docId: doc.id,
-      docTitle: doc.title.trim() || "Tanpa judul",
-      blocks: blocksFromDocument(doc.content),
-      chosen: [],
-    };
-    dispatch({ type: "pick", pick });
+  async function choose() {
+    if (!selectedDoc) return;
+    setPickError("");
+    try {
+      const doc = await studioStore.get(selectedDoc);
+      if (doc && isArchivedDocument(doc)) return setPickError(RESTORE_ARCHIVED_MESSAGE);
+      if (!doc || !isActiveDocument(doc) || doc.wordCount <= 0) {
+        return setPickError("Dokumen ini tidak bisa dipilih. Pilih dokumen lain.");
+      }
+      dispatch({
+        type: "pick",
+        pick: {
+          docId: doc.id,
+          docTitle: doc.title.trim() || "Tanpa judul",
+          blocks: blocksFromDocument(doc.content),
+          chosen: [],
+        },
+      });
+    } catch {
+      setPickError("Dokumen gagal dibaca. Coba lagi.");
+    }
   }
 
   return (
@@ -184,8 +202,12 @@ export function ComposeForm(props: Props) {
                 status={docs.status}
                 docs={usable}
                 now={docs.loadedAt}
-                selectedId={selectedDoc}
-                onSelect={setSelectedDoc}
+                selectedId={usable.some((doc) => doc.id === selectedDoc) ? selectedDoc : null}
+                error={pickError}
+                onSelect={(id) => {
+                  setPickError("");
+                  setSelectedDoc(id);
+                }}
                 onRetry={docs.reload}
                 onWriteDirect={() => dispatch({ type: "tab", tab: "direct" })}
                 onChoose={choose}

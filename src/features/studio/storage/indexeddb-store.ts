@@ -1,6 +1,9 @@
 import { dayKey, emptyLog, type DailyLog } from "../daily-progress";
+import { changeDocumentArchive, copyActiveDocument, isArchivedDocument } from "../document-archive";
+import { notifyDocumentListChanged } from "./document-events";
 import { planSnapshots, versionsToPrune, visibleVersions, type DocumentVersion } from "../versions";
 import {
+  applyClassification,
   applyMeta,
   commitSave,
   type DocumentMeta,
@@ -118,6 +121,7 @@ export function createIndexedDbStore(): DocumentStore {
     async duplicate(source, title) {
       const copy: StudioDocument = {
         ...source,
+        archivedAt: null,
         id: crypto.randomUUID(),
         title,
         version: 1,
@@ -130,6 +134,32 @@ export function createIndexedDbStore(): DocumentStore {
         tx.onerror = () => reject(tx.error);
       });
       return copy;
+    },
+
+    async duplicateActive(id) {
+      const tx = (await db()).transaction(DOCS, "readwrite");
+      const docs = tx.objectStore(DOCS);
+      const source = (await request(docs.get(id))) as StudioDocument | undefined;
+      const copy = copyActiveDocument(source, crypto.randomUUID(), Date.now());
+      if (copy) docs.add(copy);
+      await done(tx);
+      if (copy) notifyDocumentListChanged();
+      return copy;
+    },
+
+    async setArchived(id, archived) {
+      const tx = (await db()).transaction([DOCS, FOLDERS], "readwrite");
+      const docs = tx.objectStore(DOCS);
+      const current = (await request(docs.get(id))) as StudioDocument | undefined;
+      const folderExists =
+        archived ||
+        !current?.folderId ||
+        (await request(tx.objectStore(FOLDERS).getKey(current.folderId))) !== undefined;
+      const next = changeDocumentArchive(current, archived, Date.now(), folderExists);
+      if (next) docs.put(next);
+      await done(tx);
+      if (next) notifyDocumentListChanged();
+      return next;
     },
 
     async list() {
@@ -152,19 +182,34 @@ export function createIndexedDbStore(): DocumentStore {
       const tx = (await db()).transaction(DOCS, "readwrite");
       const store = tx.objectStore(DOCS);
       const existing = (await request(store.get(id))) as StudioDocument | undefined;
-      if (!existing) return null;
+      if (!existing || isArchivedDocument(existing)) return null;
       const next = applyMeta(existing, patch, Date.now());
       store.put(next);
       await done(tx);
       return next;
     },
 
+    async updateClassification(id, expected, changes) {
+      const tx = (await db()).transaction(DOCS, "readwrite");
+      const store = tx.objectStore(DOCS);
+      const current = ((await request(store.get(id))) as StudioDocument | undefined) ?? null;
+      const result = applyClassification(current, expected, changes);
+      if (result.status === "saved") store.put(result.doc);
+      await done(tx);
+      return result;
+    },
+
     async deletePermanently(id: string) {
       const tx = (await db()).transaction([DOCS, VERSIONS], "readwrite");
-      tx.objectStore(DOCS).delete(id);
-      const versions = tx.objectStore(VERSIONS);
-      const keys = (await request(versions.index("docId").getAllKeys(id))) as IDBValidKey[];
-      for (const key of keys) versions.delete(key);
+      const docs = tx.objectStore(DOCS);
+      const current = (await request(docs.get(id))) as StudioDocument | undefined;
+      // An older Sampah dialog may still be open after the document was restored elsewhere.
+      if (current?.deletedAt != null) {
+        docs.delete(id);
+        const versions = tx.objectStore(VERSIONS);
+        const keys = (await request(versions.index("docId").getAllKeys(id))) as IDBValidKey[];
+        for (const key of keys) versions.delete(key);
+      }
       await done(tx);
     },
 

@@ -1,8 +1,16 @@
 "use client";
 
 import { useState } from "react";
+import { Notice } from "@/components/ui/states";
+import {
+  ARCHIVE_HREF,
+  isActiveDocument,
+  isArchivedDocument,
+  RESTORE_ARCHIVED_MESSAGE,
+} from "@/features/studio/document-archive";
+import Link from "next/link";
 import { useDocumentList } from "@/features/studio/hooks/use-document-list";
-import type { DocumentStore } from "@/features/studio/storage/document-store";
+import type { DocumentStore, StudioDocument } from "@/features/studio/storage/document-store";
 import { studioStore } from "@/features/studio/storage/store";
 import { useViewer } from "@/lib/viewer";
 import { liveRegistration } from "../payment-model";
@@ -35,6 +43,18 @@ type Props = {
   store?: SubmissionStore;
   documents?: DocumentStore;
 };
+
+function ArchivedSourceNotice({ id, docs }: { id: string | null; docs: StudioDocument[] }) {
+  if (!id || !docs.some((doc) => doc.id === id && isArchivedDocument(doc))) return null;
+  return (
+    <Notice>
+      {RESTORE_ARCHIVED_MESSAGE}{" "}
+      <Link href={ARCHIVE_HREF} className="underline">
+        Buka Arsip
+      </Link>
+    </Notice>
+  );
+}
 
 /**
  * Kirim karya (PRJ-04 steps 1 to 5, PRD 17.5). Which screen you get depends on who you are and on
@@ -107,15 +127,17 @@ export function SubmitView({
     return result;
   };
 
+  const requestedDocumentId = round === 0 ? documentId : null;
   return (
     <SubmitShell slug={slug}>
+      <ArchivedSourceNotice id={requestedDocumentId} docs={list.docs} />
       <SubmitFormScreen
         key={round}
         project={project}
         now={data.now}
-        docs={list.docs.filter((d) => !d.deletedAt).sort((a, b) => b.updatedAt - a.updatedAt)}
+        docs={list.docs.filter(isActiveDocument).sort((a, b) => b.updatedAt - a.updatedAt)}
         sent={mine}
-        documentId={round === 0 ? documentId : null}
+        documentId={requestedDocumentId}
         onSend={send}
       />
       <SentWorks works={mine} />

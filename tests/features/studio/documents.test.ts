@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { listEntries, pickLastDocument, trashed } from "@/features/studio/documents";
+import {
+  documentTagOptions,
+  listEntries,
+  pickLastDocument,
+  trashed,
+} from "@/features/studio/documents";
 import type { StudioDocument, StudioFolder } from "@/features/studio/storage/document-store";
 
 const content = { type: "doc" };
@@ -11,6 +16,46 @@ const doc = (id: string, over: Partial<StudioDocument> = {}): StudioDocument => 
   version: 1,
   updatedAt: 1,
   ...over,
+});
+
+describe("document filters", () => {
+  const folders = [folder("f1", "Draf")];
+  const docs = [
+    doc("loose", { kind: "cerpen", tags: ["Hujan"] }),
+    doc("filed", { kind: "cerpen", tags: ["HUJAN"], folderId: "f1", updatedAt: 2 }),
+    doc("poem", { kind: "puisi", tags: ["Hujan"], folderId: "f1" }),
+    doc("other-tag", { kind: "cerpen", tags: ["Pagi"], folderId: "f1" }),
+    doc("old"),
+    doc("deleted", { kind: "cerpen", tags: ["Hujan", "Tersembunyi"], deletedAt: 5 }),
+  ];
+
+  it("combines both filters across folders at the top level", () => {
+    const entries = listEntries(docs, folders, null, { kind: "cerpen", tag: "hujan" });
+    expect(entries.map((entry) => entry.kind === "document" && entry.doc.id)).toEqual([
+      "filed",
+      "loose",
+    ]);
+  });
+
+  it("only returns matches inside the open folder", () => {
+    const entries = listEntries(docs, folders, "f1", { kind: null, tag: "hujan" });
+    expect(entries.map((entry) => entry.kind === "document" && entry.doc.id)).toEqual([
+      "filed",
+      "poem",
+    ]);
+  });
+
+  it("deduplicates tag choices per scope and excludes Sampah", () => {
+    expect(documentTagOptions(docs, null)).toEqual([
+      ["hujan", "Hujan"],
+      ["pagi", "Pagi"],
+    ]);
+    expect(documentTagOptions(docs, "f1")).toEqual([
+      ["hujan", "HUJAN"],
+      ["pagi", "Pagi"],
+    ]);
+    expect(documentTagOptions(docs, "empty")).toEqual([]);
+  });
 });
 const folder = (id: string, name = id): StudioFolder => ({ id, name, createdAt: 0 });
 

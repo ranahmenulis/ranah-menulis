@@ -38,6 +38,28 @@ afterEach(() => {
 });
 
 describe("event participation", () => {
+  it("rejects an archived document for a new entry and keeps an existing entry intact", async () => {
+    const archived = { get: async () => ({ ...doc, archivedAt: start }) };
+    expect(await joinEvent(id, doc.id, archived, () => start)).toMatchObject({
+      ok: false,
+      message: expect.stringContaining("Arsip"),
+    });
+    expect(await joinEvent(id, doc.id, documentStore, () => start)).toMatchObject({ ok: true });
+    const entry = entryOf(await current(), ME_ID)!;
+    expect(await beginEventSprint(id, entry.id, archived, () => sprintStart)).toMatchObject({
+      ok: false,
+      message: expect.stringContaining("Arsip"),
+    });
+    await recordEventSave({
+      ...doc,
+      archivedAt: start,
+      version: 4,
+      wordCount: 90,
+      updatedAt: start + 1,
+    });
+    expect(entryOf(await current(), ME_ID)).toEqual(entry);
+  });
+
   it("does not hold event writes while Studio is still loading a document", async () => {
     const read = Promise.withResolvers<StudioDocument>();
     const get = vi.fn(() => read.promise);

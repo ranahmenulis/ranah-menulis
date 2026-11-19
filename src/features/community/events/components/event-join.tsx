@@ -6,6 +6,8 @@ import { Dialog } from "@/components/ui/dialog";
 import { Field, Select } from "@/components/ui/field";
 import { ErrorBanner, FeedItemSkeleton, Notice, RetryButton } from "@/components/ui/states";
 import { STUDIO_HREF } from "@/features/app-shell/nav";
+import { isActiveDocument } from "@/features/studio/document-archive";
+import { onDocumentListChanged } from "@/features/studio/storage/document-events";
 import type { DocumentStore, StudioDocument } from "@/features/studio/storage/document-store";
 import { joinEvent } from "../event-actions";
 
@@ -34,8 +36,7 @@ export function EventJoin({
     let active = true;
     void store.list().then(
       (docs) => {
-        if (active)
-          setState({ status: "ready", documents: docs.filter((doc) => doc.deletedAt == null) });
+        if (active) setState({ status: "ready", documents: docs.filter(isActiveDocument) });
       },
       () => {
         if (active) setState({ status: "error" });
@@ -45,6 +46,8 @@ export function EventJoin({
       active = false;
     };
   }, [store, attempt]);
+
+  useEffect(() => onDocumentListChanged(() => setAttempt((value) => value + 1)), []);
 
   async function submit() {
     setPending(true);

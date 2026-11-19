@@ -15,6 +15,7 @@ type DocsProps = {
   docs: StudioDocument[];
   now: number;
   selectedId: string | null;
+  error?: string;
   onSelect: (id: string) => void;
   onChoose: () => void;
   onRetry: () => void;
@@ -29,6 +30,7 @@ export function DocumentChoices(p: DocsProps) {
       <p className="-mt-2 text-sm text-ink-muted">
         Kamu akan memilih bagian yang menjadi salinan publik. Dokumennya sendiri tidak ikut terbit.
       </p>
+      {p.error && <ErrorBanner>{p.error}</ErrorBanner>}
 
       {p.status === "loading" && (
         <div

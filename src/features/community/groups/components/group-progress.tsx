@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/states";
 import { personById } from "@/features/kelola/admin/people";
 import { useDocumentList } from "@/features/studio/hooks/use-document-list";
+import { isActiveDocument } from "@/features/studio/document-archive";
 import type { DocumentStore } from "@/features/studio/storage/document-store";
 import { studioStore } from "@/features/studio/storage/store";
 import type { GroupResult } from "../group-actions";
@@ -35,7 +36,7 @@ function ProgressDialog({
   onShared: (result: GroupResult) => void;
 }) {
   const docs = useDocumentList(store);
-  const usable = docs.docs.filter((doc) => !doc.deletedAt && doc.wordCount > 0);
+  const usable = docs.docs.filter((doc) => isActiveDocument(doc) && doc.wordCount > 0);
   const [selected, setSelected] = useState("");
   const [busy, setBusy] = useState(false);
   const [failure, setFailure] = useState("");

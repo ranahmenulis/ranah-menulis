@@ -4,6 +4,8 @@ import { useRouter } from "next/navigation";
 import { kirimHref } from "@/features/projects/submission-model";
 import { SendToProjectDialog } from "../send-to-project-dialog";
 import type { DocumentList } from "../../hooks/use-document-list";
+import type { StudioDocument } from "../../storage/document-store";
+import { DocumentClassificationDialog } from "./document-classification-dialog";
 import { DeleteDialog, MoveDialog, NameDialog } from "./document-dialogs";
 import type { Pending } from "./pending";
 
@@ -29,10 +31,12 @@ export function PendingDialogs({
   pending,
   list,
   onClose,
+  onClassified,
 }: {
   pending: Pending | null;
   list: DocumentList;
   onClose: () => void;
+  onClassified?: (doc: StudioDocument) => void;
 }) {
   if (!pending) return null;
   const run = (action: () => Promise<void>) => async () => {
@@ -78,6 +82,21 @@ export function PendingDialogs({
           submitLabel="Simpan"
           onClose={onClose}
           onSubmit={(name) => run(() => list.rename(pending.doc.id, name))()}
+        />
+      );
+    case "classification":
+      return (
+        <DocumentClassificationDialog
+          key={pending.doc.id}
+          doc={pending.doc}
+          onSave={(expected, changes) =>
+            list.updateClassification(pending.doc.id, expected, changes)
+          }
+          onSaved={(doc) => {
+            onClose();
+            onClassified?.(doc);
+          }}
+          onClose={onClose}
         />
       );
     case "move":

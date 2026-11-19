@@ -3,6 +3,7 @@
 import type { JSONContent } from "@tiptap/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { emptyLog, type DailyLog } from "../daily-progress";
+import { isArchivedDocument } from "../document-archive";
 import { sanitizeTargets, type DocumentTarget } from "../document-targets";
 import { versionId, type DocumentVersion } from "../versions";
 import type { DocumentStore, SaveInput, StudioDocument } from "../storage/document-store";
@@ -10,7 +11,7 @@ import type { DocumentStore, SaveInput, StudioDocument } from "../storage/docume
 const AUTOSAVE_DELAY_MS = 800;
 const RETRY_DELAY_MS = 5000;
 
-export type LoadState = "loading" | "ready" | "missing" | "error";
+export type LoadState = "loading" | "ready" | "missing" | "archived" | "error";
 /** draft: nothing written yet. failed: the device could not store the change (retrying). */
 export type SaveStatus = "draft" | "saved" | "saving" | "failed";
 export type ConflictChoice = "local" | "remote" | "both";
@@ -131,6 +132,7 @@ export function useStudioDocument(
         setProgress(today);
         if (isNew) return;
         if (!doc) return setLoad("missing");
+        if (isArchivedDocument(doc)) return setLoad("archived");
         version.current = doc.version;
         const stored = sanitizeTargets(doc.targets);
         latest.current = {

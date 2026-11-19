@@ -1,5 +1,6 @@
 import { personById } from "@/features/kelola/admin/people";
 import { validateReason } from "@/features/kelola/reason";
+import { isArchivedDocument, RESTORE_ARCHIVED_MESSAGE } from "@/features/studio/document-archive";
 import type { DocumentStore } from "@/features/studio/storage/document-store";
 import { studioStore } from "@/features/studio/storage/store";
 import { resolveFixturePosts } from "../post-model";
@@ -27,6 +28,7 @@ export async function shareProgress(
   } catch {
     return refuseGroup("Dokumen gagal dibaca. Coba lagi.");
   }
+  if (doc && isArchivedDocument(doc)) return refuseGroup(RESTORE_ARCHIVED_MESSAGE);
   if (
     !doc ||
     doc.deletedAt ||

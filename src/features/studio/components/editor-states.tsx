@@ -3,6 +3,23 @@
 import Link from "next/link";
 import { ErrorBanner, RetryButton, Skeleton } from "@/components/ui/states";
 import { ButtonLink } from "@/components/ui/button";
+import { ARCHIVE_HREF } from "../document-archive";
+import type { LoadState } from "../hooks/use-studio-document";
+
+export function EditorUnavailable({
+  load,
+  onRetry,
+  backHref,
+}: {
+  load: LoadState;
+  onRetry: () => void;
+  backHref: string;
+}) {
+  if (load === "error") return <EditorError onRetry={onRetry} backHref={backHref} />;
+  if (load === "missing") return <EditorMissing backHref={backHref} />;
+  if (load === "archived") return <EditorArchived />;
+  return <EditorLoading />;
+}
 
 /** Shown only when loading takes longer than 300ms (DESIGN.md 8); CSS keeps it invisible until then. */
 export function EditorLoading() {
@@ -50,6 +67,18 @@ export function EditorMissing({ backHref }: { backHref: string }) {
           Kembali ke Studio
         </Link>
       </p>
+    </div>
+  );
+}
+
+export function EditorArchived() {
+  return (
+    <div className="mx-auto grid w-full max-w-170 justify-items-start gap-4 py-8">
+      <p className="font-serif text-xl leading-7 font-semibold">Dokumen ini ada di Arsip.</p>
+      <p className="text-sm text-ink-muted">Pulihkan dokumen di Studio untuk kembali menulis.</p>
+      <ButtonLink href={ARCHIVE_HREF} variant="secondary">
+        Buka Arsip
+      </ButtonLink>
     </div>
   );
 }

@@ -1,20 +1,35 @@
 "use client";
 
 import { FolderSimplePlus } from "@phosphor-icons/react/dist/ssr";
-import { useState } from "react";
+import { Suspense, useRef, useState } from "react";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { ErrorBanner, RetryButton, Skeleton } from "@/components/ui/states";
 import { Tabs } from "@/components/ui/tabs";
 import { useSharedDocumentIds } from "@/features/community/hooks/use-shared-documents";
 import { useSubmittedDocumentIds } from "@/features/projects/hooks/use-submitted-documents";
 import { postStore } from "@/features/community/storage/store";
+import { hasDocumentFilters } from "../../document-classification";
+import { isActiveDocument } from "../../document-archive";
+import { documentTagOptions, listEntries } from "../../documents";
 import { useDocumentList } from "../../hooks/use-document-list";
+import type { StudioDocument } from "../../storage/document-store";
 import { studioStore } from "../../storage/store";
 import { StudioTabs } from "../studio-tabs";
+import { ArchiveList } from "./archive-list";
+import { DocumentFilterFields, useDocumentFilters } from "./document-filters";
 import { LiveList, TrashList } from "./document-lists";
 import type { Pending } from "./pending";
 import { PendingDialogs } from "./pending-dialogs";
 import { TodayLine } from "./today-line";
+
+type ArchiveAction = "archive" | "restore" | "duplicate";
+type ListNotice = { text: string; copyId?: string; failed?: boolean };
+
+const archiveSuccess = {
+  archive: "Dokumen dipindah ke Arsip.",
+  restore: "Dokumen dipulihkan.",
+  duplicate: "Salinan dokumen dibuat.",
+};
 
 function ListSkeleton() {
   return (
@@ -39,43 +54,155 @@ function ListSkeleton() {
   );
 }
 
+function ListFeedback({ status, onRetry }: { status: "loading" | "error"; onRetry: () => void }) {
+  if (status === "loading") return <ListSkeleton />;
+  return (
+    <div className="mt-6 grid gap-3">
+      <ErrorBanner action={<RetryButton onClick={onRetry} />}>
+        Daftar dokumen gagal dimuat. Isi dokumenmu tidak berubah; yang gagal hanya daftarnya.
+      </ErrorBanner>
+      <p className="text-xs text-ink-muted">Progres hari ini dan tab Streak tetap bisa dibuka.</p>
+    </div>
+  );
+}
+
 /**
  * Studio, tab Dokumen (DESIGN.md 6.4): a plain list, not cards. Documents and folders from this
  * device; Sampah keeps trashed documents so they can be restored.
  */
 export function DocumentsView() {
-  const list = useDocumentList(studioStore);
-  const sharedIds = useSharedDocumentIds(postStore);
-  const submittedIds = useSubmittedDocumentIds();
-  const [tab, setTab] = useState("semua");
-  const [folderId, setFolderId] = useState<string | null>(null);
-  const [pending, setPending] = useState<Pending | null>(null);
-
-  const inTrash = tab === "sampah";
-  const ready = list.status === "ready";
-  const folder = list.folders.find((f) => f.id === folderId) ?? null;
-
   return (
     <div className="max-w-182">
       <h1 className="mb-3 heading-lg max-md:hidden">Studio</h1>
       <StudioTabs />
       <TodayLine />
+      <Suspense fallback={<ListSkeleton />}>
+        <DocumentListContent />
+      </Suspense>
+    </div>
+  );
+}
 
-      <div className="mt-6 flex items-center gap-4 shadow-[inset_0_-1px_0_var(--line)]">
+function DocumentListContent() {
+  const list = useDocumentList(studioStore);
+  const sharedIds = useSharedDocumentIds(postStore);
+  const submittedIds = useSubmittedDocumentIds();
+  const [folderId, setFolderId] = useState<string | null>(null);
+  const [pending, setPending] = useState<Pending | null>(null);
+  const [notice, setNotice] = useState<ListNotice | null>(null);
+  const [busy, setBusy] = useState(false);
+  const busyRef = useRef(false);
+  const statusRef = useRef<HTMLParagraphElement>(null);
+  const kindFilterRef = useRef<HTMLSelectElement>(null);
+  const tabBarRef = useRef<HTMLDivElement>(null);
+  const { filters, rawTag, changeFilters, tab } = useDocumentFilters();
+
+  const activeReady = list.status === "ready" && tab === "semua";
+  const folder = activeReady ? list.folders.find((f) => f.id === folderId) : undefined;
+  const hasActiveDocuments = list.docs.some(isActiveDocument);
+  const hasFilterOptions = hasDocumentFilters(filters) || hasActiveDocuments;
+
+  function selectTab(next: string) {
+    changeFilters({ tab: next === "semua" ? "" : next });
+    setFolderId(null);
+    setNotice(null);
+  }
+
+  function focusNotice() {
+    requestAnimationFrame(() => statusRef.current?.focus());
+  }
+
+  function classified(doc: StudioDocument) {
+    setNotice({ text: "Jenis dan tag disimpan." });
+    if (listEntries([doc], [], folderId, filters).length === 0) {
+      focusNotice();
+    }
+  }
+
+  async function runArchiveAction(action: ArchiveAction, id: string) {
+    if (busyRef.current) return;
+    busyRef.current = true;
+    setBusy(true);
+    setNotice(null);
+    try {
+      const doc = await (action === "duplicate"
+        ? list.duplicateActive(id)
+        : list.setArchived(id, action === "archive"));
+      setNotice(
+        doc
+          ? { text: archiveSuccess[action], copyId: action === "duplicate" ? doc.id : undefined }
+          : { text: "Status dokumen sudah berubah. Periksa daftar dan coba lagi.", failed: true },
+      );
+    } catch {
+      setNotice({ text: "Perubahan belum tersimpan. Coba lagi.", failed: true });
+    } finally {
+      busyRef.current = false;
+      setBusy(false);
+      focusNotice();
+    }
+  }
+
+  function renderList() {
+    return list.status !== "ready" ? (
+      <ListFeedback status={list.status} onRetry={list.reload} />
+    ) : tab === "sampah" ? (
+      <TrashList list={list} onPending={setPending} />
+    ) : tab === "arsip" ? (
+      <ArchiveList
+        list={list}
+        busy={busy}
+        onRestore={(id) => void runArchiveAction("restore", id)}
+        onShowAll={() => {
+          selectTab("semua");
+          requestAnimationFrame(() =>
+            tabBarRef.current?.querySelector<HTMLElement>("#tab-semua")?.focus(),
+          );
+        }}
+      />
+    ) : (
+      <LiveList
+        list={list}
+        folderId={folderId}
+        folderName={folder?.name ?? null}
+        onOpenFolder={setFolderId}
+        onPending={(action) => {
+          setNotice(null);
+          setPending(action);
+        }}
+        onArchiveAction={(action, id) => void runArchiveAction(action, id)}
+        archiveBusy={busy}
+        sharedIds={sharedIds}
+        submittedIds={submittedIds}
+        filters={filters}
+        onClearFilters={() => {
+          changeFilters({ jenis: "", tag: "" });
+          const target = hasActiveDocuments
+            ? kindFilterRef.current
+            : tabBarRef.current?.querySelector<HTMLElement>('[role="tab"][aria-selected="true"]');
+          target?.focus();
+        }}
+      />
+    );
+  }
+
+  return (
+    <>
+      <div
+        ref={tabBarRef}
+        className="mt-6 flex items-center gap-4 shadow-[inset_0_-1px_0_var(--line)]"
+      >
         <Tabs
           label="Daftar"
           value={tab}
-          onValueChange={(t) => {
-            setTab(t);
-            setFolderId(null);
-          }}
+          onValueChange={selectTab}
           className="min-w-0 flex-1 shadow-none"
           items={[
             { id: "semua", label: "Semua" },
+            { id: "arsip", label: "Arsip" },
             { id: "sampah", label: "Sampah" },
           ]}
         />
-        {!inTrash && ready && (
+        {activeReady && (
           <div className="flex items-center gap-2 max-md:hidden">
             <Button
               variant="text"
@@ -93,7 +220,7 @@ export function DocumentsView() {
         )}
       </div>
 
-      {folder && !inTrash && (
+      {folder && (
         <p className="mt-4 text-sm">
           <button
             type="button"
@@ -107,31 +234,39 @@ export function DocumentsView() {
         </p>
       )}
 
-      {list.status === "loading" && <ListSkeleton />}
-      {list.status === "error" && (
-        <div className="mt-6 grid gap-3">
-          <ErrorBanner action={<RetryButton onClick={list.reload} />}>
-            Daftar dokumen gagal dimuat. Isi dokumenmu tidak berubah; yang gagal hanya daftarnya.
-          </ErrorBanner>
-          <p className="text-xs text-ink-muted">
-            Progres hari ini dan tab Streak tetap bisa dibuka.
-          </p>
-        </div>
-      )}
-      {ready && !inTrash && (
-        <LiveList
-          list={list}
-          folderId={folderId}
-          folderName={folder?.name ?? null}
-          onOpenFolder={setFolderId}
-          onPending={setPending}
-          sharedIds={sharedIds}
-          submittedIds={submittedIds}
+      {activeReady && hasFilterOptions && (
+        <DocumentFilterFields
+          filters={filters}
+          rawTag={rawTag}
+          tags={documentTagOptions(list.docs, folderId)}
+          kindRef={kindFilterRef}
+          onChange={changeFilters}
         />
       )}
-      {ready && inTrash && <TrashList list={list} onPending={setPending} />}
+      <p
+        role="status"
+        tabIndex={-1}
+        ref={statusRef}
+        className={
+          notice ? `mt-3 text-sm ${notice.failed ? "text-danger" : "text-ink"}` : "sr-only"
+        }
+      >
+        {notice?.text}
+      </p>
+      {notice?.copyId && (
+        <ButtonLink href={`/studio/${notice.copyId}`} variant="text" size="sm" className="px-0">
+          Buka salinan
+        </ButtonLink>
+      )}
 
-      <PendingDialogs pending={pending} list={list} onClose={() => setPending(null)} />
-    </div>
+      {renderList()}
+
+      <PendingDialogs
+        pending={pending}
+        list={list}
+        onClose={() => setPending(null)}
+        onClassified={classified}
+      />
+    </>
   );
 }

@@ -2,6 +2,7 @@
 
 import { useCallback, useRef } from "react";
 import { useToast } from "@/components/ui/toast";
+import { isActiveDocument } from "@/features/studio/document-archive";
 import { readGroupReader } from "../groups/group-viewer";
 import { recordEventSave, type EventSaveSnapshot } from "./event-actions";
 import { tracksEventDocument } from "./event-store";
@@ -40,14 +41,14 @@ export function useEventSave(eventId?: string) {
   );
 
   const onSaved = useCallback(
-    ({ id, version, updatedAt, wordCount, deletedAt }: EventSaveSnapshot) => {
+    ({ id, version, updatedAt, wordCount, deletedAt, archivedAt }: EventSaveSnapshot) => {
       const actor = readGroupReader();
-      if (!actor || deletedAt != null) return;
+      if (!actor || !isActiveDocument({ deletedAt, archivedAt })) return;
       const tracked = tracksEventDocument(actor, id);
       if (tracked === false) trackedDocuments.current.delete(id);
       if (tracked === true) trackedDocuments.current.add(id);
       if (!(tracked ?? (Boolean(eventId) || trackedDocuments.current.has(id)))) return;
-      pending.current.push({ id, version, updatedAt, wordCount, deletedAt });
+      pending.current.push({ id, version, updatedAt, wordCount, deletedAt, archivedAt });
       void flush();
     },
     [eventId, flush],

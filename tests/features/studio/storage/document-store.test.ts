@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { emptyLog, totalWords } from "@/features/studio/daily-progress";
 import {
+  applyClassification,
   applyMeta,
   commitSave,
   type StudioDocument,
@@ -29,6 +30,53 @@ describe("commitSave: document targets", () => {
     const withTargets = commitSave(null, { ...input, targets }, 0, emptyLog(), 100);
     const without = commitSave(null, input, 0, emptyLog(), 100);
     expect(withTargets.ok && withTargets.progress).toEqual(without.ok && without.progress);
+  });
+});
+
+describe("applyClassification", () => {
+  const classification = { kind: "cerpen", tags: ["Hujan"] } as const;
+
+  it("keeps the latest text, folder, target and version, and survives the next autosave", () => {
+    const latest = stored({
+      version: 4,
+      folderId: "f1",
+      wordCount: 130,
+      updatedAt: 200,
+      targets: [{ id: "t1", words: 500, due: null }],
+    });
+    const result = applyClassification(
+      latest,
+      {},
+      { ...classification, tags: [...classification.tags] },
+    );
+    expect(result).toEqual({ status: "saved", doc: { ...latest, ...classification } });
+    if (result.status !== "saved") return;
+    const saved = commitSave(result.doc, { ...input, wordCount: 140 }, 4, emptyLog(), 300);
+    expect(saved.ok && saved.doc).toMatchObject({ ...classification, wordCount: 140, version: 5 });
+    expect(saved.ok && totalWords(saved.progress)).toBe(10);
+  });
+
+  it("rejects stale metadata without overwriting it and never writes to Sampah", () => {
+    const current = stored({ kind: "puisi", tags: ["Hujan"] });
+    expect(applyClassification(current, {}, { kind: "esai" })).toEqual({
+      status: "conflict",
+      doc: current,
+    });
+    expect(applyClassification({ ...current, deletedAt: 20 }, current, {})).toEqual({
+      status: "unavailable",
+    });
+    expect(applyClassification(null, current, {})).toEqual({ status: "unavailable" });
+  });
+
+  it("clears classification and rejects duplicate tags at the write boundary", () => {
+    const current = stored({ kind: "puisi", tags: ["Hujan"] });
+    expect(applyClassification(current, current, {})).toEqual({
+      status: "saved",
+      doc: { ...current, kind: undefined, tags: [] },
+    });
+    expect(applyClassification(current, current, { tags: ["Hujan", "HUJAN"] })).toEqual({
+      status: "invalid",
+    });
   });
 });
 

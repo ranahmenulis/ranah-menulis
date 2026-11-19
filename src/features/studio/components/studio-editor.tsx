@@ -26,7 +26,7 @@ import { EditorBar } from "./editor-bar";
 import { EditorCanvas } from "./editor-canvas";
 import { DocumentTargetsDialog } from "./document-targets-dialog";
 import { ExportDialog } from "./export-dialog";
-import { EditorError, EditorLoading, EditorMissing } from "./editor-states";
+import { EditorUnavailable } from "./editor-states";
 import { FocusHud } from "./focus-hud";
 import { FormatBar } from "./format-bar";
 import { HelpDrawer } from "./help-drawer";
@@ -40,6 +40,7 @@ const FALLBACK_TITLE: Record<LoadState, string> = {
   ready: "",
   error: "Dokumen tidak terbuka",
   missing: "Dokumen tidak ditemukan",
+  archived: "Dokumen diarsipkan",
 };
 
 /** The writing area makes room for an open side panel, and sits lower in focus mode. */
@@ -54,12 +55,6 @@ function canvasClass(panelOpen: boolean, focusMode: boolean) {
 
 /** A new document has no id until it is first stored. */
 const storedId = (id: string) => (id === "baru" ? null : id);
-
-function NotReady({ load, onRetry }: { load: LoadState; onRetry: () => void }) {
-  if (load === "error") return <EditorError onRetry={onRetry} backHref={STUDIO_HREF} />;
-  if (load === "missing") return <EditorMissing backHref={STUDIO_HREF} />;
-  return <EditorLoading />;
-}
 
 /**
  * Studio editor screen. Documents live on this device for now (step 3a/3b); the same
@@ -121,9 +116,9 @@ export function StudioEditor({ documentId, eventId }: { documentId: string; even
 
   const share = useCallback(async () => {
     if (!(await saveNow())) return false;
-    router.push(postFromDocumentHref(getId()));
     // This editor stays mounted in the background; coming back must not reopen the dialog.
     setDialog(null);
+    router.push(postFromDocumentHref(getId()));
     return true;
   }, [saveNow, getId, router]);
 
@@ -224,7 +219,7 @@ export function StudioEditor({ documentId, eventId }: { documentId: string; even
       autoFocusTitle={documentId === "baru"}
     />
   ) : (
-    <NotReady load={doc.load} onRetry={doc.reload} />
+    <EditorUnavailable load={doc.load} onRetry={doc.reload} backHref={STUDIO_HREF} />
   );
 
   return (
@@ -255,7 +250,7 @@ export function StudioEditor({ documentId, eventId }: { documentId: string; even
           onFocusMode={enterFocus}
         />
       )}
-      {eventId && (
+      {eventId && doc.load !== "archived" && (
         <EventEditorPanel
           eventId={eventId}
           documentId={documentId}

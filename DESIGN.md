@@ -313,7 +313,11 @@ Urutan dari atas, satu kolom 680px:
 
 ### 6.4 Daftar dokumen Studio
 
-Pola "Stories" Medium: tab Semua · Folder · Sampah. Butir: judul `heading-sm`, meta "Diubah 2 jam lalu · 1.240 kata", penanda teks kecil bergaris "Dibagikan" / "Dikirim ke proyek", ⋯ di kanan. Kosong: satu kalimat serif + tombol "Mulai menulis".
+Tab Semua · Arsip · Sampah. Folder tampil di tab Semua. Butir: judul `heading-sm`, meta "Diubah 2 jam lalu · 1.240 kata", penanda teks kecil bergaris "Dibagikan" / "Dikirim ke proyek", ⋯ di kanan. Kosong: satu kalimat serif + tombol "Mulai menulis".
+
+Jenis dokumen opsional tampil sebagai teks kecil. Tag tampil sebagai pil monokrom yang berbaris ulang saat ruang sempit. Menu ⋯ membuka dialog **Jenis dan tag**, dengan pemilih jenis, satu isian untuk menambah tag, dan tombol lepas per tag. Tombol Simpan menjadi satu-satunya aksi terisi di dialog. Daftar aktif memiliki pemilih Jenis dokumen dan Tag yang tersimpan di alamat. Saat disaring dari tingkat teratas, hasil lintas folder menyebut nama folder pada barisnya. Di dalam folder, penyaring hanya berlaku pada folder itu. Hasil kosong memberi aksi **Hapus penyaring**. Bila baris keluar dari hasil setelah simpan, fokus berpindah ke pesan hasil. **[usulan]**
+
+Aksi Arsipkan dan Duplikat ada di menu ⋯ dokumen aktif. Tab Arsip memakai baris yang sama dengan waktu pengarsipan, jumlah kata, dan nama folder bila ada. Pulihkan berupa tombol teks. Saat kosong, tampilkan “Arsip kosong.” dan “Lihat semua dokumen”. Status aksi menerima fokus setelah baris hilang. Setelah duplikat berhasil, tampilkan tautan Buka salinan. Tautan editor ke dokumen arsip menampilkan pesan singkat dan Buka Arsip.
 
 ### 6.5 Profil penulis
 

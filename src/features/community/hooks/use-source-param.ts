@@ -2,14 +2,15 @@
 
 import { useEffect, useState, type Dispatch } from "react";
 import type { DocumentStore } from "@/features/studio/storage/document-store";
+import { isArchivedDocument } from "@/features/studio/document-archive";
 import type { ComposeAction } from "../compose-state";
 import { blocksFromDocument } from "../doc-blocks";
 
 /**
  * What became of the document named in the address (`/tulis?dokumen=`): still loading, chosen as the
- * source, or why it could not be (not there or in Sampah, nothing written in it, could not be read).
+ * source, or why it could not be selected.
  */
-export type SourceParam = "none" | "loading" | "ready" | "gone" | "empty" | "error";
+export type SourceParam = "none" | "loading" | "ready" | "gone" | "archived" | "empty" | "error";
 
 /**
  * Opens "Tulis postingan" with a Studio document already chosen (STD-10). Only the document is
@@ -30,6 +31,7 @@ export function useSourceParam(
       .then((doc) => {
         if (cancelled) return;
         if (!doc || doc.deletedAt) return setState("gone");
+        if (isArchivedDocument(doc)) return setState("archived");
         const blocks = blocksFromDocument(doc.content);
         if (blocks.length === 0) return setState("empty");
         dispatch({
