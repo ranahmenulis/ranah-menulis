@@ -1,6 +1,7 @@
 import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { ToastProvider } from "@/components/ui/toast";
+import { resetAccount, saveAccount } from "@/features/account/account-store";
 import { dayKey } from "@/features/studio/daily-progress";
 import { addDays } from "@/features/studio/streak";
 import { LiveList } from "@/features/studio/components/documents/document-lists";
@@ -13,6 +14,36 @@ vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn(), back: vi.
 
 beforeAll(installDialogShim);
 afterEach(cleanup);
+
+it("labels a target as due today on the account day", () => {
+  vi.stubEnv("TZ", "UTC");
+  vi.useFakeTimers();
+  vi.setSystemTime(new Date("2026-11-19T17:30:00Z"));
+  saveAccount({ profile: { timeZone: "Asia/Jakarta" } });
+  try {
+    const due = "2026-11-20";
+    const list = listOf([{ ...doc("a", "Naskah"), targets: [{ id: "t", words: 500, due }] }]);
+    list.loadedAt = Date.now();
+    render(
+      <ToastProvider>
+        <LiveList
+          list={list}
+          folderId={null}
+          folderName={null}
+          onOpenFolder={vi.fn()}
+          onArchiveAction={vi.fn()}
+          onPending={vi.fn()}
+        />
+      </ToastProvider>,
+    );
+    expect(rowOf("Naskah").textContent).toContain("tenggat hari ini");
+  } finally {
+    cleanup();
+    resetAccount();
+    vi.useRealTimers();
+    vi.unstubAllEnvs();
+  }
+});
 
 const doc = (id: string, title: string): StudioDocument => ({
   id,
