@@ -68,7 +68,9 @@ describe("studio mockup markers", () => {
   });
 
   it("pair every marked legend entry with its pin, matching the rules in globals.css", () => {
-    const { container } = render(<WritingExperience copy={landing.studio} />);
+    const { container } = render(
+      <WritingExperience copy={landing.studio} images={landing.images} />,
+    );
     const entries = Array.from(container.querySelectorAll("li[data-marker-for]"));
     const marked = entries.map((li) => li.getAttribute("data-marker-for"));
     // globals.css ("Studio legend") names these four by hand.
@@ -98,7 +100,7 @@ describe("publishing", () => {
 
 describe("writing experience", () => {
   it("shows the six feature tiles and marks templates as coming later", () => {
-    render(<WritingExperience copy={landing.studio} />);
+    render(<WritingExperience copy={landing.studio} images={landing.images} />);
     const tiles = screen.getAllByRole("heading", { level: 3 });
     expect(tiles).toHaveLength(6);
     const template = screen.getByRole("heading", { name: "Template Menulis" }).closest("li")!;
@@ -108,17 +110,18 @@ describe("writing experience", () => {
   });
 
   it("sends the Studio call to action to sign-up", () => {
-    render(<WritingExperience copy={landing.studio} />);
+    render(<WritingExperience copy={landing.studio} images={landing.images} />);
     const cta = screen.getByRole("link", { name: /Coba Ranah Studio Sekarang/ });
     expect(cta.getAttribute("href")).toBe("/daftar");
   });
 });
 
 describe("closing section", () => {
-  it("uses the opposite theme so it always stands apart from the page", () => {
+  it("always uses the dark tokens, in both themes", () => {
     const { container } = render(<Waitlist waitlist={landing.waitlist} />);
     const section = container.querySelector("#daftar")!;
-    expect(section.classList.contains("theme-invert")).toBe(true);
+    expect(section.classList.contains("theme-dark")).toBe(true);
+    expect(section.classList.contains("theme-invert")).toBe(false);
     expect(section.hasAttribute("data-theme")).toBe(false);
   });
 

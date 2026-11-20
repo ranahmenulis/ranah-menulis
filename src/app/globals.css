@@ -89,8 +89,10 @@
 }
 
 /* Bagian yang dibalik (daftar tunggu di landing): memakai set token tema lawan, sehingga
-   input, chip, fokus, galat, dan logo tetap terbaca. Ikut tema yang sedang berlaku. */
-.theme-invert {
+   input, chip, fokus, galat, dan logo tetap terbaca. Ikut tema yang sedang berlaku.
+   .theme-dark selalu memakai set gelap di kedua tema (pita penutup landing, 20 November 2026). */
+.theme-invert,
+.theme-dark {
   --canvas: #121212;
   --surface: #1a1a1a;
   --subtle: #232323;
@@ -185,6 +187,7 @@
 
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-serif: var(--font-merriweather), Georgia, serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, Consolas, monospace;
 
   /* Interface sans scale (DESIGN.md 4.2). Overrides the Tailwind scale. */
   --text-xs: 0.8125rem;
@@ -502,8 +505,8 @@
 .lp-word {
   display: inline-block;
   overflow: clip;
-  padding-block: 0.06em 0.14em;
-  margin-block: -0.06em -0.14em;
+  padding: 0.06em 0.06em 0.14em;
+  margin: -0.06em -0.06em -0.14em;
   vertical-align: top;
 }
 .lp-word > span {
@@ -597,6 +600,116 @@ html.lp-motion .lp-marker {
   from {
     transform: scaleX(0);
   }
+}
+
+/* ------------------------------------------------------------------------------------------
+   Landing plates (DESIGN.md 4.6, landing exception of 20 Nov 2026): public-domain engravings and
+   photographs, always monochrome. The hero title, the plates' dark-mode treatment, and the drift
+   transforms. The drift variables (--par, --sc, --lift, --dy, --ds) are written by
+   motion/scroll-drift.ts only when lp-motion is on; unset, every plate stands at rest.
+   ------------------------------------------------------------------------------------------ */
+
+/* Hero C2: Inter 700 in three lines, the middle one in the Merriweather italic. */
+.lp-hero-title {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: min(9.4vw, 2.75rem);
+  line-height: 1;
+  letter-spacing: -0.055em;
+  @media (width >= 48rem) {
+    font-size: clamp(2.75rem, 8.1vw, 7.375rem);
+    line-height: 0.92;
+  }
+}
+.lp-hero-serif {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 300;
+  font-size: 0.9em;
+  letter-spacing: -0.035em;
+}
+
+.lp-photo {
+  filter: grayscale(1) contrast(1.18) brightness(0.98);
+  display: block;
+}
+/* A plate on white paper: multiplied in light mode so the paper melts into the page. In dark mode
+   no plate is inverted or blended (user decision, 20 Nov 2026): it stays as it is. */
+.lp-plate {
+  mix-blend-mode: multiply;
+}
+:root[data-theme="dark"] .lp-plate {
+  mix-blend-mode: normal;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .lp-plate {
+    mix-blend-mode: normal;
+  }
+}
+
+/* Dark landing: the artifact's deeper black (#0c0c0c, hairlines #262626) instead of the app's
+   #121212, so the plates and the closing band read with more contrast. Scoped to the landing
+   (.lp-root is the wrapper in app/page.tsx); the app's dark tokens are untouched. */
+:root[data-theme="dark"]:has(.lp-root) {
+  --canvas: #0c0c0c;
+  --subtle: #1a1a1a;
+  --line: #262626;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):has(.lp-root) {
+    --canvas: #0c0c0c;
+    --subtle: #1a1a1a;
+    --line: #262626;
+  }
+}
+.lp-root .theme-dark {
+  --canvas: #0c0c0c;
+  --subtle: #1a1a1a;
+  --line: #262626;
+}
+
+/* Hero band: the engraving fades in from the top (the mask is on the band's picture box, so it
+   stays put while the image drifts inside it) and the editor sits over it. */
+.lp-relief {
+  mask-image: linear-gradient(to bottom, transparent 0, #000 34%);
+}
+.lp-relief img {
+  transform: translateY(var(--par, 0px)) scale(var(--sc, 1.1));
+  will-change: transform;
+}
+.lp-device {
+  transform: translateY(var(--lift, 0px));
+  will-change: transform;
+}
+/* Radius and shadow here are a deliberate exception to "only rounded-full or none" and "no new
+   shadows" (user decision, 20 Nov 2026): the editor is a device lifted off the engraving. */
+.lp-device-frame {
+  border-radius: 14px;
+  box-shadow: 0 40px 90px -30px rgb(0 0 0 / 0.5);
+}
+
+/* A plate behind content: absolute, behind it, drifting against the page. */
+.lp-drift {
+  position: absolute;
+  z-index: -2;
+}
+.lp-drift > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: translateY(var(--dy, 0px)) scale(var(--ds, 1.08));
+  will-change: transform;
+}
+.lp-press-shade {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(to top, rgb(0 0 0 / 0.55), rgb(0 0 0 / 0.05) 60%);
+}
+.lp-moon {
+  opacity: 0.7;
+  mask-image: linear-gradient(to left, #000 35%, transparent 95%);
 }
 
 /* The badge in the Terbit preview arrives with a short pop when its state changes. */

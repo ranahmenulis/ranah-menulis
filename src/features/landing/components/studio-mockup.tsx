@@ -9,6 +9,7 @@ import {
   TextItalic,
 } from "@phosphor-icons/react/dist/ssr";
 import { Monogram } from "@/components/ui/logo";
+import { cn } from "@/lib/cn";
 import { VisibilityTag } from "@/components/ui/visibility-tag";
 import { format, useLocale, useT } from "@/lib/i18n/provider";
 import { textStats } from "@/lib/text-stats";
@@ -59,10 +60,11 @@ export function StudioMockup() {
         </span>
         <Marker n={MARKERS.format} />
       </div>
-      <div className="mx-auto max-w-170 px-4 py-8 md:px-6 md:py-14">
-        <p className="mb-6 read-title">{doc.title}</p>
-        {doc.page.map((p) => (
-          <p key={p} className="mb-[1.4em] read-body text-ink-read">
+      <div className="mx-auto max-w-170 px-5 py-8 md:px-6 md:py-14">
+        <p className="mb-4 read-title md:mb-6">{doc.title}</p>
+        {doc.page.map((p, i) => (
+          // One paragraph on a phone: the page is a sample, and the legend below does the telling.
+          <p key={p} className={cn("mb-[1.4em] read-body text-ink-read", i > 0 && "max-md:hidden")}>
             {p}
           </p>
         ))}

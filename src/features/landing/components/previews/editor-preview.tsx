@@ -48,10 +48,11 @@ export function EditorPreview() {
         </span>
       </div>
       <div className="px-4 py-5 md:p-7">
-        <p className="mb-4 font-serif text-[28px] leading-9 font-semibold tracking-[-0.015em]">
+        {/* The Studio section right below shows the full page, so a phone skips the repeated title. */}
+        <p className="mb-4 font-serif text-[28px] leading-9 font-semibold tracking-[-0.015em] max-md:hidden">
           {doc.title}
         </p>
-        <p className="font-serif text-lg leading-[29px]">
+        <p className="font-serif text-[15px] leading-[25px] md:text-lg md:leading-[29px]">
           {BASE}
           <span
             className={cn("transition-opacity duration-150 ease-out", resetting && "opacity-40")}

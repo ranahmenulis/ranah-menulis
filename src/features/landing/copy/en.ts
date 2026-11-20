@@ -20,7 +20,8 @@ export const landing: typeof source = {
   },
   hero: {
     eyebrow: "Digital Writing Ecosystem",
-    title: "A Digital Home for Every Story. Start With Us.",
+    titleLines: ["A Digital Home for", "Every Story.", "Start With Us."],
+    colophon: "Indonesia · Malaysia",
     lead: "Find a place to write, grow your craft, connect with a community, and publish your work with RanahMenulis.",
     cta: "Join the waitlist",
     secondary: "Explore the Ecosystem",
@@ -29,6 +30,10 @@ export const landing: typeof source = {
     saving: "Saving…",
     saved: "Saved 2:02 PM",
     words: "words",
+  },
+  images: {
+    holbein: "Study of the hands of Erasmus writing, a drawing by the young Hans Holbein.",
+    keladi: "Engraving of a potted caladium plant, from The American Florist magazine, 1886.",
   },
   doc: {
     title: "What Grandma Waited For Beneath the Water Apple Tree",
@@ -106,6 +111,8 @@ export const landing: typeof source = {
     eyebrow: "Ranah Studio",
     title: "Your Focused, Comfortable Place to Write.",
     lead: "Write, develop, and finish your work in Ranah Studio. A professional workspace for writers.",
+    featuresLabel: "Ranah Studio features",
+    swipe: "Swipe",
     mockup:
       "Ranah Studio editor: a title and two paragraphs, a simple format bar, word and character counts, reading time, and today's goal at 320 of 500 words.",
     characters: "characters",

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { cn } from "@/lib/cn";
 import { markLandingReady, motionAllowed } from "../motion/motion-env";
 
 const LINE_GAP_MS = 80;
@@ -27,16 +28,24 @@ function numberLines(title: HTMLElement): number {
  * moment). The server HTML is the standing title; CSS hides the words only while `html.lp-motion`
  * is on and the section has no `data-entered` yet, so without script, under reduced motion, or
  * without IntersectionObserver nothing waits.
+ *
+ * The title is either one `text` that wraps where the browser wraps it, or `lines` that are set on
+ * their own line each (the hero), optionally with a class per line. Either way the heading reads
+ * as one sentence.
  */
 export function EnterTitle({
   id,
   text,
+  lines,
+  lineClasses,
   className,
   as: Tag = "h1",
   trigger = "load",
 }: {
   id: string;
-  text: string;
+  text?: string;
+  lines?: readonly string[];
+  lineClasses?: readonly string[];
   className: string;
   as?: "h1" | "h2";
   trigger?: "load" | "view";
@@ -73,17 +82,30 @@ export function EnterTitle({
     return () => cancelAnimationFrame(frame);
   }, [trigger]);
 
-  const words = text.split(" ");
   return (
     <Tag id={id} ref={ref} className={className}>
-      {words.map((word, i) => (
-        <span key={i}>
-          <span data-word className="lp-word">
-            <span>{word}</span>
+      {lines ? (
+        lines.map((line, i) => (
+          <span key={i} className={cn("block", lineClasses?.[i])}>
+            <Words text={line} />
+            {i < lines.length - 1 && " "}
           </span>
-          {i < words.length - 1 && " "}
-        </span>
-      ))}
+        ))
+      ) : (
+        <Words text={text ?? ""} />
+      )}
     </Tag>
   );
+}
+
+function Words({ text }: { text: string }) {
+  const words = text.split(" ");
+  return words.map((word, i) => (
+    <span key={i}>
+      <span data-word className="lp-word">
+        <span>{word}</span>
+      </span>
+      {i < words.length - 1 && " "}
+    </span>
+  ));
 }

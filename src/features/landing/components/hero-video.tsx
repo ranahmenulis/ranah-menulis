@@ -63,7 +63,15 @@ function Poster({ locale, theme }: { locale: Locale; theme: Theme }) {
   );
 }
 
-export function HeroVideo({ label }: { label: string }) {
+export function HeroVideo({
+  label,
+  className,
+  figureClassName,
+}: {
+  label: string;
+  className?: string;
+  figureClassName?: string;
+}) {
   const { previews } = useT().landing;
   const locale = useLocale();
   const [theme] = useTheme();
@@ -99,12 +107,15 @@ export function HeroVideo({ label }: { label: string }) {
   }, [inView, paused, src]);
 
   return (
-    <div className="relative mt-14 md:col-span-12 md:mt-24">
+    <div className={cn("relative", className)}>
       <figure
         ref={frame}
         role="img"
         aria-label={label}
-        className="relative m-0 aspect-[4/5] overflow-hidden border border-line bg-subtle md:aspect-[16/10]"
+        className={cn(
+          "relative m-0 aspect-[4/5] overflow-hidden border border-line bg-subtle md:aspect-[16/10]",
+          figureClassName,
+        )}
       >
         <Poster locale={locale} theme="light" />
         <Poster locale={locale} theme="dark" />

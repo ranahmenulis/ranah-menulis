@@ -26,19 +26,25 @@ const heroScript = `(function(){var d=document.documentElement;if(window.matchMe
 export default async function Home() {
   const { landing } = await getDictionary();
   return (
-    <>
+    // `lp-root` marks the landing for its dark-mode canvas (globals.css, "Dark landing");
+    // `contents` keeps the wrapper out of the body's flex layout.
+    <div className="lp-root contents">
       <script dangerouslySetInnerHTML={{ __html: heroScript }} />
       <TopBar />
       <main>
-        <Hero copy={landing.hero} />
+        <Hero
+          copy={landing.hero}
+          pillars={landing.waitlist.pillars}
+          pillarsLabel={landing.waitlist.pillarsLabel}
+        />
         <SocialProof copy={landing.socialProof} />
         <Ecosystem copy={landing.ecosystem} />
-        <WritingExperience copy={landing.studio} />
+        <WritingExperience copy={landing.studio} images={landing.images} />
         <Publishing copy={landing.publishing} />
-        <Faq title={landing.faqTitle} items={landing.faq} />
+        <Faq title={landing.faqTitle} items={landing.faq} images={landing.images} />
         <Waitlist waitlist={landing.waitlist} />
       </main>
       <Footer copy={landing} />
-    </>
+    </div>
   );
 }

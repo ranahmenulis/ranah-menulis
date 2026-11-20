@@ -32,7 +32,9 @@ export function CommunityPreview() {
           <b className="font-medium">{c.author}</b>
           <span className="text-ink-muted">· {c.time}</span>
         </div>
-        <p className="font-serif text-base leading-[26px] text-ink-read">{c.excerpt}</p>
+        <p className="font-serif text-[15px] leading-6 text-ink-read max-md:line-clamp-2 md:text-base md:leading-[26px]">
+          {c.excerpt}
+        </p>
         <span className="text-xs text-ink-muted">{c.meta}</span>
         <div className="flex items-center gap-5 text-xs text-ink-muted tabular-nums">
           <span className="inline-flex items-center gap-1.5">
