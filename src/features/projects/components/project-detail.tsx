@@ -13,6 +13,7 @@ import type { SubmissionStore } from "../storage/submission-store";
 import { useSubmissions } from "../use-submissions";
 import { useProjects } from "../use-projects";
 import type { Project, ProjectFixture, ProjectState } from "../types";
+import { ClassTestimonials } from "../kelas/components/class-testimonials";
 import { CategoryBlockView, Section } from "./category-blocks";
 import { ProjectAside } from "./project-aside";
 import { ProjectDetailSkeleton, ProjectGone } from "./projects-states";
@@ -129,6 +130,7 @@ export function ProjectDetail({ slug, source, store }: Props) {
 
           <CategoryBlockView block={project.block} />
           <Schedule project={project} state={state} />
+          {project.block.kind === "kelas" && <ClassTestimonials slug={project.slug} />}
 
           <Section title="Hak cipta dan ketentuan">
             <p className="text-base">

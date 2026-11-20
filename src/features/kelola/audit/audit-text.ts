@@ -49,6 +49,8 @@ const SENTENCES: Record<AuditAction, (p: Parts) => string> = {
   "group.post.hide": (p) => `${p.actor} menyembunyikan tulisan ${p.target} dari ${p.label}.`,
   "event.create": (p) => `${p.actor} membuat event ${p.label}.`,
   "event.update": (p) => `${p.actor} mengubah pengaturan event ${p.label}.`,
+  "testimonial.hide": (p) => `${p.actor} menyembunyikan testimoni ${p.label} di ${p.project}.`,
+  "testimonial.restore": (p) => `${p.actor} memulihkan testimoni ${p.label} di ${p.project}.`,
 };
 
 /** One sentence per entry, from the actor's side: "Super Admin memberi Editor kepada Hafiz". */

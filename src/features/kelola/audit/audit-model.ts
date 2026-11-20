@@ -48,6 +48,8 @@ const KIND_OF: Record<AuditAction, Exclude<AuditKind, "semua">> = {
   "group.post.hide": "grup",
   "event.create": "event",
   "event.update": "event",
+  "testimonial.hide": "moderasi",
+  "testimonial.restore": "moderasi",
 };
 
 export const parseAuditKind = (raw: string | null): AuditKind =>
