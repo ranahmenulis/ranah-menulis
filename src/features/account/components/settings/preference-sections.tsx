@@ -5,6 +5,7 @@ import { Field, Select } from "@/components/ui/field";
 import { LOCALES, type Locale } from "@/lib/i18n/config";
 import { useChangeLocale, useLocale, useT } from "@/lib/i18n/provider";
 import { saveAccount, type Account, type AccountPrefs } from "../../account-store";
+import { NotificationPreferences } from "./notification-preferences";
 import { SettingsSection } from "./settings-section";
 
 export function LanguageSection() {
@@ -49,24 +50,7 @@ export function PreferenceSections({ prefs }: { prefs: Account["prefs"] }) {
           onChange={(event) => set({ showStreak: event.target.checked })}
         />
       </SettingsSection>
-      <SettingsSection
-        id="notifications"
-        title={settings.notifications.title}
-        subtitle={settings.notifications.subtitle}
-      >
-        <div className="grid gap-4">
-          <CheckChoice
-            label={settings.notifications.comments}
-            checked={prefs.emailComments}
-            onChange={(event) => set({ emailComments: event.target.checked })}
-          />
-          <CheckChoice
-            label={settings.notifications.projects}
-            checked={prefs.emailProjects}
-            onChange={(event) => set({ emailProjects: event.target.checked })}
-          />
-        </div>
-      </SettingsSection>
+      <NotificationPreferences prefs={prefs.notifications} />
     </>
   );
 }

@@ -1,5 +1,12 @@
 "use client";
 
+import {
+  DEFAULT_NOTIFICATION_PREFS,
+  mergeNotificationPrefs,
+  parseNotificationPrefs,
+  type NotificationPrefs,
+  type NotificationPrefsPatch,
+} from "@/features/notifications/preferences";
 import { useMemo, useSyncExternalStore } from "react";
 import { GENRES, type Genre } from "@/features/community/types";
 import { DEFAULT_TIME_ZONE, isTimeZone, type Country } from "./timezones";
@@ -23,10 +30,8 @@ export type AccountProfile = {
 };
 
 export type AccountPrefs = {
-  /** Mail about comments and replies (PRD 20: a summary, can be turned off). */
-  emailComments: boolean;
-  /** Mail that is not mandatory: deadline reminders and revisions sent. */
-  emailProjects: boolean;
+  /** Per event, in the app and by email, for those PRD 20 lets the reader turn off (PLT-11). */
+  notifications: NotificationPrefs;
   /** Whether the streak shows on the public profile. Private is the default (Brief). */
   showStreak: boolean;
   writing: WritingPreferences;
@@ -47,7 +52,10 @@ export type AccountPatch = {
   memberSince?: string;
   passwordChangedAt?: string | null;
   profile?: Partial<AccountProfile>;
-  prefs?: Partial<Omit<AccountPrefs, "writing">> & { writing?: Partial<WritingPreferences> };
+  prefs?: Partial<Omit<AccountPrefs, "writing" | "notifications">> & {
+    writing?: Partial<WritingPreferences>;
+    notifications?: NotificationPrefsPatch;
+  };
 };
 
 /**
@@ -68,8 +76,7 @@ export const DEFAULT_ACCOUNT: Account = {
     avatar: null,
   },
   prefs: {
-    emailComments: true,
-    emailProjects: true,
+    notifications: DEFAULT_NOTIFICATION_PREFS,
     showStreak: false,
     writing: DEFAULT_WRITING_PREFERENCES,
   },
@@ -111,8 +118,7 @@ export function parseAccount(raw: string | null): Account {
       avatar: typeof p.avatar === "string" && p.avatar.startsWith("data:image/") ? p.avatar : null,
     },
     prefs: {
-      emailComments: flag(f.emailComments, d.prefs.emailComments),
-      emailProjects: flag(f.emailProjects, d.prefs.emailProjects),
+      notifications: parseNotificationPrefs(f.notifications, f),
       showStreak: flag(f.showStreak, d.prefs.showStreak),
       writing: parseWritingPreferences(f.writing),
     },
@@ -130,6 +136,10 @@ export function mergeAccount(current: Account, patch: AccountPatch): Account {
       ...current.prefs,
       ...patch.prefs,
       writing: { ...current.prefs.writing, ...patch.prefs?.writing },
+      notifications: mergeNotificationPrefs(
+        current.prefs.notifications,
+        patch.prefs?.notifications,
+      ),
     },
   };
 }
