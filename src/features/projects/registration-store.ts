@@ -1,6 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
+import { cancellationLog } from "./cancellation-log";
 import { confirmPayment, isExpired } from "./payment-model";
 import type { Registration, RegistrationMap } from "./types";
 
@@ -86,7 +87,7 @@ export const readRegistrations = (): RegistrationMap => registrationsFor(snapsho
  * Saves one registration. A project is registered once: a second call for the same project (a
  * second tab, a repeated submit) keeps the first and changes nothing. The one exception is a
  * registration whose payment hold ran out: it is replaced, so the reader can try again [usulan].
- * Cancelling is a separate step (PRJ-06, free projects only) and does not exist yet.
+ * Cancelling is `cancelRegistration` (PRJ-06, free projects only).
  */
 export function saveRegistration(registration: Registration) {
   const current = parseRegistrations(snapshot());
@@ -110,6 +111,30 @@ export function settlePayment(
   const paid = registration ? confirmPayment(registration, now, by) : null;
   if (!paid) return false;
   write({ ...current, [slug]: paid });
+  return true;
+}
+
+/**
+ * Takes the registration away (its seat is free again) and notes it in the cancellation log, so
+ * the status stays on record. Whether it may be cancelled is decided by `cancel-flow.ts`, which
+ * reads everything again first. Returns false when there is nothing to cancel.
+ */
+export function cancelRegistration(slug: string, now: number): boolean {
+  const current = parseRegistrations(snapshot());
+  const registration = current[slug];
+  if (!registration) return false;
+  cancellationLog.write([
+    ...cancellationLog.read(),
+    {
+      slug,
+      registeredAt: registration.registeredAt,
+      cancelledAt: now,
+      packageName: registration.packageName,
+    },
+  ]);
+  const { [slug]: _removed, ...rest } = current;
+  void _removed;
+  write(rest);
   return true;
 }
 

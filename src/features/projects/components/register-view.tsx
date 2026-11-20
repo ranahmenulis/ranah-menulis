@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ComponentProps } from "react";
 import { useViewer } from "@/lib/viewer";
 import { projectState } from "../project-model";
 import { isExpired } from "../payment-model";
@@ -8,6 +8,7 @@ import { newRegistration } from "../registration-model";
 import { saveRegistration, useRegistrations } from "../registration-store";
 import { useProjects } from "../use-projects";
 import type { ProjectFixture } from "../types";
+import { CancelledNotice } from "./cancel-registration";
 import { RegisterForm } from "./register-form";
 import {
   RegisterBlocked,
@@ -21,6 +22,8 @@ type Props = {
   slug: string;
   /** Replaces the dummy catalog in tests. */
   source?: ProjectFixture[];
+  /** Replace the device's stores in tests. */
+  stores?: ComponentProps<typeof RegisterStatus>["stores"];
 };
 
 /**
@@ -28,11 +31,12 @@ type Props = {
  * your own registration first, then why you cannot register (guest, full, closed), else the form.
  * A draft or unknown address is "not found" like on the detail page.
  */
-export function RegisterView({ slug, source }: Props) {
+export function RegisterView({ slug, source, stores }: Props) {
   const data = useProjects(source);
   const guest = useViewer() === "tamu";
   const registrations = useRegistrations();
   const [justNow, setJustNow] = useState(false);
+  const [cancelled, setCancelled] = useState(false);
   // Set when the project turned out to be closed or full at the moment of submitting.
   const [late, setLate] = useState<"kuota-penuh" | "ditutup" | null>(null);
 
@@ -47,7 +51,15 @@ export function RegisterView({ slug, source }: Props) {
   const registration = own && !isExpired(own, data.now) ? own : undefined;
 
   if (registration) {
-    return <RegisterStatus project={project} registration={registration} justNow={justNow} />;
+    return (
+      <RegisterStatus
+        project={project}
+        registration={registration}
+        justNow={justNow}
+        onCancelled={() => setCancelled(true)}
+        stores={stores}
+      />
+    );
   }
   if (guest) {
     return (
@@ -67,6 +79,7 @@ export function RegisterView({ slug, source }: Props) {
 
   return (
     <RegisterShell project={project}>
+      {cancelled && <CancelledNotice />}
       <RegisterForm
         project={project}
         state={state}
@@ -79,6 +92,7 @@ export function RegisterView({ slug, source }: Props) {
             return;
           }
           saveRegistration(newRegistration(project, now, packageName));
+          setCancelled(false);
           setJustNow(true);
         }}
       />

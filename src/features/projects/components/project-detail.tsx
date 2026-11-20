@@ -103,6 +103,7 @@ export function ProjectDetail({ slug, source, store }: Props) {
               guest={guest}
               registration={liveRegistration(registrations[project.slug], data.now)}
               sentCount={sentCount}
+              stores={store ? { submissions: store } : undefined}
             />
           </div>
         </div>
