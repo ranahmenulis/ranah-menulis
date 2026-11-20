@@ -30,6 +30,7 @@ import { submissionStore } from "@/features/projects/storage/store";
 import { notifySubmissionsChanged } from "@/features/projects/storage/submission-events";
 import { submissionNotifications } from "@/features/projects/submission-notifications";
 import { useSubmissions } from "@/features/projects/use-submissions";
+import { useAccount } from "@/features/account/account-store";
 import { useViewer } from "@/lib/viewer";
 import {
   newestFirst,
@@ -37,6 +38,8 @@ import {
   unreadCount,
   withReadState,
 } from "./notification-model";
+import { eventOf } from "./notification-category";
+import { allowsInApp } from "./preferences";
 import { markRead, useReadIds } from "./read-state";
 import { mayActivateNotification, verifyNotification } from "./notification-access";
 import type { Notification } from "./types";
@@ -88,7 +91,8 @@ function useAllNotifications(
     tasks: mentorTasks,
     overrides,
   });
-  const items = useMemo(
+  const prefs = useAccount().prefs.notifications;
+  const everything = useMemo(
     () =>
       viewer === "tamu"
         ? NO_NOTIFICATIONS
@@ -134,6 +138,11 @@ function useAllNotifications(
       community.items,
       viewer,
     ],
+  );
+  // The reader's choices (PLT-11) apply here, so the list, the bell and Beranda always agree.
+  const items = useMemo(
+    () => everything.filter((n) => allowsInApp(prefs, eventOf(n))),
+    [everything, prefs],
   );
   const states = [works, assignments, soloRows, community];
   const loading = states.some((source) => source.status === "loading");

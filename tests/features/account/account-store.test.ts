@@ -84,12 +84,12 @@ describe("mergeAccount", () => {
   it("changes only what the patch names", () => {
     const next = mergeAccount(DEFAULT_ACCOUNT, {
       profile: { bio: "Baru" },
-      prefs: { emailComments: false },
+      prefs: { notifications: { comments: { email: false } } },
     });
     expect(next.profile.bio).toBe("Baru");
     expect(next.profile.name).toBe(DEFAULT_ACCOUNT.profile.name);
-    expect(next.prefs.emailComments).toBe(false);
-    expect(next.prefs.emailProjects).toBe(true);
+    expect(next.prefs.notifications.comments).toEqual({ app: true, email: false });
+    expect(next.prefs.notifications.deadline.email).toBe(true);
   });
 
   it("can set the password date back to null", () => {
@@ -146,11 +146,13 @@ describe("saveAccount and resetAccount", () => {
   });
 
   it("merges separate writing changes without overwriting other account preferences", () => {
-    saveAccount({ prefs: { emailComments: false, writing: { textSize: "large" } } });
+    saveAccount({
+      prefs: { notifications: { comments: { email: false } }, writing: { textSize: "large" } },
+    });
     saveAccount({ prefs: { writing: { wordCountPin: "target" } } });
     saveAccount({ prefs: { writing: { curlyQuotes: true } } });
     const account = parseAccount(localStorage.getItem("ranah.account"));
-    expect(account.prefs.emailComments).toBe(false);
+    expect(account.prefs.notifications.comments.email).toBe(false);
     expect(account.prefs.writing).toEqual({
       ...DEFAULT_WRITING_PREFERENCES,
       textSize: "large",

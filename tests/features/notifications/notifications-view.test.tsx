@@ -29,6 +29,19 @@ describe("NotificationsView", () => {
     expect(await screen.findByText("25 menit lalu")).toBeTruthy();
   });
 
+  it("leaves out what the reader turned off, and counts only what is shown", () => {
+    localStorage.setItem(
+      "ranah.account",
+      JSON.stringify({
+        prefs: { notifications: { comments: { app: false }, appreciation: { app: false } } },
+      }),
+    );
+    render(<NotificationsView />);
+    // Two replies, a mention and the appreciation are gone; the follower line is left.
+    expect(rows()).toHaveLength(1);
+    expect(screen.getByText(/mulai mengikutimu/)).toBeTruthy();
+  });
+
   it("marks unread lines for screen readers, and only those", () => {
     render(<NotificationsView />);
     expect(

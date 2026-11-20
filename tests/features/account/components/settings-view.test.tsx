@@ -36,7 +36,7 @@ describe("SettingsView", () => {
       "Bahasa",
       "Menulis",
       "Privasi",
-      "Notifikasi email",
+      "Notifikasi",
       "Keamanan",
       "Zona bahaya",
     ]) {
@@ -96,11 +96,21 @@ describe("SettingsView", () => {
     expect(streak.checked).toBe(true);
   });
 
-  it("saves the email preferences, which can be turned off", () => {
+  it("saves a notification choice at once, per event and channel", () => {
     wrap(<SettingsView />);
-    fireEvent.click(screen.getByRole("checkbox", { name: /Ringkasan komentar/ }));
-    expect(saved().prefs.emailComments).toBe(false);
-    expect(saved().prefs.emailProjects).toBe(true);
+    const group = screen.getByRole("group", { name: "Komentar dan balasan baru" });
+    fireEvent.click(within(group).getByRole("checkbox", { name: "Lewat email" }));
+    expect(saved().prefs.notifications.comments).toEqual({ app: true, email: false });
+    expect(saved().prefs.notifications.deadline).toEqual({ app: true, email: true });
+  });
+
+  it("offers only the channels an event has, and says what cannot be turned off", () => {
+    wrap(<SettingsView />);
+    const follow = screen.getByRole("group", { name: "Pengikut baru" });
+    expect(within(follow).queryByRole("checkbox", { name: "Lewat email" })).toBeNull();
+    const weekly = screen.getByRole("group", { name: "Email progres menulis mingguan" });
+    expect(within(weekly).queryByRole("checkbox", { name: "Di aplikasi" })).toBeNull();
+    expect(screen.getByText(/tidak bisa dimatikan/)).toBeTruthy();
   });
 
   it("switches the display language", async () => {
