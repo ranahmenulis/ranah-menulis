@@ -27,7 +27,10 @@ export function HeroBand({ label }: { label: string }) {
   }, []);
 
   return (
-    <div ref={ref} className="lp-band relative pb-14 md:pb-[clamp(56px,9vw,120px)]">
+    // `isolate`: the editor's z-10 only lifts it over the engraving inside this band. Without it the
+    // editor (later in the DOM) painted over the sticky top bar's z-10 and the phone menu sheets
+    // that live inside it.
+    <div ref={ref} className="lp-band relative isolate pb-14 md:pb-[clamp(56px,9vw,120px)]">
       <div className="lp-relief absolute inset-x-0 top-[26%] bottom-0 overflow-hidden md:top-[22%]">
         <Plate image={image} className="lp-photo h-[118%] w-full object-cover object-[50%_62%]" />
       </div>
