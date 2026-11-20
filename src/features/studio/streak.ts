@@ -65,18 +65,54 @@ export function summarizeStreak(
     cursor = addDays(cursor, -1);
   }
 
-  const metDays = [...words.keys()].filter(met).sort();
+  const runs = streakRuns(words, changes);
   let longest = null as StreakRun | null;
-  let run = null as StreakRun | null;
-  for (const day of metDays) {
-    const previous: StreakRun | null = run;
-    run =
-      previous && addDays(previous.end, 1) === day
-        ? { length: previous.length + 1, start: previous.start, end: day }
-        : { length: 1, start: day, end: day };
-    if (!longest || run.length > longest.length) longest = run;
+  for (const run of runs) if (!longest || run.length > longest.length) longest = run;
+  return { current, longest, last: runs.at(-1) ?? null };
+}
+
+/** Every run of consecutive met days, oldest first. */
+export function streakRuns(words: Map<string, number>, changes: TargetChange[]): StreakRun[] {
+  const met = metChecker(words, changes);
+  const runs: StreakRun[] = [];
+  for (const day of [...words.keys()].filter(met).sort()) {
+    const previous = runs.at(-1);
+    if (previous && addDays(previous.end, 1) === day) {
+      runs[runs.length - 1] = { length: previous.length + 1, start: previous.start, end: day };
+    } else {
+      runs.push({ length: 1, start: day, end: day });
+    }
   }
-  return { current, longest, last: run };
+  return runs;
+}
+
+/** A streak shorter than this is not kept in the history (usulan, mengikuti acuan Novlr). */
+export const MIN_HISTORY_STREAK = 2;
+
+export type PastStreak = StreakRun & { brokeOn: string; longest: boolean };
+
+/**
+ * Streaks that already ended, newest first (STK-09). The running streak is left out: it is the
+ * run ending today, or yesterday while today is still open. Derived from the daily log, so
+ * nothing is stored.
+ */
+export function pastStreaks(
+  words: Map<string, number>,
+  changes: TargetChange[],
+  today: string,
+): PastStreak[] {
+  const summary = summarizeStreak(words, changes, today);
+  const open = summary.current > 0 ? summary.last?.end : undefined;
+  const past = streakRuns(words, changes).filter(
+    (run) => run.end !== open && run.length >= MIN_HISTORY_STREAK,
+  );
+  return past
+    .map((run) => ({
+      ...run,
+      brokeOn: addDays(run.end, 1),
+      longest: run.start === summary.longest?.start,
+    }))
+    .reverse();
 }
 
 export type CalendarCell = { day: string; inMonth: boolean };

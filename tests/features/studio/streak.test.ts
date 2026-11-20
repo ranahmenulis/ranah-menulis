@@ -4,6 +4,7 @@ import {
   dayState,
   milestones,
   monthGrid,
+  pastStreaks,
   summarizeStreak,
   targetFor,
   weekStart,
@@ -117,5 +118,39 @@ describe("milestones", () => {
     expect(fourteen.achievedOn).toBeNull();
     expect(fourteen.remaining).toBe("7 hari lagi");
     expect(list.find((m) => m.id === "words-10000")!.remaining).toBe("6.500 kata lagi");
+  });
+});
+
+describe("pastStreaks", () => {
+  const w = words({
+    "2026-11-01": 600,
+    "2026-11-02": 600,
+    "2026-11-03": 600,
+    "2026-11-05": 600,
+    "2026-11-07": 600,
+    "2026-11-08": 600,
+    "2026-11-09": 100,
+  });
+
+  it("lists ended runs of 2+ days, newest first, with the day they broke", () => {
+    const past = pastStreaks(w, t500, "2026-11-12");
+    expect(past.map((r) => [r.start, r.end, r.length, r.brokeOn])).toEqual([
+      ["2026-11-07", "2026-11-08", 2, "2026-11-09"],
+      ["2026-11-01", "2026-11-03", 3, "2026-11-04"],
+    ]);
+    expect(past.map((r) => r.longest)).toEqual([false, true]);
+  });
+
+  it("leaves out the running streak, also while today is still open", () => {
+    const running = words({ "2026-11-01": 600, "2026-11-02": 600, "2026-11-03": 600 });
+    expect(pastStreaks(running, t500, "2026-11-03")).toEqual([]);
+    expect(pastStreaks(running, t500, "2026-11-04")).toEqual([]);
+    expect(pastStreaks(running, t500, "2026-11-05")).toHaveLength(1);
+  });
+
+  it("is empty without any ended streak and follows target changes", () => {
+    expect(pastStreaks(new Map(), t500, "2026-11-12")).toEqual([]);
+    const raised = [...t500, { from: "2026-11-02", value: 700 }];
+    expect(pastStreaks(w, raised, "2026-11-12")).toHaveLength(0);
   });
 });
