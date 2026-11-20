@@ -24,11 +24,13 @@ import { ProjectForm } from "./project-form";
 import { StaffTab } from "./staff-tab";
 import { StageTab, hasStages } from "./stage-tab";
 import { StatusActions } from "./status-actions";
+import { TestimonialsTab } from "./testimonials-tab";
 
 /** The tabs that depend on the project: payments only when it costs money, stages only for Solo and Lomba. */
 function shown(tab: ManageTab, project: Project): boolean {
   if (tab === "pembayaran") return takesPayment(project);
   if (tab === "tahap") return hasStages(project);
+  if (tab === "testimoni") return project.category === "kelas";
   return true;
 }
 
@@ -162,6 +164,7 @@ function TabBody({
         />
       )}
       {tab === "kiriman" && <WorksTab project={project} works={works} />}
+      {tab === "testimoni" && project.category === "kelas" && <TestimonialsTab project={project} />}
     </>
   );
 }

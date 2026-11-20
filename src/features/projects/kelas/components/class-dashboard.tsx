@@ -13,6 +13,7 @@ import { ClassAssignments } from "./class-assignments";
 import { ClassMaterials } from "./class-materials";
 import { ClassProgress } from "./class-progress";
 import { ClassSchedule } from "./class-schedule";
+import { TestimonialSection } from "./testimonial-section";
 import { backToProject, ClassBlocked } from "./class-states";
 
 type Props = {
@@ -65,6 +66,7 @@ export function ClassDashboard({ slug, source, classes, store }: Props) {
       <ClassSchedule content={content} now={now} zone={zone} />
       <ClassAssignments slug={slug} rows={rows} zone={zone} />
       <ClassMaterials content={content} done={done} started={started} zone={zone} />
+      <TestimonialSection slug={slug} rows={rows} started={started} store={store} />
     </MyShell>
   );
 }
