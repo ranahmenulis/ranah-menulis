@@ -7,6 +7,8 @@ import { MOTION_CLASS } from "@/features/landing/motion/motion-env";
 
 let phone = true;
 
+const position = () => document.querySelector("[data-legend-at]")?.textContent;
+
 beforeEach(() => {
   vi.stubGlobal("matchMedia", () => ({
     matches: phone,
@@ -26,7 +28,8 @@ describe("studio legend", () => {
     render(<StudioLegend copy={landing.studio} />);
     const list = screen.getByRole("list", { name: "Fitur Ranah Studio" });
     expect(list.querySelectorAll("li")).toHaveLength(6);
-    expect(screen.getByText("01 / 06")).toBeTruthy();
+    expect(position()).toBe("01");
+    expect(screen.getByText(/\/ 06/)).toBeTruthy();
     expect(screen.getByText("Geser →")).toBeTruthy();
     // A sideways scroller must be reachable by keyboard.
     expect(list.getAttribute("tabindex")).toBe("0");
@@ -46,17 +49,21 @@ describe("studio legend", () => {
     const list = screen.getByRole("list", { name: "Fitur Ranah Studio" });
     Object.defineProperty(list, "clientWidth", { value: 300, configurable: true });
     Object.defineProperty(list, "scrollWidth", { value: 1200, configurable: true });
-    Object.defineProperty(list.firstElementChild, "getBoundingClientRect", {
-      value: () => ({ width: 200 }),
+    // Cards 216 px apart; the row's edge sits at x = 0.
+    Array.from(list.children).forEach((card, i) => {
+      card.getBoundingClientRect = () => ({ left: i * 216 - list.scrollLeft }) as DOMRect;
     });
+    list.getBoundingClientRect = () => ({ left: 0 }) as DOMRect;
 
-    list.scrollLeft = 432; // two steps of 216
+    list.scrollLeft = 430; // near the third card
     act(() => void list.dispatchEvent(new Event("scroll")));
-    expect(screen.getByText("03 / 06")).toBeTruthy();
+    expect(position()).toBe("03");
+    // The number it left stays for the roll out.
+    expect(document.querySelector(".lp-roll-out")?.textContent).toBe("01");
 
     list.scrollLeft = 900;
     act(() => void list.dispatchEvent(new Event("scroll")));
-    expect(screen.getByText("06 / 06")).toBeTruthy();
+    expect(position()).toBe("06");
   });
 });
 

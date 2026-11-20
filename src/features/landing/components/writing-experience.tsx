@@ -5,6 +5,7 @@ import { LANDING_IMAGES } from "../assets";
 import { Eyebrow, Grid, Section, SectionTop, Wrap } from "./layout";
 import { Plate } from "./plate";
 import { PreviewFrame } from "./previews/preview-frame";
+import { Reveal } from "./reveal";
 import { StudioLegend } from "./studio-legend";
 import { StudioMockup } from "./studio-mockup";
 
@@ -33,13 +34,15 @@ export function WritingExperience({
               {copy.title}
             </h2>
             <div className="mt-4 grid content-start gap-5 md:col-span-4 md:col-start-9 md:mt-2">
-              <Plate
-                image={plate}
-                width={112}
-                height={150}
-                alt={images.holbein}
-                className="lp-photo h-[150px] w-28 object-cover object-[50%_30%]"
-              />
+              <Reveal kind="plate" className="w-28">
+                <Plate
+                  image={plate}
+                  width={112}
+                  height={150}
+                  alt={images.holbein}
+                  className="lp-photo h-[150px] w-28 object-cover object-[50%_30%]"
+                />
+              </Reveal>
               <p className="text-lg leading-7 text-pretty text-ink-muted">{copy.lead}</p>
             </div>
           </SectionTop>

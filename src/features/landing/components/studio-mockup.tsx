@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef, type CSSProperties } from "react";
 import {
   ListBullets,
   ListNumbers,
@@ -14,8 +15,11 @@ import { VisibilityTag } from "@/components/ui/visibility-tag";
 import { format, useLocale, useT } from "@/lib/i18n/provider";
 import { textStats } from "@/lib/text-stats";
 import { MARKERS } from "./studio-markers";
+import { useReveal } from "../motion/use-reveal";
 
 const TODAY_WORDS = 320;
+// Reading order of the pins on the mockup: format bar, target, counter, reading time.
+const PIN_ORDER: number[] = Object.values(MARKERS).sort((a, b) => a - b);
 
 // Only the formats STD-01 allows: bold, italic, subheading, quote, bullet and numbered lists.
 const tools = [TextB, TextItalic, TextH, Quotes, ListBullets, ListNumbers];
@@ -26,6 +30,7 @@ function Marker({ n }: { n: number }) {
     <span
       aria-hidden
       data-marker={n}
+      style={{ "--i": PIN_ORDER.indexOf(n) } as CSSProperties}
       className="lp-marker inline-grid size-5 shrink-0 place-items-center rounded-full bg-ink text-[11px] leading-none font-semibold text-on-ink tabular-nums"
     >
       {n}
@@ -39,9 +44,13 @@ export function StudioMockup() {
   const stats = textStats(doc.page);
   const numberLocale = useLocale() === "en" ? "en-US" : "id-ID";
   const n = (value: number) => value.toLocaleString(numberLocale);
+  const ref = useRef<HTMLDivElement>(null);
+  useReveal(ref);
 
   return (
-    <>
+    // The pins pop in one by one and the target bar fills once the mockup comes into view
+    // (globals.css, "Landing reveals"), so a phone without hover still sees what is annotated.
+    <div ref={ref} data-reveal="pins" className="lp-pins">
       <div className="flex h-14 items-center gap-3 border-b border-line px-4 md:gap-4 md:px-6">
         <Monogram height={20} />
         <span className="hidden max-w-[320px] truncate text-sm font-medium md:inline">
@@ -92,6 +101,6 @@ export function StudioMockup() {
           </span>
         </div>
       </div>
-    </>
+    </div>
   );
 }

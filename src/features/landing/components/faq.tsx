@@ -2,6 +2,7 @@ import type { Dictionary } from "@/lib/i18n/dictionaries";
 import { LANDING_IMAGES } from "../assets";
 import { Grid, Section, SectionTop, Wrap } from "./layout";
 import { Plate } from "./plate";
+import { Reveal } from "./reveal";
 
 /**
  * Every answer open, no accordion (design-taste-frontend: FAQs show every answer; nothing
@@ -27,11 +28,13 @@ export function Faq({
               <h2 id="faq-h" className="landing-h2">
                 {title}
               </h2>
-              <Plate
-                image={leaf}
-                alt={images.keladi}
-                className="lp-photo lp-plate h-auto w-full md:max-w-[300px]"
-              />
+              <Reveal kind="plate">
+                <Plate
+                  image={leaf}
+                  alt={images.keladi}
+                  className="lp-photo lp-plate h-auto w-full md:max-w-[300px]"
+                />
+              </Reveal>
             </div>
             <dl className="mt-6 border-t border-line md:col-span-7 md:col-start-6 md:mt-0">
               {items.map((f) => (
