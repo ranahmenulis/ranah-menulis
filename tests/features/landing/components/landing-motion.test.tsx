@@ -60,8 +60,9 @@ describe("landing without motion (no script, reduced motion)", () => {
   });
 
   it("keeps the hero title whole for assistive tech", () => {
-    render(<EnterTitle id="hero-h" text={landing.hero.title} className="display" />);
-    expect(screen.getByRole("heading", { level: 1 }).textContent).toBe(landing.hero.title);
+    const whole = landing.hero.titleLines.join(" ");
+    render(<EnterTitle id="hero-h" lines={landing.hero.titleLines} className="display" />);
+    expect(screen.getByRole("heading", { level: 1 }).textContent).toBe(whole);
   });
 
   it("leaves the closing title standing without waiting for it to be seen", () => {
@@ -73,7 +74,9 @@ describe("landing without motion (no script, reduced motion)", () => {
   });
 
   it("shows every FAQ answer open, without an accordion", () => {
-    const { container } = render(<Faq title={landing.faqTitle} items={landing.faq} />);
+    const { container } = render(
+      <Faq title={landing.faqTitle} items={landing.faq} images={landing.images} />,
+    );
     expect(container.querySelector("details")).toBeNull();
     for (const item of landing.faq) expect(screen.getByText(item.answer)).toBeTruthy();
   });

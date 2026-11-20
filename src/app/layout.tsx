@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Merriweather } from "next/font/google";
+import { Inter, JetBrains_Mono, Merriweather } from "next/font/google";
 import { Suspense } from "react";
 import { ToastProvider } from "@/components/ui/toast";
 import { I18nRoot } from "@/lib/i18n/i18n-root";
@@ -23,6 +23,14 @@ const serif = Merriweather({
   display: "swap",
 });
 
+// Landing colophon only (DESIGN.md 4.2, landing exception): a small mono line in the hero.
+const mono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-jetbrains-mono",
+  weight: ["400", "500"],
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: "RanahMenulis",
   description: "Ekosistem digital untuk menulis, komunitas literasi, dan penerbitan buku.",
@@ -38,7 +46,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="id"
       data-scroll-behavior="smooth"
       suppressHydrationWarning // the landing script adds lp-motion and the theme script data-theme before hydration
-      className={`${sans.variable} ${serif.variable} h-full antialiased`}
+      className={`${sans.variable} ${serif.variable} ${mono.variable} h-full antialiased`}
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />

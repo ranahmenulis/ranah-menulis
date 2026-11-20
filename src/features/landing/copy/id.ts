@@ -26,7 +26,9 @@ export const landing = {
   },
   hero: {
     eyebrow: "Digital Writing Ecosystem",
-    title: "Ruang Digital Untuk Setiap Ceritamu. Mulai Bersama Kami.",
+    // Three lines: the middle one is set in the serif italic (DESIGN.md 4.6, hero C2).
+    titleLines: ["Ruang Digital Untuk", "Setiap Ceritamu.", "Mulai Bersama Kami."],
+    colophon: "Indonesia · Malaysia",
     lead: "Temukan ruang untuk menulis, mengembangkan kemampuan, terhubung dengan komunitas, dan menerbitkan karyamu bersama RanahMenulis.",
     cta: "Gabung daftar tunggu",
     secondary: "Jelajahi Ekosistem",
@@ -35,6 +37,11 @@ export const landing = {
     saving: "Menyimpan…",
     saved: "Tersimpan 14.02",
     words: "kata",
+  },
+  // Alt text of the public-domain plates that carry meaning; the other three are decorative.
+  images: {
+    holbein: "Studi tangan Erasmus yang sedang menulis, gambar Hans Holbein muda.",
+    keladi: "Gravir tanaman keladi dalam pot, dari majalah The American Florist tahun 1886.",
   },
   // Sample manuscript shown in the hero and the previews.
   doc: {
@@ -114,6 +121,8 @@ export const landing = {
     eyebrow: "Ranah Studio",
     title: "Ruang Menulismu yang Fokus dan Nyaman.",
     lead: "Tulis, kembangkan, dan selesaikan karyamu di Ranah Studio. Workspace profesional untuk penulis.",
+    featuresLabel: "Fitur Ranah Studio",
+    swipe: "Geser",
     mockup:
       "Editor Ranah Studio: judul dan dua paragraf, bilah format sederhana, jumlah kata dan karakter, waktu baca, dan target hari ini 320 dari 500 kata.",
     characters: "karakter",
