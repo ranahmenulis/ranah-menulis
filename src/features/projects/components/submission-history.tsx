@@ -1,5 +1,5 @@
 import { StatusSubmission } from "@/components/ui/status-submission";
-import { formatNumber } from "../project-model";
+import { versionSizeText } from "../submission-text";
 import { sentAtText } from "../submission-text";
 import type { StatusChange, Submission, SubmissionVersion } from "../submission-types";
 import { Section } from "./category-blocks";
@@ -43,7 +43,7 @@ function VersionRow({ version, latest }: { version: SubmissionVersion; latest: b
         {latest && <span className="text-ink-muted"> · terbaru</span>}
         <span className="text-ink-muted">
           {" "}
-          · {formatNumber(version.wordCount)} kata · dibekukan {sentAtText(version.frozenAt)}
+          · {versionSizeText(version)} · dibekukan {sentAtText(version.frozenAt)}
         </span>
       </p>
       <p className="text-xs text-ink-muted">

@@ -1,7 +1,7 @@
 import type { JSONContent } from "@tiptap/react";
 import { docStats } from "@/features/studio/editor-stats";
-import { sha256Hex } from "@/lib/sha256";
-import type { SubmissionVersion } from "./submission-types";
+import { sha256Bytes, sha256Hex } from "@/lib/sha256";
+import type { SubmissionVersion, VersionFile } from "./submission-types";
 
 /** JSON with object keys sorted, so the same content always gives the same hash. */
 export function canonicalJson(value: unknown): string {
@@ -30,5 +30,25 @@ export function freezeVersion(content: JSONContent, now: number, version = 1): S
     wordCount: docStats(copy).words,
     hash: sha256Hex(canonicalJson(copy)),
     frozenAt: now,
+  };
+}
+
+/**
+ * A version that is an uploaded file. The text is not read (PDF and DOCX are only kept), so the
+ * word count is 0 and the hash is of the bytes: the same file always has the same hash.
+ */
+export function freezeFile(
+  file: VersionFile,
+  bytes: Uint8Array,
+  now: number,
+  version = 1,
+): SubmissionVersion {
+  return {
+    version,
+    content: { type: "doc", content: [] },
+    wordCount: 0,
+    hash: sha256Bytes(bytes),
+    frozenAt: now,
+    file,
   };
 }

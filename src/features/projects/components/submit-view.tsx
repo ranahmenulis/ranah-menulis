@@ -12,6 +12,7 @@ import Link from "next/link";
 import { useDocumentList } from "@/features/studio/hooks/use-document-list";
 import type { DocumentStore, StudioDocument } from "@/features/studio/storage/document-store";
 import { studioStore } from "@/features/studio/storage/store";
+import type { FileStore } from "@/lib/files/file-store";
 import { useViewer } from "@/lib/viewer";
 import { liveRegistration } from "../payment-model";
 import { useRegistrations } from "../registration-store";
@@ -42,6 +43,7 @@ type Props = {
   source?: ProjectFixture[];
   store?: SubmissionStore;
   documents?: DocumentStore;
+  files?: FileStore;
 };
 
 function ArchivedSourceNotice({ id, docs }: { id: string | null; docs: StudioDocument[] }) {
@@ -68,6 +70,7 @@ export function SubmitView({
   source,
   store = submissionStore,
   documents = studioStore,
+  files,
 }: Props) {
   const data = useProjects(source);
   const guest = useViewer() === "tamu";
@@ -122,7 +125,14 @@ export function SubmitView({
   if (!registration) return null;
 
   const send = async (form: SubmitForm): Promise<SendResult> => {
-    const result = await sendSubmission({ project, registration, form, documents, store });
+    const result = await sendSubmission({
+      project,
+      registration,
+      form,
+      documents,
+      store,
+      files,
+    });
     if (result.kind === "sent") setJustSent(result.submission);
     return result;
   };
@@ -138,6 +148,7 @@ export function SubmitView({
         docs={list.docs.filter(isActiveDocument).sort((a, b) => b.updatedAt - a.updatedAt)}
         sent={mine}
         documentId={requestedDocumentId}
+        files={files}
         onSend={send}
       />
       <SentWorks works={mine} />

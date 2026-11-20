@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { CheckChoice } from "@/components/ui/choice";
 import { ErrorBanner, Notice } from "@/components/ui/states";
+import type { FileStore } from "@/lib/files/file-store";
 import type { StudioDocument } from "@/features/studio/storage/document-store";
 import { useSubmitForm } from "../hooks/use-submit-form";
 import { formatNumber, projectState } from "../project-model";
@@ -16,6 +17,7 @@ import type { SendResult } from "../submit-flow";
 import type { Project } from "../types";
 import { Section } from "./category-blocks";
 import { SubmitDocumentPicker } from "./submit-document-picker";
+import { ManuscriptUpload } from "./manuscript-upload";
 import { SubmitInfoFields } from "./submit-info-fields";
 
 type Props = {
@@ -28,6 +30,7 @@ type Props = {
   sent: Submission[];
   /** The document named in the address (`?dokumen=`), if any. */
   documentId: string | null;
+  files?: FileStore;
   onSend: (form: SubmitForm) => Promise<SendResult>;
 };
 
@@ -86,6 +89,15 @@ export function SubmitFormScreen(props: Props) {
           describedBy={docError ? "kirim-doc-error" : undefined}
           invalid={Boolean(docError)}
         />
+        {project.block.kind === "solo" && (
+          <ManuscriptUpload
+            upload={f.form.upload}
+            uploading={f.uploading}
+            error={f.uploadError}
+            onPick={(file) => void f.pickFile(file)}
+            onClear={f.clearFile}
+          />
+        )}
         {f.doc && !docError && (
           <p className="text-sm text-ink-muted">
             {formatNumber(wordsOf(f.doc))} kata, sesuai batas {wordRuleText(rules)}.

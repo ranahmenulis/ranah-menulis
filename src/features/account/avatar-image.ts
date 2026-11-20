@@ -1,7 +1,7 @@
 const SIZE = 256;
 
 /**
- * Turns the chosen photo into a small square JPEG data URL (centre crop) so it fits in
+ * Turns the chosen photo into a small square WebP data URL (centre crop) so it fits in
  * localStorage. Rejects when the file is not a readable image; the caller shows that as the photo
  * type error. The photo never leaves the device while accounts are dummy.
  */
@@ -14,7 +14,7 @@ export async function fileToAvatar(file: File): Promise<string> {
     canvas.height = SIZE;
     const context = canvas.getContext("2d");
     if (!context) throw new Error("canvas unavailable");
-    // JPEG has no transparency: without a backdrop a cut-out PNG would turn black.
+    // Keep a white backdrop so a cut-out PNG does not turn black where it is transparent.
     context.fillStyle = "#fff";
     context.fillRect(0, 0, SIZE, SIZE);
     context.drawImage(
@@ -28,7 +28,7 @@ export async function fileToAvatar(file: File): Promise<string> {
       SIZE,
       SIZE,
     );
-    return canvas.toDataURL("image/jpeg", 0.85);
+    return canvas.toDataURL("image/webp", 0.85);
   } finally {
     bitmap.close();
   }

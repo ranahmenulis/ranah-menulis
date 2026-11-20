@@ -38,10 +38,14 @@ export const approveFinal = (store: SoloStore, t: Target) =>
 export const requestChanges = (store: SoloStore, t: Target, note: string) =>
   run(store, t, (cur) => withChangeRequest(t.stages, cur, base(t), Date.now(), note));
 
-/** The publishing team's step. Only the development-only panel calls it until 6g. */
+/** The publishing team's step (Organizer, tab Tahap). */
 export const advanceStage = (store: SoloStore, t: Target) =>
   run(store, t, (cur) => withAdvance(t.stages, cur, base(t), Date.now()));
 
-/** The publishing team adds a preview file. Only the development-only panel calls it until 6g. */
-export const addPreviewFile = (store: SoloStore, t: Target, kind: PreviewFile["kind"]) =>
-  run(store, t, (cur) => withFile(cur, base(t), kind, Date.now()));
+/** The publishing team adds a preview file (an image or a PDF kept in the file store). */
+export const addPreviewFile = (
+  store: SoloStore,
+  t: Target,
+  kind: PreviewFile["kind"],
+  upload?: Parameters<typeof withFile>[4],
+) => run(store, t, (cur) => withFile(cur, base(t), kind, Date.now(), upload));

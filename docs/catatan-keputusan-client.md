@@ -245,3 +245,15 @@ Catatan Wafiy: "Kita bahas yang perlu dibahas."
 
 - **Penamaan ulang "Roast My Writing":** namanya akan diganti. Jangan diganti sekarang; client ingin menunggu sampai pekerjaan selesai supaya semua revisi dikerjakan sekaligus. Nama penggantinya belum diberikan.
 - **Community tanpa chat realtime:** jangan membangun chat realtime di bagian Community. Dibuat seperti Novlr; percakapan diarahkan ke platform lain lewat satu tautan komunitas resmi (selaras dengan c9). Chat/DM tetap di luar cakupan.
+
+### Pengingat scope MVP dari founder (17 November 2026)
+
+User mengirim ulang daftar scope MVP founder (tiga modul inti dan delapan supporting platform). Teks lengkapnya dan tiga selisih terhadap PRD (konfigurasi platform, notifikasi pengelola, administrasi pembayaran) ada di `docs/produk/MVP Scope RanahMenulis.md` bagian 7. PRD belum diubah.
+
+
+### Unggahan gambar dan berkas (keputusan user, 20 November 2026)
+
+- **Gambar di postingan Community** tidak ada di PRD (COM-03 menyebut "foto" penulis, bukan lampiran) dan tidak masuk daftar MVP Community. Dibangun atas persetujuan user: satu gambar per postingan, teks alternatif wajib, diperkecil dan diubah ke WebP di perangkat. **Perlu konfirmasi client.**
+- **Sampul dokumen Studio, banner proyek, dan logo grup**: tidak dibangun (tidak ada di PRD atau Fase 2, PLT-09).
+- **Unggah naskah Solo (DOCX/PDF)** mengikuti Q-13 dan **pratinjau sampul/isi buku dari tim** mengikuti SOL-02 (keduanya MVP). Batas ukuran berkas **10 MB bersifat sementara**: client belum memberi angka (konstanta `FILE_MAX_BYTES` di `src/lib/files/limits.ts`).
+- Berkas disimpan di perangkat (IndexedDB `ranah-files`). Saat backend ada: Supabase Storage dengan RLS (naskah hanya penulis dan tim yang ditugaskan; pratinjau hanya penulis buku itu), pemindaian berkas, dan batas ukuran dari client.

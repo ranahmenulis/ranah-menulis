@@ -241,6 +241,7 @@ export function ComposeForm(props: Props) {
                   kind={state.kind}
                   genre={state.genre}
                   blocks={blocks}
+                  image={state.image}
                   sourceTitle={sourceTitle}
                   groupOnly={state.visibility === "grup"}
                 />

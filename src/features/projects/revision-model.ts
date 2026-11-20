@@ -4,7 +4,7 @@ import {
   type Problem,
   type SubmitDoc,
 } from "./submission-model";
-import type { Submission } from "./submission-types";
+import type { Submission, VersionFile } from "./submission-types";
 import type { Project } from "./types";
 
 /**
@@ -17,16 +17,19 @@ export function revisionProblems(input: {
   project: Project;
   work: Submission;
   docId: string | null;
+  /** An uploaded file chosen as the revision (Solo), instead of a document. */
+  upload?: VersionFile | null;
   note: string;
   doc: SubmitDoc | null;
   all: Submission[];
   now: number;
 }): Problem[] {
-  const { project, work, docId, note, doc, all, now } = input;
+  const { project, work, docId, upload = null, note, doc, all, now } = input;
   return validateSubmission({
     project: { ...project, closesAt: null },
     form: {
       docId,
+      upload,
       title: work.title,
       genre: work.genre,
       note,

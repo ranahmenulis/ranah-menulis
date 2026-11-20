@@ -1,4 +1,5 @@
 import type { SubmissionStatus } from "@/components/ui/status-submission";
+import { versionSizeText } from "@/features/projects/submission-text";
 import { projectFixtures } from "@/features/projects/fixtures/all-projects";
 import { categoryLabel } from "@/features/projects/project-model";
 import { revisionsSent } from "@/features/projects/submission-status";
@@ -34,7 +35,8 @@ export type QueueRow = {
   projectTitle: string;
   category: string;
   genre: string;
-  words: number;
+  /** "1.250 kata" or "PDF · 2,3 MB" for an uploaded file. */
+  size: string;
   status: SubmissionStatus;
   /** Since when it has been in this status. */
   since: number;
@@ -71,7 +73,7 @@ export function queueRows(
         projectTitle: project.title,
         category: categoryLabel(project.category),
         genre: work.genre,
-        words: work.versions.at(-1)?.wordCount ?? 0,
+        size: versionSizeText(work.versions.at(-1)),
         status: work.status,
         since: work.statusLog.at(-1)?.at ?? work.submittedAt,
         revisions: revisionsSent(work),

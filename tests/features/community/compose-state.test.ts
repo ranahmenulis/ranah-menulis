@@ -150,3 +150,44 @@ describe("loading a draft", () => {
     });
   });
 });
+
+describe("post image", () => {
+  const photo = { src: "data:image/webp;base64,AAAA", width: 1200, height: 800, alt: "" };
+  const withPhoto = run([{ type: "image", image: photo }], complete);
+
+  it("needs its alt text before the post can be published", () => {
+    expect(missingFor(withPhoto)).toEqual(["imageAlt"]);
+    expect(canPublish(withPhoto)).toBe(false);
+    expect(missingHint(withPhoto)).toBe("Untuk menerbitkan, lengkapi teks alternatif gambar.");
+  });
+
+  it("does not take an alt text made of spaces", () => {
+    const blank = run([{ type: "image", image: { ...photo, alt: "   " } }], complete);
+    expect(canPublish(blank)).toBe(false);
+  });
+
+  it("can be published once the alt text is written, and removing the image lifts the rule", () => {
+    const described = run(
+      [{ type: "image", image: { ...photo, alt: " Mesin tik tua " } }],
+      complete,
+    );
+    expect(canPublish(described)).toBe(true);
+    expect(canPublish(run([{ type: "image", image: null }], withPhoto))).toBe(true);
+  });
+
+  it("is stored with a trimmed alt text and comes back when a draft is reopened", () => {
+    const described = run(
+      [{ type: "image", image: { ...photo, alt: " Mesin tik tua " } }],
+      complete,
+    );
+    const stored = toStored(described, "p1", "draft", 1000);
+    expect(stored.image?.alt).toBe("Mesin tik tua");
+    expect(composeReducer(initialCompose, { type: "load", post: stored }).image).toEqual(
+      stored.image,
+    );
+  });
+
+  it("leaves a post without an image as before", () => {
+    expect(toStored(complete, "p2", "draft", 1000).image).toBeUndefined();
+  });
+});

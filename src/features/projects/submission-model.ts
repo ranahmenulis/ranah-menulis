@@ -10,6 +10,8 @@ import {
   TITLE_LIMIT,
   type Submission,
   type SubmissionVersion,
+  type VersionFile,
+  uploadDocId,
 } from "./submission-types";
 import type { Project, Registration } from "./types";
 
@@ -80,6 +82,8 @@ export function submitAction(
 /** What the participant fills in. The statement is never kept in a draft: it is made at sending. */
 export type SubmitForm = {
   docId: string | null;
+  /** Solo only (Q-13): an uploaded PDF or DOCX instead of a Studio document. Never both. */
+  upload: VersionFile | null;
   title: string;
   genre: string;
   note: string;
@@ -89,6 +93,7 @@ export type SubmitForm = {
 
 export const emptyForm: SubmitForm = {
   docId: null,
+  upload: null,
   title: "",
   genre: "",
   note: "",
@@ -127,6 +132,8 @@ export function initialForm(input: {
   const usable = (id: string | null) => docs.find((d) => d.id === id && isActiveDocument(d));
   const chosen = usable(documentId) ?? usable(form.docId);
   form.docId = chosen?.id ?? null;
+  // An uploaded file is only for Solo, and a document picked from the address replaces it.
+  if (!isSolo(project) || chosen) form.upload = null;
   // A draft title belongs to the draft's document: a different one from the address brings its own.
   const switched = chosen !== undefined && chosen.id !== draft?.docId;
   if (chosen && (switched || form.title.trim() === "")) {
@@ -138,7 +145,12 @@ export function initialForm(input: {
 
 function docProblem(project: Project, form: SubmitForm, doc: SubmitDoc | null, sent: Submission[]) {
   const rules = project.submission;
-  if (!rules || !form.docId) return form.docId === null ? "Pilih dokumen dari Studio." : null;
+  if (!rules || !form.docId) {
+    if (form.docId !== null) return null;
+    return isSolo(project)
+      ? "Pilih dokumen dari Studio atau unggah berkas."
+      : "Pilih dokumen dari Studio.";
+  }
   if (!doc || doc.deletedAt) return "Dokumen ini tidak ada lagi di Studio.";
   if (doc.archivedAt != null) return RESTORE_ARCHIVED_MESSAGE;
   const words = wordsOf(doc);
@@ -149,6 +161,14 @@ function docProblem(project: Project, form: SubmitForm, doc: SubmitDoc | null, s
   }
   if (words > rules.maxWords) {
     return `Naskahmu ${formatNumber(words)} kata, melebihi batas ${formatNumber(rules.maxWords)} kata.`;
+  }
+  return null;
+}
+
+function uploadProblem(project: Project, upload: VersionFile, sent: Submission[]) {
+  if (!isSolo(project)) return "Proyek ini hanya menerima dokumen dari Studio.";
+  if (sent.some((s) => s.docId === uploadDocId(upload.fileId))) {
+    return "Berkas ini sudah dikirim ke proyek ini.";
   }
   return null;
 }
@@ -183,7 +203,10 @@ export function validateSubmission(input: {
     sent.length >= rules.maxWorks &&
       `Kamu sudah mengirim ${rules.maxWorks} karya, batas untuk proyek ini.`,
   );
-  add("doc", docProblem(project, form, doc, sent));
+  add(
+    "doc",
+    form.upload ? uploadProblem(project, form.upload, sent) : docProblem(project, form, doc, sent),
+  );
   const title = form.title.trim();
   add("title", title === "" && "Isi judul karya.");
   add("title", title.length > TITLE_LIMIT && `Judul maksimal ${TITLE_LIMIT} karakter.`);
@@ -225,7 +248,8 @@ export function newSubmission(input: {
   project: Project;
   registration: Registration;
   form: SubmitForm;
-  doc: SubmitDoc;
+  /** The Studio document, or the uploaded file as `{ id: uploadDocId(...), title: file name }`. */
+  doc: Pick<SubmitDoc, "id" | "title">;
   version: SubmissionVersion;
   now: number;
 }): Submission {

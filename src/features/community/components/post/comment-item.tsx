@@ -1,8 +1,8 @@
 "use client";
 
+import { AuthorAvatar } from "../author-avatar";
 import { EyeSlash, Flag, Trash } from "@phosphor-icons/react/dist/ssr";
 import type { ReactNode } from "react";
-import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Menu, type MenuEntry } from "@/components/ui/menu";
 import { cn } from "@/lib/cn";
@@ -119,7 +119,7 @@ export function CommentItem(p: Props) {
         reply && "ml-6 border-l pl-4",
       )}
     >
-      <Avatar name={author.name} size={32} />
+      <AuthorAvatar author={author} size={32} />
       <div className="min-w-0 pr-8">
         <div className="flex flex-wrap items-center gap-x-2 text-[13px] leading-[18px] text-ink-muted">
           <AuthorLink handle={author.handle} className="text-sm font-medium">

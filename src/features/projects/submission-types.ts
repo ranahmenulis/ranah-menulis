@@ -21,12 +21,21 @@ export const TITLE_LIMIT = 120;
  */
 export type SubmissionVersion = {
   version: number;
+  /** Empty when the version is an uploaded file (`file`): the text of a PDF or DOCX is not read. */
   content: JSONContent;
   wordCount: number;
-  /** SHA-256 of the canonical JSON of `content`, in hex. */
+  /** SHA-256 of the canonical JSON of `content`, or of the file's bytes, in hex. */
   hash: string;
   frozenAt: number;
+  /** Set when this version is an uploaded manuscript (Solo, Q-13) instead of a Studio document. */
+  file?: VersionFile;
 };
+
+/** An uploaded manuscript kept in the file store; `fileId` is its key there. */
+export type VersionFile = { fileId: string; name: string; type: string; size: number };
+
+/** The `docId` of a submission whose manuscript is an uploaded file, so one file is sent once. */
+export const uploadDocId = (fileId: string) => `file:${fileId}`;
 
 /**
  * Every status change is recorded: who, when, and why (BR-PRJ-05). `reason` is the editor's note

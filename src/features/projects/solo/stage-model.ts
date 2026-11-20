@@ -159,6 +159,8 @@ export function withFile(
   b: Base,
   kind: PreviewFile["kind"],
   now: number,
+  /** The file the team attached; without it the row is only a description. */
+  upload?: { id: string; name: string; type: string; size: number },
 ): SoloProgress {
   const row = base(progress, b);
   const version = row.files.filter((f) => f.kind === kind).length + 1;
@@ -169,7 +171,8 @@ export function withFile(
     name,
     version,
     at: now,
-    sizeKb: kind === "cover" ? 840 : 2_300,
+    sizeKb: upload ? Math.max(1, Math.round(upload.size / 1024)) : kind === "cover" ? 840 : 2_300,
+    ...(upload ? { fileId: upload.id, fileName: upload.name, fileType: upload.type } : {}),
   };
   return { ...row, files: [...row.files, file] };
 }

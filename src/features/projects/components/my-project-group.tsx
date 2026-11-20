@@ -1,8 +1,9 @@
 import Link from "next/link";
+import { versionSizeText } from "../submission-text";
 import { StatusSubmission } from "@/components/ui/status-submission";
 import { TextLink } from "@/components/ui/text-link";
 import { payHref } from "../payment-model";
-import { categoryLabel, formatNumber, formatProjectDate, projectHref } from "../project-model";
+import { categoryLabel, formatProjectDate, projectHref } from "../project-model";
 import { dashboardHref } from "../kelas/class-model";
 import { soloDashboardHref } from "../solo/solo-model";
 import { resultsHref } from "../lomba/contest-model";
@@ -19,7 +20,7 @@ function workMeta(work: Submission, project: Project): string {
   const last = work.versions.at(-1);
   const parts = [
     work.versions.length > 1 ? `Versi ${work.versions.length}` : null,
-    `${formatNumber(last?.wordCount ?? 0)} kata`,
+    versionSizeText(last),
     `dikirim ${sentAtText(work.submittedAt)}`,
   ];
   const due = revisionDueAt(work);

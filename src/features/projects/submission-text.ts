@@ -1,3 +1,4 @@
+import { fileKindLabel, formatFileSize } from "@/lib/files/format-size";
 import { formatNumber } from "./project-model";
 import type { SubmitBlock } from "./submission-model";
 import type { SubmissionRules } from "./types";
@@ -40,3 +41,12 @@ const TIME = new Intl.DateTimeFormat("id-ID", {
 
 /** "25 Nov 2026 14.05" in the reader's own zone: this is when *they* sent it. */
 export const sentAtText = (timestamp: number) => TIME.format(timestamp);
+
+/** "1.250 kata" for a document, "PDF · 2,3 MB" for an uploaded file (its words are not counted). */
+export function versionSizeText(
+  version: { wordCount: number; file?: { type: string; size: number } } | undefined,
+): string {
+  if (version?.file)
+    return `${fileKindLabel(version.file.type)} · ${formatFileSize(version.file.size)}`;
+  return `${formatNumber(version?.wordCount ?? 0)} kata`;
+}

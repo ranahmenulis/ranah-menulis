@@ -1,4 +1,13 @@
-import { act, cleanup, configure, fireEvent, render, screen, within } from "@testing-library/react";
+import {
+  act,
+  cleanup,
+  configure,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("next/navigation", () => ({
@@ -6,6 +15,12 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: vi.fn() }),
 }));
 
+const files = vi.hoisted(() => ({
+  current: null as null | import("@/lib/files/file-store").FileStore,
+}));
+vi.mock("@/lib/files/store", () => ({ fileStore: () => files.current }));
+
+import { createMemoryFileStore } from "@/lib/files/memory-file-store";
 import { ManageView } from "@/features/kelola/organizer/components/manage-view";
 import { parseOverrides } from "@/features/projects/lomba/stage-store";
 import { createMemorySoloStore } from "@/features/projects/solo/storage/memory-solo-store";
@@ -23,6 +38,7 @@ const DONE = "lomba-cerita-mini-pesisir-2026";
 const ANTOLOGI = "antologi-pulang-ke-pesisir";
 
 beforeEach(() => {
+  files.current = createMemoryFileStore();
   sessionStorage.clear();
   localStorage.clear();
   sessionStorage.setItem("rm-roles", "organizer");
@@ -93,9 +109,20 @@ describe("Solo stages", () => {
     const solo = await openSolo([accepted()]);
     fireEvent.click(await screen.findByRole("button", { name: "Tambah pratinjau sampul" }));
     const dialog = await screen.findByRole("dialog");
-    fireEvent.click(within(dialog).getByRole("button", { name: "Tambahkan" }));
+    const add = within(dialog).getByRole("button", { name: "Tambahkan" }) as HTMLButtonElement;
+    // A preview needs its file: nothing can be added before one is picked.
+    expect(add.disabled).toBe(true);
+    const png = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0, 0, 0]);
+    fireEvent.change(within(dialog).getByLabelText("Pilih berkas pratinjau sampul"), {
+      target: { files: [new File([png], "sampul-v1.png")] },
+    });
+    await waitFor(() => expect(add.disabled).toBe(false));
+    fireEvent.click(add);
     expect(await screen.findByText(/Pratinjau sampul ditambahkan/)).toBeTruthy();
-    expect((await solo.list())[0].files).toHaveLength(1);
+    const [row] = await solo.list();
+    expect(row.files).toHaveLength(1);
+    expect(row.files[0]).toMatchObject({ fileName: "sampul-v1.png", fileType: "image/png" });
+    expect(await files.current!.get(row.files[0].fileId!)).not.toBeNull();
     expect(screen.queryByRole("button", { name: "Tambah pratinjau sampul" })).toBeNull();
   });
 

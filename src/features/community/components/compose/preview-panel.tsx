@@ -1,19 +1,21 @@
 import { Avatar } from "@/components/ui/avatar";
 import { useAccount } from "@/features/account/account-store";
-import { PostText, ScopeLine } from "../post/post-article";
-import type { Genre, PostBlock, PostKind } from "../../types";
+import { hasDropCap, PostText, ScopeLine } from "../post/post-article";
+import type { Genre, PostBlock, PostImage, PostKind } from "../../types";
+import { PostFigure } from "../post/post-figure";
 
 type Props = {
   title: string;
   kind: PostKind;
   genre: Genre | "";
   blocks: PostBlock[];
+  image: PostImage | null;
   sourceTitle: string | null;
   groupOnly: boolean;
 };
 
 /** The post exactly as a reader sees it, in the same typography as the post page (STD-10). */
-export function PreviewPanel({ title, kind, genre, blocks, sourceTitle, groupOnly }: Props) {
+export function PreviewPanel({ title, kind, genre, blocks, image, sourceTitle, groupOnly }: Props) {
   const { profile } = useAccount();
   const mark = `${kind === "prolog" ? "Prolog" : "Cuplikan"}${genre ? ` · ${genre}` : ""}`;
   return (
@@ -29,9 +31,10 @@ export function PreviewPanel({ title, kind, genre, blocks, sourceTitle, groupOnl
           {profile.name}
         </div>
         <ScopeLine kind={kind} sourceTitle={sourceTitle} groupOnly={groupOnly} />
+        {image && <PostFigure image={image} bleed={false} />}
         <div className="pt-4 text-[17px] [&_.read-body]:text-[17px]! [&_.read-body]:leading-7!">
           {blocks.length > 0 ? (
-            <PostText blocks={blocks} kind={kind} />
+            <PostText blocks={blocks} kind={kind} dropCap={hasDropCap(genre || "Esai")} />
           ) : (
             <p className="text-sm text-ink-muted">
               Teks yang kamu pilih atau tulis tampil di sini.
