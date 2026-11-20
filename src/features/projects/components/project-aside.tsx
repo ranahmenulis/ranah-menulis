@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { ComponentProps, ReactNode } from "react";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { TextLink } from "@/components/ui/text-link";
 import { SignInButton } from "@/features/account/components/auth-buttons";
@@ -6,6 +6,7 @@ import { daysLeftLabel, feeLines, formatProjectDate } from "../project-model";
 import { deadlineText, quotaText } from "../project-text";
 import { projectAction, type ProjectAction } from "../project-action";
 import { resultsHref } from "../lomba/contest-model";
+import { CancelRegistration } from "./cancel-registration";
 import { registerHref } from "../registration-model";
 import type { Project, ProjectState, Registration } from "../types";
 
@@ -35,6 +36,30 @@ function ActionButton({ action, signIn }: { action: ProjectAction; signIn: boole
   );
 }
 
+function OwnRegistration({
+  project,
+  registration,
+  stores,
+}: {
+  project: Project;
+  registration?: Registration;
+  stores?: Props["stores"];
+}) {
+  return (
+    <>
+      {registration && (
+        <>
+          <p className="text-xs text-ink-muted">{registrationNote(project, registration)}</p>
+          <TextLink href={registerHref(project.slug)} className="text-xs text-ink-muted">
+            Lihat pendaftaran
+          </TextLink>
+        </>
+      )}
+      <CancelRegistration project={project} registration={registration} showNotice {...stores} />
+    </>
+  );
+}
+
 type Props = {
   project: Project;
   state: ProjectState;
@@ -44,6 +69,8 @@ type Props = {
   registration?: Registration;
   /** Works this reader sent here that still count against the limit. */
   sentCount?: number | null;
+  /** Replace the device's stores in tests. */
+  stores?: Pick<ComponentProps<typeof CancelRegistration>, "submissions" | "assignments">;
 };
 
 function registrationNote(project: Project, registration: Registration): string {
@@ -59,7 +86,15 @@ function registrationNote(project: Project, registration: Registration): string 
  * says why (your own registration, full, closed, guest). Below lg the column moves above the
  * document so the action stays reachable.
  */
-export function ProjectAside({ project, state, now, guest, registration, sentCount = 0 }: Props) {
+export function ProjectAside({
+  project,
+  state,
+  now,
+  guest,
+  registration,
+  sentCount = 0,
+  stores,
+}: Props) {
   const action = projectAction({ project, state, guest, registration, now, sentCount });
   const lines = feeLines(project);
   const quota = project.quota;
@@ -116,13 +151,8 @@ export function ProjectAside({ project, state, now, guest, registration, sentCou
             Lihat hasil lomba
           </TextLink>
         )}
-        {registration && !guest && (
-          <>
-            <p className="text-xs text-ink-muted">{registrationNote(project, registration)}</p>
-            <TextLink href={registerHref(project.slug)} className="text-xs text-ink-muted">
-              Lihat pendaftaran
-            </TextLink>
-          </>
+        {!guest && (
+          <OwnRegistration project={project} registration={registration} stores={stores} />
         )}
       </div>
     </aside>

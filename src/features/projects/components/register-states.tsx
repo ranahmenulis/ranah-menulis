@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { ComponentProps, ReactNode } from "react";
 import { ButtonLink } from "@/components/ui/button";
 import { Notice, Skeleton } from "@/components/ui/states";
 import { TextLink } from "@/components/ui/text-link";
@@ -7,6 +7,7 @@ import { payHref } from "../payment-model";
 import { formatProjectDate, moneyLabel, projectHref } from "../project-model";
 import { registrationFee } from "../registration-model";
 import { kirimHref } from "../submission-model";
+import { CancelRegistration } from "./cancel-registration";
 import type { Project, Registration } from "../types";
 
 /** One column of 680 with the way back always on top (every full-width screen needs an exit). */
@@ -83,10 +84,15 @@ export function RegisterStatus({
   project,
   registration,
   justNow,
+  onCancelled,
+  stores,
 }: {
   project: Project;
   registration: Registration;
   justNow: boolean;
+  onCancelled?: () => void;
+  /** Replace the device's stores in tests. */
+  stores?: Pick<ComponentProps<typeof CancelRegistration>, "submissions" | "assignments">;
 }) {
   const confirmed = registration.status === "terdaftar";
   const fee = moneyLabel(registrationFee(project, registration.packageName));
@@ -130,6 +136,12 @@ export function RegisterStatus({
           </>
         )}
       </div>
+      <CancelRegistration
+        project={project}
+        registration={registration}
+        onCancelled={onCancelled}
+        {...stores}
+      />
     </RegisterShell>
   );
 }
