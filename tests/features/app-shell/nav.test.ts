@@ -10,9 +10,9 @@ import {
 } from "@/features/app-shell/nav";
 
 describe("navigation", () => {
-  it("marks Streak and Studio as different entries by path", () => {
+  it("lights Studio for every Studio tab, Streak included", () => {
     expect(activeId("/studio")).toBe("studio");
-    expect(activeId("/studio/streak")).toBe("streak");
+    expect(activeId("/studio/streak")).toBe("studio");
     expect(activeId("/beranda")).toBe("beranda");
     expect(activeId("/")).toBeNull();
   });
@@ -37,9 +37,9 @@ describe("navigation", () => {
     expect(showsWriteButton("/studio/streak")).toBe(false);
   });
 
-  it("lists Jelajahi under Beranda on wide screens and keeps it out of the phone tabs", () => {
+  it("lists Jelajahi under Beranda on wide screens and as a phone tab", () => {
     expect(mainNav.map((n) => n.id).slice(0, 3)).toEqual(["beranda", "jelajahi", "studio"]);
-    expect(bottomNav.some((n) => n.id === "jelajahi")).toBe(false);
+    expect(bottomNav.some((n) => n.id === "jelajahi")).toBe(true);
     expect(activeId("/jelajahi")).toBe("jelajahi");
   });
 
@@ -61,11 +61,11 @@ describe("navigation", () => {
     expect(isPostPage("/jelajahi")).toBe(false);
   });
 
-  it("has five phone tabs and no Streak in the desktop list (it is a sub-item)", () => {
+  it("has five phone tabs, Jelajahi included, and no Streak anywhere (it is a Studio tab)", () => {
     expect(bottomNav.map((n) => n.id)).toEqual([
       "beranda",
+      "jelajahi",
       "studio",
-      "streak",
       "projects",
       "profil",
     ]);

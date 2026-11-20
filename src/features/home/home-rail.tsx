@@ -31,7 +31,7 @@ function RailLink({ href, icon, children }: { href: string; icon: ReactNode; chi
 /**
  * The side column of Beranda (Medium's right column, contents after Novlr's Desk): everything
  * that is not the one thing to do now. Sections with nothing to say are not drawn. From xl it
- * stands beside the feed; below that it sits between the card and the feed.
+ * stands beside the feed; below that it follows the feed.
  */
 export function HomeRail({
   data,

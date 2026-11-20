@@ -22,7 +22,6 @@ import {
   mainNav,
   mobileTitle,
   showsWriteButton,
-  sidebarSub,
 } from "./nav";
 import { CommunityLink } from "./community-link";
 import { ResumeWriting } from "./resume-writing";
@@ -66,35 +65,44 @@ export function AppShell({ children }: { children: ReactNode }) {
       />
 
       <div className="flex min-w-0 flex-1">
-        {sidebar && (
+        {/* The sidebar stays mounted so it can slide: the column narrows while the list slides
+            out to the left (200ms). Closed, it is inert, so neither Tab nor a screen reader
+            reaches it. Instant under reduced motion. */}
+        <div
+          inert={!sidebar}
+          className={cn(
+            "sticky top-[calc(3.5rem+var(--safe-top))] hidden h-[calc(100dvh-3.5rem-var(--safe-top))] shrink-0 overflow-hidden lg:block",
+            "transition-[width] duration-200 ease-(--ease-out) motion-reduce:transition-none",
+            sidebar ? "w-60" : "w-0",
+          )}
+        >
           <nav
             aria-label={nav.label}
-            className="sticky top-[calc(3.5rem+var(--safe-top))] hidden h-[calc(100dvh-3.5rem-var(--safe-top))] w-60 shrink-0 content-start gap-0.5 overflow-y-auto border-r border-line px-3 py-4 lg:grid"
+            className={cn(
+              "grid h-full w-60 content-start gap-0.5 overflow-y-auto border-r border-line px-3 py-4",
+              "transition-transform duration-200 ease-(--ease-out) motion-reduce:transition-none",
+              !sidebar && "-translate-x-full",
+            )}
           >
             {entries.map((entry) => (
-              <div key={entry.id} className="grid">
-                <NavLink entry={entry} variant="sidebar" active={active === entry.id} />
-                {entry.id === "studio" && (
-                  <NavLink entry={sidebarSub} variant="sub" active={active === "streak"} />
-                )}
-              </div>
+              <NavLink
+                key={entry.id}
+                entry={entry}
+                variant="sidebar"
+                active={active === entry.id}
+              />
             ))}
             <ResumeWriting variant="card" doc={lastDocument} />
             <CommunityLink variant="sidebar" />
           </nav>
-        )}
+        </div>
 
         <nav
           aria-label={nav.label}
           className="sticky top-[calc(3.5rem+var(--safe-top))] hidden h-[calc(100dvh-3.5rem-var(--safe-top))] w-18 shrink-0 content-start gap-1 border-r border-line py-3 md:grid lg:hidden"
         >
           {entries.map((entry) => (
-            <NavLink
-              key={entry.id}
-              entry={entry}
-              variant="rail"
-              active={active === entry.id || (entry.id === "studio" && active === "streak")}
-            />
+            <NavLink key={entry.id} entry={entry} variant="rail" active={active === entry.id} />
           ))}
           <ResumeWriting variant="icon" doc={lastDocument} />
         </nav>

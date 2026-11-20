@@ -1,3 +1,4 @@
+import { photos } from "./photos";
 import type { FixturePost } from "./fixture-types";
 
 const HOUR = 3_600_000;
@@ -70,6 +71,7 @@ export const postsB: FixturePost[] = [
     groupName: "Grup Penulis Pesisir",
     appreciations: 17,
     saves: 5,
+    image: photos.coast,
     agoMs: 2 * DAY + 5 * HOUR,
     blocks: [
       {
@@ -114,6 +116,7 @@ export const postsB: FixturePost[] = [
     visibility: "publik",
     appreciations: 21,
     saves: 7,
+    image: photos.mountain,
     agoMs: 12 * HOUR,
     blocks: [
       {
@@ -132,6 +135,7 @@ export const postsB: FixturePost[] = [
     visibility: "publik",
     appreciations: 44,
     saves: 28,
+    image: photos.lighthouse,
     agoMs: 4 * DAY + 6 * HOUR,
     blocks: [
       {
@@ -154,6 +158,7 @@ export const postsB: FixturePost[] = [
     visibility: "publik",
     appreciations: 15,
     saves: 4,
+    image: photos.typewriter,
     agoMs: 3 * HOUR,
     blocks: [
       {
@@ -172,7 +177,6 @@ export const postsB: FixturePost[] = [
     visibility: "publik",
     appreciations: 36,
     saves: 21,
-    hasImage: true,
     agoMs: 5 * DAY + 9 * HOUR,
     blocks: [
       {
@@ -195,6 +199,7 @@ export const postsB: FixturePost[] = [
     visibility: "publik",
     appreciations: 52,
     saves: 40,
+    image: photos.foldedLetter,
     agoMs: 6 * DAY + 4 * HOUR,
     blocks: [
       {

@@ -1,3 +1,4 @@
+import { photos } from "./photos";
 import type { FixturePost } from "./fixture-types";
 
 const HOUR = 3_600_000;
@@ -15,6 +16,7 @@ export const postsA: FixturePost[] = [
     visibility: "publik",
     appreciations: 86,
     saves: 41,
+    image: photos.clouds,
     agoMs: 3 * DAY + 5 * HOUR,
     updatedAgoMs: 2 * DAY + 2 * HOUR,
     blocks: [
@@ -64,7 +66,7 @@ export const postsA: FixturePost[] = [
     visibility: "publik",
     appreciations: 67,
     saves: 30,
-    hasImage: true,
+    image: photos.skyBeforeRain,
     agoMs: 1 * DAY + 3 * HOUR,
     blocks: [
       {
@@ -171,7 +173,7 @@ export const postsA: FixturePost[] = [
     visibility: "publik",
     appreciations: 23,
     saves: 9,
-    hasImage: true,
+    image: photos.letter,
     agoMs: 4 * DAY,
     blocks: [
       {

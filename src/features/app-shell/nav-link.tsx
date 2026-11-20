@@ -5,11 +5,10 @@ import { cn } from "@/lib/cn";
 import { useT } from "@/lib/i18n/provider";
 import type { NavEntry } from "./nav";
 
-type Variant = "sidebar" | "sub" | "rail" | "tab";
+type Variant = "sidebar" | "rail" | "tab";
 
 const layout: Record<Variant, string> = {
   sidebar: "flex h-10 items-center gap-3 px-3 text-sm",
-  sub: "flex h-9 items-center pl-12 text-sm",
   rail: "grid justify-items-center gap-1 py-2 text-xs",
   tab: "grid content-center justify-items-center gap-0.5 text-xs",
 };
@@ -39,7 +38,7 @@ export function NavLink({
   );
   const content = (
     <>
-      {variant !== "sub" && <Icon size={24} weight={active ? "fill" : "regular"} aria-hidden />}
+      <Icon size={24} weight={active ? "fill" : "regular"} aria-hidden />
       {label}
     </>
   );

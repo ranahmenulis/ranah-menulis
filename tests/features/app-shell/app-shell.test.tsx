@@ -65,7 +65,7 @@ describe("AppShell", () => {
     expect(new Set(current())).toEqual(new Set(["Studio"]));
   });
 
-  it("marks Streak on the Streak tab: sub-item in the sidebar, own tab on phones, Studio on the rail", () => {
+  it("marks Studio on the Streak tab everywhere; Streak is not a navigation entry", () => {
     renderAt("/studio/streak");
     const [sidebar, rail, bottom] = screen.getAllByRole("navigation", { hidden: true });
     const currentIn = (nav: HTMLElement) =>
@@ -74,9 +74,24 @@ describe("AppShell", () => {
         .filter((a) => a.getAttribute("aria-current") === "page")
         .map((a) => a.textContent);
 
-    expect(currentIn(sidebar)).toEqual(["Streak"]);
-    expect(currentIn(rail)).toEqual(["Studio"]); // the rail has no Streak entry
-    expect(currentIn(bottom)).toEqual(["Streak"]);
+    for (const nav of [sidebar, rail, bottom]) {
+      expect(currentIn(nav)).toEqual(["Studio"]);
+      expect(within(nav).queryByText("Streak")).toBeNull();
+    }
+  });
+
+  it("keeps the sidebar mounted and makes it inert while it is closed", () => {
+    renderAt("/beranda");
+    const sidebar = screen.getAllByRole("navigation", { hidden: true })[0];
+    const column = sidebar.parentElement!;
+    expect(column.hasAttribute("inert")).toBe(false);
+
+    fireEvent.click(screen.getByRole("button", { name: "Sembunyikan atau tampilkan sidebar" }));
+    expect(column.hasAttribute("inert")).toBe(true);
+    expect(sidebar.className).toContain("-translate-x-full");
+
+    fireEvent.click(screen.getByRole("button", { name: "Sembunyikan atau tampilkan sidebar" }));
+    expect(column.hasAttribute("inert")).toBe(false);
   });
 
   it("shows the round write button on Beranda and the list, but not on Streak", () => {

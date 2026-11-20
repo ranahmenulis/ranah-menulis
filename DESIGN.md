@@ -27,7 +27,7 @@ Medium dipakai karena satu hal: **ia membuat tulisan menjadi pusat layar**. Itu 
 | --- | --- | --- |
 | Halaman artikel | Kolom baca tunggal ±680px, teks serif besar, baris penulis di bawah judul, bilah aksi bergaris atas-bawah, pemisah adegan tiga titik, komentar di laci samping | Judul karya serif (Medium memakai sans tebal); dukungan puisi (baris dijaga); penanda visibilitas; tidak ada paywall dan bintang member |
 | Feed beranda | Daftar dipisah garis tipis, bukan kartu; baris "di [grup] oleh [penulis] · tanggal"; judul + cuplikan; meta berikon di kiri dan aksi (simpan, ⋯) di kanan; thumbnail 3:2 di kanan; tab bergaris bawah; kolom kanan (pilihan editor, sedang ramai, topik berchip +, penulis untuk diikuti, tautan footer kecil) | Blok "Hari ini" di atas feed (Brief 4A); thumbnail hanya bila karya punya gambar; judul dan cuplikan memakai serif karena yang dijual adalah suara tulisan (Medium memakai sans tebal) |
-| Sidebar kiri | Beranda, Library, Profil, Stories, Stats, lalu garis dan daftar "Following" | Beranda, Studio (Streak sebagai sub-butir di bawahnya), Projects, Tersimpan, Profil, lalu garis, Kelola/Admin, lalu daftar Grup saya |
+| Sidebar kiri | Beranda, Library, Profil, Stories, Stats, lalu garis dan daftar "Following" | Beranda, Jelajahi, Studio, Projects, Tersimpan, Profil (Streak hanya tab di dalam Studio, 20 November 2026), lalu garis, Kelola/Admin, lalu daftar Grup saya |
 | Editor | Kanvas kosong, bilah format tetap di bawah bilah editor (pil bergaris), status "Tersimpan" berupa teks abu di bilah atas | Indikator simpan tiga keadaan; jumlah kata selalu terlihat; mode fokus; menu Kirim ke proyek; drawer kit inspirasi |
 | Daftar cerita (Stories) | Tab Draf/Terbit, baris berisi judul dan meta, menu ⋯ | Folder, penanda "Dibagikan" dan "Dikirim ke proyek" |
 | Profil | Dua kolom di desktop: karya di kiri, identitas di kanan | Genre, negara, portofolio proyek; streak hanya bila penulis memilih |
@@ -121,8 +121,8 @@ Brief tidak mengatur judul karya dan angka besar; keduanya tetap serif (Merriwea
 | `read-title` | 36 / 46, tracking −0.01em | 28 / 36 | 600 | Judul karya di halaman baca dan editor |
 | `read-subtitle` | 20 / 30 | 18 / 28 | 400, `ink-muted` | Subjudul karya |
 | `read-h2` | 23 / 32 | 20 / 28 | 600 | Subjudul di dalam karya |
-| `feed-title` | 20 / 28 | 16 / 24 | 600 | Judul di feed dan daftar |
-| `feed-excerpt` | 15 / 24 | 14 / 22 | 400, `ink-muted` | Cuplikan di feed |
+| `feed-title` | 20 / 28 | 18 / 24 | 600 | Judul di feed dan daftar |
+| `feed-excerpt` | 15 / 24 | 15 / 22 | 400, `ink-muted` | Cuplikan di feed |
 | `figure` | 52 / 1.0 | 40 / 1.0 | 400, angka lining tabular | Angka streak, statistik |
 
 **Skala landing (sans, Inter):** `display` `clamp(40px, 8vw, 88px)` / 1.02, tracking −0.035em, 700 (judul penutup); `landing-h2` 40 / 48 (ponsel 28 / 36), tracking −0.025em, 600 (judul bagian). **Hero C2** (20 November 2026, `lp-hero-title`): Inter 700, `clamp(44px, 8.1vw, 118px)` / 0,92 dan tracking −0,055em (ponsel `min(9.4vw, 44px)` / 1), tiga baris rata kiri; baris tengah memakai **Merriweather miring 300** (`lp-hero-serif`, 0,9em, tracking −0,035em, menjorok 1,05em dari md). Itu satu-satunya judul Inter yang berganti huruf di tengah baris, dan **perlu persetujuan client** karena brief font menetapkan Inter untuk judul hero; bila ditolak, ganti ke Inter tanpa mengubah susunan. **Font ketiga, hanya di landing** (keputusan user, 20 November 2026): JetBrains Mono 400 dan 500 (`next/font`, token `--font-mono`) untuk satu baris colophon di atas judul hero (11,5px, ponsel 10,5px, tracking 0,02em, `ink-muted`) dan penanda posisi legenda Studio di ponsel; tidak dipakai di aplikasi.
@@ -233,9 +233,9 @@ Aturan:
 
 | Lebar | Navigasi |
 | --- | --- |
-| < 768 (ponsel) | Bilah atas 52px: monogram R kiri; kanan cari, lonceng, avatar. **Bilah bawah** solid 56px + safe area, bergaris atas: Beranda, Studio, Streak, Projects, Profil. Kelola dan Admin lewat menu Profil. **Tombol Tulis** bulat `ink` 56px di kanan bawah, 16px di atas bilah bawah, hanya di Beranda dan Studio. |
+| < 768 (ponsel) | Bilah atas 52px: monogram R kiri; kanan cari, lonceng, avatar. **Bilah bawah** solid 56px + safe area, bergaris atas, **lima tab**: Beranda, Jelajahi, Studio, Projects, Profil (Streak lewat tab Studio; Jelajahi punya tab sendiri karena ikon pencarian di bilah atas tidak cukup jelas sebagai pintunya, 20 November 2026). Kelola dan Admin lewat menu Profil. **Tombol Tulis** bulat `ink` 56px di kanan bawah, 16px di atas bilah bawah, hanya di Beranda dan Studio. |
 | 768–1023 (tablet) | Bilah atas + **rail** kiri 72px berisi ikon dengan label kecil |
-| ≥ 1024 (desktop) | Bilah atas 56px bergaris bawah 1px. **Sidebar** kiri 240px yang bisa disembunyikan (pola Medium): Beranda, **Studio** dengan satu sub-butir **Streak** menjorok di bawahnya (lihat 5.3), Projects, Tersimpan, Profil, lalu garis pemisah, Kelola dan Admin (hanya bila punya peran) |
+| ≥ 1024 (desktop) | Bilah atas 56px bergaris bawah 1px. **Sidebar** kiri 240px yang bisa disembunyikan (pola Medium): Beranda, Jelajahi, **Studio** (tanpa sub-butir Streak, lihat 5.3), Projects, Tersimpan, Profil, lalu garis pemisah, Kelola dan Admin (hanya bila punya peran) | Buka-tutup sidebar beranimasi 200ms `--ease-out`: kolom menyempit sementara daftarnya bergeser keluar ke kiri; saat tertutup kolomnya `inert`; instan saat reduced motion.
 | ≥ 1280 | Halaman baca dan feed menampilkan kolom kanan 320px (pilihan editor, genre, penulis untuk diikuti) |
 
 **Bilah atas desktop:** kiri tombol sidebar + wordmark; lalu kolom pencarian pill `subtle` 240px; kanan: "Tulis" (ikon pena + teks, tombol teks), lonceng dengan titik ink bila ada yang belum dibaca, avatar 32px.
@@ -256,12 +256,13 @@ Aturan:
 Menurut PRD (bagian 8 dan 16) dan daftar modul client, **Ranah Studio sudah mencakup Streak**: satu modul, satu navigasi, satu alur data. Streak dihitung dari aktivitas menulis di Studio. Tiga modul inti MVP adalah **Studio (termasuk Streak), Community, dan Projects**; Dashboard/Beranda adalah platform pendukung, bukan modul.
 
 Konsekuensi untuk tampilan:
-- **Desktop:** Streak bukan item sejajar dengan Studio. Ia sub-butir di bawah Studio di sidebar, dan halaman Studio punya dua tab bergaris bawah: **Dokumen** dan **Streak**. Mengetuk Streak tidak berpindah modul, hanya berpindah area.
+- **Navigasi (diputuskan user, 20 November 2026):** Streak **tidak ada** di sidebar, rail, maupun bilah bawah ponsel. Satu-satunya pintu adalah tab Streak di Studio (dan tautan dari Beranda, Editor, Dokumen); halaman Streak menyalakan butir Studio.
+- **Desktop:** halaman Studio punya dua tab bergaris bawah: **Dokumen** dan **Streak**. Mengetuk Streak tidak berpindah modul, hanya berpindah area.
 - **Penghubung dua arah:** di halaman Dokumen terlihat satu baris ringkas progres hari ini ("Hari ini 320 / 500 kata") yang membuka tab Streak. Di Editor, indikator target kecil di bilah atas terhubung ke Streak. Streak selalu punya tombol "Mulai menulis" yang membuka dokumen terakhir.
-- **Ponsel:** PRD menetapkan bilah bawah Beranda, Studio, Streak, Projects, Profil, jadi Streak tetap punya tab sendiri sebagai pintu cepat. Tab Streak dan tab Studio berbagi judul modul "Studio" di bilah atas, dan Streak tidak muncul di Beranda sebagai modul tersendiri selain blok "Hari ini".
+- **Ponsel:** bilah bawah empat tab (Beranda, Studio, Projects, Profil); butir terbuka di bawah ini terjawab. Tab Streak dan tab Studio berbagi judul modul "Studio" di bilah atas, dan Streak tidak muncul di Beranda sebagai modul tersendiri selain blok "Hari ini".
 - **Bahasa:** di teks publik, Streak disebut sebagai bagian Studio ("target harian di Studio"), bukan produk terpisah.
 - **Asal keputusan:** rapat dengan client (transkrip, Agil dan Wafi): nama tunggal "Studio" dipilih supaya orang tidak bingung dengan dua nama; "Streak" hanya nama fitur di dalamnya. "Tab" yang disebut di rapat itu adalah tab bantuan (kit inspirasi) di dalam editor, yang sudah ada sebagai drawer bantuan (6.3); tab Dokumen/Streak di 5.3 adalah usulan desain tambahan dan boleh diganti bila client keberatan.
-- **Terbuka:** apakah bilah bawah ponsel tetap memakai lima tab (PRD 16, usulan) atau empat tab dengan Streak di dalam Studio. Putuskan saat melihat desain ponsel yang sudah dirender.
+- **Terjawab (20 November 2026):** lima tab (Jelajahi ditambahkan), Streak di dalam Studio.
 - **Pengecualian dari "satu modul":** ID fitur STK dan STD tetap terpisah di PRD agar rujukan tidak putus. Itu urusan dokumen, bukan antarmuka.
 
 ### 5.4 Dari menulis ke Streak: satu alur data
@@ -301,7 +302,7 @@ Urutan dari atas, satu kolom 680px:
 
 ### 6.2 Beranda (feed)
 
-**Susunan tiga kolom (20 November 2026, masukan user "terlalu banyak teks, bingung harus ngapain, perlu garis antar segmen"; tata letak Medium, isi Desk Novlr):** sidebar, kolom tengah 680 yang berada di tengah sisa ruang, lalu dari 1280 kolom kanan yang **menempel ke tepi layar** selebar `clamp(20rem, 24vw, 28rem)` (±24% layar, rasio Medium) dengan garis kiri 1px setinggi halaman (tidak lengket), padding kiri 32 dan kanan 24. Di bawah 1280 isi kolom kanan turun di antara kartu dan tab feed.
+**Susunan tiga kolom (20 November 2026, masukan user "terlalu banyak teks, bingung harus ngapain, perlu garis antar segmen"; tata letak Medium, isi Desk Novlr):** sidebar, kolom tengah 680 yang berada di tengah sisa ruang, lalu dari 1280 kolom kanan yang **menempel ke tepi layar** selebar `clamp(20rem, 24vw, 28rem)` (±24% layar, rasio Medium) dengan garis kiri 1px setinggi halaman (tidak lengket), padding kiri 32 dan kanan 24. Di bawah 1280 isi kolom kanan turun **di bawah feed**, dipisah garis `line-strong` (keputusan user 20 November 2026: di ponsel feed lebih dulu, seperti Medium).
 
 1. Kolom tengah: salam `heading-lg` "Siap menulis, {nama depan}?" (`#beranda-title`), satu kalimat 7 hari terakhir (`weekSentence`, tanpa persen), lalu **satu kartu** berbingkai 1px `line` tanpa radius dan bayangan (satu-satunya kotak di Beranda, seperti kartu "Write, grow" Medium) dengan satu tombol terisi: Lanjutkan menulis, atau "Belum ada dokumen." + Mulai menulis, atau Tiga langkah awal untuk penulis baru. Setiap aksi hanya muncul sekali. Baris "Notifikasi baru" dihapus (lonceng sudah ada).
 1a. Kolom kanan (`home-rail.tsx`), bagian berjudul `text-sm` semibold, **dipisah garis `line-strong`**; butir di dalam satu bagian dipisah garis `line`: Progres hari ini (bilah target, streak, tiga angka kata), Perlu perhatian, Proyek saya, Undangan grup, Bersama penulis lain (Event, Grup Penulis, Tulis postingan, Komunitas). Bagian kosong tidak digambar; Progres disembunyikan selama Tiga langkah awal tampil. Tanpa konten editorial (keputusan client h6).
@@ -310,6 +311,7 @@ Urutan dari atas, satu kolom 680px:
 4. **Butir karya** (tanpa kartu), dipisah garis 1px, padding vertikal 24px:
    - Avatar 20px + "di **Grup X** oleh **Nama** · 14 Okt" `text-xs`.
    - `feed-title`, lalu `feed-excerpt` dua baris (dipotong).
+   - **Skala ponsel mengikuti Medium (diukur dari tangkapan layar 440px, 20 November 2026):** Medium memakai judul 20/24, subjudul 16/20, meta 14, jarak baris sekitar 32px atas-bawah; Ranah memakai judul serif 18/24 (serif dibuat 2px lebih kecil dari sans), cuplikan 15/22, baris penulis, label, dan hitungan 13px (12px dari md), dan padding butir 28px di ponsel (24px dari md). Gutter halaman tetap 16 (Medium 24) supaya kolom teks di sebelah thumbnail 80px tidak menyempit.
    - Baris bawah `text-xs ink-muted`: kiri ikon + jumlah apresiasi dan komentar; kanan Simpan, ⋯.
    - Thumbnail hanya bila karya punya gambar, rasio 3:2 di kanan: 160×107 desktop, 80×53 ponsel, tanpa radius.
 5. **Butir catatan** (postingan Community pendek): avatar 32 + nama + waktu, lalu teks serif 16/26 langsung tanpa judul, dipotong 8 baris dengan "Baca selengkapnya", lalu bilah aksi Apresiasi, Komentar, Bagikan, Simpan.
@@ -379,15 +381,17 @@ Desktop: kolom kiri (nama `heading-lg`, tab Karya · Tentang · Proyek, lalu daf
 Halaman untuk menemukan tulisan di luar yang diikuti. PRD menetapkan delapan kategori: Trending Today, New Writers, Editor's Picks, Most Appreciated, Most Saved, Hidden Gems, Indonesia Writers, Malaysia Writers. Kategori tanpa isi disembunyikan.
 
 1. **Baris chip kategori** di atas, bisa digulir mendatar, lengket di bawah bilah atas. Chip pil `subtle`; terpilih memakai isian `ink`. Chip pertama "Semua".
-2. **Grid masonry.** Desktop 3 kolom di lebar halaman 1040, tablet 2 kolom, ponsel 1 kolom (daftar biasa pola 6.2, bukan masonry). Jarak antarkolom 24px.
-3. **Ubin** adalah satu-satunya tempat kotak dipakai di halaman baca: border 1px `line`, radius 0, tanpa bayangan, padding 20px, **satu tingkat saja** (tidak ada kotak di dalam ubin). Isi ubin sama dengan butir feed: baris penulis `text-xs`, lalu salah satu dari tiga bentuk:
+2. **Grid lajur campuran (20 November 2026, pola Explore Substack).** Lebar halaman 1280. Lajur menurut lebar kontainer: 4 dari 1240px, 3 dari 896px, 2 dari 576px, di bawahnya daftar biasa pola 6.2. Jarak antarlajur dan antarubin 24px. Kepadatan dari masonry terukur (`useRowSpan`: baris grid 4px, tiap ubin merentang setinggi isinya, `grid-auto-flow: dense`), jadi ubin lebar dan sempit saling mengisi tanpa celah. Satu halaman 12 ubin (habis dibagi 2, 3, 4). **Reveal:** tiap ubin naik 12px dan memudar masuk (500ms `--ease-out`, `translate` dan `opacity` saja) **sekali**, saat pertama terlihat (`useRevealOnce`, IntersectionObserver, tanpa observer langsung tampil); jeda bertingkat 60ms per lajur (maks. 180ms) supaya satu baris mengalir dan ubin di bawah tidak menunggu; ubin dari "Muat lebih banyak" dan pergantian kategori memakai cara yang sama; mati total saat reduced motion.
+3. **Ubin**: permukaan `subtle` tanpa garis, sudut siku, tanpa bayangan, **satu tingkat saja**. Bentuk (`tileForm`):
    - **Catatan:** teks serif 16/26 langsung, dipotong 8 baris.
    - **Karya:** `feed-title`, `feed-excerpt` tiga baris.
-   - **Karya bergambar:** gambar rasio 3:2 di atas judul, tanpa teks di atas gambar dan tanpa gradien.
-   Di bawah ubin: apresiasi dan komentar kecil di kiri, Simpan di kanan.
+   - **Sampul** (karya dengan foto lanskap, lebar ≥1,25× tinggi): foto selebar ubin di atas, ubin merentang **dua lajur** mulai 3 lajur, judul 26/34.
+   - **Bergambar** (karya dengan foto lain): foto selebar ubin di atas judul, satu lajur.
+   - **Sisip** (catatan dengan foto): teks dulu, foto di dalam padding di bawahnya, tinggi maksimal 352px.
+   Foto memakai rasio dan **warna aslinya** (keputusan user 20 November 2026: tidak dibuat hitam putih; WebP 900px), tanpa teks di atas gambar dan tanpa gradien. Di bawah ubin: apresiasi dan komentar kecil di kiri, Simpan di kanan. Di daftar ponsel foto menjadi thumbnail 80×53 di kanan.
 4. **Tombol "Muat lebih banyak"** (sekunder) di akhir, bukan gulir tanpa batas, supaya footer tetap terjangkau dan posisi tidak hilang.
 5. Tidak ada banner promosi di atas grid dan tidak ada pengisi ruang (tulisan yang diiklankan, ajakan membuat akun) di antara ubin.
-6. **Guard terhadap rasa media sosial:** ubin tanpa gambar adalah bawaan; grid yang didominasi foto berarti penulis melampirkan foto, bukan desain yang memaksanya. Angka apresiasi ditampilkan kecil dan tidak dipakai sebagai pengurut utama kecuali di kategori Most Appreciated.
+6. **Guard terhadap rasa media sosial:** ubin tanpa gambar adalah bawaan; grid yang didominasi foto berarti penulis melampirkan foto, bukan desain yang memaksanya. Data contoh memakai foto domain publik dari moodboard pada 8 dari 19 postingan (di bawah setengah, dijaga tes). Angka apresiasi ditampilkan kecil dan tidak dipakai sebagai pengurut utama kecuali di kategori Most Appreciated.
 
 ### 6.9 Halaman postingan dengan balasan (pola halaman catatan Substack)
 

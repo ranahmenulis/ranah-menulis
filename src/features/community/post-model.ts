@@ -21,12 +21,25 @@ export function postLabel(post: Pick<PostCore, "kind" | "genre">): string {
   return `${post.kind === "prolog" ? "Prolog" : "Cuplikan"} · ${post.genre}`;
 }
 
-export type TileForm = "note" | "titled" | "image";
+export type TileForm = "note" | "titled" | "cover" | "image" | "inset";
 
-/** Which of the three tile shapes a post takes: photo first, else short text first, else title. */
+/** A photo at least this much wider than tall can lead a wide tile. [usulan] */
+const COVER_RATIO = 1.25;
+
+/** A short text is a note; anything longer is shown under its title (DESIGN.md 6.8). */
+export const isNote = (post: Post) => wordsOf(post.blocks) <= NOTE_MAX_WORDS;
+
+/**
+ * Which tile shape a post takes in Jelajahi (DESIGN.md 6.8). Without a photo: note or titled. With
+ * one: a note keeps its text first and the photo below it ("inset"); a titled post with a
+ * landscape photo becomes a wide tile led by the photo ("cover"), otherwise the photo sits above
+ * the title in a normal tile ("image").
+ */
 export function tileForm(post: Post): TileForm {
-  if (post.hasImage) return "image";
-  return wordsOf(post.blocks) <= NOTE_MAX_WORDS ? "note" : "titled";
+  const note = isNote(post);
+  if (!post.image) return note ? "note" : "titled";
+  if (note) return "inset";
+  return post.image.width / post.image.height >= COVER_RATIO ? "cover" : "image";
 }
 
 /** First block that is running text; used as the excerpt under a title. */

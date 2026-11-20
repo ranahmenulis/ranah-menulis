@@ -135,4 +135,5 @@ export function visibleCategories(
 export const categoryById = (id: string): Category | undefined =>
   CATEGORIES.find((c) => c.id === id);
 
-export const PAGE_SIZE = 9;
+/** Divisible by two, three and four lanes, so a page ends on a full row. */
+export const PAGE_SIZE = 12;
