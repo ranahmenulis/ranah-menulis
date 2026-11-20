@@ -19,7 +19,8 @@ import { DiscoverTile } from "./discover-tile";
 import { DiscoverSkeleton } from "./discover-skeleton";
 
 /**
- * Jelajahi (COM-09, DESIGN.md 6.8): sticky category chips, a masonry grid of tiles, and a "Muat
+ * Jelajahi (COM-09, DESIGN.md 6.8): sticky category chips, a masonry grid of tiles (two to four lanes,
+ * wide photo tiles across two; `useRowSpan`), and a "Muat
  * lebih banyak" button instead of endless scrolling. Categories with nothing in them are not
  * listed. Dummy fixtures plus whatever was published on this device.
  */
@@ -52,7 +53,7 @@ export function DiscoverView() {
   const hasMore = list.length > count;
 
   return (
-    <div className="@container mx-auto max-w-260">
+    <div className="@container mx-auto max-w-320">
       <div className="flex items-center gap-4">
         <h1 className="text-[22px] leading-[30px] font-semibold md:text-[28px] md:leading-9">
           Jelajahi
@@ -92,10 +93,11 @@ export function DiscoverView() {
             {categoryById(current.id)?.description}
           </p>
 
-          <div className="@xl:columns-2 @xl:gap-x-6 @4xl:columns-3">
-            {visible.map((post) => (
+          <div className="grid @xl:grid-flow-row-dense @xl:auto-rows-[4px] @xl:grid-cols-2 @xl:gap-x-6 @4xl:grid-cols-3 @[77.5rem]:grid-cols-4">
+            {visible.map((post, index) => (
               <DiscoverTile
                 key={post.id}
+                index={index}
                 post={post}
                 comments={commentCounts.get(post.id) ?? 0}
                 saved={data.marks[mark.saved(post.id)] ?? false}

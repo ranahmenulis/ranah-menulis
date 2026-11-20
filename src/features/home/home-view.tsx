@@ -28,7 +28,7 @@ import { greetingSentence } from "./week-summary";
 /**
  * Beranda (PLT-10, DESIGN.md 6.2). Three columns like Medium: the app sidebar, a centered column
  * with a greeting, the one thing to do now, and the feed, then a side column from xl (HomeRail).
- * Below xl the side column sits between the card and the feed. The feed is Community's dummy posts
+ * Below xl the side column follows the feed (as in Medium, the feed comes first on a phone). The feed is Community's dummy posts
  * plus what was published on this device.
  */
 export function HomeView() {
@@ -80,19 +80,6 @@ export function HomeView() {
         )}
       </div>
 
-      <aside
-        aria-label="Progres dan kegiatan"
-        className="mt-8 xl:col-start-2 xl:row-span-2 xl:row-start-1 xl:mt-0 xl:border-l xl:border-line xl:py-10 xl:pr-6 xl:pl-8"
-      >
-        <HomeRail
-          data={data}
-          showProgress={!showSteps}
-          showProjects={ready && !isNew}
-          groups={groups}
-          reader={reader}
-        />
-      </aside>
-
       <div className="min-w-0 xl:w-full xl:max-w-194 xl:justify-self-center xl:px-12 xl:pb-10">
         <Tabs
           label="Feed"
@@ -135,6 +122,19 @@ export function HomeView() {
           ))
         )}
       </div>
+
+      <aside
+        aria-label="Progres dan kegiatan"
+        className="mt-4 border-t border-line-strong pt-6 xl:col-start-2 xl:row-span-2 xl:row-start-1 xl:mt-0 xl:border-t-0 xl:border-l xl:border-line xl:py-10 xl:pr-6 xl:pl-8"
+      >
+        <HomeRail
+          data={data}
+          showProgress={!showSteps}
+          showProjects={ready && !isNew}
+          groups={groups}
+          reader={reader}
+        />
+      </aside>
     </div>
   );
 }

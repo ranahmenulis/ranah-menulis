@@ -21,6 +21,8 @@ export type Author = {
   place?: string;
 };
 
+export type PostImage = { src: string; width: number; height: number; alt: string };
+
 export type PostCore = {
   id: string;
   authorId: string;
@@ -36,8 +38,8 @@ export type PostCore = {
   groupMembershipId?: string;
   appreciations: number;
   saves: number;
-  /** Fixture posts only: a photo the author attached. Shown as a labelled placeholder. */
-  hasImage?: boolean;
+  /** Fixture posts only: a photo the author attached, at its own aspect ratio. */
+  image?: PostImage;
 };
 
 /** A post as the screens use it: every time is an absolute timestamp. */

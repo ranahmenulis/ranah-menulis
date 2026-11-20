@@ -6,7 +6,6 @@ import {
   Notebook,
   ShieldCheck,
   User,
-  CalendarDots,
 } from "@phosphor-icons/react/dist/ssr";
 import type { Icon } from "@phosphor-icons/react";
 import { OWN_PROFILE_HREF } from "@/features/profile/profile-href";
@@ -44,7 +43,6 @@ const discover: NavEntry = {
   href: DISCOVER_HREF,
 };
 const studio: NavEntry = { id: "studio", label: "Studio", Icon: Notebook, href: STUDIO_HREF };
-const streak: NavEntry = { id: "streak", label: "Streak", Icon: CalendarDots, href: STREAK_HREF };
 const projects: NavEntry = {
   id: "projects",
   label: "Projects",
@@ -67,17 +65,16 @@ export const kelolaNav: NavEntry = {
 const profile: NavEntry = { id: "profil", label: "Profil", Icon: User, href: OWN_PROFILE_HREF };
 
 /**
- * Desktop sidebar and tablet rail. Streak is a sub-item of Studio on the sidebar (DESIGN.md 5.3).
- * Jelajahi sits under Beranda [usulan]; phones keep five tabs and open it from the search icon.
+ * Desktop sidebar and tablet rail. Jelajahi sits under Beranda; phones open it from the search icon.
+ * Streak is not a navigation entry (user, 20 November 2026): it is a tab of Studio (DESIGN.md 5.3),
+ * so its pages light up Studio.
  */
 export const mainNav = [home, discover, studio, projects, saved, profile];
-export const sidebarSub = streak;
-/** Phones: five tabs per PRD 16. [konfirmasi] four tabs is a proposal. */
-export const bottomNav = [home, studio, streak, projects, profile];
+/** Phones: five tabs (PRD 16); Jelajahi has its own tab, Streak is reached from the Studio tabs. */
+export const bottomNav = [home, discover, studio, projects, profile];
 
-/** Which nav entry the current path belongs to. Studio and Streak are separate on phones only. */
+/** Which nav entry the current path belongs to. */
 export function activeId(pathname: string): string | null {
-  if (pathname.startsWith(STREAK_HREF)) return "streak";
   if (pathname.startsWith(STUDIO_HREF)) return "studio";
   if (pathname.startsWith("/beranda")) return "beranda";
   if (pathname.startsWith(DISCOVER_HREF)) return "jelajahi";

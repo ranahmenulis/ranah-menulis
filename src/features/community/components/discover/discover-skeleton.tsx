@@ -1,4 +1,11 @@
-import { Skeleton } from "@/components/ui/states";
+import { Skeleton as Base } from "@/components/ui/states";
+import type { ComponentProps } from "react";
+import { cn } from "@/lib/cn";
+
+/** Bars sit on the `subtle` tile, so they take the line color to stay visible. */
+const Skeleton = ({ className, ...props }: ComponentProps<"div">) => (
+  <Base className={cn("@xl:bg-line", className)} {...props} />
+);
 
 const TILES = [
   { image: false, long: true },
@@ -23,13 +30,13 @@ export function DiscoverSkeleton() {
         ))}
       </div>
       <Skeleton className="mt-4 mb-6 h-3.5 w-80 max-w-full" />
-      <div className="@xl:columns-2 @xl:gap-x-6 @4xl:columns-3">
+      <div className="@xl:columns-2 @xl:gap-x-6 @4xl:columns-3 @[77.5rem]:columns-4">
         {TILES.map((tile, i) => (
           <div
             key={i}
-            className="mb-6 grid break-inside-avoid gap-2.5 border border-line p-5 @max-xl:mb-0 @max-xl:border-0 @max-xl:border-b @max-xl:px-0"
+            className="mb-6 grid break-inside-avoid gap-2.5 p-5 @max-xl:mb-0 @max-xl:border-b @max-xl:border-line @max-xl:px-0 @xl:bg-subtle"
           >
-            {tile.image && <Skeleton className="aspect-3/2 w-full @max-xl:hidden" />}
+            {tile.image && <Skeleton className="aspect-4/3 w-full @max-xl:hidden @xl:bg-line" />}
             <div className="flex items-center gap-2">
               <Skeleton className="size-5 rounded-full" />
               <Skeleton className="h-3 w-30" />

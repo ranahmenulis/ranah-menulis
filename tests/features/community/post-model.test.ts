@@ -27,10 +27,21 @@ describe("fixtures", () => {
 });
 
 describe("tileForm and labels", () => {
-  it("shows a photo post as an image tile, a short text as a note, the rest with a title", () => {
-    expect(tileForm(byId("pasar-malam-selepas-hujan"))).toBe("image");
+  it("shows a short text as a note and the rest with a title", () => {
     expect(tileForm(byId("toples-kerupuk"))).toBe("note");
-    expect(tileForm(byId("hujan-pertama-bulan-november"))).toBe("titled");
+    expect(tileForm(byId("jam-dinding-kedai-kopi-ah-seng"))).toBe("titled");
+  });
+
+  it("places a photo by its shape: wide cover, above the title, or under a note", () => {
+    expect(tileForm(byId("penjaga-mercusuar"))).toBe("cover");
+    expect(tileForm(byId("surat-dari-lantai-dua-puluh"))).toBe("image");
+    expect(tileForm(byId("kereta-malam-ke-bandung"))).toBe("inset");
+  });
+
+  it("keeps text tiles the majority (DESIGN.md 6.8)", () => {
+    const withPhoto = posts.filter((p) => p.image).length;
+    expect(withPhoto).toBeGreaterThan(0);
+    expect(withPhoto / posts.length).toBeLessThan(0.5);
   });
 
   it("labels a post honestly as prolog or cuplikan with its genre", () => {
