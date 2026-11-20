@@ -9,7 +9,7 @@ const listeners = new Set<() => void>();
 /** Only set when localStorage refused a write; it wins, so the screen shows what was just marked. */
 let fallback: string | null = null;
 
-type Marks = Record<string, string[]>;
+export type Marks = Record<string, string[]>;
 
 function snapshot(): string | null {
   try {
@@ -69,6 +69,11 @@ export function useDoneMaterials(slug: string): ReadonlySet<string> {
     sets.set(ids, set);
   }
   return set;
+}
+
+/** Every class's marks at once, for screens that look across classes (Lanjutkan on Beranda). */
+export function useDoneMarks(): Marks {
+  return marksFor(useSyncExternalStore(subscribe, snapshot, () => null));
 }
 
 /** Marks or unmarks one material. Reads the stored value again, so two tabs do not overwrite. */

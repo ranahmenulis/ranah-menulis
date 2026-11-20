@@ -13,6 +13,8 @@ export type ClassMaterial = {
   body: string[];
   /** A recording or reading kept on an outside service (Q-26: the platform does not host video). */
   url?: string;
+  /** A writing exercise the participant can copy into Studio (KLS-06). Blank lines split paragraphs. */
+  exercise?: string;
 };
 
 /** Fixture form: days after the class started, so a dummy class never goes stale. */

@@ -83,6 +83,8 @@ export const puisiClass: ClassFixture = {
           body: [
             "Bacalah satu puisi pendek dengan suara keras, dua kali. Catat kata yang terdengar paling nyaring.",
           ],
+          exercise:
+            "Dengarkan satu bunyi di sekitarmu selama satu menit, lalu tulis lima kata yang paling mirip bunyi itu.\n\nSusun lima kata itu menjadi dua larik.",
         },
       ],
       assignment: {

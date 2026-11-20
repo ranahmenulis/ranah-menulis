@@ -6,6 +6,9 @@ import { StatusSubmission } from "@/components/ui/status-submission";
 import { TextLink } from "@/components/ui/text-link";
 import { cn } from "@/lib/cn";
 import { useMyProjects, type MyProjectsData } from "@/features/projects/hooks/use-my-projects";
+import { RunningClassList } from "@/features/projects/kelas/components/running-classes";
+import { useRunningClasses } from "@/features/projects/kelas/hooks/use-running-classes";
+import type { AssignmentStore } from "@/features/projects/kelas/storage/assignment-store";
 import type { MyProject } from "@/features/projects/my-projects";
 import { paymentItems, revisionItems } from "@/features/projects/my-projects";
 import { formatProjectDate, projectHref } from "@/features/projects/project-model";
@@ -173,14 +176,45 @@ export function MyProjectsRow({ my }: { my: MyProjectsData }) {
 }
 
 /**
- * Both project sections of the Beranda side column, from one read of the registrations and submissions. They fail
- * together, but only this part of Beranda: a retry here leaves everything else alone.
+ * "Kelas yang sedang berjalan" (KLS-05): classes you can continue, each with a Lanjutkan button.
+ * Not drawn when there is none; a failed read says so with a retry.
  */
-export function ProjectRows({ store }: { store?: SubmissionStore }) {
+export function RunningClassesRow({ store }: { store?: AssignmentStore }) {
+  const running = useRunningClasses({ store });
+  if (running.status === "error") {
+    return (
+      <Section title="Kelas yang sedang berjalan">
+        <ErrorBanner action={<RetryButton onClick={running.reload} />}>
+          Kelas yang sedang berjalan gagal dimuat. Bagian lain di Beranda tetap bisa dipakai.
+        </ErrorBanner>
+      </Section>
+    );
+  }
+  if (running.status !== "ready" || running.rows.length === 0) return null;
+  return (
+    <Section title="Kelas yang sedang berjalan">
+      <RunningClassList rows={running.rows} variant="rail" />
+    </Section>
+  );
+}
+
+/**
+ * The project sections of the Beranda side column, from one read of the registrations and
+ * submissions. They fail on their own: a retry here leaves everything else alone.
+ */
+export function ProjectRows({
+  store,
+  assignments,
+}: {
+  store?: SubmissionStore;
+  /** Replaces the class hand-in store in tests. */
+  assignments?: AssignmentStore;
+}) {
   const my = useMyProjects(undefined, store);
   return (
     <>
       <Attention my={my} />
+      <RunningClassesRow store={assignments} />
       <MyProjectsRow my={my} />
     </>
   );

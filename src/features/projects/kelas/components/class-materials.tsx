@@ -1,10 +1,13 @@
 import { Check } from "@phosphor-icons/react/dist/ssr";
 import { CheckChoice } from "@/components/ui/choice";
 import { Notice } from "@/components/ui/states";
+import { ExerciseBlock } from "./exercise-block";
 import { ExternalLink } from "./external-link";
 import { Section } from "../../components/category-blocks";
 import { formatProjectDate } from "../../project-model";
 import type { TimeZoneName } from "../../types";
+import { materialAnchor } from "../continue-model";
+import { useMaterialFocus } from "../hooks/use-material-focus";
 import { setMaterialDone } from "../material-progress";
 import type { ClassContent, ClassMaterial } from "../types";
 
@@ -18,7 +21,7 @@ function Material({
   done: boolean;
 }) {
   return (
-    <details className="group border-b border-line py-3">
+    <details id={materialAnchor(material.id)} className="group border-b border-line py-3">
       <summary className="flex cursor-pointer list-none items-start justify-between gap-3">
         <span className="min-w-0 text-base font-medium wrap-anywhere">{material.title}</span>
         <span className="flex shrink-0 items-center gap-2 text-xs text-ink-muted">
@@ -38,6 +41,7 @@ function Material({
           </p>
         ))}
         {material.url && <ExternalLink href={material.url}>Buka rekaman</ExternalLink>}
+        <ExerciseBlock slug={slug} material={material} />
         <CheckChoice
           checked={done}
           onChange={(e) => setMaterialDone(slug, material.id, e.target.checked)}
@@ -63,6 +67,7 @@ export function ClassMaterials({
   started: boolean;
   zone: TimeZoneName;
 }) {
+  useMaterialFocus(started);
   return (
     <Section title="Materi">
       {!started ? (

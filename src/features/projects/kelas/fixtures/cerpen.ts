@@ -61,6 +61,8 @@ export const cerpenClass: ClassFixture = {
             "Cerpen yang berhasil biasanya berangkat dari satu pertanyaan: apa yang terjadi bila tokoh ini kehilangan hal yang paling dijaganya?",
             "Tulis ide ceritamu dalam satu kalimat, lalu ubah menjadi pertanyaan. Pertanyaan itu yang akan kamu jawab sepanjang cerita.",
           ],
+          exercise:
+            "Tulis ide ceritamu dalam satu kalimat.\n\nUbah kalimat itu menjadi satu pertanyaan: apa yang terjadi bila tokohku kehilangan hal yang paling dijaganya?\n\nTulis tiga kemungkinan jawabannya, masing-masing satu kalimat.",
         },
         {
           id: "cerpen-1b",
@@ -113,6 +115,8 @@ export const cerpenClass: ClassFixture = {
             "Adegan yang bekerja punya tokoh, tujuan, dan hambatan. Bila salah satunya hilang, adegan itu hanya pengisi halaman.",
             "Mulailah adegan selambat mungkin dan akhiri secepat mungkin.",
           ],
+          exercise:
+            "Pilih satu adegan dari cerpenmu. Tulis dalam satu kalimat apa yang diinginkan tokohmu di adegan itu, dan apa yang menghalanginya.\n\nLalu tulis adegannya, mulai dari saat paling dekat dengan masalah.",
         },
         {
           id: "cerpen-3b",

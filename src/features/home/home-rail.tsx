@@ -8,6 +8,7 @@ import { NEW_POST_HREF } from "@/features/app-shell/nav";
 import { EVENTS_HREF } from "@/features/community/events/event-model";
 import { GROUPS_HREF, type WritingGroup } from "@/features/community/groups/group-model";
 import { GroupInvitations } from "@/features/community/groups/components/group-invitations";
+import type { AssignmentStore } from "@/features/projects/kelas/storage/assignment-store";
 import type { SubmissionStore } from "@/features/projects/storage/submission-store";
 import type { StreakData } from "@/features/studio/hooks/use-streak-data";
 import { ProjectRows } from "./project-rows";
@@ -40,6 +41,7 @@ export function HomeRail({
   groups,
   reader,
   submissions,
+  assignments,
 }: {
   data: StreakData;
   /** False while the first steps already ask for a target. */
@@ -49,11 +51,13 @@ export function HomeRail({
   reader: string | null;
   /** Replaces the device store in tests. */
   submissions?: SubmissionStore;
+  /** Replaces the class hand-in store in tests. */
+  assignments?: AssignmentStore;
 }) {
   return (
     <div className="grid content-start">
       {showProgress && <ProgressSection data={data} />}
-      {showProjects && <ProjectRows store={submissions} />}
+      {showProjects && <ProjectRows store={submissions} assignments={assignments} />}
       <GroupInvitations groups={groups} reader={reader} variant="rail" />
       <Section title="Bersama penulis lain">
         <ul className="flex flex-wrap gap-x-6 gap-y-2.5 xl:grid">
