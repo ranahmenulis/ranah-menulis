@@ -7,12 +7,14 @@ import {
   waitFor,
   within,
 } from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { AssignmentView } from "@/features/projects/kelas/components/assignment-view";
 import { ClassDashboard } from "@/features/projects/kelas/components/class-dashboard";
 import { createMemoryAssignmentStore } from "@/features/projects/kelas/storage/memory-assignment-store";
 import { docs, documentsOf, register } from "../../components/submit-helpers";
 import { CERPEN, DAY } from "../helpers";
+
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }) }));
 
 configure({ asyncUtilTimeout: 5000 });
 

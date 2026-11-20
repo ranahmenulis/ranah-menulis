@@ -1,6 +1,7 @@
 import { cleanup, configure, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { ProjectRows } from "@/features/home/project-rows";
+import { createMemoryAssignmentStore } from "@/features/projects/kelas/storage/memory-assignment-store";
 import { createMemorySubmissionStore } from "@/features/projects/storage/memory-submission-store";
 import type { SubmissionStore } from "@/features/projects/storage/submission-store";
 import type { Submission } from "@/features/projects/submission-types";
@@ -48,7 +49,9 @@ async function storeWith(...works: Submission[]) {
 describe("Beranda, Perlu perhatian", () => {
   it("puts a revision the editor asked for first, linking to its note", async () => {
     register(CERPEN);
-    render(<ProjectRows store={await storeWith(asked())} />);
+    render(
+      <ProjectRows store={await storeWith(asked())} assignments={createMemoryAssignmentStore()} />,
+    );
     const link = await screen.findByRole("link", { name: "Baca catatan editor" });
     expect(link.getAttribute("href")).toBe(`/projects/${CERPEN}/kiriman/r`);
     const first = screen.getAllByRole("listitem")[0];
@@ -57,7 +60,12 @@ describe("Beranda, Perlu perhatian", () => {
   });
 
   it("omits the row when no project needs attention", () => {
-    render(<ProjectRows store={createMemorySubmissionStore()} />);
+    render(
+      <ProjectRows
+        store={createMemorySubmissionStore()}
+        assignments={createMemoryAssignmentStore()}
+      />,
+    );
     expect(screen.queryByText("Perlu perhatian")).toBeNull();
     expect(screen.queryByRole("link", { name: "Baca catatan editor" })).toBeNull();
   });
@@ -68,7 +76,7 @@ describe("Beranda, Perlu perhatian", () => {
       ...createMemorySubmissionStore(),
       list: () => Promise.reject(new Error("idb")),
     };
-    render(<ProjectRows store={store} />);
+    render(<ProjectRows store={store} assignments={createMemoryAssignmentStore()} />);
     expect(await screen.findByRole("alert")).toBeTruthy();
   });
 });
@@ -88,7 +96,12 @@ describe("Beranda, pembayaran", () => {
         },
       }),
     );
-    render(<ProjectRows store={createMemorySubmissionStore()} />);
+    render(
+      <ProjectRows
+        store={createMemorySubmissionStore()}
+        assignments={createMemoryAssignmentStore()}
+      />,
+    );
     expect(await screen.findByText("Pembayaran Lomba Cerpen Hujan 2026 menunggu")).toBeTruthy();
     expect(screen.getByRole("link", { name: "Bayar sekarang" }).getAttribute("href")).toBe(
       `/projects/${CERPEN}/bayar`,
@@ -99,7 +112,9 @@ describe("Beranda, pembayaran", () => {
 describe("Beranda, Proyek saya", () => {
   it("shows the status of the work that matters most, with the way to all", async () => {
     register(CERPEN);
-    render(<ProjectRows store={await storeWith(asked())} />);
+    render(
+      <ProjectRows store={await storeWith(asked())} assignments={createMemoryAssignmentStore()} />,
+    );
     const link = await screen.findByRole("link", { name: "Lomba Cerpen Hujan 2026" });
     expect(link.getAttribute("href")).toBe(`/projects/${CERPEN}/kiriman/r`);
     expect(screen.getByText("Perlu Revisi")).toBeTruthy();
@@ -110,7 +125,12 @@ describe("Beranda, Proyek saya", () => {
 
   it("shows the registration when nothing was sent, and no more than two projects", async () => {
     register(CERPEN, KELAS, "lomba-esai-literasi-remaja");
-    render(<ProjectRows store={createMemorySubmissionStore()} />);
+    render(
+      <ProjectRows
+        store={createMemorySubmissionStore()}
+        assignments={createMemoryAssignmentStore()}
+      />,
+    );
     await screen.findByRole("link", { name: "Lihat semua" });
     const row = screen.getByText("Proyek saya").parentElement!;
     const items = within(row).getAllByRole("listitem");
@@ -120,7 +140,12 @@ describe("Beranda, Proyek saya", () => {
   });
 
   it("is not drawn when nothing was joined", () => {
-    render(<ProjectRows store={createMemorySubmissionStore()} />);
+    render(
+      <ProjectRows
+        store={createMemorySubmissionStore()}
+        assignments={createMemoryAssignmentStore()}
+      />,
+    );
     expect(screen.queryByText("Proyek saya")).toBeNull();
   });
 
@@ -141,7 +166,12 @@ describe("Beranda, Proyek saya", () => {
       status: "ditarik",
       submittedAt: NOW,
     });
-    render(<ProjectRows store={await storeWith(live, gone)} />);
+    render(
+      <ProjectRows
+        store={await storeWith(live, gone)}
+        assignments={createMemoryAssignmentStore()}
+      />,
+    );
     expect(
       (await screen.findByRole("link", { name: "Lomba Cerpen Hujan 2026" })).getAttribute("href"),
     ).toBe(`/projects/${CERPEN}/kiriman/live`);
@@ -156,7 +186,7 @@ describe("Beranda, Proyek saya", () => {
       list: () => (fail ? Promise.reject(new Error("idb")) : base.list()),
     };
     register(CERPEN);
-    render(<ProjectRows store={store} />);
+    render(<ProjectRows store={store} assignments={createMemoryAssignmentStore()} />);
     expect(await screen.findByRole("alert")).toBeTruthy();
     fail = false;
     fireEvent.click(screen.getByRole("button", { name: "Coba lagi" }));

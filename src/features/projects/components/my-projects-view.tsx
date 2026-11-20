@@ -1,9 +1,12 @@
 "use client";
 
 import { ButtonLink } from "@/components/ui/button";
-import { EmptyState } from "@/components/ui/states";
+import { EmptyState, ErrorBanner, RetryButton } from "@/components/ui/states";
 import { PROJECTS_HREF } from "@/features/app-shell/nav";
 import { useMyProjects } from "../hooks/use-my-projects";
+import { RunningClassList } from "../kelas/components/running-classes";
+import { useRunningClasses } from "../kelas/hooks/use-running-classes";
+import type { AssignmentStore } from "../kelas/storage/assignment-store";
 import type { SubmissionStore } from "../storage/submission-store";
 import type { ProjectFixture } from "../types";
 import { MyProjectGroup } from "./my-project-group";
@@ -13,7 +16,35 @@ type Props = {
   /** Replace the dummy catalog and the device store in tests. */
   source?: ProjectFixture[];
   store?: SubmissionStore;
+  /** Replaces the class hand-in store in tests. */
+  assignments?: AssignmentStore;
 };
+
+/** KLS-05, above the projects: only drawn when a class is running. */
+function RunningClassesSection({ store }: { store?: AssignmentStore }) {
+  const running = useRunningClasses({ store });
+  if (running.status === "error") {
+    return (
+      <section aria-labelledby="kelas-berjalan" className="grid gap-3 border-b border-line py-5">
+        <h2 id="kelas-berjalan" className="text-sm font-semibold">
+          Kelas yang sedang berjalan
+        </h2>
+        <ErrorBanner action={<RetryButton onClick={running.reload} />}>
+          Kelas yang sedang berjalan gagal dimuat.
+        </ErrorBanner>
+      </section>
+    );
+  }
+  if (running.status !== "ready" || running.rows.length === 0) return null;
+  return (
+    <section aria-labelledby="kelas-berjalan" className="grid gap-3 border-b border-line py-5">
+      <h2 id="kelas-berjalan" className="text-sm font-semibold">
+        Kelas yang sedang berjalan
+      </h2>
+      <RunningClassList rows={running.rows} variant="page" />
+    </section>
+  );
+}
 
 /**
  * Proyek saya (PRJ-04, PRD 17.5): every registration with its works and their status, what needs
@@ -21,7 +52,7 @@ type Props = {
  * own, a failed read is an error with a retry (never "nothing joined"), and an empty list points
  * to the catalog.
  */
-export function MyProjectsView({ source, store }: Props) {
+export function MyProjectsView({ source, store, assignments }: Props) {
   const data = useMyProjects(source, store);
 
   if (data.guest) return <MyGuest back="katalog" />;
@@ -49,6 +80,7 @@ export function MyProjectsView({ source, store }: Props) {
         </EmptyState>
       ) : (
         <div>
+          <RunningClassesSection store={assignments} />
           {data.rows.map((row) => (
             <MyProjectGroup key={row.project.slug} row={row} />
           ))}

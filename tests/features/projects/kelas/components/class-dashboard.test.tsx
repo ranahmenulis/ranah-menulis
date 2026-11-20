@@ -1,10 +1,12 @@
 import { act, cleanup, configure, fireEvent, render, screen, within } from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ClassDashboard } from "@/features/projects/kelas/components/class-dashboard";
 import { createMemoryAssignmentStore } from "@/features/projects/kelas/storage/memory-assignment-store";
 import type { AssignmentStore } from "@/features/projects/kelas/storage/assignment-store";
 import { register } from "../../components/submit-helpers";
 import { CERPEN, handedIn, PUISI } from "../helpers";
+
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }) }));
 
 configure({ asyncUtilTimeout: 5000 });
 
