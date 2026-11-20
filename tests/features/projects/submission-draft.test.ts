@@ -11,6 +11,7 @@ describe("submission drafts", () => {
     saveDraft("a", { ...emptyForm, docId: "d1", title: "Judul", agreed: true });
     expect(loadDraft("a")).toEqual({
       docId: "d1",
+      upload: null,
       title: "Judul",
       genre: "",
       note: "",

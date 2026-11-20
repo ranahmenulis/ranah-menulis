@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Avatar } from "@/components/ui/avatar";
+import { AuthorAvatar } from "@/features/community/components/author-avatar";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { SETTINGS_HREF } from "@/features/account/redirect";
 import { SAVED_HREF } from "@/features/app-shell/nav";
@@ -31,7 +31,7 @@ export function ProfileIdentity(p: Props) {
       aria-label={`Profil ${p.author.name}`}
       className="grid justify-items-start gap-3 py-5 lg:sticky lg:top-[calc(6rem+var(--safe-top))] lg:col-start-2 lg:row-span-3 lg:row-start-1 lg:self-start lg:py-0"
     >
-      <Avatar name={p.author.name} size={88} />
+      <AuthorAvatar author={p.author} size={88} />
       <p className="text-sm">
         <b className="font-medium tabular-nums">{number.format(p.followers)}</b> pengikut ·{" "}
         <b className="font-medium tabular-nums">{number.format(p.following)}</b> mengikuti

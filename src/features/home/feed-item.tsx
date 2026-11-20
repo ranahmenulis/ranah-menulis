@@ -1,8 +1,8 @@
 "use client";
 
+import { AuthorAvatar } from "@/features/community/components/author-avatar";
 import { BookmarkSimple, ChatCircle, DotsThree, Heart } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
-import { Avatar } from "@/components/ui/avatar";
 import { cn } from "@/lib/cn";
 import { formatAgo } from "@/features/community/format-time";
 import { authorOf, excerptOf, isNote, postLabel } from "@/features/community/post-model";
@@ -61,7 +61,7 @@ export function FeedItem({ post, now, comments, appreciated, saved, onAppreciate
   return (
     <article className="relative grid gap-2.5 border-b border-line py-7 md:py-6">
       <div className="flex items-center gap-2 text-[13px] leading-[18px] md:text-xs md:leading-4">
-        <Avatar name={author.name} size={note ? 32 : 20} />
+        <AuthorAvatar author={author} size={note ? 32 : 20} />
         <span className="min-w-0">
           {post.visibility === "grup" && post.groupName && (
             <>

@@ -1,4 +1,5 @@
 import { EmptyState } from "@/components/ui/states";
+import { versionSizeText } from "@/features/projects/submission-text";
 import { StatusSubmission } from "@/components/ui/status-submission";
 import { formatProjectDateTime } from "@/features/projects/project-model";
 import { paymentState } from "@/features/projects/payment-model";
@@ -71,7 +72,7 @@ export function WorksTab({ project, works }: { project: Project; works: Submissi
                 <span className="font-medium wrap-anywhere">{work.title}</span>
                 <span className="text-xs text-ink-muted">
                   {formatProjectDateTime(work.submittedAt, project.timeZone)} ·{" "}
-                  {work.versions.at(-1)?.wordCount ?? 0} kata
+                  {versionSizeText(work.versions.at(-1))}
                 </span>
               </span>
               <StatusSubmission status={work.status} />

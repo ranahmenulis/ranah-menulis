@@ -1,12 +1,13 @@
 "use client";
 
+import { versionSizeText } from "../submission-text";
 import Link from "next/link";
 import { useEffect, useRef, useState, type Ref } from "react";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { ErrorBanner, Notice } from "@/components/ui/states";
 import { StatusSubmission } from "@/components/ui/status-submission";
 import { useViewer } from "@/lib/viewer";
-import { categoryLabel, formatNumber, projectHref } from "../project-model";
+import { categoryLabel, projectHref } from "../project-model";
 import { submissionStore } from "../storage/store";
 import type { SubmissionStore } from "../storage/submission-store";
 import { withdrawSubmission, type ActionResult } from "../submission-actions";
@@ -79,8 +80,7 @@ function Header({
         {work.title}
       </h1>
       <p className="text-sm text-ink-muted">
-        {work.genre} · {formatNumber(latest?.wordCount ?? 0)} kata · dikirim{" "}
-        {sentAtText(work.submittedAt)}
+        {work.genre} · {versionSizeText(latest)} · dikirim {sentAtText(work.submittedAt)}
       </p>
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1 pt-1">
         <StatusSubmission status={work.status} />

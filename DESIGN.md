@@ -391,9 +391,11 @@ Halaman untuk menemukan tulisan di luar yang diikuti. PRD menetapkan delapan kat
    Foto memakai rasio dan **warna aslinya** (keputusan user 20 November 2026: tidak dibuat hitam putih; WebP 900px), tanpa teks di atas gambar dan tanpa gradien. Di bawah ubin: apresiasi dan komentar kecil di kiri, Simpan di kanan. Di daftar ponsel foto menjadi thumbnail 80×53 di kanan.
 4. **Tombol "Muat lebih banyak"** (sekunder) di akhir, bukan gulir tanpa batas, supaya footer tetap terjangkau dan posisi tidak hilang.
 5. Tidak ada banner promosi di atas grid dan tidak ada pengisi ruang (tulisan yang diiklankan, ajakan membuat akun) di antara ubin.
-6. **Guard terhadap rasa media sosial:** ubin tanpa gambar adalah bawaan; grid yang didominasi foto berarti penulis melampirkan foto, bukan desain yang memaksanya. Data contoh memakai foto domain publik dari moodboard pada 8 dari 19 postingan (di bawah setengah, dijaga tes). Angka apresiasi ditampilkan kecil dan tidak dipakai sebagai pengurut utama kecuali di kategori Most Appreciated.
+6. **Guard terhadap rasa media sosial:** ubin tanpa gambar adalah bawaan; grid yang didominasi foto berarti penulis melampirkan foto, bukan desain yang memaksanya. Data contoh memakai foto domain publik dari moodboard pada 9 dari 19 postingan (di bawah setengah, dijaga tes). Penulis boleh melampirkan **satu** gambar per postingan lewat Tulis postingan (20 November 2026): teks alternatif wajib, gambar diperkecil ke 1600px dan disimpan ulang sebagai WebP di perangkat (EXIF kamera ikut hilang). Angka apresiasi ditampilkan kecil dan tidak dipakai sebagai pengurut utama kecuali di kategori Most Appreciated.
 
 ### 6.9 Halaman postingan dengan balasan (pola halaman catatan Substack)
+
+> **Detail artikel (20 November 2026, kerangka Medium):** urutan satu kolom 680: label, judul, byline, baris cakupan publik, **foto utama** bila ada (selebar layar di ponsel, selebar kolom dari md; tanpa keterangan, tanpa kredit, tanpa radius; `alt` dari penulis), teks serif dengan **drop cap** hanya untuk prosa (bukan Puisi), bilah aksi, baris meta, **kartu penulis** "Ditulis oleh" (avatar 56, bio, Ikuti), komentar, "Lainnya dari {penulis}" (maks. 3), lalu Tulisan terkait. Foto profil sendiri tampil di semua entri milikmu (`AuthorAvatar`); penulis contoh tetap memakai inisial.
 
 > Implementasi (langkah 5): kolom 680 di tengah; di ponsel bilah aksi lengket di bawah menggantikan bilah navigasi dan memuat menu ⋯, bilah atas hanya panah kembali. Ubin Jelajahi memakai container query (3 kolom ≥ 896px, 2 kolom ≥ 576px, di bawahnya daftar bergaris).
 

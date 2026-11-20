@@ -1,5 +1,5 @@
 import { ME_ID } from "../fixtures/authors";
-import type { Comment, Genre, Post, PostBlock, PostKind, Visibility } from "../types";
+import type { Comment, Genre, Post, PostBlock, PostImage, PostKind, Visibility } from "../types";
 
 /** What a post written on this device looks like in storage. Drafts may be incomplete. */
 export type StoredPost = {
@@ -16,6 +16,8 @@ export type StoredPost = {
   sourceDocId: string | null;
   /** Null until the author chooses; a post is never public by default (BR-COM-01). */
   visibility: Visibility | null;
+  /** The photo the author attached: a resized WebP as a data URL (a Storage URL once there is a backend). */
+  image?: PostImage;
   groupName?: string;
   groupId?: string;
   groupMembershipId?: string;
@@ -66,6 +68,7 @@ export function toPost(stored: StoredPost): Post | null {
     blocks: stored.blocks,
     sourceTitle: stored.sourceTitle,
     visibility: stored.visibility,
+    image: stored.image,
     groupName: stored.groupName,
     groupId: stored.groupId,
     groupMembershipId: stored.groupMembershipId,

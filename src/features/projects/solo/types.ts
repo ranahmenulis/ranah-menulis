@@ -13,15 +13,23 @@ export type SoloStage =
   | "produksi"
   | "selesai";
 
-/** A preview file of the cover or the layout. Only a description: no real file exists yet. */
+/**
+ * A preview file of the cover or the layout. When the team attached a real file (`fileId`), the
+ * author can see or download it; an older row without one is only a description.
+ */
 export type PreviewFile = {
   id: string;
   kind: "cover" | "layout";
   name: string;
   version: number;
   at: number;
-  /** A sample size in KB, shown as text. */
+  /** The size in KB, shown as text (a sample number on a row without a file). */
   sizeKb: number;
+  /** Key of the attached file in the file store; absent on a description-only row. */
+  fileId?: string;
+  /** Name and type of the attached file. */
+  fileName?: string;
+  fileType?: string;
 };
 
 /**

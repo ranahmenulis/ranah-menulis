@@ -12,6 +12,7 @@ import { mark } from "../../storage/post-store";
 import { postStore } from "../../storage/store";
 import { CommentsSection } from "./comments-section";
 import { PostActionBar, PostMobileBar } from "./post-action-bar";
+import { AuthorCard } from "./author-card";
 import { PostArticle } from "./post-article";
 import { GuestAside, PostError, PostGone, PostSkeleton } from "./post-states";
 import { RelatedPosts } from "./related-posts";
@@ -38,6 +39,19 @@ export function PostView({ postId }: { postId: string }) {
             post,
             data.posts.filter((p) => p.visibility === "publik"),
           )
+        : [],
+    [post, data.posts],
+  );
+
+  const moreFromAuthor = useMemo(
+    () =>
+      post
+        ? data.posts
+            .filter(
+              (p) => p.authorId === post.authorId && p.id !== post.id && p.visibility === "publik",
+            )
+            .sort((a, b) => b.publishedAt - a.publishedAt)
+            .slice(0, 3)
         : [],
     [post, data.posts],
   );
@@ -99,8 +113,15 @@ export function PostView({ postId }: { postId: string }) {
           {post.appreciations.toLocaleString("id-ID")} apresiasi · {commentCount} komentar ·{" "}
           {formatAbsolute(post.publishedAt, data.now)}
         </p>
+        <AuthorCard
+          author={author}
+          showFollow={post.authorId !== ME_ID}
+          following={data.following(post.authorId)}
+          onFollow={(a) => actions.follow(a.id, a.name)}
+        />
         <CommentsSection post={post} data={data} guest={guest} actions={actions} />
-        <RelatedPosts posts={related} />
+        <RelatedPosts posts={moreFromAuthor} title={`Lainnya dari ${author.name}`} />
+        <RelatedPosts posts={related.filter((p) => !moreFromAuthor.some((m) => m.id === p.id))} />
       </div>
 
       {guest && <GuestAside authorName={author.name} />}

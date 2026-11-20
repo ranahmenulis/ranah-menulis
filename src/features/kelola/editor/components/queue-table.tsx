@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { StatusSubmission } from "@/components/ui/status-submission";
-import { formatNumber } from "@/features/projects/project-model";
 import { MAX_REVISIONS } from "@/features/projects/submission-status";
 import { sentAtText } from "@/features/projects/submission-text";
 import { reviewHref } from "../area-hrefs";
@@ -53,7 +52,7 @@ export function QueueTable({ rows, label }: { rows: QueueRow[]; label: string })
             <td className={td}>
               <StatusSubmission status={row.status} filled />
             </td>
-            <td className={`${td} tabular-nums sm:text-right`}>{formatNumber(row.words)} kata</td>
+            <td className={`${td} tabular-nums sm:text-right`}>{row.size}</td>
             <td className={`${td} text-ink-muted`}>
               <span className="sm:hidden">Menunggu sejak </span>
               {sentAtText(row.since)}

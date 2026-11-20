@@ -4,11 +4,17 @@ import type { Post } from "../../types";
 import { AuthorLine } from "../discover/discover-tile";
 
 /** "Tulisan terkait": at most five, in the row pattern of the feed (DESIGN.md 6.9 #5). */
-export function RelatedPosts({ posts }: { posts: Post[] }) {
+export function RelatedPosts({
+  posts,
+  title = "Tulisan terkait",
+}: {
+  posts: Post[];
+  title?: string;
+}) {
   if (posts.length === 0) return null;
   return (
-    <section aria-label="Tulisan terkait" className="mt-14">
-      <h2 className="mb-2 text-xl leading-7 font-semibold">Tulisan terkait</h2>
+    <section aria-label={title} className="mt-14">
+      <h2 className="mb-2 text-xl leading-7 font-semibold">{title}</h2>
       {posts.map((post) => (
         <article key={post.id} className="relative grid gap-1.5 border-b border-line py-5">
           <AuthorLine authorId={post.authorId} />

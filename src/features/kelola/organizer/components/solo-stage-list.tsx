@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
+import { FilePickButton } from "@/components/ui/file-pick-button";
 import { EmptyState, ErrorBanner, RetryButton, Skeleton } from "@/components/ui/states";
 import { useSoloRows } from "@/features/projects/solo/hooks/use-solo-rows";
 import {
@@ -22,6 +23,9 @@ import { soloStore } from "@/features/projects/solo/storage/store";
 import type { PreviewFile, SoloProgress, SoloStage } from "@/features/projects/solo/types";
 import type { Submission } from "@/features/projects/submission-types";
 import type { Project, Registration } from "@/features/projects/types";
+import { fileKindLabel, formatFileSize } from "@/lib/files/format-size";
+import { saveUpload, type SaveUploadResult } from "@/lib/files/save-upload";
+import { fileStore } from "@/lib/files/store";
 
 type Book = {
   id: string;
@@ -65,6 +69,12 @@ export function SoloStageList({
   const [asking, setAsking] = useState<Ask | null>(null);
   const [busy, setBusy] = useState(false);
   const [said, setSaid] = useState("");
+  /** The preview file chosen in the open dialog, already kept on this device. */
+  const [picked, setPicked] = useState<Extract<SaveUploadResult, { ok: true }>["file"] | null>(
+    null,
+  );
+  const [pickError, setPickError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
   const line = useRef<HTMLParagraphElement>(null);
 
   const books: Book[] = works
@@ -81,14 +91,31 @@ export function SoloStageList({
       };
     });
 
+  function close() {
+    setAsking(null);
+    setPicked(null);
+    setPickError(null);
+  }
+
+  async function pickPreview(file: File) {
+    setSaving(true);
+    setPickError(null);
+    const saved = await saveUpload(file, "preview", fileStore());
+    setSaving(false);
+    if (saved.ok) setPicked(saved.file);
+    else setPickError(saved.message);
+  }
+
   async function confirm(ask: Ask) {
     setBusy(true);
     const { book } = ask;
     const run =
-      ask.kind === "lanjut" ? advanceStage(store, book) : addPreviewFile(store, book, ask.file);
+      ask.kind === "lanjut"
+        ? advanceStage(store, book)
+        : addPreviewFile(store, book, ask.file, picked ?? undefined);
     const result = await run;
     setBusy(false);
-    setAsking(null);
+    close();
     setSaid(
       result === "ok"
         ? ask.kind === "lanjut"
@@ -130,7 +157,7 @@ export function SoloStageList({
       {asking && (
         <Dialog
           open
-          onClose={() => setAsking(null)}
+          onClose={close}
           title={
             asking.kind === "lanjut"
               ? `Lanjut ke ${asking.label.toLowerCase()}?`
@@ -143,15 +170,44 @@ export function SoloStageList({
           }
           actions={
             <>
-              <Button variant="secondary" onClick={() => setAsking(null)}>
+              <Button variant="secondary" onClick={close}>
                 Batal
               </Button>
-              <Button loading={busy} onClick={() => void confirm(asking)}>
+              <Button
+                loading={busy}
+                disabled={asking.kind === "pratinjau" && picked === null}
+                onClick={() => void confirm(asking)}
+              >
                 {asking.kind === "lanjut" ? "Lanjutkan" : "Tambahkan"}
               </Button>
             </>
           }
-        />
+        >
+          {asking.kind === "pratinjau" && (
+            <div className="mt-4 grid gap-3">
+              <div className="flex flex-wrap items-center gap-3">
+                <FilePickButton
+                  kind="preview"
+                  label={`Pilih berkas pratinjau ${fileName(asking.file)}`}
+                  onPick={(file) => void pickPreview(file)}
+                  disabled={saving}
+                >
+                  {saving ? "Menyimpan…" : picked ? "Ganti berkas" : "Pilih berkas"}
+                </FilePickButton>
+                <span className="min-w-0 text-sm wrap-anywhere text-ink-muted">
+                  {picked
+                    ? `${picked.name} · ${fileKindLabel(picked.type)} · ${formatFileSize(picked.size)}`
+                    : "Gambar JPG, PNG, WebP, atau PDF."}
+                </span>
+              </div>
+              {pickError && (
+                <p role="alert" className="text-sm text-danger">
+                  {pickError}
+                </p>
+              )}
+            </div>
+          )}
+        </Dialog>
       )}
     </div>
   );

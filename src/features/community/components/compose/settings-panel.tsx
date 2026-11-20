@@ -8,6 +8,7 @@ import type { ComposeAction, ComposeState } from "../../compose-state";
 import { groupsFor } from "../../groups/group-model";
 import { writingGroups } from "../../groups/group-store";
 import { useGroupReader } from "../../groups/group-viewer";
+import { CoverImageField } from "./cover-image-field";
 import { GENRES, type Genre } from "../../types";
 
 type Props = {
@@ -75,6 +76,8 @@ export function SettingsPanel({ state, dispatch, showTitle, hint }: Props) {
         </Field>
       </div>
 
+      <CoverImageField image={state.image} dispatch={dispatch} />
+
       <fieldset className="grid gap-3">
         <legend className="mb-3 text-sm font-medium">Siapa yang bisa membaca</legend>
         <RadioChoice
@@ -109,7 +112,9 @@ export function SettingsPanel({ state, dispatch, showTitle, hint }: Props) {
       <Notice>
         {state.visibility === "grup"
           ? "Hanya anggota grup pilihanmu yang bisa membaca cuplikan ini."
-          : "Yang menjadi publik hanya teks ini."}{" "}
+          : state.image
+            ? "Yang menjadi publik hanya teks dan gambar ini."
+            : "Yang menjadi publik hanya teks ini."}{" "}
         Dokumenmu di Studio tetap pribadi. Mengubah dokumen tidak mengubah postingan ini kecuali
         kamu memperbaruinya sendiri.
       </Notice>

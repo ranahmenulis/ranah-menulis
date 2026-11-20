@@ -1,5 +1,6 @@
 "use client";
 
+import { versionSizeText } from "@/features/projects/submission-text";
 import { useRef, useState } from "react";
 import { ButtonLink } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
@@ -10,7 +11,7 @@ import { DUMMY_USER } from "@/features/app-shell/nav";
 import { StatusHistory } from "@/features/projects/components/submission-history";
 import { useCatalog } from "@/features/projects/use-catalog";
 import { useStaffAssignments } from "../../staff-assignments";
-import { categoryLabel, formatNumber, projectHref } from "@/features/projects/project-model";
+import { categoryLabel, projectHref } from "@/features/projects/project-model";
 import { notifySubmissionsChanged } from "@/features/projects/storage/submission-events";
 import { submissionStore } from "@/features/projects/storage/store";
 import type { SubmissionStore } from "@/features/projects/storage/submission-store";
@@ -18,6 +19,7 @@ import { sentAtText } from "@/features/projects/submission-text";
 import type { Submission } from "@/features/projects/submission-types";
 import { useSubmissions } from "@/features/projects/use-submissions";
 import { useEffectiveRoles } from "@/features/kelola/use-effective-roles";
+import { FileVersion } from "@/features/projects/components/file-version";
 import { FrozenText } from "../../components/frozen-text";
 import { EDITOR_HREF } from "../area-hrefs";
 import { blockedMessage, resolveReview, reviewerHint } from "../review-model";
@@ -83,10 +85,14 @@ function Text({ work }: { work: Submission }) {
         </div>
       )}
       <p className="text-xs text-ink-muted">
-        Versi {version.version} · {formatNumber(version.wordCount)} kata · dibekukan{" "}
+        Versi {version.version} · {versionSizeText(version)} · dibekukan{" "}
         {sentAtText(version.frozenAt)}
       </p>
-      <FrozenText content={version.content} />
+      {version.file ? (
+        <FileVersion file={version.file} />
+      ) : (
+        <FrozenText content={version.content} />
+      )}
     </section>
   );
 }
@@ -94,7 +100,7 @@ function Text({ work }: { work: Submission }) {
 function Body({ work, store }: { work: Submission; store: SubmissionStore }) {
   const project = useCatalog().find((p) => p.slug === work.slug);
   const title = useRef<HTMLHeadingElement>(null);
-  const words = work.versions.at(-1)?.wordCount ?? 0;
+  const size = versionSizeText(work.versions.at(-1));
   return (
     <Shell>
       <header className="grid gap-2">
@@ -110,8 +116,7 @@ function Body({ work, store }: { work: Submission; store: SubmissionStore }) {
           {work.title}
         </h1>
         <p className="text-sm wrap-anywhere text-ink-muted">
-          oleh {DUMMY_USER.name} · {work.genre} · {formatNumber(words)} kata · dikirim{" "}
-          {sentAtText(work.submittedAt)}
+          oleh {DUMMY_USER.name} · {work.genre} · {size} · dikirim {sentAtText(work.submittedAt)}
         </p>
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 pt-1">
           <StatusSubmission status={work.status} />

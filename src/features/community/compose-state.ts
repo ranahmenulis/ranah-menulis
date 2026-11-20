@@ -1,7 +1,7 @@
 import { MAX_POST_WORDS, wordsOf } from "./post-model";
 import { groupIdOf } from "./groups/group-model";
 import type { StoredPost } from "./storage/post-store";
-import type { Genre, PostBlock, PostKind, Visibility } from "./types";
+import type { Genre, PostBlock, PostImage, PostKind, Visibility } from "./types";
 
 export type ComposeTab = "direct" | "doc";
 
@@ -19,6 +19,8 @@ export type ComposeState = {
   visibility: Visibility | null;
   groupId: string | null;
   directBlocks: PostBlock[];
+  /** One optional photo, already resized and re-encoded; its alt text is required to publish. */
+  image: PostImage | null;
   pick: Pick | null;
   /** Where a reopened draft's text came from; kept so the notice about a trashed source works. */
   draftSource: { docId: string; title: string } | null;
@@ -34,6 +36,7 @@ export const initialCompose: ComposeState = {
   visibility: null,
   groupId: null,
   directBlocks: [],
+  image: null,
   pick: null,
   draftSource: null,
   draftId: null,
@@ -48,6 +51,7 @@ export type ComposeAction =
   | { type: "visibility"; value: "publik" }
   | { type: "visibility"; value: "grup"; groupId: string }
   | { type: "direct"; blocks: PostBlock[] }
+  | { type: "image"; image: PostImage | null }
   | { type: "pick"; pick: Pick }
   | { type: "unpick" }
   | { type: "toggle"; index: number }
@@ -67,13 +71,11 @@ export function composeReducer(state: ComposeState, action: ComposeAction): Comp
     case "genre":
       return { ...state, genre: action.value };
     case "visibility":
-      return {
-        ...state,
-        visibility: action.value,
-        groupId: action.value === "grup" ? action.groupId : null,
-      };
+      return withVisibility(state, action);
     case "direct":
       return { ...state, directBlocks: action.blocks };
+    case "image":
+      return { ...state, image: action.image };
     case "pick":
       // The post title starts as the document's title; it is a separate field the author may change.
       return {
@@ -91,6 +93,17 @@ export function composeReducer(state: ComposeState, action: ComposeAction): Comp
     case "load":
       return loadDraft(action.post);
   }
+}
+
+function withVisibility(
+  state: ComposeState,
+  action: Extract<ComposeAction, { type: "visibility" }>,
+): ComposeState {
+  return {
+    ...state,
+    visibility: action.value,
+    groupId: action.value === "grup" ? action.groupId : null,
+  };
 }
 
 function togglePicked(state: ComposeState, index: number): ComposeState {
@@ -113,6 +126,7 @@ function loadDraft(p: StoredPost): ComposeState {
     visibility: p.visibility,
     groupId: p.visibility === "grup" ? (groupIdOf(p) ?? null) : null,
     directBlocks: p.blocks,
+    image: p.image ?? null,
     draftSource:
       p.sourceDocId && p.sourceTitle ? { docId: p.sourceDocId, title: p.sourceTitle } : null,
   };
@@ -126,13 +140,14 @@ export function publicBlocks(state: ComposeState): PostBlock[] {
   return state.directBlocks;
 }
 
-export type Missing = "title" | "text" | "genre" | "visibility";
+export type Missing = "title" | "text" | "genre" | "visibility" | "imageAlt";
 
 const LABEL: Record<Missing, string> = {
   title: "judul",
   text: "teks",
   genre: "genre",
   visibility: "pilihan siapa yang bisa membaca",
+  imageAlt: "teks alternatif gambar",
 };
 
 /** What still stands between this form and "Terbitkan". Too long is separate (see `isTooLong`). */
@@ -143,6 +158,7 @@ export function missingFor(state: ComposeState): Missing[] {
   if (!state.genre) missing.push("genre");
   if (!state.visibility || (state.visibility === "grup" && !state.groupId))
     missing.push("visibility");
+  if (state.image && !state.image.alt.trim()) missing.push("imageAlt");
   return missing;
 }
 
@@ -191,6 +207,7 @@ export function toStored(
     sourceTitle: fromDoc ? state.pick!.docTitle : (state.draftSource?.title ?? null),
     sourceDocId: fromDoc ? state.pick!.docId : (state.draftSource?.docId ?? null),
     visibility: state.visibility,
+    image: state.image ? { ...state.image, alt: state.image.alt.trim() } : undefined,
     ...audience,
     updatedAt: now,
     publishedAt: status === "published" ? now : undefined,

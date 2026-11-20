@@ -1,8 +1,8 @@
 "use client";
 
+import { AuthorAvatar } from "../author-avatar";
 import { BookmarkSimple, ChatCircle, Heart } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
-import { Avatar } from "@/components/ui/avatar";
 import { cn } from "@/lib/cn";
 import { AuthorLink } from "@/features/profile/author-link";
 import { revealDelay, useRevealOnce } from "../../hooks/use-reveal-once";
@@ -24,7 +24,7 @@ export function AuthorLine({ authorId, size = 20 }: { authorId: string; size?: 2
   const author = authorOf(authorId);
   return (
     <div className="flex min-w-0 items-center gap-2 text-xs @max-xl:text-[13px]">
-      <Avatar name={author.name} size={size} />
+      <AuthorAvatar author={author} size={size} />
       <span className="min-w-0 truncate">
         <AuthorLink handle={author.handle} className="font-medium">
           {author.name}

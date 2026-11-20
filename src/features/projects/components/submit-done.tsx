@@ -1,8 +1,9 @@
 import { Button, ButtonLink } from "@/components/ui/button";
+import { versionSizeText } from "../submission-text";
 import { StatusSubmission } from "@/components/ui/status-submission";
 import { TextLink } from "@/components/ui/text-link";
 import { STUDIO_HREF } from "@/features/app-shell/nav";
-import { formatNumber, projectHref } from "../project-model";
+import { projectHref } from "../project-model";
 import { sentAtText } from "../submission-text";
 import type { Submission } from "../submission-types";
 import type { Project } from "../types";
@@ -30,9 +31,10 @@ export function SubmitDone({
         </p>
         <StatusSubmission status={submission.status} />
         <p className="text-sm text-ink-muted">
-          Yang terkirim adalah salinan beku dokumenmu: {formatNumber(version?.wordCount ?? 0)} kata,
-          dibekukan {sentAtText(version?.frozenAt ?? submission.submittedAt)}. Mengedit dokumen di
-          Studio tidak mengubahnya.
+          Yang terkirim adalah salinan beku {version?.file ? "berkasmu" : "dokumenmu"}:{" "}
+          {versionSizeText(version)}, dibekukan{" "}
+          {sentAtText(version?.frozenAt ?? submission.submittedAt)}. Mengedit dokumen di Studio
+          tidak mengubahnya.
         </p>
       </div>
       <div className="flex flex-wrap items-center gap-x-4 gap-y-3">

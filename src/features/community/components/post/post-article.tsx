@@ -1,17 +1,35 @@
 "use client";
 
+import { AuthorAvatar } from "../author-avatar";
 import { Globe, UsersThree } from "@phosphor-icons/react/dist/ssr";
-import { Avatar } from "@/components/ui/avatar";
+import { cn } from "@/lib/cn";
 import { Button } from "@/components/ui/button";
 import { formatDay } from "../../format-time";
 import { AuthorLink } from "@/features/profile/author-link";
 import { authorOf, postLabel } from "../../post-model";
-import type { Author, Post, PostBlock, PostKind } from "../../types";
+import type { Author, Genre, Post, PostBlock, PostKind } from "../../types";
+import { PostFigure } from "./post-figure";
+
+/** Opening letter three lines tall, in the serif of the text (not for poems). */
+const DROP_CAP =
+  "first-letter:float-left first-letter:mr-2.5 first-letter:mt-1 first-letter:text-[3.4em] first-letter:leading-[0.8] first-letter:font-semibold";
+
+/** Prose gets a drop cap; poems do not, because their line breaks would break around it. */
+export const hasDropCap = (genre: Genre) => genre !== "Puisi";
 
 const END: Record<PostKind, string> = { prolog: "Akhir prolog.", cuplikan: "Akhir cuplikan." };
 
 /** The public text itself, in reading typography (DESIGN.md 4.2). Used by the post and by previews. */
-export function PostText({ blocks, kind }: { blocks: PostBlock[]; kind: PostKind }) {
+export function PostText({
+  blocks,
+  kind,
+  dropCap = false,
+}: {
+  blocks: PostBlock[];
+  kind: PostKind;
+  /** A larger first letter on the opening paragraph; prose only, never poems. */
+  dropCap?: boolean;
+}) {
   return (
     <>
       <div className="grid gap-[1.1em]">
@@ -28,7 +46,13 @@ export function PostText({ blocks, kind }: { blocks: PostBlock[]; kind: PostKind
               {block.text}
             </h2>
           ) : (
-            <p key={i} className="read-body whitespace-pre-line text-ink-read">
+            <p
+              key={i}
+              className={cn(
+                "read-body whitespace-pre-line text-ink-read",
+                dropCap && i === 0 && DROP_CAP,
+              )}
+            >
               {block.text}
             </p>
           ),
@@ -88,7 +112,7 @@ export function PostArticle({ post, now, showFollow, following, onFollow }: Prop
       <h1 className="mb-6 read-title text-ink-read">{post.title}</h1>
 
       <div className="mb-0 flex items-center gap-3 border-t border-line py-5">
-        <Avatar name={author.name} size={44} />
+        <AuthorAvatar author={author} size={44} />
         <div className="grid min-w-0 gap-0.5">
           <span className="flex min-w-0 items-center gap-1 text-[15px] leading-[22px] font-medium">
             <AuthorLink handle={author.handle} className="truncate">
@@ -125,8 +149,9 @@ export function PostArticle({ post, now, showFollow, following, onFollow }: Prop
         sourceTitle={post.sourceTitle}
         groupOnly={post.visibility === "grup"}
       />
+      {post.image && <PostFigure image={post.image} />}
       <div className="mt-8">
-        <PostText blocks={post.blocks} kind={post.kind} />
+        <PostText blocks={post.blocks} kind={post.kind} dropCap={hasDropCap(post.genre)} />
       </div>
     </article>
   );

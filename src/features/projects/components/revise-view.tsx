@@ -1,5 +1,6 @@
 "use client";
 
+import { versionSizeText } from "../submission-text";
 import { useState } from "react";
 import { ButtonLink } from "@/components/ui/button";
 import { Notice } from "@/components/ui/states";
@@ -10,7 +11,6 @@ import { isActiveDocument } from "@/features/studio/document-archive";
 import type { DocumentStore } from "@/features/studio/storage/document-store";
 import { studioStore } from "@/features/studio/storage/store";
 import { useViewer } from "@/lib/viewer";
-import { formatNumber } from "../project-model";
 import { sendRevision } from "../revise-flow";
 import { submissionStore } from "../storage/store";
 import type { SubmissionStore } from "../storage/submission-store";
@@ -42,7 +42,7 @@ function Done({ work, slug }: { work: Submission; slug: string }) {
         <p className="text-base wrap-anywhere">{work.title}</p>
         <StatusSubmission status={work.status} />
         <p className="text-sm text-ink-muted">
-          Versi {latest?.version}: {formatNumber(latest?.wordCount ?? 0)} kata, dibekukan{" "}
+          Versi {latest?.version}: {versionSizeText(latest)}, dibekukan{" "}
           {sentAtText(latest?.frozenAt ?? work.submittedAt)}. Versi sebelumnya tetap tersimpan.
         </p>
       </div>
@@ -132,11 +132,12 @@ export function ReviseView({
         all={submissions.submissions}
         docs={list.docs.filter(isActiveDocument).sort((a, b) => b.updatedAt - a.updatedAt)}
         now={catalog.now}
-        onSend={async (docId, note) => {
+        onSend={async (docId, note, upload) => {
           const result = await sendRevision({
             project,
             submission: work,
             docId,
+            upload,
             note,
             documents,
             store,

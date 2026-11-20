@@ -1,6 +1,6 @@
 import { StatusSubmission } from "@/components/ui/status-submission";
+import { versionSizeText } from "../submission-text";
 import { TextLink } from "@/components/ui/text-link";
-import { formatNumber } from "../project-model";
 import { submissionHref } from "../submission-href";
 import { sentAtText } from "../submission-text";
 import type { Submission } from "../submission-types";
@@ -28,7 +28,7 @@ export function SentWorks({ works }: { works: Submission[] }) {
                 {work.title}
               </TextLink>
               <p className="text-xs wrap-anywhere text-ink-muted">
-                {work.docTitle} · {formatNumber(work.versions.at(-1)?.wordCount ?? 0)} kata ·{" "}
+                {work.docTitle} · {versionSizeText(work.versions.at(-1))} ·{" "}
                 {sentAtText(work.submittedAt)}
               </p>
             </div>

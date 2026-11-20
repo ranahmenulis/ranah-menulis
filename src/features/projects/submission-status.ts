@@ -106,6 +106,8 @@ export function withRevision(
     hash: string;
     docId: string;
     docTitle: string;
+    /** Set when the new version is an uploaded file. */
+    file?: SubmissionVersion["file"];
     note: string;
     now: number;
   },
@@ -118,6 +120,7 @@ export function withRevision(
     wordCount: input.wordCount,
     hash: input.hash,
     frozenAt: now,
+    ...(input.file ? { file: input.file } : {}),
   };
   return {
     ...logged(s, "revisi-terkirim", { at: now, by: "peserta", ...(note ? { reason: note } : {}) }),

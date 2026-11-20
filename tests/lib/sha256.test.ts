@@ -22,3 +22,12 @@ describe("sha256Hex", () => {
     expect(sha256Hex(text)).toBe(createHash("sha256").update(text, "utf8").digest("hex"));
   });
 });
+
+describe("sha256Bytes", () => {
+  it("agrees with Node on raw bytes, including bytes that are not text", async () => {
+    const { sha256Bytes } = await import("@/lib/sha256");
+    const bytes = Uint8Array.from({ length: 1000 }, (_, i) => (i * 37) % 256);
+    expect(sha256Bytes(bytes)).toBe(createHash("sha256").update(bytes).digest("hex"));
+    expect(sha256Bytes(new Uint8Array())).toBe(sha256Hex(""));
+  });
+});

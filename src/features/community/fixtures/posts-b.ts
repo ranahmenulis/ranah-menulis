@@ -28,6 +28,7 @@ export const postsB: FixturePost[] = [
     id: "dua-puluh-menit-sebelum-subuh",
     authorId: "nur-aisyah",
     title: "Dua Puluh Menit Sebelum Subuh",
+    image: photos.typewriter,
     kind: "cuplikan",
     genre: "Esai",
     sourceTitle: null,

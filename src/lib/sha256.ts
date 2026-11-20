@@ -17,7 +17,11 @@ const rotr = (x: number, n: number) => (x >>> n) | (x << (32 - n));
  * would have no hash, and a frozen submission must always carry one (STD-09).
  */
 export function sha256Hex(text: string): string {
-  const bytes = new TextEncoder().encode(text);
+  return sha256Bytes(new TextEncoder().encode(text));
+}
+
+/** SHA-256 of raw bytes (an uploaded file), as lowercase hex. */
+export function sha256Bytes(bytes: Uint8Array): string {
   const padded = new Uint8Array(((bytes.length + 9 + 63) >> 6) << 6);
   padded.set(bytes);
   padded[bytes.length] = 0x80;

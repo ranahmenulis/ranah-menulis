@@ -11,9 +11,10 @@ import type { ReviseResult } from "../revise-flow";
 import { wordsOf } from "../submission-model";
 import { MAX_REVISIONS, latestFeedback, revisionDueAt, revisionsSent } from "../submission-status";
 import { wordRuleText } from "../submission-text";
-import { NOTE_LIMIT, type Submission } from "../submission-types";
+import { NOTE_LIMIT, type Submission, type VersionFile } from "../submission-types";
 import type { Project } from "../types";
 import { Section } from "./category-blocks";
+import { ManuscriptUpload } from "./manuscript-upload";
 import { SubmitDocumentPicker } from "./submit-document-picker";
 
 type Props = {
@@ -24,7 +25,7 @@ type Props = {
   /** Documents that can be picked: everything outside Sampah, newest first. */
   docs: StudioDocument[];
   now: number;
-  onSend: (docId: string | null, note: string) => Promise<ReviseResult>;
+  onSend: (docId: string | null, note: string, upload: VersionFile | null) => Promise<ReviseResult>;
 };
 
 const counter = (text: string) =>
@@ -93,6 +94,15 @@ export function ReviseForm(props: Props) {
           describedBy={f.docError ? "revisi-doc-error" : undefined}
           invalid={Boolean(f.docError)}
         />
+        {project.block.kind === "solo" && (
+          <ManuscriptUpload
+            upload={f.upload}
+            uploading={f.uploading}
+            error={f.uploadError}
+            onPick={(file) => void f.pickFile(file)}
+            onClear={f.clearFile}
+          />
+        )}
         {f.doc && !f.docError && (
           <p className="text-sm text-ink-muted">
             {formatNumber(wordsOf(f.doc))} kata, sesuai batas {wordRuleText(rules)}.

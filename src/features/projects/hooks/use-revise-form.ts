@@ -1,11 +1,13 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { saveUpload } from "@/lib/files/save-upload";
+import { fileStore } from "@/lib/files/store";
 import type { StudioDocument } from "@/features/studio/storage/document-store";
 import { revisionProblems } from "../revision-model";
 import type { ReviseResult } from "../revise-flow";
 import type { Problem } from "../submission-model";
-import type { Submission } from "../submission-types";
+import type { Submission, VersionFile } from "../submission-types";
 import type { Project } from "../types";
 
 type Input = {
@@ -14,7 +16,7 @@ type Input = {
   all: Submission[];
   docs: StudioDocument[];
   now: number;
-  onSend: (docId: string | null, note: string) => Promise<ReviseResult>;
+  onSend: (docId: string | null, note: string, upload: VersionFile | null) => Promise<ReviseResult>;
 };
 
 /**
@@ -26,6 +28,12 @@ export function useReviseForm({ project, work, all, docs, now, onSend }: Input) 
   const [docId, setDocId] = useState<string | null>(() =>
     docs.some((d) => d.id === work.docId) ? work.docId : null,
   );
+  /** A file chosen as the revision; starts as the file already sent (sending it again is refused). */
+  const [upload, setUpload] = useState<VersionFile | null>(
+    () => work.versions.at(-1)?.file ?? null,
+  );
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
   const [note, setNote] = useState("");
   const [attempted, setAttempted] = useState(false);
   /** Problems found when sending, from data read fresh at that moment. */
@@ -34,10 +42,11 @@ export function useReviseForm({ project, work, all, docs, now, onSend }: Input) 
   const [failed, setFailed] = useState(false);
 
   const doc = docs.find((d) => d.id === docId) ?? null;
-  const problems = revisionProblems({ project, work, docId, note, doc, all, now });
+  const problems = revisionProblems({ project, work, docId, upload, note, doc, all, now });
   const shown = late.length > 0 ? late : attempted ? problems : [];
   // Once a document is chosen its own problem (too short, too long) shows without waiting.
-  const live = docId !== null && !shown.some((p) => p.field === "doc") ? problems : [];
+  const live =
+    (docId !== null || upload !== null) && !shown.some((p) => p.field === "doc") ? problems : [];
 
   const messageOf = (field: Problem["field"]) =>
     [...shown, ...(field === "doc" ? live : [])].find((p) => p.field === field)?.message;
@@ -49,7 +58,7 @@ export function useReviseForm({ project, work, all, docs, now, onSend }: Input) 
     if (problems.length > 0) return;
     setBusy(true);
     setFailed(false);
-    const result = await onSend(docId, note);
+    const result = await onSend(docId, note, upload);
     setBusy(false);
     if (result.kind === "invalid") setLate(result.problems);
     if (result.kind === "failed") setFailed(true);
@@ -59,8 +68,28 @@ export function useReviseForm({ project, work, all, docs, now, onSend }: Input) 
     docId,
     doc,
     note,
+    upload,
+    uploading,
+    uploadError,
     pickDoc: (next: StudioDocument) => {
       setDocId(next.id);
+      setUpload(null);
+      setLate([]);
+    },
+    pickFile: async (file: File) => {
+      setUploading(true);
+      setUploadError(null);
+      const saved = await saveUpload(file, "manuscript", fileStore());
+      setUploading(false);
+      if (!saved.ok) return setUploadError(saved.message);
+      const { id, name, type, size } = saved.file;
+      setUpload({ fileId: id, name, type, size });
+      setDocId(null);
+      setLate([]);
+    },
+    clearFile: () => {
+      setUpload(null);
+      setUploadError(null);
       setLate([]);
     },
     changeNote: (value: string) => {
