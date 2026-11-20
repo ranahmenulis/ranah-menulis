@@ -33,7 +33,7 @@ describe("SavedView", () => {
   it("says there is nothing yet and points to Jelajahi", async () => {
     renderView();
     expect(await screen.findByText("Belum ada tulisan yang kamu simpan.")).toBeTruthy();
-    expect(screen.getByRole("link", { name: "Buka Jelajahi" }).getAttribute("href")).toBe(
+    expect(screen.getByRole("link", { name: "Buka Community" }).getAttribute("href")).toBe(
       "/jelajahi",
     );
   });

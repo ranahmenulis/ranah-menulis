@@ -88,7 +88,7 @@ export function HomeView() {
           onValueChange={(id) => id === "jelajahi" && router.push(DISCOVER_HREF)}
           items={[
             { id: "mengikuti", label: "Mengikuti" },
-            { id: "jelajahi", label: "Jelajahi" },
+            { id: "jelajahi", label: "Community" },
           ]}
         />
 
@@ -102,7 +102,7 @@ export function HomeView() {
               ingin kamu baca lagi.
             </p>
             <ButtonLink href={DISCOVER_HREF} variant="secondary">
-              Buka Jelajahi
+              Buka Community
             </ButtonLink>
           </div>
         ) : (

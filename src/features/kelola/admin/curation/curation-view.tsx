@@ -26,7 +26,7 @@ export function CurationView({ store = postStore }: { store?: PostStore }) {
           Kurasi
         </h1>
         <p className="text-sm text-ink-muted">
-          Pilihan tim untuk Jelajahi dan Projects. Setiap perubahan dicatat.
+          Pilihan tim untuk Community dan Projects. Setiap perubahan dicatat.
         </p>
       </div>
       <p

@@ -44,7 +44,7 @@ export function ComposeMissing({ failed }: { failed: boolean }) {
             Tulis postingan baru
           </ButtonLink>
           <ButtonLink href={DISCOVER_HREF} variant="text">
-            Kembali ke Jelajahi
+            Kembali ke Community
           </ButtonLink>
         </div>
       </div>

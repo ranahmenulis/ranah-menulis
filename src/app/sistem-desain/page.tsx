@@ -157,7 +157,7 @@ function Pane({ theme }: { theme: "light" | "dark" }) {
             value="mengikuti"
             items={[
               { id: "mengikuti", label: "Mengikuti", href: "#" },
-              { id: "jelajahi", label: "Jelajahi", href: "#" },
+              { id: "jelajahi", label: "Community", href: "#" },
             ]}
           />
           <div className="flex items-end gap-4">

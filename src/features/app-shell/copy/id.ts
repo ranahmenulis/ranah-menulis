@@ -2,7 +2,7 @@ export const shell = {
   nav: {
     label: "Utama",
     beranda: "Beranda",
-    jelajahi: "Jelajahi",
+    jelajahi: "Community",
     studio: "Studio",
     streak: "Streak",
     projects: "Projects",

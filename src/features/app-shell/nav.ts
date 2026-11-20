@@ -38,7 +38,7 @@ export const postFromDocumentHref = (documentId: string) =>
 const home: NavEntry = { id: "beranda", label: "Beranda", Icon: House, href: HOME_HREF };
 const discover: NavEntry = {
   id: "jelajahi",
-  label: "Jelajahi",
+  label: "Community",
   Icon: Compass,
   href: DISCOVER_HREF,
 };
@@ -65,13 +65,13 @@ export const kelolaNav: NavEntry = {
 const profile: NavEntry = { id: "profil", label: "Profil", Icon: User, href: OWN_PROFILE_HREF };
 
 /**
- * Desktop sidebar and tablet rail. Jelajahi sits under Beranda; phones open it from the search icon.
+ * Desktop sidebar and tablet rail. Community (route /jelajahi) sits in the middle; phones open it from the search icon too.
  * Streak is not a navigation entry (user, 20 November 2026): it is a tab of Studio (DESIGN.md 5.3),
  * so its pages light up Studio.
  */
-export const mainNav = [home, discover, studio, projects, saved, profile];
-/** Phones: five tabs (PRD 16); Jelajahi has its own tab, Streak is reached from the Studio tabs. */
-export const bottomNav = [home, discover, studio, projects, profile];
+export const mainNav = [home, studio, discover, projects, saved, profile];
+/** Phones: five tabs (PRD 16); Community is the middle tab, Streak is reached from the Studio tabs. */
+export const bottomNav = [home, studio, discover, projects, profile];
 
 /** Which nav entry the current path belongs to. */
 export function activeId(pathname: string): string | null {
