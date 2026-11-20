@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
+import { atRowEnd, cardAtEdge, useAutoAdvance } from "../motion/use-auto-advance";
 import { Tag } from "./previews/preview-frame";
 import { MARKERS } from "./studio-markers";
 
@@ -9,22 +10,25 @@ import { MARKERS } from "./studio-markers";
 const LATER = new Set([3]);
 // Legend entries with a pin on the mockup (1-based), so hovering them can light that pin.
 const MARKED = new Set<number>(Object.values(MARKERS));
-/** Space between entries on a phone (Tailwind gap-4). */
-const GAP = 16;
 const PHONE = "(max-width: 47.99rem)";
 
 const pad = (n: number) => String(n).padStart(2, "0");
+
+const onPhone = () => window.matchMedia?.(PHONE).matches ?? false;
 
 /**
  * The editorial legend 01-06 under the Studio mockup (hairlines only, no boxes). From md up it is
  * a 2- or 3-column grid; on a phone it is one row that swipes sideways (client request: "biar ga
  * makan tempat"), with a "01 / 06 · Geser →" line under it that follows the scroll. Hovering an
- * entry with a pin lights that pin (globals.css, "Studio legend").
+ * entry with a pin lights that pin (globals.css, "Studio legend"). On a phone the row also moves
+ * on by itself every 3 s while in view, until the reader touches it (`useAutoAdvance`).
  */
 export function StudioLegend({ copy }: { copy: Dictionary["landing"]["studio"] }) {
   const list = useRef<HTMLOListElement>(null);
-  const [at, setAt] = useState(1);
+  // The current position and the one it left, so the number can roll from one to the other.
+  const [pos, setPos] = useState({ at: 1, prev: 1 });
   const total = copy.features.length;
+  useAutoAdvance(list, onPhone);
 
   useEffect(() => {
     const el = list.current;
@@ -34,11 +38,8 @@ export function StudioLegend({ copy }: { copy: Dictionary["landing"]["studio"] }
     const syncFocus = () =>
       phone?.matches ? el.setAttribute("tabindex", "0") : el.removeAttribute("tabindex");
     const onScroll = () => {
-      const first = el.firstElementChild;
-      if (!first) return;
-      const step = first.getBoundingClientRect().width + GAP;
-      const end = el.scrollLeft + el.clientWidth >= el.scrollWidth - 2;
-      setAt(end ? total : Math.min(total, Math.round(el.scrollLeft / step) + 1));
+      const at = atRowEnd(el) ? total : cardAtEdge(el) + 1;
+      setPos((p) => (p.at === at ? p : { at, prev: p.at }));
     };
     syncFocus();
     phone?.addEventListener("change", syncFocus);
@@ -83,7 +84,24 @@ export function StudioLegend({ copy }: { copy: Dictionary["landing"]["studio"] }
         className="mt-3 flex justify-between font-mono text-[11px] font-medium text-ink-muted md:hidden"
       >
         <span className="tabular-nums">
-          {pad(at)} / {pad(total)}
+          <span className="inline-grid overflow-hidden align-top">
+            {pos.prev !== pos.at && (
+              <span
+                key={`out-${pos.prev}-${pos.at}`}
+                className="lp-roll-out col-start-1 row-start-1"
+              >
+                {pad(pos.prev)}
+              </span>
+            )}
+            <span
+              key={`in-${pos.at}`}
+              data-legend-at
+              className="lp-roll-in col-start-1 row-start-1"
+            >
+              {pad(pos.at)}
+            </span>
+          </span>{" "}
+          / {pad(total)}
         </span>
         <span>{copy.swipe} →</span>
       </p>

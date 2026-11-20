@@ -45,6 +45,11 @@ export function plateDrift(p: number, { range, zoom }: DriftOptions) {
   };
 }
 
+/** The covers' shared offset: -0.5 as the stack enters, 0 mid-screen, 0.5 as it leaves. */
+export function coverDrift(p: number) {
+  return { "--cp": (p - 0.5).toFixed(3) };
+}
+
 type Update = () => void;
 const targets = new Set<Update>();
 let queued = false;

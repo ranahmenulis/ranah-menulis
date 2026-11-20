@@ -712,6 +712,118 @@ html.lp-motion .lp-marker {
   mask-image: linear-gradient(to left, #000 35%, transparent 95%);
 }
 
+/* ------------------------------------------------------------------------------------------
+   Landing reveals (DESIGN.md 4.6, 20 Nov 2026). Each needs html.lp-motion; [data-reveal] parts
+   wait for data-seen (motion/use-reveal.ts), set once they come into view. Without lp-motion
+   (no script, reduced motion) every part stands final.
+   ------------------------------------------------------------------------------------------ */
+
+/* Hero picture arrives with the title: the engraving rises from the bottom of the page, then the
+   editor lifts in over it. `translate`, not `transform`, so the scroll drift's transform (written
+   every frame, never transitioned) stacks on top. */
+html.lp-motion [data-enter] .lp-relief img {
+  transition:
+    translate 1100ms var(--ease-out) var(--follow, 350ms),
+    opacity 1100ms var(--ease-out) var(--follow, 350ms);
+}
+html.lp-motion [data-enter]:not([data-entered]) .lp-relief img {
+  translate: 0 8%;
+  opacity: 0;
+}
+html.lp-motion [data-enter] .lp-device {
+  transition:
+    translate 900ms var(--ease-out) calc(var(--follow, 350ms) + 120ms),
+    opacity 900ms var(--ease-out) calc(var(--follow, 350ms) + 120ms);
+}
+html.lp-motion [data-enter]:not([data-entered]) .lp-device {
+  translate: 0 48px;
+  opacity: 0;
+}
+
+/* Publishing covers: two depths against the drifting room (--cp from cover-stack.tsx; the side
+   covers move half as far as the middle one), and one rise when the stack comes into view, side
+   covers first, the middle one last. The middle cover's own lift is the `translate` on the cover
+   inside, so these transforms stack with it. */
+.lp-cover {
+  transform: translateY(calc(var(--cp, 0) * -24px));
+}
+.lp-cover[data-depth="2"] {
+  transform: translateY(calc(var(--cp, 0) * -48px));
+}
+html.lp-motion .lp-cover {
+  will-change: transform;
+  transition:
+    translate 700ms var(--ease-out) calc(var(--i, 0) * 70ms),
+    opacity 700ms var(--ease-out) calc(var(--i, 0) * 70ms);
+}
+html.lp-motion .lp-covers:not([data-seen]) .lp-cover {
+  translate: 0 32px;
+  opacity: 0;
+}
+
+/* Studio pins pop in one by one, then the target bar fills: an animation with a backwards fill,
+   so the hover dimming and growth (transitions on the same pins) keep their own timing after. */
+html.lp-motion .lp-pins:not([data-seen]) :is(.lp-marker, .lp-target) {
+  opacity: 0;
+}
+html.lp-motion .lp-pins[data-seen] .lp-marker {
+  animation: lp-pin-in 220ms var(--ease-out) calc(var(--i, 0) * 90ms) backwards;
+}
+html.lp-motion .lp-pins[data-seen] .lp-target {
+  animation: lp-fill 600ms var(--ease-out) 400ms backwards;
+}
+@keyframes lp-pin-in {
+  from {
+    opacity: 0;
+    scale: 0.6;
+  }
+}
+
+/* Plates are pulled down like a fresh print. The clip sits on the image, not the wrapper, so the
+   keladi's multiply still reaches the page. */
+html.lp-motion [data-reveal="plate"] > img {
+  transition: clip-path 900ms var(--ease-out);
+}
+html.lp-motion [data-reveal="plate"]:not([data-seen]) > img {
+  clip-path: inset(0 0 100% 0);
+}
+
+/* Buttons with an arrow: the arrow leans 3px toward where the button goes. */
+@media (hover: hover) and (pointer: fine) {
+  html.lp-motion .lp-btn > svg:last-child {
+    transition: transform 200ms var(--ease-out);
+  }
+  html.lp-motion .lp-btn:hover > svg:last-child {
+    transform: translateX(3px);
+  }
+}
+
+/* The phone legend's position rolls: the old number leaves upward, the new one comes from below. */
+html.lp-motion .lp-roll-in {
+  animation: lp-roll-in 180ms var(--ease-out);
+}
+html.lp-motion .lp-roll-out {
+  animation: lp-roll-out 180ms var(--ease-out) forwards;
+}
+.lp-roll-out {
+  visibility: hidden;
+}
+html.lp-motion .lp-roll-out {
+  visibility: visible;
+}
+@keyframes lp-roll-in {
+  from {
+    translate: 0 100%;
+    opacity: 0;
+  }
+}
+@keyframes lp-roll-out {
+  to {
+    translate: 0 -100%;
+    opacity: 0;
+  }
+}
+
 /* The badge in the Terbit preview arrives with a short pop when its state changes. */
 @keyframes lp-pop {
   from {

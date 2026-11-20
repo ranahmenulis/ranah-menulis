@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { MOTION_CLASS } from "@/features/landing/motion/motion-env";
 import {
+  coverDrift,
   heroDrift,
   heroProgress,
   passage,
@@ -45,6 +46,14 @@ describe("plateDrift", () => {
   it("interpolates a zoom range along the passage", () => {
     expect(plateDrift(0, { range: 40, zoom: [1.14, 1.06] })["--ds"]).toBe("1.140");
     expect(plateDrift(1, { range: 40, zoom: [1.14, 1.06] })["--ds"]).toBe("1.060");
+  });
+});
+
+describe("coverDrift", () => {
+  it("is centred on the middle of the passage", () => {
+    expect(coverDrift(0)).toEqual({ "--cp": "-0.500" });
+    expect(coverDrift(0.5)).toEqual({ "--cp": "0.000" });
+    expect(coverDrift(1)).toEqual({ "--cp": "0.500" });
   });
 });
 
