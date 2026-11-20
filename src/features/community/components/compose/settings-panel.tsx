@@ -83,7 +83,7 @@ export function SettingsPanel({ state, dispatch, showTitle, hint }: Props) {
         <RadioChoice
           name="post-visibility"
           label="Publik"
-          hint="Semua orang, termasuk yang belum punya akun. Muncul di feed pengikut dan Jelajahi."
+          hint="Semua orang, termasuk yang belum punya akun. Muncul di feed pengikut dan Community."
           checked={state.visibility === "publik"}
           onChange={() => dispatch({ type: "visibility", value: "publik" })}
         />

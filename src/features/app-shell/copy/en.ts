@@ -4,7 +4,7 @@ export const shell: typeof source = {
   nav: {
     label: "Main",
     beranda: "Home",
-    jelajahi: "Explore",
+    jelajahi: "Community",
     studio: "Studio",
     streak: "Streak",
     projects: "Projects",

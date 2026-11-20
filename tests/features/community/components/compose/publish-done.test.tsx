@@ -35,7 +35,7 @@ describe("PublishDone, where to go next", () => {
     expect(back.getByRole("link", { name: "Kembali ke Beranda" }).getAttribute("href")).toBe(
       "/beranda",
     );
-    expect(back.getByRole("link", { name: "Kembali ke Jelajahi" }).getAttribute("href")).toBe(
+    expect(back.getByRole("link", { name: "Kembali ke Community" }).getAttribute("href")).toBe(
       "/jelajahi",
     );
     expect(back.queryByRole("link", { name: "Kembali ke Studio" })).toBeNull();

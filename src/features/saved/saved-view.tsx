@@ -81,7 +81,7 @@ export function SavedView() {
               className="mt-4"
               action={
                 <ButtonLink href={DISCOVER_HREF} variant="secondary">
-                  Buka Jelajahi
+                  Buka Community
                 </ButtonLink>
               }
             >

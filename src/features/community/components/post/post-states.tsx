@@ -38,7 +38,7 @@ export function PostError({ onRetry }: { onRetry: () => void }) {
         Tulisan ini gagal dimuat. Periksa koneksimu, lalu coba lagi.
       </ErrorBanner>
       <ButtonLink href={DISCOVER_HREF} variant="text" className="px-0">
-        Kembali ke Jelajahi
+        Kembali ke Community
       </ButtonLink>
     </div>
   );
@@ -53,7 +53,7 @@ export function PostGone() {
         Kalau kamu menyimpannya, tautannya tetap ada di Tersimpan dengan tanda tidak tersedia.
       </p>
       <ButtonLink href={DISCOVER_HREF} variant="secondary">
-        Kembali ke Jelajahi
+        Kembali ke Community
       </ButtonLink>
     </div>
   );

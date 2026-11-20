@@ -113,10 +113,10 @@ describe("AppShell", () => {
     expect(new Set(current().filter(Boolean))).toEqual(new Set(["Projects"]));
   });
 
-  it("marks Jelajahi as current on its page", () => {
+  it("marks Community (the /jelajahi page) as current on its page", () => {
     renderAt("/jelajahi");
-    // The phone search icon (no text) is also current: it is how phones reach Jelajahi.
-    expect(new Set(current().filter(Boolean))).toEqual(new Set(["Jelajahi"]));
+    // The phone search icon (no text) is also current: it is how phones reach this page.
+    expect(new Set(current().filter(Boolean))).toEqual(new Set(["Community"]));
   });
 
   it("drops the phone bottom bar on a post page, where the post brings its own action bar", () => {

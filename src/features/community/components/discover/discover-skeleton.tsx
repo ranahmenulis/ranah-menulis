@@ -21,7 +21,7 @@ export function DiscoverSkeleton() {
   return (
     <div
       role="status"
-      aria-label="Memuat Jelajahi"
+      aria-label="Memuat Community"
       className="animate-[rm-appear_0s_300ms_forwards] opacity-0"
     >
       <div className="flex gap-2 border-b border-line py-4">

@@ -37,8 +37,8 @@ describe("navigation", () => {
     expect(showsWriteButton("/studio/streak")).toBe(false);
   });
 
-  it("lists Jelajahi under Beranda on wide screens and as a phone tab", () => {
-    expect(mainNav.map((n) => n.id).slice(0, 3)).toEqual(["beranda", "jelajahi", "studio"]);
+  it("puts Community (route /jelajahi) in the middle on wide screens and as a phone tab", () => {
+    expect(mainNav.map((n) => n.id).slice(0, 3)).toEqual(["beranda", "studio", "jelajahi"]);
     expect(bottomNav.some((n) => n.id === "jelajahi")).toBe(true);
     expect(activeId("/jelajahi")).toBe("jelajahi");
   });
@@ -61,11 +61,11 @@ describe("navigation", () => {
     expect(isPostPage("/jelajahi")).toBe(false);
   });
 
-  it("has five phone tabs, Jelajahi included, and no Streak anywhere (it is a Studio tab)", () => {
+  it("has five phone tabs, Community in the middle, and no Streak anywhere (it is a Studio tab)", () => {
     expect(bottomNav.map((n) => n.id)).toEqual([
       "beranda",
-      "jelajahi",
       "studio",
+      "jelajahi",
       "projects",
       "profil",
     ]);

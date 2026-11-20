@@ -35,14 +35,14 @@ export function PicksSection({
           Editor&apos;s Picks
         </h2>
         <p className="text-sm text-ink-muted">
-          Tampil di kategori Editor&apos;s Picks di Jelajahi, sesuai urutan di sini. Kategori
+          Tampil di kategori Editor&apos;s Picks di Community, sesuai urutan di sini. Kategori
           disembunyikan bila daftar kosong.
         </p>
       </div>
 
       {rows.length === 0 ? (
         <p className="text-sm text-ink-muted">
-          Belum ada pilihan. Kategori Editor&apos;s Picks disembunyikan di Jelajahi.
+          Belum ada pilihan. Kategori Editor&apos;s Picks disembunyikan di Community.
         </p>
       ) : (
         <ol className="grid">

@@ -56,7 +56,7 @@ export function DiscoverView() {
     <div className="@container mx-auto max-w-320">
       <div className="flex items-center gap-4">
         <h1 className="text-[22px] leading-[30px] font-semibold md:text-[28px] md:leading-9">
-          Jelajahi
+          Community
         </h1>
         {!guest && (
           <ButtonLink href={NEW_POST_HREF} variant="text" className="ml-auto">
@@ -70,7 +70,7 @@ export function DiscoverView() {
 
       {data.status === "error" && (
         <ErrorBanner className="mt-6" action={<RetryButton onClick={data.reload} />}>
-          Jelajahi gagal dimuat. Feed di Beranda dan tulisan yang kamu simpan tetap bisa dibuka.
+          Community gagal dimuat. Feed di Beranda dan tulisan yang kamu simpan tetap bisa dibuka.
         </ErrorBanner>
       )}
 

@@ -57,7 +57,7 @@ export function PublishDone({ post }: { post: StoredPost }) {
           </ButtonLink>
         )}
         <ButtonLink href={DISCOVER_HREF} variant="text" className="px-0!">
-          Kembali ke Jelajahi
+          Kembali ke Community
         </ButtonLink>
       </nav>
     </div>
