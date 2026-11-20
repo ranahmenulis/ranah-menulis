@@ -7,12 +7,13 @@ import { useToast } from "@/components/ui/toast";
 import { buildSampleHistory } from "../../sample-history";
 import { studioStore } from "../../storage/store";
 import { useStreakData } from "../../hooks/use-streak-data";
-import { addDays, milestones, parseDay } from "../../streak";
+import { addDays, milestones, parseDay, pastStreaks } from "../../streak";
 import { DEFAULT_TARGET, saveTargets } from "../../target-setting";
 import { StudioTabs } from "../studio-tabs";
 import { capitalizeFirst } from "../../streak-copy";
 import { StatsSection, TodaySection } from "./streak-sections";
 import { MilestoneList } from "./milestone-list";
+import { StreakHistory } from "./streak-history";
 import { StreakCalendar } from "./streak-calendar";
 import { TargetDialog } from "./target-dialog";
 
@@ -112,7 +113,10 @@ export function StreakView() {
               />
               <StatsSection words={words} today={today} hasWriting={hasWriting} />
             </div>
-            <MilestoneList items={milestones(words, changes, today)} today={today} />
+            <div className="grid content-start gap-8">
+              <MilestoneList items={milestones(words, changes, today)} today={today} />
+              {target !== null && <StreakHistory items={pastStreaks(words, changes, today)} />}
+            </div>
           </div>
 
           {showSeed && (
