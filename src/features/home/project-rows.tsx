@@ -12,7 +12,7 @@ import { formatProjectDate, projectHref } from "@/features/projects/project-mode
 import type { SubmissionStore } from "@/features/projects/storage/submission-store";
 import { MY_PROJECTS_HREF, submissionHref } from "@/features/projects/submission-href";
 import { revisionDueAt } from "@/features/projects/submission-status";
-import { Row } from "./today-row";
+import { Section } from "./today-row";
 
 type Item = {
   key: string;
@@ -54,12 +54,15 @@ export function Attention({ my }: { my: MyProjectsData }) {
   if (!items.length) return null;
 
   return (
-    <Row label="Perlu perhatian">
-      <ul className="col-span-2 grid gap-4 md:col-span-2">
+    <Section title="Perlu perhatian">
+      <ul className="grid">
         {items.map((item, i) => (
           <li
             key={item.key}
-            className={cn("flex items-start justify-between gap-4", i > 0 && MORE)}
+            className={cn(
+              "grid gap-1 border-t border-line py-2 first:border-t-0 first:pt-0",
+              i > 0 && MORE,
+            )}
           >
             <span className="min-w-0 text-sm">
               <b className="font-medium wrap-anywhere">{item.title}</b>
@@ -69,7 +72,7 @@ export function Attention({ my }: { my: MyProjectsData }) {
               href={item.action.href}
               variant="text"
               size="sm"
-              className="shrink-0 text-ink"
+              className="justify-self-start px-0 text-ink"
             >
               {item.action.label}
             </ButtonLink>
@@ -83,7 +86,7 @@ export function Attention({ my }: { my: MyProjectsData }) {
           </li>
         )}
       </ul>
-    </Row>
+    </Section>
   );
 }
 
@@ -134,19 +137,25 @@ function ProjectLine({ row }: { row: MyProject }) {
 export function MyProjectsRow({ my }: { my: MyProjectsData }) {
   if (my.status === "error") {
     return (
-      <Row label="Proyek saya">
-        <ErrorBanner className="col-span-full" action={<RetryButton onClick={my.reload} />}>
+      <Section title="Proyek saya">
+        <ErrorBanner action={<RetryButton onClick={my.reload} />}>
           Proyek saya gagal dimuat. Bagian lain di Beranda tetap bisa dipakai.
         </ErrorBanner>
-      </Row>
+      </Section>
     );
   }
   if (my.status !== "ready" || my.rows.length === 0) return null;
   return (
-    <Row label="Proyek saya">
-      <ul className="grid gap-3 max-md:col-span-2">
+    <Section title="Proyek saya">
+      <ul className="grid">
         {my.rows.slice(0, 2).map((row, i) => (
-          <li key={row.project.slug} className={cn("flex items-start gap-3", i > 0 && MORE)}>
+          <li
+            key={row.project.slug}
+            className={cn(
+              "flex items-start gap-3 border-t border-line py-2 first:border-t-0 first:pt-0",
+              i > 0 && MORE,
+            )}
+          >
             <ProjectLine row={row} />
           </li>
         ))}
@@ -155,16 +164,16 @@ export function MyProjectsRow({ my }: { my: MyProjectsData }) {
         href={MY_PROJECTS_HREF}
         variant="text"
         size="sm"
-        className="px-0 text-ink max-md:col-span-2 max-md:justify-self-start"
+        className="justify-self-start px-0 text-ink"
       >
         Lihat semua
       </ButtonLink>
-    </Row>
+    </Section>
   );
 }
 
 /**
- * Both project rows of "Hari ini", from one read of the registrations and submissions. They fail
+ * Both project sections of the Beranda side column, from one read of the registrations and submissions. They fail
  * together, but only this part of Beranda: a retry here leaves everything else alone.
  */
 export function ProjectRows({ store }: { store?: SubmissionStore }) {

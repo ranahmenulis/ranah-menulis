@@ -1,6 +1,6 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { WeekSummary, weekSentence } from "@/features/home/week-summary";
+import { WordTotals, greetingSentence, weekSentence } from "@/features/home/week-summary";
 import type { StreakData } from "@/features/studio/hooks/use-streak-data";
 
 afterEach(cleanup);
@@ -45,28 +45,45 @@ describe("weekSentence", () => {
   });
 });
 
-describe("WeekSummary", () => {
-  it("shows the sentence and the three calendar totals", () => {
+describe("greetingSentence", () => {
+  it("compares the last 7 days with the 7 before", () => {
+    const words = new Map([
+      ["2026-11-18", 70],
+      ["2026-11-08", 30],
+    ]);
+    expect(greetingSentence(data({ words }))).toBe(
+      "7 hari terakhir kamu menulis 70 kata, 40 kata lebih banyak dari 7 hari sebelumnya.",
+    );
+  });
+
+  it("says nothing while loading, on error or with no writing", () => {
+    expect(greetingSentence(data({ status: "loading", today: "" }))).toBeNull();
+    expect(greetingSentence(data({ status: "error" }))).toBeNull();
+    expect(greetingSentence(data({}))).toBeNull();
+  });
+});
+
+describe("WordTotals", () => {
+  it("shows the three calendar totals", () => {
     const words = new Map([
       ["2026-11-18", 70],
       ["2026-11-16", 50],
       ["2026-11-01", 300],
       ["2026-01-05", 100],
     ]);
-    render(<WeekSummary data={data({ words })} />);
+    render(<WordTotals data={data({ words })} />);
 
-    expect(screen.getByText("Ringkasan")).toBeTruthy();
     expect(screen.getByText("Minggu ini").nextElementSibling?.textContent).toContain("120");
     expect(screen.getByText("Bulan ini").nextElementSibling?.textContent).toContain("420");
     expect(screen.getByText("Tahun ini").nextElementSibling?.textContent).toContain("520");
   });
 
   it("is not drawn while loading, on error or with no writing", () => {
-    const loading = render(<WeekSummary data={data({ status: "loading", today: "" })} />);
+    const loading = render(<WordTotals data={data({ status: "loading", today: "" })} />);
     expect(loading.container.firstChild).toBeNull();
-    const failed = render(<WeekSummary data={data({ status: "error" })} />);
+    const failed = render(<WordTotals data={data({ status: "error" })} />);
     expect(failed.container.firstChild).toBeNull();
-    const empty = render(<WeekSummary data={data({})} />);
+    const empty = render(<WordTotals data={data({})} />);
     expect(empty.container.firstChild).toBeNull();
   });
 });

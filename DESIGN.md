@@ -301,7 +301,10 @@ Urutan dari atas, satu kolom 680px:
 
 ### 6.2 Beranda (feed)
 
-1. Blok "Hari ini" (Brief 4A): Lanjutkan menulis, Progres hari ini, Perlu perhatian, Proyek saya. Disajikan sebagai baris bergaris, bukan widget berkotak. Paling tinggi satu layar ponsel.
+**Susunan tiga kolom (20 November 2026, masukan user "terlalu banyak teks, bingung harus ngapain, perlu garis antar segmen"; tata letak Medium, isi Desk Novlr):** sidebar, kolom tengah 680 yang berada di tengah sisa ruang, lalu dari 1280 kolom kanan yang **menempel ke tepi layar** selebar `clamp(20rem, 24vw, 28rem)` (±24% layar, rasio Medium) dengan garis kiri 1px setinggi halaman (tidak lengket), padding kiri 32 dan kanan 24. Di bawah 1280 isi kolom kanan turun di antara kartu dan tab feed.
+
+1. Kolom tengah: salam `heading-lg` "Siap menulis, {nama depan}?" (`#beranda-title`), satu kalimat 7 hari terakhir (`weekSentence`, tanpa persen), lalu **satu kartu** berbingkai 1px `line` tanpa radius dan bayangan (satu-satunya kotak di Beranda, seperti kartu "Write, grow" Medium) dengan satu tombol terisi: Lanjutkan menulis, atau "Belum ada dokumen." + Mulai menulis, atau Tiga langkah awal untuk penulis baru. Setiap aksi hanya muncul sekali. Baris "Notifikasi baru" dihapus (lonceng sudah ada).
+1a. Kolom kanan (`home-rail.tsx`), bagian berjudul `text-sm` semibold, **dipisah garis `line-strong`**; butir di dalam satu bagian dipisah garis `line`: Progres hari ini (bilah target, streak, tiga angka kata), Perlu perhatian, Proyek saya, Undangan grup, Bersama penulis lain (Event, Grup Penulis, Tulis postingan, Komunitas). Bagian kosong tidak digambar; Progres disembunyikan selama Tiga langkah awal tampil. Tanpa konten editorial (keputusan client h6).
 2. **Ponsel saja:** deretan penulis dan grup yang diikuti (avatar 56, nama `text-xs` di bawahnya, titik `ink` 8px bila ada karya baru, butir terakhir "+ Temukan" ke Discover).
 3. Tab bergaris bawah: **Mengikuti** · **Jelajahi** (ke Discover). Tab aktif: teks `ink` + garis bawah 1px `line-strong`; yang lain `ink-muted`. Di ponsel tab bisa digulir mendatar.
 4. **Butir karya** (tanpa kartu), dipisah garis 1px, padding vertikal 24px:
