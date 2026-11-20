@@ -35,12 +35,12 @@ export function FirstSteps({
   if (dismissed || steps.every((s) => s.done)) return null;
 
   return (
-    <div className="mb-6">
-      <ol aria-label="Tiga langkah awal" className="border-t border-line">
+    <div className="mt-2">
+      <ol aria-label="Tiga langkah awal">
         {steps.map((step) => (
           <li
             key={step.label}
-            className="flex items-center gap-3 border-b border-line py-3.5 text-sm"
+            className="flex items-center gap-3 border-t border-line py-3 text-sm first:border-t-0"
           >
             <span
               aria-hidden
@@ -66,7 +66,7 @@ export function FirstSteps({
           </li>
         ))}
       </ol>
-      <div className="mt-1 flex justify-end">
+      <div className="flex justify-end border-t border-line pt-2">
         <Button
           variant="text"
           size="sm"

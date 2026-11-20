@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { TextLink } from "@/components/ui/text-link";
+import { cn } from "@/lib/cn";
 import { useActionStatus } from "@/features/kelola/admin/use-action-status";
 import { authorOf } from "../../post-model";
 import { declineInvite, joinGroup } from "../group-actions";
@@ -11,9 +12,12 @@ import { groupHref, memberOf, type WritingGroup } from "../group-model";
 export function GroupInvitations({
   groups,
   reader,
+  variant = "page",
 }: {
   groups: readonly WritingGroup[];
   reader: string | null;
+  /** "rail" matches the sections of the Beranda side column. */
+  variant?: "page" | "rail";
 }) {
   const { message, statusRef, show } = useActionStatus();
   const [joinedId, setJoinedId] = useState("");
@@ -25,8 +29,20 @@ export function GroupInvitations({
   if (!invitations.length && !message) return null;
 
   return (
-    <section className="grid gap-2 border-t border-line py-4" aria-label="Undangan grup">
-      {invitations.length > 0 && <h2 className="heading-md">Undangan grup</h2>}
+    <section
+      className={cn(
+        "grid gap-2 border-t",
+        variant === "rail"
+          ? "border-line-strong py-5 first:border-t-0 first:pt-0"
+          : "border-line py-4",
+      )}
+      aria-label="Undangan grup"
+    >
+      {invitations.length > 0 && (
+        <h2 className={variant === "rail" ? "text-sm font-semibold" : "heading-md"}>
+          Undangan grup
+        </h2>
+      )}
       <p ref={statusRef} role="status" tabIndex={-1} className="text-sm outline-none empty:sr-only">
         {message}
       </p>

@@ -1,15 +1,20 @@
 import type { ReactNode } from "react";
 
-/** One labelled row of the "Hari ini" block: a line above, no box (DESIGN.md 6.2). */
-export function Row({ label, children }: { label: string; children: ReactNode }) {
+/**
+ * One section of the Beranda side column (Medium's right column): a small heading, then its lines.
+ * Sections are parted by a strong hairline; lines inside one section use the light one, so the
+ * eye can tell a new section from a new line (user feedback, 20 November 2026). No boxes.
+ */
+export function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-6 gap-y-2 border-b border-line py-4 md:grid-cols-[10rem_minmax(0,1fr)_auto] md:py-5">
-      <p className="col-span-full pt-0.5 text-xs font-medium text-ink-muted md:col-span-1 md:text-sm">
-        {label}
-      </p>
+    <section
+      aria-label={title}
+      className="grid gap-3 border-t border-line-strong py-5 first:border-t-0 first:pt-0"
+    >
+      <h2 className="text-sm font-semibold">{title}</h2>
       {children}
-    </div>
+    </section>
   );
 }
 
-export const sub = "mt-1 text-sm text-ink-muted";
+export const sub = "mt-0.5 text-xs text-ink-muted";
