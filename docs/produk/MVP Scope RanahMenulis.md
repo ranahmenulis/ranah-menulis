@@ -61,3 +61,35 @@ R0 (desain + RLS) → R1 (RBAC) → R2 (dokumen Studio) → R4 (versi beku + pem
 - **Sebelum R6:** Q-34, Q-38
 
 Yang paling menentukan untuk dibawa ke client lebih dulu: **Q-44 (jadwal vs cakupan), Q-19 (pembayaran), Q-21 (ketentuan hak cipta, butuh penasihat hukum), dan Q-38 (visibilitas Grup).**
+
+## 7. Pengingat scope MVP dari founder (17 November 2026)
+
+Teks asli, dikirim ulang oleh user saat slicing 6g berjalan. Ini acuan utama untuk menilai apa yang masuk MVP.
+
+**1. Tiga Modul Utama (Core Product).** Ketiganya wajib tersedia sejak MVP dengan alur dasar yang berfungsi end-to-end.
+
+1. *Ranah Studio*: ruang menulis, pengelolaan dokumen, editor, autosave, dan Streak menulis.
+2. *Ranah Projects*: pengelolaan Antologi, Penerbitan Solo, Kelas Menulis, dan Lomba.
+3. *Ranah Community*: ruang interaksi penulis dan pembaca, berbagi tulisan, apresiasi, komentar, dan discover.
+
+**2. Supporting Platform (wajib, bukan modul utama).**
+
+- *Dashboard / Beranda*: ringkasan aktivitas, progres, dan akses ke modul.
+- *User Profile & Settings*: identitas penulis, portofolio, dan pengaturan akun.
+- *Super Admin & Admin Panel*: pengelolaan pengguna, role, konten, proyek, moderasi, dan **konfigurasi platform**.
+- *Organizer / Management Panel*: pengelolaan proyek, submission, editor, mentor, dan juri.
+- *Authentication & Authorization*: login, registrasi, manajemen role dan permission.
+- *Notification System*: **notifikasi aktivitas** dan email transaksional.
+- *Payment Management*: pembayaran, **verifikasi, status transaksi, dan administrasi pembayaran**.
+- *Grup Penulis*: kolaborasi dan pengelolaan keanggotaan sebagai kapabilitas lintas modul, bisa diatur oleh Admin.
+
+**Selisih terhadap PRD v0.2 yang ditemukan saat slicing 6g** (belum mengubah PRD):
+
+| Butir founder | Di PRD | Tindak lanjut |
+| --- | --- | --- |
+| Konfigurasi platform (Admin Panel) | 17.6 punya halaman "Admin: pengaturan sistem" untuk Super Admin, **tanpa isi** | Isinya harus ditentukan bersama user; masuk sub-langkah 6g-7. Kandidat dari PRD: tautan komunitas (PLT-12), data pembayaran, versi ketentuan hak cipta |
+| Notifikasi aktivitas untuk pengelola | PRD 20 memuat "submission ditugaskan", "revisi dikirim", "karya tugas dikumpulkan" (AC-30), belum dibangun di slicing | Sub-langkah 6g-N |
+| Administrasi pembayaran, status transaksi | PLT-07 hanya QRIS semi-manual dan konfirmasi | Daftar transaksi dengan status dan jalur bukti di 6g-3b |
+
+Tidak ada di daftar ini: Event umum (COM-13, masuk lewat keputusan client 17 November 2026) dan Template Studio (ditunda).
+
