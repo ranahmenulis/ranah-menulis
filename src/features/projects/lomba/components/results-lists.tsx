@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { Notice } from "@/components/ui/states";
 import { authors } from "@/features/community/fixtures/authors";
 import { AuthorLink } from "@/features/profile/author-link";
@@ -71,6 +72,15 @@ export function ResultsLists({ project, stage, results, mine }: Props) {
   );
 }
 
+/**
+ * Winners arrive from the last place up, so the first prize lands last (rm-row-in steps of 45ms,
+ * slightly uneven); "Juara 1" then pops once its row has settled (rm-pop steps of 14ms).
+ */
+export function winnerStep(index: number, count: number): { row: number; pop: number } {
+  const row = (count - 1 - index) * 1.6 + (index % 2) * 0.4;
+  return { row, pop: Math.round((row * 45 + 420) / 14) };
+}
+
 function Winners({ project, results }: { project: Project; results: ContestResults | null }) {
   const winners = results ? rankedWinners(results) : [];
   return (
@@ -79,12 +89,26 @@ function Winners({ project, results }: { project: Project; results: ContestResul
         <p className="text-sm text-ink-muted">Daftar pemenang belum tersedia.</p>
       ) : (
         <ol className="grid">
-          {winners.map((w) => {
+          {winners.map((w, index) => {
             const prize = prizeFor(project, w.rank);
+            const { row, pop } = winnerStep(index, winners.length);
             return (
-              <li key={w.entry.id} className="grid gap-1 border-b border-line py-4">
+              <li
+                key={w.entry.id}
+                className="rm-row-in grid gap-1 border-b border-line py-4"
+                style={{ "--i": row } as CSSProperties}
+              >
                 <p className="text-xs text-ink-muted">
-                  Juara {w.rank}
+                  {w.rank === 1 ? (
+                    <span
+                      className="rm-pop inline-block font-medium text-ink"
+                      style={{ "--i": pop } as CSSProperties}
+                    >
+                      Juara 1
+                    </span>
+                  ) : (
+                    `Juara ${w.rank}`
+                  )}
                   {w.tie ? " (seri)" : ""}
                   {prize ? ` · ${prize}` : ""}
                 </p>

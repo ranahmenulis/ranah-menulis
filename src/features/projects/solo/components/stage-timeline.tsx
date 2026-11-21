@@ -29,10 +29,11 @@ export function StageTimeline({ rows, zone }: { rows: StageRow[]; zone: TimeZone
             <span
               aria-hidden
               className={cn(
-                "mt-1 size-3 rounded-full border border-ink",
+                // The dot fills as the team moves the book on; the running stage pops in once.
+                "mt-1 size-3 rounded-full border border-ink transition-[background-color,box-shadow] duration-300 ease-(--ease-out)",
                 row.state === "selesai" && "bg-ink",
                 row.state === "berjalan" &&
-                  "bg-canvas ring-2 ring-ink ring-offset-2 ring-offset-canvas",
+                  "rm-pop bg-canvas ring-2 ring-ink ring-offset-2 ring-offset-canvas",
                 row.state === "menunggu" && "border-ink-muted",
               )}
             />

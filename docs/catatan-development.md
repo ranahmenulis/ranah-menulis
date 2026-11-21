@@ -11,6 +11,7 @@ Terakhir diperbarui: **21 November 2026**.
 - **Gate terakhir (21 November 2026):** `npm run check` lulus (223 berkas, 1.846 tes) dan `npm run build` berhasil.
 - **Perombakan UI "semua layar sama" (21 November 2026), di lokal, belum di-push (user minta tes lokal dulu):** fase 0–4 semua sudah di-commit (`2e96360`, `50ba82f`, `4271ef9`, `5e0db25`, `9910aa8`: sampul Projects, hero Streak dan Statistik, pita Beranda, penanda halaman Dokumen, keadaan kosong bergambar, jangkar Event, Grup, Profil, Notifikasi). Tes penuh belum dijalankan sejak fase 3.
 - **Fase 5 (21 November 2026):** pita peran Kelola (Editor, Juri, Mentor, Organizer, Admin, dan ringkasan `/kelola`), DESIGN.md 7.8. Di-commit lokal, belum di-push. Gate: `npm run check` lulus (234 berkas, 1.900 tes) dan `npm run build` berhasil.
+- **Fase 6 (21 November 2026):** gerak tambahan dari `find-animation-opportunities` (DESIGN.md 7.9), di-commit lokal, belum di-push.
 - **Hook git:** `pre-commit` = lint-staged; `pre-push` = `typecheck` saja. Tes penuh lewat `npm run check` dan CI.
 - **Saklar demo peran:** `NEXT_PUBLIC_DEMO_ROLES=1` aktif di Vercel Production, jadi `?sebagai=` (tamu dan peran kelola) berlaku di produksi. **Wajib dihapus bersama bypass login saat auth sungguhan masuk.**
 - **Panduan uji:** `docs/panduan-uji-pengguna.md` (juga `.html`, `.pdf`), versi web `/panduan-uji.html`, berkas contoh `/contoh-naskah.txt` dan `.pdf`. Diuji di Vercel lewat Chrome CDP pada 21 November 2026. Perbarui panduan bila alur atau nama tombol berubah.
@@ -21,7 +22,7 @@ Landing; Beranda; Studio (Dokumen, Editor, Streak, Statistik, riwayat versi, tar
 
 ## 3. Backlog dekat (belum dikerjakan)
 
-0. **Lanjutan perombakan UI** (rencana disetujui 21 November 2026, monokrom tetap, gerak tidak dibatasi): fase 4a, 4b, dan 5 selesai lokal; berikutnya fase 6 `find-animation-opportunities` (termasuk titik `GroupSeal` yang membesar dari pojok SVG karena `rm-pop` tanpa `transform-box`). Fase 3 selesai (Beranda dan Dokumen dikerjakan 21 November 2026, belum di-commit). Gerak, hover, dan keyboard belum diuji dengan klik sungguhan.
+0. **Lanjutan perombakan UI** (rencana disetujui 21 November 2026, monokrom tetap, gerak tidak dibatasi): fase 4a sampai 6 selesai lokal; berikutnya uji ponsel, mode gelap, dan klik/keyboard sungguhan untuk semua layar yang diubah, lalu push setelah user setuju. Fase 3 selesai (Beranda dan Dokumen dikerjakan 21 November 2026, belum di-commit). Gerak, hover, dan keyboard belum diuji dengan klik sungguhan.
 1. **N10** daftar pintasan keyboard (kecil, sudah disetujui client).
 2. Ganti kata "galat" menjadi "error" di teks aplikasi (baru panduan yang diganti). Perlu cakupan jelas lebih dulu: kamus `id` dan `en` serta teks di komponen.
 3. **N9** gambar kutipan dan **N21** kartu progres: opsional, user belum memintanya, **prioritas paling akhir**.
@@ -49,6 +50,12 @@ Isi pekerjaannya (urutan belum diputuskan):
 - Hal yang "perlu dibahas" client tidak boleh dibangun (lihat CLAUDE.md, Keputusan Lembar Novlr).
 
 ## 6. Log sesi
+
+### 21 November 2026 (sesi UI, fase 6: gerak tambahan)
+- `find-animation-opportunities` atas seluruh aplikasi (tanpa landing): kesimpulannya gerak sudah hampir pas; lima usulan disetujui user dan dikerjakan (DESIGN.md 7.9): titik `GroupSeal` dari pusatnya, PublishDone naik bertahap, pemenang lomba dari juara terakhir ke juara 1, titik tahap Solo, `<details>` materi kelas dan Bantuan Studio membuka halus (`.rm-details`).
+- Ditolak (terlalu sering atau data): pop Apresiasi/Simpan, skala tekan `Button` (bertentangan dengan DESIGN 4.6), animasi ulang grafik, Ctrl+K, tab, chip, indikator simpan.
+- Verifikasi: tes terarah 12 berkas lulus + `winner-step.test.ts`; CDP: urutan jeda pemenang 144/90/0 ms, `<details>` 24 → 184 (100 ms) → 224 px, tangkapan layar hasil lomba dan Grup.
+- Gate penuh: `npm run check` 1.901 dari 1.902 tes lulus; satu gagal di `studio-search-dialog.test.tsx` (berkas tidak disentuh) dan lulus 3/3 saat dijalankan sendiri, jadi rapuh di bawah beban (catat bersama tes Event yang sama polanya). Build tidak dijalankan ulang (hanya CSS dan komponen, tanpa rute).
 
 ### 21 November 2026 (sesi UI, fase 5: Kelola sebagai dunia lain)
 - Keputusan user: pita hanya di layar utama area dan ringkasan (layar dalam tetap), angka Admin = kasus moderasi Baru, penanda SVG tipografis (bukan foto).
