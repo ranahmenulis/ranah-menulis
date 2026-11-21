@@ -35,7 +35,7 @@ Alamat dasar: [ranah-menulis.vercel.app](https://ranah-menulis.vercel.app/berand
 | # | Buka | Lakukan | Hasil yang diharapkan |
 |---|---|---|---|
 | B1 | [Studio](https://ranah-menulis.vercel.app/studio) | Klik tombol tulisan baru. | Editor penuh layar terbuka. ☐ |
-| B2 | [Editor baru](https://ranah-menulis.vercel.app/studio/baru) | Ketik judul dan beberapa paragraf (sekitar 100 kata). Pakai tebal, miring, judul, kutipan, daftar. | Format berlaku, jumlah kata bertambah, tersimpan otomatis. ☐ |
+| B2 | [Editor baru](https://ranah-menulis.vercel.app/studio/baru) | Ketik judul, lalu tempel (paste) [naskah contoh](https://ranah-menulis.vercel.app/contoh-naskah.txt) sekitar 1.100 kata (dibutuhkan agar bisa dikirim ke lomba dan antologi). Pakai tebal, miring, judul, kutipan, daftar. | Format berlaku, jumlah kata bertambah, tersimpan otomatis. ☐ |
 | B3 | Editor | Klik "N kata". | Kata, karakter, paragraf, waktu baca. ☐ |
 | B4 | Editor | Nyalakan mode fokus, lalu keluar. | Tampilan bersih. ☐ |
 | B5 | Editor | Jalankan timer sprint 1 menit sambil menulis. | Hasil "N kata dalam M menit" di akhir. ☐ |
@@ -69,14 +69,14 @@ Alamat dasar: [ranah-menulis.vercel.app](https://ranah-menulis.vercel.app/berand
 | # | Buka | Lakukan | Hasil yang diharapkan |
 |---|---|---|---|
 | E1 | [Katalog](https://ranah-menulis.vercel.app/projects) | Ganti kategori, filter Status dan Biaya. | Daftar proyek berubah. ☐ |
-| E2 | [Lomba berbayar](https://ranah-menulis.vercel.app/projects/lomba-cerpen-hujan-2026) | Baca detail, klik Daftar, centang ketentuan, Daftar. | Status "Menunggu pembayaran". ☐ |
-| E3 | [Bayar](https://ranah-menulis.vercel.app/projects/lomba-cerpen-hujan-2026/bayar) | Lihat kode QRIS. | Kode contoh berlabel dan sisa waktu 24 jam. Pembayaran **dikonfirmasi pengelola** di Bagian 2. ☐ |
+| E2 | [Lomba berbayar](https://ranah-menulis.vercel.app/projects/lomba-cerpen-hujan-2026) | Baca detail, klik Daftar, centang ketentuan, Daftar. | Status "Menunggu pembayaran". Pengiriman karya menyusul setelah pembayaran dikonfirmasi di Bagian 2. ☐ |
+| E3 | [Bayar](https://ranah-menulis.vercel.app/projects/lomba-cerpen-hujan-2026/bayar) | Lihat kode QRIS. | Kode contoh berlabel dan sisa waktu 24 jam. ☐ |
 | E4 | [Lomba gratis](https://ranah-menulis.vercel.app/projects/lomba-esai-literasi-remaja) | Daftar, lalu klik Kirim karya, pilih dokumen dari B2. | Status "Terkirim". ☐ |
 | E5 | [Proyek saya](https://ranah-menulis.vercel.app/projects/saya) | Buka. | Pendaftaran dan kiriman terlihat dengan statusnya. ☐ |
 | E6 | [Kelas berjalan](https://ranah-menulis.vercel.app/projects/kelas-cerpen-untuk-pemula) | Daftar (gratis), klik Buka dasbor kelas. | Jadwal, materi, tugas, progres. ☐ |
 | E7 | Dasbor kelas | Tandai satu materi selesai, klik Lanjutkan, salin latihan ke Studio. | Latihan menjadi dokumen baru di Studio. ☐ |
 | E8 | Dasbor kelas, tugas pertama | Kumpulkan tugas dengan teks langsung. | Status "Dikumpulkan". Dinilai di Bagian 2. ☐ |
-| E9 | [Solo](https://ranah-menulis.vercel.app/projects/solo-penerbitan-buku-sendiri) | Pilih paket, daftar, lalu kirim naskah. | Naskah terkirim. Tahap penerbitan berjalan di Bagian 2. ☐ |
+| E9 | [Solo](https://ranah-menulis.vercel.app/projects/solo-penerbitan-buku-sendiri) | Pilih paket "Terbit dan Produksi", centang ketentuan, Daftar. | Status "Menunggu pembayaran". Kirim naskah menyusul di Bagian 2. ☐ |
 | E10 | [Hasil lomba selesai](https://ranah-menulis.vercel.app/projects/lomba-cerita-mini-pesisir-2026/hasil) | Buka. | Pemenang, hadiah, catatan juri. ☐ |
 
 ## 1.F Notifikasi, pengaturan, dan ponsel
@@ -91,64 +91,68 @@ Alamat dasar: [ranah-menulis.vercel.app](https://ranah-menulis.vercel.app/berand
 
 # Bagian 2. Semua role pengelola (satu cerita)
 
-**Persiapan:** pakai peramban yang sama dengan Bagian 1. Kerjakan **Bagian 1 bagian E** lebih dulu (daftar lomba berbayar, kirim karya, daftar kelas dan kumpulkan tugas, daftar Solo dan kirim naskah, kirim Antologi), lalu lanjutkan di bawah. Ganti role dengan membuka tautan di tab yang sama.
+**Persiapan:** pakai peramban yang sama dengan Bagian 1 (data tersimpan di peramban itu). Kerjakan **Bagian 1 bagian B dan E** lebih dulu: naskah contoh, daftar lomba berbayar, daftar kelas dan kumpulkan tugas, serta daftar Solo. Ganti role dengan membuka tautan di tab yang sama. Tombol yang sama muncul dua kali (di layar lalu di dialog konfirmasi); klik tombol di dialog untuk menyelesaikan.
 
-## 2.A Organizer: menyiapkan dan menjalankan proyek
+## 2.A Organizer: menyiapkan proyek dan konfirmasi pembayaran
 
 | # | Buka | Lakukan | Hasil yang diharapkan |
 |---|---|---|---|
 | A1 | [Daftar proyek Organizer](https://ranah-menulis.vercel.app/kelola/organizer?sebagai=organizer) | Buka. | Proyek yang dikelola tampil. ☐ |
-| A2 | [Buat proyek](https://ranah-menulis.vercel.app/kelola/organizer/baru?sebagai=organizer) | Isi satu proyek Antologi lengkap, simpan, lalu Terbitkan. | Proyek muncul di [katalog](https://ranah-menulis.vercel.app/projects). ☐ |
-| A3 | [Lomba berbayar, tab Pembayaran](https://ranah-menulis.vercel.app/kelola/organizer/lomba-cerpen-hujan-2026?sebagai=organizer&tab=pembayaran) | Klik Konfirmasi pembayaran. | Pendaftaran peserta menjadi lunas, status "Terdaftar". ☐ |
-| A4 | [Event baru](https://ranah-menulis.vercel.app/kelola/organizer/event/baru?sebagai=organizer) | Buat event, simpan. | Event tampil di [daftar event](https://ranah-menulis.vercel.app/event). ☐ |
+| A2 | [Buat proyek](https://ranah-menulis.vercel.app/kelola/organizer/baru?sebagai=organizer) | Pilih Antologi, isi judul dan data lain, klik Buat draf, lalu Terbitkan. | Proyek muncul di [katalog](https://ranah-menulis.vercel.app/projects). ☐ |
+| A3 | [Pembayaran lomba](https://ranah-menulis.vercel.app/kelola/organizer/lomba-cerpen-hujan-2026?sebagai=organizer&tab=pembayaran) | Klik Konfirmasi pembayaran, lalu konfirmasi di dialog. | Status "Lunas". ☐ |
+| A4 | [Pembayaran antologi](https://ranah-menulis.vercel.app/kelola/organizer/antologi-surat-yang-tidak-pernah-terkirim?sebagai=organizer&tab=pembayaran) | Peserta mendaftar dulu di [halaman daftar](https://ranah-menulis.vercel.app/projects/antologi-surat-yang-tidak-pernah-terkirim/daftar?sebagai=masuk) (Rp75.000), lalu konfirmasi seperti A3. | Status "Lunas". ☐ |
+| A5 | [Pembayaran Solo](https://ranah-menulis.vercel.app/kelola/organizer/solo-penerbitan-buku-sendiri?sebagai=organizer&tab=pembayaran) | Konfirmasi seperti A3. | Status "Lunas". ☐ |
+| A6 | [Event baru](https://ranah-menulis.vercel.app/kelola/organizer/event/baru?sebagai=organizer) | Isi event, klik Buat event. | Event tampil di [daftar event](https://ranah-menulis.vercel.app/event). ☐ |
 
-## 2.B Peserta: kirim karya setelah dikonfirmasi
-
-| # | Buka | Lakukan | Hasil yang diharapkan |
-|---|---|---|---|
-| B1 | [Lomba berbayar](https://ranah-menulis.vercel.app/projects/lomba-cerpen-hujan-2026?sebagai=masuk) | Klik Kirim karya, pilih dokumen, kirim. | Status "Terkirim". ☐ |
-
-## 2.C Juri dan Organizer: lomba sampai pemenang
+## 2.B Peserta: kirim karya
 
 | # | Buka | Lakukan | Hasil yang diharapkan |
 |---|---|---|---|
-| C1 | [Panel Juri](https://ranah-menulis.vercel.app/kelola/juri?sebagai=juri) | Buka lomba, buka satu "Karya N". | Karya tampil tanpa nama penulis. ☐ |
-| C2 | Karya tadi | Isi skor 1 sampai 10 tiap kriteria, Simpan penilaian. | Progres juri naik. ☐ |
-| C3 | [Tahap lomba](https://ranah-menulis.vercel.app/kelola/organizer/lomba-cerpen-hujan-2026?sebagai=organizer&tab=tahap) | Klik Tutup penerimaan, mulai dinilai, lalu Tutup penilaian. | Penilaian ditutup. ☐ |
-| C4 | Tab Tahap | Pilih finalis dan peringkat, isi catatan juri, Simpan hasil. Klik Umumkan finalis, lalu Umumkan pemenang. | Tahap maju sesuai urutan. ☐ |
-| C5 | [Hasil lomba](https://ranah-menulis.vercel.app/projects/lomba-cerpen-hujan-2026/hasil?sebagai=masuk) | Buka sebagai peserta. | Pemenang, hadiah, dan catatan juri tampil. ☐ |
+| B1 | [Kirim ke lomba](https://ranah-menulis.vercel.app/projects/lomba-cerpen-hujan-2026/kirim?sebagai=masuk) | Pilih dokumen naskah contoh, isi judul dan genre, centang pernyataan, Kirim karya. | "Karyamu terkirim", status Terkirim. ☐ |
+| B2 | [Kirim ke antologi](https://ranah-menulis.vercel.app/projects/antologi-surat-yang-tidak-pernah-terkirim/kirim?sebagai=masuk) | Sama seperti B1. | Status Terkirim. ☐ |
+| B3 | [Kirim naskah Solo](https://ranah-menulis.vercel.app/projects/solo-penerbitan-buku-sendiri/kirim?sebagai=masuk) | Unggah [naskah contoh PDF](https://ranah-menulis.vercel.app/contoh-naskah.pdf) lewat tombol "Unggah PDF atau DOCX" (unduh dulu), isi judul, jenis buku, sinopsis, Kirim karya. | Status Terkirim. ☐ |
 
-## 2.D Editor: antologi dan penerbitan Solo
+## 2.C Lomba: dari penerimaan sampai pemenang
 
 | # | Buka | Lakukan | Hasil yang diharapkan |
 |---|---|---|---|
-| D1 | [Antrean Editor](https://ranah-menulis.vercel.app/kelola/editor?sebagai=editor) | Buka kiriman dari daftar. | Naskah beku dan riwayat status tampil. ☐ |
-| D2 | Kiriman Antologi | Klik Mulai tinjau, lalu Terima dengan alasan. | Status menjadi Diterima. ☐ |
-| D3 | Kiriman Solo | Mulai tinjau, lalu Terima. | Status Diterima. ☐ |
-| D4 | [Tahap Solo](https://ranah-menulis.vercel.app/kelola/organizer/solo-penerbitan-buku-sendiri?sebagai=organizer&tab=tahap) | Klik Lanjut ke tahap berikutnya sampai persetujuan final, tambah pratinjau (gambar atau PDF). | Tahap maju. ☐ |
-| D5 | [Dasbor Solo](https://ranah-menulis.vercel.app/projects/solo-penerbitan-buku-sendiri/dasbor?sebagai=masuk) | Sebagai penulis, lihat pratinjau, klik Setujui. | Produksi dimulai. ☐ |
-| D6 | [Notifikasi](https://ranah-menulis.vercel.app/notifikasi?sebagai=masuk) | Buka. | Ada pemberitahuan Diterima dan tahap Solo. ☐ |
+| C1 | [Tahap lomba](https://ranah-menulis.vercel.app/kelola/organizer/lomba-cerpen-hujan-2026?sebagai=organizer&tab=tahap) | Klik "Tutup penerimaan, mulai dinilai" lalu konfirmasi. | Tahap berubah menjadi "Sedang dinilai". Juri baru bisa menilai setelah ini. ☐ |
+| C2 | [Panel Juri](https://ranah-menulis.vercel.app/kelola/juri/lomba-cerpen-hujan-2026?sebagai=juri) | Buka "Karya 1", isi skor 1 sampai 10 tiap kriteria, Simpan penilaian. | Naskah tampil tanpa nama penulis. Karya masuk "Sudah dinilai". ☐ |
+| C3 | [Tahap lomba](https://ranah-menulis.vercel.app/kelola/organizer/lomba-cerpen-hujan-2026?sebagai=organizer&tab=tahap) | Klik Tutup penilaian, konfirmasi. | "Penilaian ditutup. Skor tidak bisa diubah lagi." ☐ |
+| C4 | Tab Tahap yang sama | Centang Finalis, isi Peringkat 1 dan catatan juri, klik Simpan hasil. Lalu klik Umumkan finalis dan Umumkan pemenang (konfirmasi tiap kali). | Tahap berubah menjadi "Pemenang diumumkan". ☐ |
+| C5 | [Hasil lomba](https://ranah-menulis.vercel.app/projects/lomba-cerpen-hujan-2026/hasil?sebagai=masuk) | Buka sebagai peserta. | Finalis dan pemenang tampil beserta catatan juri. ☐ |
+
+## 2.D Editor: antologi dan Solo
+
+| # | Buka | Lakukan | Hasil yang diharapkan |
+|---|---|---|---|
+| D1 | [Antrean Editor](https://ranah-menulis.vercel.app/kelola/editor?sebagai=editor) | Buka kiriman Antologi. | Naskah beku dan riwayat status tampil. ☐ |
+| D2 | Kiriman Antologi | Klik Mulai tinjau, lalu Terima dan isi alasan. | Status Diterima. ☐ |
+| D3 | Kiriman Solo | Klik Mulai tinjau, lalu Terima dan isi alasan. | Status Diterima. ☐ |
+| D4 | [Tahap Solo](https://ranah-menulis.vercel.app/kelola/organizer/solo-penerbitan-buku-sendiri?sebagai=organizer&tab=tahap) | Klik "Lanjut ke ..." (konfirmasi Lanjutkan) sampai persetujuan final. Klik "Tambah pratinjau sampul" dan "Tambah pratinjau isi buku", pilih berkas gambar atau PDF, Tambahkan. | Tahap maju, dua pratinjau tersimpan. ☐ |
+| D5 | [Dasbor Solo](https://ranah-menulis.vercel.app/projects/solo-penerbitan-buku-sendiri/dasbor?sebagai=masuk) | Sebagai penulis, lihat pratinjau, klik Setujui, lalu "Setujui dan mulai produksi". | Tahap Produksi dimulai, tidak bisa dibatalkan. ☐ |
+| D6 | [Notifikasi](https://ranah-menulis.vercel.app/notifikasi?sebagai=masuk) | Buka. | Pemberitahuan Diterima, tahap Solo, dan pratinjau. ☐ |
 
 ## 2.E Mentor: kelas
 
 | # | Buka | Lakukan | Hasil yang diharapkan |
 |---|---|---|---|
-| E1 | [Kelola kelas](https://ranah-menulis.vercel.app/kelola/mentor?sebagai=mentor) | Buka Kelas Cerpen untuk Pemula, tab Tugas, tambah satu tugas. | Tugas baru ada di dasbor peserta. ☐ |
-| E2 | Tab Pengumpulan | Buka pengumpulan dari peserta, klik Tandai selesai. | Status "Selesai". ☐ |
-| E3 | [Dasbor kelas](https://ranah-menulis.vercel.app/projects/kelas-cerpen-untuk-pemula/dasbor?sebagai=masuk) | Sebagai peserta, lihat progres. | Progres naik. Tulis satu testimoni. ☐ |
-| E4 | [Testimoni, Organizer](https://ranah-menulis.vercel.app/kelola/organizer/kelas-cerpen-untuk-pemula?sebagai=organizer&tab=testimoni) | Lihat testimoni. | Testimoni tampil dan dapat dikelola. ☐ |
+| E1 | [Kelola kelas](https://ranah-menulis.vercel.app/kelola/mentor/kelas-cerpen-untuk-pemula?sebagai=mentor) | Buka tab Pengumpulan, buka tugas "Kerangka cerpenmu" milik peserta. | Tugas dan versi tampil. ☐ |
+| E2 | Tugas tadi | Klik Tandai selesai, konfirmasi. | Status "Selesai". ☐ |
+| E3 | [Tab Tugas](https://ranah-menulis.vercel.app/kelola/mentor/kelas-cerpen-untuk-pemula?sebagai=mentor&tab=tugas) | Klik Buat tugas, isi, simpan. | Tugas baru tampil di dasbor peserta. ☐ |
+| E4 | [Dasbor kelas](https://ranah-menulis.vercel.app/projects/kelas-cerpen-untuk-pemula/dasbor?sebagai=masuk) | Sebagai peserta, lihat progres dan tugas baru. Tulis satu testimoni. | Progres naik. ☐ |
+| E5 | [Testimoni, Organizer](https://ranah-menulis.vercel.app/kelola/organizer/kelas-cerpen-untuk-pemula?sebagai=organizer&tab=testimoni) | Lihat testimoni. | Testimoni tampil dan dapat dikelola. ☐ |
 
 ## 2.F Administrator dan Super Admin
 
 | # | Buka | Lakukan | Hasil yang diharapkan |
 |---|---|---|---|
-| F1 | [Pengguna dan role](https://ranah-menulis.vercel.app/kelola/admin?sebagai=super-admin) | Cari pengguna, buka detailnya, beri satu role. | Role tampil di detail. ☐ |
-| F2 | Postingan di Community | Sebagai pembaca, laporkan satu komentar dengan alasan. | Laporan terkirim. ☐ |
-| F3 | [Moderasi](https://ranah-menulis.vercel.app/kelola/admin/moderasi?sebagai=administrator) | Buka kasus, pilih keputusan Sembunyikan dengan alasan. | Konten hilang dari layar pembaca. Pelapor tidak terlihat. ☐ |
-| F4 | [Kurasi](https://ranah-menulis.vercel.app/kelola/admin/kurasi?sebagai=administrator) | Tambah satu Editor's Pick dan satu proyek unggulan. | Tampil di Community dan katalog. ☐ |
-| F5 | [Pengaturan](https://ranah-menulis.vercel.app/kelola/admin/pengaturan?sebagai=administrator) | Isi tautan komunitas luar (`https://...`). | Tautan tampil di sidebar dan Beranda. ☐ |
-| F6 | [Grup](https://ranah-menulis.vercel.app/kelola/admin/grup?sebagai=administrator) | Buka satu grup, tunjuk Admin Grup. | Admin Grup berubah. ☐ |
-| F7 | [Audit log](https://ranah-menulis.vercel.app/kelola/admin/audit?sebagai=administrator) | Buka. | Semua tindakan di atas tercatat, terbaru dulu, hanya bisa dibaca. ☐ |
+| F1 | [Pengguna dan role](https://ranah-menulis.vercel.app/kelola/admin?sebagai=super-admin) | Buka satu pengguna, klik Beri pada satu role. | Role tampil di detail pengguna. ☐ |
+| F2 | [Moderasi](https://ranah-menulis.vercel.app/kelola/admin/moderasi?sebagai=administrator) | Buka satu laporan contoh, pilih Sembunyikan dan isi alasan. | Konten hilang dari layar pembaca. Identitas pelapor tidak tampil. ☐ |
+| F3 | [Kurasi](https://ranah-menulis.vercel.app/kelola/admin/kurasi?sebagai=administrator) | Klik Tambah pada satu tulisan (Editor's Picks) dan satu proyek unggulan. | Tampil di Community dan katalog. ☐ |
+| F4 | [Pengaturan](https://ranah-menulis.vercel.app/kelola/admin/pengaturan?sebagai=administrator) | Isi tautan komunitas luar (`https://...`), Simpan. | Tautan tampil di sidebar dan Beranda. ☐ |
+| F5 | [Grup](https://ranah-menulis.vercel.app/kelola/admin/grup?sebagai=administrator) | Buka satu grup, tunjuk Admin Grup. | Admin Grup berubah. ☐ |
+| F6 | [Audit log](https://ranah-menulis.vercel.app/kelola/admin/audit?sebagai=administrator) | Buka. | Tindakan F1 sampai F5 tercatat, terbaru dulu, hanya bisa dibaca. Konfirmasi pembayaran dan keputusan submission belum dicatat di sini. ☐ |
 
 ---
 
