@@ -26,24 +26,13 @@ import {
 import { writingGroups } from "../group-store";
 import { useGroupReader } from "../group-viewer";
 import { GroupPosts } from "./group-posts";
+import { GroupHero } from "./group-seal";
 import { GroupProgressSection } from "./group-progress";
 
 type OnResult = (result: GroupResult, focus?: boolean) => void;
 
 export function GroupLoading() {
   return <FeedItemSkeleton />;
-}
-
-function GroupHeader({ group }: { group: WritingGroup }) {
-  return (
-    <header className="grid gap-2">
-      <h1 className="heading-lg wrap-anywhere">{group.name}</h1>
-      <p className="text-sm text-ink-muted">
-        {group.visibility === "publik" ? "Publik" : "Privat"} · {group.members.length} anggota
-      </p>
-      {group.description && <p className="text-sm wrap-anywhere">{group.description}</p>}
-    </header>
-  );
 }
 
 function JoinPublicGroup({
@@ -166,7 +155,7 @@ function GroupDetail({
 
   return (
     <>
-      <GroupHeader group={group} />
+      <GroupHero group={group} />
       {admin && reader && (
         <GroupManagement
           group={group}

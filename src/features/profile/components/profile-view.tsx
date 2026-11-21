@@ -50,13 +50,16 @@ export function ProfileView({ handle }: { handle: string }) {
   return (
     <div className="mx-auto grid max-w-274 lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-x-12">
       <header className="lg:col-start-1 lg:row-start-1">
-        <h1 className="heading-lg [overflow-wrap:anywhere]">{author.name}</h1>
+        <h1 className="rm-rise-in font-serif text-[34px] leading-[1.15] [overflow-wrap:anywhere] [--i:-3] md:text-[48px]">
+          {author.name}
+        </h1>
         <p className="text-sm [overflow-wrap:anywhere] text-ink-muted">@{author.handle}</p>
       </header>
 
       <ProfileIdentity
         author={author}
         profile={profile}
+        works={works.length}
         followers={followerCount(author.id, data.marks)}
         following={followingCount(author.id, data.marks)}
         genres={genres}

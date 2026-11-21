@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import type { CSSProperties } from "react";
 import { ButtonLink } from "@/components/ui/button";
 import { EmptyState, ErrorBanner, FeedItemSkeleton, RetryButton } from "@/components/ui/states";
 import { HOME_HREF } from "@/features/app-shell/nav";
@@ -12,8 +13,10 @@ import {
   formatEventTime,
   type WritingEvent,
 } from "../event-model";
+import { countdownLabel } from "../event-face";
 import { refreshEvents, useEvents } from "../event-store";
 import { useEventClock } from "../use-event-clock";
+import { DateLeaf } from "./date-leaf";
 
 export function EventsError() {
   return (
@@ -44,6 +47,7 @@ export function EventsView() {
         <FeedItemSkeleton />
       ) : data.events.length === 0 ? (
         <EmptyState
+          art="clouds"
           action={
             <ButtonLink variant="secondary" href={HOME_HREF}>
               Kembali ke Beranda
@@ -53,18 +57,34 @@ export function EventsView() {
           Belum ada event.
         </EmptyState>
       ) : (
-        <ul className="grid gap-4">
+        <ul>
           {data.events
             .toSorted((a, b) => b.startsAt - a.startsAt)
-            .map((event) => (
-              <li key={event.id} className="min-w-0">
+            .map((event, index) => (
+              <li
+                key={event.id}
+                className="rm-row-in min-w-0 border-b border-line"
+                style={{ "--i": Math.min(index, 12) } as CSSProperties}
+              >
                 <Link
                   href={eventHref(event.id)}
-                  className="grid gap-2 border border-line p-5 no-underline hover:bg-subtle"
+                  className="group grid grid-cols-[auto_minmax(0,1fr)] items-start gap-4 py-5 no-underline md:gap-5"
                 >
-                  <h2 className="heading-md wrap-anywhere">{event.title}</h2>
-                  <EventSummary event={event} now={now} />
-                  <p className="line-clamp-2 text-sm wrap-anywhere">{event.description}</p>
+                  <DateLeaf
+                    at={event.startsAt}
+                    zone={event.zone}
+                    className="transition-[translate,rotate] duration-300 group-hover:-translate-y-0.5 group-hover:-rotate-3 motion-reduce:transition-none"
+                  />
+                  <span className="grid min-w-0 gap-1.5">
+                    <h2 className="heading-md wrap-anywhere group-hover:underline group-hover:underline-offset-3">
+                      {event.title}
+                    </h2>
+                    <EventSummary event={event} now={now} />
+                    <span className="text-sm font-medium">{countdownLabel(event, now)}</span>
+                    <p className="line-clamp-2 text-sm wrap-anywhere text-ink-soft">
+                      {event.description}
+                    </p>
+                  </span>
                 </Link>
               </li>
             ))}

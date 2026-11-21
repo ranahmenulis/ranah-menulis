@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import {
   useRef,
   type ComponentProps,
+  type CSSProperties,
   type MouseEvent,
   type ReactNode,
   type RefObject,
@@ -17,6 +18,7 @@ import { cn } from "@/lib/cn";
 import { authorOf } from "@/features/community/post-model";
 import { mayActivateNotification } from "./notification-access";
 import type { NotificationView } from "./notification-model";
+import { dayGroups } from "./notification-days";
 import { agoLabel, leadOf } from "./notification-text";
 
 type LinkActions = {
@@ -208,6 +210,7 @@ export function NotificationList({
   if (items.length === 0) {
     return (
       <EmptyState
+        art="lighthouse"
         action={
           <ButtonLink href="/beranda" variant="secondary">
             Ke Beranda
@@ -218,6 +221,8 @@ export function NotificationList({
       </EmptyState>
     );
   }
+  // One flat list with the day headings as separators, so a row that moves to another day while
+  // the other sources load keeps its element (a clicked link must stay connected).
   return (
     <ul
       onFocusCapture={onFocusCapture}
@@ -228,11 +233,29 @@ export function NotificationList({
         intent.current += 1;
       }}
     >
-      {items.map((item) => (
-        <li key={item.id} data-notification-id={item.id} className="border-b border-line">
-          <NotificationRow item={item} intent={intent} now={now} onOpen={onOpen} {...actions} />
-        </li>
-      ))}
+      {dayGroups(items, now).flatMap((group, g) => [
+        <li key={`day-${group.key}`} role="presentation" className="pt-6 first:pt-2">
+          <h2
+            className="rm-rise-in border-b border-line-strong pb-2 font-serif text-xl leading-7"
+            style={{ "--i": g - 3 } as CSSProperties}
+          >
+            {group.label}
+            <span className="ml-2 font-sans text-xs text-ink-muted tabular-nums">
+              {group.items.length}
+            </span>
+          </h2>
+        </li>,
+        ...group.items.map((item, i) => (
+          <li
+            key={item.id}
+            data-notification-id={item.id}
+            className="rm-row-in border-b border-line"
+            style={{ "--i": Math.min(i, 12) } as CSSProperties}
+          >
+            <NotificationRow item={item} intent={intent} now={now} onOpen={onOpen} {...actions} />
+          </li>
+        )),
+      ])}
     </ul>
   );
 }

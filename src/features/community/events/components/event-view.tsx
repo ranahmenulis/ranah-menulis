@@ -23,6 +23,7 @@ import {
 } from "../event-model";
 import { useEvents } from "../event-store";
 import { useEventClock } from "../use-event-clock";
+import { EventHero } from "./event-hero";
 import { EventJoin } from "./event-join";
 import { EventParticipation } from "./event-participation";
 import { EventsError } from "./events-view";
@@ -56,16 +57,8 @@ function EventDetail({
   }, [message]);
   return (
     <>
-      <header className="grid gap-2">
-        <h1 className="heading-lg wrap-anywhere">{event.title}</h1>
-        <p className="text-sm text-ink-muted">
-          {eventStatus[state]} · {event.participants.length} peserta
-        </p>
-        <p className="text-sm text-ink-muted">
-          {formatEventTime(event.startsAt, zone)} – {formatEventTime(event.endsAt, zone)}
-        </p>
-        <p className="mt-2 wrap-anywhere whitespace-pre-line">{event.description}</p>
-      </header>
+      <EventHero event={event} now={now} state={state} />
+      <p className="wrap-anywhere whitespace-pre-line">{event.description}</p>
       <p role="status" tabIndex={-1} ref={statusRef} className="empty:hidden">
         {message}
       </p>
