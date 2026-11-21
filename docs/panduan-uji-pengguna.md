@@ -36,11 +36,11 @@ Alamat dasar: [ranah-menulis.vercel.app](https://ranah-menulis.vercel.app/berand
 |---|---|---|---|
 | B1 | [Studio](https://ranah-menulis.vercel.app/studio) | Klik tombol tulisan baru. | Editor penuh layar terbuka. ☐ |
 | B2 | [Editor baru](https://ranah-menulis.vercel.app/studio/baru) | Ketik judul, lalu tempel (paste) [naskah contoh](https://ranah-menulis.vercel.app/contoh-naskah.txt) sekitar 1.100 kata (dibutuhkan agar bisa dikirim ke lomba dan antologi). Pakai tebal, miring, judul, kutipan, daftar. | Format berlaku, jumlah kata bertambah, tersimpan otomatis. ☐ |
-| B3 | Editor | Klik "N kata". | Kata, karakter, paragraf, waktu baca. ☐ |
-| B4 | Editor | Nyalakan mode fokus, lalu keluar. | Tampilan bersih. ☐ |
-| B5 | Editor | Jalankan timer sprint 1 menit sambil menulis. | Hasil "N kata dalam M menit" di akhir. ☐ |
-| B6 | Editor, menu ⋯ | Atur Target dokumen, lihat Riwayat versi, Ekspor PDF. | Target tampil di jumlah kata, riwayat bisa dibuka, PDF terunduh. ☐ |
-| B7 | Editor, panah kembali | Kembali ke daftar. | Dokumen ada di daftar. Beri jenis dan tag lewat menu ⋯. ☐ |
+| B3 | [Studio](https://ranah-menulis.vercel.app/studio) (buka dokumen dari B2) | Klik "N kata". | Kata, karakter, paragraf, waktu baca. ☐ |
+| B4 | [Studio](https://ranah-menulis.vercel.app/studio) (buka dokumen dari B2) | Nyalakan mode fokus, lalu keluar. | Tampilan bersih. ☐ |
+| B5 | [Studio](https://ranah-menulis.vercel.app/studio) (buka dokumen dari B2) | Jalankan timer sprint 1 menit sambil menulis. | Hasil "N kata dalam M menit" di akhir. ☐ |
+| B6 | [Studio](https://ranah-menulis.vercel.app/studio) (editor, menu ⋯) | Atur Target dokumen, lihat Riwayat versi, Ekspor PDF. | Target tampil di jumlah kata, riwayat bisa dibuka, PDF terunduh. ☐ |
+| B7 | [Studio](https://ranah-menulis.vercel.app/studio) (panah kembali dari editor) | Kembali ke daftar. | Dokumen ada di daftar. Beri jenis dan tag lewat menu ⋯. ☐ |
 | B8 | [Studio](https://ranah-menulis.vercel.app/studio) | Buat folder, duplikat dokumen, tekan Ctrl+K dan cari satu kata dari tulisan. | Pencarian menemukan dokumen. ☐ |
 | B9 | [Streak](https://ranah-menulis.vercel.app/studio/streak) | Atur target harian. | Kalender, streak, dan progres hari ini tampil. ☐ |
 | B10 | [Statistik](https://ranah-menulis.vercel.app/studio/statistik) | Ganti Harian, Mingguan, Bulanan. | Grafik terisi. ☐ |
@@ -74,8 +74,8 @@ Alamat dasar: [ranah-menulis.vercel.app](https://ranah-menulis.vercel.app/berand
 | E4 | [Lomba gratis](https://ranah-menulis.vercel.app/projects/lomba-esai-literasi-remaja) | Daftar, lalu klik Kirim karya, pilih dokumen dari B2. | Status "Terkirim". ☐ |
 | E5 | [Proyek saya](https://ranah-menulis.vercel.app/projects/saya) | Buka. | Pendaftaran dan kiriman terlihat dengan statusnya. ☐ |
 | E6 | [Kelas berjalan](https://ranah-menulis.vercel.app/projects/kelas-cerpen-untuk-pemula) | Daftar (gratis), klik Buka dasbor kelas. | Jadwal, materi, tugas, progres. ☐ |
-| E7 | Dasbor kelas | Tandai satu materi selesai, klik Lanjutkan, salin latihan ke Studio. | Latihan menjadi dokumen baru di Studio. ☐ |
-| E8 | Dasbor kelas, tugas pertama | Kumpulkan tugas dengan teks langsung. | Status "Dikumpulkan". Dinilai di Bagian 2. ☐ |
+| E7 | [Dasbor kelas](https://ranah-menulis.vercel.app/projects/kelas-cerpen-untuk-pemula/dasbor) | Tandai satu materi selesai, klik Lanjutkan, salin latihan ke Studio. | Latihan menjadi dokumen baru di Studio. ☐ |
+| E8 | [Tugas pertama](https://ranah-menulis.vercel.app/projects/kelas-cerpen-untuk-pemula/tugas/tugas-1) | Kumpulkan tugas dengan teks langsung. | Status "Dikumpulkan". Dinilai di Bagian 2. ☐ |
 | E9 | [Solo](https://ranah-menulis.vercel.app/projects/solo-penerbitan-buku-sendiri) | Pilih paket "Terbit dan Produksi", centang ketentuan, Daftar. | Status "Menunggu pembayaran". Kirim naskah menyusul di Bagian 2. ☐ |
 | E10 | [Hasil lomba selesai](https://ranah-menulis.vercel.app/projects/lomba-cerita-mini-pesisir-2026/hasil) | Buka. | Pemenang, hadiah, catatan juri. ☐ |
 
@@ -119,7 +119,7 @@ Alamat dasar: [ranah-menulis.vercel.app](https://ranah-menulis.vercel.app/berand
 | C1 | [Tahap lomba](https://ranah-menulis.vercel.app/kelola/organizer/lomba-cerpen-hujan-2026?sebagai=organizer&tab=tahap) | Klik "Tutup penerimaan, mulai dinilai" lalu konfirmasi. | Tahap berubah menjadi "Sedang dinilai". Juri baru bisa menilai setelah ini. ☐ |
 | C2 | [Panel Juri](https://ranah-menulis.vercel.app/kelola/juri/lomba-cerpen-hujan-2026?sebagai=juri) | Buka "Karya 1", isi skor 1 sampai 10 tiap kriteria, Simpan penilaian. | Naskah tampil tanpa nama penulis. Karya masuk "Sudah dinilai". ☐ |
 | C3 | [Tahap lomba](https://ranah-menulis.vercel.app/kelola/organizer/lomba-cerpen-hujan-2026?sebagai=organizer&tab=tahap) | Klik Tutup penilaian, konfirmasi. | "Penilaian ditutup. Skor tidak bisa diubah lagi." ☐ |
-| C4 | Tab Tahap yang sama | Centang Finalis, isi Peringkat 1 dan catatan juri, klik Simpan hasil. Lalu klik Umumkan finalis dan Umumkan pemenang (konfirmasi tiap kali). | Tahap berubah menjadi "Pemenang diumumkan". ☐ |
+| C4 | [Tahap lomba](https://ranah-menulis.vercel.app/kelola/organizer/lomba-cerpen-hujan-2026?sebagai=organizer&tab=tahap) | Centang Finalis, isi Peringkat 1 dan catatan juri, klik Simpan hasil. Lalu klik Umumkan finalis dan Umumkan pemenang (konfirmasi tiap kali). | Tahap berubah menjadi "Pemenang diumumkan". ☐ |
 | C5 | [Hasil lomba](https://ranah-menulis.vercel.app/projects/lomba-cerpen-hujan-2026/hasil?sebagai=masuk) | Buka sebagai peserta. | Finalis dan pemenang tampil beserta catatan juri. ☐ |
 
 ## 2.D Editor: antologi dan Solo
@@ -127,8 +127,8 @@ Alamat dasar: [ranah-menulis.vercel.app](https://ranah-menulis.vercel.app/berand
 | # | Buka | Lakukan | Hasil yang diharapkan |
 |---|---|---|---|
 | D1 | [Antrean Editor](https://ranah-menulis.vercel.app/kelola/editor?sebagai=editor) | Buka kiriman Antologi. | Naskah beku dan riwayat status tampil. ☐ |
-| D2 | Kiriman Antologi | Klik Mulai tinjau, lalu Terima dan isi alasan. | Status Diterima. ☐ |
-| D3 | Kiriman Solo | Klik Mulai tinjau, lalu Terima dan isi alasan. | Status Diterima. ☐ |
+| D2 | [Antrean Editor](https://ranah-menulis.vercel.app/kelola/editor?sebagai=editor), kiriman Antologi | Klik Mulai tinjau, lalu Terima dan isi alasan. | Status Diterima. ☐ |
+| D3 | [Antrean Editor](https://ranah-menulis.vercel.app/kelola/editor?sebagai=editor), kiriman Solo | Klik Mulai tinjau, lalu Terima dan isi alasan. | Status Diterima. ☐ |
 | D4 | [Tahap Solo](https://ranah-menulis.vercel.app/kelola/organizer/solo-penerbitan-buku-sendiri?sebagai=organizer&tab=tahap) | Klik "Lanjut ke ..." (konfirmasi Lanjutkan) sampai persetujuan final. Klik "Tambah pratinjau sampul" dan "Tambah pratinjau isi buku", pilih berkas gambar atau PDF, Tambahkan. | Tahap maju, dua pratinjau tersimpan. ☐ |
 | D5 | [Dasbor Solo](https://ranah-menulis.vercel.app/projects/solo-penerbitan-buku-sendiri/dasbor?sebagai=masuk) | Sebagai penulis, lihat pratinjau, klik Setujui, lalu "Setujui dan mulai produksi". | Tahap Produksi dimulai, tidak bisa dibatalkan. ☐ |
 | D6 | [Notifikasi](https://ranah-menulis.vercel.app/notifikasi?sebagai=masuk) | Buka. | Pemberitahuan Diterima, tahap Solo, dan pratinjau. ☐ |
@@ -138,7 +138,7 @@ Alamat dasar: [ranah-menulis.vercel.app](https://ranah-menulis.vercel.app/berand
 | # | Buka | Lakukan | Hasil yang diharapkan |
 |---|---|---|---|
 | E1 | [Kelola kelas](https://ranah-menulis.vercel.app/kelola/mentor/kelas-cerpen-untuk-pemula?sebagai=mentor) | Buka tab Pengumpulan, buka tugas "Kerangka cerpenmu" milik peserta. | Tugas dan versi tampil. ☐ |
-| E2 | Tugas tadi | Klik Tandai selesai, konfirmasi. | Status "Selesai". ☐ |
+| E2 | [Pengumpulan](https://ranah-menulis.vercel.app/kelola/mentor/kelas-cerpen-untuk-pemula?sebagai=mentor) (tugas dari E1) | Klik Tandai selesai, konfirmasi. | Status "Selesai". ☐ |
 | E3 | [Tab Tugas](https://ranah-menulis.vercel.app/kelola/mentor/kelas-cerpen-untuk-pemula?sebagai=mentor&tab=tugas) | Klik Buat tugas, isi, simpan. | Tugas baru tampil di dasbor peserta. ☐ |
 | E4 | [Dasbor kelas](https://ranah-menulis.vercel.app/projects/kelas-cerpen-untuk-pemula/dasbor?sebagai=masuk) | Sebagai peserta, lihat progres dan tugas baru. Tulis satu testimoni. | Progres naik. ☐ |
 | E5 | [Testimoni, Organizer](https://ranah-menulis.vercel.app/kelola/organizer/kelas-cerpen-untuk-pemula?sebagai=organizer&tab=testimoni) | Lihat testimoni. | Testimoni tampil dan dapat dikelola. ☐ |
