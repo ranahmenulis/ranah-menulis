@@ -33,4 +33,17 @@ describe("Button", () => {
     expect(container.querySelectorAll("i")).toHaveLength(0);
     expect(screen.getByRole("button", { name: "Lanjut" }).getAttribute("aria-busy")).toBeNull();
   });
+
+  it("sinks filled and outlined buttons when pressed, never text buttons", () => {
+    render(
+      <>
+        <Button>Utama</Button>
+        <Button variant="secondary">Kedua</Button>
+        <Button variant="text">Teks</Button>
+      </>,
+    );
+    expect(screen.getByRole("button", { name: "Utama" }).className).toContain("active:scale-97");
+    expect(screen.getByRole("button", { name: "Kedua" }).className).toContain("active:scale-97");
+    expect(screen.getByRole("button", { name: "Teks" }).className).not.toContain("scale-97");
+  });
 });

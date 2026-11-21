@@ -22,7 +22,7 @@ Landing; Beranda; Studio (Dokumen, Editor, Streak, Statistik, riwayat versi, tar
 
 ## 3. Backlog dekat (belum dikerjakan)
 
-0. **Lanjutan perombakan UI** (rencana disetujui 21 November 2026, monokrom tetap, gerak tidak dibatasi): fase 4a sampai 6 selesai lokal; berikutnya uji ponsel, mode gelap, dan klik/keyboard sungguhan untuk semua layar yang diubah, lalu push setelah user setuju. Fase 3 selesai (Beranda dan Dokumen dikerjakan 21 November 2026, belum di-commit). Gerak, hover, dan keyboard belum diuji dengan klik sungguhan.
+0. **Lanjutan perombakan UI** (rencana disetujui 21 November 2026, monokrom tetap, gerak tidak dibatasi): fase 4a sampai 6 dan pelonggaran (hati, tekan tombol) selesai lokal; berikutnya uji ponsel (termasuk keputusan bilah navigasi yang bersembunyi di halaman baca), mode gelap, dan klik/keyboard sungguhan untuk semua layar yang diubah, lalu push setelah user setuju. Fase 3 selesai (Beranda dan Dokumen dikerjakan 21 November 2026, belum di-commit). Gerak, hover, dan keyboard belum diuji dengan klik sungguhan.
 1. **N10** daftar pintasan keyboard (kecil, sudah disetujui client).
 2. Ganti kata "galat" menjadi "error" di teks aplikasi (baru panduan yang diganti). Perlu cakupan jelas lebih dulu: kamus `id` dan `en` serta teks di komponen.
 3. **N9** gambar kutipan dan **N21** kartu progres: opsional, user belum memintanya, **prioritas paling akhir**.
@@ -50,6 +50,12 @@ Isi pekerjaannya (urutan belum diputuskan):
 - Hal yang "perlu dibahas" client tidak boleh dibangun (lihat CLAUDE.md, Keputusan Lembar Novlr).
 
 ## 6. Log sesi
+
+### 21 November 2026 (sesi UI, pelonggaran setelah fase 6)
+- User meminta daftar hal yang lazim di aplikasi lain tetapi dilarang di sini. Hasil sisir DESIGN.md: dua pelanggaran sendiri (eyebrow huruf kapital di pita peran fase 5; larangan "animasi masuk saat gulir" yang usang di 4.6) dan tiga kandidat pelonggaran.
+- Dikerjakan (keputusan user): eyebrow pita peran menjadi huruf biasa; DESIGN 4.6 diperbarui; hati Apresiasi pop sekali saat dinyalakan (`rm-heart-pop`, 260ms, tidak saat dimatikan atau dibuka); tombol `primary`, `secondary`, `danger` mengecil ke 0,97 saat ditekan.
+- Ditunda: bilah navigasi yang bersembunyi saat gulir di halaman baca ponsel (diputuskan saat uji ponsel). Menunggu client: tooltip grafik Statistik, simpan otomatis draf postingan `/tulis`. Dipertahankan: lonceng bertitik tanpa angka, item navigasi aktif tanpa pill, angka apresiasi kecil, merah bukan untuk Ditolak.
+- Verifikasi: tes terarah (button, post-action-bar baru, Kelola components, related) lulus; CDP: pop hati terukur (skala 1,02 di 80ms), pita peran berlabel huruf biasa. Tes penuh belum dijalankan ulang untuk perubahan ini; wajib sebelum push.
 
 ### 21 November 2026 (sesi UI, fase 6: gerak tambahan)
 - `find-animation-opportunities` atas seluruh aplikasi (tanpa landing): kesimpulannya gerak sudah hampir pas; lima usulan disetujui user dan dikerjakan (DESIGN.md 7.9): titik `GroupSeal` dari pusatnya, PublishDone naik bertahap, pemenang lomba dari juara terakhir ke juara 1, titik tahap Solo, `<details>` materi kelas dan Bantuan Studio membuka halus (`.rm-details`).

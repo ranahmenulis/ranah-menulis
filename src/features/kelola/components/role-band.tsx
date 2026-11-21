@@ -68,10 +68,7 @@ export function RoleBand({ area, title, titleId, description, work, people, clas
       )}
     >
       <div className="grid min-w-0 content-start gap-3">
-        <p
-          className="rm-rise-in text-xs font-medium tracking-wide text-ink-muted uppercase"
-          style={step(-3)}
-        >
+        <p className="rm-rise-in text-sm font-medium text-ink-muted" style={step(-3)}>
           Ruang kerja · {copy.role}
         </p>
         <Title
@@ -136,9 +133,7 @@ export function RoleBandLink({
       style={step(index)}
     >
       <span className="grid min-w-0 gap-2">
-        <span className="text-xs font-medium tracking-wide text-ink-muted uppercase">
-          {copy.role}
-        </span>
+        <span className="text-sm font-medium text-ink-muted">{copy.role}</span>
         <span className="font-serif text-[22px] leading-7 font-semibold group-hover:underline">
           {label}
         </span>

@@ -15,19 +15,21 @@ type Common = {
 const base =
   "inline-flex items-center justify-center gap-2 rounded-full border " +
   "font-semibold whitespace-nowrap select-none cursor-pointer no-underline " +
-  "transition-opacity duration-120 ease-out " +
+  "transition-[opacity,scale] duration-120 ease-out " +
   "disabled:cursor-default disabled:opacity-(--opacity-disabled) " +
   "aria-disabled:cursor-default aria-disabled:opacity-(--opacity-disabled) " +
   "aria-busy:cursor-progress";
 
 const variants: Record<ButtonVariant, string> = {
+  // Filled and outlined buttons sink a little when pressed (DESIGN.md 4.6); text buttons do not.
   primary:
-    "border-transparent bg-ink text-on-ink hover:opacity-(--opacity-hover) active:opacity-press",
-  secondary: "border-ink text-ink transition-none hover:bg-subtle active:bg-line",
+    "border-transparent bg-ink text-on-ink hover:opacity-(--opacity-hover) active:opacity-press active:scale-97",
+  secondary:
+    "border-ink text-ink transition-[scale] hover:bg-subtle active:scale-97 active:bg-line",
   text: "border-transparent text-ink-muted transition-none hover:text-ink active:text-ink active:underline active:underline-offset-3",
   // Hanya di dialog konfirmasi. Label on-ink agar tetap terbaca di mode gelap (usulan).
   danger:
-    "border-transparent bg-danger text-on-ink hover:opacity-(--opacity-hover) active:opacity-press",
+    "border-transparent bg-danger text-on-ink hover:opacity-(--opacity-hover) active:opacity-press active:scale-97",
   "danger-text": "border-transparent text-danger transition-none",
 };
 
