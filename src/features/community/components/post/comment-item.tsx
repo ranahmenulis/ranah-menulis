@@ -138,8 +138,14 @@ export function CommentItem(p: Props) {
         </div>
         {p.children}
       </div>
-      <div className="absolute top-2.5 -right-2 scale-90">
-        <Menu label={`Lainnya untuk komentar ${author.name}`} items={menuFor(p)} />
+      {/* Only the trigger is scaled: a transform on a wrapper would become the containing block of
+          the menu's fixed bottom sheet on phones and squeeze it into this corner. */}
+      <div className="absolute top-2.5 -right-2">
+        <Menu
+          label={`Lainnya untuk komentar ${author.name}`}
+          items={menuFor(p)}
+          className="[&>button]:scale-90"
+        />
       </div>
     </div>
   );

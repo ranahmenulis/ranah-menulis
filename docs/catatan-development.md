@@ -51,6 +51,14 @@ Isi pekerjaannya (urutan belum diputuskan):
 
 ## 6. Log sesi
 
+### 21 November 2026 (uji ponsel dan mode gelap)
+- Sapuan otomatis 20 layar yang diubah hari ini di 390×844, terang dan gelap, lewat CDP (`Emulation.setDeviceMetricsOverride` mobile + sentuh), dengan pemeriksa elemen yang melewati tepi kanan, dan lembar kontak `sharp` untuk ditinjau.
+- **Bug ditemukan dan diperbaiki** (sudah ada sejak `b9aba29`): menu ⋯ komentar dibungkus `scale-90`, sehingga lembar bawahnya di ponsel terjepit jadi strip 40px di tepi kanan (transform menjadi acuan posisi elemen `fixed`) dan halaman postingan melebar 2px. Skala kini hanya pada tombol pemicu (`[&>button]:scale-90`). Pelajaran: jangan memasang `transform` pada pembungkus `Menu`, `Dialog`, atau `Drawer`.
+- Bilah aksi ponsel di halaman postingan: Bagikan dan Simpan kini hanya ikon dengan `aria-label` (sebelumnya label teks membuatnya tidak muat di 375px).
+- Tidak ada temuan lain: pita gelap terbaca di mode gelap (naik satu tingkat), tombol primer berbalik, tidak ada halaman lain yang melebar. Beberapa tangkapan masih skeleton karena server dev mengompilasi; layar yang sama dicek di tema lain.
+- Bilah navigasi yang bersembunyi saat gulir: rekomendasi tidak dipasang (lihat ringkasan sesi); bila user setuju, hapus dari daftar tunda.
+- Belum: klik dan keyboard sungguhan, perangkat fisik.
+
 ### 21 November 2026 (sesi UI, pelonggaran setelah fase 6)
 - User meminta daftar hal yang lazim di aplikasi lain tetapi dilarang di sini. Hasil sisir DESIGN.md: dua pelanggaran sendiri (eyebrow huruf kapital di pita peran fase 5; larangan "animasi masuk saat gulir" yang usang di 4.6) dan tiga kandidat pelonggaran.
 - Dikerjakan (keputusan user): eyebrow pita peran menjadi huruf biasa; DESIGN 4.6 diperbarui; hati Apresiasi pop sekali saat dinyalakan (`rm-heart-pop`, 260ms, tidak saat dimatikan atau dibuka); tombol `primary`, `secondary`, `danger` mengecil ke 0,97 saat ditekan.
