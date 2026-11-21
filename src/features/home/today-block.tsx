@@ -31,11 +31,11 @@ function Continue({ data }: { data: StreakData }) {
     <div className="grid gap-4">
       <div className="theme-dark app-band grid items-center gap-6 p-6 text-ink sm:grid-cols-[minmax(0,1fr)_auto] md:p-8">
         <div className="flex min-w-0 items-start gap-5">
-          <DocumentMark
-            page={doc ?? { id: "baru", wordCount: 0 }}
-            className="rm-cover-enter w-14 shrink-0 md:w-16"
-          />
-          <div className="min-w-0">
+          {/* The wrapper sets the width: DocumentMark is w-full and cn() does not merge classes. */}
+          <div className="w-14 shrink-0 md:w-16">
+            <DocumentMark page={doc ?? { id: "baru", wordCount: 0 }} className="rm-cover-enter" />
+          </div>
+          <div className="min-w-0 flex-1">
             <p className="text-xs font-medium text-ink-muted">
               {doc ? "Lanjutkan menulis" : "Halaman pertama"}
             </p>
