@@ -95,7 +95,7 @@ export function HomeView() {
 
         {isNew ? (
           <div className="grid justify-items-start gap-3 py-12">
-            <EmptyPlate art="readingTogether" className="mb-3" />
+            <EmptyPlate art="hikayat" className="mb-3" />
             <p className="font-serif text-xl leading-7 font-semibold">
               Kamu belum mengikuti siapa pun.
             </p>

@@ -14,6 +14,7 @@ Terakhir diperbarui: **21 November 2026**.
 - **Fase 6 (21 November 2026):** gerak tambahan dari `find-animation-opportunities` (DESIGN.md 7.9), di-commit lokal, belum di-push.
 - **Layar akun (21 November 2026):** dipoles dengan pelat kertas marmer, lihat Log sesi.
 - **Poles alur Projects dan dasbor (21 November 2026):** kepala kecil `ProjectStrip` di langkah alur dan pita `DashboardBand` di dasbor Kelas dan Solo (Backlog 0a butir 1 dan 2), di-commit lokal, belum di-push. Gate: `npm run check` lulus (241 berkas, 1.921 tes); `npm run build` belum dijalankan (server dev memakai `.next` yang sama).
+- **Poles lanjutan (21 November 2026):** satu foto di Pengaturan (`7b56511`), filter katalog Projects satu baris (`a1abfd2`), keadaan kosong Dokumen (gambar dan tata letak baru); di-commit lokal, belum di-push.
 - **Berikutnya:** uji klik dan keyboard sungguhan di semua layar yang diubah 21 November 2026, perangkat ponsel fisik oleh user, lalu push setelah user setuju. Pengaturan akun (0a butir 3) juga selesai.
 - **Hook git:** `pre-commit` = lint-staged; `pre-push` = `typecheck` saja. Tes penuh lewat `npm run check` dan CI.
 - **Saklar demo peran:** `NEXT_PUBLIC_DEMO_ROLES=1` aktif di Vercel Production, jadi `?sebagai=` (tamu dan peran kelola) berlaku di produksi. **Wajib dihapus bersama bypass login saat auth sungguhan masuk.**
@@ -59,6 +60,14 @@ Isi pekerjaannya (urutan belum diputuskan):
 - Hal yang "perlu dibahas" client tidak boleh dibangun (lihat CLAUDE.md, Keputusan Lembar Novlr).
 
 ## 6. Log sesi
+
+### 21 November 2026 (tiga poles dari masukan user)
+- User: Studio kosong terasa aneh (foto Dürer), foto Pengaturan tampil dua kali, katalog Projects perlu tata letak lain. Rencana disetujui: "1 gabung, 2 setuju, 3 a".
+- Pengaturan: isian foto pindah ke kepala (`PhotoControls` dipecah dari `PhotoPicker`; `ProfileFields photo={false}`), foto kepala = foto formulir sebagai pratinjau, tetap tersimpan lewat "Simpan perubahan"; `/mulai` tidak berubah.
+- Projects: Status dan Biaya jadi dua menu `Popover` berisi radio di slot `end` `StickyChipBar` (klik memilih dan menutup, panah memindah tanpa menutup, Escape mengembalikan fokus); kalimat kategori di bawah judul; grid 5 lajur dari xl. Diuji dengan klik mouse CDP sungguhan di desktop dan 390px.
+- Studio: Dokumen = `womanWriting` dengan `EmptyState layout="side"`, kotak cari disembunyikan sampai ada dokumen (`showsSearch`); Grup = `readingTogether`; Beranda = gambar baru Hikayat Amir Hamzah (Wikimedia Commons, PD, 560px WebP 63 KB); `durer-hands.webp` dihapus.
+- Temuan: drive C sempat penuh (1 MB) sehingga Node kehabisan memori dan server dev mati; user mengosongkan ruang (scratchpad sesi ikut terhapus, skrip CDP ditulis ulang).
+- Verifikasi: tes terarah (akun 14 berkas; katalog 14 tes; related empty-art/Beranda/Grup/Studio 64 berkas, 627 tes), `tsc`, ESLint, tangkapan CDP terang dan gelap, desktop dan ponsel. Tes penuh dan `npm run build` belum dijalankan untuk ketiga perubahan ini.
 
 ### 21 November 2026 (poles alur Projects dan dasbor, Backlog 0a)
 - Rencana disetujui user, ikut semua rekomendasi: bilah progres Kelas pindah ke dalam pita, detail kiriman ikut diberi kepala kecil, Pengaturan akun ditunda.

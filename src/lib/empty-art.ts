@@ -5,8 +5,8 @@
  * 21 November 2026), at most 560px, in public/empty/. Decorative: the sentence beside each plate carries the meaning. Sources, all on
  * Wikimedia Commons:
  *
- *   durerHands:      Albrecht Dürer, Self-portrait, Study of a Hand and a Pillow, 1493 (PD)
- *                    File:Albrecht_Dürer,_Self-portrait,_Study_of_a_Hand_and_a_Pillow_(MET_1975.1.862_recto).jpg
+ *   hikayat:         Hikayat Amir Hamzah in Makassarese script, copyist unknown (PD)
+ *                    File:Hikayat_Amir_Hamzah_in_Makassarese.jpg
  *   readingTogether: John Everett Millais and Joseph Swain, Sister Anna's Probation, 1862 (PD)
  *                    File:Sister_Anna's_Probation_-_Precious_Book.jpg
  *   library:         Johann Boxbarth, library interior, c. 1700 (PD)
@@ -27,9 +27,9 @@ export type EmptyArt = { src: string; width: number; height: number };
 const DIR = "/empty";
 
 export const EMPTY_ART = {
-  /** Dokumen. */
-  durerHands: { src: `${DIR}/durer-hands.webp`, width: 412, height: 560 },
-  /** Beranda, following nobody yet. */
+  /** Beranda, following nobody yet: a book of stories, open. */
+  hikayat: { src: `${DIR}/hikayat-amir-hamzah.webp`, width: 560, height: 446 },
+  /** Grup Penulis: two people reading one book. */
   readingTogether: { src: `${DIR}/reading-together.webp`, width: 560, height: 502 },
   /** Tersimpan. */
   library: { src: `${DIR}/library-1700.webp`, width: 560, height: 426 },
@@ -37,7 +37,7 @@ export const EMPTY_ART = {
   lighthouse: { src: `${DIR}/eddystone-1703.webp`, width: 388, height: 560 },
   /** Proyek saya. */
   engravingRoom: { src: `${DIR}/lanman-engraving.webp`, width: 560, height: 440 },
-  /** Grup Penulis. */
+  /** Dokumen: someone writing at a desk. */
   womanWriting: { src: `${DIR}/woman-writing.webp`, width: 560, height: 355 },
   /** Event. */
   clouds: { src: `${DIR}/dahl-clouds.webp`, width: 560, height: 396 },

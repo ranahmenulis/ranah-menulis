@@ -124,7 +124,8 @@ export function LiveList({
     return (
       <EmptyState
         className="pt-14"
-        art={folderName ? undefined : "durerHands"}
+        art={folderName ? undefined : "womanWriting"}
+        layout="side"
         action={
           <ButtonLink href="/studio/baru" variant="secondary" className="max-md:hidden">
             Mulai menulis

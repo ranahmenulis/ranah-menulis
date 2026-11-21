@@ -244,3 +244,46 @@ describe("LiveList: page marks", () => {
     expect(rowOf("Catatan").querySelector("[data-page]")!.getAttribute("data-page")).toBe("polos");
   });
 });
+
+describe("Dokumen list, first empty state", () => {
+  function renderEmpty(folderName: string | null) {
+    const { container } = render(
+      <ToastProvider>
+        <LiveList
+          list={listOf([])}
+          folderId={folderName ? "f" : null}
+          folderName={folderName}
+          onOpenFolder={vi.fn()}
+          onArchiveAction={vi.fn()}
+          onPending={vi.fn()}
+        />
+      </ToastProvider>,
+    );
+    return container;
+  }
+
+  it("sets the writing plate beside the sentence and the way to start", () => {
+    const container = renderEmpty(null);
+    const plate = container.querySelector("[data-empty-art]");
+    expect(plate?.getAttribute("data-empty-art")).toBe("womanWriting");
+    const column = screen.getByText("Belum ada tulisan di sini.").parentElement!;
+    expect(column.contains(screen.getByRole("link", { name: "Mulai menulis" }))).toBe(true);
+    expect(column.contains(plate)).toBe(false);
+  });
+
+  it("stays text only inside an empty folder", () => {
+    const container = renderEmpty("Draf");
+    expect(screen.getByText("Folder ini masih kosong.")).toBeTruthy();
+    expect(container.querySelector("[data-empty-art]")).toBeNull();
+  });
+});
+
+describe("showsSearch", () => {
+  it("hides the search box until there is something to search, but keeps a typed query", async () => {
+    const { showsSearch } = await import("@/features/studio/components/documents/documents-view");
+    expect(showsSearch(true, false, "")).toBe(false);
+    expect(showsSearch(true, true, "")).toBe(true);
+    expect(showsSearch(true, false, "hujan")).toBe(true);
+    expect(showsSearch(false, true, "")).toBe(false);
+  });
+});

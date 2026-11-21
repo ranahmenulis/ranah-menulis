@@ -8,7 +8,16 @@ import { Button } from "./button";
  * A colour plate above a first-time empty state (DESIGN.md 5.4). Decorative: the sentence says
  * what is empty. It rises in once and then drifts very slowly; still under reduced motion.
  */
-export function EmptyPlate({ art, className }: { art: EmptyArtName; className?: string }) {
+export function EmptyPlate({
+  art,
+  compact = false,
+  className,
+}: {
+  art: EmptyArtName;
+  /** A smaller plate, set beside the sentence instead of above it. */
+  compact?: boolean;
+  className?: string;
+}) {
   const { src, width, height } = EMPTY_ART[art];
   return (
     <span
@@ -24,7 +33,10 @@ export function EmptyPlate({ art, className }: { art: EmptyArtName; className?: 
         alt=""
         loading="lazy"
         decoding="async"
-        className="rm-plate-img block h-40 w-auto max-w-full object-cover md:h-48"
+        className={cn(
+          "rm-plate-img block w-auto max-w-full object-cover",
+          compact ? "h-24 md:h-28" : "h-40 md:h-48",
+        )}
       />
     </span>
   );
@@ -38,17 +50,39 @@ export function EmptyState({
   children,
   action,
   art,
+  layout = "stack",
   className,
 }: {
   children: ReactNode;
   action?: ReactNode;
   art?: EmptyArtName;
+  /** "side": a smaller plate to the left of the sentence and the action (from sm). */
+  layout?: "stack" | "side";
   className?: string;
 }) {
+  const sentence = (
+    <p className="font-serif text-xl leading-7 font-semibold text-ink">{children}</p>
+  );
+  if (art && layout === "side") {
+    return (
+      <div
+        className={cn(
+          "grid justify-items-start gap-4 py-8 sm:grid-cols-[auto_minmax(0,1fr)] sm:items-center sm:gap-x-6",
+          className,
+        )}
+      >
+        <EmptyPlate art={art} compact />
+        <div className="grid justify-items-start gap-4">
+          {sentence}
+          {action}
+        </div>
+      </div>
+    );
+  }
   return (
     <div className={cn("grid justify-items-start gap-4 py-8", className)}>
       {art && <EmptyPlate art={art} className="mb-2" />}
-      <p className="font-serif text-xl leading-7 font-semibold text-ink">{children}</p>
+      {sentence}
       {action}
     </div>
   );

@@ -85,6 +85,10 @@ export function DocumentsView() {
   );
 }
 
+/** Nothing to search yet: the box would only sit above the empty state. A typed query stays. */
+export const showsSearch = (enabled: boolean, hasDocuments: boolean, query: string) =>
+  enabled && (hasDocuments || query !== "");
+
 function DocumentListContent() {
   const list = useDocumentSummaryList(studioStore);
   const sharedIds = useSharedDocumentIds(postStore);
@@ -262,7 +266,7 @@ function DocumentListContent() {
         </p>
       )}
 
-      {search.enabled && (
+      {showsSearch(search.enabled, hasActiveDocuments, search.query) && (
         <DocumentSearchField
           value={search.query}
           inputRef={search.inputRef}

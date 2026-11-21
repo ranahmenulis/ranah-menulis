@@ -84,7 +84,7 @@ function PublicDirectory({
             <GroupList groups={mine} />
           ) : (
             <EmptyState
-              art="womanWriting"
+              art="readingTogether"
               action={
                 <Button variant="secondary" onClick={onCode}>
                   Gabung dengan kode
