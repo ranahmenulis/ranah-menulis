@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, type CSSProperties } from "react";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { EmptyState, FeedItemSkeleton, Notice } from "@/components/ui/states";
 import { TextLink } from "@/components/ui/text-link";
@@ -11,12 +11,14 @@ import { HOME_HREF } from "@/features/app-shell/nav";
 import { BackShell } from "@/features/kelola/components/back-shell";
 import { useEffectiveRoles } from "@/features/kelola/use-effective-roles";
 import { isPlatformAdmin } from "@/lib/roles";
+
 import { useViewer } from "@/lib/viewer";
 import { adminGroupHref, groupHref, groupsFor, type WritingGroup } from "../group-model";
 import { writingGroups } from "../group-store";
 import { useGroupReader } from "../group-viewer";
 import { GroupSettingsDialog, JoinCodeDialog } from "./group-dialogs";
 import { GroupInvitations } from "./group-invitations";
+import { GroupSeal } from "./group-seal";
 
 function GroupList({
   groups,
@@ -27,19 +29,29 @@ function GroupList({
 }) {
   return (
     <ul className="divide-y divide-line border-y border-line">
-      {groups.map((group) => (
-        <li key={group.id} className="grid gap-1 py-4">
-          <TextLink
-            href={admin ? adminGroupHref(group.id) : groupHref(group.id)}
-            className="font-medium wrap-anywhere"
-          >
-            {group.name}
-          </TextLink>
-          <p className="text-sm text-ink-muted">
-            {group.visibility === "publik" ? "Publik" : "Privat"} · {group.members.length} anggota
-            {admin && !group.members.some((member) => member.admin) && " · Belum ada Admin Grup"}
-          </p>
-          {group.description && <p className="text-sm wrap-anywhere">{group.description}</p>}
+      {groups.map((group, index) => (
+        <li
+          key={group.id}
+          className="rm-row-in group/row flex items-start gap-4 py-4"
+          style={{ "--i": Math.min(index, 12) } as CSSProperties}
+        >
+          <GroupSeal
+            group={group}
+            className="transition-[rotate] duration-500 group-hover/row:rotate-12 motion-reduce:transition-none"
+          />
+          <div className="grid min-w-0 gap-1">
+            <TextLink
+              href={admin ? adminGroupHref(group.id) : groupHref(group.id)}
+              className="font-medium wrap-anywhere"
+            >
+              {group.name}
+            </TextLink>
+            <p className="text-sm text-ink-muted">
+              {group.visibility === "publik" ? "Publik" : "Privat"} · {group.members.length} anggota
+              {admin && !group.members.some((member) => member.admin) && " · Belum ada Admin Grup"}
+            </p>
+            {group.description && <p className="text-sm wrap-anywhere">{group.description}</p>}
+          </div>
         </li>
       ))}
     </ul>
@@ -72,6 +84,7 @@ function PublicDirectory({
             <GroupList groups={mine} />
           ) : (
             <EmptyState
+              art="womanWriting"
               action={
                 <Button variant="secondary" onClick={onCode}>
                   Gabung dengan kode

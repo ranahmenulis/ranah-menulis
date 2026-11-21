@@ -9,7 +9,7 @@ Terakhir diperbarui: **21 November 2026**.
 - **Fase:** slicing selesai (semua layar MVP dibangun dengan data dummy dan lokal, tersimpan di peramban). Berikutnya fase backend. Belum ada backend: login di-bypass, data tidak dibagikan antar pengguna.
 - **Produksi:** `https://ranah-menulis.vercel.app`. Branch `main`, sinkron dengan `origin/main` (commit kode terakhir `e3a0a68`).
 - **Gate terakhir (21 November 2026):** `npm run check` lulus (223 berkas, 1.846 tes) dan `npm run build` berhasil.
-- **Belum di-commit (21 November 2026): perombakan UI "semua layar sama".** Fase 0–3 dari rencana yang disetujui user selesai di lokal: prinsip baru di DESIGN.md (jangkar visual per layar, momen pencapaian, gerak bebas), token `ink-soft`, pita `app-band`, sampul tipografis Projects, layar pencapaian, hero Streak, Statistik berpita, angka bergulung. User minta **tes di lokal dulu, jangan push**.
+- **Perombakan UI "semua layar sama" (21 November 2026), di lokal, belum di-push (user minta tes lokal dulu):** fase 0–3 sudah di-commit (`2e96360`, `50ba82f`, `4271ef9`: sampul Projects, hero Streak dan Statistik, pita Beranda, penanda halaman Dokumen). **Fase 4a (kosong bergambar) dan 4b (jangkar Event, Grup, Profil, Notifikasi) belum di-commit**: berkasnya sudah ada di pohon kerja; sebagian ter-stage oleh `git commit` 4a yang menggantung di terminal user sejak 11.50 (memegang `.git/index.lock`, tanpa proses anak, CPU nyaris nol). Lihat Log sesi paling atas untuk cara melanjutkan.
 - **Hook git:** `pre-commit` = lint-staged; `pre-push` = `typecheck` saja. Tes penuh lewat `npm run check` dan CI.
 - **Saklar demo peran:** `NEXT_PUBLIC_DEMO_ROLES=1` aktif di Vercel Production, jadi `?sebagai=` (tamu dan peran kelola) berlaku di produksi. **Wajib dihapus bersama bypass login saat auth sungguhan masuk.**
 - **Panduan uji:** `docs/panduan-uji-pengguna.md` (juga `.html`, `.pdf`), versi web `/panduan-uji.html`, berkas contoh `/contoh-naskah.txt` dan `.pdf`. Diuji di Vercel lewat Chrome CDP pada 21 November 2026. Perbarui panduan bila alur atau nama tombol berubah.
@@ -20,7 +20,7 @@ Landing; Beranda; Studio (Dokumen, Editor, Streak, Statistik, riwayat versi, tar
 
 ## 3. Backlog dekat (belum dikerjakan)
 
-0. **Lanjutan perombakan UI** (rencana disetujui 21 November 2026, monokrom tetap, gerak tidak dibatasi): fase 4 keadaan kosong bergambar (gravir domain publik di `EmptyState`) dan Grup/Event/Profil/Notifikasi; fase 5 Kelola sebagai dunia lain (pita kepala peran); fase 6 `find-animation-opportunities`. Fase 3 selesai (Beranda dan Dokumen dikerjakan 21 November 2026, belum di-commit). Gerak, hover, dan keyboard belum diuji dengan klik sungguhan.
+0. **Lanjutan perombakan UI** (rencana disetujui 21 November 2026, monokrom tetap, gerak tidak dibatasi): fase 4a dan 4b selesai lokal; fase 5 Kelola sebagai dunia lain (pita kepala peran); fase 6 `find-animation-opportunities`. Fase 3 selesai (Beranda dan Dokumen dikerjakan 21 November 2026, belum di-commit). Gerak, hover, dan keyboard belum diuji dengan klik sungguhan.
 1. **N10** daftar pintasan keyboard (kecil, sudah disetujui client).
 2. Ganti kata "galat" menjadi "error" di teks aplikasi (baru panduan yang diganti). Perlu cakupan jelas lebih dulu: kamus `id` dan `en` serta teks di komponen.
 3. **N9** gambar kutipan dan **N21** kartu progres: opsional, user belum memintanya, **prioritas paling akhir**.
@@ -48,6 +48,25 @@ Isi pekerjaannya (urutan belum diputuskan):
 - Hal yang "perlu dibahas" client tidak boleh dibangun (lihat CLAUDE.md, Keputusan Lembar Novlr).
 
 ## 6. Log sesi
+
+### 21 November 2026 (akhir sesi UI: cara melanjutkan)
+- **Mulai sesi berikutnya dengan memeriksa `.git/index.lock`.** Bila masih ada dan tidak ada proses `git` yang bekerja (lihat `git.exe commit ...` di Task Manager atau terminal IDE), tutup terminal itu atau hentikan prosesnya, hapus kunci, lalu `git status`.
+- Commit yang perlu dibuat (dua, terpisah): (1) 4a: `public/empty/*`, `src/lib/empty-art.ts`, `src/components/ui/states.tsx`, `src/app/globals.css` (blok "First-time empty states"), delapan layar pemakai `art` (`document-lists`, `saved-view`, `notification-list`, `my-projects-view`, `groups-view`, `events-view`, `profile-tabs-content`, `home-view`), `tests/components/ui/empty-state.test.tsx`, `saved-view.test.tsx`. (2) 4b: berkas Event (`event-face.ts`, `date-leaf.tsx`, `event-hero.tsx`, `event-view.tsx`, `events-view.tsx`), Grup (`group-seal.tsx`, `group-view.tsx`, `groups-view.tsx`), Profil (`profile-identity.tsx`, `profile-view.tsx`), Notifikasi (`notification-days.ts`, `notification-list.tsx`), tiga tes baru, dan dokumen. `globals.css` dan `notification-list.tsx`/`events-view.tsx`/`groups-view.tsx` memuat perubahan kedua fase; bila ingin murni terpisah gunakan `git add -p`.
+- Gate sebelum push: `npm run check` (tes penuh belum dijalankan sejak fase 3) dan `npm run build`.
+- Berikutnya: fase 5 (Kelola sebagai dunia lain, pita kepala per peran), fase 6 (`find-animation-opportunities`), lalu uji ponsel, mode gelap, dan klik/keyboard sungguhan untuk semua layar yang diubah hari ini.
+
+### 21 November 2026 (sesi UI, fase 4b)
+- Event: lembar kalender (bulan, tanggal serif, hari; zona event) di daftar dan pita kepala detail dengan target bergulung dan hitung mundur bergaris. Daftar event jadi baris, bukan kartu.
+- Grup: segel monogram (huruf awal, titik per anggota, nada dari id) di daftar dan pita kepala detail dengan jumlah anggota bergulung.
+- Profil: nama serif 34/48px, tiga angka bergulung (karya, pengikut, mengikuti).
+- Notifikasi: dikelompokkan Hari ini, Kemarin, Minggu ini, Lebih lama. Temuan: memecah jadi beberapa `<ul>` membuat baris dipasang ulang saat sumber lain dimuat sehingga klik hilang (3 tes `management-inbox` gagal); diperbaiki dengan satu daftar dan judul hari `role="presentation"`.
+- Verifikasi: tes terarah Event, Grup, Notifikasi, Profil, Beranda lulus (satu tes `group-view` sempat gagal saat berjalan bersama lalu lulus sendiri); tangkapan layar desktop terang enam layar. Belum: ponsel, mode gelap, klik dan keyboard sungguhan, tes penuh. Belum di-commit. Saat sesi ini ada `.git/index.lock` dari proses lain (tidak disentuh).
+
+### 21 November 2026 (sesi UI, fase 4a)
+- Keputusan user: gambar kosong **tidak boleh duplikat** dengan landing atau Community, diambil dari moodboard (`claude.ai/artifact/28b43Y3jyRYYq9fXDfStBV`), dan **berwarna asli** (tidak diabu-abukan, agar tidak monoton).
+- Dikerjakan: `EmptyState art` + `EmptyPlate`, `lib/empty-art.ts` (sumber tiap gambar), `public/empty/` delapan WebP 16–114 KB (maks. 560px). Dipasang di Dokumen (tingkat teratas), Beranda belum mengikuti, Tersimpan, Notifikasi, Proyek saya, Grup saya, Event, karya profil. Filter, Sampah, Arsip, dan Kelola tetap teks.
+- Rencana 4b (belum dikerjakan): pita kepala detail grup dan event, monogram atau blok tanggal di katalog, angka besar di profil, notifikasi per hari.
+- Verifikasi: tes terarah 137 lulus; tangkapan layar Dokumen dan Tersimpan kosong. Belum di-commit (fase 3 juga belum).
 
 ### 21 November 2026 (sesi UI, Beranda dan Dokumen)
 - Daftar Dokumen: ikon diganti penanda halaman per jenis dokumen yang terisi menurut jumlah kata (`document-mark.ts`, `DocumentMark`, `FolderMark`); baris naik bertahap, garis tergores, hover mengangkat lembar.
