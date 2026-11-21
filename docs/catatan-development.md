@@ -20,7 +20,7 @@ Landing; Beranda; Studio (Dokumen, Editor, Streak, Statistik, riwayat versi, tar
 
 ## 3. Backlog dekat (belum dikerjakan)
 
-0. **Lanjutan perombakan UI** (rencana disetujui 21 November 2026, monokrom tetap, gerak tidak dibatasi): fase 4 keadaan kosong bergambar (gravir domain publik di `EmptyState`) dan Grup/Event/Profil/Notifikasi; fase 5 Kelola sebagai dunia lain (pita kepala peran); fase 6 `find-animation-opportunities`. Sisa fase 3 yang belum: penanda jenis di daftar dokumen dan kartu Hari ini di Beranda. Gerak, hover, dan keyboard belum diuji dengan klik sungguhan.
+0. **Lanjutan perombakan UI** (rencana disetujui 21 November 2026, monokrom tetap, gerak tidak dibatasi): fase 4 keadaan kosong bergambar (gravir domain publik di `EmptyState`) dan Grup/Event/Profil/Notifikasi; fase 5 Kelola sebagai dunia lain (pita kepala peran); fase 6 `find-animation-opportunities`. Fase 3 selesai (Beranda dan Dokumen dikerjakan 21 November 2026, belum di-commit). Gerak, hover, dan keyboard belum diuji dengan klik sungguhan.
 1. **N10** daftar pintasan keyboard (kecil, sudah disetujui client).
 2. Ganti kata "galat" menjadi "error" di teks aplikasi (baru panduan yang diganti). Perlu cakupan jelas lebih dulu: kamus `id` dan `en` serta teks di komponen.
 3. **N9** gambar kutipan dan **N21** kartu progres: opsional, user belum memintanya, **prioritas paling akhir**.
@@ -48,6 +48,11 @@ Isi pekerjaannya (urutan belum diputuskan):
 - Hal yang "perlu dibahas" client tidak boleh dibangun (lihat CLAUDE.md, Keputusan Lembar Novlr).
 
 ## 6. Log sesi
+
+### 21 November 2026 (sesi UI, Beranda dan Dokumen)
+- Daftar Dokumen: ikon diganti penanda halaman per jenis dokumen yang terisi menurut jumlah kata (`document-mark.ts`, `DocumentMark`, `FolderMark`); baris naik bertahap, garis tergores, hover mengangkat lembar.
+- Beranda: kartu Hari ini menjadi pita gelap (halaman dokumen + cincin `TodayRing` yang diekstrak dari hero Streak); Progres kolom kanan jadi angka streak bergulung; Proyek saya bersampul kecil.
+- Verifikasi: tangkapan layar Chrome headless (Dokumen dengan enam jenis, Beranda terang 1366). Belum: ponsel, mode gelap, klik dan keyboard sungguhan. Belum di-commit.
 
 ### 21 November 2026 (sesi UI)
 - Audit: aplikasi terasa monoton karena DESIGN.md sendiri memerintahkan keseragaman (kolom 680 + garis di ±20 spesifikasi, 45 kolom 680, 209 garis, 488 teks abu, tanpa gambar di luar landing dan Community). Monokrom bukan penyebab utama.

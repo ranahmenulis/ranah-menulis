@@ -48,6 +48,18 @@ describe("TodayCard", () => {
     expect(filled).toHaveLength(1);
   });
 
+  it("shows today's ring beside the document when there is a daily target", () => {
+    render(<TodayCard data={data()} showSteps={false} />);
+    const ring = screen.getByRole("progressbar", { name: "Progres hari ini" });
+    expect(ring.getAttribute("aria-valuenow")).toBe("320");
+    expect(ring.getAttribute("aria-valuemax")).toBe("500");
+  });
+
+  it("leaves the ring out without a daily target", () => {
+    render(<TodayCard data={data({ target: null })} showSteps={false} />);
+    expect(screen.queryByRole("progressbar")).toBeNull();
+  });
+
   it("invites the first document when there is none", () => {
     render(<TodayCard data={data({ lastDocument: null })} showSteps={false} />);
     expect(screen.getByText("Belum ada dokumen.")).toBeTruthy();

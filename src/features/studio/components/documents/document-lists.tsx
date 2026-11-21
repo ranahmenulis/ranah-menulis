@@ -187,10 +187,11 @@ export function LiveList({
 
   return (
     <ul>
-      {entries.map((entry) =>
+      {entries.map((entry, index) =>
         entry.kind === "folder" ? (
           <Row
             key={entry.folder.id}
+            index={index}
             kind="folder"
             title={entry.folder.name}
             onOpen={() => onOpenFolder(entry.folder.id)}
@@ -208,7 +209,9 @@ export function LiveList({
         ) : (
           <Row
             key={entry.doc.id}
+            index={index}
             kind="document"
+            page={entry.doc}
             title={nameOf(entry.doc)}
             href={`/studio/${entry.doc.id}`}
             meta={
@@ -240,10 +243,13 @@ export function TrashList({ list, onPending }: ListProps) {
   return (
     <>
       <ul>
-        {trash.map((doc) => (
+        {trash.map((doc, index) => (
           <Row
             key={doc.id}
+            index={index}
             kind="document"
+            page={doc}
+            faded
             title={nameOf(doc)}
             meta={meta(doc, "Dipindahkan", doc.deletedAt ?? doc.updatedAt, list.loadedAt)}
             menuLabel={`Menu dokumen ${nameOf(doc)}`}

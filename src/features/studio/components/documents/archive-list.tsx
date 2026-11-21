@@ -38,7 +38,7 @@ export function ArchiveList({
   const folders = new Map(list.folders.map(({ id, name }) => [id, name]));
   return (
     <ul>
-      {archive.map((doc) => {
+      {archive.map((doc, index) => {
         const title = doc.title || "Tanpa judul";
         const folder = doc.folderId ? folders.get(doc.folderId) : undefined;
         const time = formatChanged(doc.archivedAt ?? doc.updatedAt, list.loadedAt);
@@ -46,7 +46,10 @@ export function ArchiveList({
         return (
           <Row
             key={doc.id}
+            index={index}
             kind="document"
+            page={doc}
+            faded
             title={title}
             meta={meta.filter(Boolean).join(" · ")}
             menuLabel={`Menu dokumen ${title}`}

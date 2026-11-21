@@ -1,8 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import type { CSSProperties } from "react";
 import { ButtonLink } from "@/components/ui/button";
+import { CountUp } from "@/components/ui/count-up";
 import { ErrorBanner, RetryButton, Skeleton } from "@/components/ui/states";
+import { DocumentMark } from "@/features/studio/components/documents/document-mark";
+import { TodayRing } from "@/features/studio/components/streak/today-ring";
 import type { StreakData } from "@/features/studio/hooks/use-streak-data";
 import { formatChanged } from "@/features/studio/relative-time";
 import { FirstSteps } from "./steps";
@@ -11,34 +15,55 @@ import { WordTotals } from "./week-summary";
 
 const number = new Intl.NumberFormat("id-ID");
 
-/** The one box of Beranda, like Medium's "Write, grow" card: one thing to do now. */
+/** The box for the first steps and the loading placeholder. */
 const card = "border border-line p-5 md:p-6";
 
+/**
+ * The anchor of Beranda (DESIGN.md 6.2): a dark band with the document you were writing, drawn as
+ * its page, and today's ring when there is a daily target. The one filled button sits under it.
+ */
 function Continue({ data }: { data: StreakData }) {
   const doc = data.lastDocument;
-  if (!doc) {
-    return (
-      <div className={`${card} flex flex-wrap items-center justify-between gap-4`}>
-        <p className="font-serif text-xl leading-7 font-semibold">Belum ada dokumen.</p>
-        <ButtonLink href="/studio/baru">Mulai menulis</ButtonLink>
-      </div>
-    );
-  }
+  const ring = data.target !== null && (
+    <TodayRing words={data.todayWords} target={data.target} compact />
+  );
   return (
-    <div className={`${card} grid gap-4 sm:flex sm:items-end sm:justify-between`}>
-      <div className="min-w-0">
-        <p className="text-xs font-medium text-ink-muted">Lanjutkan menulis</p>
-        <p className="mt-1.5 font-serif text-xl leading-7 font-semibold [overflow-wrap:anywhere] md:text-2xl md:leading-8">
-          {doc.title || "Tanpa judul"}
-        </p>
-        <p className="mt-1 text-sm text-ink-muted">
-          {number.format(doc.wordCount)} kata · diubah {formatChanged(doc.updatedAt, data.nowMs)} ·
-          Pribadi
-        </p>
+    <div className="grid gap-4">
+      <div className="theme-dark app-band grid items-center gap-6 p-6 text-ink sm:grid-cols-[minmax(0,1fr)_auto] md:p-8">
+        <div className="flex min-w-0 items-start gap-5">
+          <DocumentMark
+            page={doc ?? { id: "baru", wordCount: 0 }}
+            className="rm-cover-enter w-14 shrink-0 md:w-16"
+          />
+          <div className="min-w-0">
+            <p className="text-xs font-medium text-ink-muted">
+              {doc ? "Lanjutkan menulis" : "Halaman pertama"}
+            </p>
+            <p className="rm-rise-in mt-2 font-serif text-2xl leading-8 [overflow-wrap:anywhere] md:text-[30px] md:leading-10">
+              {doc ? doc.title || "Tanpa judul" : "Belum ada dokumen."}
+            </p>
+            {doc && (
+              <p
+                className="rm-rise-in mt-2 text-sm text-ink-soft"
+                style={{ "--i": 1 } as CSSProperties}
+              >
+                {number.format(doc.wordCount)} kata · diubah{" "}
+                {formatChanged(doc.updatedAt, data.nowMs)} · Pribadi
+              </p>
+            )}
+          </div>
+        </div>
+        {ring}
       </div>
-      <ButtonLink href={`/studio/${doc.id}`} className="shrink-0 justify-self-start">
-        Lanjutkan
-      </ButtonLink>
+      {doc ? (
+        <ButtonLink href={`/studio/${doc.id}`} className="justify-self-start">
+          Lanjutkan
+        </ButtonLink>
+      ) : (
+        <ButtonLink href="/studio/baru" className="justify-self-start">
+          Mulai menulis
+        </ButtonLink>
+      )}
     </div>
   );
 }
@@ -107,17 +132,19 @@ export function ProgressSection({ data }: { data: StreakData }) {
   const label = `Progres hari ini ${todayWords} dari ${target} kata, streak ${summary.current} hari. Buka Streak`;
   return (
     <Section title="Progres hari ini">
-      <Link href="/studio/streak" aria-label={label} className="grid gap-2 text-sm no-underline">
-        <span className="flex items-baseline gap-1.5 tabular-nums">
-          <b className="font-medium">{number.format(todayWords)}</b>
-          <span className="text-ink-muted">/ {number.format(target)} kata</span>
-          <span className="ml-auto">Streak {summary.current} hari</span>
+      <Link
+        href="/studio/streak"
+        aria-label={label}
+        className="group flex items-center gap-3 no-underline"
+      >
+        <span className="font-serif text-[44px] leading-none font-light tabular-nums">
+          <CountUp value={summary.current} />
         </span>
-        <span aria-hidden className="h-1 bg-line">
-          <i
-            className="block h-full bg-ink"
-            style={{ width: `${Math.min(100, (todayWords / target) * 100)}%` }}
-          />
+        <span className="grid text-sm">
+          <span className="group-hover:underline group-hover:underline-offset-3">hari streak</span>
+          <span className="text-xs text-ink-muted tabular-nums">
+            {number.format(todayWords)} / {number.format(target)} kata hari ini
+          </span>
         </span>
       </Link>
       <WordTotals data={data} />
