@@ -21,7 +21,10 @@ function Material({
   done: boolean;
 }) {
   return (
-    <details id={materialAnchor(material.id)} className="group border-b border-line py-3">
+    <details
+      id={materialAnchor(material.id)}
+      className="rm-details group border-b border-line py-3"
+    >
       <summary className="flex cursor-pointer list-none items-start justify-between gap-3">
         <span className="min-w-0 text-base font-medium wrap-anywhere">{material.title}</span>
         <span className="flex shrink-0 items-center gap-2 text-xs text-ink-muted">

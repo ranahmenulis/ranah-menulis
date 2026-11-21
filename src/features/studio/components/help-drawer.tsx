@@ -59,7 +59,7 @@ function KitList() {
         Bahan kecil untuk kalimat berikutnya. Pilih satu bagian.
       </p>
       {kits.map((kit) => (
-        <details key={kit.name} className="group border-b border-line">
+        <details key={kit.name} className="rm-details group border-b border-line">
           <summary className="flex min-h-12 cursor-pointer list-none items-center gap-3 px-4 text-sm md:px-5 [&::-webkit-details-marker]:hidden">
             <span className="min-w-0 flex-1">{kit.name}</span>
             <span className="text-xs text-ink-muted">{kit.hint}</span>

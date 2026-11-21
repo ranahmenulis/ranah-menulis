@@ -1221,3 +1221,31 @@ html.lp-motion .lp-roll-out {
 .rm-mark .rm-bar {
   transform-origin: bottom;
 }
+
+/* Group seals (community/groups/components/group-seal.tsx): member dots pop from their own centre,
+   not from the corner of the drawing. */
+.rm-seal-ring .rm-pop {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* Disclosures that open gently (class materials, Studio help): the content grows to its height in
+   250ms instead of appearing at once. Browsers without ::details-content open instantly as before. */
+.rm-details {
+  interpolate-size: allow-keywords;
+}
+.rm-details::details-content {
+  block-size: 0;
+  overflow: clip;
+  transition:
+    block-size 250ms var(--ease-out),
+    content-visibility 250ms allow-discrete;
+}
+.rm-details[open]::details-content {
+  block-size: auto;
+}
+@media (prefers-reduced-motion: reduce) {
+  .rm-details::details-content {
+    transition: none;
+  }
+}
