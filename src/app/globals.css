@@ -13,6 +13,7 @@
   --ink: #191919;
   --ink-read: #191919;
   --ink-muted: #5e5e5e;
+  --ink-soft: #3d3d3d;
   --ink-faint: #767676;
   --line: #e6e6e6;
   --line-strong: #191919;
@@ -34,6 +35,7 @@
     --ink: #ededed;
     --ink-read: #d2d2d2;
     --ink-muted: #a3a3a3;
+    --ink-soft: #c4c4c4;
     --ink-faint: #8c8c8c;
     --line: #2e2e2e;
     --line-strong: #ededed;
@@ -55,6 +57,7 @@
   --ink: #ededed;
   --ink-read: #d2d2d2;
   --ink-muted: #a3a3a3;
+  --ink-soft: #c4c4c4;
   --ink-faint: #8c8c8c;
   --line: #2e2e2e;
   --line-strong: #ededed;
@@ -75,6 +78,7 @@
   --ink: #191919;
   --ink-read: #191919;
   --ink-muted: #5e5e5e;
+  --ink-soft: #3d3d3d;
   --ink-faint: #767676;
   --line: #e6e6e6;
   --line-strong: #191919;
@@ -99,6 +103,7 @@
   --ink: #ededed;
   --ink-read: #d2d2d2;
   --ink-muted: #a3a3a3;
+  --ink-soft: #c4c4c4;
   --ink-faint: #8c8c8c;
   --line: #2e2e2e;
   --line-strong: #ededed;
@@ -119,6 +124,7 @@
     --ink: #191919;
     --ink-read: #191919;
     --ink-muted: #5e5e5e;
+    --ink-soft: #3d3d3d;
     --ink-faint: #767676;
     --line: #e6e6e6;
     --line-strong: #191919;
@@ -139,6 +145,7 @@
   --ink: #191919;
   --ink-read: #191919;
   --ink-muted: #5e5e5e;
+  --ink-soft: #3d3d3d;
   --ink-faint: #767676;
   --line: #e6e6e6;
   --line-strong: #191919;
@@ -158,6 +165,7 @@
   --ink: #ededed;
   --ink-read: #d2d2d2;
   --ink-muted: #a3a3a3;
+  --ink-soft: #c4c4c4;
   --ink-faint: #8c8c8c;
   --line: #2e2e2e;
   --line-strong: #ededed;
@@ -171,6 +179,25 @@
   color-scheme: dark;
 }
 
+/* App band (DESIGN.md 4.5, 21 November 2026): the one dark surface the app uses to anchor a screen
+   (featured project, project header, milestone screens). Put it together with .theme-dark so every
+   token inside reads as dark. On a dark page the band is lifted a step so it never disappears. */
+.app-band {
+  background: var(--canvas);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .app-band {
+    --canvas: #1d1d1d;
+    --subtle: #2a2a2a;
+    --line: #363636;
+  }
+}
+[data-theme="dark"] .app-band {
+  --canvas: #1d1d1d;
+  --subtle: #2a2a2a;
+  --line: #363636;
+}
+
 @theme inline {
   --color-canvas: var(--canvas);
   --color-surface: var(--surface);
@@ -178,6 +205,7 @@
   --color-ink: var(--ink);
   --color-ink-read: var(--ink-read);
   --color-ink-muted: var(--ink-muted);
+  --color-ink-soft: var(--ink-soft);
   --color-ink-faint: var(--ink-faint);
   --color-line: var(--line);
   --color-line-strong: var(--line-strong);
@@ -885,5 +913,167 @@ html.lp-motion .lp-roll-out {
     );
     animation: scroll-edge-fade linear both;
     animation-timeline: scroll(self inline);
+  }
+}
+
+/* Project covers (projects/components/project-cover.tsx, DESIGN.md 7.6, 21 November 2026). The
+   cover draws itself in once its tile is seen ([data-cover-reveal] without [data-seen]) and moves
+   when the tile is pointed at (.rm-cover-host on the tile). The global reduced-motion rule makes it all
+   instant. */
+.rm-cover {
+  transition: translate 320ms var(--ease-out);
+}
+.rm-cover-line {
+  transform-box: fill-box;
+  transform-origin: var(--origin, left);
+  transition: scale 700ms var(--ease-out) calc(var(--i, 0) * 45ms);
+}
+.rm-cover-spin {
+  transform-box: view-box;
+  transform-origin: var(--ox, 40px) var(--oy, 44px);
+  transition:
+    rotate 1400ms var(--ease-out),
+    scale 700ms var(--ease-out);
+}
+.rm-cover-pen {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 1100ms var(--ease-out) 200ms;
+}
+.rm-cover-initial {
+  transition:
+    translate 700ms var(--ease-out),
+    opacity 700ms var(--ease-out);
+}
+[data-cover-reveal]:not([data-seen]) .rm-cover-line {
+  scale: 0 1;
+}
+[data-cover-reveal]:not([data-seen]) .rm-cover-spin {
+  rotate: -90deg;
+  scale: 0.6;
+}
+[data-cover-reveal]:not([data-seen]) .rm-cover-pen {
+  stroke-dashoffset: 1;
+}
+[data-cover-reveal]:not([data-seen]) .rm-cover-initial {
+  translate: 0 18%;
+  opacity: 0;
+}
+@media (hover: hover) and (pointer: fine) {
+  .rm-cover-host:hover .rm-cover {
+    translate: 0 -6px;
+  }
+  .rm-cover-host:hover .rm-cover-line {
+    scale: 1.18 1;
+  }
+  .rm-cover-host:hover .rm-cover-spin {
+    rotate: 60deg;
+  }
+  .rm-cover-host:hover .rm-cover-pen {
+    animation: rm-pen-redraw 1100ms var(--ease-out);
+  }
+  .rm-cover-host:hover .rm-cover-initial {
+    translate: 0 -5%;
+  }
+}
+@keyframes rm-pen-redraw {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+
+/* Rise in once (lib/use-reveal-once.ts): [data-rise] waits for data-seen. Under reduced motion the
+   global rule makes it instant. */
+[data-rise] {
+  transition:
+    opacity 600ms var(--ease-out) var(--delay, 0ms),
+    translate 600ms var(--ease-out) var(--delay, 0ms);
+}
+[data-rise]:not([data-seen]) {
+  opacity: 0;
+  translate: 0 16px;
+}
+
+/* A cover that arrives with its page (project header, milestone screens): it rises and settles
+   from a slight tilt, once, on load. */
+.rm-cover-enter {
+  animation: rm-cover-in 900ms var(--ease-out) 120ms both;
+}
+@keyframes rm-cover-in {
+  from {
+    opacity: 0;
+    translate: 0 28px;
+    rotate: -4deg;
+  }
+}
+
+/* Milestone screens (projects/components/milestone-hero.tsx, DESIGN.md 7.7). Text rises in after
+   the cover; rings burst from behind the cover once, like ink spreading on paper. */
+.rm-rise-in {
+  animation: rm-rise-in 700ms var(--ease-out) calc(380ms + var(--i, 0) * 110ms) both;
+}
+@keyframes rm-rise-in {
+  from {
+    opacity: 0;
+    translate: 0 18px;
+  }
+}
+.rm-burst {
+  top: 50%;
+  left: calc(1.5rem + 3.5rem);
+  @media (width >= 48rem) {
+    left: calc(2.5rem + 4.5rem);
+  }
+  @media (width < 40rem) {
+    top: calc(2.5rem + 5rem);
+  }
+}
+.rm-burst > span {
+  position: absolute;
+  left: -9rem;
+  top: -9rem;
+  width: 18rem;
+  height: 18rem;
+  border-radius: 9999px;
+  border: 1px solid var(--ink);
+  opacity: 0;
+  animation: rm-burst 1800ms var(--ease-out) calc(500ms + var(--i) * 140ms) both;
+}
+@keyframes rm-burst {
+  from {
+    opacity: 0.55;
+    scale: 0.3;
+  }
+  to {
+    opacity: 0;
+    scale: 2.4;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rm-burst {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rm-rise-in,
+  .rm-cover-enter {
+    animation: none;
+  }
+  [data-rise] {
+    transition-delay: 0ms;
+  }
+  /* Nothing waits to be seen when nothing moves. */
+  [data-rise]:not([data-seen]) {
+    opacity: 1;
+    translate: none;
+  }
+  [data-cover-reveal]:not([data-seen]) :is(.rm-cover-line, .rm-cover-spin, .rm-cover-initial) {
+    scale: none;
+    rotate: none;
+    translate: none;
+    opacity: 1;
+  }
+  [data-cover-reveal]:not([data-seen]) .rm-cover-pen {
+    stroke-dashoffset: 0;
   }
 }

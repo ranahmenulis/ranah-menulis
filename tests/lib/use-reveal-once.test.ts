@@ -1,9 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  REVEAL_LANES,
-  REVEAL_STEP_MS,
-  revealDelay,
-} from "@/features/community/hooks/use-reveal-once";
+import { REVEAL_LANES, REVEAL_STEP_MS, revealDelay } from "@/lib/use-reveal-once";
 
 describe("revealDelay", () => {
   it("cascades across one row and starts over, so no tile waits for the whole list", () => {

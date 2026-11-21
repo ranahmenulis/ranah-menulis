@@ -18,7 +18,7 @@ import type { Filters, ProjectFixture } from "../types";
 import { CategoryBar, ProjectFilters } from "./project-filters";
 import { narrowedBy, useFeaturedSplit } from "../hooks/use-featured-split";
 import { FeaturedBlock } from "./featured-block";
-import { ProjectRow } from "./project-row";
+import { ProjectTile } from "./project-tile";
 import { ProjectsSkeleton } from "./projects-states";
 
 const fromSearch = (search: string) =>
@@ -70,7 +70,7 @@ export function ProjectsView({ source }: Props) {
   return (
     <div className="mx-auto max-w-260">
       <div className="flex items-center justify-between gap-4">
-        <h1 className="text-[22px] leading-[30px] font-semibold md:text-[28px] md:leading-9">
+        <h1 className="text-[28px] leading-9 font-bold tracking-[-0.02em] md:text-[40px] md:leading-[48px]">
           Projects
         </h1>
         <ButtonLink href={MY_PROJECTS_HREF} variant="text" size="sm" className="text-ink">
@@ -113,9 +113,9 @@ export function ProjectsView({ source }: Props) {
       ) : (
         <>
           <FeaturedBlock featured={featured} showsRest={rest.length > 0} now={data.now} />
-          <div className="grid gap-x-10 lg:grid-cols-2">
-            {rest.map((project) => (
-              <ProjectRow key={project.slug} project={project} now={data.now} />
+          <div className="mt-6 grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 md:grid-cols-3 lg:grid-cols-4">
+            {rest.map((project, i) => (
+              <ProjectTile key={project.slug} project={project} now={data.now} index={i} />
             ))}
           </div>
         </>

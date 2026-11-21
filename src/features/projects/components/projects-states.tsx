@@ -16,12 +16,12 @@ export function ProjectsSkeleton() {
           <Skeleton key={i} className="h-8 rounded-full" style={{ width: `${w * 4}px` }} />
         ))}
       </div>
-      <div className="grid gap-x-10 lg:grid-cols-2">
+      <div className="mt-6 grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 md:grid-cols-3 lg:grid-cols-4">
         {[0, 1, 2, 3].map((i) => (
-          <div key={i} className="grid gap-3 border-b border-line py-5">
-            <Skeleton className="h-3.5 w-32" />
-            <Skeleton className="h-6 w-3/4" />
-            <Skeleton className="h-4 w-full" />
+          <div key={i} className="grid gap-3">
+            <Skeleton className="aspect-[4/5] w-full" />
+            <Skeleton className="h-3.5 w-24" />
+            <Skeleton className="h-5 w-3/4" />
             <Skeleton className="h-3.5 w-2/3" />
           </div>
         ))}
