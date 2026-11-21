@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { EmptyState, ErrorBanner, RetryButton, Skeleton } from "@/components/ui/states";
 import type { SubmissionStore } from "@/features/projects/storage/submission-store";
+import { RoleBand } from "../../components/role-band";
+import { bandFrom, judgeWork } from "../../role-band";
 import { contestHref } from "../area-hrefs";
 import { judgingText } from "../judge-model";
 import { useJudgeContests } from "../use-judge-data";
@@ -13,14 +15,16 @@ import { useJudgeContests } from "../use-judge-data";
  */
 export function ContestsView({ store }: { store?: SubmissionStore }) {
   const data = useJudgeContests({ store });
+  const work = bandFrom(data, (d) => judgeWork(d.items));
   return (
     <section aria-labelledby="penilaian-title" className="grid max-w-170 gap-5">
-      <div className="grid gap-1">
-        <h1 id="penilaian-title" className="heading-lg">
-          Penilaian
-        </h1>
-        <p className="text-sm text-ink-muted">Lomba yang ditugaskan kepadamu.</p>
-      </div>
+      <RoleBand
+        area="juri"
+        title="Penilaian"
+        titleId="penilaian-title"
+        description="Lomba yang ditugaskan kepadamu."
+        work={work}
+      />
       {data.status === "error" ? (
         <ErrorBanner action={<RetryButton onClick={data.reload} />}>
           Lomba belum bisa dibuka karena data di perangkat ini tidak terbaca.

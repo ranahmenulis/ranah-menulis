@@ -19,7 +19,8 @@ import {
 } from "../area-hrefs";
 import { countByList, listEmptyText, matchesList } from "../list-model";
 import { statusLabel } from "../project-status";
-import { MANAGE_EVENTS_HREF } from "../events/event-access";
+import { RoleBand } from "../../components/role-band";
+import { organizerWork, type BandWork } from "../../role-band";
 import { useOrganizerList, type OrganizerRow } from "../use-organizer-data";
 
 function ListSkeleton() {
@@ -73,22 +74,20 @@ export function OrganizerView({ store }: { store?: SubmissionStore }) {
   const rows = useMemo(() => (data.status === "ready" ? data.rows : []), [data]);
   const counts = useMemo(() => countByList(rows), [rows]);
   const shown = useMemo(() => rows.filter((r) => matchesList(r, filter)), [rows, filter]);
+  const work: BandWork =
+    data.status === "ready" ? organizerWork(counts.aktif) : { status: data.status };
 
   return (
     <section aria-labelledby="proyek-title" className="grid max-w-170 gap-5">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div className="grid gap-1">
-          <h1 id="proyek-title" className="heading-lg">
-            Proyek
-          </h1>
-          <p className="text-sm text-ink-muted">Proyek yang kamu kelola.</p>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <ButtonLink variant="secondary" href={MANAGE_EVENTS_HREF}>
-            Kelola Event
-          </ButtonLink>
-          <ButtonLink href={NEW_PROJECT_HREF}>Buat proyek</ButtonLink>
-        </div>
+      <RoleBand
+        area="organizer"
+        title="Proyek"
+        titleId="proyek-title"
+        description="Proyek yang kamu kelola."
+        work={work}
+      />
+      <div>
+        <ButtonLink href={NEW_PROJECT_HREF}>Buat proyek</ButtonLink>
       </div>
 
       {data.status === "error" ? (

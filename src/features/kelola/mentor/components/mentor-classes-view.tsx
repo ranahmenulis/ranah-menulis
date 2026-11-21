@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { EmptyState, ErrorBanner, RetryButton, Skeleton } from "@/components/ui/states";
+import { RoleBand } from "../../components/role-band";
+import { bandFrom, mentorWork } from "../../role-band";
 import { classHref } from "../area-hrefs";
 import { useMentorClasses } from "../use-mentor-data";
 import type { AssignmentStore } from "@/features/projects/kelas/storage/assignment-store";
@@ -12,14 +14,16 @@ import type { AssignmentStore } from "@/features/projects/kelas/storage/assignme
  */
 export function MentorClassesView({ store }: { store?: AssignmentStore }) {
   const data = useMentorClasses({ store });
+  const work = bandFrom(data, (d) => mentorWork(d.items));
   return (
     <section aria-labelledby="kelas-title" className="grid max-w-170 gap-5">
-      <div className="grid gap-1">
-        <h1 id="kelas-title" className="heading-lg">
-          Kelas
-        </h1>
-        <p className="text-sm text-ink-muted">Kelas yang ditugaskan kepadamu.</p>
-      </div>
+      <RoleBand
+        area="mentor"
+        title="Kelas"
+        titleId="kelas-title"
+        description="Kelas yang ditugaskan kepadamu."
+        work={work}
+      />
       {data.status === "error" ? (
         <ErrorBanner action={<RetryButton onClick={data.reload} />}>
           Kelas belum bisa dibuka karena data di perangkat ini tidak terbaca.

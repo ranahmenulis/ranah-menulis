@@ -491,6 +491,20 @@ Selalu di dekat judul dokumen dan di dialog Bagikan: ikon + teks `text-xs`. **Pr
 
 `projects/components/milestone-hero.tsx`: pita gelap berisi sampul proyek (masuk dengan `rm-cover-enter`), kalimat serif 30/40px yang naik, lalu fakta (status, salinan beku, biaya). Tombol lanjut di bawah pita. `celebrate` menyalakan cincin tinta yang melebar dari sampul, hanya untuk momen itu sendiri (bukan saat halaman dibuka lagi). Dipakai: Terdaftar, Menunggu pembayaran (tanpa cincin), Pembayaran diterima, Karyamu terkirim, Revisimu terkirim.
 
+### 7.8 Pita peran Kelola (21 November 2026)
+
+Kelola adalah "dunia lain": layar utama tiap area dibuka pita gelap `RoleBand` (`kelola/components/role-band.tsx`, model murni `kelola/role-band.ts`) supaya pengelola langsung tahu ia sedang bekerja, bukan menulis. Isi pita: baris kecil "Ruang kerja · {peran}", judul layar serif 28/36px (h1 layar), satu kalimat, **satu angka kerja** serif 56/88px yang bergulung (`CountUp`; "—" saat memuat, disembunyikan bila data gagal dibaca karena layar di bawahnya sudah menyebut galatnya), dan satu tautan teks ke pekerjaan utamanya (tombol terisi tetap di permukaan halaman, mis. "Buat proyek"). Tautan hilang saat angkanya nol, kecuali Organizer ("Kelola Event").
+
+| Peran | Penanda (`role-mark.tsx`) | Angka | Jalan masuk |
+|---|---|---|---|
+| Editor | lembar naskah dengan tanda koreksi (coret, sisip, lingkar) | karya Perlu tindakan | filter Perlu tindakan |
+| Juri | tiga bobot kriteria di atas skala 1–10 | karya belum dinilai di lomba yang penilaiannya dibuka | lomba pertama yang masih punya |
+| Mentor | daftar tugas yang dicentang satu per satu | pengumpulan menunggu penilaian | kelas pertama yang punya |
+| Organizer | garis tahap dengan simpul dan bendera tenggat | proyek aktif | Kelola Event |
+| Administrator | matriks titik, satu per pengguna (cincin = ditangguhkan) | kasus moderasi Baru | Moderasi |
+
+Penanda adalah SVG tipografis sekeluarga dengan sampul proyek (7.6), `aria-hidden`, memakai gerak yang sudah ada: garis `rm-page-line`, goresan `rm-ring` (pathLength 1), titik dan tanda `rm-pop`, gerigi `rm-bar` (`.rm-mark` memberi `transform-box: fill-box`). Pita hanya di layar utama area; layar dalam (tinjauan, detail kelas, skor) tetap padat tanpa pita. Admin memasang pita di layout hanya di akar tiap tab, dengan nama area sebagai teks biasa karena h1 milik tab. `/kelola` memakai `RoleBandLink`: satu pita ringkas per area yang dipegang (seluruh pita satu tautan, naik bertahap `rm-row-in`, grid dua kolom dari xl). Ponsel: penanda 64px di samping judul, angka di bawahnya. Reduced motion: semua langsung tampil. Pita ini tampilan, bukan kontrol akses.
+
 ### 7.x Tombol tema dan bahasa
 
 Dua kontrol tampilan ada di bilah atas landing, aplikasi, dan bingkai tamu [usulan]. Dari md ke atas: tombol bahasa (menu, ikon Translate, butir aktif bertanda "Aktif") dan tombol tema (ikon Sun atau Moon sesuai tema yang tampil; satu klik membalik Terang dan Gelap). Di bawah md keduanya digabung menjadi satu menu "Tampilan dan bahasa" (lembar bawah) agar bilah ponsel tidak sesak. Pilihan tema disimpan di cookie dan dipasang sebelum cat pertama; tanpa pilihan tersimpan, tema otomatis mengikuti sistem (tidak ada opsi "Ikuti sistem" di antarmuka; pilihan pengguna menimpanya). Saat tema berganti lewat tombol, tema baru terungkap sebagai lingkaran yang membesar dari tombol itu (View Transitions, 500 ms, ease-out); di layar sempit asalnya tombol menu. Reduced motion atau browser tanpa dukungan: berganti seketika. Papan `/sistem-desain` tidak memakai efek ini.
