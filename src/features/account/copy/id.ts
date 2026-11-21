@@ -56,6 +56,15 @@ export const account = {
     label: "Foto profil",
     hint: "JPG, PNG, atau WebP, maksimal 2 MB.",
   },
+  /** The endpaper beside the account screens (auth-art.ts). */
+  plate: {
+    welcome: {
+      line: "Satu kalimat hari ini sudah cukup.",
+    },
+    recover: {
+      line: "Halaman yang hilang bisa ditulis lagi.",
+    },
+  },
   signIn: {
     title: "Masuk",
     subtitle: "Lanjutkan menulis di RanahMenulis.",
