@@ -1,0 +1,595 @@
+<!doctype html><html lang=id><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><title>Panduan Uji RanahMenulis</title><style>@page{size:A4;margin:14mm}body{font:10.5pt/1.5 'Segoe UI',Arial,sans-serif;color:#111;max-width:900px;margin:auto}
+h1{font-size:20pt;margin:22px 0 6px}h2{font-size:13pt;border-bottom:2px solid #111;padding-bottom:3px;margin-top:20px;page-break-after:avoid}
+table{border-collapse:collapse;width:100%;margin:8px 0;font-size:9.5pt}th{background:#eee;text-align:left}
+td,th{border:1px solid #bbb;padding:5px 7px;vertical-align:top}tr{page-break-inside:avoid}
+td:first-child{white-space:nowrap;font-weight:600}a{color:#0645ad}hr{border:0;border-top:1px solid #ccc;margin:16px 0}</style><h1>Panduan Uji RanahMenulis</h1>
+<p><strong>Untuk:</strong> penguji dan client · <strong>Per:</strong> 21 November 2026</p>
+<p>Tujuan: memastikan semua layar dan alur sudah sesuai harapan <strong>sebelum</strong> server (login dan database) dibangun. Ikuti urutan dari atas ke bawah, klik tautan di setiap langkah, lakukan yang diminta, lalu centang ☐ jika hasilnya sesuai. Catat apa pun yang terasa membingungkan, janggal, atau kurang.</p>
+<h2>Baca dulu (1 menit)</h2>
+<ul>
+<li><strong>Data masih contoh.</strong> Semua yang Anda buat hanya tersimpan <strong>di peramban Anda sendiri</strong>. Tidak terlihat orang lain.</li>
+<li><strong>Anda otomatis "masuk"</strong> sebagai pengguna contoh <strong>Rinjani Putri</strong>. Halaman Masuk dan Daftar baru tampilan, belum ada login sungguhan.</li>
+<li><strong>Bagian 1 (penulis dan peserta)</strong> dibuka lewat alamat publik <code>ranah-menulis.vercel.app</code>. Tidak perlu memasang apa pun.</li>
+<li><strong>Bagian 2 (semua role pengelola)</strong> juga dibuka di alamat yang sama. Peran dipilih lewat <code>?sebagai=</code> pada tautan (sudah disediakan di tiap langkah), tanpa memasang apa pun. Semua dikerjakan di <strong>satu peramban dan satu perangkat</strong>, karena data tersimpan di peramban itu.</li>
+<li>Pindah role: buka tautan dengan <code>?sebagai=</code> di tab yang sama (sudah disediakan di tiap langkah). Satu orang memainkan semua role.</li>
+<li>Coba juga di ponsel dan mode gelap (tombol tema di bilah atas).</li>
+<li><strong>Cara mencatat temuan:</strong> tulis nomor langkah (misal <em>1.C3</em>) dan apa yang terasa kurang sesuai.</li>
+</ul>
+<hr />
+<h1>Bagian 1. Penulis dan peserta</h1>
+<p>Alamat dasar: <a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/beranda">ranah-menulis.vercel.app</a></p>
+<h2>1.A Mulai</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Buka</th>
+<th>Lakukan</th>
+<th>Hasil yang diharapkan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A1</td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/">Halaman awal</a></td>
+<td>Gulir sampai bawah, ganti bahasa dan tema.</td>
+<td>Lima bagian ekosistem, contoh editor, jalur penerbitan, FAQ, form daftar tunggu. ☐</td>
+</tr>
+<tr>
+<td>A2</td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/daftar">Daftar</a></td>
+<td>Isi email, sandi (8 karakter lebih, ada huruf dan angka), centang ketentuan.</td>
+<td>Lanjut ke layar verifikasi. ☐</td>
+</tr>
+<tr>
+<td>A3</td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/verifikasi?status=berhasil">Verifikasi</a></td>
+<td>Buka.</td>
+<td>Email terverifikasi, lanjut ke pengenalan profil. ☐</td>
+</tr>
+<tr>
+<td>A4</td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/mulai">Mulai</a></td>
+<td>Isi nama, username, bio, zona waktu, genre.</td>
+<td>Profil tersimpan. ☐</td>
+</tr>
+<tr>
+<td>A5</td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/beranda">Beranda</a></td>
+<td>Perhatikan susunan, lalu tutup panduan awal.</td>
+<td>Satu kartu "Hari ini" dengan satu tombol utama. Jelas harus mulai dari mana? ☐</td>
+</tr>
+</tbody>
+</table>
+<h2>1.B Menulis di Studio</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Buka</th>
+<th>Lakukan</th>
+<th>Hasil yang diharapkan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>B1</td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/studio">Studio</a></td>
+<td>Klik tombol tulisan baru.</td>
+<td>Editor penuh layar terbuka. ☐</td>
+</tr>
+<tr>
+<td>B2</td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/studio/baru">Editor baru</a></td>
+<td>Ketik judul dan beberapa paragraf (sekitar 100 kata). Pakai tebal, miring, judul, kutipan, daftar.</td>
+<td>Format berlaku, jumlah kata bertambah, tersimpan otomatis. ☐</td>
+</tr>
+<tr>
+<td>B3</td>
+<td>Editor</td>
+<td>Klik "N kata".</td>
+<td>Kata, karakter, paragraf, waktu baca. ☐</td>
+</tr>
+<tr>
+<td>B4</td>
+<td>Editor</td>
+<td>Nyalakan mode fokus, lalu keluar.</td>
+<td>Tampilan bersih. ☐</td>
+</tr>
+<tr>
+<td>B5</td>
+<td>Editor</td>
+<td>Jalankan timer sprint 1 menit sambil menulis.</td>
+<td>Hasil "N kata dalam M menit" di akhir. ☐</td>
+</tr>
+<tr>
+<td>B6</td>
+<td>Editor, menu ⋯</td>
+<td>Atur Target dokumen, lihat Riwayat versi, Ekspor PDF.</td>
+<td>Target tampil di jumlah kata, riwayat bisa dibuka, PDF terunduh. ☐</td>
+</tr>
+<tr>
+<td>B7</td>
+<td>Editor, panah kembali</td>
+<td>Kembali ke daftar.</td>
+<td>Dokumen ada di daftar. Beri jenis dan tag lewat menu ⋯. ☐</td>
+</tr>
+<tr>
+<td>B8</td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/studio">Studio</a></td>
+<td>Buat folder, duplikat dokumen, tekan Ctrl+K dan cari satu kata dari tulisan.</td>
+<td>Pencarian menemukan dokumen. ☐</td>
+</tr>
+<tr>
+<td>B9</td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/studio/streak">Streak</a></td>
+<td>Atur target harian.</td>
+<td>Kalender, streak, dan progres hari ini tampil. ☐</td>
+</tr>
+<tr>
+<td>B10</td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/studio/statistik">Statistik</a></td>
+<td>Ganti Harian, Mingguan, Bulanan.</td>
+<td>Grafik terisi. ☐</td>
+</tr>
+<tr>
+<td>B11</td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/beranda">Beranda</a></td>
+<td>Kembali.</td>
+<td>Kata hari ini, ringkasan minggu, dan tombol Lanjutkan menulis terisi. ☐</td>
+</tr>
+</tbody>
+</table>
+<h2>1.C Community</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Buka</th>
+<th>Lakukan</th>
+<th>Hasil yang diharapkan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>C1</td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/jelajahi">Community</a></td>
+<td>Ganti kategori, klik "Muat lebih banyak".</td>
+<td>Tulisan tampil sebagai ubin. ☐</td>
+</tr>
+<tr>
+<td>C2</td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/postingan/hujan-pertama-bulan-november">Contoh tulisan</a></td>
+<td>Beri apresiasi, simpan, tulis komentar dan balasan.</td>
+<td>Hitungan bertambah, komentar muncul. ☐</td>
+</tr>
+<tr>
+<td>C3</td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/penulis/nuraisyah">Profil penulis</a></td>
+<td>Klik Ikuti, buka tab Karya dan Tentang.</td>
+<td>Tombol berubah jadi Mengikuti. ☐</td>
+</tr>
+<tr>
+<td>C4</td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/tersimpan">Tersimpan</a></td>
+<td>Buka.</td>
+<td>Tulisan dari C2 ada di sini. ☐</td>
+</tr>
+<tr>
+<td>C5</td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/tulis">Tulis postingan</a></td>
+<td>Pilih dokumen dari B2, centang bagian yang dibagikan, isi judul dan genre, pilih siapa yang boleh membaca, terbitkan.</td>
+<td>Hanya teks yang dipilih menjadi publik. Tulisan muncul di Community dan profil Anda. ☐</td>
+</tr>
+</tbody>
+</table>
+<h2>1.D Grup dan Event</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Buka</th>
+<th>Lakukan</th>
+<th>Hasil yang diharapkan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>D1</td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/grup">Grup</a></td>
+<td>Buat grup baru.</td>
+<td>Anda menjadi Admin Grup. ☐</td>
+</tr>
+<tr>
+<td>D2</td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/grup/penulis-pesisir">Grup contoh</a></td>
+<td>Lihat anggota, bagikan progres menulis.</td>
+<td>Progres tampil setelah persetujuan. ☐</td>
+</tr>
+<tr>
+<td>D3</td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/event/cerita-selama-sepekan">Event</a></td>
+<td>Gabung dengan satu dokumen, menulis di Studio, kembali.</td>
+<td>Progres event bertambah. Event contoh aktif sampai <strong>25 November 2026</strong>. ☐</td>
+</tr>
+</tbody>
+</table>
+<h2>1.E Projects: dari daftar sampai hasil</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Buka</th>
+<th>Lakukan</th>
+<th>Hasil yang diharapkan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>E1</td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/projects">Katalog</a></td>
+<td>Ganti kategori, filter Status dan Biaya.</td>
+<td>Daftar proyek berubah. ☐</td>
+</tr>
+<tr>
+<td>E2</td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/projects/lomba-cerpen-hujan-2026">Lomba berbayar</a></td>
+<td>Baca detail, klik Daftar, centang ketentuan, Daftar.</td>
+<td>Status "Menunggu pembayaran". ☐</td>
+</tr>
+<tr>
+<td>E3</td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/projects/lomba-cerpen-hujan-2026/bayar">Bayar</a></td>
+<td>Lihat kode QRIS.</td>
+<td>Kode contoh berlabel dan sisa waktu 24 jam. Pembayaran <strong>dikonfirmasi pengelola</strong> di Bagian 2. ☐</td>
+</tr>
+<tr>
+<td>E4</td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/projects/lomba-esai-literasi-remaja">Lomba gratis</a></td>
+<td>Daftar, lalu klik Kirim karya, pilih dokumen dari B2.</td>
+<td>Status "Terkirim". ☐</td>
+</tr>
+<tr>
+<td>E5</td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/projects/saya">Proyek saya</a></td>
+<td>Buka.</td>
+<td>Pendaftaran dan kiriman terlihat dengan statusnya. ☐</td>
+</tr>
+<tr>
+<td>E6</td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/projects/kelas-cerpen-untuk-pemula">Kelas berjalan</a></td>
+<td>Daftar (gratis), klik Buka dasbor kelas.</td>
+<td>Jadwal, materi, tugas, progres. ☐</td>
+</tr>
+<tr>
+<td>E7</td>
+<td>Dasbor kelas</td>
+<td>Tandai satu materi selesai, klik Lanjutkan, salin latihan ke Studio.</td>
+<td>Latihan menjadi dokumen baru di Studio. ☐</td>
+</tr>
+<tr>
+<td>E8</td>
+<td>Dasbor kelas, tugas pertama</td>
+<td>Kumpulkan tugas dengan teks langsung.</td>
+<td>Status "Dikumpulkan". Dinilai di Bagian 2. ☐</td>
+</tr>
+<tr>
+<td>E9</td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/projects/solo-penerbitan-buku-sendiri">Solo</a></td>
+<td>Pilih paket, daftar, lalu kirim naskah.</td>
+<td>Naskah terkirim. Tahap penerbitan berjalan di Bagian 2. ☐</td>
+</tr>
+<tr>
+<td>E10</td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/projects/lomba-cerita-mini-pesisir-2026/hasil">Hasil lomba selesai</a></td>
+<td>Buka.</td>
+<td>Pemenang, hadiah, catatan juri. ☐</td>
+</tr>
+</tbody>
+</table>
+<h2>1.F Notifikasi, pengaturan, dan ponsel</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Buka</th>
+<th>Lakukan</th>
+<th>Hasil yang diharapkan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>F1</td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/notifikasi">Notifikasi</a></td>
+<td>Buka.</td>
+<td>Pemberitahuan pendaftaran dan kiriman dari bagian E. ☐</td>
+</tr>
+<tr>
+<td>F2</td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/pengaturan">Pengaturan</a></td>
+<td>Ubah tampilan, menulis, dan pilihan notifikasi. Simpan.</td>
+<td>Perubahan berlaku. ☐</td>
+</tr>
+<tr>
+<td>F3</td>
+<td>Ponsel</td>
+<td>Ulangi beberapa langkah di ponsel dan mode gelap.</td>
+<td>Bilah bawah punya lima tab, dialog muncul dari bawah, tidak ada halaman yang bergeser ke samping. ☐</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h1>Bagian 2. Semua role pengelola (satu cerita)</h1>
+<p><strong>Persiapan:</strong> pakai peramban yang sama dengan Bagian 1. Kerjakan <strong>Bagian 1 bagian E</strong> lebih dulu (daftar lomba berbayar, kirim karya, daftar kelas dan kumpulkan tugas, daftar Solo dan kirim naskah, kirim Antologi), lalu lanjutkan di bawah. Ganti role dengan membuka tautan di tab yang sama.</p>
+<h2>2.A Organizer: menyiapkan dan menjalankan proyek</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Buka</th>
+<th>Lakukan</th>
+<th>Hasil yang diharapkan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A1</td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/kelola/organizer?sebagai=organizer">Daftar proyek Organizer</a></td>
+<td>Buka.</td>
+<td>Proyek yang dikelola tampil. ☐</td>
+</tr>
+<tr>
+<td>A2</td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/kelola/organizer/baru?sebagai=organizer">Buat proyek</a></td>
+<td>Isi satu proyek Antologi lengkap, simpan, lalu Terbitkan.</td>
+<td>Proyek muncul di <a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/projects">katalog</a>. ☐</td>
+</tr>
+<tr>
+<td>A3</td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/kelola/organizer/lomba-cerpen-hujan-2026?sebagai=organizer&amp;tab=pembayaran">Lomba berbayar, tab Pembayaran</a></td>
+<td>Klik Konfirmasi pembayaran.</td>
+<td>Pendaftaran peserta menjadi lunas, status "Terdaftar". ☐</td>
+</tr>
+<tr>
+<td>A4</td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/kelola/organizer/event/baru?sebagai=organizer">Event baru</a></td>
+<td>Buat event, simpan.</td>
+<td>Event tampil di <a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/event">daftar event</a>. ☐</td>
+</tr>
+</tbody>
+</table>
+<h2>2.B Peserta: kirim karya setelah dikonfirmasi</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Buka</th>
+<th>Lakukan</th>
+<th>Hasil yang diharapkan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>B1</td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/projects/lomba-cerpen-hujan-2026?sebagai=masuk">Lomba berbayar</a></td>
+<td>Klik Kirim karya, pilih dokumen, kirim.</td>
+<td>Status "Terkirim". ☐</td>
+</tr>
+</tbody>
+</table>
+<h2>2.C Juri dan Organizer: lomba sampai pemenang</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Buka</th>
+<th>Lakukan</th>
+<th>Hasil yang diharapkan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>C1</td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/kelola/juri?sebagai=juri">Panel Juri</a></td>
+<td>Buka lomba, buka satu "Karya N".</td>
+<td>Karya tampil tanpa nama penulis. ☐</td>
+</tr>
+<tr>
+<td>C2</td>
+<td>Karya tadi</td>
+<td>Isi skor 1 sampai 10 tiap kriteria, Simpan penilaian.</td>
+<td>Progres juri naik. ☐</td>
+</tr>
+<tr>
+<td>C3</td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/kelola/organizer/lomba-cerpen-hujan-2026?sebagai=organizer&amp;tab=tahap">Tahap lomba</a></td>
+<td>Klik Tutup penerimaan, mulai dinilai, lalu Tutup penilaian.</td>
+<td>Penilaian ditutup. ☐</td>
+</tr>
+<tr>
+<td>C4</td>
+<td>Tab Tahap</td>
+<td>Pilih finalis dan peringkat, isi catatan juri, Simpan hasil. Klik Umumkan finalis, lalu Umumkan pemenang.</td>
+<td>Tahap maju sesuai urutan. ☐</td>
+</tr>
+<tr>
+<td>C5</td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/projects/lomba-cerpen-hujan-2026/hasil?sebagai=masuk">Hasil lomba</a></td>
+<td>Buka sebagai peserta.</td>
+<td>Pemenang, hadiah, dan catatan juri tampil. ☐</td>
+</tr>
+</tbody>
+</table>
+<h2>2.D Editor: antologi dan penerbitan Solo</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Buka</th>
+<th>Lakukan</th>
+<th>Hasil yang diharapkan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>D1</td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/kelola/editor?sebagai=editor">Antrean Editor</a></td>
+<td>Buka kiriman dari daftar.</td>
+<td>Naskah beku dan riwayat status tampil. ☐</td>
+</tr>
+<tr>
+<td>D2</td>
+<td>Kiriman Antologi</td>
+<td>Klik Mulai tinjau, lalu Terima dengan alasan.</td>
+<td>Status menjadi Diterima. ☐</td>
+</tr>
+<tr>
+<td>D3</td>
+<td>Kiriman Solo</td>
+<td>Mulai tinjau, lalu Terima.</td>
+<td>Status Diterima. ☐</td>
+</tr>
+<tr>
+<td>D4</td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/kelola/organizer/solo-penerbitan-buku-sendiri?sebagai=organizer&amp;tab=tahap">Tahap Solo</a></td>
+<td>Klik Lanjut ke tahap berikutnya sampai persetujuan final, tambah pratinjau (gambar atau PDF).</td>
+<td>Tahap maju. ☐</td>
+</tr>
+<tr>
+<td>D5</td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/projects/solo-penerbitan-buku-sendiri/dasbor?sebagai=masuk">Dasbor Solo</a></td>
+<td>Sebagai penulis, lihat pratinjau, klik Setujui.</td>
+<td>Produksi dimulai. ☐</td>
+</tr>
+<tr>
+<td>D6</td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/notifikasi?sebagai=masuk">Notifikasi</a></td>
+<td>Buka.</td>
+<td>Ada pemberitahuan Diterima dan tahap Solo. ☐</td>
+</tr>
+</tbody>
+</table>
+<h2>2.E Mentor: kelas</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Buka</th>
+<th>Lakukan</th>
+<th>Hasil yang diharapkan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>E1</td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/kelola/mentor?sebagai=mentor">Kelola kelas</a></td>
+<td>Buka Kelas Cerpen untuk Pemula, tab Tugas, tambah satu tugas.</td>
+<td>Tugas baru ada di dasbor peserta. ☐</td>
+</tr>
+<tr>
+<td>E2</td>
+<td>Tab Pengumpulan</td>
+<td>Buka pengumpulan dari peserta, klik Tandai selesai.</td>
+<td>Status "Selesai". ☐</td>
+</tr>
+<tr>
+<td>E3</td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/projects/kelas-cerpen-untuk-pemula/dasbor?sebagai=masuk">Dasbor kelas</a></td>
+<td>Sebagai peserta, lihat progres.</td>
+<td>Progres naik. Tulis satu testimoni. ☐</td>
+</tr>
+<tr>
+<td>E4</td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/kelola/organizer/kelas-cerpen-untuk-pemula?sebagai=organizer&amp;tab=testimoni">Testimoni, Organizer</a></td>
+<td>Lihat testimoni.</td>
+<td>Testimoni tampil dan dapat dikelola. ☐</td>
+</tr>
+</tbody>
+</table>
+<h2>2.F Administrator dan Super Admin</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Buka</th>
+<th>Lakukan</th>
+<th>Hasil yang diharapkan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>F1</td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/kelola/admin?sebagai=super-admin">Pengguna dan role</a></td>
+<td>Cari pengguna, buka detailnya, beri satu role.</td>
+<td>Role tampil di detail. ☐</td>
+</tr>
+<tr>
+<td>F2</td>
+<td>Postingan di Community</td>
+<td>Sebagai pembaca, laporkan satu komentar dengan alasan.</td>
+<td>Laporan terkirim. ☐</td>
+</tr>
+<tr>
+<td>F3</td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/kelola/admin/moderasi?sebagai=administrator">Moderasi</a></td>
+<td>Buka kasus, pilih keputusan Sembunyikan dengan alasan.</td>
+<td>Konten hilang dari layar pembaca. Pelapor tidak terlihat. ☐</td>
+</tr>
+<tr>
+<td>F4</td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/kelola/admin/kurasi?sebagai=administrator">Kurasi</a></td>
+<td>Tambah satu Editor's Pick dan satu proyek unggulan.</td>
+<td>Tampil di Community dan katalog. ☐</td>
+</tr>
+<tr>
+<td>F5</td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/kelola/admin/pengaturan?sebagai=administrator">Pengaturan</a></td>
+<td>Isi tautan komunitas luar (<code>https://...</code>).</td>
+<td>Tautan tampil di sidebar dan Beranda. ☐</td>
+</tr>
+<tr>
+<td>F6</td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/kelola/admin/grup?sebagai=administrator">Grup</a></td>
+<td>Buka satu grup, tunjuk Admin Grup.</td>
+<td>Admin Grup berubah. ☐</td>
+</tr>
+<tr>
+<td>F7</td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://ranah-menulis.vercel.app/kelola/admin/audit?sebagai=administrator">Audit log</a></td>
+<td>Buka.</td>
+<td>Semua tindakan di atas tercatat, terbaru dulu, hanya bisa dibaca. ☐</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Lembar masukan</h2>
+<table>
+<thead>
+<tr>
+<th>Pertanyaan</th>
+<th>Jawaban</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Layar mana yang paling membingungkan?</td>
+<td></td>
+</tr>
+<tr>
+<td>Fitur apa yang kurang atau berlebih?</td>
+<td></td>
+</tr>
+<tr>
+<td>Apakah alur dari daftar sampai hasil terasa wajar?</td>
+<td></td>
+</tr>
+<tr>
+<td>Teks atau istilah mana yang perlu diubah?</td>
+<td></td>
+</tr>
+<tr>
+<td>Siap lanjut ke tahap server (login dan database)?</td>
+<td>Ya / Belum, karena:</td>
+</tr>
+</tbody>
+</table>
