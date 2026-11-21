@@ -79,6 +79,7 @@ export function SavedView() {
           {empty && (
             <EmptyState
               className="mt-4"
+              art="library"
               action={
                 <ButtonLink href={DISCOVER_HREF} variant="secondary">
                   Buka Community

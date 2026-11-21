@@ -38,6 +38,12 @@ describe("SavedView", () => {
     );
   });
 
+  it("shows the library plate only while nothing is saved", async () => {
+    const { container } = renderView();
+    await screen.findByText("Belum ada tulisan yang kamu simpan.");
+    expect(container.querySelector('[data-empty-art="library"]')).toBeTruthy();
+  });
+
   it("tells the reader the list is private", async () => {
     renderView();
     await screen.findByText("Belum ada tulisan yang kamu simpan.");

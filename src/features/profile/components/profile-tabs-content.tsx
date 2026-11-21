@@ -62,6 +62,7 @@ export function WorksEmpty({ own }: { own: boolean }) {
   return (
     <EmptyState
       className="py-6"
+      art="wildRose"
       action={
         own ? (
           <ButtonLink href={NEW_POST_HREF} variant="secondary">
