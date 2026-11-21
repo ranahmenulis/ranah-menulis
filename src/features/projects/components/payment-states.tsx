@@ -6,6 +6,7 @@ import { kirimHref } from "../submission-model";
 import type { Project, Registration } from "../types";
 import { RegisterShell } from "./register-states";
 import { MilestoneHero } from "./milestone-hero";
+import { ProjectStrip } from "./project-strip";
 
 /** Placeholder for the QRIS code: the real one comes with the payment service [konfirmasi Q-19]. */
 function QrisSample({ amount }: { amount: number }) {
@@ -40,12 +41,12 @@ export function PayWaiting({
   const due = paymentDueAt(registration);
   return (
     <RegisterShell project={project}>
+      <ProjectStrip project={project} />
       <div className="grid gap-3">
         <h1 className="font-serif text-2xl leading-8 font-semibold">Selesaikan pembayaran.</h1>
-        <p className="text-base wrap-anywhere">
-          {project.title}
-          {registration.packageName ? ` · Paket ${registration.packageName}` : ""}
-        </p>
+        {registration.packageName && (
+          <p className="text-base wrap-anywhere">Paket {registration.packageName}</p>
+        )}
         <p className="text-sm text-ink-muted">
           Kuotamu ditahan sampai {formatProjectDateTime(due, project.timeZone)} (
           {remainingLabel(due, now)}). Setelah itu pendaftaran ini berakhir dan kursinya dibuka
@@ -104,6 +105,7 @@ export function PayDone({
 export function PayExpired({ project, canRetry }: { project: Project; canRetry: boolean }) {
   return (
     <RegisterShell project={project}>
+      <ProjectStrip project={project} />
       <h1 className="font-serif text-2xl leading-8 font-semibold">Waktu pembayaran habis.</h1>
       <p className="text-sm wrap-anywhere text-ink-muted">
         Pendaftaran {project.title} berakhir karena pembayaran belum masuk, dan kuotanya dibuka

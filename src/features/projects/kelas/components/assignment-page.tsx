@@ -15,6 +15,7 @@ import type { AssignmentStore } from "../storage/assignment-store";
 import { AssignmentHistory } from "./assignment-history";
 import { HandInSection, JustSentNotice } from "./hand-in-section";
 import { StatusTugas } from "./status-tugas";
+import { ProjectStrip } from "../../components/project-strip";
 
 type Ready = Extract<ClassData, { status: "ready" }>;
 
@@ -43,6 +44,7 @@ export function AssignmentPage({ data, row, docs, store, documents }: Props) {
 
   return (
     <MyShell back={{ href: dashboardHref(project.slug), label: "Dasbor kelas" }}>
+      <ProjectStrip project={project} />
       <header className="grid gap-2">
         <p className="text-xs wrap-anywhere text-ink-muted">{assignment.module}</p>
         <h1 ref={titleRef} tabIndex={-1} className="heading-lg wrap-anywhere outline-none">

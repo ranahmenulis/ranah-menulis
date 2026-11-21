@@ -1,13 +1,11 @@
 "use client";
 
 import { versionSizeText } from "../submission-text";
-import Link from "next/link";
 import { useEffect, useRef, useState, type Ref } from "react";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { ErrorBanner, Notice } from "@/components/ui/states";
 import { StatusSubmission } from "@/components/ui/status-submission";
 import { useViewer } from "@/lib/viewer";
-import { categoryLabel, projectHref } from "../project-model";
 import { submissionStore } from "../storage/store";
 import type { SubmissionStore } from "../storage/submission-store";
 import { withdrawSubmission, type ActionResult } from "../submission-actions";
@@ -23,6 +21,7 @@ import { MyError, MyGuest, MyShell, MySkeleton } from "./my-states";
 import { DecisionNote, RevisionRequest } from "./revision-request";
 import { StatusHistory, VersionHistory } from "./submission-history";
 import { WithdrawDialog } from "./withdraw-dialog";
+import { ProjectStrip } from "./project-strip";
 
 type Props = {
   slug: string;
@@ -70,12 +69,7 @@ function Header({
   const latest = work.versions.at(-1);
   return (
     <header className="grid gap-2">
-      <p className="text-xs text-ink-muted">
-        {categoryLabel(project.category)} ·{" "}
-        <Link href={projectHref(project.slug)} className="text-ink-muted underline">
-          {project.title}
-        </Link>
-      </p>
+      <ProjectStrip project={project} linked className="mb-4" />
       <h1 ref={titleRef} tabIndex={-1} className="heading-lg wrap-anywhere outline-none">
         {work.title}
       </h1>

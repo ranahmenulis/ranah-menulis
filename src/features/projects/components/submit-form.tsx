@@ -19,6 +19,7 @@ import { Section } from "./category-blocks";
 import { SubmitDocumentPicker } from "./submit-document-picker";
 import { ManuscriptUpload } from "./manuscript-upload";
 import { SubmitInfoFields } from "./submit-info-fields";
+import { ProjectStrip } from "./project-strip";
 
 type Props = {
   project: Project;
@@ -60,7 +61,8 @@ export function SubmitFormScreen(props: Props) {
   return (
     <form className="grid gap-8" noValidate onSubmit={(e) => void f.submit(e)}>
       <header className="grid gap-2">
-        <h1 className="heading-lg wrap-anywhere">Kirim karya: {project.title}</h1>
+        <ProjectStrip project={project} className="mb-4" />
+        <h1 className="heading-lg">Kirim karya</h1>
         <p className="text-sm text-ink-muted">
           Naskah {wordRuleText(rules)}. Kamu sudah mengirim {formatNumber(sent.length)} dari{" "}
           {worksText(rules.maxWorks)}. {deadlineText(project, projectState(project, now))}.

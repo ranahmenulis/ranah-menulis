@@ -72,9 +72,8 @@ describe("SubmitView, the form", () => {
 
   it("names the project, the rules, and lists documents with the ones that cannot be sent", async () => {
     await open();
-    expect(screen.getByRole("heading", { level: 1 }).textContent).toBe(
-      "Kirim karya: Lomba Esai Literasi Remaja",
-    );
+    expect(screen.getByRole("heading", { level: 1 }).textContent).toBe("Kirim karya");
+    expect(screen.getByText("Lomba Esai Literasi Remaja")).toBeTruthy();
     expect(screen.getByText(/Naskah 700 sampai 1\.200 kata/)).toBeTruthy();
     expect((screen.getByRole("radio", { name: /Masih Kosong/ }) as HTMLInputElement).disabled).toBe(
       true,

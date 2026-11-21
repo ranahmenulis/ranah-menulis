@@ -5,6 +5,7 @@ import { projectHref } from "../../project-model";
 import { registerHref } from "../../registration-model";
 import type { Project } from "../../types";
 import type { ShownBlock } from "../solo-model";
+import { ProjectStrip } from "../../components/project-strip";
 
 const MESSAGE: Record<ShownBlock, string> = {
   tamu: "Masuk untuk membuka dasbor penerbitan.",
@@ -23,7 +24,7 @@ export const backToProject = (slug: string) => ({
 export function SoloBlocked({ project, block }: { project: Project; block: ShownBlock }) {
   return (
     <MyShell back={backToProject(project.slug)}>
-      <h1 className="heading-lg wrap-anywhere">{project.title}</h1>
+      <ProjectStrip project={project} titleAs="h1" />
       <Notice>{MESSAGE[block]}</Notice>
       {block === "belum-terdaftar" ? (
         <ButtonLink href={registerHref(project.slug)} className="justify-self-start">

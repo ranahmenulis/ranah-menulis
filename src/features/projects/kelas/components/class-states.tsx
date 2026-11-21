@@ -5,6 +5,7 @@ import { projectHref } from "../../project-model";
 import { registerHref } from "../../registration-model";
 import type { Project } from "../../types";
 import type { DashboardBlock } from "../class-model";
+import { ProjectStrip } from "../../components/project-strip";
 
 const MESSAGE: Record<DashboardBlock, string> = {
   tamu: "Masuk untuk membuka dasbor kelas.",
@@ -24,7 +25,7 @@ export const backToProject = (slug: string) => ({
 export function ClassBlocked({ project, block }: { project: Project; block: DashboardBlock }) {
   return (
     <MyShell back={backToProject(project.slug)}>
-      <h1 className="heading-lg wrap-anywhere">{project.title}</h1>
+      <ProjectStrip project={project} titleAs="h1" />
       <Notice>{MESSAGE[block]}</Notice>
       {block === "belum-terdaftar" ? (
         <ButtonLink href={registerHref(project.slug)} className="justify-self-start">

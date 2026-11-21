@@ -16,6 +16,7 @@ import type { Project } from "../types";
 import { Section } from "./category-blocks";
 import { ManuscriptUpload } from "./manuscript-upload";
 import { SubmitDocumentPicker } from "./submit-document-picker";
+import { ProjectStrip } from "./project-strip";
 
 type Props = {
   project: Project;
@@ -48,6 +49,7 @@ function Heading({ project, work }: { project: Project; work: Submission }) {
   if (!rules) return null;
   return (
     <header className="grid gap-2">
+      <ProjectStrip project={project} className="mb-4" />
       <h1 className="heading-lg wrap-anywhere">Kirim revisi: {work.title}</h1>
       <p className="text-sm text-ink-muted">
         Revisi ke-{Math.min(revisionsSent(work) + 1, MAX_REVISIONS)} dari {MAX_REVISIONS}.

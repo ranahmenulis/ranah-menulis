@@ -31,9 +31,8 @@ const backLink = () => screen.getByRole("link", { name: /Kembali ke proyek/ });
 
 describe("RegisterView, the form", () => {
   it("names the project and always offers a way back to it", async () => {
-    expect((await open("kelas-cerpen-untuk-pemula")).textContent).toBe(
-      "Daftar: Kelas Cerpen untuk Pemula",
-    );
+    expect((await open("kelas-cerpen-untuk-pemula")).textContent).toBe("Daftar");
+    expect(screen.getByText("Kelas Cerpen untuk Pemula")).toBeTruthy();
     expect(backLink().getAttribute("href")).toBe("/projects/kelas-cerpen-untuk-pemula");
   });
 
@@ -164,7 +163,8 @@ describe("RegisterView, when you cannot register", () => {
         packages: [{ name: "Paket".repeat(40), fee: { idr: 12_500_000 }, includes: [] }],
       },
     };
-    expect((await open("odd", [odd])).className).toContain("wrap-anywhere");
+    await open("odd", [odd]);
+    expect(screen.getByText(odd.title).className).toContain("wrap-anywhere");
     expect(screen.getAllByText("Paket".repeat(40)).length).toBeGreaterThan(0);
   });
 });

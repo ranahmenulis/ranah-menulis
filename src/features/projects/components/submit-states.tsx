@@ -7,6 +7,7 @@ import { registerHref } from "../registration-model";
 import type { SubmitBlock } from "../submission-model";
 import { blockMessage } from "../submission-text";
 import type { Project } from "../types";
+import { ProjectStrip } from "./project-strip";
 
 /** One column of 680 with the way back to the project always on top (every wide screen needs an exit). */
 export function SubmitShell({ slug, children }: { slug: string; children: ReactNode }) {
@@ -68,7 +69,7 @@ export function SubmitBlocked({
 }) {
   return (
     <SubmitShell slug={project.slug}>
-      <h1 className="heading-lg wrap-anywhere">{project.title}</h1>
+      <ProjectStrip project={project} titleAs="h1" />
       <Notice>{blockMessage(block, project.submission)}</Notice>
       {block === "belum-terdaftar" ? (
         <ButtonLink href={registerHref(project.slug)} className="justify-self-start">

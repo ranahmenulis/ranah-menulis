@@ -25,6 +25,7 @@ import type { Project } from "../types";
 import { useSubmissions } from "../use-submissions";
 import { MyError, MyGuest, MyShell, MySkeleton } from "./my-states";
 import { ReviseForm } from "./revise-form";
+import { ProjectStrip } from "./project-strip";
 
 type Props = {
   slug: string;
@@ -123,6 +124,7 @@ export function ReviseView({
   if (block) {
     return (
       <MyShell back={back}>
+        <ProjectStrip project={project} />
         <h1 className="heading-lg wrap-anywhere">{work.title}</h1>
         <Notice>{reviseMessage[block]}</Notice>
         <ButtonLink href={back.href} variant="secondary" className="justify-self-start">

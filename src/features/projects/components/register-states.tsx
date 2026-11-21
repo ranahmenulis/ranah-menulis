@@ -10,6 +10,7 @@ import { kirimHref } from "../submission-model";
 import { CancelRegistration } from "./cancel-registration";
 import type { Project, Registration } from "../types";
 import { MilestoneHero } from "./milestone-hero";
+import { ProjectStrip } from "./project-strip";
 
 /** One column of 680 with the way back always on top (every full-width screen needs an exit). */
 export function RegisterShell({ project, children }: { project: Project; children: ReactNode }) {
@@ -61,7 +62,7 @@ export function RegisterBlocked({
 }) {
   return (
     <RegisterShell project={project}>
-      <h1 className="heading-lg wrap-anywhere">{project.title}</h1>
+      <ProjectStrip project={project} titleAs="h1" />
       <Notice>{children}</Notice>
       {signIn && <SignInButton className="justify-self-start">Masuk</SignInButton>}
       <ButtonLink

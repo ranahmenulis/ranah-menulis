@@ -8,6 +8,7 @@ import { deadlineText } from "../project-text";
 import { canRegister, registrationFee } from "../registration-model";
 import type { Project, ProjectState } from "../types";
 import { Section } from "./category-blocks";
+import { ProjectStrip } from "./project-strip";
 
 /**
  * The two statements every project shares, from the PRD (BR-PRJ-03: the author keeps the copyright
@@ -51,7 +52,10 @@ export function RegisterForm({ project, state, onSubmit }: Props) {
         if (ready) onSubmit(packageName);
       }}
     >
-      <h1 className="heading-lg wrap-anywhere">Daftar: {project.title}</h1>
+      <header className="grid gap-6">
+        <ProjectStrip project={project} />
+        <h1 className="heading-lg">Daftar</h1>
+      </header>
 
       <Section title="Ringkasan">
         <dl>
