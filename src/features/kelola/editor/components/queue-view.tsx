@@ -5,23 +5,19 @@ import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
 import { EmptyState, ErrorBanner, RetryButton, Skeleton } from "@/components/ui/states";
-import { submissionStore } from "@/features/projects/storage/store";
 import type { SubmissionStore } from "@/features/projects/storage/submission-store";
-import { useCatalog } from "@/features/projects/use-catalog";
-import { useSubmissions } from "@/features/projects/use-submissions";
-import { useEffectiveRoles } from "@/features/kelola/use-effective-roles";
-import { useStaffAssignments } from "../../staff-assignments";
+import { RoleBand } from "../../components/role-band";
+import { editorWork, type BandWork } from "../../role-band";
 import { EDITOR_HREF } from "../area-hrefs";
 import {
   QUEUE_FILTERS,
   applyFilter,
-  countByFilter,
   emptyText,
   parseQueueFilter,
   queueQuery,
-  queueRows,
   type QueueFilter,
 } from "../queue-model";
+import { useEditorQueue } from "../use-editor-queue";
 import { QueueTable } from "./queue-table";
 
 function QueueSkeleton() {
@@ -40,11 +36,8 @@ function QueueSkeleton() {
  * filter lives in the address so a view can be linked; it opens on "Perlu tindakan". Reads the
  * submissions kept on this device (sliced with dummy data), so it also lists the dummy user's own.
  */
-export function QueueView({ store = submissionStore }: { store?: SubmissionStore }) {
-  const submissions = useSubmissions(store);
-  const roles = useEffectiveRoles();
-  const catalog = useCatalog();
-  const assigned = useStaffAssignments();
+export function QueueView({ store }: { store?: SubmissionStore }) {
+  const { submissions, all, counts } = useEditorQueue(store);
 
   // The address is the source of truth (see ProjectsView): Next keeps the previous page mounted.
   const search = useSearchParams()?.get("status") ?? null;
@@ -59,22 +52,20 @@ export function QueueView({ store = submissionStore }: { store?: SubmissionStore
     window.history.replaceState(null, "", `${EDITOR_HREF}${queueQuery(next)}`);
   }
 
-  const all = useMemo(
-    () => queueRows(submissions.submissions, roles, catalog, assigned),
-    [submissions.submissions, roles, catalog, assigned],
-  );
-  const counts = useMemo(() => countByFilter(all), [all]);
   const shown = useMemo(() => applyFilter(all, filter), [all, filter]);
   const label = QUEUE_FILTERS.find((f) => f.id === filter)?.label ?? "";
+  const work: BandWork =
+    submissions.status === "ready" ? editorWork(counts) : { status: submissions.status };
 
   return (
     <section aria-labelledby="antrean-title" className="grid gap-5">
-      <div className="grid gap-1">
-        <h1 id="antrean-title" className="heading-lg">
-          Antrean submission
-        </h1>
-        <p className="text-sm text-ink-muted">Karya yang ditugaskan kepadamu untuk ditinjau.</p>
-      </div>
+      <RoleBand
+        area="editor"
+        title="Antrean submission"
+        titleId="antrean-title"
+        description="Karya yang ditugaskan kepadamu untuk ditinjau."
+        work={work}
+      />
 
       {submissions.status === "error" ? (
         <ErrorBanner action={<RetryButton onClick={submissions.reload} />}>

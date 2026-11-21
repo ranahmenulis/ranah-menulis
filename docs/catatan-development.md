@@ -10,6 +10,7 @@ Terakhir diperbarui: **21 November 2026**.
 - **Produksi:** `https://ranah-menulis.vercel.app`. Branch `main`, sinkron dengan `origin/main` (commit kode terakhir `e3a0a68`).
 - **Gate terakhir (21 November 2026):** `npm run check` lulus (223 berkas, 1.846 tes) dan `npm run build` berhasil.
 - **Perombakan UI "semua layar sama" (21 November 2026), di lokal, belum di-push (user minta tes lokal dulu):** fase 0–4 semua sudah di-commit (`2e96360`, `50ba82f`, `4271ef9`, `5e0db25`, `9910aa8`: sampul Projects, hero Streak dan Statistik, pita Beranda, penanda halaman Dokumen, keadaan kosong bergambar, jangkar Event, Grup, Profil, Notifikasi). Tes penuh belum dijalankan sejak fase 3.
+- **Fase 5 (21 November 2026):** pita peran Kelola (Editor, Juri, Mentor, Organizer, Admin, dan ringkasan `/kelola`), DESIGN.md 7.8. Di-commit lokal, belum di-push. Gate: `npm run check` lulus (234 berkas, 1.900 tes) dan `npm run build` berhasil.
 - **Hook git:** `pre-commit` = lint-staged; `pre-push` = `typecheck` saja. Tes penuh lewat `npm run check` dan CI.
 - **Saklar demo peran:** `NEXT_PUBLIC_DEMO_ROLES=1` aktif di Vercel Production, jadi `?sebagai=` (tamu dan peran kelola) berlaku di produksi. **Wajib dihapus bersama bypass login saat auth sungguhan masuk.**
 - **Panduan uji:** `docs/panduan-uji-pengguna.md` (juga `.html`, `.pdf`), versi web `/panduan-uji.html`, berkas contoh `/contoh-naskah.txt` dan `.pdf`. Diuji di Vercel lewat Chrome CDP pada 21 November 2026. Perbarui panduan bila alur atau nama tombol berubah.
@@ -20,7 +21,7 @@ Landing; Beranda; Studio (Dokumen, Editor, Streak, Statistik, riwayat versi, tar
 
 ## 3. Backlog dekat (belum dikerjakan)
 
-0. **Lanjutan perombakan UI** (rencana disetujui 21 November 2026, monokrom tetap, gerak tidak dibatasi): fase 4a dan 4b selesai lokal; fase 5 Kelola sebagai dunia lain (pita kepala peran); fase 6 `find-animation-opportunities`. Fase 3 selesai (Beranda dan Dokumen dikerjakan 21 November 2026, belum di-commit). Gerak, hover, dan keyboard belum diuji dengan klik sungguhan.
+0. **Lanjutan perombakan UI** (rencana disetujui 21 November 2026, monokrom tetap, gerak tidak dibatasi): fase 4a, 4b, dan 5 selesai lokal; berikutnya fase 6 `find-animation-opportunities` (termasuk titik `GroupSeal` yang membesar dari pojok SVG karena `rm-pop` tanpa `transform-box`). Fase 3 selesai (Beranda dan Dokumen dikerjakan 21 November 2026, belum di-commit). Gerak, hover, dan keyboard belum diuji dengan klik sungguhan.
 1. **N10** daftar pintasan keyboard (kecil, sudah disetujui client).
 2. Ganti kata "galat" menjadi "error" di teks aplikasi (baru panduan yang diganti). Perlu cakupan jelas lebih dulu: kamus `id` dan `en` serta teks di komponen.
 3. **N9** gambar kutipan dan **N21** kartu progres: opsional, user belum memintanya, **prioritas paling akhir**.
@@ -48,6 +49,13 @@ Isi pekerjaannya (urutan belum diputuskan):
 - Hal yang "perlu dibahas" client tidak boleh dibangun (lihat CLAUDE.md, Keputusan Lembar Novlr).
 
 ## 6. Log sesi
+
+### 21 November 2026 (sesi UI, fase 5: Kelola sebagai dunia lain)
+- Keputusan user: pita hanya di layar utama area dan ringkasan (layar dalam tetap), angka Admin = kasus moderasi Baru, penanda SVG tipografis (bukan foto).
+- Dikerjakan: `kelola/role-band.ts` (murni), `RoleBand`/`RoleBandLink`, lima `RoleMark` SVG, `use-band-work.ts`, `editor/use-editor-queue.ts` (diekstrak dari `QueueView`), `AdminBand` di layout Admin (akar tab saja). Ringkasan `/kelola` jadi grid pita per peran. Tombol sekunder "Kelola Event" Organizer menjadi tautan di pita; "Buat proyek" tetap satu-satunya tombol terisi.
+- Angka Juri hanya menghitung lomba yang penilaiannya dibuka (karya di lomba belum dibuka tidak bisa dinilai).
+- Verifikasi: tes baru `tests/features/kelola/role-band.test.ts`, `components/role-band.test.tsx`, `components/kelola-overview.test.tsx`; tes Kelola 27 berkas lulus sebelum tes baru; tangkapan layar CDP desktop terang (enam layar), gelap (ringkasan, Juri), ponsel 390 (Mentor, ringkasan). Peran dev Admin adalah `administrator`, bukan `admin`. Belum: klik dan keyboard sungguhan.
+- Gate penuh: `npm run check` lulus (234 berkas, 1.900 tes) dan `npm run build` berhasil.
 
 ### 21 November 2026 (akhir sesi UI: cara melanjutkan)
 - Fase 4a dan 4b sudah di-commit (`5e0db25`, `9910aa8`). Commit 4a yang dijalankan user menggantung di terminal IDE dan memegang `.git/index.lock`; dengan izin user prosesnya dihentikan dan kuncinya dihapus. Gambar kosong untuk Grup, Event, dan Notifikasi ikut commit 4b karena berkasnya memuat perubahan kedua fase.

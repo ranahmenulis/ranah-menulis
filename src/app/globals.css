@@ -1210,3 +1210,14 @@ html.lp-motion .lp-roll-out {
     animation: none;
   }
 }
+
+/* Role marks of the management bands (kelola/components/role-mark.tsx, DESIGN.md 7.8). Dots and
+   ticks grow from their own box, not from the corner of the drawing. Lines (rm-page-line), strokes
+   (rm-ring) and dots (rm-pop) reuse the motions above, so reduced motion already stills them. */
+.rm-mark :is(.rm-pop, .rm-bar) {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.rm-mark .rm-bar {
+  transform-origin: bottom;
+}
