@@ -8,7 +8,7 @@ import {
   Link as LinkIcon,
   ShareNetwork,
 } from "@phosphor-icons/react/dist/ssr";
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, type MenuEntry } from "@/components/ui/menu";
 import { cn } from "@/lib/cn";
@@ -47,6 +47,8 @@ function Actions({
   onShare,
   compact,
 }: Props & { compact: boolean }): ReactNode {
+  // Bumped only when the heart is switched on, so it pops for that moment and never on load.
+  const [pops, setPops] = useState(0);
   const count = (n: number) => <span className="tabular-nums">{n.toLocaleString("id-ID")}</span>;
   const text = (label: string) => (compact ? null : label);
   return (
@@ -55,14 +57,18 @@ function Actions({
         variant="text"
         aria-pressed={appreciated}
         aria-label={`Apresiasi ${appreciations}`}
-        onClick={onAppreciate}
+        onClick={() => {
+          if (!appreciated) setPops((n) => n + 1);
+          onAppreciate();
+        }}
         className={cn("group gap-1.5! px-2.5! font-normal!", appreciated && "text-ink!")}
       >
         <Heart
+          key={pops}
           size={20}
           weight={appreciated ? "fill" : "regular"}
           aria-hidden
-          className={pressIcon}
+          className={cn(pressIcon, appreciated && pops > 0 && "rm-heart-pop")}
         />
         {text("Apresiasi ")}
         {count(appreciations)}

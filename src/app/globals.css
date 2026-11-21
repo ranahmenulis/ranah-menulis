@@ -1249,3 +1249,20 @@ html.lp-motion .lp-roll-out {
     transition: none;
   }
 }
+
+/* Appreciation (community/components/post/post-action-bar.tsx): the heart pops once when it is
+   switched on, never when the page opens or when it is switched off. */
+.rm-heart-pop {
+  animation: rm-heart-pop 260ms var(--ease-out);
+}
+@keyframes rm-heart-pop {
+  0% {
+    scale: 0.85;
+  }
+  55% {
+    scale: 1.15;
+  }
+  100% {
+    scale: 1;
+  }
+}
