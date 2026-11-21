@@ -12,6 +12,7 @@ Terakhir diperbarui: **21 November 2026**.
 - **Perombakan UI "semua layar sama" (21 November 2026), di lokal, belum di-push (user minta tes lokal dulu):** fase 0–4 semua sudah di-commit (`2e96360`, `50ba82f`, `4271ef9`, `5e0db25`, `9910aa8`: sampul Projects, hero Streak dan Statistik, pita Beranda, penanda halaman Dokumen, keadaan kosong bergambar, jangkar Event, Grup, Profil, Notifikasi). Tes penuh belum dijalankan sejak fase 3.
 - **Fase 5 (21 November 2026):** pita peran Kelola (Editor, Juri, Mentor, Organizer, Admin, dan ringkasan `/kelola`), DESIGN.md 7.8. Di-commit lokal, belum di-push. Gate: `npm run check` lulus (234 berkas, 1.900 tes) dan `npm run build` berhasil.
 - **Fase 6 (21 November 2026):** gerak tambahan dari `find-animation-opportunities` (DESIGN.md 7.9), di-commit lokal, belum di-push.
+- **Layar akun (21 November 2026):** dipoles dengan pelat kertas marmer, lihat Log sesi.
 - **Hook git:** `pre-commit` = lint-staged; `pre-push` = `typecheck` saja. Tes penuh lewat `npm run check` dan CI.
 - **Saklar demo peran:** `NEXT_PUBLIC_DEMO_ROLES=1` aktif di Vercel Production, jadi `?sebagai=` (tamu dan peran kelola) berlaku di produksi. **Wajib dihapus bersama bypass login saat auth sungguhan masuk.**
 - **Panduan uji:** `docs/panduan-uji-pengguna.md` (juga `.html`, `.pdf`), versi web `/panduan-uji.html`, berkas contoh `/contoh-naskah.txt` dan `.pdf`. Diuji di Vercel lewat Chrome CDP pada 21 November 2026. Perbarui panduan bila alur atau nama tombol berubah.
@@ -50,6 +51,11 @@ Isi pekerjaannya (urutan belum diputuskan):
 - Hal yang "perlu dibahas" client tidak boleh dibangun (lihat CLAUDE.md, Keputusan Lembar Novlr).
 
 ## 6. Log sesi
+
+### 21 November 2026 (layar akun dipoles)
+- User: Masuk dan Daftar masih polos. Keputusan (ikut rekomendasi): dua kolom berpelat foto, dua gambar (Masuk/Daftar dan pemulihan/verifikasi/Mulai), kalimat serif ditulis sendiri.
+- Dikerjakan: kertas marmer dari moodboard (a109 1869 dan a108 c. 1880, berwarna asli, belum dipakai di tempat lain) di `public/auth/`; `auth-art.ts`, `auth-plate.tsx`; `AuthFrame` dua kolom dari lg dengan panel `app-band` lengket, strip 140px di bawah lg; `AuthPage` naik bertahap dan `celebrate` (cincin tinta di Verifikasi berhasil); kamus `account.plate` id dan en. Gambar dekoratif (`alt=""`), seperti EmptyPlate.
+- Verifikasi: tes akun dan i18n (16 berkas) dan related (20 berkas) lulus, termasuk `auth-art.test.ts` dan `auth-frame.test.tsx` baru; CDP desktop terang dan gelap, ponsel 390 terang dan gelap tanpa halaman melebar, cincin terlihat di tengah animasi.
 
 ### 21 November 2026 (uji ponsel dan mode gelap)
 - Sapuan otomatis 20 layar yang diubah hari ini di 390×844, terang dan gelap, lewat CDP (`Emulation.setDeviceMetricsOverride` mobile + sentuh), dengan pemeriksa elemen yang melewati tepi kanan, dan lembar kontak `sharp` untuk ditinjau.

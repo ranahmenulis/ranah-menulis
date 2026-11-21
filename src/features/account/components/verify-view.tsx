@@ -39,7 +39,7 @@ export function VerifyView() {
 
   if (status === "berhasil") {
     return (
-      <AuthPage title={t.verify.doneTitle} subtitle={t.verify.doneBody}>
+      <AuthPage title={t.verify.doneTitle} subtitle={t.verify.doneBody} celebrate>
         <ButtonLink
           href={withNext(ONBOARDING_HREF, next)}
           onClick={() => setViewer("masuk")}

@@ -58,6 +58,14 @@ export const account: typeof source = {
     label: "Profile photo",
     hint: "JPG, PNG, or WebP, 2 MB at most.",
   },
+  plate: {
+    welcome: {
+      line: "One sentence today is enough.",
+    },
+    recover: {
+      line: "A lost page can be written again.",
+    },
+  },
   signIn: {
     title: "Sign in",
     subtitle: "Pick up your writing in RanahMenulis.",
