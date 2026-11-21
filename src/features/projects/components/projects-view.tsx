@@ -15,7 +15,7 @@ import {
 import { MY_PROJECTS_HREF } from "../submission-href";
 import { useProjects } from "../use-projects";
 import type { Filters, ProjectFixture } from "../types";
-import { CategoryBar, ProjectFilters } from "./project-filters";
+import { CategoryBar } from "./project-filters";
 import { narrowedBy, useFeaturedSplit } from "../hooks/use-featured-split";
 import { FeaturedBlock } from "./featured-block";
 import { ProjectTile } from "./project-tile";
@@ -78,9 +78,8 @@ export function ProjectsView({ source }: Props) {
         </ButtonLink>
       </div>
 
+      <p className="mt-2 text-sm text-ink-muted">{description}</p>
       <CategoryBar filters={filters} onChange={change} />
-      <p className="mt-3 text-sm text-ink-muted md:mt-4">{description}</p>
-      <ProjectFilters filters={filters} onChange={change} />
 
       {/* The empty state below already says it on screen; this line is for screen readers then. */}
       <p role="status" className={list.length === 0 ? "sr-only" : "mt-5 text-sm text-ink-muted"}>
@@ -113,7 +112,7 @@ export function ProjectsView({ source }: Props) {
       ) : (
         <>
           <FeaturedBlock featured={featured} showsRest={rest.length > 0} now={data.now} />
-          <div className="mt-6 grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 md:grid-cols-3 lg:grid-cols-4">
+          <div className="mt-6 grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-5 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
             {rest.map((project, i) => (
               <ProjectTile key={project.slug} project={project} now={data.now} index={i} />
             ))}

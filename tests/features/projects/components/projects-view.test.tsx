@@ -63,17 +63,42 @@ describe("ProjectsView", () => {
     expect(window.location.search).toBe("");
   });
 
-  it("filters by status and fee, and says how many match", async () => {
+  it("filters by status and fee from two menus, and says how many match", async () => {
     render(<ProjectsView source={source} />);
-    const status = await screen.findByRole("group", { name: "Status" });
-    fireEvent.click(within(status).getByRole("button", { name: "Segera tutup" }));
+    const pick = (menu: "Status" | "Biaya", option: string) => {
+      fireEvent.click(screen.getByRole("button", { name: new RegExp(`^${menu}`) }));
+      const group = screen.getByRole("radiogroup", { name: menu });
+      const radio = within(group).getByRole("radio", { name: option });
+      fireEvent.pointerDown(radio);
+      fireEvent.click(radio);
+    };
+    await screen.findByRole("button", { name: "Status" });
+    pick("Status", "Segera tutup");
     expect(titles()).toEqual(["Kelas C"]);
-    fireEvent.click(within(status).getByRole("button", { name: "Ditutup" }));
-    expect(titles()).toEqual(["Lomba B"]);
+    // A mouse pick closes the panel and names the choice on the button.
+    expect(screen.queryByRole("radiogroup")).toBeNull();
+    expect(screen.getByRole("button", { name: "Status: Segera tutup" })).toBeTruthy();
+    expect(window.location.search).toBe("?status=segera-tutup");
 
-    const fee = screen.getByRole("group", { name: "Biaya" });
-    fireEvent.click(within(fee).getByRole("button", { name: "Berbayar" }));
+    pick("Status", "Ditutup");
+    expect(titles()).toEqual(["Lomba B"]);
+    pick("Biaya", "Berbayar");
     expect(screen.getByRole("status").textContent).toBe("Tidak ada proyek");
+  });
+
+  it("keeps the menu open while the keyboard moves the choice, and Escape closes it", async () => {
+    render(<ProjectsView source={source} />);
+    const button = await screen.findByRole("button", { name: "Biaya" });
+    fireEvent.click(button);
+    expect(button.getAttribute("aria-expanded")).toBe("true");
+    const group = screen.getByRole("radiogroup", { name: "Biaya" });
+    fireEvent.keyDown(group, { key: "ArrowDown" });
+    fireEvent.click(within(group).getByRole("radio", { name: "Gratis" }));
+    expect(titles()).toEqual(["Lomba A", "Lomba B"]);
+    expect(screen.getByRole("radiogroup", { name: "Biaya" })).toBeTruthy();
+    fireEvent.keyDown(document, { key: "Escape" });
+    expect(screen.queryByRole("radiogroup")).toBeNull();
+    expect(document.activeElement?.textContent).toBe("Biaya: Gratis");
   });
 
   it("clears the filters from the empty result", async () => {
