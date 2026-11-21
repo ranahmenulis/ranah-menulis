@@ -1,7 +1,7 @@
 "use client";
 
 import { CaretLeft, CaretRight } from "@phosphor-icons/react/dist/ssr";
-import { useState } from "react";
+import { useState, type CSSProperties } from "react";
 import { Dot } from "@/components/ui/dots";
 import { IconButton } from "@/components/ui/icon-button";
 import { cn } from "@/lib/cn";
@@ -82,15 +82,16 @@ export function StreakCalendar({ today, words, history, changes, celebrate }: Ca
       <div
         role="grid"
         aria-label={`Kalender ${monthName.format(new Date(cursor.year, cursor.month, 1))}, minggu mulai Senin`}
-        className="grid grid-cols-7 md:grid-cols-[repeat(7,36px)]"
+        key={prefix}
+        className="grid grid-cols-7 md:grid-cols-[repeat(7,52px)]"
       >
         {WEEKDAYS.map((w, i) => (
-          <span key={i} className="grid h-9 place-items-center text-xs text-ink-muted">
+          <span key={i} className="grid h-10 place-items-center text-xs text-ink-muted">
             {w}
           </span>
         ))}
         {cells.map((cell, i) => {
-          if (!cell.inMonth) return <span key={i} className="h-9 max-md:h-12" />;
+          if (!cell.inMonth) return <span key={i} className="h-12 md:h-13" />;
           const state = dayState(cell.day, today, words, changes);
           const isToday = cell.day === today;
           const written = words.get(cell.day) ?? 0;
@@ -104,14 +105,19 @@ export function StreakCalendar({ today, words, history, changes, celebrate }: Ca
               aria-current={isToday ? "date" : undefined}
               onClick={() => setPicked(cell.day)}
               className={cn(
-                "grid h-9 cursor-pointer place-items-center disabled:cursor-default max-md:h-12",
+                "grid h-12 cursor-pointer place-items-center transition-colors duration-150 hover:bg-subtle disabled:cursor-default disabled:hover:bg-transparent md:h-13",
                 isToday && "shadow-[inset_0_0_0_1px_var(--ink)]",
                 picked === cell.day && !isToday && "bg-subtle",
               )}
             >
-              {state === "met" && <Dot kind={isToday && celebrate ? "fill" : "full"} />}
-              {state === "partial" && <Dot kind="ring" />}
-              {state === "empty" && <Dot kind="empty" />}
+              <span
+                className="rm-pop grid place-items-center"
+                style={{ "--i": i } as CSSProperties}
+              >
+                {state === "met" && <Dot kind={isToday && celebrate ? "fill" : "full"} size={20} />}
+                {state === "partial" && <Dot kind="ring" size={20} />}
+                {state === "empty" && <Dot kind="empty" />}
+              </span>
             </button>
           );
         })}

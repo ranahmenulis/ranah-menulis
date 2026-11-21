@@ -1,7 +1,9 @@
+import type { ReactNode } from "react";
+import { CountUp } from "@/components/ui/count-up";
 import type { Period, Summary } from "../../statistics";
-import { formatDay, formatNumber, rangeName } from "../../statistics-copy";
+import { formatDay, rangeName } from "../../statistics-copy";
 
-function Stat({ value, label }: { value: string; label: string }) {
+function Stat({ value, label }: { value: ReactNode; label: string }) {
   return (
     <div className="flex min-w-0 flex-col-reverse justify-end gap-1">
       <dt className="text-xs text-ink-muted">{label}</dt>
@@ -19,19 +21,24 @@ function Stat({ value, label }: { value: string; label: string }) {
 export function StatisticsCards({ summary, period }: { summary: Summary; period: Period }) {
   const { total, average, best, targetDays, metDays } = summary;
   return (
-    <dl className="grid gap-6">
+    <dl className="theme-dark app-band grid gap-8 p-6 text-ink md:p-10">
       <div className="flex min-w-0 flex-col-reverse justify-end gap-2">
-        <dt className="text-xs text-ink-muted">kata dalam {rangeName(period)}</dt>
-        <dd className="figure [overflow-wrap:anywhere]">{formatNumber(total)}</dd>
+        <dt className="text-sm text-ink-soft">kata dalam {rangeName(period)}</dt>
+        <dd className="font-serif text-[64px] leading-[0.95] font-light [overflow-wrap:anywhere] tabular-nums md:text-[104px]">
+          <CountUp value={total} />
+        </dd>
       </div>
-      <div className="grid grid-cols-3 gap-3 border-t border-line pt-4">
-        <Stat value={formatNumber(average)} label="rata-rata kata per hari" />
+      <div className="grid grid-cols-3 gap-3 border-t border-line pt-5">
+        <Stat value={<CountUp value={average} />} label="rata-rata kata per hari" />
         <Stat
-          value={formatNumber(best?.words ?? 0)}
+          value={<CountUp value={best?.words ?? 0} />}
           label={best ? `kata, hari terbaik (${formatDay(best.day)})` : "kata, hari terbaik"}
         />
         {targetDays > 0 ? (
-          <Stat value={formatNumber(metDays)} label={`dari ${targetDays} hari memenuhi target`} />
+          <Stat
+            value={<CountUp value={metDays} />}
+            label={`dari ${targetDays} hari memenuhi target`}
+          />
         ) : (
           <Stat value="–" label="hari memenuhi target, belum ada data" />
         )}

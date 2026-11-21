@@ -1077,3 +1077,41 @@ html.lp-motion .lp-roll-out {
     stroke-dashoffset: 0;
   }
 }
+
+/* Studio Streak and Statistik (DESIGN.md 6.7, 7.3). Ink dots drop in one after another (calendar
+   per month, the seven-day strip), the today ring closes from empty, chart bars grow from the axis.
+   All once per mount; the global reduced-motion rule makes them instant. */
+.rm-pop {
+  animation: rm-pop 420ms cubic-bezier(0.34, 1.56, 0.64, 1) calc(var(--i, 0) * 14ms + 120ms) both;
+}
+@keyframes rm-pop {
+  from {
+    opacity: 0;
+    scale: 0.2;
+  }
+}
+.rm-ring {
+  animation: rm-ring 1300ms var(--ease-out) 200ms both;
+  transition: stroke-dashoffset 600ms var(--ease-out);
+}
+@keyframes rm-ring {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+.rm-bar {
+  transform-origin: bottom;
+  animation: rm-bar 700ms var(--ease-out) calc(var(--i, 0) * 16ms) both;
+}
+@keyframes rm-bar {
+  from {
+    scale: 1 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rm-pop,
+  .rm-ring,
+  .rm-bar {
+    animation: none;
+  }
+}
