@@ -70,6 +70,7 @@ export function MyProjectsView({ source, store, assignments }: Props) {
       <h1 className="heading-lg">Proyek saya</h1>
       {data.rows.length === 0 ? (
         <EmptyState
+          art="engravingRoom"
           action={
             <ButtonLink href={PROJECTS_HREF} variant="secondary">
               Lihat Projects

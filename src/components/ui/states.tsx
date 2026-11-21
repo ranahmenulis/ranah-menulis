@@ -1,20 +1,53 @@
 import type { ComponentProps, ReactNode } from "react";
 import { Info, WarningCircle } from "@phosphor-icons/react/dist/ssr";
 import { cn } from "@/lib/cn";
+import { EMPTY_ART, type EmptyArtName } from "@/lib/empty-art";
 import { Button } from "./button";
 
-/** Kosong: satu kalimat serif yang menyatakan keadaan + satu aksi. Tanpa ilustrasi. */
+/**
+ * A colour plate above a first-time empty state (DESIGN.md 5.4). Decorative: the sentence says
+ * what is empty. It rises in once and then drifts very slowly; still under reduced motion.
+ */
+export function EmptyPlate({ art, className }: { art: EmptyArtName; className?: string }) {
+  const { src, width, height } = EMPTY_ART[art];
+  return (
+    <span
+      aria-hidden
+      data-empty-art={art}
+      className={cn("rm-plate block overflow-hidden", className)}
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element -- a small static plate, like the landing */}
+      <img
+        src={src}
+        width={width}
+        height={height}
+        alt=""
+        loading="lazy"
+        decoding="async"
+        className="rm-plate-img block h-40 w-auto max-w-full object-cover md:h-48"
+      />
+    </span>
+  );
+}
+
+/**
+ * Kosong: satu kalimat serif yang menyatakan keadaan + satu aksi. `art` menambahkan pelat berwarna
+ * di atasnya, hanya untuk kosong pertama kali (bukan hasil penyaring, Sampah, atau tabel Kelola).
+ */
 export function EmptyState({
   children,
   action,
+  art,
   className,
 }: {
   children: ReactNode;
   action?: ReactNode;
+  art?: EmptyArtName;
   className?: string;
 }) {
   return (
     <div className={cn("grid justify-items-start gap-4 py-8", className)}>
+      {art && <EmptyPlate art={art} className="mb-2" />}
       <p className="font-serif text-xl leading-7 font-semibold text-ink">{children}</p>
       {action}
     </div>

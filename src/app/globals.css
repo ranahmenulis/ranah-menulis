@@ -1165,3 +1165,48 @@ html.lp-motion .lp-roll-out {
     animation: none;
   }
 }
+
+/* First-time empty states (components/ui/states.tsx EmptyPlate, DESIGN.md 9). The plate rises in
+   once, its picture develops from a pale print to its original colours, then drifts very slowly
+   inside its frame. Colour is kept on purpose (user, 21 November 2026); slightly dimmed on a dark
+   page so it does not glare. Still under reduced motion. */
+.rm-plate {
+  animation: rm-plate-in 800ms var(--ease-out) 80ms both;
+}
+.rm-plate-img {
+  transform-origin: 40% 45%;
+  animation:
+    rm-plate-develop 1400ms var(--ease-out) 120ms both,
+    rm-plate-drift 22s ease-in-out 1500ms infinite alternate;
+}
+@keyframes rm-plate-in {
+  from {
+    opacity: 0;
+    translate: 0 14px;
+  }
+}
+@keyframes rm-plate-develop {
+  from {
+    filter: saturate(0) contrast(0.4) brightness(1.5);
+  }
+}
+@keyframes rm-plate-drift {
+  to {
+    scale: 1.06;
+    translate: -1.5% -1%;
+  }
+}
+:root[data-theme="dark"] .rm-plate-img {
+  filter: brightness(0.85);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .rm-plate-img {
+    filter: brightness(0.85);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rm-plate,
+  .rm-plate-img {
+    animation: none;
+  }
+}
