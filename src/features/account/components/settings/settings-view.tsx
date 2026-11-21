@@ -14,6 +14,7 @@ import { DangerSection } from "./danger-section";
 import { PersonalSection } from "./personal-section";
 import { LanguageSection, PreferenceSections } from "./preference-sections";
 import { SecuritySection } from "./security-section";
+import { SettingsHead } from "./settings-head";
 import { WritingSection } from "./writing-section";
 
 /**
@@ -39,6 +40,7 @@ export function SettingsView() {
       <h1 className="heading-lg">{t.settings.title}</h1>
       {hydrated ? (
         <>
+          <SettingsHead profile={account.profile} />
           <PersonalSection account={account} />
           <LanguageSection />
           <WritingSection prefs={account.prefs.writing} />
