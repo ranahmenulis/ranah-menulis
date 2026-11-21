@@ -402,7 +402,7 @@ Halaman untuk menemukan tulisan di luar yang diikuti. PRD menetapkan delapan kat
 
 > **Detail artikel (20 November 2026, kerangka Medium):** urutan satu kolom 680: label, judul, byline, baris cakupan publik, **foto utama** bila ada (selebar layar di ponsel, selebar kolom dari md; tanpa keterangan, tanpa kredit, tanpa radius; `alt` dari penulis), teks serif dengan **drop cap** hanya untuk prosa (bukan Puisi), bilah aksi, baris meta, **kartu penulis** "Ditulis oleh" (avatar 56, bio, Ikuti), komentar, "Lainnya dari {penulis}" (maks. 3), lalu Tulisan terkait. Foto profil sendiri tampil di semua entri milikmu (`AuthorAvatar`); penulis contoh tetap memakai inisial.
 
-> Implementasi (langkah 5): kolom 680 di tengah; di ponsel bilah aksi lengket di bawah menggantikan bilah navigasi dan memuat menu ⋯, bilah atas hanya panah kembali. Ubin Jelajahi memakai container query (3 kolom ≥ 896px, 2 kolom ≥ 576px, di bawahnya daftar bergaris).
+> Implementasi (langkah 5): kolom 680 di tengah; di ponsel bilah aksi lengket di bawah menggantikan bilah navigasi dan memuat menu ⋯ (semua aksi berupa ikon dengan angka atau `aria-label`, tanpa label teks, supaya muat di 375px; 21 November 2026), bilah atas hanya panah kembali. Ubin Jelajahi memakai container query (3 kolom ≥ 896px, 2 kolom ≥ 576px, di bawahnya daftar bergaris).
 
 Melengkapi 6.1 untuk postingan pendek (catatan) dan bagian komentar:
 

@@ -82,14 +82,22 @@ function Actions({
         {text("Komentar ")}
         {count(comments)}
       </a>
-      <Button variant="text" onClick={onShare} className="gap-1.5! px-2.5! font-normal!">
+      {/* On phones Bagikan and Simpan are icons only, like Apresiasi and Komentar, so the bar fits
+          a 375px screen; the accessible name stays the same. */}
+      <Button
+        variant="text"
+        onClick={onShare}
+        aria-label={compact ? "Bagikan" : undefined}
+        className="gap-1.5! px-2.5! font-normal!"
+      >
         <ShareNetwork size={20} aria-hidden />
-        Bagikan
+        {text("Bagikan")}
       </Button>
       <Button
         variant="text"
         aria-pressed={saved}
         onClick={onSave}
+        aria-label={compact ? (saved ? "Tersimpan" : "Simpan") : undefined}
         className={cn("group ml-auto gap-1.5! px-2.5! font-normal!", saved && "text-ink!")}
       >
         <BookmarkSimple
@@ -98,7 +106,7 @@ function Actions({
           aria-hidden
           className={pressIcon}
         />
-        {saved ? "Tersimpan" : "Simpan"}
+        {text(saved ? "Tersimpan" : "Simpan")}
       </Button>
     </>
   );
