@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useSyncExternalStore } from "react";
+import { isDemoRolesEnabled } from "./env";
 import { NO_ROLES, parseRoles, type ManagerRole } from "./roles";
 
 /**
- * Who is looking while sign-in is bypassed. Always "masuk" (the dummy user) except in development
- * and tests, where `?sebagai=tamu` switches the tab to the signed-out view, `?sebagai=masuk`
+ * Who is looking while sign-in is bypassed. Always "masuk" (the dummy user) except in development,
+ * tests, and builds with `NEXT_PUBLIC_DEMO_ROLES=1`, where `?sebagai=tamu` switches the tab to the signed-out view, `?sebagai=masuk`
  * switches back, and `?sebagai=editor,juri` signs in holding those management roles (clearing any
  * earlier ones). Removed together with the bypass when real auth arrives.
  */
@@ -14,7 +15,7 @@ export type Viewer = "masuk" | "tamu";
 const KEY = "rm-viewer";
 const ROLES_KEY = "rm-roles";
 const EVENT = "rm-viewer-change";
-const enabled = process.env.NODE_ENV !== "production";
+const enabled = process.env.NODE_ENV !== "production" || isDemoRolesEnabled();
 
 function read(): Viewer {
   if (!enabled) return "masuk";
