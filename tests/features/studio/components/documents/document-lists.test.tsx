@@ -221,3 +221,26 @@ describe("LiveList: document targets", () => {
     expect(screen.getAllByText(/Diubah/)).toHaveLength(2);
   });
 });
+
+describe("LiveList: page marks", () => {
+  it("draws each document as a page that follows its kind and is hidden from readers", () => {
+    const list = listOf([{ ...doc("a", "Sajak Pagi"), kind: "puisi" }, doc("b", "Catatan")]);
+    render(
+      <ToastProvider>
+        <LiveList
+          list={list}
+          folderId={null}
+          folderName={null}
+          onOpenFolder={vi.fn()}
+          onArchiveAction={vi.fn()}
+          onPending={vi.fn()}
+        />
+      </ToastProvider>,
+    );
+    const poem = rowOf("Sajak Pagi").querySelector("[data-page]")!;
+    expect(poem.getAttribute("data-page")).toBe("puisi");
+    expect(poem.getAttribute("aria-hidden")).toBe("true");
+    expect(poem.querySelectorAll("line").length).toBeGreaterThan(0);
+    expect(rowOf("Catatan").querySelector("[data-page]")!.getAttribute("data-page")).toBe("polos");
+  });
+});

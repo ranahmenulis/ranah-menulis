@@ -1,13 +1,23 @@
 "use client";
 
-import { FileText, FolderSimple } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { Menu, type MenuEntry } from "@/components/ui/menu";
+import type { DocumentKind } from "../../document-classification";
+import { DocumentMark, FolderMark } from "./document-mark";
 
-/** One line of the Dokumen list: icon, title, quiet meta, and a ⋯ menu (DESIGN.md 6.4). */
+/** Rows after this many arrive together, so a long list does not trickle in. */
+const STAGGER_ROWS = 12;
+
+/**
+ * One line of the Dokumen list: the document as a small page, title, quiet meta, and a ⋯ menu
+ * (DESIGN.md 6.4). Rows rise in once when they mount, one after another.
+ */
 export function Row({
   kind,
+  page,
+  faded = false,
+  index = 0,
   title,
   href,
   onOpen,
@@ -19,6 +29,12 @@ export function Row({
   details,
 }: {
   kind: "folder" | "document";
+  /** The document the page mark is drawn from; a blank page without it. */
+  page?: { id: string; kind?: DocumentKind; wordCount: number };
+  /** Archived and trashed rows: the page sits back. */
+  faded?: boolean;
+  /** Position in the list, for the arrival stagger. */
+  index?: number;
   title: string;
   href?: string;
   onOpen?: () => void;
@@ -31,7 +47,6 @@ export function Row({
   tags?: string[];
   details?: ReactNode;
 }) {
-  const Icon = kind === "folder" ? FolderSimple : FileText;
   const heading =
     href !== undefined ? (
       <Link href={href} className="hover:underline hover:underline-offset-3">
@@ -49,8 +64,15 @@ export function Row({
       title
     );
   return (
-    <li className="grid grid-cols-[20px_minmax(0,1fr)_auto] items-start gap-x-3 border-b border-line py-4 md:grid-cols-[24px_minmax(0,1fr)_auto] md:gap-x-4 md:py-5">
-      <Icon size={24} aria-hidden className="mt-0.5 text-ink-muted max-md:size-5" />
+    <li
+      className="rm-row-in rm-page-host grid grid-cols-[28px_minmax(0,1fr)_auto] items-start gap-x-3 border-b border-line py-4 md:grid-cols-[34px_minmax(0,1fr)_auto] md:gap-x-4 md:py-5"
+      style={{ "--i": Math.min(index, STAGGER_ROWS) } as CSSProperties}
+    >
+      {kind === "folder" ? (
+        <FolderMark className="mt-0.5" />
+      ) : (
+        <DocumentMark page={page ?? { id: title, wordCount: 0 }} faded={faded} className="mt-0.5" />
+      )}
       <div className="min-w-0">
         <h2 className="heading-sm [overflow-wrap:anywhere] text-ink">{heading}</h2>
         <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs [overflow-wrap:anywhere] text-ink-muted">

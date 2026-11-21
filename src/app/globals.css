@@ -1115,3 +1115,53 @@ html.lp-motion .lp-roll-out {
     animation: none;
   }
 }
+
+/* Studio Dokumen (DESIGN.md 6.4). Rows rise in once when they mount, one after another; each page
+   writes its lines in from the left; pointing at a row lifts its page and fans a folder's sheets.
+   The global reduced-motion rule keeps everything still. */
+.rm-row-in {
+  animation: rm-row-in 520ms var(--ease-out) calc(var(--i, 0) * 45ms) both;
+}
+@keyframes rm-row-in {
+  from {
+    opacity: 0;
+    translate: 0 10px;
+  }
+}
+.rm-page {
+  transition:
+    translate 260ms var(--ease-out),
+    rotate 260ms var(--ease-out),
+    box-shadow 260ms var(--ease-out);
+}
+.rm-page-line {
+  transform-box: fill-box;
+  transform-origin: left;
+  animation: rm-page-line 520ms var(--ease-out) calc(220ms + var(--i, 0) * 60ms) both;
+}
+@keyframes rm-page-line {
+  from {
+    scale: 0 1;
+  }
+}
+.rm-page-fan {
+  transition: rotate 300ms var(--ease-out);
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .rm-page-host:hover .rm-page {
+    translate: 0 -3px;
+    rotate: -3deg;
+  }
+  .rm-page-host:hover .rm-page-fan {
+    rotate: -14deg;
+  }
+  .rm-page-host:hover .rm-page-fan[data-fan="right"] {
+    rotate: 12deg;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rm-row-in,
+  .rm-page-line {
+    animation: none;
+  }
+}

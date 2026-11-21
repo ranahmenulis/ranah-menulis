@@ -6,50 +6,10 @@ import { useCountUp } from "@/lib/use-count-up";
 import type { StreakData } from "../../hooks/use-streak-data";
 import { addDays, dayState, parseDay } from "../../streak";
 import { formatRun, streakLine } from "../../streak-copy";
+import { TodayRing } from "./today-ring";
 
-const number = new Intl.NumberFormat("id-ID");
 const weekday = new Intl.DateTimeFormat("id-ID", { weekday: "narrow" });
 const shortDay = new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "short" });
-
-/** Today's words as a ring that closes toward the target, the number rolling up inside it. */
-function TodayRing({ words, target }: { words: number; target: number }) {
-  const shown = useCountUp(words);
-  const progress = Math.min(1, words / target);
-  return (
-    <div
-      role="progressbar"
-      aria-label="Progres hari ini"
-      aria-valuemin={0}
-      aria-valuemax={target}
-      aria-valuenow={words}
-      className="relative grid size-44 shrink-0 place-items-center md:size-52"
-    >
-      <svg viewBox="0 0 100 100" className="absolute inset-0 -rotate-90" fill="none" aria-hidden>
-        <circle cx={50} cy={50} r={45} stroke="var(--line)" strokeWidth={3} />
-        <circle
-          cx={50}
-          cy={50}
-          r={45}
-          stroke="var(--ink)"
-          strokeWidth={3}
-          strokeLinecap="round"
-          pathLength={1}
-          strokeDasharray={1}
-          strokeDashoffset={1 - progress}
-          className="rm-ring"
-          style={{ "--to": 1 - progress } as CSSProperties}
-        />
-      </svg>
-      <div className="grid justify-items-center gap-0.5 text-center">
-        <span className="text-xs text-ink-muted">Hari ini</span>
-        <span className="font-serif text-[40px] leading-none tabular-nums md:text-[48px]">
-          {number.format(shown)}
-        </span>
-        <span className="text-xs text-ink-muted">/ {number.format(target)} kata</span>
-      </div>
-    </div>
-  );
-}
 
 /** The last seven days as ink dots, today last; they drop in one after another. */
 function WeekDots({ data }: { data: StreakData }) {

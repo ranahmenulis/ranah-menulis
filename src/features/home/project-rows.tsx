@@ -6,6 +6,7 @@ import { StatusSubmission } from "@/components/ui/status-submission";
 import { TextLink } from "@/components/ui/text-link";
 import { cn } from "@/lib/cn";
 import { useMyProjects, type MyProjectsData } from "@/features/projects/hooks/use-my-projects";
+import { ProjectCover } from "@/features/projects/components/project-cover";
 import { RunningClassList } from "@/features/projects/kelas/components/running-classes";
 import { useRunningClasses } from "@/features/projects/kelas/hooks/use-running-classes";
 import type { AssignmentStore } from "@/features/projects/kelas/storage/assignment-store";
@@ -109,24 +110,27 @@ function ProjectLine({ row }: { row: MyProject }) {
   const waiting = row.registration.status !== "terdaftar";
   return (
     <>
-      {work ? (
-        <StatusSubmission status={work.status} outlineRevisi />
-      ) : (
-        <span className="inline-flex h-6 items-center text-xs text-ink-muted">
-          {waiting ? "Menunggu pembayaran" : "Terdaftar"}
+      <ProjectCover project={row.project} className="w-11 shrink-0" />
+      <span className="grid min-w-0 justify-items-start gap-1.5 text-sm">
+        <span className="min-w-0">
+          <TextLink
+            href={work ? submissionHref(work.slug, work.id) : projectHref(row.project.slug)}
+            className="font-medium wrap-anywhere"
+          >
+            {row.project.title}
+          </TextLink>
+          <span className="block text-xs wrap-anywhere text-ink-muted">
+            {work ? `“${work.title}”` : "Belum ada karya terkirim"}
+            {due !== null && ` · tenggat revisi ${formatProjectDate(due, row.project.timeZone)}`}
+          </span>
         </span>
-      )}
-      <span className="min-w-0 text-sm">
-        <TextLink
-          href={work ? submissionHref(work.slug, work.id) : projectHref(row.project.slug)}
-          className="font-medium wrap-anywhere"
-        >
-          {row.project.title}
-        </TextLink>
-        <span className="block text-xs wrap-anywhere text-ink-muted">
-          {work ? `“${work.title}”` : "Belum ada karya terkirim"}
-          {due !== null && ` · tenggat revisi ${formatProjectDate(due, row.project.timeZone)}`}
-        </span>
+        {work ? (
+          <StatusSubmission status={work.status} outlineRevisi />
+        ) : (
+          <span className="text-xs text-ink-muted">
+            {waiting ? "Menunggu pembayaran" : "Terdaftar"}
+          </span>
+        )}
       </span>
     </>
   );
@@ -155,7 +159,7 @@ export function MyProjectsRow({ my }: { my: MyProjectsData }) {
           <li
             key={row.project.slug}
             className={cn(
-              "flex items-start gap-3 border-t border-line py-2 first:border-t-0 first:pt-0",
+              "rm-cover-host flex items-start gap-3 border-t border-line py-3 first:border-t-0 first:pt-0",
               i > 0 && MORE,
             )}
           >
