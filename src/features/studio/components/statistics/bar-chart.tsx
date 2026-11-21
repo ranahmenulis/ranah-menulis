@@ -1,6 +1,13 @@
 "use client";
 
-import { useId, useRef, useState, type KeyboardEvent, type PointerEvent } from "react";
+import {
+  useId,
+  useRef,
+  useState,
+  type CSSProperties,
+  type KeyboardEvent,
+  type PointerEvent,
+} from "react";
 import { cn } from "@/lib/cn";
 import { axisTicks, type Bucket, type Period } from "../../statistics";
 import { axisLabel, rangeName, readout, tickLabel, unitName } from "../../statistics-copy";
@@ -97,7 +104,7 @@ export function BarChart({ buckets, period }: { buckets: Bucket[]; period: Perio
           onKeyDown={onKeyDown}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
-          className="relative h-52 touch-pan-y"
+          className="relative h-60 touch-pan-y md:h-72"
         >
           {ticks.map((tick) => (
             <span
@@ -124,8 +131,8 @@ export function BarChart({ buckets, period }: { buckets: Bucket[]; period: Perio
                 )}
                 {bucket.words > 0 && (
                   <span
-                    style={{ height: pct(bucket.words, top) }}
-                    className="relative block min-h-0.5 w-full max-w-6 bg-ink"
+                    style={{ height: pct(bucket.words, top), "--i": index } as CSSProperties}
+                    className="rm-bar relative block min-h-0.5 w-full max-w-6 bg-ink"
                   />
                 )}
               </div>

@@ -110,10 +110,11 @@ describe("theme-color", () => {
   it("matches the --canvas token of each theme in globals.css", () => {
     const css = readFileSync(path.resolve(__dirname, "../../../src/app/globals.css"), "utf8");
     // The landing deliberately uses a deeper black under .lp-root (DESIGN.md 4.6, "Dark landing");
-    // those rules are scoped to the landing and are not app tokens, so they are left out here.
+    // those rules are scoped to the landing and are not app tokens, so they are left out here. The
+    // app band (DESIGN.md 4.5) lifts its own surface on dark pages; it is a band, not the page.
     const appCss = css
       .split(/(?<=\})/)
-      .filter((rule) => !rule.includes(".lp-root"))
+      .filter((rule) => !rule.includes(".lp-root") && !rule.includes(".app-band"))
       .join("");
     const canvases = [...appCss.matchAll(/--canvas:\s*(#[0-9a-f]{6})/gi)].map((m) => m[1]);
     expect(new Set(canvases)).toEqual(new Set(Object.values(THEME_COLORS)));

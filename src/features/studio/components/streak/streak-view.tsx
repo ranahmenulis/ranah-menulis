@@ -102,7 +102,7 @@ export function StreakView() {
             onSetTarget={() => setDialog(true)}
           />
 
-          <div className="mt-12 grid gap-12 md:grid-cols-[minmax(0,1fr)_minmax(0,20rem)]">
+          <div className="mt-14 grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,20rem)]">
             <div className="grid content-start gap-8">
               <StreakCalendar
                 today={today}

@@ -26,7 +26,7 @@ function LoadingBlocks() {
     >
       <Skeleton className="h-8 w-56 rounded-full" />
       <Skeleton className="h-14 w-44" />
-      <Skeleton className="h-52 w-full" />
+      <Skeleton className="h-60 w-full md:h-72" />
     </div>
   );
 }

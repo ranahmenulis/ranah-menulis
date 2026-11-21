@@ -19,7 +19,7 @@ export function MilestoneList({ items, today }: { items: Milestone[]; today: str
           const reached = m.achievedOn !== null;
           return (
             <li key={m.id} className="flex items-center gap-3 border-b border-line py-3">
-              <Dot kind={reached ? "full" : "lock"} size={20} />
+              <Dot kind={reached ? "full" : "lock"} size={28} />
               <div className="min-w-0 flex-1">
                 <p className={cn("text-base", reached ? "font-medium" : "text-ink-muted")}>
                   {m.title}
