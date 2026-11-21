@@ -5,7 +5,9 @@ import { TextLink } from "@/components/ui/text-link";
 import { PROJECTS_HREF } from "@/features/app-shell/nav";
 import { useViewer } from "@/lib/viewer";
 import { categoryLabel, formatProjectDate, projectState } from "../project-model";
-import { deadlineText } from "../project-text";
+import { cn } from "@/lib/cn";
+import { deadlineText, stateLabel } from "../project-text";
+import { ProjectCover } from "./project-cover";
 import { liveRegistration } from "../payment-model";
 import { useRegistrations } from "../registration-store";
 import { activeSubmissions } from "../submission-model";
@@ -18,23 +20,28 @@ import { CategoryBlockView, Section } from "./category-blocks";
 import { ProjectAside } from "./project-aside";
 import { ProjectDetailSkeleton, ProjectGone } from "./projects-states";
 
-function Schedule({ project, state }: { project: Project; state: ProjectState }) {
+function Schedule({ project, state, now }: { project: Project; state: ProjectState; now: number }) {
   const rows = [
-    { label: "Pendaftaran", value: deadlineText(project, state) },
+    { label: "Pendaftaran", value: deadlineText(project, state), done: state === "ditutup" },
     ...project.milestones.map((m) => ({
       label: m.label,
       value: `${formatProjectDate(m.at, project.timeZone)} ${project.timeZone}`,
+      done: m.at < now,
     })),
   ];
   return (
     <Section title="Jadwal">
-      <dl className="grid">
+      <dl className="relative grid gap-5 pl-7 before:absolute before:top-2 before:bottom-2 before:left-[5px] before:w-px before:bg-line">
         {rows.map((row, i) => (
-          <div
-            key={i}
-            className="flex flex-wrap items-baseline justify-between gap-x-4 border-b border-line py-3 text-base"
-          >
-            <dt className="wrap-anywhere">{row.label}</dt>
+          <div key={i} className="relative grid gap-0.5">
+            <span
+              aria-hidden
+              className={cn(
+                "absolute top-1.5 -left-7 size-[11px] rounded-full border-2 border-ink",
+                row.done ? "bg-ink" : "bg-canvas",
+              )}
+            />
+            <dt className="text-base font-medium wrap-anywhere">{row.label}</dt>
             <dd className="text-sm text-ink-muted">{row.value}</dd>
           </div>
         ))}
@@ -44,6 +51,31 @@ function Schedule({ project, state }: { project: Project; state: ProjectState })
         berlaku sampai akhir hari pada tanggal itu.
       </p>
     </Section>
+  );
+}
+
+/** The project's header: a dark band with its cover, so every project page opens on its face. */
+function DetailHeader({ project, state }: { project: Project; state: ProjectState }) {
+  return (
+    <header
+      data-cover-reveal
+      data-seen=""
+      className="rm-cover-host theme-dark app-band mt-4 grid items-end gap-6 p-6 text-ink sm:grid-cols-[minmax(0,1fr)_auto] md:p-10"
+    >
+      <div className="grid min-w-0 gap-3">
+        <p className="text-xs text-ink-muted">
+          <span className="font-medium text-ink">{categoryLabel(project.category)}</span> ·{" "}
+          {stateLabel[state]}
+        </p>
+        <h1 className="read-title text-balance wrap-anywhere">{project.title}</h1>
+        <p className="read-subtitle wrap-anywhere text-ink-soft!">{project.summary}</p>
+      </div>
+      <ProjectCover
+        project={project}
+        showTitle
+        className="rm-cover-enter w-32 max-sm:-order-1 md:w-44"
+      />
+    </header>
   );
 }
 
@@ -88,14 +120,10 @@ export function ProjectDetail({ slug, source, store }: Props) {
         Semua Projects
       </TextLink>
 
-      <div className="mt-6 grid gap-x-10 gap-y-8 lg:grid-cols-[minmax(0,1fr)_20rem]">
-        <header className="grid min-w-0 gap-2 lg:col-start-1">
-          <p className="text-xs font-medium">{categoryLabel(project.category)}</p>
-          <h1 className="read-title wrap-anywhere">{project.title}</h1>
-          <p className="read-subtitle wrap-anywhere">{project.summary}</p>
-        </header>
+      <DetailHeader project={project} state={state} />
 
-        <div className="max-lg:order-2 lg:col-start-2 lg:row-span-2 lg:row-start-1">
+      <div className="mt-10 grid gap-x-12 gap-y-10 lg:grid-cols-[minmax(0,1fr)_20rem]">
+        <div className="max-lg:order-1 lg:col-start-2 lg:row-start-1">
           <div className="lg:sticky lg:top-[calc(3.5rem+var(--safe-top)+1.5rem)]">
             <ProjectAside
               project={project}
@@ -109,7 +137,7 @@ export function ProjectDetail({ slug, source, store }: Props) {
           </div>
         </div>
 
-        <div className="grid min-w-0 content-start gap-10 max-lg:order-3 lg:col-start-1">
+        <div className="grid min-w-0 content-start gap-12 max-lg:order-2 lg:col-start-1 lg:row-start-1">
           <Section title="Tentang proyek">
             {project.about.map((paragraph, i) => (
               <p key={i} className="read-body wrap-anywhere">
@@ -129,7 +157,7 @@ export function ProjectDetail({ slug, source, store }: Props) {
           </Section>
 
           <CategoryBlockView block={project.block} />
-          <Schedule project={project} state={state} />
+          <Schedule project={project} state={state} now={data.now} />
           {project.block.kind === "kelas" && <ClassTestimonials slug={project.slug} />}
 
           <Section title="Hak cipta dan ketentuan">

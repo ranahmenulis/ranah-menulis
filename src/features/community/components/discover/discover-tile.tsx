@@ -5,7 +5,7 @@ import { BookmarkSimple, ChatCircle, Heart } from "@phosphor-icons/react/dist/ss
 import Link from "next/link";
 import { cn } from "@/lib/cn";
 import { AuthorLink } from "@/features/profile/author-link";
-import { revealDelay, useRevealOnce } from "../../hooks/use-reveal-once";
+import { revealDelay, useRevealOnce } from "@/lib/use-reveal-once";
 import { useRowSpan } from "../../hooks/use-row-span";
 import { authorOf, excerptOf, postLabel, tileForm, type TileForm } from "../../post-model";
 import type { Post, PostImage } from "../../types";

@@ -9,6 +9,7 @@ import { registrationFee } from "../registration-model";
 import { kirimHref } from "../submission-model";
 import { CancelRegistration } from "./cancel-registration";
 import type { Project, Registration } from "../types";
+import { MilestoneHero } from "./milestone-hero";
 
 /** One column of 680 with the way back always on top (every full-width screen needs an exit). */
 export function RegisterShell({ project, children }: { project: Project; children: ReactNode }) {
@@ -99,43 +100,26 @@ export function RegisterStatus({
 
   return (
     <RegisterShell project={project}>
-      <div className="grid gap-3">
-        <h1 className="font-serif text-2xl leading-8 font-semibold">
-          {statusTitle(registration, justNow)}
-        </h1>
+      <MilestoneHero
+        project={project}
+        title={statusTitle(registration, justNow)}
+        celebrate={justNow && confirmed}
+        actions={<RegisterActions project={project} confirmed={confirmed} />}
+      >
         <p className="text-base wrap-anywhere">
           {project.title}
           {registration.packageName ? ` · Paket ${registration.packageName}` : ""}
         </p>
-        <p className="text-sm text-ink-muted">
+        <p className="text-sm text-ink-soft">
           Terdaftar pada {formatProjectDate(registration.registeredAt, project.timeZone)}. Ketentuan
           versi {registration.termsVersion} disetujui.
         </p>
         {!confirmed && (
-          <p className="text-sm text-ink-muted">
+          <p className="text-sm text-ink-soft">
             Biaya {fee}. Kuotamu ditahan sampai pembayaran masuk atau waktunya habis.
           </p>
         )}
-      </div>
-      <div className="flex flex-wrap items-center gap-3">
-        {confirmed && project.submission ? (
-          <>
-            <ButtonLink href={kirimHref(project.slug)}>Kirim karya</ButtonLink>
-            <ButtonLink href={projectHref(project.slug)} variant="secondary">
-              Lihat proyek
-            </ButtonLink>
-          </>
-        ) : confirmed ? (
-          <ButtonLink href={projectHref(project.slug)}>Lihat proyek</ButtonLink>
-        ) : (
-          <>
-            <ButtonLink href={payHref(project.slug)}>Bayar sekarang</ButtonLink>
-            <ButtonLink href={projectHref(project.slug)} variant="secondary">
-              Lihat proyek
-            </ButtonLink>
-          </>
-        )}
-      </div>
+      </MilestoneHero>
       <CancelRegistration
         project={project}
         registration={registration}
@@ -143,5 +127,29 @@ export function RegisterStatus({
         {...stores}
       />
     </RegisterShell>
+  );
+}
+
+function RegisterActions({ project, confirmed }: { project: Project; confirmed: boolean }) {
+  return (
+    <>
+      {confirmed && project.submission ? (
+        <>
+          <ButtonLink href={kirimHref(project.slug)}>Kirim karya</ButtonLink>
+          <ButtonLink href={projectHref(project.slug)} variant="secondary">
+            Lihat proyek
+          </ButtonLink>
+        </>
+      ) : confirmed ? (
+        <ButtonLink href={projectHref(project.slug)}>Lihat proyek</ButtonLink>
+      ) : (
+        <>
+          <ButtonLink href={payHref(project.slug)}>Bayar sekarang</ButtonLink>
+          <ButtonLink href={projectHref(project.slug)} variant="secondary">
+            Lihat proyek
+          </ButtonLink>
+        </>
+      )}
+    </>
   );
 }

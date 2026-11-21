@@ -5,6 +5,7 @@ import { registerHref, registrationFee } from "../registration-model";
 import { kirimHref } from "../submission-model";
 import type { Project, Registration } from "../types";
 import { RegisterShell } from "./register-states";
+import { MilestoneHero } from "./milestone-hero";
 
 /** Placeholder for the QRIS code: the real one comes with the payment service [konfirmasi Q-19]. */
 function QrisSample({ amount }: { amount: number }) {
@@ -72,26 +73,29 @@ export function PayDone({
 }) {
   return (
     <RegisterShell project={project}>
-      <div className="grid gap-3">
-        <h1 className="font-serif text-2xl leading-8 font-semibold">Pembayaran diterima.</h1>
+      <MilestoneHero
+        project={project}
+        title="Pembayaran diterima."
+        celebrate
+        actions={
+          project.submission ? (
+            <>
+              <ButtonLink href={kirimHref(project.slug)}>Kirim karya</ButtonLink>
+              <ButtonLink href={projectHref(project.slug)} variant="secondary">
+                Lihat proyek
+              </ButtonLink>
+            </>
+          ) : (
+            <ButtonLink href={projectHref(project.slug)}>Lihat proyek</ButtonLink>
+          )
+        }
+      >
         <p className="text-base wrap-anywhere">{project.title}</p>
-        <p className="text-sm text-ink-muted">
+        <p className="text-sm text-ink-soft">
           Kamu sudah terdaftar. Biaya{" "}
           {moneyLabel(registrationFee(project, registration.packageName))}.
         </p>
-      </div>
-      <div className="flex flex-wrap items-center gap-3">
-        {project.submission ? (
-          <>
-            <ButtonLink href={kirimHref(project.slug)}>Kirim karya</ButtonLink>
-            <ButtonLink href={projectHref(project.slug)} variant="secondary">
-              Lihat proyek
-            </ButtonLink>
-          </>
-        ) : (
-          <ButtonLink href={projectHref(project.slug)}>Lihat proyek</ButtonLink>
-        )}
-      </div>
+      </MilestoneHero>
     </RegisterShell>
   );
 }

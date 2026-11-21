@@ -14,6 +14,7 @@ import { revisionDueAt } from "../submission-status";
 import { sentAtText } from "../submission-text";
 import type { Submission } from "../submission-types";
 import type { Project } from "../types";
+import { ProjectCover } from "./project-cover";
 
 /** The line under a work: how many versions, how long, when it was sent, and what is due. */
 function workMeta(work: Submission, project: Project): string {
@@ -80,9 +81,10 @@ export function MyProjectGroup({ row }: { row: MyProject }) {
   return (
     <section
       aria-labelledby={`saya-${project.slug}`}
-      className="grid gap-3 border-b border-line py-5"
+      className="rm-cover-host grid grid-cols-[3.5rem_minmax(0,1fr)] gap-x-4 gap-y-3 border-b border-line py-6 sm:grid-cols-[4.5rem_minmax(0,1fr)]"
     >
-      <div className="grid gap-1">
+      <ProjectCover project={project} className="row-span-2 self-start" />
+      <div className="grid min-w-0 gap-1">
         <p className="text-xs text-ink-muted">
           {categoryLabel(project.category)} ·{" "}
           {registration.status === "terdaftar" ? "Terdaftar" : "Menunggu pembayaran"}

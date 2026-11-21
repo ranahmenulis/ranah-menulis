@@ -20,6 +20,8 @@ import { sentAtText } from "../submission-text";
 import type { Submission } from "../submission-types";
 import type { ProjectFixture } from "../types";
 import { useProjects } from "../use-projects";
+import { MilestoneHero } from "./milestone-hero";
+import type { Project } from "../types";
 import { useSubmissions } from "../use-submissions";
 import { MyError, MyGuest, MyShell, MySkeleton } from "./my-states";
 import { ReviseForm } from "./revise-form";
@@ -33,25 +35,30 @@ type Props = {
   documents?: DocumentStore;
 };
 
-function Done({ work, slug }: { work: Submission; slug: string }) {
+function Done({ work, slug, project }: { work: Submission; slug: string; project?: Project }) {
   const latest = work.versions.at(-1);
   return (
     <MyShell back={{ href: submissionHref(slug, work.id), label: "Kembali ke karya" }}>
-      <div className="grid justify-items-start gap-3">
-        <h1 className="font-serif text-2xl leading-8 font-semibold">Revisimu terkirim.</h1>
+      <MilestoneHero
+        project={project ?? { slug, category: "antologi", title: work.title }}
+        title="Revisimu terkirim."
+        celebrate
+        actions={
+          <>
+            <ButtonLink href={submissionHref(slug, work.id)}>Lihat karya</ButtonLink>
+            <TextLink href={MY_PROJECTS_HREF} className="text-sm text-ink-muted">
+              Proyek saya
+            </TextLink>
+          </>
+        }
+      >
         <p className="text-base wrap-anywhere">{work.title}</p>
         <StatusSubmission status={work.status} />
-        <p className="text-sm text-ink-muted">
+        <p className="text-sm text-ink-soft">
           Versi {latest?.version}: {versionSizeText(latest)}, dibekukan{" "}
           {sentAtText(latest?.frozenAt ?? work.submittedAt)}. Versi sebelumnya tetap tersimpan.
         </p>
-      </div>
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
-        <ButtonLink href={submissionHref(slug, work.id)}>Lihat karya</ButtonLink>
-        <TextLink href={MY_PROJECTS_HREF} className="text-sm text-ink-muted">
-          Proyek saya
-        </TextLink>
-      </div>
+      </MilestoneHero>
     </MyShell>
   );
 }
@@ -97,7 +104,8 @@ export function ReviseView({
     return <MySkeleton label="Memuat halaman revisi" />;
   }
 
-  if (sent) return <Done work={sent} slug={slug} />;
+  if (sent)
+    return <Done work={sent} slug={slug} project={catalog.projects.find((p) => p.slug === slug)} />;
   const project = catalog.projects.find((p) => p.slug === slug && p.publication === "terbit");
   const work = submissions.submissions.find((s) => s.id === id && s.slug === slug);
   if (!project || !work) {
