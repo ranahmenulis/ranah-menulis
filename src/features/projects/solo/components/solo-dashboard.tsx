@@ -3,6 +3,8 @@
 import { ButtonLink } from "@/components/ui/button";
 import { Notice } from "@/components/ui/states";
 import { TextLink } from "@/components/ui/text-link";
+import { CountUp } from "@/components/ui/count-up";
+import { BandFigure, DashboardBand } from "../../components/dashboard-band";
 import { MyError, MyShell, MySkeleton } from "../../components/my-states";
 import { ProjectGone } from "../../components/projects-states";
 import { formatProjectDate } from "../../project-model";
@@ -14,7 +16,7 @@ import type { Submission } from "../../submission-types";
 import type { ProjectFixture, TimeZoneName } from "../../types";
 import type { SoloProgress } from "../types";
 import { useSolo, type SoloData } from "../hooks/use-solo";
-import { acceptedAt } from "../solo-model";
+import { acceptedAt, soloFigure } from "../solo-model";
 import { currentStage, timeline } from "../stage-model";
 import { soloStore } from "../storage/store";
 import type { SoloStore } from "../storage/solo-store";
@@ -111,24 +113,34 @@ export function SoloDashboard({ slug, source, submissions, store = soloStore }: 
 
 type Ready = Extract<SoloData, { status: "ready" }>;
 
-function SoloHeader({
-  title,
-  packageName,
-  work,
-}: {
-  title: string;
-  packageName?: string;
-  work?: Submission;
-}) {
+function SoloBand({ data }: { data: Ready }) {
+  const { project, registration, work, stages, progress } = data;
+  const figure = soloFigure(work, stages, progress);
+  const facts = [
+    registration.packageName && `Paket ${registration.packageName}`,
+    work && `Naskah: ${work.title}`,
+  ].filter(Boolean);
   return (
-    <header className="grid gap-2">
-      <p className="text-xs text-ink-muted">Dasbor penerbitan</p>
-      <h1 id={TITLE_ID} tabIndex={-1} className="heading-lg wrap-anywhere outline-none">
-        {title}
-      </h1>
-      {packageName && <p className="text-sm wrap-anywhere text-ink-muted">Paket {packageName}</p>}
-      {work && <p className="text-sm wrap-anywhere text-ink-muted">Naskah: {work.title}</p>}
-    </header>
+    <DashboardBand project={project} eyebrow="Dasbor penerbitan" titleId={TITLE_ID}>
+      {figure.kind === "stage" ? (
+        <BandFigure
+          figure={
+            <>
+              <CountUp value={figure.index} />
+              <span className="text-ink-soft">/{figure.total}</span>
+            </>
+          }
+          caption={`Tahap ${figure.index} dari ${figure.total} · ${figure.label}`}
+        />
+      ) : (
+        <BandFigure words figure={figure.label} />
+      )}
+      {facts.map((fact) => (
+        <p key={fact as string} className="text-sm wrap-anywhere text-ink-soft">
+          {fact}
+        </p>
+      ))}
+    </DashboardBand>
   );
 }
 
@@ -153,7 +165,7 @@ function rowsOf(data: Ready, accepted: boolean) {
 }
 
 function SoloReady({ data, slug, store }: { data: Ready; slug: string; store: SoloStore }) {
-  const { project, registration, work, phase, stages, progress } = data;
+  const { project, work, phase, stages, progress } = data;
   const zone = project.timeZone;
   // Only an accepted submission has stages that run; the target is what the actions work on.
   const target = phase === "diterima" && work ? { id: work.id, slug, stages } : null;
@@ -163,7 +175,7 @@ function SoloReady({ data, slug, store }: { data: Ready; slug: string; store: So
 
   return (
     <MyShell back={backToProject(slug)}>
-      <SoloHeader title={project.title} packageName={registration.packageName} work={work} />
+      <SoloBand data={data} />
       {!target && <PhaseNotice slug={slug} work={work} />}
       <ApprovedNotice progress={progress} zone={zone} />
       {phase !== "ditolak" && <StageTimeline rows={rows} zone={zone} />}

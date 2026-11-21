@@ -1,6 +1,7 @@
 "use client";
 
 import { Notice } from "@/components/ui/states";
+import { DashboardBand } from "../../components/dashboard-band";
 import { MyError, MyShell, MySkeleton } from "../../components/my-states";
 import { ProjectGone } from "../../components/projects-states";
 import { formatProjectDate } from "../../project-model";
@@ -11,7 +12,7 @@ import type { AssignmentStore } from "../storage/assignment-store";
 import type { ClassFixture } from "../types";
 import { ClassAssignments } from "./class-assignments";
 import { ClassMaterials } from "./class-materials";
-import { ClassProgress } from "./class-progress";
+import { ClassProgress, ProgressNote } from "./class-progress";
 import { ClassSchedule } from "./class-schedule";
 import { TestimonialSection } from "./testimonial-section";
 import { backToProject, ClassBlocked } from "./class-states";
@@ -51,18 +52,16 @@ export function ClassDashboard({ slug, source, classes, store }: Props) {
 
   return (
     <MyShell back={backToProject(slug)}>
-      <header className="grid gap-2">
-        <p className="text-xs text-ink-muted">Dasbor kelas</p>
-        <h1 className="heading-lg wrap-anywhere">{project.title}</h1>
-        {teacher && <p className="text-sm wrap-anywhere text-ink-muted">Mentor: {teacher}</p>}
-      </header>
+      <DashboardBand project={project} eyebrow="Dasbor kelas">
+        <ClassProgress progress={progress} mentor={teacher} />
+      </DashboardBand>
       {!started && (
         <Notice>
           Kelas belum dimulai. Materi dan tugas dibuka pada{" "}
           {formatProjectDate(content.startsAt, zone)}.
         </Notice>
       )}
-      <ClassProgress progress={progress} />
+      <ProgressNote progress={progress} />
       <ClassSchedule content={content} now={now} zone={zone} />
       <ClassAssignments slug={slug} rows={rows} zone={zone} />
       <ClassMaterials content={content} done={done} started={started} zone={zone} />

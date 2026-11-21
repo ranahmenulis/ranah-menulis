@@ -209,3 +209,13 @@ export function timeline(
     };
   });
 }
+
+/** Where the running stage sits in the package: "Tahap 3 dari 6", counting the submission. */
+export function stagePosition(
+  stages: SoloStage[],
+  progress: SoloProgress | null,
+): { index: number; total: number; stage: SoloStage } {
+  const stage = currentStage(stages, progress);
+  const at = stages.indexOf(stage);
+  return { index: at < 0 ? stages.length : at + 1, total: stages.length, stage };
+}

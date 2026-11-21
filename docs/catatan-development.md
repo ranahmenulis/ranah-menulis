@@ -13,6 +13,8 @@ Terakhir diperbarui: **21 November 2026**.
 - **Fase 5 (21 November 2026):** pita peran Kelola (Editor, Juri, Mentor, Organizer, Admin, dan ringkasan `/kelola`), DESIGN.md 7.8. Di-commit lokal, belum di-push. Gate: `npm run check` lulus (234 berkas, 1.900 tes) dan `npm run build` berhasil.
 - **Fase 6 (21 November 2026):** gerak tambahan dari `find-animation-opportunities` (DESIGN.md 7.9), di-commit lokal, belum di-push.
 - **Layar akun (21 November 2026):** dipoles dengan pelat kertas marmer, lihat Log sesi.
+- **Poles alur Projects dan dasbor (21 November 2026):** kepala kecil `ProjectStrip` di langkah alur dan pita `DashboardBand` di dasbor Kelas dan Solo (Backlog 0a butir 1 dan 2), di-commit lokal, belum di-push. Gate: `npm run check` lulus (241 berkas, 1.921 tes); `npm run build` belum dijalankan (server dev memakai `.next` yang sama).
+- **Berikutnya:** uji klik dan keyboard sungguhan di semua layar yang diubah 21 November 2026, perangkat ponsel fisik oleh user, lalu push setelah user setuju. Pengaturan akun (0a butir 3) ditunda.
 - **Hook git:** `pre-commit` = lint-staged; `pre-push` = `typecheck` saja. Tes penuh lewat `npm run check` dan CI.
 - **Saklar demo peran:** `NEXT_PUBLIC_DEMO_ROLES=1` aktif di Vercel Production, jadi `?sebagai=` (tamu dan peran kelola) berlaku di produksi. **Wajib dihapus bersama bypass login saat auth sungguhan masuk.**
 - **Panduan uji:** `docs/panduan-uji-pengguna.md` (juga `.html`, `.pdf`), versi web `/panduan-uji.html`, berkas contoh `/contoh-naskah.txt` dan `.pdf`. Diuji di Vercel lewat Chrome CDP pada 21 November 2026. Perbarui panduan bila alur atau nama tombol berubah.
@@ -24,6 +26,12 @@ Landing; Beranda; Studio (Dokumen, Editor, Streak, Statistik, riwayat versi, tar
 ## 3. Backlog dekat (belum dikerjakan)
 
 0. **Lanjutan perombakan UI** (rencana disetujui 21 November 2026, monokrom tetap, gerak tidak dibatasi): fase 4a sampai 6 dan pelonggaran (hati, tekan tombol) selesai lokal; berikutnya uji ponsel (termasuk keputusan bilah navigasi yang bersembunyi di halaman baca), mode gelap, dan klik/keyboard sungguhan untuk semua layar yang diubah, lalu push setelah user setuju. Fase 3 selesai (Beranda dan Dokumen dikerjakan 21 November 2026, belum di-commit). Gerak, hover, dan keyboard belum diuji dengan klik sungguhan.
+0a. **Poles layar yang tertinggal** (audit 21 November 2026). Butir 1 dan 2 **selesai** 21 November 2026 (lihat Log sesi); butir 3 ditunda (keputusan user, ikut rekomendasi). Catatan asli:
+    1. **Alur Projects** (satu paket): Daftar (`register-view`), Kirim karya (`submit-view`), Revisi (`revise-view`), Bayar (`payment-view`), dan halaman Tugas Kelas (`kelas/components/assignment-view`) polos (tautan kembali, judul, kotak info, formulir). Beri kepala kecil berisi `ProjectCover` ukuran kecil, kategori, dan judul proyek, memakai komponen yang ada; layar sebelumnya (detail) dan sesudahnya (`MilestoneHero`) sudah berjangkar.
+    2. **Dasbor Kelas** (`kelas/components/class-dashboard.tsx`) dan **dasbor Solo** (`solo/components/solo-dashboard.tsx`): tanpa sampul atau pita sama sekali (grep 0). Usul pita gelap `app-band` berisi sampul dan angka bergulung (progres kelas, tahap Solo yang berjalan). Belum pernah dilihat di peramban karena butuh pendaftaran: isi data localStorage dulu (pendaftaran `terdaftar` untuk `kelas-cerpen-untuk-pemula` dan `solo-penerbitan-buku-sendiri`, serta kiriman Solo Diterima) agar bisa dipotret. Layar detail kiriman dan Tugas juga belum pernah dilihat.
+    3. **Pengaturan akun** (ditunda; prioritas rendah, opsional): formulir panjang tanpa kepala; usul kepala foto besar, nama serif, username seperti kepala profil.
+    - **Sengaja polos, jangan dipoles:** Editor Studio, Tulis postingan, layar dalam Kelola (tinjauan, detail kelas, form skor, detail Organizer, Buat event, Buat proyek).
+    - Setelah itu: uji klik dan keyboard sungguhan di semua layar yang diubah 21 November 2026, perangkat ponsel fisik, lalu `npm run check` dan `npm run build` sebelum push (tes penuh belum dijalankan sejak commit `8d4ef34`; ada satu tes rapuh `studio-search-dialog.test.tsx` saat seluruh tes berjalan bersamaan).
 1. **N10** daftar pintasan keyboard (kecil, sudah disetujui client).
 2. Ganti kata "galat" menjadi "error" di teks aplikasi (baru panduan yang diganti). Perlu cakupan jelas lebih dulu: kamus `id` dan `en` serta teks di komponen.
 3. **N9** gambar kutipan dan **N21** kartu progres: opsional, user belum memintanya, **prioritas paling akhir**.
@@ -51,6 +59,14 @@ Isi pekerjaannya (urutan belum diputuskan):
 - Hal yang "perlu dibahas" client tidak boleh dibangun (lihat CLAUDE.md, Keputusan Lembar Novlr).
 
 ## 6. Log sesi
+
+### 21 November 2026 (poles alur Projects dan dasbor, Backlog 0a)
+- Rencana disetujui user, ikut semua rekomendasi: bilah progres Kelas pindah ke dalam pita, detail kiriman ikut diberi kepala kecil, Pengaturan akun ditunda.
+- `ProjectStrip` (sampul 48px, kategori, judul) di Daftar, Bayar menunggu dan kedaluwarsa, Kirim karya, Kirim revisi, detail kiriman (judul menaut ke proyek), Tugas Kelas, dan layar blokir Daftar, Kirim, dasbor Kelas, dasbor Solo (strip menjadi h1). Judul layar dipendekkan: "Daftar", "Kirim karya". Layar `MilestoneHero` tidak berubah.
+- `DashboardBand` + `BandFigure`: Kelas = persen bergulung, bilah `progressbar`, mentor; Solo = "N/M" tahap (`stagePosition`, `soloFigure`) atau status dalam kata sebelum diterima. Perilaku, validasi, dan alur formulir tidak berubah.
+- Tes baru: `project-strip.test.tsx`, `dashboard-band.test.tsx`, `solo/solo-figure.test.ts`; `register-view` dan `submit-view` disesuaikan dengan judul baru.
+- Verifikasi CDP dengan data uji yang diisi lewat skrip (pendaftaran di localStorage, kiriman Solo Diterima dan Antologi Perlu Revisi di IndexedDB, baris tahap Solo): desktop terang dan gelap, ponsel 390 terang dan gelap, tidak ada halaman melebar. Pelajaran: di Git Bash argumen `/projects/...` diubah jadi path Windows; jalankan skrip dengan `MSYS_NO_PATHCONV=1`.
+- Belum: klik dan keyboard sungguhan, ponsel fisik, `npm run build`.
 
 ### 21 November 2026 (layar akun dipoles)
 - User: Masuk dan Daftar masih polos. Keputusan (ikut rekomendasi): dua kolom berpelat foto, dua gambar (Masuk/Daftar dan pemulihan/verifikasi/Mulai), kalimat serif ditulis sendiri.

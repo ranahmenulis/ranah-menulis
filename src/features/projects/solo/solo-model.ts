@@ -1,8 +1,8 @@
 import type { Submission } from "../submission-types";
 import { projectHref } from "../project-model";
 import type { Project, Registration } from "../types";
-import { packageStages } from "./stage-model";
-import type { SoloStage } from "./types";
+import { packageStages, STAGE_LABEL, stagePosition } from "./stage-model";
+import type { SoloProgress, SoloStage } from "./types";
 
 export const soloDashboardHref = (slug: string) => `${projectHref(slug)}/dasbor`;
 
@@ -50,4 +50,25 @@ export function stagesFor(project: Project, packageName: string | undefined): So
   if (project.block.kind !== "solo") return packageStages([]);
   const pack = project.block.packages.find((p) => p.name === packageName);
   return packageStages(pack?.includes ?? []);
+}
+
+/** The large figure of the Solo dashboard band: the running stage, or where the submission is. */
+export type SoloFigure =
+  | { kind: "stage"; index: number; total: number; label: string }
+  | { kind: "status"; label: string };
+
+export function soloFigure(
+  work: Submission | undefined,
+  stages: SoloStage[],
+  progress: SoloProgress | null,
+): SoloFigure {
+  const phase = soloPhase(work);
+  if (phase === "belum-mengajukan") return { kind: "status", label: "Naskah belum diajukan" };
+  if (phase === "ditolak") return { kind: "status", label: "Pengajuan tidak lolos" };
+  if (phase === "diajukan") {
+    const label = work?.status === "perlu-revisi" ? "Perlu revisi" : "Sedang ditinjau";
+    return { kind: "status", label };
+  }
+  const { index, total, stage } = stagePosition(stages, progress);
+  return { kind: "stage", index, total, label: STAGE_LABEL[stage] };
 }
