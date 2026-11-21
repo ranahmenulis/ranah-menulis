@@ -16,13 +16,15 @@ type Props = {
   form: ProfileForm;
   /** The username the reader already has: it is not "taken" for them, and it is not "new". */
   ownUsername?: string;
+  /** Settings shows the photo in its head instead, so it passes false. */
+  photo?: boolean;
 };
 
 /**
  * The profile fields (PLT-02): photo, name, username, bio, country, time zone, genres. Used by
  * onboarding and by Settings; the screen supplies the heading, the form tag, and the button.
  */
-export function ProfileFields({ form, ownUsername }: Props) {
+export function ProfileFields({ form, ownUsername, photo = true }: Props) {
   const t = useT().account;
   const device = useDeviceTimeZone();
   const { values, set, touch, issueOf } = form;
@@ -48,7 +50,7 @@ export function ProfileFields({ form, ownUsername }: Props) {
 
   return (
     <div className="grid gap-6">
-      <PhotoPicker form={form} />
+      {photo && <PhotoPicker form={form} />}
 
       <Field
         id={profileFieldId("name")}

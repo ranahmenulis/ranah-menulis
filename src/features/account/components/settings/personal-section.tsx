@@ -11,6 +11,7 @@ import { useProfileForm } from "../../hooks/use-profile-form";
 import { cleanProfile } from "../../profile-validation";
 import { normalizeUsername } from "../../validation";
 import { ProfileFields } from "../profile-fields";
+import { SettingsHead } from "./settings-head";
 import { SettingsSection } from "./settings-section";
 
 /** "November 2026". The date is read as UTC so the month does not shift with the reader's zone. */
@@ -34,51 +35,54 @@ export function PersonalSection({ account }: { account: Account }) {
   const zoneChanged = form.values.timeZone !== account.profile.timeZone;
 
   return (
-    <SettingsSection
-      id="personal"
-      title={t.settings.personal.title}
-      subtitle={t.settings.personal.subtitle}
-    >
-      <form
-        noValidate
-        className="grid gap-6"
-        onSubmit={(event) => {
-          event.preventDefault();
-          if (!form.validate()) return;
-          const kept = saveAccount({ profile: cleanProfile(form.values, normalizeUsername) });
-          toast(
-            kept
-              ? { message: t.settings.personal.saved, key: "settings-saved" }
-              : { message: t.settings.personal.failed, tone: "error", key: "settings-saved" },
-          );
-        }}
+    <>
+      <SettingsHead profile={account.profile} form={form} />
+      <SettingsSection
+        id="personal"
+        title={t.settings.personal.title}
+        subtitle={t.settings.personal.subtitle}
       >
-        <ProfileFields form={form} ownUsername={account.profile.username} />
+        <form
+          noValidate
+          className="grid gap-6"
+          onSubmit={(event) => {
+            event.preventDefault();
+            if (!form.validate()) return;
+            const kept = saveAccount({ profile: cleanProfile(form.values, normalizeUsername) });
+            toast(
+              kept
+                ? { message: t.settings.personal.saved, key: "settings-saved" }
+                : { message: t.settings.personal.failed, tone: "error", key: "settings-saved" },
+            );
+          }}
+        >
+          <ProfileFields form={form} ownUsername={account.profile.username} photo={false} />
 
-        {zoneChanged && <Notice>{t.settings.zone.warning}</Notice>}
+          {zoneChanged && <Notice>{t.settings.zone.warning}</Notice>}
 
-        <div className="grid gap-1 border-t border-line pt-5 text-sm">
-          <p className="text-ink-muted">{t.settings.personal.email}</p>
-          <p className="[overflow-wrap:anywhere]">{account.email}</p>
-          <p className="flex items-center gap-1.5 font-medium">
-            <ShieldCheck size={18} aria-hidden />
-            {t.settings.personal.verified}
-          </p>
-          <p className="mt-2 text-ink-muted">
-            {format(t.settings.personal.memberSince, {
-              date: memberSince(account.memberSince, locale),
-            })}
-          </p>
-        </div>
+          <div className="grid gap-1 border-t border-line pt-5 text-sm">
+            <p className="text-ink-muted">{t.settings.personal.email}</p>
+            <p className="[overflow-wrap:anywhere]">{account.email}</p>
+            <p className="flex items-center gap-1.5 font-medium">
+              <ShieldCheck size={18} aria-hidden />
+              {t.settings.personal.verified}
+            </p>
+            <p className="mt-2 text-ink-muted">
+              {format(t.settings.personal.memberSince, {
+                date: memberSince(account.memberSince, locale),
+              })}
+            </p>
+          </div>
 
-        <div className="flex flex-wrap items-center gap-3">
-          <Button type="submit">{t.settings.personal.save}</Button>
-          {/* The public profile page still reads the dummy author, whatever username was saved. */}
-          <ButtonLink href={OWN_PROFILE_HREF} variant="text">
-            {t.settings.personal.viewProfile}
-          </ButtonLink>
-        </div>
-      </form>
-    </SettingsSection>
+          <div className="flex flex-wrap items-center gap-3">
+            <Button type="submit">{t.settings.personal.save}</Button>
+            {/* The public profile page still reads the dummy author, whatever username was saved. */}
+            <ButtonLink href={OWN_PROFILE_HREF} variant="text">
+              {t.settings.personal.viewProfile}
+            </ButtonLink>
+          </div>
+        </form>
+      </SettingsSection>
+    </>
   );
 }
