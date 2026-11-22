@@ -7,6 +7,7 @@ import StarterKit from "@tiptap/starter-kit";
 import { useEffect, useLayoutEffect, useRef, type CSSProperties } from "react";
 import { useAccount } from "@/features/account/account-store";
 import { useHydrated } from "@/features/account/hooks/use-hydrated";
+import { useT } from "@/lib/i18n/provider";
 import { DEFAULT_LAYOUT, layoutVars, type DocumentLayout } from "../document-layout";
 import { docStats, selectionStats, type EditorStats } from "../editor-stats";
 import { useTypewriterScroll } from "../hooks/use-typewriter-scroll";
@@ -41,7 +42,10 @@ const EDITOR_EXTENSIONS = [
     link: false,
     underline: false,
   }),
-  Placeholder.configure({ placeholder: "Mulai dari satu kalimat." }),
+  // The text lives on the editor element so a change of language can swap it without rebuilding the editor.
+  Placeholder.configure({
+    placeholder: ({ editor }) => editor.view.dom.getAttribute("data-empty-text") ?? "",
+  }),
   TextAlign.configure({ types: ["heading", "paragraph"] }),
   StudioTypography,
 ];
@@ -70,6 +74,12 @@ function HydratedEditorCanvas({
   const titleRef = useRef<HTMLTextAreaElement>(null);
   const pageRef = useRef<HTMLElement>(null);
   const { writing } = useAccount().prefs;
+  const t = useT().studioEditor.canvas;
+  const attributes = {
+    class: "studio-prose",
+    "aria-label": t.bodyLabel,
+    "data-empty-text": t.placeholder,
+  };
   const { curlyQuotes, substitutions } = writing;
 
   const editor = useEditor({
@@ -77,7 +87,7 @@ function HydratedEditorCanvas({
     content: initialContent,
     extensions: EDITOR_EXTENSIONS,
     editorProps: {
-      attributes: { class: "studio-prose", "aria-label": "Isi tulisan" },
+      attributes,
     },
     // A new editor starts with nothing selected; reporting it clears a selection left by the old one.
     onCreate: ({ editor: e }) => {
@@ -101,6 +111,14 @@ function HydratedEditorCanvas({
     pageRef,
     writing.mode === "typewriter" ? writing.typewriterPosition : null,
   );
+
+  // A language change keeps the editor and its text; only the labels and the empty hint change.
+  useLayoutEffect(() => {
+    if (!editor) return;
+    editor.setOptions({ editorProps: { attributes } });
+    editor.view.dispatch(editor.state.tr);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- `attributes` only holds these two texts
+  }, [editor, t.bodyLabel, t.placeholder]);
 
   useLayoutEffect(() => {
     if (!editor) return;
@@ -132,8 +150,8 @@ function HydratedEditorCanvas({
         rows={1}
         autoFocus={autoFocusTitle}
         defaultValue={initialTitle}
-        placeholder="Judul"
-        aria-label="Judul"
+        placeholder={t.titlePlaceholder}
+        aria-label={t.titleLabel}
         onChange={(e) => onTitleChange(e.target.value)}
         onKeyDown={(e) => {
           if (e.key === "Enter") {

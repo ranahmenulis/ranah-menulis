@@ -4,6 +4,7 @@ import { CloudSlash } from "@phosphor-icons/react/dist/ssr";
 import { useEffect, useState } from "react";
 import { Popover } from "@/components/ui/popover";
 import { cn } from "@/lib/cn";
+import { format, useLocale, useT } from "@/lib/i18n/provider";
 import { formatClock } from "../count-words";
 import type { SaveStatus } from "../hooks/use-studio-document";
 
@@ -23,6 +24,8 @@ const STAMP_AFTER_MS = 3000;
  * weight 500, with a crossed cloud; it is deliberately not red because it is temporary.
  */
 export function SaveIndicator({ status, savedAt, offline, className }: SaveIndicatorProps) {
+  const t = useT().studioEditor;
+  const locale = useLocale();
   const savedMs = savedAt?.getTime() ?? null;
   const [stampedFor, setStampedFor] = useState<number | null>(() =>
     savedMs !== null && Date.now() - savedMs >= STAMP_AFTER_MS ? savedMs : null,
@@ -44,7 +47,7 @@ export function SaveIndicator({ status, savedAt, offline, className }: SaveIndic
         <Popover
           open={open}
           onOpenChange={setOpen}
-          label={trouble === "offline" ? "Tentang status sinkron" : "Tentang status simpan"}
+          label={trouble === "offline" ? t.save.aboutSync : t.save.aboutSave}
           className="max-md:static"
           panelClassName="left-0 right-auto w-75 origin-top-left p-3.5 text-sm max-md:inset-x-4 max-md:w-auto"
           renderTrigger={(props) => (
@@ -54,27 +57,25 @@ export function SaveIndicator({ status, savedAt, offline, className }: SaveIndic
               className="inline-flex cursor-pointer items-center gap-1.5 font-medium text-ink"
             >
               <CloudSlash size={16} aria-hidden />
-              {trouble === "offline" ? "Belum tersinkron" : "Belum tersimpan"}
+              {trouble === "offline" ? t.save.offlineLabel : t.save.failedLabel}
             </button>
           )}
         >
           <p className="font-medium">
-            {trouble === "offline"
-              ? "Perubahanmu tersimpan di perangkat ini."
-              : "Perubahan terakhir belum tersimpan di perangkat ini."}
+            {trouble === "offline" ? t.save.offlineTitle : t.save.failedTitle}
           </p>
           <p className="mt-1 text-ink-muted">
-            {trouble === "offline"
-              ? "Studio mengirimnya otomatis saat koneksi kembali. Kamu boleh terus menulis."
-              : "Studio mencoba lagi tiap beberapa detik. Jangan tutup halaman ini dulu."}
+            {trouble === "offline" ? t.save.offlineBody : t.save.failedBody}
           </p>
         </Popover>
       ) : (
         <span className="text-ink-muted">
-          {status === "draft" && "Draf baru"}
-          {status === "saving" && "Menyimpan…"}
+          {status === "draft" && t.save.draft}
+          {status === "saving" && t.save.saving}
           {status === "saved" &&
-            (savedAt && stampedFor === savedMs ? `Tersimpan ${formatClock(savedAt)}` : "Tersimpan")}
+            (savedAt && stampedFor === savedMs
+              ? format(t.save.savedAt, { time: formatClock(savedAt, locale) })
+              : t.save.saved)}
         </span>
       )}
     </span>

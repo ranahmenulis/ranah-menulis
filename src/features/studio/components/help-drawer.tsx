@@ -5,11 +5,14 @@ import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Drawer } from "@/components/ui/drawer";
 import { Tabs } from "@/components/ui/tabs";
-import { kits, prompts } from "../help-content";
+import { useLocale, useT } from "@/lib/i18n/provider";
+import { helpContent } from "../help-content";
 
 const COPIED_MS = 2000;
 
 function PromptList() {
+  const t = useT().studioEditor;
+  const { prompts } = helpContent(useLocale());
   const [copied, setCopied] = useState<number | null>(null);
   const timer = useRef<number | undefined>(undefined);
   useEffect(() => () => window.clearTimeout(timer.current), []);
@@ -28,7 +31,7 @@ function PromptList() {
   return (
     <>
       <p className="border-b border-line px-4 py-3.5 text-sm text-ink-muted md:px-5 md:py-4">
-        Pancingan untuk memulai saat buntu. Salin, lalu jawab dengan kata-katamu sendiri.
+        {t.help.promptIntro}
       </p>
       {prompts.map((text, i) => (
         <div
@@ -40,11 +43,11 @@ function PromptList() {
             variant="text"
             size="sm"
             onClick={() => copy(i)}
-            aria-label={copied === i ? "Prompt tersalin" : "Salin prompt"}
+            aria-label={copied === i ? t.help.copied : t.help.copy}
             className={copied === i ? "text-ink" : undefined}
           >
             {copied === i ? <Check size={16} aria-hidden /> : <Copy size={16} aria-hidden />}
-            {copied === i ? "Tersalin" : "Salin"}
+            {copied === i ? t.help.copiedShort : t.help.copyShort}
           </Button>
         </div>
       ))}
@@ -53,10 +56,12 @@ function PromptList() {
 }
 
 function KitList() {
+  const t = useT().studioEditor;
+  const { kits } = helpContent(useLocale());
   return (
     <>
       <p className="border-b border-line px-4 py-3.5 text-sm text-ink-muted md:px-5 md:py-4">
-        Bahan kecil untuk kalimat berikutnya. Pilih satu bagian.
+        {t.help.kitIntro}
       </p>
       {kits.map((kit) => (
         <details key={kit.name} className="rm-details group border-b border-line">
@@ -85,17 +90,18 @@ function KitList() {
 
 /** Writing help: inspiration kit and copyable prompts (STD-11). Drawer on desktop, sheet on phones. */
 export function HelpDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const t = useT().studioEditor;
   const [tab, setTab] = useState("prompt");
   return (
-    <Drawer open={open} onClose={onClose} title="Bantuan menulis" closeLabel="Tutup bantuan">
+    <Drawer open={open} onClose={onClose} title={t.help.title} closeLabel={t.help.close}>
       <Tabs
-        label="Jenis bantuan"
+        label={t.help.tabs}
         value={tab}
         onValueChange={setTab}
         className="mx-4 md:mx-5"
         items={[
-          { id: "kit", label: "Kit inspirasi" },
-          { id: "prompt", label: "Prompt" },
+          { id: "kit", label: t.help.kit },
+          { id: "prompt", label: t.help.prompt },
         ]}
       />
       <div role="tabpanel" aria-labelledby={`tab-${tab}`} className="min-h-0 flex-1 overflow-auto">

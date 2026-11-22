@@ -6,12 +6,15 @@ import { Dialog } from "@/components/ui/dialog";
 import { Drawer } from "@/components/ui/drawer";
 import { EmptyState, ErrorBanner, RetryButton, Skeleton } from "@/components/ui/states";
 import { cn } from "@/lib/cn";
+import { format, useLocale, useT } from "@/lib/i18n/provider";
+import { useFormat } from "@/lib/i18n/use-format";
+import type { Locale } from "@/lib/i18n/config";
 import { formatClock } from "../count-words";
 import { paragraphsOf } from "../diff-paragraphs";
 import { useVersions } from "../hooks/use-versions";
 import { formatChanged } from "../relative-time";
 import type { DocumentStore } from "../storage/document-store";
-import { deltaLabel, REASON_LABEL, type DocumentVersion } from "../versions";
+import { deltaLabel, type DocumentVersion } from "../versions";
 
 type Props = {
   open: boolean;
@@ -25,13 +28,11 @@ type Props = {
   onRestore: (version: DocumentVersion) => Promise<boolean>;
 };
 
-const number = new Intl.NumberFormat("id-ID");
-
 /** "40 menit lalu", "hari ini 08.40", or "16 Nov 21.40": the clock is added once it is not today. */
-function whenLabel(savedAt: number, now: number): string {
-  const label = formatChanged(savedAt, now);
+function whenLabel(savedAt: number, now: number, locale: Locale): string {
+  const label = formatChanged(savedAt, now, locale);
   const sameDay = new Date(savedAt).toDateString() === new Date(now).toDateString();
-  return sameDay ? label : `${label} ${formatClock(new Date(savedAt))}`;
+  return sameDay ? label : `${label} ${formatClock(new Date(savedAt), locale)}`;
 }
 
 function List({
@@ -47,9 +48,12 @@ function List({
   selected: string | null;
   onSelect: (id: string) => void;
 }) {
+  const t = useT().studioEditor;
+  const locale = useLocale();
+  const fmt = useFormat();
   return (
     <ul
-      aria-label="Versi tersimpan"
+      aria-label={t.versions.list}
       className="max-h-[45%] min-h-0 shrink-0 overflow-auto border-b border-line"
     >
       {versions.map((v) => (
@@ -63,11 +67,14 @@ function List({
               selected === v.id ? "bg-subtle" : "hover:bg-subtle",
             )}
           >
-            <span className="font-medium">{whenLabel(v.savedAt, now)}</span>
+            <span className="font-medium">{whenLabel(v.savedAt, now, locale)}</span>
             <span className="text-xs text-ink-muted tabular-nums">
-              {number.format(v.wordCount)} kata · {deltaLabel(v.wordCount, currentWords)}
+              {format(t.versions.wordsLine, {
+                n: fmt.number(v.wordCount),
+                delta: deltaLabel(v.wordCount, currentWords, locale),
+              })}
             </span>
-            <span className="text-xs text-ink-muted">{REASON_LABEL[v.reason]}</span>
+            <span className="text-xs text-ink-muted">{t.versions.reasons[v.reason]}</span>
           </button>
         </li>
       ))}
@@ -76,15 +83,16 @@ function List({
 }
 
 function Preview({ version, onAsk }: { version: DocumentVersion; onAsk: () => void }) {
+  const t = useT().studioEditor;
   const paragraphs = paragraphsOf(version.content);
   return (
-    <section aria-label="Isi versi" className="flex min-h-0 flex-1 flex-col">
+    <section aria-label={t.versions.content} className="flex min-h-0 flex-1 flex-col">
       <div className="min-h-0 flex-1 overflow-auto px-4 py-4 md:px-5">
         <p className="mb-3 font-serif text-lg leading-6 font-semibold [overflow-wrap:anywhere]">
-          {version.title.trim() || "Tanpa judul"}
+          {version.title.trim() || t.versions.untitled}
         </p>
         {paragraphs.length === 0 ? (
-          <p className="text-sm text-ink-muted">Versi ini belum berisi teks.</p>
+          <p className="text-sm text-ink-muted">{t.versions.empty}</p>
         ) : (
           paragraphs.map((text, i) => (
             <p
@@ -98,7 +106,7 @@ function Preview({ version, onAsk }: { version: DocumentVersion; onAsk: () => vo
       </div>
       <div className="border-t border-line px-4 py-3 md:px-5">
         <Button variant="secondary" onClick={onAsk}>
-          Pulihkan versi ini
+          {t.versions.restoreThis}
         </Button>
       </div>
     </section>
@@ -119,6 +127,7 @@ export function VersionHistoryDrawer({
   onRestore,
 }: Props) {
   const { state, reload } = useVersions(store, docId, open);
+  const t = useT().studioEditor;
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [asking, setAsking] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -143,9 +152,13 @@ export function VersionHistoryDrawer({
 
   return (
     <>
-      <Drawer open={open} onClose={onClose} title="Riwayat versi" closeLabel="Tutup riwayat versi">
+      <Drawer open={open} onClose={onClose} title={t.versions.title} closeLabel={t.versions.close}>
         {state.status === "loading" && (
-          <div role="status" aria-label="Memuat versi" className="grid gap-3 px-4 py-4 md:px-5">
+          <div
+            role="status"
+            aria-label={t.versions.loading}
+            className="grid gap-3 px-4 py-4 md:px-5"
+          >
             <Skeleton className="h-4 w-2/3" />
             <Skeleton className="h-4 w-1/2" />
             <Skeleton className="h-4 w-3/5" />
@@ -154,16 +167,14 @@ export function VersionHistoryDrawer({
         {state.status === "error" && (
           <div className="p-4 md:p-5">
             <ErrorBanner action={<RetryButton onClick={reload} />}>
-              Riwayat versi gagal dimuat. Tulisanmu tidak berubah.
+              {t.versions.loadError}
             </ErrorBanner>
           </div>
         )}
         {state.status === "ready" && versions.length === 0 && (
           <div className="px-4 md:px-5">
-            <EmptyState>Belum ada versi tersimpan.</EmptyState>
-            <p className="text-sm text-ink-muted">
-              Versi muncul sendiri saat kamu menulis dan disimpan selama 3 hari.
-            </p>
+            <EmptyState>{t.versions.none}</EmptyState>
+            <p className="text-sm text-ink-muted">{t.versions.noneHint}</p>
           </div>
         )}
         {state.status === "ready" && versions.length > 0 && (
@@ -178,9 +189,7 @@ export function VersionHistoryDrawer({
             {selected ? (
               <Preview version={selected} onAsk={() => setAsking(true)} />
             ) : (
-              <p className="px-4 py-4 text-sm text-ink-muted md:px-5">
-                Pilih satu versi untuk melihat isinya. Versi disimpan 3 hari.
-              </p>
+              <p className="px-4 py-4 text-sm text-ink-muted md:px-5">{t.versions.pick}</p>
             )}
           </>
         )}
@@ -190,24 +199,20 @@ export function VersionHistoryDrawer({
         open={asking}
         onClose={() => !busy && setAsking(false)}
         dismissible={!busy}
-        title="Pulihkan versi ini?"
-        description="Tulisanmu sekarang disimpan dulu sebagai versi, jadi kamu bisa kembali ke sana kapan saja dalam 3 hari."
+        title={t.versions.askTitle}
+        description={t.versions.askBody}
         actions={
           <>
             <Button variant="text" onClick={() => setAsking(false)} disabled={busy}>
-              Batal
+              {t.versions.cancel}
             </Button>
             <Button onClick={() => void restore()} loading={busy}>
-              Pulihkan
+              {t.versions.restore}
             </Button>
           </>
         }
       >
-        {failed && (
-          <ErrorBanner>
-            Versi belum bisa dipulihkan. Tulisanmu tidak berubah. Coba lagi.
-          </ErrorBanner>
-        )}
+        {failed && <ErrorBanner>{t.versions.restoreFailed}</ErrorBanner>}
       </Dialog>
     </>
   );

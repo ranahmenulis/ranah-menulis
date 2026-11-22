@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { kirimHref } from "@/features/projects/submission-model";
+import { useT } from "@/lib/i18n/provider";
 import { SendToProjectDialog } from "../send-to-project-dialog";
 import type { DocumentList } from "../../hooks/use-document-list";
 import type { StudioDocument } from "../../storage/document-store";
@@ -38,6 +39,7 @@ export function PendingDialogs({
   onClose: () => void;
   onClassified?: (doc: StudioDocument) => void;
 }) {
+  const t = useT().studioDocuments.dialogs;
   if (!pending) return null;
   const run = (action: () => Promise<void>) => async () => {
     onClose();
@@ -50,10 +52,10 @@ export function PendingDialogs({
         <NameDialog
           open
           required
-          title="Folder baru"
-          label="Nama folder"
+          title={t.newFolder.title}
+          label={t.newFolder.label}
           initial=""
-          submitLabel="Buat folder"
+          submitLabel={t.newFolder.submit}
           onClose={onClose}
           onSubmit={(name) => run(() => list.createFolder(name))()}
         />
@@ -63,10 +65,10 @@ export function PendingDialogs({
         <NameDialog
           open
           required
-          title="Ganti nama folder"
-          label="Nama folder"
+          title={t.renameFolder.title}
+          label={t.renameFolder.label}
           initial={pending.name}
-          submitLabel="Simpan"
+          submitLabel={t.renameFolder.submit}
           onClose={onClose}
           onSubmit={(name) => run(() => list.renameFolder(pending.id, name))()}
         />
@@ -76,10 +78,10 @@ export function PendingDialogs({
         <NameDialog
           open
           required={false}
-          title="Ganti nama dokumen"
-          label="Judul"
+          title={t.renameDocument.title}
+          label={t.renameDocument.label}
           initial={pending.doc.title}
-          submitLabel="Simpan"
+          submitLabel={t.renameDocument.submit}
           onClose={onClose}
           onSubmit={(name) => run(() => list.rename(pending.doc.id, name))()}
         />

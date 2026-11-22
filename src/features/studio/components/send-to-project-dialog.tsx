@@ -7,6 +7,7 @@ import { Dialog } from "@/components/ui/dialog";
 import { ErrorBanner, Notice, RetryButton } from "@/components/ui/states";
 import { TextLink } from "@/components/ui/text-link";
 import { PROJECTS_HREF } from "@/features/app-shell/nav";
+import { useT } from "@/lib/i18n/provider";
 import { useSendTargets, type SendTargets } from "@/features/projects/hooks/use-send-targets";
 import { categoryLabel } from "@/features/projects/project-model";
 import type { SubmissionStore } from "@/features/projects/storage/submission-store";
@@ -37,30 +38,29 @@ function Targets({
   onChange: (slug: string) => void;
   onLeave: () => void;
 }) {
+  const t = useT().studioEditor;
   if (status === "error") {
     return (
-      <ErrorBanner action={<RetryButton onClick={reload} />}>
-        Daftar proyekmu belum bisa dibaca dari perangkat ini.
-      </ErrorBanner>
+      <ErrorBanner action={<RetryButton onClick={reload} />}>{t.sendTo.loadError}</ErrorBanner>
     );
   }
-  if (status === "loading") return <p className="text-sm text-ink-muted">Memuat proyekmu…</p>;
+  if (status === "loading") return <p className="text-sm text-ink-muted">{t.sendTo.loading}</p>;
   if (targets.length === 0) {
     return (
       <Notice
         action={
           <TextLink href={PROJECTS_HREF} onClick={onLeave} className="text-sm whitespace-nowrap">
-            Lihat Projects
+            {t.sendTo.seeProjects}
           </TextLink>
         }
       >
-        Kamu belum terdaftar di proyek yang menerima karya.
+        {t.sendTo.none}
       </Notice>
     );
   }
   return (
     <fieldset className="grid gap-3">
-      <legend className="sr-only">Pilih proyek</legend>
+      <legend className="sr-only">{t.sendTo.choose}</legend>
       {targets.map(({ project, reason }) => (
         <RadioChoice
           key={project.slug}
@@ -83,6 +83,7 @@ function Targets({
  * frozen copy is made. Closing it before leaving matters: a modal left open would freeze the page.
  */
 export function SendToProjectDialog({ open, onClose, docId, onPick, store }: Props) {
+  const t = useT().studioEditor;
   const found = useSendTargets(docId, store);
   const [slug, setSlug] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -117,26 +118,21 @@ export function SendToProjectDialog({ open, onClose, docId, onPick, store }: Pro
       onClose={close}
       dismissible={!busy}
       swipeToDismiss
-      title="Kirim ke proyek"
-      description="Pilih proyek yang kamu ikuti. Informasi karya dan pemeriksaannya ada di langkah berikutnya."
+      title={t.sendTo.title}
+      description={t.sendTo.description}
       actions={
         <>
           <Button variant="text" onClick={close} disabled={busy}>
-            Batal
+            {t.sendTo.cancel}
           </Button>
           <Button onClick={() => void next()} disabled={!chosen} loading={busy}>
-            Lanjutkan
+            {t.sendTo.continue}
           </Button>
         </>
       }
     >
       <Targets {...found} value={chosen} onChange={setSlug} onLeave={close} />
-      {failed && (
-        <ErrorBanner>
-          Tulisanmu belum tersimpan di perangkat ini, jadi belum bisa dikirim. Coba lagi sebentar
-          lagi.
-        </ErrorBanner>
-      )}
+      {failed && <ErrorBanner>{t.sendTo.failed}</ErrorBanner>}
     </Dialog>
   );
 }

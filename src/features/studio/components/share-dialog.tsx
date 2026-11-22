@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { ErrorBanner, Notice } from "@/components/ui/states";
 import { VisibilityTag } from "@/components/ui/visibility-tag";
+import { useT } from "@/lib/i18n/provider";
 
 type Props = {
   open: boolean;
@@ -23,6 +24,7 @@ type Props = {
  * becomes public. The notice has no close button on purpose (BR-STD-01, BR-COM-01).
  */
 export function ShareDialog({ open, onClose, documentTitle, onContinue }: Props) {
+  const t = useT().studioEditor;
   const [busy, setBusy] = useState(false);
   const [failed, setFailed] = useState(false);
 
@@ -48,36 +50,25 @@ export function ShareDialog({ open, onClose, documentTitle, onContinue }: Props)
       onClose={close}
       dismissible={!busy}
       swipeToDismiss
-      title="Bagikan sebagai postingan"
+      title={t.share.title}
       actions={
         <>
           <Button variant="text" onClick={close} disabled={busy}>
-            Batal
+            {t.share.cancel}
           </Button>
           <Button onClick={() => void next()} loading={busy}>
-            Pilih bagian untuk dibagikan
+            {t.share.next}
           </Button>
         </>
       }
     >
       <div className="grid gap-1.5">
-        <b className="truncate text-sm font-medium">{documentTitle.trim() || "Tanpa judul"}</b>
+        <b className="truncate text-sm font-medium">{documentTitle.trim() || t.share.untitled}</b>
         <VisibilityTag visibility="pribadi" />
       </div>
-      <Notice>
-        Dokumen ini tetap Pribadi. Yang menjadi publik hanya teks yang kamu pilih di langkah
-        berikutnya, sebagai salinan. Mengubah dokumen sesudahnya tidak mengubah postingan.
-      </Notice>
-      <p className="text-sm text-ink-muted">
-        Kamu memilih bagiannya, memberi judul dan genre, lalu menentukan siapa yang bisa melihatnya.
-        Satu postingan maksimal 500 kata.
-      </p>
-      {failed && (
-        <ErrorBanner>
-          Tulisanmu belum tersimpan di perangkat ini, jadi belum bisa dibagikan. Coba lagi sebentar
-          lagi.
-        </ErrorBanner>
-      )}
+      <Notice>{t.share.notice}</Notice>
+      <p className="text-sm text-ink-muted">{t.share.explain}</p>
+      {failed && <ErrorBanner>{t.share.failed}</ErrorBanner>}
     </Dialog>
   );
 }

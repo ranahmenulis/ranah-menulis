@@ -5,9 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Field, Input, describedBy } from "@/components/ui/field";
 import { cn } from "@/lib/cn";
+import { format, useT } from "@/lib/i18n/provider";
+import { useFormat } from "@/lib/i18n/use-format";
 import { parseTarget, TARGET_PRESETS } from "../../target-setting";
-
-const number = new Intl.NumberFormat("id-ID");
 
 type TargetDialogProps = {
   open: boolean;
@@ -22,40 +22,42 @@ type TargetDialogProps = {
  * before saving. The very first target applies today.
  */
 export function TargetDialog({ open, current, onClose, onSave }: TargetDialogProps) {
+  const t = useT().studioStreak.dialog;
+  const { number } = useFormat();
   const [text, setText] = useState(String(current ?? 500));
   const value = parseTarget(text);
   const invalid = text.trim() !== "" && value === null;
-  const error = invalid ? "Isi angka bulat antara 1 dan 100.000." : undefined;
+  const error = invalid ? t.error : undefined;
   const hint =
     value === null
       ? undefined
       : current === null
-        ? "Target berlaku mulai hari ini. Tulisanmu hari ini ikut dihitung."
+        ? t.hintFirst
         : value === current
-          ? `Target saat ini ${number.format(current)} kata per hari.`
-          : `Hari ini tetap ${number.format(current)} kata. Target ${number.format(value)} kata berlaku mulai besok.`;
+          ? format(t.hintSame, { current: number(current) })
+          : format(t.hintChange, { current: number(current), value: number(value) });
 
   return (
     <Dialog
       open={open}
       onClose={onClose}
-      title={current === null ? "Tetapkan target harian" : "Atur target harian"}
-      description="Berapa kata yang ingin kamu tulis setiap hari. Setiap hari yang tercapai menjadi satu titik di kalendermu."
+      title={current === null ? t.titleFirst : t.title}
+      description={t.description}
       actions={
         <>
           <Button variant="secondary" onClick={onClose}>
-            Batal
+            {t.cancel}
           </Button>
           <Button
             disabled={value === null || value === current}
             onClick={() => value !== null && onSave(value)}
           >
-            Simpan
+            {t.save}
           </Button>
         </>
       }
     >
-      <div className="flex flex-wrap gap-2" role="group" aria-label="Pilihan cepat">
+      <div className="flex flex-wrap gap-2" role="group" aria-label={t.presets}>
         {TARGET_PRESETS.map((n) => (
           <button
             key={n}
@@ -67,11 +69,11 @@ export function TargetDialog({ open, current, onClose, onSave }: TargetDialogPro
               value === n ? "bg-ink text-on-ink" : "bg-subtle text-ink",
             )}
           >
-            {number.format(n)}
+            {number(n)}
           </button>
         ))}
       </div>
-      <Field id="target" label="Kata per hari" hint={hint} error={error}>
+      <Field id="target" label={t.field} hint={hint} error={error}>
         <Input
           id="target"
           inputMode="numeric"

@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { Popover } from "@/components/ui/popover";
 import { cn } from "@/lib/cn";
+import { format, useT } from "@/lib/i18n/provider";
+import { useFormat } from "@/lib/i18n/use-format";
 import { topDocuments, totalWords, type DailyLog } from "../daily-progress";
 
 type TargetIndicatorProps = {
@@ -14,8 +16,6 @@ type TargetIndicatorProps = {
   className?: string;
 };
 
-const number = new Intl.NumberFormat("id-ID");
-
 /**
  * Words written today across all documents, as "468 / 500 hari ini" (DESIGN.md 5.4). It changes
  * after a save completes, not on every keystroke, and looks different from the document word
@@ -23,6 +23,8 @@ const number = new Intl.NumberFormat("id-ID");
  * [usulan] The Streak sentence and "Buka Streak" link arrive with the Streak tab (step 4).
  */
 export function TargetIndicator({ progress, target, pending, className }: TargetIndicatorProps) {
+  const t = useT().studioEditor.target;
+  const number = useFormat();
   const total = totalWords(progress);
   const reached = total >= target;
   const [open, setOpen] = useState(false);
@@ -38,53 +40,54 @@ export function TargetIndicator({ progress, target, pending, className }: Target
   const docs = topDocuments(progress);
   const remaining = target - total;
   const note = pending
-    ? "Tercatat saat tersambung. Kata dari perangkat ini dikirim nanti, dihitung ke hari kamu menulisnya, dan tidak dihitung dua kali."
+    ? t.pendingNote
     : reached
-      ? "Target hari ini sudah tercapai. Angka tetap bertambah selama kamu menulis."
-      : `${number.format(remaining)} kata lagi untuk target hari ini.`;
+      ? t.reachedNote
+      : format(t.remainingNote, { n: number.number(remaining) });
 
   return (
     <Popover
       open={open}
       onOpenChange={setOpen}
-      label="Kata hari ini"
+      label={t.label}
       className={cn("max-md:static", className)}
       panelClassName="w-80 p-4 text-sm max-md:inset-x-4 max-md:w-auto"
       renderTrigger={(props) => (
         <button
           {...props}
           type="button"
-          title="Kata hari ini dari semua dokumen"
-          aria-label={`Kata hari ini dari semua dokumen: ${total} dari target ${target}${pending ? ", sebagian tercatat saat tersambung" : ""}. Buka rincian`}
+          title={t.title}
+          aria-label={format(pending ? t.ariaPending : t.aria, {
+            total: String(total),
+            target: String(target),
+          })}
           className="group inline-flex min-h-8 cursor-pointer flex-wrap items-center justify-end gap-x-1.5 text-xs text-ink-muted tabular-nums max-md:grid max-md:grid-cols-[auto_auto] max-md:content-center max-md:leading-tight"
         >
           <Dot reached={reached} fresh={justReached} />
           <b className="font-medium whitespace-nowrap text-ink group-hover:underline group-hover:underline-offset-3 group-aria-expanded:underline">
-            {number.format(total)} / {number.format(target)}
+            {number.number(total)} / {number.number(target)}
           </b>
           <span className="whitespace-nowrap max-md:col-start-2 max-md:justify-self-end">
-            hari ini
+            {t.today}
           </span>
           {pending && (
             <>
-              <span className="max-md:hidden">· tercatat saat tersambung</span>
-              <span className="col-start-2 justify-self-end md:hidden">· Luring</span>
+              <span className="max-md:hidden">{t.pendingLong}</span>
+              <span className="col-start-2 justify-self-end md:hidden">{t.pendingShort}</span>
             </>
           )}
         </button>
       )}
     >
       <div className="grid grid-cols-[minmax(0,1fr)] gap-3">
-        <p className="font-medium text-pretty">
-          {justReached ? "Target hari ini tercapai." : "Kata hari ini dari semua dokumen"}
-        </p>
+        <p className="font-medium text-pretty">{justReached ? t.reachedTitle : t.title}</p>
         <p className="text-xs leading-[18px] text-pretty text-ink-muted">{note}</p>
         {docs.length > 0 && (
           <ul className="grid grid-cols-[minmax(0,1fr)] border-t border-line">
             {docs.map((d) => (
               <li key={d.id} className="flex items-baseline gap-3 border-b border-line py-2">
-                <span className="min-w-0 flex-1 truncate">{d.title || "Tanpa judul"}</span>
-                <span className="text-ink-muted tabular-nums">{number.format(d.words)}</span>
+                <span className="min-w-0 flex-1 truncate">{d.title || t.untitled}</span>
+                <span className="text-ink-muted tabular-nums">{number.number(d.words)}</span>
               </li>
             ))}
           </ul>

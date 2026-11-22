@@ -4,6 +4,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ErrorBanner, RetryButton, Skeleton } from "@/components/ui/states";
 import { useToast } from "@/components/ui/toast";
+import { useT } from "@/lib/i18n/provider";
+import { useFormat } from "@/lib/i18n/use-format";
 import { buildSampleHistory } from "../../sample-history";
 import { studioStore } from "../../storage/store";
 import { useStreakData } from "../../hooks/use-streak-data";
@@ -17,17 +19,14 @@ import { StreakHistory } from "./streak-history";
 import { StreakCalendar } from "./streak-calendar";
 import { TargetDialog } from "./target-dialog";
 
-const headDate = new Intl.DateTimeFormat("id-ID", {
-  weekday: "long",
-  day: "numeric",
-  month: "long",
-});
+const HEAD_DATE: Intl.DateTimeFormatOptions = { weekday: "long", day: "numeric", month: "long" };
 
 function LoadingBlocks() {
+  const t = useT().studioStreak;
   return (
     <div
       role="status"
-      aria-label="Memuat Streak"
+      aria-label={t.loading}
       className="mt-6 grid animate-[rm-appear_0s_300ms_forwards] gap-8 opacity-0"
     >
       <div className="grid gap-3">
@@ -47,6 +46,8 @@ function LoadingBlocks() {
  * ink dots, three plain statistics, and milestones. Data is this device's writing log for now.
  */
 export function StreakView() {
+  const t = useT().studioStreak;
+  const { locale, date } = useFormat();
   const data = useStreakData(studioStore);
   const toast = useToast();
   const [dialog, setDialog] = useState(false);
@@ -68,16 +69,14 @@ export function StreakView() {
 
   return (
     <div className="max-w-260">
-      <h1 className="mb-3 heading-lg max-md:hidden">Studio</h1>
+      <h1 className="mb-3 heading-lg max-md:hidden">{t.title}</h1>
       <StudioTabs />
 
       {status === "loading" && <LoadingBlocks />}
 
       {status === "error" && (
         <div className="mt-6 grid gap-4">
-          <ErrorBanner action={<RetryButton onClick={data.reload} />}>
-            Streak gagal dimuat. Tulisanmu tidak berubah; yang gagal hanya tampilannya.
-          </ErrorBanner>
+          <ErrorBanner action={<RetryButton onClick={data.reload} />}>{t.loadError}</ErrorBanner>
         </div>
       )}
 
@@ -85,12 +84,12 @@ export function StreakView() {
         <>
           <div className="mt-4 flex items-center gap-3">
             <span className="text-xs text-ink-muted">
-              {capitalizeFirst(headDate.format(parseDay(today)))}
-              <span className="normal-case"> · hari berganti pukul 00.00</span>
+              {capitalizeFirst(date(parseDay(today), HEAD_DATE), locale)}
+              <span className="normal-case">{t.dayChanges}</span>
             </span>
             {target !== null && (
               <Button variant="text" className="ml-auto text-ink" onClick={() => setDialog(true)}>
-                Atur target
+                {t.setTarget}
               </Button>
             )}
           </div>
@@ -114,7 +113,7 @@ export function StreakView() {
               <StatsSection words={words} today={today} hasWriting={hasWriting} />
             </div>
             <div className="grid content-start gap-8">
-              <MilestoneList items={milestones(words, changes, today)} today={today} />
+              <MilestoneList items={milestones(words, changes, today, locale)} today={today} />
               {target !== null && <StreakHistory items={pastStreaks(words, changes, today)} />}
             </div>
           </div>
@@ -141,10 +140,7 @@ export function StreakView() {
               data.setTarget(value);
               setDialog(false);
               toast({
-                message:
-                  target === null
-                    ? "Target harian disimpan."
-                    : "Target disimpan. Berlaku mulai besok.",
+                message: target === null ? t.targetSavedFirst : t.targetSaved,
               });
             }}
           />

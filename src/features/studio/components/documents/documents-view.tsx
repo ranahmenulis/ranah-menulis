@@ -3,8 +3,9 @@
 import { FolderSimplePlus } from "@phosphor-icons/react/dist/ssr";
 import { Suspense, useEffect, useRef, useState } from "react";
 import { Button, ButtonLink } from "@/components/ui/button";
-import { ErrorBanner, RetryButton, Skeleton } from "@/components/ui/states";
+import { ErrorBanner, RetryButton } from "@/components/ui/states";
 import { Tabs } from "@/components/ui/tabs";
+import { useT } from "@/lib/i18n/provider";
 import { useSharedDocumentIds } from "@/features/community/hooks/use-shared-documents";
 import { useSubmittedDocumentIds } from "@/features/projects/hooks/use-submitted-documents";
 import { postStore } from "@/features/community/storage/store";
@@ -20,6 +21,7 @@ import { ArchiveList } from "./archive-list";
 import { DocumentFilterFields, useDocumentFilters } from "./document-filters";
 import { DocumentSearchField } from "./document-search-field";
 import { LiveList, TrashList } from "./document-lists";
+import { ListFeedback, ListSkeleton } from "./list-feedback";
 import type { Pending } from "./pending";
 import { PendingDialogs } from "./pending-dialogs";
 import { TodayLine } from "./today-line";
@@ -27,55 +29,15 @@ import { TodayLine } from "./today-line";
 type ArchiveAction = "archive" | "restore" | "duplicate";
 type ListNotice = { text: string; copyId?: string; failed?: boolean };
 
-const archiveSuccess = {
-  archive: "Dokumen dipindah ke Arsip.",
-  restore: "Dokumen dipulihkan.",
-  duplicate: "Salinan dokumen dibuat.",
-};
-
-function ListSkeleton() {
-  return (
-    <div
-      role="status"
-      aria-label="Memuat dokumen"
-      className="animate-[rm-appear_0s_300ms_forwards] opacity-0"
-    >
-      {[0, 1, 2, 3, 4].map((i) => (
-        <div
-          key={i}
-          className="grid grid-cols-[20px_minmax(0,1fr)] gap-x-3 border-b border-line py-5"
-        >
-          <Skeleton className="size-5" />
-          <div className="grid gap-2.5">
-            <Skeleton className="h-4" style={{ width: `${70 - i * 6}%` }} />
-            <Skeleton className="h-3 w-2/5" />
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function ListFeedback({ status, onRetry }: { status: "loading" | "error"; onRetry: () => void }) {
-  if (status === "loading") return <ListSkeleton />;
-  return (
-    <div className="mt-6 grid gap-3">
-      <ErrorBanner action={<RetryButton onClick={onRetry} />}>
-        Daftar dokumen gagal dimuat. Isi dokumenmu tidak berubah; yang gagal hanya daftarnya.
-      </ErrorBanner>
-      <p className="text-xs text-ink-muted">Progres hari ini dan tab Streak tetap bisa dibuka.</p>
-    </div>
-  );
-}
-
 /**
  * Studio, tab Dokumen (DESIGN.md 6.4): a plain list, not cards. Documents and folders from this
  * device; Sampah keeps trashed documents so they can be restored.
  */
 export function DocumentsView() {
+  const t = useT().studioDocuments;
   return (
     <div className="max-w-182">
-      <h1 className="mb-3 heading-lg max-md:hidden">Studio</h1>
+      <h1 className="mb-3 heading-lg max-md:hidden">{t.tabs.studio}</h1>
       <StudioTabs />
       <TodayLine />
       <Suspense fallback={<ListSkeleton />}>
@@ -90,6 +52,7 @@ export const showsSearch = (enabled: boolean, hasDocuments: boolean, query: stri
   enabled && (hasDocuments || query !== "");
 
 function DocumentListContent() {
+  const t = useT().studioDocuments;
   const list = useDocumentSummaryList(studioStore);
   const sharedIds = useSharedDocumentIds(postStore);
   const submittedIds = useSubmittedDocumentIds();
@@ -132,7 +95,7 @@ function DocumentListContent() {
   }
 
   function classified(doc: StudioDocument) {
-    setNotice({ text: "Jenis dan tag disimpan." });
+    setNotice({ text: t.list.classified });
     if (listEntries([doc], [], folderId, filters, search.matches).length === 0) {
       focusNotice();
     }
@@ -149,11 +112,14 @@ function DocumentListContent() {
         : list.setArchived(id, action === "archive"));
       setNotice(
         doc
-          ? { text: archiveSuccess[action], copyId: action === "duplicate" ? doc.id : undefined }
-          : { text: "Status dokumen sudah berubah. Periksa daftar dan coba lagi.", failed: true },
+          ? {
+              text: t.list.archiveSuccess[action],
+              copyId: action === "duplicate" ? doc.id : undefined,
+            }
+          : { text: t.list.statusChanged, failed: true },
       );
     } catch {
-      setNotice({ text: "Perubahan belum tersimpan. Coba lagi.", failed: true });
+      setNotice({ text: t.list.saveFailed, failed: true });
     } finally {
       busyRef.current = false;
       setBusy(false);
@@ -183,7 +149,7 @@ function DocumentListContent() {
     if (search.state.status === "error") {
       return (
         <ErrorBanner className="mt-4" action={<RetryButton onClick={search.state.retry} />}>
-          Pencarian dokumen gagal. Coba lagi.
+          {t.list.searchFailed}
         </ErrorBanner>
       );
     }
@@ -222,14 +188,14 @@ function DocumentListContent() {
         className="mt-6 flex items-center gap-4 shadow-[inset_0_-1px_0_var(--line)]"
       >
         <Tabs
-          label="Daftar"
+          label={t.list.tabsLabel}
           value={tab}
           onValueChange={selectTab}
           className="min-w-0 flex-1 shadow-none"
           items={[
-            { id: "semua", label: "Semua" },
-            { id: "arsip", label: "Arsip" },
-            { id: "sampah", label: "Sampah" },
+            { id: "semua", label: t.list.all },
+            { id: "arsip", label: t.list.archive },
+            { id: "sampah", label: t.list.trash },
           ]}
         />
         {activeReady && (
@@ -241,10 +207,10 @@ function DocumentListContent() {
               onClick={() => setPending({ kind: "newFolder" })}
             >
               <FolderSimplePlus size={16} aria-hidden />
-              Folder baru
+              {t.list.newFolder}
             </Button>
             <ButtonLink href="/studio/baru" size="sm">
-              Dokumen baru
+              {t.list.newDocument}
             </ButtonLink>
           </div>
         )}
@@ -257,7 +223,7 @@ function DocumentListContent() {
             className="cursor-pointer text-ink-muted hover:text-ink"
             onClick={() => openFolder(null)}
           >
-            Semua dokumen
+            {t.list.allDocuments}
           </button>
           <span className="text-ink-muted"> / </span>
           <span ref={folderHeadingRef} tabIndex={-1} className="font-medium">
@@ -296,7 +262,7 @@ function DocumentListContent() {
       </p>
       {notice?.copyId && (
         <ButtonLink href={`/studio/${notice.copyId}`} variant="text" size="sm" className="px-0">
-          Buka salinan
+          {t.list.openCopy}
         </ButtonLink>
       )}
 

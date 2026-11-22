@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ErrorBanner, RetryButton, Skeleton } from "@/components/ui/states";
 import { ButtonLink } from "@/components/ui/button";
+import { useT } from "@/lib/i18n/provider";
 import { ARCHIVE_HREF } from "../document-archive";
 import type { LoadState } from "../hooks/use-studio-document";
 
@@ -23,10 +24,11 @@ export function EditorUnavailable({
 
 /** Shown only when loading takes longer than 300ms (DESIGN.md 8); CSS keeps it invisible until then. */
 export function EditorLoading() {
+  const t = useT().studioEditor;
   return (
     <div
       role="status"
-      aria-label="Membuka dokumen"
+      aria-label={t.states.loading}
       className="mx-auto grid w-full max-w-170 animate-[rm-appear_0s_300ms_forwards] gap-3.5 opacity-0"
     >
       <Skeleton className="mb-6 h-10 w-4/5" />
@@ -42,13 +44,14 @@ export function EditorLoading() {
 }
 
 export function EditorError({ onRetry, backHref }: { onRetry: () => void; backHref: string }) {
+  const t = useT().studioEditor;
   return (
     <div className="mx-auto grid w-full max-w-170 justify-items-start gap-4">
       <ErrorBanner className="w-full" action={<RetryButton onClick={onRetry} />}>
-        Dokumen ini gagal dibuka. Isinya tidak diubah; yang gagal hanya pemuatannya.
+        {t.states.loadError}
       </ErrorBanner>
       <ButtonLink href={backHref} variant="text" className="px-0">
-        Kembali ke Studio
+        {t.states.backToStudio}
       </ButtonLink>
     </div>
   );
@@ -56,15 +59,14 @@ export function EditorError({ onRetry, backHref }: { onRetry: () => void; backHr
 
 /** "Tidak tersedia": a single column with one sentence and a way back (DESIGN.md 8). */
 export function EditorMissing({ backHref }: { backHref: string }) {
+  const t = useT().studioEditor;
   return (
     <div className="mx-auto grid w-full max-w-170 justify-items-start gap-4 py-8">
-      <p className="font-serif text-xl leading-7 font-semibold">
-        Dokumen ini tidak ada di perangkat ini.
-      </p>
+      <p className="font-serif text-xl leading-7 font-semibold">{t.states.missingTitle}</p>
       <p className="text-sm text-ink-muted">
-        Mungkin sudah dipindahkan atau dibuka dari perangkat lain.{" "}
+        {t.states.missingBody}{" "}
         <Link href={backHref} className="text-ink underline underline-offset-3">
-          Kembali ke Studio
+          {t.states.backToStudio}
         </Link>
       </p>
     </div>
@@ -72,12 +74,13 @@ export function EditorMissing({ backHref }: { backHref: string }) {
 }
 
 export function EditorArchived() {
+  const t = useT().studioEditor;
   return (
     <div className="mx-auto grid w-full max-w-170 justify-items-start gap-4 py-8">
-      <p className="font-serif text-xl leading-7 font-semibold">Dokumen ini ada di Arsip.</p>
-      <p className="text-sm text-ink-muted">Pulihkan dokumen di Studio untuk kembali menulis.</p>
+      <p className="font-serif text-xl leading-7 font-semibold">{t.states.archivedTitle}</p>
+      <p className="text-sm text-ink-muted">{t.states.archivedBody}</p>
       <ButtonLink href={ARCHIVE_HREF} variant="secondary">
-        Buka Arsip
+        {t.states.openArchive}
       </ButtonLink>
     </div>
   );

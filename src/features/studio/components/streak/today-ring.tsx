@@ -2,9 +2,9 @@
 
 import type { CSSProperties } from "react";
 import { cn } from "@/lib/cn";
+import { format, useT } from "@/lib/i18n/provider";
+import { useFormat } from "@/lib/i18n/use-format";
 import { useCountUp } from "@/lib/use-count-up";
-
-const number = new Intl.NumberFormat("id-ID");
 
 /**
  * Today's words as a ring that closes toward the target, the number rolling up inside it. Used by
@@ -19,12 +19,14 @@ export function TodayRing({
   target: number;
   compact?: boolean;
 }) {
+  const t = useT().studioStreak.ring;
+  const f = useFormat();
   const shown = useCountUp(words);
   const progress = Math.min(1, words / target);
   return (
     <div
       role="progressbar"
-      aria-label="Progres hari ini"
+      aria-label={t.label}
       aria-valuemin={0}
       aria-valuemax={target}
       aria-valuenow={words}
@@ -50,16 +52,18 @@ export function TodayRing({
         />
       </svg>
       <div className="grid justify-items-center gap-0.5 text-center">
-        <span className="text-xs text-ink-muted">Hari ini</span>
+        <span className="text-xs text-ink-muted">{t.today}</span>
         <span
           className={cn(
             "font-serif leading-none tabular-nums",
             compact ? "text-[30px] md:text-[34px]" : "text-[40px] md:text-[48px]",
           )}
         >
-          {number.format(shown)}
+          {f.number(shown)}
         </span>
-        <span className="text-xs text-ink-muted">/ {number.format(target)} kata</span>
+        <span className="text-xs text-ink-muted">
+          {format(t.ofTarget, { target: f.number(target) })}
+        </span>
       </div>
     </div>
   );

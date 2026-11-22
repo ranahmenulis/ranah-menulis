@@ -1,44 +1,33 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import type { MenuEntry } from "@/components/ui/menu";
 import { EmptyState } from "@/components/ui/states";
 import { useToast } from "@/components/ui/toast";
 import { ButtonLink } from "@/components/ui/button";
+import { format, useLocale, useT } from "@/lib/i18n/provider";
 import { listEntries, NO_DOCUMENT_FILTERS, trashed } from "../../documents";
-import {
-  DOCUMENT_KINDS,
-  hasDocumentFilters,
-  type DocumentFilters,
-} from "../../document-classification";
+import { hasDocumentFilters, type DocumentFilters } from "../../document-classification";
 import type { DocumentList } from "../../hooks/use-document-list";
-import { formatChanged } from "../../relative-time";
 import { targetSummary } from "../../document-targets";
 import { useAccount } from "@/features/account/account-store";
 import { writingTime } from "../../writing-time";
 import type { DocumentSummary } from "../../storage/document-store";
 import { Row } from "./document-row";
+import { documentMenu } from "./document-menu";
+import { documentMeta, folderMeta, type DocumentCopy } from "./document-text";
 import type { Pending } from "./pending";
 
-const number = new Intl.NumberFormat("id-ID");
-const soon = { hint: "Segera", disabled: true, onSelect: () => {} } as const;
 const NO_IDS: ReadonlySet<string> = new Set();
 
-const meta = (doc: DocumentSummary, verb: string, at: number, now: number) =>
-  `${verb} ${formatChanged(at, now)} · ${number.format(doc.wordCount)} kata`;
-/** Nearest open document target for the meta line; nothing before the list has loaded. */
-const targetPart = (doc: DocumentSummary, today: string) => {
-  const line = today ? targetSummary(doc.targets, doc.wordCount, today) : null;
-  return line ? ` · ${line}` : "";
-};
-const nameOf = (doc: DocumentSummary) => doc.title || "Tanpa judul";
+const nameOf = (doc: DocumentSummary, t: DocumentCopy) => doc.title || t.untitled;
 
 function ClassificationDetails({ doc, folder }: { doc: DocumentSummary; folder?: string }) {
+  const t = useT().studioDocuments;
   if (!doc.kind && !doc.tags?.length && !folder) return null;
   return (
     <p className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs [overflow-wrap:anywhere] text-ink-muted">
-      {folder && <span>Folder: {folder}</span>}
-      {doc.kind && <span>{DOCUMENT_KINDS[doc.kind]}</span>}
+      {folder && <span>{format(t.meta.folderPrefix, { name: folder })}</span>}
+      {doc.kind && <span>{t.kinds[doc.kind]}</span>}
       {doc.tags?.map((tag) => (
         <span key={tag} className="max-w-full rounded-full bg-subtle px-2 py-px">
           {tag}
@@ -84,6 +73,8 @@ export function LiveList({
   archiveBusy?: boolean;
 }) {
   const toast = useToast();
+  const t = useT().studioDocuments;
+  const locale = useLocale();
   const now = list.loadedAt;
   const { timeZone } = useAccount().profile;
   const today = now > 0 ? writingTime(now, timeZone).day : "";
@@ -91,6 +82,11 @@ export function LiveList({
   const filtering = hasDocumentFilters(filters) || searchMatches !== null;
   const folderNames =
     filtering && folderId === null ? new Map(list.folders.map(({ id, name }) => [id, name])) : null;
+  /** Nearest open document target for the meta line; nothing before the list has loaded. */
+  const targetPart = (doc: DocumentSummary) => {
+    const line = today ? targetSummary(doc.targets, doc.wordCount, today, locale) : null;
+    return line ? ` · ${line}` : "";
+  };
 
   if (entries.length === 0) {
     if (searchMatches !== null) {
@@ -99,11 +95,11 @@ export function LiveList({
           className="pt-14"
           action={
             <Button variant="secondary" onClick={onClearSearch}>
-              Hapus pencarian
+              {t.empty.clearSearch}
             </Button>
           }
         >
-          <span role="status">Tidak ada dokumen yang cocok dengan pencarian.</span>
+          <span role="status">{t.empty.noSearchMatch}</span>
         </EmptyState>
       );
     }
@@ -113,11 +109,11 @@ export function LiveList({
           className="pt-14"
           action={
             <Button variant="secondary" onClick={onClearFilters}>
-              Hapus penyaring
+              {t.empty.clearFilters}
             </Button>
           }
         >
-          Tidak ada dokumen yang cocok.
+          {t.empty.noFilterMatch}
         </EmptyState>
       );
     }
@@ -128,64 +124,14 @@ export function LiveList({
         layout="side"
         action={
           <ButtonLink href="/studio/baru" variant="secondary" className="max-md:hidden">
-            Mulai menulis
+            {t.empty.start}
           </ButtonLink>
         }
       >
-        {folderName ? "Folder ini masih kosong." : "Belum ada tulisan di sini."}
+        {folderName ? t.empty.folderEmpty : t.empty.none}
       </EmptyState>
     );
   }
-
-  const docMenu = (doc: DocumentSummary): MenuEntry[] => [
-    { id: "rename", label: "Ganti nama", onSelect: () => onPending({ kind: "rename", doc }) },
-    {
-      id: "classification",
-      label: "Jenis dan tag",
-      onSelect: () => onPending({ kind: "classification", doc }),
-    },
-    { id: "move", label: "Pindah ke folder", onSelect: () => onPending({ kind: "move", doc }) },
-    {
-      id: "duplicate",
-      label: "Duplikat",
-      disabled: archiveBusy,
-      onSelect: () => onArchiveAction("duplicate", doc.id),
-    },
-    {
-      id: "send",
-      label: "Kirim ke proyek",
-      // Nothing to send while the document has no text, like Bagikan in the editor.
-      disabled: doc.wordCount === 0,
-      onSelect: () => onPending({ kind: "sendToProject", doc }),
-    },
-    { id: "export", label: "Ekspor", ...soon },
-    {
-      id: "archive",
-      label: "Arsipkan",
-      disabled: archiveBusy,
-      onSelect: () => onArchiveAction("archive", doc.id),
-    },
-    { id: "sep", type: "separator" },
-    {
-      id: "trash",
-      label: "Pindah ke sampah",
-      hint: "Bisa dipulihkan",
-      onSelect: async () => {
-        try {
-          if (!(await list.trash(doc.id))) {
-            toast({ message: "Status dokumen sudah berubah.", tone: "error" });
-            return;
-          }
-          toast({
-            message: "Dokumen dipindah ke Sampah.",
-            action: { label: "Urungkan", onSelect: () => list.restore(doc.id) },
-          });
-        } catch {
-          toast({ message: "Dokumen belum bisa dipindah. Coba lagi.", tone: "error" });
-        }
-      },
-    },
-  ];
 
   return (
     <ul>
@@ -197,12 +143,12 @@ export function LiveList({
             kind="folder"
             title={entry.folder.name}
             onOpen={() => onOpenFolder(entry.folder.id)}
-            meta={`${entry.count} dokumen · diubah ${formatChanged(entry.changedAt, now)}`}
-            menuLabel={`Menu folder ${entry.folder.name}`}
+            meta={folderMeta(t, locale, entry.count, entry.changedAt, now)}
+            menuLabel={format(t.menu.folderLabel, { name: entry.folder.name })}
             items={[
               {
                 id: "rename",
-                label: "Ganti nama",
+                label: t.menu.rename,
                 onSelect: () =>
                   onPending({ kind: "renameFolder", id: entry.folder.id, name: entry.folder.name }),
               },
@@ -214,10 +160,11 @@ export function LiveList({
             index={index}
             kind="document"
             page={entry.doc}
-            title={nameOf(entry.doc)}
+            title={nameOf(entry.doc, t)}
             href={`/studio/${entry.doc.id}`}
             meta={
-              meta(entry.doc, "Diubah", entry.doc.updatedAt, now) + targetPart(entry.doc, today)
+              documentMeta(t, locale, "changed", entry.doc.wordCount, entry.doc.updatedAt, now) +
+              targetPart(entry.doc)
             }
             details={
               <ClassificationDetails
@@ -226,11 +173,19 @@ export function LiveList({
               />
             }
             tags={[
-              ...(sharedIds.has(entry.doc.id) ? ["Dibagikan"] : []),
-              ...(submittedIds.has(entry.doc.id) ? ["Dikirim ke proyek"] : []),
+              ...(sharedIds.has(entry.doc.id) ? [t.rowTags.shared] : []),
+              ...(submittedIds.has(entry.doc.id) ? [t.rowTags.sent] : []),
             ]}
-            menuLabel={`Menu dokumen ${nameOf(entry.doc)}`}
-            items={docMenu(entry.doc)}
+            menuLabel={format(t.menu.documentLabel, { name: nameOf(entry.doc, t) })}
+            items={documentMenu({
+              doc: entry.doc,
+              t,
+              list,
+              toast,
+              archiveBusy,
+              onPending,
+              onArchiveAction,
+            })}
           />
         ),
       )}
@@ -240,8 +195,10 @@ export function LiveList({
 
 /** Sampah: restore with one tap; permanent delete always asks first. */
 export function TrashList({ list, onPending }: ListProps) {
+  const t = useT().studioDocuments;
+  const locale = useLocale();
   const trash = trashed(list.docs);
-  if (trash.length === 0) return <EmptyState className="pt-14">Sampah kosong.</EmptyState>;
+  if (trash.length === 0) return <EmptyState className="pt-14">{t.trash.empty}</EmptyState>;
   return (
     <>
       <ul>
@@ -252,9 +209,16 @@ export function TrashList({ list, onPending }: ListProps) {
             kind="document"
             page={doc}
             faded
-            title={nameOf(doc)}
-            meta={meta(doc, "Dipindahkan", doc.deletedAt ?? doc.updatedAt, list.loadedAt)}
-            menuLabel={`Menu dokumen ${nameOf(doc)}`}
+            title={nameOf(doc, t)}
+            meta={documentMeta(
+              t,
+              locale,
+              "trashed",
+              doc.wordCount,
+              doc.deletedAt ?? doc.updatedAt,
+              list.loadedAt,
+            )}
+            menuLabel={format(t.menu.documentLabel, { name: nameOf(doc, t) })}
             extra={
               <Button
                 variant="text"
@@ -262,13 +226,13 @@ export function TrashList({ list, onPending }: ListProps) {
                 className="text-ink"
                 onClick={() => list.restore(doc.id)}
               >
-                Pulihkan
+                {t.trash.restore}
               </Button>
             }
             items={[
               {
                 id: "delete",
-                label: "Hapus permanen",
+                label: t.trash.deleteForever,
                 danger: true,
                 onSelect: () => onPending({ kind: "delete", doc }),
               },
@@ -276,10 +240,7 @@ export function TrashList({ list, onPending }: ListProps) {
           />
         ))}
       </ul>
-      <p className="mt-4 text-xs text-ink-muted">
-        Dokumen di Sampah bisa dipulihkan. Hapus permanen ada di menu ⋯ dan selalu meminta
-        konfirmasi.
-      </p>
+      <p className="mt-4 text-xs text-ink-muted">{t.trash.note}</p>
     </>
   );
 }

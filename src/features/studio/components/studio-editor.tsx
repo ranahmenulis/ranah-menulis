@@ -7,6 +7,7 @@ import { postFromDocumentHref, STUDIO_HREF } from "@/features/app-shell/nav";
 import { EventEditorPanel } from "@/features/community/events/components/event-editor-panel";
 import { useEventSave } from "@/features/community/events/use-event-save";
 import { cn } from "@/lib/cn";
+import { useT } from "@/lib/i18n/provider";
 import { sameStats, type EditorStats } from "../editor-stats";
 import { useOnlineStatus } from "../hooks/use-online-status";
 import { useSendFromEditor } from "../hooks/use-send-from-editor";
@@ -40,14 +41,6 @@ import { SprintAnnouncer } from "./sprint-control";
 import { StudioSearchDialog } from "./studio-search-dialog";
 import { VersionHistoryDrawer } from "./version-history-drawer";
 
-const FALLBACK_TITLE: Record<LoadState, string> = {
-  loading: "",
-  ready: "",
-  error: "Dokumen tidak terbuka",
-  missing: "Dokumen tidak ditemukan",
-  archived: "Dokumen diarsipkan",
-};
-
 /** The writing area makes room for an open side panel, and sits lower in focus mode. */
 function canvasClass(panelOpen: boolean, focusMode: boolean) {
   return cn(
@@ -58,6 +51,13 @@ function canvasClass(panelOpen: boolean, focusMode: boolean) {
   );
 }
 
+/** The name shown in the bar while the document is not open (nothing while it is loading). */
+function fallbackTitle(load: LoadState, t: ReturnType<typeof useT>["studioEditor"]) {
+  return load === "error" || load === "missing" || load === "archived"
+    ? t.states.fallbackTitle[load]
+    : "";
+}
+
 /** A new document has no id until it is first stored. */
 const storedId = (id: string) => (id === "baru" ? null : id);
 
@@ -66,6 +66,7 @@ const storedId = (id: string) => (id === "baru" ? null : id);
  * `useStudioDocument` contract will be backed by Supabase in 3c.
  */
 export function StudioEditor({ documentId, eventId }: { documentId: string; eventId?: string }) {
+  const t = useT().studioEditor;
   const { onSaved, flush: saveEventProgress } = useEventSave(eventId);
   const doc = useStudioDocument(documentId, store, onSaved);
   const online = useOnlineStatus();
@@ -190,7 +191,7 @@ export function StudioEditor({ documentId, eventId }: { documentId: string; even
           helpOpen={side.panel === "help"}
           empty={isEmpty}
           ready={ready}
-          fallbackTitle={FALLBACK_TITLE[doc.load]}
+          fallbackTitle={fallbackTitle(doc.load, t)}
           menuItems={menuItems}
           counterTarget={docTargets.counter}
           sprint={sprint}

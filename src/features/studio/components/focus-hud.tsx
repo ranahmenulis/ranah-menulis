@@ -1,6 +1,9 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { format, useLocale, useT } from "@/lib/i18n/provider";
+import { useFormat } from "@/lib/i18n/use-format";
+import type { Locale } from "@/lib/i18n/config";
 import type { DailyLog } from "../daily-progress";
 import { totalWords } from "../daily-progress";
 import { formatClock } from "../count-words";
@@ -18,11 +21,13 @@ type FocusHudProps = {
   onExit: () => void;
 };
 
-function saveText(status: SaveStatus, savedAt: Date | null) {
-  if (status === "failed") return "Belum tersimpan";
-  if (status === "saving") return "Menyimpan…";
-  if (status === "draft" || !savedAt) return "Draf baru";
-  return `Tersimpan ${formatClock(savedAt)}`;
+type EditorText = ReturnType<typeof useT>["studioEditor"];
+
+function saveText(status: SaveStatus, savedAt: Date | null, t: EditorText, locale: Locale) {
+  if (status === "failed") return t.save.failedLabel;
+  if (status === "saving") return t.save.saving;
+  if (status === "draft" || !savedAt) return t.save.draft;
+  return format(t.save.savedAt, { time: formatClock(savedAt, locale) });
 }
 
 /**
@@ -38,12 +43,14 @@ export function FocusHud({
   sprint,
   onExit,
 }: FocusHudProps) {
-  const number = new Intl.NumberFormat("id-ID");
+  const t = useT().studioEditor;
+  const locale = useLocale();
+  const fmt = useFormat();
   return (
     <>
       <div className="fixed top-[calc(1rem+var(--safe-top))] right-4 z-20 md:top-[calc(1.25rem+var(--safe-top))] md:right-6">
         <Button variant="text" size="sm" onClick={onExit} className="font-normal text-ink-faint">
-          Keluar dari mode fokus · Esc
+          {t.focus.exit}
         </Button>
       </div>
       <p
@@ -52,17 +59,22 @@ export function FocusHud({
       >
         {sprint.state.phase === "running" && (
           <span className="tabular-nums" aria-hidden>
-            Sprint{" "}
+            {t.focus.sprint}{" "}
             {formatRemaining(
               remainingMs(sprint.state.startedAt, sprint.state.minutes, sprint.nowMs),
             )}
           </span>
         )}
-        {sprint.state.phase === "done" && <span>Sprint: {resultText(sprint.state)}</span>}
-        <span>{saveText(status, savedAt)}</span>
-        <span>{number.format(words)} kata</span>
+        {sprint.state.phase === "done" && (
+          <span>{format(t.focus.sprintResult, { result: resultText(sprint.state, locale) })}</span>
+        )}
+        <span>{saveText(status, savedAt, t, locale)}</span>
+        <span>{format(t.focus.words, { n: fmt.number(words) })}</span>
         <span>
-          {number.format(totalWords(progress))} / {number.format(target)} hari ini
+          {format(t.focus.today, {
+            done: fmt.number(totalWords(progress)),
+            target: fmt.number(target),
+          })}
         </span>
       </p>
     </>

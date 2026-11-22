@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { IconButton } from "@/components/ui/icon-button";
 import { Menu, type MenuEntry } from "@/components/ui/menu";
 import { VisibilityTag } from "@/components/ui/visibility-tag";
+import { useT } from "@/lib/i18n/provider";
 import type { DailyLog } from "../daily-progress";
 import type { EditorStats } from "../editor-stats";
 import type { SaveStatus } from "../hooks/use-studio-document";
@@ -77,17 +78,18 @@ export function EditorBar({
   onToggleHelp,
   onFocusMode,
 }: EditorBarProps) {
+  const t = useT().studioEditor;
   return (
     <header className="relative z-40 flex flex-none flex-wrap items-center gap-x-2 border-b border-line bg-canvas pt-(--safe-top) pr-2 pl-4 md:h-[calc(3.5rem+var(--safe-top))] md:flex-nowrap md:gap-x-4 md:px-4">
-      <IconButton label="Kembali ke Studio" onClick={onBack} className="order-1 -ml-2 md:-ml-1">
+      <IconButton label={t.bar.back} onClick={onBack} className="order-1 -ml-2 md:-ml-1">
         <ArrowLeft size={20} aria-hidden />
       </IconButton>
       <span className="order-2 min-w-0 flex-1 truncate text-sm font-medium md:order-2 md:max-w-85 md:flex-none">
-        {ready ? title.trim() || "Tanpa judul" : fallbackTitle}
+        {ready ? title.trim() || t.bar.untitled : fallbackTitle}
       </span>
       {onSearch && (
         <IconButton
-          label="Cari di Studio"
+          label={t.bar.search}
           aria-haspopup="dialog"
           aria-keyshortcuts="Control+K Meta+K"
           onClick={onSearch}
@@ -99,13 +101,13 @@ export function EditorBar({
       <Button
         size="sm"
         disabled={!ready || words === 0}
-        title={ready && words === 0 ? "Tulis sesuatu dulu untuk dibagikan" : undefined}
+        title={ready && words === 0 ? t.bar.shareEmpty : undefined}
         onClick={onShare}
         className="order-3 md:order-6"
       >
-        Bagikan
+        {t.bar.share}
       </Button>
-      <Menu label="Menu dokumen" items={menuItems} className="order-4 md:order-7" />
+      <Menu label={t.bar.menu} items={menuItems} className="order-4 md:order-7" />
       <span aria-hidden className="order-5 basis-full md:hidden" />
 
       {!ready && <span aria-hidden className="order-6 flex-1 md:order-4" />}
@@ -136,14 +138,14 @@ export function EditorBar({
       )}
 
       <IconButton
-        label="Bantuan menulis"
+        label={t.bar.help}
         aria-pressed={helpOpen}
         onClick={onToggleHelp}
         className="max-md:hidden md:order-5"
       >
         <Lightbulb size={20} aria-hidden />
       </IconButton>
-      <IconButton label="Mode fokus" onClick={onFocusMode} className="max-md:hidden md:order-8">
+      <IconButton label={t.bar.focus} onClick={onFocusMode} className="max-md:hidden md:order-8">
         <ArrowsOut size={20} aria-hidden />
       </IconButton>
     </header>

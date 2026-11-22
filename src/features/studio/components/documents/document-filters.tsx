@@ -3,12 +3,8 @@
 import { useSearchParams } from "next/navigation";
 import { useId, useMemo, type Ref } from "react";
 import { Field, Select } from "@/components/ui/field";
-import {
-  DOCUMENT_KINDS,
-  parseKind,
-  parseTag,
-  type DocumentFilters,
-} from "../../document-classification";
+import { useT } from "@/lib/i18n/provider";
+import { parseKind, parseTag, type DocumentFilters } from "../../document-classification";
 
 export function useDocumentFilters() {
   const params = useSearchParams();
@@ -49,26 +45,27 @@ export function DocumentFilterFields({
   onChange: ReturnType<typeof useDocumentFilters>["changeFilters"];
 }) {
   const id = useId();
+  const t = useT().studioDocuments;
   const missingTag = tags.some(([key]) => key === filters.tag) ? null : filters.tag;
 
   return (
     <div className="mt-4 grid grid-cols-2 gap-3 sm:max-w-sm">
-      <Field id={`${id}-kind`} label="Jenis dokumen">
+      <Field id={`${id}-kind`} label={t.filters.kind}>
         <Select
           id={`${id}-kind`}
           ref={kindRef}
           value={filters.kind ?? ""}
           onChange={(event) => onChange({ jenis: event.target.value })}
         >
-          <option value="">Semua jenis</option>
-          {Object.entries(DOCUMENT_KINDS).map(([key, label]) => (
+          <option value="">{t.filters.allKinds}</option>
+          {Object.entries(t.kinds).map(([key, label]) => (
             <option key={key} value={key}>
               {label}
             </option>
           ))}
         </Select>
       </Field>
-      <Field id={`${id}-tag`} label="Tag">
+      <Field id={`${id}-tag`} label={t.filters.tag}>
         <Select
           id={`${id}-tag`}
           value={filters.tag ?? ""}
@@ -77,7 +74,7 @@ export function DocumentFilterFields({
             onChange({ tag: label ?? "" });
           }}
         >
-          <option value="">Semua tag</option>
+          <option value="">{t.filters.allTags}</option>
           {tags.map(([key, label]) => (
             <option key={key} value={key}>
               {label}

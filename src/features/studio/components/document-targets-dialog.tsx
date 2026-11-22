@@ -4,6 +4,8 @@ import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Field, Input, describedBy } from "@/components/ui/field";
+import { format, useLocale, useT } from "@/lib/i18n/provider";
+import { useFormat } from "@/lib/i18n/use-format";
 import {
   addTarget,
   MAX_TARGETS,
@@ -27,14 +29,7 @@ type Props = {
   onChange: (next: DocumentTarget[]) => void;
 };
 
-const FAILURES: Record<AddFailure, string> = {
-  limit: `Satu dokumen punya paling banyak ${MAX_TARGETS} target.`,
-  due: "Tenggat tidak boleh sebelum hari ini.",
-  duplicate: "Target ini sudah ada.",
-};
-const WORDS_ERROR = "Isi angka bulat antara 1 dan 500.000.";
-
-const STATUS_TEXT = { tercapai: "Tercapai", terlewat: "Terlewat", berjalan: "" } as const;
+type DialogError = AddFailure | "words";
 
 /**
  * Targets of one document (STK-08): a word count and an optional due day, several at once. They are
@@ -43,21 +38,25 @@ const STATUS_TEXT = { tercapai: "Tercapai", terlewat: "Terlewat", berjalan: "" }
 export function DocumentTargetsDialog({ open, onClose, words, targets, today, onChange }: Props) {
   const [text, setText] = useState("");
   const [due, setDue] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<DialogError | null>(null);
+  const t = useT().studioEditor.targetsDialog;
+  const locale = useLocale();
+  const fmt = useFormat();
   const wordsInput = useRef<HTMLInputElement>(null);
   const full = targets.length >= MAX_TARGETS;
-  const wordsError = error === WORDS_ERROR ? error : undefined;
-  const dueError = error && error !== WORDS_ERROR && error !== FAILURES.limit ? error : undefined;
+  const failureText = (code: AddFailure) => format(t.failures[code], { max: String(MAX_TARGETS) });
+  const wordsError = error === "words" ? t.wordsError : undefined;
+  const dueError = error === "due" || error === "duplicate" ? failureText(error) : undefined;
 
   function add() {
     const parsed = parseTargetWords(text);
-    if (parsed === null) return setError(WORDS_ERROR);
+    if (parsed === null) return setError("words");
     const result = addTarget(
       targets,
       { id: crypto.randomUUID(), words: parsed, due: due || null },
       today,
     );
-    if (!result.ok) return setError(FAILURES[result.reason]);
+    if (!result.ok) return setError(result.reason);
     onChange(result.list);
     setText("");
     setDue("");
@@ -76,15 +75,15 @@ export function DocumentTargetsDialog({ open, onClose, words, targets, today, on
       open={open}
       onClose={onClose}
       swipeToDismiss
-      title="Target dokumen"
-      description="Jumlah kata yang ingin dicapai dokumen ini, dengan atau tanpa tenggat. Terpisah dari target harian dan tidak memengaruhi streak."
-      actions={<Button onClick={onClose}>Selesai</Button>}
+      title={t.title}
+      description={t.description}
+      actions={<Button onClick={onClose}>{t.done}</Button>}
     >
       <div className="grid gap-5">
         {targets.length === 0 ? (
-          <p className="text-sm text-ink-muted">Belum ada target untuk dokumen ini.</p>
+          <p className="text-sm text-ink-muted">{t.none}</p>
         ) : (
-          <ul aria-label="Target dokumen" className="border-t border-line">
+          <ul aria-label={t.list} className="border-t border-line">
             {sortTargets(targets).map((target) => {
               const status = targetStatus(target, words, today);
               return (
@@ -93,20 +92,20 @@ export function DocumentTargetsDialog({ open, onClose, words, targets, today, on
                   className="flex items-center justify-between gap-3 border-b border-line py-3 text-sm"
                 >
                   <span className="min-w-0 tabular-nums">
-                    {targetLine(target, words, today)}
-                    {STATUS_TEXT[status] && status !== "tercapai" && (
+                    {targetLine(target, words, today, locale)}
+                    {t.status[status] && status !== "tercapai" && (
                       <span className="ml-2 rounded-full border border-line px-2 py-px text-xs">
-                        {STATUS_TEXT[status]}
+                        {t.status[status]}
                       </span>
                     )}
                   </span>
                   <Button
                     variant="text"
                     size="sm"
-                    aria-label={`Hapus target ${target.words.toLocaleString("id-ID")} kata`}
+                    aria-label={format(t.removeLabel, { n: fmt.number(target.words) })}
                     onClick={() => remove(target.id)}
                   >
-                    Hapus
+                    {t.remove}
                   </Button>
                 </li>
               );
@@ -122,7 +121,7 @@ export function DocumentTargetsDialog({ open, onClose, words, targets, today, on
             add();
           }}
         >
-          <Field id="target-words" label="Jumlah kata" error={wordsError}>
+          <Field id="target-words" label={t.words} error={wordsError}>
             <Input
               id="target-words"
               ref={wordsInput}
@@ -134,7 +133,7 @@ export function DocumentTargetsDialog({ open, onClose, words, targets, today, on
               onChange={(e) => setText(e.target.value)}
             />
           </Field>
-          <Field id="target-due" label="Tenggat" optional error={dueError}>
+          <Field id="target-due" label={t.due} optional error={dueError}>
             <Input
               id="target-due"
               type="date"
@@ -146,9 +145,9 @@ export function DocumentTargetsDialog({ open, onClose, words, targets, today, on
               onChange={(e) => setDue(e.target.value)}
             />
           </Field>
-          {full && <p className="text-xs text-ink-muted">{FAILURES.limit}</p>}
+          {full && <p className="text-xs text-ink-muted">{failureText("limit")}</p>}
           <Button type="submit" variant="secondary" disabled={full || today === ""}>
-            Tambah target
+            {t.add}
           </Button>
         </form>
       </div>

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Field, Input, Select } from "@/components/ui/field";
+import { format, useT } from "@/lib/i18n/provider";
 import type { StudioFolder } from "../../storage/document-store";
 
 const FORM_ID = "name-form";
@@ -29,6 +30,7 @@ export function NameDialog({
   onSubmit: (name: string) => void;
   onClose: () => void;
 }) {
+  const t = useT().studioDocuments;
   const [name, setName] = useState(initial);
   const trimmed = name.trim();
   return (
@@ -39,7 +41,7 @@ export function NameDialog({
       actions={
         <>
           <Button variant="secondary" onClick={onClose}>
-            Batal
+            {t.dialogs.cancel}
           </Button>
           <Button type="submit" form={FORM_ID} disabled={required && !trimmed}>
             {submitLabel}
@@ -75,29 +77,28 @@ export function MoveDialog({
   onSubmit: (folderId: string | null) => void;
   onClose: () => void;
 }) {
+  const t = useT().studioDocuments.dialogs;
   const [value, setValue] = useState(current ?? "");
   return (
     <Dialog
       open={open}
       onClose={onClose}
-      title="Pindah ke folder"
-      description={
-        folders.length === 0 ? "Belum ada folder. Buat folder dulu dari daftar dokumen." : undefined
-      }
+      title={t.move.title}
+      description={folders.length === 0 ? t.move.noFolders : undefined}
       actions={
         <>
           <Button variant="secondary" onClick={onClose}>
-            Batal
+            {t.cancel}
           </Button>
           <Button disabled={value === (current ?? "")} onClick={() => onSubmit(value || null)}>
-            Pindahkan
+            {t.move.submit}
           </Button>
         </>
       }
     >
-      <Field id="move-field" label="Folder tujuan">
+      <Field id="move-field" label={t.move.label}>
         <Select id="move-field" value={value} onChange={(e) => setValue(e.target.value)}>
-          <option value="">Tanpa folder</option>
+          <option value="">{t.move.noFolder}</option>
           {folders.map((f) => (
             <option key={f.id} value={f.id}>
               {f.name}
@@ -121,20 +122,21 @@ export function DeleteDialog({
   onConfirm: () => void;
   onClose: () => void;
 }) {
+  const t = useT().studioDocuments;
   return (
     <Dialog
       open={open}
       onClose={onClose}
       role="alertdialog"
-      title="Hapus permanen dokumen ini?"
-      description={`“${title || "Tanpa judul"}” dan seluruh isinya akan hilang dan tidak bisa dipulihkan. Tulisan lain tidak terpengaruh.`}
+      title={t.dialogs.delete.title}
+      description={format(t.dialogs.delete.description, { title: title || t.untitled })}
       actions={
         <>
           <Button variant="secondary" onClick={onClose}>
-            Batal
+            {t.dialogs.cancel}
           </Button>
           <Button variant="danger" onClick={onConfirm}>
-            Hapus permanen
+            {t.dialogs.delete.confirm}
           </Button>
         </>
       }

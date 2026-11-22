@@ -9,6 +9,7 @@ import {
   type PointerEvent,
 } from "react";
 import { cn } from "@/lib/cn";
+import { format, useLocale, useT } from "@/lib/i18n/provider";
 import { axisTicks, type Bucket, type Period } from "../../statistics";
 import { axisLabel, rangeName, readout, tickLabel, unitName } from "../../statistics-copy";
 
@@ -33,6 +34,8 @@ const pct = (value: number, top: number) => `${(value / top) * 100}%`;
  * chart carries every value, so nothing depends on pointing.
  */
 export function BarChart({ buckets, period }: { buckets: Bucket[]; period: Period }) {
+  const t = useT().studioStats.chart;
+  const locale = useLocale();
   const [picked, setPicked] = useState<number | null>(null);
   const [focused, setFocused] = useState(false);
   const plot = useRef<HTMLDivElement>(null);
@@ -72,7 +75,7 @@ export function BarChart({ buckets, period }: { buckets: Bucket[]; period: Perio
         aria-live={focused ? "polite" : "off"}
         className="min-h-11 text-sm [overflow-wrap:anywhere] md:min-h-6"
       >
-        {readout(buckets[active], period)}
+        {readout(buckets[active], period, locale)}
       </figcaption>
 
       <div className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-2 pt-2">
@@ -83,7 +86,7 @@ export function BarChart({ buckets, period }: { buckets: Bucket[]; period: Perio
               style={{ bottom: pct(tick, top) }}
               className="absolute right-0 translate-y-1/2 text-xs text-ink-muted"
             >
-              {tickLabel(tick, top)}
+              {tickLabel(tick, top, locale)}
             </span>
           ))}
         </div>
@@ -92,8 +95,11 @@ export function BarChart({ buckets, period }: { buckets: Bucket[]; period: Perio
           ref={plot}
           role="group"
           tabIndex={0}
-          aria-roledescription="grafik batang"
-          aria-label={`Kata per ${unitName(period)}, ${rangeName(period)}`}
+          aria-roledescription={t.roleDescription}
+          aria-label={format(t.label, {
+            unit: unitName(period, locale),
+            range: rangeName(period, locale),
+          })}
           aria-describedby={readoutId}
           onPointerMove={pick}
           onPointerDown={pick}
@@ -155,7 +161,7 @@ export function BarChart({ buckets, period }: { buckets: Bucket[]; period: Perio
                       mode === "wide" && "max-md:hidden",
                     )}
                   >
-                    {axisLabel(bucket, period)}
+                    {axisLabel(bucket, period, locale)}
                   </span>
                 )}
               </div>
@@ -167,7 +173,7 @@ export function BarChart({ buckets, period }: { buckets: Bucket[]; period: Perio
       {hasTarget && (
         <p className="flex items-center gap-2 text-xs text-ink-muted">
           <span aria-hidden className="h-px w-4 bg-ink-muted" />
-          Target harian
+          {t.targetLegend}
         </p>
       )}
     </figure>

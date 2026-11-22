@@ -6,9 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Field, Input, Select, describedBy } from "@/components/ui/field";
 import { ErrorBanner } from "@/components/ui/states";
+import { format, useT } from "@/lib/i18n/provider";
 import {
   addDocumentTag,
-  DOCUMENT_KINDS,
   MAX_DOCUMENT_TAGS,
   MAX_TAG_LENGTH,
   parseKind,
@@ -32,6 +32,9 @@ type Props = {
 
 export function DocumentClassificationDialog({ doc, onSave, onSaved, onClose }: Props) {
   const id = useId();
+  const copy = useT().studioDocuments;
+  const t = copy.classification;
+  const kinds = copy.kinds;
   const tagInput = useRef<HTMLInputElement>(null);
   const [expected, setExpected] = useState<DocumentClassification>(doc);
   const [kind, setKind] = useState(doc.kind);
@@ -42,12 +45,16 @@ export function DocumentClassificationDialog({ doc, onSave, onSaved, onClose }: 
   const [latest, setLatest] = useState<StudioDocument | null>(null);
   const [saving, setSaving] = useState(false);
   const tagId = `${id}-tag`;
-  const hint = `Batas sementara ${MAX_DOCUMENT_TAGS} tag, masing-masing ${MAX_TAG_LENGTH} karakter.`;
+  const hint = format(t.hint, { tags: String(MAX_DOCUMENT_TAGS), length: String(MAX_TAG_LENGTH) });
+  const tagErrorText = (code: "empty" | "tooLong" | "duplicate" | "limit") =>
+    format(t.errors[code], {
+      limit: String(code === "limit" ? MAX_DOCUMENT_TAGS : MAX_TAG_LENGTH),
+    });
 
   function readDraftTag() {
     const result = addDocumentTag(tags, draftTag);
     if (!result.ok) {
-      setTagError(result.error);
+      setTagError(tagErrorText(result.code));
       tagInput.current?.focus();
       return null;
     }
@@ -81,14 +88,14 @@ export function DocumentClassificationDialog({ doc, onSave, onSaved, onClose }: 
           setLatest(result.doc);
           break;
         case "unavailable":
-          setError("Dokumen ini sudah tidak tersedia di daftar aktif.");
+          setError(t.unavailable);
           break;
         case "invalid":
-          setError("Periksa kembali jenis dan tag dokumen.");
+          setError(t.invalid);
           break;
       }
     } catch {
-      setError("Jenis dan tag gagal disimpan. Coba lagi.");
+      setError(t.saveFailed);
     } finally {
       setSaving(false);
     }
@@ -107,16 +114,16 @@ export function DocumentClassificationDialog({ doc, onSave, onSaved, onClose }: 
   return (
     <Dialog
       open
-      title="Jenis dan tag"
+      title={t.title}
       onClose={onClose}
       dismissible={!saving}
       actions={
         <>
           <Button variant="secondary" onClick={onClose} disabled={saving}>
-            Batal
+            {copy.dialogs.cancel}
           </Button>
           <Button type="submit" form={`${id}-form`} disabled={saving || latest !== null}>
-            {saving ? "Menyimpan…" : "Simpan"}
+            {saving ? t.saving : t.save}
           </Button>
         </>
       }
@@ -125,15 +132,13 @@ export function DocumentClassificationDialog({ doc, onSave, onSaved, onClose }: 
         {error && <ErrorBanner>{error}</ErrorBanner>}
         {latest && (
           <div className="grid justify-items-start gap-2">
-            <ErrorBanner>
-              Jenis atau tag berubah di tab lain. Memuat data terbaru akan mengganti isian ini.
-            </ErrorBanner>
+            <ErrorBanner>{t.conflict}</ErrorBanner>
             <Button variant="secondary" size="sm" onClick={() => loadLatest(latest)}>
-              Muat data terbaru
+              {t.loadLatest}
             </Button>
           </div>
         )}
-        <Field id={`${id}-kind`} label="Jenis dokumen" optional>
+        <Field id={`${id}-kind`} label={t.kindLabel} optional>
           <Select
             id={`${id}-kind`}
             value={kind ?? ""}
@@ -141,8 +146,8 @@ export function DocumentClassificationDialog({ doc, onSave, onSaved, onClose }: 
             disabled={saving}
             onChange={(event) => setKind(parseKind(event.target.value) ?? undefined)}
           >
-            <option value="">Tanpa jenis</option>
-            {Object.entries(DOCUMENT_KINDS).map(([key, label]) => (
+            <option value="">{t.noKind}</option>
+            {Object.entries(kinds).map(([key, label]) => (
               <option key={key} value={key}>
                 {label}
               </option>
@@ -151,7 +156,7 @@ export function DocumentClassificationDialog({ doc, onSave, onSaved, onClose }: 
         </Field>
         <Field
           id={tagId}
-          label="Tag baru"
+          label={t.newTag}
           optional
           hint={hint}
           error={tagError && <span role="alert">{tagError}</span>}
@@ -175,18 +180,18 @@ export function DocumentClassificationDialog({ doc, onSave, onSaved, onClose }: 
               }}
             />
             <Button variant="secondary" disabled={saving} onClick={addTag}>
-              Tambah
+              {t.add}
             </Button>
           </div>
         </Field>
         {tags.length > 0 && (
-          <ul aria-label="Tag dokumen" className="flex flex-wrap gap-2">
+          <ul aria-label={t.tagsLabel} className="flex flex-wrap gap-2">
             {tags.map((tag) => (
               <li key={tag} className="max-w-full min-w-0">
                 <Button
                   variant="secondary"
                   size="sm"
-                  aria-label={`Lepas tag ${tag}`}
+                  aria-label={format(t.removeTag, { tag })}
                   className="h-auto! min-h-8 max-w-full py-1 text-start leading-tight [overflow-wrap:anywhere] whitespace-normal!"
                   disabled={saving}
                   onClick={() => {

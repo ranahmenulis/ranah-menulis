@@ -7,7 +7,7 @@ import { CheckChoice, RadioChoice } from "@/components/ui/choice";
 import { Dialog } from "@/components/ui/dialog";
 import { ErrorBanner } from "@/components/ui/states";
 import { useToast } from "@/components/ui/toast";
-import { useT } from "@/lib/i18n/provider";
+import { format as formatText, useT } from "@/lib/i18n/provider";
 import { DEFAULT_LAYOUT, type DocumentLayout } from "../document-layout";
 import { downloadBlob, exportFileName } from "../export/download";
 import { toPlainText } from "../export/export-blocks";
@@ -37,7 +37,9 @@ export function ExportDialog({
   layout = DEFAULT_LAYOUT,
   getContent,
 }: ExportDialogProps) {
-  const note = useT().studioLayout.export;
+  const all = useT();
+  const note = all.studioLayout.export;
+  const t = all.studioEditor.export;
   const toast = useToast();
   const [format, setFormat] = useState<Format>("pdf");
   const [pdf, setPdf] = useState<PdfOptions>(DEFAULT_PDF_OPTIONS);
@@ -69,7 +71,7 @@ export function ExportDialog({
       }
       setBusy(false);
       onClose();
-      toast({ message: `Berkas ${format.toUpperCase()} diunduh.` });
+      toast({ message: formatText(t.done, { format: format.toUpperCase() }) });
     } catch {
       setBusy(false);
       setFailed(true);
@@ -82,37 +84,33 @@ export function ExportDialog({
       onClose={close}
       dismissible={!busy}
       swipeToDismiss
-      title="Ekspor dokumen"
-      description="Berkas dibuat di perangkat ini lalu diunduh. Hanya teks yang diekspor; tebal dan miring tidak ikut."
+      title={t.title}
+      description={t.description}
       actions={
         <>
           <Button variant="text" onClick={close} disabled={busy}>
-            Batal
+            {t.cancel}
           </Button>
           <Button onClick={() => void run()} loading={busy}>
-            Unduh {format.toUpperCase()}
+            {formatText(t.download, { format: format.toUpperCase() })}
           </Button>
         </>
       }
     >
       <div className="grid gap-4">
-        {failed && (
-          <ErrorBanner>
-            Berkas belum bisa dibuat. Isi dokumenmu tidak berubah. Coba lagi.
-          </ErrorBanner>
-        )}
-        <div role="radiogroup" aria-label="Format" className="grid gap-3">
+        {failed && <ErrorBanner>{t.failed}</ErrorBanner>}
+        <div role="radiogroup" aria-label={t.format} className="grid gap-3">
           <RadioChoice
             name="export-format"
             label="PDF"
-            hint="Untuk dibaca atau dicetak"
+            hint={t.pdfHint}
             checked={format === "pdf"}
             onChange={() => setFormat("pdf")}
           />
           <RadioChoice
             name="export-format"
             label="TXT"
-            hint="Teks biasa, bisa dibuka di aplikasi apa pun"
+            hint={t.txtHint}
             checked={format === "txt"}
             onChange={() => setFormat("txt")}
           />
@@ -120,13 +118,13 @@ export function ExportDialog({
         {format === "pdf" && (
           <div className="grid gap-4 border-t border-line pt-4">
             <CheckChoice
-              label="Judul di halaman depan"
-              hint="Judul sendirian di halaman pertama, tulisan mulai di halaman kedua"
+              label={t.titlePage}
+              hint={t.titlePageHint}
               checked={pdf.titlePage}
               onChange={(e) => setPdf({ ...pdf, titlePage: e.target.checked })}
             />
             <CheckChoice
-              label="Nomor halaman"
+              label={t.pageNumbers}
               checked={pdf.pageNumbers}
               onChange={(e) => setPdf({ ...pdf, pageNumbers: e.target.checked })}
             />

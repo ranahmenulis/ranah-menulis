@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Field, Input, describedBy } from "@/components/ui/field";
 import { Popover } from "@/components/ui/popover";
 import { cn } from "@/lib/cn";
+import { format, useLocale, useT } from "@/lib/i18n/provider";
+import { useFormat } from "@/lib/i18n/use-format";
 import type { SprintApi } from "../hooks/use-sprint";
 import {
   formatRemaining,
@@ -18,7 +20,6 @@ import {
   type SprintState,
 } from "../sprint";
 
-const number = new Intl.NumberFormat("id-ID");
 export const SPRINT_TRIGGER_ID = "sprint-trigger";
 
 type SprintControlProps = {
@@ -30,9 +31,10 @@ type SprintControlProps = {
 };
 
 function StartForm({ onStart }: { onStart: (minutes: number) => void }) {
+  const t = useT().studioEditor;
   const [text, setText] = useState("25");
   const minutes = parseMinutes(text);
-  const error = text.trim() !== "" && minutes === null ? "Isi 1 sampai 180 menit." : undefined;
+  const error = text.trim() !== "" && minutes === null ? t.sprint.invalid : undefined;
   return (
     <form
       className="grid gap-3"
@@ -41,11 +43,9 @@ function StartForm({ onStart }: { onStart: (minutes: number) => void }) {
         if (minutes !== null) onStart(minutes);
       }}
     >
-      <p className="font-medium">Timer sprint</p>
-      <p className="text-xs text-ink-muted">
-        Tulis tanpa henti sampai waktu habis. Streak dan targetmu tidak berubah.
-      </p>
-      <div className="flex flex-wrap gap-2" role="group" aria-label="Pilihan durasi">
+      <p className="font-medium">{t.sprint.title}</p>
+      <p className="text-xs text-ink-muted">{t.sprint.intro}</p>
+      <div className="flex flex-wrap gap-2" role="group" aria-label={t.sprint.durations}>
         {SPRINT_PRESETS.map((n) => (
           <button
             key={n}
@@ -57,11 +57,11 @@ function StartForm({ onStart }: { onStart: (minutes: number) => void }) {
               minutes === n ? "bg-ink text-on-ink" : "bg-subtle text-ink",
             )}
           >
-            {n} mnt
+            {format(t.sprint.preset, { n: String(n) })}
           </button>
         ))}
       </div>
-      <Field id="sprint-minutes" label="Menit" error={error}>
+      <Field id="sprint-minutes" label={t.sprint.minutes} error={error}>
         <Input
           id="sprint-minutes"
           inputMode="numeric"
@@ -72,7 +72,7 @@ function StartForm({ onStart }: { onStart: (minutes: number) => void }) {
         />
       </Field>
       <Button type="submit" disabled={minutes === null}>
-        Mulai sprint
+        {t.sprint.start}
       </Button>
     </form>
   );
@@ -89,18 +89,20 @@ function Running({
   words: number;
   onStop: () => void;
 }) {
+  const t = useT().studioEditor;
+  const fmt = useFormat();
   const left = remainingMs(state.startedAt, state.minutes, nowMs);
   return (
     <div className="grid gap-3">
-      <p className="font-medium">Sprint berjalan</p>
+      <p className="font-medium">{t.sprint.running}</p>
       <p className="font-serif text-3xl font-semibold tabular-nums" aria-hidden>
         {formatRemaining(left)}
       </p>
       <p className="text-ink-muted tabular-nums">
-        {number.format(sprintWords(state.startWords, words))} kata sejauh ini
+        {format(t.sprint.soFar, { n: fmt.number(sprintWords(state.startWords, words)) })}
       </p>
       <Button variant="secondary" onClick={onStop}>
-        Hentikan sprint
+        {t.sprint.stop}
       </Button>
     </div>
   );
@@ -115,16 +117,18 @@ function Done({
   onAgain: () => void;
   onClose: () => void;
 }) {
+  const t = useT().studioEditor;
+  const locale = useLocale();
   return (
     <div className="grid gap-3">
-      <p className="font-medium">{state.stopped ? "Sprint dihentikan" : "Sprint selesai"}</p>
-      <p className="font-serif text-xl leading-7 font-semibold">{resultText(state)}</p>
+      <p className="font-medium">{state.stopped ? t.sprint.stopped : t.sprint.done}</p>
+      <p className="font-serif text-xl leading-7 font-semibold">{resultText(state, locale)}</p>
       <div className="flex gap-2">
         <Button variant="secondary" onClick={onAgain}>
-          Mulai lagi
+          {t.sprint.again}
         </Button>
         <Button variant="text" onClick={onClose}>
-          Tutup
+          {t.sprint.close}
         </Button>
       </div>
     </div>
@@ -137,14 +141,15 @@ function Done({
  * countdown is not a live region: screen readers hear only the start and the end (SprintAnnouncer).
  */
 export function SprintControl({ sprint, words, open, onOpenChange }: SprintControlProps) {
+  const t = useT().studioEditor;
   const { state, nowMs } = sprint;
   const mobileLabel =
     state.phase === "running"
       ? formatRemaining(remainingMs(state.startedAt, state.minutes, nowMs))
       : state.phase === "done"
-        ? "selesai"
+        ? t.sprint.triggerDone
         : "";
-  const label = mobileLabel ? `Sprint ${mobileLabel}` : "Sprint";
+  const label = mobileLabel ? `${t.sprint.trigger} ${mobileLabel}` : t.sprint.trigger;
 
   const closeAndFocusTrigger = () => {
     onOpenChange(false);
@@ -155,7 +160,7 @@ export function SprintControl({ sprint, words, open, onOpenChange }: SprintContr
     <Popover
       open={open}
       onOpenChange={onOpenChange}
-      label="Timer sprint"
+      label={t.sprint.title}
       className="max-md:static"
       panelClassName="w-72 p-4 text-sm max-md:inset-x-4 max-md:w-auto"
       renderTrigger={(props) => (
@@ -164,7 +169,7 @@ export function SprintControl({ sprint, words, open, onOpenChange }: SprintContr
           id={SPRINT_TRIGGER_ID}
           type="button"
           aria-label={label}
-          title="Timer sprint"
+          title={t.sprint.title}
           className={cn(
             "inline-flex min-h-8 cursor-pointer items-center text-xs whitespace-nowrap text-ink-muted tabular-nums hover:text-ink hover:underline hover:underline-offset-3 aria-expanded:text-ink aria-expanded:underline aria-expanded:underline-offset-3",
             state.phase === "idle" && "max-md:hidden",
@@ -206,11 +211,13 @@ export function SprintControl({ sprint, words, open, onOpenChange }: SprintContr
 
 /** One quiet announcement when a sprint starts and when it ends; silent in between. */
 export function SprintAnnouncer({ state }: { state: SprintState }) {
+  const t = useT().studioEditor;
+  const locale = useLocale();
   const message =
     state.phase === "running"
-      ? `Sprint ${spokenDuration(state.minutes * 60_000)} dimulai.`
+      ? format(t.sprint.started, { duration: spokenDuration(state.minutes * 60_000, locale) })
       : state.phase === "done"
-        ? `${state.stopped ? "Sprint dihentikan" : "Sprint selesai"}: ${resultText(state)}.`
+        ? `${state.stopped ? t.sprint.stopped : t.sprint.done}: ${resultText(state, locale)}.`
         : "";
   return (
     <p role="status" className="sr-only">

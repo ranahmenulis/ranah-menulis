@@ -4,10 +4,11 @@ import { useMemo, useState } from "react";
 import { ButtonLink } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
 import { EmptyState, ErrorBanner, RetryButton, Skeleton } from "@/components/ui/states";
+import { format, useLocale, useT } from "@/lib/i18n/provider";
 import { useStreakData } from "../../hooks/use-streak-data";
 import { statistics, type Period } from "../../statistics";
 import { writingMetrics } from "../../statistics-activity";
-import { NO_STATISTICS, PERIOD_LABEL, rangeName } from "../../statistics-copy";
+import { noStatistics, periodLabel, rangeName } from "../../statistics-copy";
 import { studioStore } from "../../storage/store";
 import { StudioTabs } from "../studio-tabs";
 import { BarChart } from "./bar-chart";
@@ -18,10 +19,11 @@ import { WritingMetricsSection } from "./writing-metrics-section";
 const PERIODS: Period[] = ["day", "week", "month"];
 
 function LoadingBlocks() {
+  const t = useT().studioStats;
   return (
     <div
       role="status"
-      aria-label="Memuat statistik"
+      aria-label={t.loading}
       className="mt-6 grid animate-[rm-appear_0s_300ms_forwards] gap-6 opacity-0"
     >
       <Skeleton className="h-8 w-56 rounded-full" />
@@ -37,6 +39,8 @@ function LoadingBlocks() {
  * empty state has no threshold of days or words ([konfirmasi]): one written word is enough.
  */
 export function StatisticsView() {
+  const t = useT().studioStats;
+  const locale = useLocale();
   const data = useStreakData(studioStore);
   const [period, setPeriod] = useState<Period>("day");
   const { status, today, words, changes, history, lastDocument } = data;
@@ -59,34 +63,29 @@ export function StatisticsView() {
 
   return (
     <div className="max-w-260">
-      <h1 className="mb-3 heading-lg max-md:hidden">Studio</h1>
+      <h1 className="mb-3 heading-lg max-md:hidden">{t.title}</h1>
       <StudioTabs />
 
       {status === "loading" && <LoadingBlocks />}
 
       {status === "error" && (
         <div className="mt-6 grid gap-4">
-          <ErrorBanner action={<RetryButton onClick={data.reload} />}>
-            Statistik gagal dimuat. Tulisanmu tidak berubah; yang gagal hanya tampilannya.
-          </ErrorBanner>
+          <ErrorBanner action={<RetryButton onClick={data.reload} />}>{t.loadError}</ErrorBanner>
         </div>
       )}
 
       {status === "ready" && !hasWriting && (
-        <EmptyState
-          className="mt-4"
-          action={<ButtonLink href={startHref}>Mulai menulis</ButtonLink>}
-        >
-          {NO_STATISTICS}
+        <EmptyState className="mt-4" action={<ButtonLink href={startHref}>{t.start}</ButtonLink>}>
+          {noStatistics(locale)}
         </EmptyState>
       )}
 
       {stats && hasWriting && (
         <div className="mt-6 grid gap-8">
-          <div role="group" aria-label="Satuan waktu" className="flex flex-wrap gap-2">
+          <div role="group" aria-label={t.periodGroup} className="flex flex-wrap gap-2">
             {PERIODS.map((id) => (
               <Chip key={id} pressed={id === period} onClick={() => setPeriod(id)}>
-                {PERIOD_LABEL[id]}
+                {periodLabel(id, locale)}
               </Chip>
             ))}
           </div>
@@ -95,8 +94,7 @@ export function StatisticsView() {
 
           {stats.summary.total === 0 && (
             <p className="text-sm text-ink-muted">
-              Tidak ada tulisan dalam {rangeName(period)}. Tulisan yang lebih lama tidak ditampilkan
-              di sini.
+              {format(t.noWritingInRange, { range: rangeName(period, locale) })}
             </p>
           )}
 

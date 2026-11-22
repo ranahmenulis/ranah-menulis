@@ -1,4 +1,5 @@
 import { useEffect, useRef, type ReactNode } from "react";
+import { useT } from "@/lib/i18n/provider";
 import type { DocumentLayout } from "../../document-layout";
 import { PagePreview } from "./page-preview";
 
@@ -13,12 +14,13 @@ type Props = {
 /** The scrolling area of the editor screen: the writing surface, or the page preview over it. */
 export function EditorStage({ className, showPreview, preview, children }: Props) {
   const ref = useRef<HTMLElement>(null);
+  const t = useT().studioEditor.canvas;
   // The preview opens at the first page, not wherever the writer had scrolled to.
   useEffect(() => {
     if (showPreview) ref.current?.scrollTo({ top: 0 });
   }, [showPreview]);
   return (
-    <main ref={ref} aria-label="Kanvas menulis" className={className}>
+    <main ref={ref} aria-label={t.canvasLabel} className={className}>
       {showPreview && <PagePreview {...preview} />}
       <div hidden={showPreview}>{children}</div>
     </main>

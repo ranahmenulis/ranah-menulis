@@ -5,18 +5,16 @@ import { useState, type CSSProperties } from "react";
 import { Dot } from "@/components/ui/dots";
 import { IconButton } from "@/components/ui/icon-button";
 import { cn } from "@/lib/cn";
+import type { Locale } from "@/lib/i18n/config";
+import { formatNumber } from "@/lib/i18n/format";
+import { format, useT } from "@/lib/i18n/provider";
+import { useFormat } from "@/lib/i18n/use-format";
 import type { DailyLog } from "../../daily-progress";
 import { dayState, monthGrid, parseDay, type TargetChange } from "../../streak";
-import { capitalizeFirst } from "../../streak-copy";
+import { capitalizeFirst, shortDate } from "../../streak-copy";
 
-const WEEKDAYS = ["S", "S", "R", "K", "J", "S", "M"];
-const number = new Intl.NumberFormat("id-ID");
-const monthName = new Intl.DateTimeFormat("id-ID", { month: "long", year: "numeric" });
-const longDay = new Intl.DateTimeFormat("id-ID", {
-  weekday: "long",
-  day: "numeric",
-  month: "short",
-});
+const MONTH_YEAR: Intl.DateTimeFormatOptions = { month: "long", year: "numeric" };
+const LONG_DAY: Intl.DateTimeFormatOptions = { weekday: "long", day: "numeric", month: "short" };
 
 type CalendarProps = {
   today: string;
@@ -27,13 +25,22 @@ type CalendarProps = {
   celebrate: boolean;
 };
 
-function ariaFor(day: string, today: string, state: string, written: number) {
-  const date = parseDay(day);
-  const label = `${date.getDate()} ${new Intl.DateTimeFormat("id-ID", { month: "short" }).format(date)}`;
-  const extra = day === today ? ", hari ini" : "";
+type CalendarCopy = ReturnType<typeof useT>["studioStreak"]["calendar"];
+
+function ariaFor(
+  day: string,
+  today: string,
+  state: string,
+  written: number,
+  t: CalendarCopy,
+  locale: Locale,
+) {
+  const label = shortDate(parseDay(day), locale);
+  const extra = day === today ? t.todaySuffix : "";
   if (state === "future") return label;
-  if (state === "empty") return `${label}${extra}, kosong`;
-  return `${label}${extra}, ${number.format(written)} kata${state === "met" ? ", target tercapai" : ""}`;
+  if (state === "empty") return `${label}${extra}${t.emptySuffix}`;
+  const words = format(t.wordsSuffix, { words: formatNumber(written, locale) });
+  return `${label}${extra}${words}${state === "met" ? t.metSuffix : ""}`;
 }
 
 /**
@@ -41,6 +48,10 @@ function ariaFor(day: string, today: string, state: string, written: number) {
  * cells on phones so each day can be tapped. Picking a day shows words per document (STK-03).
  */
 export function StreakCalendar({ today, words, history, changes, celebrate }: CalendarProps) {
+  const root = useT().studioStreak;
+  const t = root.calendar;
+  const untitled = root.untitled;
+  const { locale, number, date } = useFormat();
   const now = parseDay(today);
   const [cursor, setCursor] = useState({ year: now.getFullYear(), month: now.getMonth() });
   const [picked, setPicked] = useState(today);
@@ -48,6 +59,7 @@ export function StreakCalendar({ today, words, history, changes, celebrate }: Ca
   const cells = monthGrid(cursor.year, cursor.month);
   const isCurrent = cursor.year === now.getFullYear() && cursor.month === now.getMonth();
   const prefix = `${cursor.year}-${String(cursor.month + 1).padStart(2, "0")}`;
+  const monthName = date(new Date(cursor.year, cursor.month, 1), MONTH_YEAR);
   const monthEmpty = ![...words].some(([d, w]) => d.startsWith(prefix) && w > 0);
 
   const step = (delta: number) => {
@@ -69,23 +81,23 @@ export function StreakCalendar({ today, words, history, changes, celebrate }: Ca
     <section aria-labelledby="cal-heading" className="grid content-start gap-4">
       <div className="flex items-center gap-1">
         <h2 id="cal-heading" className="mr-auto heading-md capitalize">
-          {monthName.format(new Date(cursor.year, cursor.month, 1))}
+          {monthName}
         </h2>
-        <IconButton label="Bulan sebelumnya" onClick={() => step(-1)}>
+        <IconButton label={t.previous} onClick={() => step(-1)}>
           <CaretLeft size={20} aria-hidden />
         </IconButton>
-        <IconButton label="Bulan berikutnya" disabled={isCurrent} onClick={() => step(1)}>
+        <IconButton label={t.next} disabled={isCurrent} onClick={() => step(1)}>
           <CaretRight size={20} aria-hidden />
         </IconButton>
       </div>
 
       <div
         role="grid"
-        aria-label={`Kalender ${monthName.format(new Date(cursor.year, cursor.month, 1))}, minggu mulai Senin`}
+        aria-label={format(t.gridLabel, { month: monthName })}
         key={prefix}
         className="grid grid-cols-7 md:grid-cols-[repeat(7,52px)]"
       >
-        {WEEKDAYS.map((w, i) => (
+        {t.weekdays.map((w, i) => (
           <span key={i} className="grid h-10 place-items-center text-xs text-ink-muted">
             {w}
           </span>
@@ -100,7 +112,7 @@ export function StreakCalendar({ today, words, history, changes, celebrate }: Ca
               key={cell.day}
               type="button"
               disabled={state === "future"}
-              aria-label={ariaFor(cell.day, today, state, written)}
+              aria-label={ariaFor(cell.day, today, state, written, t, locale)}
               aria-pressed={picked === cell.day}
               aria-current={isToday ? "date" : undefined}
               onClick={() => setPicked(cell.day)}
@@ -126,24 +138,22 @@ export function StreakCalendar({ today, words, history, changes, celebrate }: Ca
       <div aria-hidden className="flex flex-wrap gap-x-5 gap-y-2 text-xs text-ink-muted">
         <span className="flex items-center gap-2">
           <Dot kind="full" />
-          Target tercapai
+          {t.legendMet}
         </span>
         <span className="flex items-center gap-2">
           <Dot kind="ring" />
-          Ada tulisan
+          {t.legendPartial}
         </span>
         <span className="flex items-center gap-2">
           <Dot kind="empty" />
-          Kosong
+          {t.legendEmpty}
         </span>
       </div>
 
       {monthEmpty && (
         <div>
-          <p className="font-serif text-xl leading-7 font-semibold">Belum ada tulisan bulan ini.</p>
-          <p className="mt-1 text-sm text-ink-muted">
-            Satu kalimat di Studio sudah cukup untuk titik pertama.
-          </p>
+          <p className="font-serif text-xl leading-7 font-semibold">{t.monthEmptyTitle}</p>
+          <p className="mt-1 text-sm text-ink-muted">{t.monthEmptyHint}</p>
         </div>
       )}
 
@@ -151,31 +161,30 @@ export function StreakCalendar({ today, words, history, changes, celebrate }: Ca
         <div role="status" className="grid gap-3 border-t border-line pt-4 text-sm">
           <p>
             <b className="font-medium">
-              {picked === today && "Hari ini, "}
-              {capitalizeFirst(longDay.format(parseDay(picked)))}
+              {picked === today && t.pickedToday}
+              {capitalizeFirst(date(parseDay(picked), LONG_DAY), locale)}
             </b>{" "}
             ·{" "}
             {pickedWords === 0
-              ? "Tidak ada tulisan."
-              : `${number.format(pickedWords)} kata${pickedState === "met" ? ", target tercapai." : "."}`}
+              ? t.noWriting
+              : format(pickedState === "met" ? t.pickedWordsMet : t.pickedWords, {
+                  words: number(pickedWords),
+                })}
           </p>
           {docs.length > 0 && (
             <>
               <ul
-                aria-label="Kata per dokumen"
+                aria-label={t.docsLabel}
                 className="grid grid-cols-[minmax(0,1fr)] border-t border-line"
               >
                 {docs.map((d) => (
                   <li key={d.id} className="flex items-baseline gap-3 border-b border-line py-2.5">
-                    <span className="min-w-0 flex-1 truncate">{d.title || "Tanpa judul"}</span>
-                    <span className="text-ink-muted tabular-nums">{number.format(d.words)}</span>
+                    <span className="min-w-0 flex-1 truncate">{d.title || untitled}</span>
+                    <span className="text-ink-muted tabular-nums">{number(d.words)}</span>
                   </li>
                 ))}
               </ul>
-              <p className="text-xs text-ink-muted">
-                Kata bersih yang ditulis hari itu, dari catatan simpan otomatis Studio. Dokumen yang
-                kemudian dihapus tetap dihitung.
-              </p>
+              <p className="text-xs text-ink-muted">{t.docsNote}</p>
             </>
           )}
         </div>

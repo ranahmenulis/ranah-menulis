@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/toast";
 import { cn } from "@/lib/cn";
+import { format, useLocale, useT } from "@/lib/i18n/provider";
 import { formatClock } from "../count-words";
 import { diffParagraphs, paragraphsOf } from "../diff-paragraphs";
 import type { Conflict, ConflictChoice } from "../hooks/use-studio-document";
@@ -32,6 +33,7 @@ export function EditorConflictDialog({
   resolveConflict: (choice: ConflictChoice) => Promise<void>;
 }) {
   const toast = useToast();
+  const t = useT().studioEditor;
   const versions = useMemo(() => {
     if (!conflict) return null;
     const { local, remote } = conflict;
@@ -59,7 +61,7 @@ export function EditorConflictDialog({
       onResolve={async (choice) => {
         await resolveConflict(choice);
         if (choice === "both") {
-          toast({ message: "Versi dari tempat lain disimpan sebagai dokumen baru." });
+          toast({ message: t.conflict.toastBoth });
         }
       }}
     />
@@ -87,6 +89,8 @@ function VersionCard({
   picked: boolean;
   onPick: () => void;
 }) {
+  const t = useT().studioEditor;
+  const locale = useLocale();
   const shown = version.paragraphs.flatMap((text, index) =>
     differing.has(index) ? [{ text, index }] : [],
   );
@@ -102,13 +106,14 @@ function VersionCard({
         <span className="min-w-0">
           {name}
           <span className="block text-xs font-normal text-ink-muted">
-            {formatClock(version.savedAt)} · {version.words} kata
+            {format(t.conflict.cardMeta, {
+              time: formatClock(version.savedAt, locale),
+              n: String(version.words),
+            })}
           </span>
         </span>
       </span>
-      {shown.length === 0 && (
-        <span className="text-xs text-ink-muted">Hanya judul yang berbeda.</span>
-      )}
+      {shown.length === 0 && <span className="text-xs text-ink-muted">{t.conflict.titleOnly}</span>}
       {shown.map(({ text, index }) => (
         <p key={index} className="font-serif text-base leading-[26px] break-words">
           <span className="bg-subtle underline decoration-1 underline-offset-3">{text}</span>
@@ -124,6 +129,7 @@ function VersionCard({
  * "Lanjutkan" stays disabled until they do. Differences are marked monochrome (tint + underline).
  */
 export function ConflictDialog({ open, local, remote, onResolve }: ConflictDialogProps) {
+  const t = useT().studioEditor;
   const [choice, setChoice] = useState<ConflictChoice | null>(null);
   const [busy, setBusy] = useState(false);
   const { onlyA, onlyB } = diffParagraphs(local.paragraphs, remote.paragraphs);
@@ -148,17 +154,17 @@ export function ConflictDialog({ open, local, remote, onResolve }: ConflictDialo
       role="alertdialog"
       size="wide"
       fullPageOnMobile
-      title="Dokumen ini diubah di dua tempat"
-      description="Dokumen yang sama diubah dari perangkat atau tab lain sebelum perubahan ini tersimpan. Pilih versi yang dipakai. Tidak ada yang ditimpa sebelum kamu memilih."
+      title={t.conflict.title}
+      description={t.conflict.description}
       actions={
         <Button disabled={!choice} loading={busy} onClick={proceed}>
-          Lanjutkan
+          {t.conflict.continue}
         </Button>
       }
     >
       <div className="grid gap-4 md:grid-cols-2">
         <VersionCard
-          name="Perangkat ini"
+          name={t.conflict.thisDevice}
           version={local}
           differing={onlyA}
           checked={choice === "local"}
@@ -166,7 +172,7 @@ export function ConflictDialog({ open, local, remote, onResolve }: ConflictDialo
           onPick={() => setChoice("local")}
         />
         <VersionCard
-          name="Dari tempat lain"
+          name={t.conflict.elsewhere}
           version={remote}
           differing={onlyB}
           checked={choice === "remote"}
@@ -175,7 +181,8 @@ export function ConflictDialog({ open, local, remote, onResolve }: ConflictDialo
         />
       </div>
       <p className="text-xs text-ink-muted">
-        {same > 0 && `${same} paragraf sama di kedua versi. `}Bagian yang berbeda bergaris bawah.
+        {same > 0 && format(t.conflict.sameParagraphs, { n: String(same) })}
+        {t.conflict.differenceNote}
       </p>
       <label className="flex cursor-pointer items-start gap-3 border-t border-line pt-3.5 text-sm">
         <input
@@ -186,11 +193,8 @@ export function ConflictDialog({ open, local, remote, onResolve }: ConflictDialo
           className={radio}
         />
         <span>
-          Simpan keduanya
-          <span className="block text-ink-muted">
-            Dokumen ini memakai versi perangkat ini. Versi dari tempat lain disimpan sebagai dokumen
-            baru.
-          </span>
+          {t.conflict.both}
+          <span className="block text-ink-muted">{t.conflict.bothHint}</span>
         </span>
       </label>
     </Dialog>

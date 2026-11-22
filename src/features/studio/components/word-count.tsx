@@ -6,10 +6,14 @@ import { saveAccount, useAccount } from "@/features/account/account-store";
 import { useHydrated } from "@/features/account/hooks/use-hydrated";
 import { WORD_COUNT_PINS, type WordCountPin } from "@/features/account/writing-preferences";
 import { cn } from "@/lib/cn";
+import { format, useLocale, useT } from "@/lib/i18n/provider";
+import { formatNumber } from "@/lib/i18n/format";
+import type { Locale } from "@/lib/i18n/config";
 import { readingMinutes } from "@/lib/text-stats";
 import type { EditorStats } from "../editor-stats";
 import type { SprintState } from "../sprint";
 import { wordCountDisplay, type WordCountTarget } from "../word-count-pin";
+import type { studioEditor } from "../copy/editor-id";
 
 type WordCountProps = {
   /** Words in the document, the same number the daily target counts. */
@@ -24,32 +28,44 @@ type WordCountProps = {
   className?: string;
 };
 
-const number = new Intl.NumberFormat("id-ID");
 const NONE = "—";
-const PIN_LABELS = { document: "Dokumen", sprint: "Sprint", target: "Target dokumen" };
 const PIN_OPTIONS = [...WORD_COUNT_PINS, null];
 
+type CounterCopy = (typeof studioEditor)["counter"];
+
 /** Reading time reads "—" for no words: "1 mnt" would suggest there is something to read. */
-const minutes = (words: number) => (words > 0 ? `${readingMinutes(words)} mnt` : NONE);
+const minutes = (words: number, t: CounterCopy) =>
+  words > 0 ? format(t.readingMinutes, { n: String(readingMinutes(words)) }) : NONE;
 
 type Row = { label: string; document: string; selected?: string };
 
-function rowsOf(words: number, stats: EditorStats | null, selection: EditorStats | null): Row[] {
-  const count = (value: number | undefined) => (value === undefined ? NONE : number.format(value));
+function rowsOf(
+  words: number,
+  stats: EditorStats | null,
+  selection: EditorStats | null,
+  t: CounterCopy,
+  locale: Locale,
+): Row[] {
+  const count = (value: number | undefined) =>
+    value === undefined ? NONE : formatNumber(value, locale);
   const sel = (read: (s: EditorStats) => string) => (selection ? read(selection) : undefined);
   return [
-    { label: "Kata", document: count(words), selected: sel((s) => count(s.words)) },
+    { label: t.words, document: count(words), selected: sel((s) => count(s.words)) },
     {
-      label: "Karakter",
+      label: t.characters,
       document: count(stats?.characters),
       selected: sel((s) => count(s.characters)),
     },
     {
-      label: "Paragraf",
+      label: t.paragraphs,
       document: count(stats?.paragraphs),
       selected: sel((s) => count(s.paragraphs)),
     },
-    { label: "Waktu baca", document: minutes(words), selected: sel((s) => minutes(s.words)) },
+    {
+      label: t.readingTime,
+      document: minutes(words, t),
+      selected: sel((s) => minutes(s.words, t)),
+    },
   ];
 }
 
@@ -63,13 +79,25 @@ export function WordCount({ words, stats, selection, sprint, target, className }
   const activeOption = useRef<HTMLButtonElement>(null);
   const hydrated = useHydrated();
   const { wordCountPin } = useAccount().prefs.writing;
+  const copy = useT().studioEditor;
+  const t = copy.counter;
+  const locale = useLocale();
+  const pinLabels = { document: t.pinDocument, sprint: t.pinSprint, target: t.pinTarget };
 
   if (!hydrated || (wordCountPin === "target" && target === undefined)) {
     return <span aria-hidden className="inline-block min-h-8 w-12 shrink-0" />;
   }
 
-  const rows = rowsOf(words, stats, selection);
-  const display = wordCountDisplay(wordCountPin, words, selection?.words, sprint, target ?? null);
+  const rows = rowsOf(words, stats, selection, t, locale);
+  const display = wordCountDisplay(
+    wordCountPin,
+    words,
+    selection?.words,
+    sprint,
+    target ?? null,
+    copy.pin,
+    locale,
+  );
 
   const choose = (pin: WordCountPin | null) => {
     setSaveFailed(!saveAccount({ prefs: { writing: { wordCountPin: pin } } }));
@@ -84,7 +112,7 @@ export function WordCount({ words, stats, selection, sprint, target, className }
     <Popover
       open={open}
       onOpenChange={setOpen}
-      label="Penghitung tulisan"
+      label={t.label}
       className={cn("max-md:static", className)}
       panelClassName="w-72 p-4 text-sm max-md:inset-x-4 max-md:w-auto"
       renderTrigger={(props) => (
@@ -92,7 +120,7 @@ export function WordCount({ words, stats, selection, sprint, target, className }
           {...props}
           type="button"
           aria-label={display.accessibleLabel}
-          title={display.accessibleLabel ?? "Rincian penghitung"}
+          title={display.accessibleLabel ?? t.details}
           className="inline-flex min-h-8 cursor-pointer items-center text-xs whitespace-nowrap text-ink-muted tabular-nums hover:text-ink hover:underline hover:underline-offset-3 aria-expanded:text-ink aria-expanded:underline aria-expanded:underline-offset-3 max-md:flex-col max-md:items-end max-md:justify-center max-md:leading-tight"
         >
           <span>{display.label}</span>
@@ -107,17 +135,17 @@ export function WordCount({ words, stats, selection, sprint, target, className }
     >
       <table className="w-full border-collapse tabular-nums">
         <caption className="pb-3 text-left font-medium">
-          {selection ? "Teks yang dipilih" : "Isi tulisan"}
+          {selection ? t.selectedText : t.body}
         </caption>
         {selection && (
           <thead>
             <tr className="text-xs text-ink-muted">
               <td />
               <th scope="col" className="py-1 text-right font-normal">
-                Pilihan
+                {t.selection}
               </th>
               <th scope="col" className="py-1 text-right font-normal">
-                Dokumen
+                {t.documentColumn}
               </th>
             </tr>
           </thead>
@@ -138,12 +166,12 @@ export function WordCount({ words, stats, selection, sprint, target, className }
       </table>
       {target && (
         <p className="mt-3 border-t border-line pt-3 text-xs text-ink-muted tabular-nums">
-          Target dokumen · {target.summary}
+          {format(t.targetLine, { summary: target.summary })}
         </p>
       )}
       <div className="mt-3 border-t border-line pt-3">
-        <p className="text-xs font-medium">Sematkan di bilah</p>
-        <div className="mt-1 flex flex-wrap gap-x-3" role="group" aria-label="Sematkan di bilah">
+        <p className="text-xs font-medium">{t.pinTitle}</p>
+        <div className="mt-1 flex flex-wrap gap-x-3" role="group" aria-label={t.pinTitle}>
           {PIN_OPTIONS.map((pin) => (
             <button
               key={pin ?? "none"}
@@ -153,20 +181,20 @@ export function WordCount({ words, stats, selection, sprint, target, className }
               onClick={() => choose(pin)}
               className="min-h-9 cursor-pointer text-xs text-ink-muted hover:text-ink aria-pressed:font-medium aria-pressed:text-ink aria-pressed:underline aria-pressed:underline-offset-3"
             >
-              {pin === null ? "Lepas sematan" : PIN_LABELS[pin]}
+              {pin === null ? t.pinNone : pinLabels[pin]}
             </button>
           ))}
         </div>
         {display.fallbackNote && <p className="text-xs text-ink-muted">{display.fallbackNote}</p>}
         {saveFailed && (
           <div className="mt-2 text-xs text-danger">
-            <p role="alert">Sematan hanya berlaku di tab ini sampai tersimpan.</p>
+            <p role="alert">{t.pinFailed}</p>
             <button
               type="button"
               onClick={retry}
               className="min-h-9 cursor-pointer underline underline-offset-3"
             >
-              Coba lagi
+              {t.retry}
             </button>
           </div>
         )}

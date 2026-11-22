@@ -9,6 +9,7 @@ import { Dialog } from "@/components/ui/dialog";
 import { Field, Input } from "@/components/ui/field";
 import { EmptyState, ErrorBanner, RetryButton, Skeleton } from "@/components/ui/states";
 import { cn } from "@/lib/cn";
+import { format, useLocale, useT } from "@/lib/i18n/provider";
 import { readViewerNow } from "@/lib/viewer";
 import {
   currentSearchHref,
@@ -39,11 +40,15 @@ export function StudioSearchDialog({
   const activation = useRef<AbortController | null>(null);
   const id = useId();
   const router = useRouter();
+  const t = useT().studioSearch;
+  const locale = useLocale();
   const { library, reload } = useStudioSearchLibrary(store);
   const results = useMemo(
     () =>
-      library.status === "ready" ? studioSearchResults(library.docs, library.folders, query) : [],
-    [library, query],
+      library.status === "ready"
+        ? studioSearchResults(library.docs, library.folders, query, locale)
+        : [],
+    [library, query, locale],
   );
   const visibleCount = Math.min(results.length, limit);
   const selectedIndex = Math.min(index, visibleCount - 1);
@@ -74,7 +79,7 @@ export function StudioSearchDialog({
         return;
       }
       if (!href) {
-        setFailure("Hasil ini sudah tidak tersedia.");
+        setFailure(t.unavailable);
         reload();
         input.current?.focus();
         return;
@@ -85,7 +90,7 @@ export function StudioSearchDialog({
       router.push(href);
     } catch {
       if (!task.signal.aborted) {
-        setFailure("Hasil belum bisa dibuka. Coba lagi.");
+        setFailure(t.openFailed);
         input.current?.focus();
       }
     } finally {
@@ -129,17 +134,16 @@ export function StudioSearchDialog({
             />
           }
         >
-          Daftar pencarian gagal dimuat.
+          {t.libraryFailed}
         </ErrorBanner>
       );
     }
-    if (!query.trim())
-      return <p className="text-sm text-ink-muted">Ketik judul dokumen atau nama folder.</p>;
+    if (!query.trim()) return <p className="text-sm text-ink-muted">{t.hint}</p>;
     if (library.status === "loading") {
       return (
         <div
           role="status"
-          aria-label="Memuat hasil"
+          aria-label={t.loadingResults}
           className="grid animate-[rm-appear_0s_300ms_forwards] gap-3 opacity-0"
         >
           <Skeleton className="h-8 w-3/4" />
@@ -150,19 +154,19 @@ export function StudioSearchDialog({
     if (visibleCount === 0) {
       return (
         <EmptyState className="py-3">
-          <span role="status">Tidak ada dokumen atau folder yang cocok.</span>
+          <span role="status">{t.noMatch}</span>
         </EmptyState>
       );
     }
     return (
       <div className="grid min-w-0 gap-2">
         <p role="status" className="sr-only">
-          {results.length} hasil
+          {format(t.count, { count: String(results.length) })}
         </p>
         <ul
           id={`${id}-results`}
           role="listbox"
-          aria-label="Hasil pencarian"
+          aria-label={t.resultsLabel}
           className="max-h-[min(36dvh,20rem)] overflow-y-auto overscroll-contain"
         >
           {results.slice(0, limit).map((result, i) => {
@@ -184,7 +188,7 @@ export function StudioSearchDialog({
                 <span className="grid min-w-0 [overflow-wrap:anywhere]">
                   <span className="text-sm font-medium">{result.name}</span>
                   <span className="text-xs text-ink-muted">
-                    {result.kind === "document" ? "Dokumen" : "Folder"}
+                    {result.kind === "document" ? t.document : t.folder}
                   </span>
                 </span>
               </li>
@@ -207,7 +211,7 @@ export function StudioSearchDialog({
               );
             }}
           >
-            Tampilkan lagi
+            {t.showMore}
           </Button>
         )}
       </div>
@@ -218,14 +222,14 @@ export function StudioSearchDialog({
     <Dialog
       open
       onClose={dismiss}
-      title="Cari di Studio"
+      title={t.title}
       actions={
         <Button variant="secondary" onClick={dismiss}>
-          Tutup
+          {t.close}
         </Button>
       }
     >
-      <Field id={`${id}-input`} label="Kata kunci">
+      <Field id={`${id}-input`} label={t.keyword}>
         <Input
           ref={input}
           id={`${id}-input`}
@@ -250,7 +254,7 @@ export function StudioSearchDialog({
       </Field>
       {busy && (
         <p role="status" className="text-sm text-ink-muted">
-          Membuka hasil…
+          {t.opening}
         </p>
       )}
       {failure && <ErrorBanner>{failure}</ErrorBanner>}
