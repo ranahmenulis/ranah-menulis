@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
+import { pageTitle } from "@/lib/i18n/metadata";
 import { Suspense } from "react";
 import { MySkeleton } from "@/features/projects/components/my-states";
 import { AssignmentView } from "@/features/projects/kelas/components/assignment-view";
 
-export const metadata: Metadata = { title: "Tugas kelas · RanahMenulis", robots: { index: false } };
+export async function generateMetadata(): Promise<Metadata> {
+  return { title: await pageTitle("classTask"), robots: { index: false } };
+}
 
 async function AssignmentRoute({
   params,

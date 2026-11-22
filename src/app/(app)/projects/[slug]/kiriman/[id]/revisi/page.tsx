@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
+import { pageTitle } from "@/lib/i18n/metadata";
 import { Suspense } from "react";
 import { MySkeleton } from "@/features/projects/components/my-states";
 import { ReviseView } from "@/features/projects/components/revise-view";
 
-export const metadata: Metadata = {
-  title: "Kirim revisi · RanahMenulis",
-  robots: { index: false },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return { title: await pageTitle("sendRevision"), robots: { index: false } };
+}
 
 async function ReviseRoute({
   params,

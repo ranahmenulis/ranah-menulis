@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
+import { pageTitle } from "@/lib/i18n/metadata";
 import { Suspense } from "react";
 import { MySkeleton } from "@/features/projects/components/my-states";
 import { SubmissionDetail } from "@/features/projects/components/submission-detail";
 
-export const metadata: Metadata = { title: "Kiriman · RanahMenulis", robots: { index: false } };
+export async function generateMetadata(): Promise<Metadata> {
+  return { title: await pageTitle("submission"), robots: { index: false } };
+}
 
 async function DetailRoute({ params }: Pick<PageProps<"/projects/[slug]/kiriman/[id]">, "params">) {
   const { slug, id } = await params;

@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
+import { pageTitle } from "@/lib/i18n/metadata";
 import { UsersView } from "@/features/kelola/admin/components/users-view";
 
-export const metadata: Metadata = { title: "Pengguna dan role · Kelola · RanahMenulis" };
+export async function generateMetadata(): Promise<Metadata> {
+  return { title: await pageTitle("usersAndRoles", "manage") };
+}
 
 export default function Page() {
   return <UsersView />;

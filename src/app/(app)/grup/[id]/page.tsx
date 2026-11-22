@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
+import { pageTitle } from "@/lib/i18n/metadata";
 import { Suspense } from "react";
 import { GroupLoading, GroupView } from "@/features/community/groups/components/group-view";
 
-export const metadata: Metadata = {
-  title: "Grup Penulis · RanahMenulis",
-  robots: { index: false },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return { title: await pageTitle("groups"), robots: { index: false } };
+}
 
 async function GroupPage({ params }: Pick<PageProps<"/grup/[id]">, "params">) {
   const { id } = await params;

@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
+import { pageTitle } from "@/lib/i18n/metadata";
 import { Suspense } from "react";
 import { EditorLoading } from "@/features/studio/components/editor-states";
 import { StudioEditor } from "@/features/studio/components/studio-editor";
 
-export const metadata: Metadata = {
-  title: "Editor · RanahMenulis",
-  robots: { index: false },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return { title: await pageTitle("editor"), robots: { index: false } };
+}
 
 async function EditorRoute({ params, searchParams }: PageProps<"/studio/[id]">) {
   const [{ id }, { event }] = await Promise.all([params, searchParams]);

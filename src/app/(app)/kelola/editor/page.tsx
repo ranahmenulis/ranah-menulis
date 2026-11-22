@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
+import { pageTitle } from "@/lib/i18n/metadata";
 import { QueueView } from "@/features/kelola/editor/components/queue-view";
 
-export const metadata: Metadata = { title: "Antrean submission · Kelola · RanahMenulis" };
+export async function generateMetadata(): Promise<Metadata> {
+  return { title: await pageTitle("submissionQueue", "manage") };
+}
 
 export default function Page() {
   return <QueueView />;

@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
+import { pageTitle } from "@/lib/i18n/metadata";
 import { AuditView } from "@/features/kelola/audit/audit-view";
 
-export const metadata: Metadata = { title: "Audit log · Kelola · RanahMenulis" };
+export async function generateMetadata(): Promise<Metadata> {
+  return { title: await pageTitle("audit", "manage") };
+}
 
 export default function Page() {
   return <AuditView />;

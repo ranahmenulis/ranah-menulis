@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
+import { pageTitle } from "@/lib/i18n/metadata";
 import { Suspense } from "react";
 import { FeedItemSkeleton } from "@/components/ui/states";
 import { ManageEventView } from "@/features/kelola/organizer/events/manage-event-view";
 
-export const metadata: Metadata = { title: "Ubah Event · RanahMenulis" };
+export async function generateMetadata(): Promise<Metadata> {
+  return { title: await pageTitle("editEvent") };
+}
 
 async function Detail({ params }: Pick<PageProps<"/kelola/organizer/event/[id]">, "params">) {
   const { id } = await params;

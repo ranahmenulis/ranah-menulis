@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { pageTitle, titleWith } from "@/lib/i18n/metadata";
 import { RegisterSkeleton } from "@/features/projects/components/register-states";
 import { RegisterView } from "@/features/projects/components/register-view";
 import { projectFixtures } from "@/features/projects/fixtures/all-projects";
@@ -11,8 +12,8 @@ export async function generateMetadata({
   const project = projectFixtures.find((p) => p.slug === slug && p.publication === "terbit");
   return {
     title: project
-      ? `Daftar: ${project.title} · Projects · RanahMenulis`
-      : "Projects · RanahMenulis",
+      ? await titleWith(project.title, ["projects"], "register")
+      : await pageTitle("projects"),
     robots: { index: false },
   };
 }

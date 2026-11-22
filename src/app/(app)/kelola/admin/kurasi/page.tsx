@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
+import { pageTitle } from "@/lib/i18n/metadata";
 import { CurationView } from "@/features/kelola/admin/curation/curation-view";
 
-export const metadata: Metadata = { title: "Kurasi · Kelola · RanahMenulis" };
+export async function generateMetadata(): Promise<Metadata> {
+  return { title: await pageTitle("curation", "manage") };
+}
 
 export default function Page() {
   return <CurationView />;

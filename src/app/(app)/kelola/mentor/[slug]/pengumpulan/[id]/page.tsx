@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
+import { pageTitle } from "@/lib/i18n/metadata";
 import { MentorReviewView } from "@/features/kelola/mentor/components/mentor-review-view";
 
-export const metadata: Metadata = {
-  title: "Nilai tugas · Kelola · RanahMenulis",
-  robots: { index: false },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return { title: await pageTitle("gradeTask", "manage"), robots: { index: false } };
+}
 
 export default async function Page({
   params,

@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { pageTitle, titleWith } from "@/lib/i18n/metadata";
 import { MySkeleton } from "@/features/projects/components/my-states";
 import { projectFixtures } from "@/features/projects/fixtures/all-projects";
 import { DashboardSwitch } from "@/features/projects/components/dashboard-switch";
 
-const dashboardName = (category: string) =>
-  category === "solo" ? "Dasbor penerbitan" : category === "kelas" ? "Dasbor kelas" : "Dasbor";
+const dashboardKey = (category: string) =>
+  category === "solo" ? "dashboardSolo" : category === "kelas" ? "dashboardClass" : "dashboard";
 
 export async function generateMetadata({
   params,
@@ -14,8 +15,8 @@ export async function generateMetadata({
   const project = projectFixtures.find((p) => p.slug === slug && p.publication === "terbit");
   return {
     title: project
-      ? `${dashboardName(project.category)}: ${project.title} · Projects · RanahMenulis`
-      : "Projects · RanahMenulis",
+      ? await titleWith(project.title, ["projects"], dashboardKey(project.category))
+      : await pageTitle("projects"),
     robots: { index: false },
   };
 }
