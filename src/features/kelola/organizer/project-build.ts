@@ -21,6 +21,7 @@ import {
 export const TITLE_LIMIT = 120;
 export const SUMMARY_LIMIT = 200;
 export const ABOUT_LIMIT = 4000;
+export const POSTER_ALT_LIMIT = 200;
 
 export type BuildContext = {
   now: number;
@@ -58,6 +59,12 @@ function basics(input: ProjectInput): InputErrors {
   else if (about.length > ABOUT_LIMIT)
     errors.about = `Deskripsi paling banyak ${ABOUT_LIMIT} karakter.`;
   if (linesOf(input.requirements).length === 0) errors.requirements = "Tulis minimal satu syarat.";
+  const alt = input.posterAlt.trim();
+  if (input.posterId && !alt) {
+    errors.posterAlt = "Isi teks alternatif poster untuk menyimpan.";
+  } else if (alt.length > POSTER_ALT_LIMIT) {
+    errors.posterAlt = `Teks alternatif paling banyak ${POSTER_ALT_LIMIT} karakter.`;
+  }
   return errors;
 }
 
@@ -269,6 +276,7 @@ export function buildProject(input: ProjectInput, ctx: BuildContext): BuildResul
       quota,
       terms,
       block: categoryBlock,
+      poster: input.posterId ? { fileId: input.posterId, alt: input.posterAlt.trim() } : undefined,
       closesInMs: null,
       milestones: [],
       absolute: { closesAt: when.closesAt, milestones: when.milestones },

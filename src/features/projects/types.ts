@@ -49,6 +49,13 @@ export type CategoryBlock =
  */
 export type ProjectTerms = { version: string; special: string[] };
 
+/**
+ * An optional poster an Organizer uploaded. `fileId` points into the file store; `alt` describes
+ * the poster for readers who cannot see it (a poster usually carries text). Without one the
+ * generated cover (`cover-model.ts`) is used.
+ */
+export type ProjectPoster = { fileId: string; alt: string };
+
 type ProjectBase = {
   slug: string;
   category: ProjectCategory;
@@ -73,6 +80,7 @@ type ProjectBase = {
   quota: { total: number; taken: number } | null;
   terms: ProjectTerms;
   block: CategoryBlock;
+  poster?: ProjectPoster;
 };
 
 /**

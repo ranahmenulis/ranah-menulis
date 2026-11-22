@@ -1,12 +1,15 @@
 import type { CSSProperties } from "react";
 import { cn } from "@/lib/cn";
 import { coverOf, type Cover } from "../cover-model";
-import type { ProjectCategory } from "../types";
+import type { ProjectCategory, ProjectPoster } from "../types";
+import { PosterCover } from "./poster-cover";
 
 type Props = {
-  project: { slug: string; category: ProjectCategory; title: string };
-  /** Print the title on the cover (header and featured band); tiles show it under the cover. */
+  project: { slug: string; category: ProjectCategory; title: string; poster?: ProjectPoster };
+  /** Print the title on the generated cover (header and featured band); tiles show it under it. */
   showTitle?: boolean;
+  /** The project header only: read an uploaded poster's alt text aloud instead of hiding it. */
+  describe?: boolean;
   className?: string;
 };
 
@@ -145,10 +148,26 @@ function Initial({ cover }: { cover: Cover }) {
 }
 
 /**
- * A project's cover (DESIGN.md 7.6): a printed object in the two cover tones, never a photo. It
- * keeps its own colours in both themes, like BookCover. Decorative: the title is always also text.
+ * A project's cover (DESIGN.md 7.6): the poster an Organizer uploaded, or else a generated printed
+ * object in the two cover tones. It keeps its own colours in both themes, like BookCover.
+ * Decorative: the title is always also text.
  */
-export function ProjectCover({ project, showTitle = false, className }: Props) {
+export function ProjectCover({ project, showTitle = false, describe, className }: Props) {
+  const generated = (
+    <GeneratedCover project={project} showTitle={showTitle} className={className} />
+  );
+  if (!project.poster) return generated;
+  return (
+    <PosterCover
+      poster={project.poster}
+      describe={describe}
+      className={className}
+      fallback={generated}
+    />
+  );
+}
+
+function GeneratedCover({ project, showTitle = false, className }: Props) {
   const cover = coverOf(project);
   const ink = cover.tone === "ink";
   return (

@@ -18,13 +18,17 @@ import {
   type InputErrors,
   type ProjectInput,
 } from "../project-input";
+import { fileStore } from "@/lib/files/store";
+import { discardPoster } from "../poster-files";
 import { CategoryFields, TextField, ZoneSelect, type FormApi } from "./form-fields";
+import { PosterField } from "./poster-field";
 
 const ORDER: (keyof ProjectInput | "block")[] = [
   "title",
   "summary",
   "about",
   "requirements",
+  "posterAlt",
   "closesDate",
   "milestones",
   "feeIdr",
@@ -63,6 +67,8 @@ export function ProjectForm({
   );
   const [errors, setErrors] = useState<InputErrors>({});
   const [said, setSaid] = useState("");
+  // The poster file that is saved with the project; a save that replaces it frees the old file.
+  const [savedPoster, setSavedPoster] = useState(fixture?.poster?.fileId ?? "");
   const locked = registrants > 0;
   const api: FormApi = {
     input,
@@ -71,7 +77,12 @@ export function ProjectForm({
   };
 
   function pickCategory(category: ProjectCategory) {
-    setInput({ ...emptyInput(category), title: input.title });
+    setInput({
+      ...emptyInput(category),
+      title: input.title,
+      posterId: input.posterId,
+      posterAlt: input.posterAlt,
+    });
     setErrors({});
   }
 
@@ -85,6 +96,9 @@ export function ProjectForm({
       return;
     }
     setErrors({});
+    const posterNow = result.project.poster?.fileId ?? "";
+    if (savedPoster && savedPoster !== posterNow) void discardPoster(savedPoster, fileStore());
+    setSavedPoster(posterNow);
     if (!fixture) return router.push(manageHref(result.project.slug));
     setSaid(
       result.project.terms.version !== fixture.terms.version
@@ -146,6 +160,10 @@ export function ProjectForm({
           rows={4}
           hint="Satu syarat per baris."
         />
+      </Section>
+
+      <Section title="Poster">
+        <PosterField api={api} savedId={savedPoster} />
       </Section>
 
       <Section title="Jadwal">

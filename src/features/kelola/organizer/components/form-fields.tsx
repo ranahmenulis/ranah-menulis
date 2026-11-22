@@ -11,7 +11,7 @@ export type FormApi = {
 
 type TextProps = {
   api: FormApi;
-  name: Exclude<keyof ProjectInput, "anonymous" | "category" | "zone">;
+  name: Exclude<keyof ProjectInput, "anonymous" | "category" | "zone" | "posterId">;
   label: string;
   hint?: ReactNode;
   rows?: number;

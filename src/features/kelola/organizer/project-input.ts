@@ -36,6 +36,9 @@ export type ProjectInput = {
   teacherName: string;
   teacherBio: string;
   modules: string;
+  /** File-store id of the poster; empty = none (the generated cover is shown). */
+  posterId: string;
+  posterAlt: string;
 };
 
 export type InputErrors = Partial<Record<keyof ProjectInput | "block", string>>;
@@ -70,6 +73,8 @@ export const emptyInput = (category: ProjectCategory = "antologi"): ProjectInput
   teacherName: "",
   teacherBio: "",
   modules: "",
+  posterId: "",
+  posterAlt: "",
 });
 
 /** The form's text for a project already written, so editing starts from what is saved. */
@@ -94,6 +99,8 @@ export function inputOf(project: ProjectFixture): ProjectInput {
     maxWords: project.submission ? String(project.submission.maxWords) : "",
     maxWorks: project.submission ? String(project.submission.maxWorks) : "1",
     special: project.terms.special.join("\n"),
+    posterId: project.poster?.fileId ?? "",
+    posterAlt: project.poster?.alt ?? "",
     ...blockInput(block),
   };
 }

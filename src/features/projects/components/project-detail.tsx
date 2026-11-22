@@ -73,6 +73,7 @@ function DetailHeader({ project, state }: { project: Project; state: ProjectStat
       <ProjectCover
         project={project}
         showTitle
+        describe
         className="rm-cover-enter w-32 max-sm:-order-1 md:w-44"
       />
     </header>

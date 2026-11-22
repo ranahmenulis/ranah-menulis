@@ -18,12 +18,17 @@ const isFee = (f: unknown) =>
 type Bag = Record<string, unknown>;
 const isBag = (v: unknown): v is Bag => typeof v === "object" && v !== null;
 
+/** A poster is optional; when present it needs both a file id and its description. */
+const hasPoster = (p: unknown) =>
+  p === undefined || (isBag(p) && typeof p.fileId === "string" && typeof p.alt === "string");
 const hasTerms = (t: unknown) => isBag(t) && typeof t.version === "string" && strings(t.special);
 const hasDates = (a: unknown) =>
   isBag(a) &&
   Array.isArray(a.milestones) &&
   a.milestones.every(isMilestone) &&
   (a.closesAt === null || Number.isFinite(a.closesAt));
+
+const hasOptionalParts = (v: Bag) => hasPoster(v.poster) && hasDates(v.absolute);
 
 /** A project an Organizer wrote on this device (PRJ-03). It carries real dates in `absolute`. */
 export const isStoredProject = (value: unknown): value is ProjectFixture => {
@@ -41,7 +46,7 @@ export const isStoredProject = (value: unknown): value is ProjectFixture => {
     hasTerms(value.terms) &&
     isBag(value.block) &&
     value.block.kind === value.category &&
-    hasDates(value.absolute)
+    hasOptionalParts(value)
   );
 };
 
