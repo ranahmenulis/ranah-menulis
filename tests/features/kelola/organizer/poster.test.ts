@@ -97,7 +97,11 @@ describe("storePoster and discardPoster", () => {
     const files = createMemoryFileStore();
     const put = vi.spyOn(files, "put");
     const saved = await storePoster(new File(["%PDF-1.7 x"], "naskah.png"), files);
-    expect(saved).toEqual({ ok: false, message: expect.stringMatching(/JPG, PNG, atau WebP/) });
+    expect(saved).toEqual({
+      ok: false,
+      message: expect.stringMatching(/JPG, PNG, atau WebP/),
+      problem: "type",
+    });
     expect(put).not.toHaveBeenCalled();
   });
 

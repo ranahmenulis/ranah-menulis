@@ -55,7 +55,7 @@ describe("saveUpload", () => {
       "manuscript",
       createMemoryFileStore(),
     );
-    expect(saved).toEqual({ ok: false, message: "Pilih berkas PDF atau DOCX." });
+    expect(saved).toEqual({ ok: false, message: "Pilih berkas PDF atau DOCX.", problem: "type" });
   });
 });
 

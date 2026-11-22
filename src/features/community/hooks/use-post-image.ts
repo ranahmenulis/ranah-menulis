@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useLocale } from "@/lib/i18n/provider";
 import { compressImage } from "@/lib/files/compress-image";
 import { problemText } from "@/lib/files/problem-text";
 import { validateUpload } from "@/lib/files/validate-upload";
@@ -13,17 +14,18 @@ import type { PostImage } from "../types";
 export function usePostImage(onImage: (image: PostImage) => void) {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const locale = useLocale();
 
   async function pick(file: File) {
     setBusy(true);
     setError(null);
     try {
       const check = await validateUpload(file, "image");
-      if (!check.ok) return setError(problemText(check.problem, "image"));
+      if (!check.ok) return setError(problemText(check.problem, "image", locale));
       const { dataUrl, width, height } = await compressImage(file);
       onImage({ src: dataUrl, width, height, alt: "" });
     } catch {
-      setError(problemText("unreadable", "image"));
+      setError(problemText("unreadable", "image", locale));
     } finally {
       setBusy(false);
     }

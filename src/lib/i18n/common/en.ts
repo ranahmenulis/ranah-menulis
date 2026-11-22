@@ -4,6 +4,7 @@ export const common: typeof source = {
   close: "Close",
   loading: "Loading",
   retry: "Try again",
+  optional: "optional",
   notifications: "Notices",
   closeNotification: "Close notice",
   language: {

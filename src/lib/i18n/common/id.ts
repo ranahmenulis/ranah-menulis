@@ -2,6 +2,7 @@ export const common = {
   close: "Tutup",
   loading: "Memuat",
   retry: "Coba lagi",
+  optional: "opsional",
   notifications: "Pemberitahuan",
   closeNotification: "Tutup pemberitahuan",
   language: {

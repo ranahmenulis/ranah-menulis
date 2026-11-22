@@ -1,9 +1,10 @@
 import { compressImage } from "@/lib/files/compress-image";
 import type { FileStore, StoredFile } from "@/lib/files/file-store";
-import { problemText } from "@/lib/files/problem-text";
+import { problemText, type FileProblem } from "@/lib/files/problem-text";
 import { validateUpload } from "@/lib/files/validate-upload";
 
-export type StorePosterResult = { ok: true; id: string } | { ok: false; message: string };
+export type StorePosterResult =
+  { ok: true; id: string } | { ok: false; message: string; problem: FileProblem };
 
 /**
  * Checks a picked image (real type, size), shrinks it to WebP (this also drops the camera's
@@ -15,7 +16,9 @@ export async function storePoster(
   now = Date.now(),
 ): Promise<StorePosterResult> {
   const check = await validateUpload(file, "image");
-  if (!check.ok) return { ok: false, message: problemText(check.problem, "image") };
+  if (!check.ok) {
+    return { ok: false, message: problemText(check.problem, "image"), problem: check.problem };
+  }
   try {
     const { blob } = await compressImage(file);
     const record: StoredFile = {
@@ -29,7 +32,7 @@ export async function storePoster(
     await store.put(record);
     return { ok: true, id: record.id };
   } catch {
-    return { ok: false, message: problemText("unreadable", "image") };
+    return { ok: false, message: problemText("unreadable", "image"), problem: "unreadable" };
   }
 }
 

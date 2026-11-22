@@ -1,6 +1,7 @@
 import type { ComponentProps, ReactNode } from "react";
 import { CaretDown, CheckCircle, WarningCircle } from "@phosphor-icons/react/dist/ssr";
 import { cn } from "@/lib/cn";
+import { CommonText } from "./common-text";
 
 type FieldProps = {
   id: string;
@@ -29,7 +30,13 @@ export function Field({
     <div className={cn("grid min-w-0 gap-2", className)}>
       <label htmlFor={id} className="text-sm font-medium text-ink">
         {label}
-        {optional && <span className="font-normal text-ink-muted"> (opsional)</span>}
+        {optional && (
+          <span className="font-normal text-ink-muted">
+            {" ("}
+            <CommonText name="optional" />
+            {")"}
+          </span>
+        )}
       </label>
       {children}
       {hint && !error && (

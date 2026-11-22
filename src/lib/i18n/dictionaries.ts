@@ -29,6 +29,16 @@ import { events as eventsId } from "@/features/community/copy/events-id";
 import { events as eventsEn } from "@/features/community/copy/events-en";
 import { studioLayout as studioLayoutId } from "@/features/studio/copy/layout-id";
 import { studioLayout as studioLayoutEn } from "@/features/studio/copy/layout-en";
+import { studioEditor as studioEditorId } from "@/features/studio/copy/editor-id";
+import { studioEditor as studioEditorEn } from "@/features/studio/copy/editor-en";
+import { studioStreak as studioStreakId } from "@/features/studio/copy/streak-id";
+import { studioStreak as studioStreakEn } from "@/features/studio/copy/streak-en";
+import { studioStats as studioStatsId } from "@/features/studio/copy/stats-id";
+import { studioStats as studioStatsEn } from "@/features/studio/copy/stats-en";
+import { studioDocuments as studioDocumentsId } from "@/features/studio/copy/documents-id";
+import { studioDocuments as studioDocumentsEn } from "@/features/studio/copy/documents-en";
+import { studioSearch as studioSearchId } from "@/features/studio/copy/documents-search-id";
+import { studioSearch as studioSearchEn } from "@/features/studio/copy/documents-search-en";
 import { profile as profileId } from "@/features/profile/copy/id";
 import { profile as profileEn } from "@/features/profile/copy/en";
 
@@ -50,6 +60,11 @@ export const id = {
   groups: groupsId,
   events: eventsId,
   studioLayout: studioLayoutId,
+  studioEditor: studioEditorId,
+  studioStreak: studioStreakId,
+  studioStats: studioStatsId,
+  studioDocuments: studioDocumentsId,
+  studioSearch: studioSearchId,
 };
 export type Dictionary = typeof id;
 
@@ -70,6 +85,11 @@ const en: Dictionary = {
   groups: groupsEn,
   events: eventsEn,
   studioLayout: studioLayoutEn,
+  studioEditor: studioEditorEn,
+  studioStreak: studioStreakEn,
+  studioStats: studioStatsEn,
+  studioDocuments: studioDocumentsEn,
+  studioSearch: studioSearchEn,
 };
 
 export const dictionaries: Record<Locale, Dictionary> = { id, en };
