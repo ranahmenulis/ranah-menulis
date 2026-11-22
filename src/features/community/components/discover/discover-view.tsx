@@ -6,13 +6,13 @@ import { Button, ButtonLink } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
 import { ErrorBanner, RetryButton } from "@/components/ui/states";
 import { StickyChipBar } from "@/components/ui/sticky-chip-bar";
+import { useT } from "@/lib/i18n/provider";
 import { useViewer } from "@/lib/viewer";
 import { NEW_POST_HREF } from "@/features/app-shell/nav";
 import { editorPicks } from "../../curation/picks-store";
 import {
   CATEGORY_CHIPS_VISIBLE,
   PAGE_SIZE,
-  categoryById,
   postsForCategory,
   visibleCategories,
 } from "../../categories";
@@ -32,6 +32,7 @@ import { DiscoverSkeleton } from "./discover-skeleton";
  * listed. Dummy fixtures plus whatever was published on this device.
  */
 export function DiscoverView() {
+  const t = useT().discover;
   const data = useCommunity(postStore);
   const guest = useViewer() === "tamu";
   const actions = usePostActions(data, guest);
@@ -63,12 +64,12 @@ export function DiscoverView() {
     <div className="@container mx-auto max-w-320">
       <div className="flex items-center gap-4">
         <h1 className="text-[22px] leading-[30px] font-semibold md:text-[28px] md:leading-9">
-          Community
+          {t.title}
         </h1>
         {!guest && (
           <ButtonLink href={NEW_POST_HREF} variant="text" className="ml-auto">
             <PencilSimpleLine size={20} aria-hidden />
-            Tulis postingan
+            {t.write}
           </ButtonLink>
         )}
       </div>
@@ -79,7 +80,7 @@ export function DiscoverView() {
 
       {data.status === "error" && (
         <ErrorBanner className="mt-6" action={<RetryButton onClick={data.reload} />}>
-          Community gagal dimuat. Feed di Beranda dan tulisan yang kamu simpan tetap bisa dibuka.
+          {t.loadError}
         </ErrorBanner>
       )}
 
@@ -87,7 +88,7 @@ export function DiscoverView() {
         <>
           {CATEGORY_CHIPS_VISIBLE ? (
             <>
-              <StickyChipBar label="Kategori">
+              <StickyChipBar label={t.categoryLabel}>
                 {categories.map((c) => (
                   <Chip
                     key={c.id}
@@ -95,13 +96,13 @@ export function DiscoverView() {
                     onClick={() => setPicked(c.id)}
                     className="shrink-0"
                   >
-                    {c.label}
+                    {t.categories[c.id].label}
                   </Chip>
                 ))}
               </StickyChipBar>
 
               <p className="mt-3 mb-4 text-sm text-ink-muted md:mt-4 md:mb-6">
-                {categoryById(current.id)?.description}
+                {t.categories[current.id].description}
               </p>
             </>
           ) : (
@@ -127,13 +128,11 @@ export function DiscoverView() {
                 variant="secondary"
                 onClick={() => setShown({ id: current.id, count: count + PAGE_SIZE })}
               >
-                Muat lebih banyak
+                {t.loadMore}
               </Button>
             ) : (
               <p className="text-[13px] leading-[18px] text-ink-muted">
-                {CATEGORY_CHIPS_VISIBLE
-                  ? "Itu semua tulisan di kategori ini."
-                  : "Itu semua tulisan."}
+                {CATEGORY_CHIPS_VISIBLE ? t.doneCategory : t.doneAll}
               </p>
             )}
           </div>

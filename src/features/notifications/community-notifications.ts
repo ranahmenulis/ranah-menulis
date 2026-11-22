@@ -44,6 +44,7 @@ export function reportNotifications(
   return buildCases(reports, entries).flatMap((row) => {
     if (row.status !== "baru") return [];
     const content = row.kind === "post" ? "tulisan" : "komentar";
+    const key = row.kind === "post" ? "modReportPost" : "modReportComment";
     return [
       {
         id: `mod-report:${caseKey(row.kind, row.targetId)}:${row.since}`,
@@ -53,6 +54,7 @@ export function reportNotifications(
         agoMs: 0,
         at: row.since,
         text: `Ada laporan baru untuk satu ${content}.`,
+        message: { key },
         href: caseHref(row.kind, row.targetId),
         target: { kind: "report" },
       },
@@ -84,6 +86,7 @@ export function pickNotification(
       agoMs: 0,
       at: pick.at,
       text: `Tulisanmu “${post.title}” dipilih untuk Editor’s Picks.`,
+      message: { key: "editorPick", params: { title: post.title } },
       href: postHref(post.id),
       target: { kind: "pick", postId: post.id },
     },
@@ -154,6 +157,7 @@ export async function hiddenNotifications(
             kind === "post"
               ? "Tulisanmu disembunyikan oleh moderator."
               : "Komentarmu disembunyikan oleh moderator.",
+          message: { key: kind === "post" ? "hiddenPost" : "hiddenComment" },
         },
       ];
     }),

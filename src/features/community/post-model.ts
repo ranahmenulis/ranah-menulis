@@ -17,8 +17,23 @@ export const blocksText = (blocks: PostBlock[]) => blocks.map((b) => b.text).joi
 export const wordsOf = (blocks: PostBlock[]) => countWords(blocksText(blocks));
 
 /** "Prolog · Cerpen": the honest label shown wherever a post is listed (COM-01). */
-export function postLabel(post: Pick<PostCore, "kind" | "genre">): string {
-  return `${post.kind === "prolog" ? "Prolog" : "Cuplikan"} · ${post.genre}`;
+export type PostLabels = {
+  prolog: string;
+  cuplikan: string;
+  genres: Record<PostCore["genre"], string>;
+};
+
+const ID_LABELS: PostLabels = {
+  prolog: "Prolog",
+  cuplikan: "Cuplikan",
+  genres: { Cerpen: "Cerpen", Puisi: "Puisi", Esai: "Esai", Memoar: "Memoar", Novel: "Novel" },
+};
+
+export function postLabel(
+  post: Pick<PostCore, "kind" | "genre">,
+  labels: PostLabels = ID_LABELS,
+): string {
+  return `${labels[post.kind]} · ${labels.genres[post.genre]}`;
 }
 
 export type TileForm = "note" | "titled" | "cover" | "image" | "inset";

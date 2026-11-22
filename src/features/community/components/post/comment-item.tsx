@@ -6,6 +6,8 @@ import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, type MenuEntry } from "@/components/ui/menu";
 import { cn } from "@/lib/cn";
+import { format, useLocale, useT } from "@/lib/i18n/provider";
+import type { Dictionary } from "@/lib/i18n/dictionaries";
 import { formatAgo } from "../../format-time";
 import { AuthorLink } from "@/features/profile/author-link";
 import { authorOf } from "../../post-model";
@@ -35,16 +37,16 @@ type Props = {
   children?: ReactNode;
 };
 
-function menuFor(p: Props): MenuEntry[] {
+function menuFor(p: Props, t: Dictionary["post"]["comment"]): MenuEntry[] {
   const report: MenuEntry = {
     id: "report",
-    label: "Laporkan",
+    label: t.report,
     icon: <Flag aria-hidden />,
     onSelect: p.onReport,
   };
   const remove: MenuEntry = {
     id: "delete",
-    label: "Hapus komentar",
+    label: t.delete,
     icon: <Trash aria-hidden />,
     danger: true,
     onSelect: p.onDelete,
@@ -53,7 +55,7 @@ function menuFor(p: Props): MenuEntry[] {
     return [
       {
         id: "hide",
-        label: "Sembunyikan komentar",
+        label: t.hide,
         icon: <EyeSlash aria-hidden />,
         onSelect: p.onHide,
       },
@@ -91,25 +93,15 @@ function QuietRow({
 /** One comment or reply (COM-05). The ⋯ menu depends on who is looking. */
 export function CommentItem(p: Props) {
   const { comment, now, reply, view } = p;
+  const locale = useLocale();
+  const t = useT().post.comment;
   const author = authorOf(comment.authorId);
 
   if (view === "hidden") {
-    return (
-      <QuietRow
-        text="Kamu menyembunyikan satu komentar. Pembaca lain tidak melihatnya."
-        action="Tampilkan lagi"
-        onAction={p.onShowAgain}
-      />
-    );
+    return <QuietRow text={t.hiddenText} action={t.hiddenAction} onAction={p.onShowAgain} />;
   }
   if (view === "reported") {
-    return (
-      <QuietRow
-        text="Kamu melaporkan komentar ini. Komentar disembunyikan dari tampilanmu selama ditinjau."
-        action="Tampilkan"
-        onAction={p.onShowAgain}
-      />
-    );
+    return <QuietRow text={t.reportedText} action={t.reportedAction} onAction={p.onShowAgain} />;
   }
 
   return (
@@ -126,14 +118,14 @@ export function CommentItem(p: Props) {
             {author.name}
           </AuthorLink>
           {p.byPostAuthor && (
-            <span className="border border-line px-1.5 text-xs text-ink-muted">Penulis</span>
+            <span className="border border-line px-1.5 text-xs text-ink-muted">{t.author}</span>
           )}
-          <span>· {formatAgo(comment.createdAt, now)}</span>
+          <span>· {formatAgo(comment.createdAt, now, locale)}</span>
         </div>
         <CommentText text={comment.text} />
         <div className="mt-1.5">
           <Button variant="text" size="sm" onClick={p.onReply} className="text-[13px]!">
-            Balas
+            {t.reply}
           </Button>
         </div>
         {p.children}
@@ -142,8 +134,8 @@ export function CommentItem(p: Props) {
           the menu's fixed bottom sheet on phones and squeeze it into this corner. */}
       <div className="absolute top-2.5 -right-2">
         <Menu
-          label={`Lainnya untuk komentar ${author.name}`}
-          items={menuFor(p)}
+          label={format(t.moreFor, { name: author.name })}
+          items={menuFor(p, t)}
           className="[&>button]:scale-90"
         />
       </div>

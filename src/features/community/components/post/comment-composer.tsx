@@ -5,6 +5,7 @@ import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/field";
 import { useAccount } from "@/features/account/account-store";
+import { useT } from "@/lib/i18n/provider";
 
 type Props = {
   /** Visible to screen readers only; the field itself shows a placeholder. */
@@ -28,6 +29,7 @@ export function CommentComposer({
   onSubmit,
   onCancel,
 }: Props) {
+  const t = useT().post.composer;
   const { profile } = useAccount();
   const [text, setText] = useState(initialText);
   const [sending, setSending] = useState(false);
@@ -69,7 +71,7 @@ export function CommentComposer({
         <div className="flex items-center gap-1">
           {onCancel && (
             <Button variant="text" size="sm" onClick={onCancel}>
-              Batal
+              {t.cancel}
             </Button>
           )}
           <Button
@@ -79,13 +81,13 @@ export function CommentComposer({
             disabled={empty}
             loading={sending}
           >
-            Kirim
+            {t.send}
           </Button>
         </div>
       </div>
       {failed && (
         <p role="alert" className="pl-11 text-sm text-danger">
-          Komentar belum terkirim. Tulisanmu masih di sini; coba kirim lagi.
+          {t.failed}
         </p>
       )}
     </form>

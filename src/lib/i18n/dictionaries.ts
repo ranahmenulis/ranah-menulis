@@ -15,6 +15,18 @@ import { saved as savedId } from "@/features/saved/copy/id";
 import { saved as savedEn } from "@/features/saved/copy/en";
 import { notifications as notificationsId } from "@/features/notifications/copy/id";
 import { notifications as notificationsEn } from "@/features/notifications/copy/en";
+import { community as communityId } from "@/features/community/copy/shared-id";
+import { community as communityEn } from "@/features/community/copy/shared-en";
+import { discover as discoverId } from "@/features/community/copy/discover-id";
+import { discover as discoverEn } from "@/features/community/copy/discover-en";
+import { post as postId } from "@/features/community/copy/post-id";
+import { post as postEn } from "@/features/community/copy/post-en";
+import { compose as composeId } from "@/features/community/copy/compose-id";
+import { compose as composeEn } from "@/features/community/copy/compose-en";
+import { groups as groupsId } from "@/features/community/copy/groups-id";
+import { groups as groupsEn } from "@/features/community/copy/groups-en";
+import { events as eventsId } from "@/features/community/copy/events-id";
+import { events as eventsEn } from "@/features/community/copy/events-en";
 import { profile as profileId } from "@/features/profile/copy/id";
 import { profile as profileEn } from "@/features/profile/copy/en";
 
@@ -29,6 +41,12 @@ export const id = {
   saved: savedId,
   notifications: notificationsId,
   profile: profileId,
+  community: communityId,
+  discover: discoverId,
+  post: postId,
+  compose: composeId,
+  groups: groupsId,
+  events: eventsId,
 };
 export type Dictionary = typeof id;
 
@@ -42,6 +60,12 @@ const en: Dictionary = {
   saved: savedEn,
   notifications: notificationsEn,
   profile: profileEn,
+  community: communityEn,
+  discover: discoverEn,
+  post: postEn,
+  compose: composeEn,
+  groups: groupsEn,
+  events: eventsEn,
 };
 
 export const dictionaries: Record<Locale, Dictionary> = { id, en };

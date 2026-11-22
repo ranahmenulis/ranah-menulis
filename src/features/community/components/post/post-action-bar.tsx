@@ -12,6 +12,8 @@ import { useState, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, type MenuEntry } from "@/components/ui/menu";
 import { cn } from "@/lib/cn";
+import { format, useT } from "@/lib/i18n/provider";
+import type { Dictionary } from "@/lib/i18n/dictionaries";
 
 type Props = {
   appreciations: number;
@@ -29,11 +31,14 @@ type Props = {
 const pressIcon = "transition-transform duration-120 ease-(--ease-out) group-active:scale-90";
 
 /** "Salin tautan" and "Laporkan tulisan" (COM-04). There is no reshare (Fase 2). */
-function postMenu({ onCopyLink, onReport }: Pick<Props, "onCopyLink" | "onReport">): MenuEntry[] {
+function postMenu(
+  { onCopyLink, onReport }: Pick<Props, "onCopyLink" | "onReport">,
+  t: Dictionary["post"]["bar"],
+): MenuEntry[] {
   return [
-    { id: "copy", label: "Salin tautan", icon: <LinkIcon aria-hidden />, onSelect: onCopyLink },
+    { id: "copy", label: t.copyLink, icon: <LinkIcon aria-hidden />, onSelect: onCopyLink },
     { id: "sep", type: "separator" },
-    { id: "report", label: "Laporkan tulisan", icon: <Flag aria-hidden />, onSelect: onReport },
+    { id: "report", label: t.report, icon: <Flag aria-hidden />, onSelect: onReport },
   ];
 }
 
@@ -47,6 +52,7 @@ function Actions({
   onShare,
   compact,
 }: Props & { compact: boolean }): ReactNode {
+  const t = useT().post.bar;
   // Bumped only when the heart is switched on, so it pops for that moment and never on load.
   const [pops, setPops] = useState(0);
   const count = (n: number) => <span className="tabular-nums">{n.toLocaleString("id-ID")}</span>;
@@ -56,7 +62,7 @@ function Actions({
       <Button
         variant="text"
         aria-pressed={appreciated}
-        aria-label={`Apresiasi ${appreciations}`}
+        aria-label={format(t.appreciateAria, { count: String(appreciations) })}
         onClick={() => {
           if (!appreciated) setPops((n) => n + 1);
           onAppreciate();
@@ -70,16 +76,16 @@ function Actions({
           aria-hidden
           className={cn(pressIcon, appreciated && pops > 0 && "rm-heart-pop")}
         />
-        {text("Apresiasi ")}
+        {text(`${t.appreciate} `)}
         {count(appreciations)}
       </Button>
       <a
         href="#komentar"
-        aria-label={`Komentar ${comments}`}
+        aria-label={format(t.commentsAria, { count: String(comments) })}
         className="inline-flex h-10 items-center gap-1.5 rounded-full px-2.5 text-sm text-ink-muted no-underline hover:text-ink"
       >
         <ChatCircle size={20} aria-hidden />
-        {text("Komentar ")}
+        {text(`${t.comments} `)}
         {count(comments)}
       </a>
       {/* On phones Bagikan and Simpan are icons only, like Apresiasi and Komentar, so the bar fits
@@ -87,17 +93,17 @@ function Actions({
       <Button
         variant="text"
         onClick={onShare}
-        aria-label={compact ? "Bagikan" : undefined}
+        aria-label={compact ? t.share : undefined}
         className="gap-1.5! px-2.5! font-normal!"
       >
         <ShareNetwork size={20} aria-hidden />
-        {text("Bagikan")}
+        {text(t.share)}
       </Button>
       <Button
         variant="text"
         aria-pressed={saved}
         onClick={onSave}
-        aria-label={compact ? (saved ? "Tersimpan" : "Simpan") : undefined}
+        aria-label={compact ? (saved ? t.saved : t.save) : undefined}
         className={cn("group ml-auto gap-1.5! px-2.5! font-normal!", saved && "text-ink!")}
       >
         <BookmarkSimple
@@ -106,7 +112,7 @@ function Actions({
           aria-hidden
           className={pressIcon}
         />
-        {text(saved ? "Tersimpan" : "Simpan")}
+        {text(saved ? t.saved : t.save)}
       </Button>
     </>
   );
@@ -114,28 +120,30 @@ function Actions({
 
 /** Desktop and tablet action bar under the text (DESIGN.md 6.9 #1). */
 export function PostActionBar(props: Props) {
+  const t = useT().post.bar;
   return (
     <div
       role="toolbar"
-      aria-label="Aksi tulisan"
+      aria-label={t.label}
       className="mt-8 flex items-center gap-1 border-y border-line py-2 max-md:hidden"
     >
       <Actions {...props} compact={false} />
-      <Menu label="Lainnya" items={postMenu(props)} />
+      <Menu label={t.more} items={postMenu(props, t)} />
     </div>
   );
 }
 
 /** Phones: sticky at the bottom in place of the navigation bar [usulan]. */
 export function PostMobileBar(props: Props) {
+  const t = useT().post.bar;
   return (
     <div
       role="toolbar"
-      aria-label="Aksi tulisan"
+      aria-label={t.label}
       className="fixed inset-x-0 bottom-0 z-30 flex h-[calc(3.5rem+env(safe-area-inset-bottom))] items-center gap-0.5 border-t border-line bg-canvas px-2 pb-[env(safe-area-inset-bottom)] md:hidden"
     >
       <Actions {...props} compact />
-      <Menu label="Lainnya" items={postMenu(props)} />
+      <Menu label={t.more} items={postMenu(props, t)} />
     </div>
   );
 }

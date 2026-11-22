@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/toast";
+import { format, useT } from "@/lib/i18n/provider";
 import { SignInButton, SignUpButton } from "@/features/account/components/auth-buttons";
 import { buildThreads, type Thread } from "../../comment-threads";
 import { ME_ID } from "../../fixtures/authors";
@@ -34,6 +35,8 @@ type Replying = { commentId: string; mention?: string } | null;
 /** Comments and replies of a post (COM-05, DESIGN.md 6.9). Dummy comments plus your own, locally. */
 export function CommentsSection({ post, data, guest, actions }: Props) {
   const toast = useToast();
+  const t = useT().post.comments;
+  const tReport = useT().post.report;
   const threads = useMemo(() => buildThreads(data.comments, post.id), [data.comments, post.id]);
   const iAmPostAuthor = post.authorId === ME_ID;
 
@@ -58,12 +61,12 @@ export function CommentsSection({ post, data, guest, actions }: Props) {
   async function send(text: string, parentId: string | null, mention?: string) {
     const ok = await data.addComment({ postId: post.id, parentId, text, mention });
     if (ok && parentId) setReplying(null);
-    if (!ok) toast({ message: "Komentar belum terkirim.", tone: "error", key: "comment" });
+    if (!ok) toast({ message: t.sendFailed, tone: "error", key: "comment" });
     return ok;
   }
 
   function startReply(thread: Thread, to: Comment) {
-    if (actions.requireAccount("Masuk untuk membalas")) return;
+    if (actions.requireAccount(t.askReply)) return;
     // Answering a reply stays in the same thread and names who it is aimed at.
     setReplying({
       commentId: to.id,
@@ -74,10 +77,10 @@ export function CommentsSection({ post, data, guest, actions }: Props) {
   function submitReport(reason: ReportReason) {
     if (reporting) {
       fileReport("comment", reporting.id, ME_ID, reason);
-      void flag(mark.reported(reporting.id), true, "Laporan belum tersimpan.");
+      void flag(mark.reported(reporting.id), true, t.reportFailed);
     }
     setReporting(null);
-    toast({ message: "Laporan terkirim. Terima kasih." });
+    toast({ message: t.reportSent });
   }
 
   function item(thread: Thread, c: Comment, reply: boolean) {
@@ -95,22 +98,22 @@ export function CommentsSection({ post, data, guest, actions }: Props) {
         iAmPostAuthor={iAmPostAuthor && !guest}
         view={view}
         onReply={() => startReply(thread, c)}
-        onHide={() => void flag(mark.hidden(c.id), true, "Komentar belum tersembunyi.")}
+        onHide={() => void flag(mark.hidden(c.id), true, t.hideFailed)}
         onShowAgain={() =>
           void flag(
             view === "hidden" ? mark.hidden(c.id) : mark.reported(c.id),
             false,
-            "Belum tersimpan.",
+            t.unsavedFailed,
           )
         }
-        onReport={() => (actions.requireAccount("Masuk untuk melaporkan") ? null : setReporting(c))}
+        onReport={() => (actions.requireAccount(t.askReport) ? null : setReporting(c))}
         onDelete={() => setDeleting(c)}
       >
         {replying?.commentId === c.id && (
           <div className="mt-3">
             <CommentComposer
-              label={`Balas ${authorOf(c.authorId).name}`}
-              placeholder={`Balas ${authorOf(c.authorId).name}`}
+              label={format(t.replyTo, { name: authorOf(c.authorId).name })}
+              placeholder={format(t.replyTo, { name: authorOf(c.authorId).name })}
               initialText={replying.mention ? `@${replying.mention} ` : ""}
               primary={false}
               autoFocus
@@ -126,9 +129,9 @@ export function CommentsSection({ post, data, guest, actions }: Props) {
   const shown = threads.slice(0, visibleThreads);
 
   return (
-    <section id="komentar" aria-label="Komentar" className="mt-14">
+    <section id="komentar" aria-label={t.label} className="mt-14">
       <h2 className="mb-4 text-xl leading-7 font-semibold">
-        Komentar{" "}
+        {t.label}{" "}
         <span className="text-base font-normal text-ink-muted tabular-nums">
           {data.comments.filter((c) => c.postId === post.id).length}
         </span>
@@ -136,22 +139,20 @@ export function CommentsSection({ post, data, guest, actions }: Props) {
 
       {guest ? (
         <div className="grid justify-items-start gap-3 border-b border-line py-6">
-          <p className="font-serif text-lg leading-[26px] font-semibold">
-            Masuk untuk ikut membalas.
-          </p>
-          <p className="text-sm text-ink-muted">
-            Kamu bisa membaca semua komentar tanpa akun. Setelah masuk, kamu kembali ke tulisan ini.
-          </p>
+          <p className="font-serif text-lg leading-[26px] font-semibold">{t.signInTitle}</p>
+          <p className="text-sm text-ink-muted">{t.signInBody}</p>
           <div className="flex items-center gap-2">
-            <SignInButton>Masuk</SignInButton>
-            <SignUpButton variant="text">Daftar</SignUpButton>
+            <SignInButton>{t.signIn}</SignInButton>
+            <SignUpButton variant="text">{t.signUp}</SignUpButton>
           </div>
         </div>
       ) : (
         <div className="border-b border-line pb-6">
           <CommentComposer
-            label="Tulis komentar"
-            placeholder={`Tulis komentar untuk ${authorOf(post.authorId).name.split(" ")[0]}`}
+            label={t.write}
+            placeholder={format(t.placeholder, {
+              name: authorOf(post.authorId).name.split(" ")[0],
+            })}
             primary
             onSubmit={(text) => send(text, null)}
           />
@@ -159,9 +160,7 @@ export function CommentsSection({ post, data, guest, actions }: Props) {
       )}
 
       {threads.length === 0 ? (
-        <p className="border-b border-line py-6 text-sm text-ink-muted">
-          Belum ada komentar. Komentar pertama sering paling dibaca penulisnya.
-        </p>
+        <p className="border-b border-line py-6 text-sm text-ink-muted">{t.empty}</p>
       ) : (
         <div>
           {shown.map((thread) => {
@@ -178,7 +177,7 @@ export function CommentsSection({ post, data, guest, actions }: Props) {
                     onClick={() => setExpanded(new Set(expanded).add(thread.root.id))}
                     className="ml-6 h-12 w-[calc(100%-1.5rem)] rounded-none border-b border-line text-ink!"
                   >
-                    Lihat {rest} balasan lainnya
+                    {format(t.moreReplies, { count: String(rest) })}
                   </Button>
                 )}
               </div>
@@ -190,36 +189,39 @@ export function CommentsSection({ post, data, guest, actions }: Props) {
               onClick={() => setVisibleThreads((n) => n + MORE_THREADS)}
               className="h-12 w-full rounded-none border-b border-line text-ink!"
             >
-              Lihat komentar lainnya
+              {t.moreComments}
             </Button>
           )}
         </div>
       )}
 
       <ReportDialog
-        subject={reporting ? `komentar ${authorOf(reporting.authorId).name}` : null}
+        subject={
+          reporting
+            ? format(tReport.subjectComment, { name: authorOf(reporting.authorId).name })
+            : null
+        }
         onClose={() => setReporting(null)}
         onSubmit={submitReport}
       />
       <Dialog
         open={deleting !== null}
         onClose={() => setDeleting(null)}
-        title="Hapus komentar ini?"
-        description="Komentar hilang dari tulisan dan tidak bisa dikembalikan."
+        title={t.deleteTitle}
+        description={t.deleteBody}
         actions={
           <>
             <Button variant="text" onClick={() => setDeleting(null)}>
-              Batal
+              {t.cancel}
             </Button>
             <Button
               variant="danger"
               onClick={() => {
-                if (deleting)
-                  void flag(mark.deleted(deleting.id), true, "Komentar belum terhapus.");
+                if (deleting) void flag(mark.deleted(deleting.id), true, t.deleteFailed);
                 setDeleting(null);
               }}
             >
-              Hapus komentar
+              {t.deleteButton}
             </Button>
           </>
         }

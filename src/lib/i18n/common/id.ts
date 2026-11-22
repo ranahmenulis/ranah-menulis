@@ -17,4 +17,11 @@ export const common = {
     cycle: "Tampilan: {current}. Ganti ke {next}",
   },
   preferences: { label: "Tampilan dan bahasa" },
+  reasonDialog: {
+    field: "Alasan",
+    cancel: "Batal",
+    limit: "Paling banyak {limit} karakter.",
+    empty: "Tulis alasannya. Peserta membacanya di detail karya.",
+    tooLong: "Alasan paling banyak {limit} karakter.",
+  },
 };

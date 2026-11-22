@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { useToast } from "@/components/ui/toast";
 import { useViewer } from "@/lib/viewer";
+import { format, useLocale, useT } from "@/lib/i18n/provider";
 import { formatAbsolute } from "../../format-time";
 import { ME_ID } from "../../fixtures/authors";
 import { useCommunity } from "../../hooks/use-community";
@@ -24,6 +25,8 @@ import { ReportDialog } from "./report-dialog";
  * related reading. Readable without an account; anything that needs one asks to sign in.
  */
 export function PostView({ postId }: { postId: string }) {
+  const locale = useLocale();
+  const t = useT().post;
   const data = useCommunity(postStore);
   const guest = useViewer() === "tamu";
   const actions = usePostActions(data, guest);
@@ -65,9 +68,9 @@ export function PostView({ postId }: { postId: string }) {
   async function copyLink() {
     try {
       await navigator.clipboard.writeText(window.location.href);
-      toast({ message: "Tautan disalin.", key: "copy" });
+      toast({ message: t.linkCopied, key: "copy" });
     } catch {
-      toast({ message: "Tautan belum bisa disalin.", tone: "error", key: "copy" });
+      toast({ message: t.linkFailed, tone: "error", key: "copy" });
     }
   }
 
@@ -94,7 +97,7 @@ export function PostView({ postId }: { postId: string }) {
     onShare: () => void share(),
     onCopyLink: () => void copyLink(),
     onReport: () => {
-      if (!actions.requireAccount("Masuk untuk melaporkan")) setReportingPost(true);
+      if (!actions.requireAccount(t.comments.askReport)) setReportingPost(true);
     },
   };
 
@@ -110,8 +113,11 @@ export function PostView({ postId }: { postId: string }) {
         />
         <PostActionBar {...bar} />
         <p className="mt-3 text-xs text-ink-muted">
-          {post.appreciations.toLocaleString("id-ID")} apresiasi · {commentCount} komentar ·{" "}
-          {formatAbsolute(post.publishedAt, data.now)}
+          {format(t.meta, {
+            appreciations: post.appreciations.toLocaleString(locale === "en" ? "en-US" : "id-ID"),
+            comments: String(commentCount),
+            time: formatAbsolute(post.publishedAt, data.now, locale),
+          })}
         </p>
         <AuthorCard
           author={author}
@@ -120,7 +126,10 @@ export function PostView({ postId }: { postId: string }) {
           onFollow={(a) => actions.follow(a.id, a.name)}
         />
         <CommentsSection post={post} data={data} guest={guest} actions={actions} />
-        <RelatedPosts posts={moreFromAuthor} title={`Lainnya dari ${author.name}`} />
+        <RelatedPosts
+          posts={moreFromAuthor}
+          title={format(t.related.moreFrom, { name: author.name })}
+        />
         <RelatedPosts posts={related.filter((p) => !moreFromAuthor.some((m) => m.id === p.id))} />
       </div>
 
@@ -128,12 +137,12 @@ export function PostView({ postId }: { postId: string }) {
       <PostMobileBar {...bar} />
 
       <ReportDialog
-        subject={reportingPost ? "tulisan" : null}
+        subject={reportingPost ? t.report.subjectPost : null}
         onClose={() => setReportingPost(false)}
         onSubmit={(reason) => {
           fileReport("post", postId, ME_ID, reason);
           setReportingPost(false);
-          toast({ message: "Laporan terkirim. Terima kasih." });
+          toast({ message: t.comments.reportSent });
         }}
       />
       {actions.guestDialog}

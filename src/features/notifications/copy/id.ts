@@ -22,5 +22,10 @@ export const notifications = {
     appreciated: "mengapresiasi prolog “{title}”.",
     followed: "mulai mengikutimu.",
     mentioned: "menyebutmu dalam komentar di “{title}”.",
+    modReportPost: "Ada laporan baru untuk satu tulisan.",
+    modReportComment: "Ada laporan baru untuk satu komentar.",
+    editorPick: "Tulisanmu “{title}” dipilih untuk Editor’s Picks.",
+    hiddenPost: "Tulisanmu disembunyikan oleh moderator.",
+    hiddenComment: "Komentarmu disembunyikan oleh moderator.",
   },
 };

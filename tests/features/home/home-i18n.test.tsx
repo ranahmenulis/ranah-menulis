@@ -35,7 +35,7 @@ describe("week sentence in two languages", () => {
       "In the last 7 days you wrote 1 word. A good start.",
     );
     expect(weekSentence(900, 500, homeEn.week, "en")).toContain("400 words more than");
-    expect(weekSentence(0, 500, homeEn.week, "en")).toContain("after 500 words");
+    expect(weekSentence(0, 500, homeEn.week, "en")).toContain("after writing 500 words");
     expect(weekSentence(0, 0, homeEn.week, "en")).toBeNull();
   });
 

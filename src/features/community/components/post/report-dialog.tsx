@@ -4,15 +4,13 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { RadioChoice } from "@/components/ui/choice";
-import { REPORT_REASON_LABEL } from "../../moderation/reasons";
+import { format, useT } from "@/lib/i18n/provider";
 import type { ReportReason } from "../../types";
 
-const REASONS = (Object.entries(REPORT_REASON_LABEL) as [ReportReason, string][]).map(
-  ([id, label]) => ({ id, label }),
-);
+const REASONS: ReportReason[] = ["spam", "hate", "copyright", "other"];
 
 type Props = {
-  /** What is being reported: "tulisan" or "komentar Farid Zulkifli". */
+  /** What is being reported, already in the interface language ("tulisan", "komentar Farid"). */
   subject: string | null;
   onClose: () => void;
   onSubmit: (reason: ReportReason) => void;
@@ -20,6 +18,7 @@ type Props = {
 
 /** Report dialog (COM-05). One reason is required; the author of the report stays anonymous. */
 export function ReportDialog({ subject, onClose, onSubmit }: Props) {
+  const t = useT().post.report;
   const [reason, setReason] = useState<ReportReason | null>(null);
 
   function close() {
@@ -31,12 +30,12 @@ export function ReportDialog({ subject, onClose, onSubmit }: Props) {
     <Dialog
       open={subject !== null}
       onClose={close}
-      title={`Laporkan ${subject ?? ""}`.trim()}
-      description="Pilih satu alasan. Penulisnya tidak tahu siapa yang melapor."
+      title={format(t.title, { subject: subject ?? "" }).trim()}
+      description={t.description}
       actions={
         <>
           <Button variant="text" onClick={close}>
-            Batal
+            {t.cancel}
           </Button>
           <Button
             disabled={reason === null}
@@ -46,19 +45,19 @@ export function ReportDialog({ subject, onClose, onSubmit }: Props) {
               setReason(null);
             }}
           >
-            Kirim laporan
+            {t.submit}
           </Button>
         </>
       }
     >
-      <div role="radiogroup" aria-label="Alasan laporan" className="grid gap-3.5">
+      <div role="radiogroup" aria-label={t.group} className="grid gap-3.5">
         {REASONS.map((r) => (
           <RadioChoice
-            key={r.id}
+            key={r}
             name="alasan-laporan"
-            label={r.label}
-            checked={reason === r.id}
-            onChange={() => setReason(r.id)}
+            label={t.reasons[r]}
+            checked={reason === r}
+            onChange={() => setReason(r)}
           />
         ))}
       </div>

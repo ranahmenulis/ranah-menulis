@@ -24,5 +24,10 @@ export const notifications: typeof source = {
     appreciated: "appreciated the prologue “{title}”.",
     followed: "started following you.",
     mentioned: "mentioned you in a comment on “{title}”.",
+    modReportPost: "There is a new report for a post.",
+    modReportComment: "There is a new report for a comment.",
+    editorPick: "Your post “{title}” was chosen for Editor’s Picks.",
+    hiddenPost: "Your post was hidden by a moderator.",
+    hiddenComment: "Your comment was hidden by a moderator.",
   },
 };

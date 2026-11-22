@@ -4,9 +4,11 @@ import { AuthorAvatar } from "../author-avatar";
 import { Globe, UsersThree } from "@phosphor-icons/react/dist/ssr";
 import { cn } from "@/lib/cn";
 import { Button } from "@/components/ui/button";
+import { format, useLocale, useT } from "@/lib/i18n/provider";
 import { formatDay } from "../../format-time";
 import { AuthorLink } from "@/features/profile/author-link";
-import { authorOf, postLabel } from "../../post-model";
+import { usePostLabel } from "../../hooks/use-post-label";
+import { authorOf } from "../../post-model";
 import type { Author, Genre, Post, PostBlock, PostKind } from "../../types";
 import { PostFigure } from "./post-figure";
 
@@ -74,19 +76,21 @@ export function ScopeLine({
   groupOnly?: boolean;
 }) {
   const Icon = groupOnly ? UsersThree : Globe;
-  const name = kind === "prolog" ? "Prolog" : "Cuplikan";
+  const dict = useT();
+  const t = dict.post.article;
+  const name = dict.community.labels[kind === "prolog" ? "prolog" : "cuplikan"];
   return (
     <p className="flex items-start gap-2.5 border-b border-line py-3 text-sm text-ink-muted">
       <Icon size={16} aria-hidden className="mt-0.5 shrink-0" />
       <span>
         {sourceTitle ? (
           <>
-            {name} dari: <b className="font-medium text-ink">{sourceTitle}</b>
+            {name} {t.scopeFrom} <b className="font-medium text-ink">{sourceTitle}</b>
           </>
         ) : (
           name
         )}{" "}
-        · hanya bagian ini yang {groupOnly ? "dibagikan ke grup" : "publik"}
+        · {t.onlyPart} {groupOnly ? t.shared : t.public}
       </span>
     </p>
   );
@@ -103,6 +107,10 @@ type Props = {
 
 /** Mark, title, byline, scope line, text: everything above the action bar of a post. */
 export function PostArticle({ post, now, showFollow, following, onFollow }: Props) {
+  const postLabel = usePostLabel();
+  const locale = useLocale();
+  const updatedWord = useT().community.updated;
+  const t = useT().post;
   const author = authorOf(post.authorId);
   const updated = post.updatedAt !== undefined && post.updatedAt - post.publishedAt > 60_000;
 
@@ -130,16 +138,22 @@ export function PostArticle({ post, now, showFollow, following, onFollow }: Prop
                   onClick={() => onFollow(author)}
                   className="text-ink!"
                 >
-                  {following ? "Mengikuti" : "Ikuti"}
+                  {following ? t.following : t.follow}
                 </Button>
               </>
             )}
           </span>
           <span className="text-xs text-ink-muted">
             @{author.handle}
-            {post.groupName && <> · di {post.groupName}</>} · Diterbitkan{" "}
-            {formatDay(post.publishedAt, now)}
-            {updated && <> · diperbarui {formatDay(post.updatedAt!, now)}</>}
+            {post.groupName && (
+              <> · {format(t.article.inGroup, { group: post.groupName })}</>
+            )} · {t.article.published} {formatDay(post.publishedAt, now, locale)}
+            {updated && (
+              <>
+                {" "}
+                · {updatedWord} {formatDay(post.updatedAt!, now, locale)}
+              </>
+            )}
           </span>
         </div>
       </div>

@@ -6,7 +6,8 @@ import Link from "next/link";
 import { cn } from "@/lib/cn";
 import { useLocale, useT } from "@/lib/i18n/provider";
 import { formatAgo } from "@/features/community/format-time";
-import { authorOf, excerptOf, isNote, postLabel } from "@/features/community/post-model";
+import { usePostLabel } from "@/features/community/hooks/use-post-label";
+import { authorOf, excerptOf, isNote } from "@/features/community/post-model";
 import type { Post } from "@/features/community/types";
 import { AuthorLink } from "@/features/profile/author-link";
 
@@ -56,6 +57,7 @@ type Props = {
 export function FeedItem({ post, now, comments, appreciated, saved, onAppreciate, onSave }: Props) {
   const t = useT().home.item;
   const locale = useLocale();
+  const postLabel = usePostLabel();
   const author = authorOf(post.authorId);
   const note = isNote(post);
   const href = `/postingan/${post.id}`;

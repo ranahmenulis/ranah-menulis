@@ -1,6 +1,9 @@
+"use client";
+
 import { Skeleton as Base } from "@/components/ui/states";
 import type { ComponentProps } from "react";
 import { cn } from "@/lib/cn";
+import { useT } from "@/lib/i18n/provider";
 
 /** Bars sit on the `subtle` tile, so they take the line color to stay visible. */
 const Skeleton = ({ className, ...props }: ComponentProps<"div">) => (
@@ -18,10 +21,11 @@ const TILES = [
 
 /** Chips and tiles in their real shape. Invisible for the first 300ms so quick loads never flash. */
 export function DiscoverSkeleton() {
+  const label = useT().discover.loading;
   return (
     <div
       role="status"
-      aria-label="Memuat Community"
+      aria-label={label}
       className="animate-[rm-appear_0s_300ms_forwards] opacity-0"
     >
       <div className="flex gap-2 border-b border-line py-4">

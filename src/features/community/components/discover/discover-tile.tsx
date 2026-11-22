@@ -4,10 +4,12 @@ import { AuthorAvatar } from "../author-avatar";
 import { BookmarkSimple, ChatCircle, Heart } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import { cn } from "@/lib/cn";
+import { format, useT } from "@/lib/i18n/provider";
 import { AuthorLink } from "@/features/profile/author-link";
 import { revealDelay, useRevealOnce } from "@/lib/use-reveal-once";
 import { useRowSpan } from "../../hooks/use-row-span";
-import { authorOf, excerptOf, postLabel, tileForm, type TileForm } from "../../post-model";
+import { usePostLabel } from "../../hooks/use-post-label";
+import { authorOf, excerptOf, tileForm, type TileForm } from "../../post-model";
 import type { Post, PostImage } from "../../types";
 
 type Props = {
@@ -60,7 +62,7 @@ function Photo({ image, form }: { image: PostImage; form: TileForm }) {
 }
 
 function Text({ post, form, href }: { post: Post; form: TileForm; href: string }) {
-  const label = postLabel(post);
+  const label = usePostLabel()(post);
   const linkClass = "text-ink no-underline after:absolute after:inset-0 hover:underline";
   if (form === "note" || form === "inset") {
     return (
@@ -113,6 +115,7 @@ function Text({ post, form, href }: { post: Post; form: TileForm; href: string }
  * buttons. Below 576px of width the tile is a plain row with a small photo on the right.
  */
 export function DiscoverTile({ post, index, comments, saved, onSave }: Props) {
+  const t = useT().discover;
   const form = tileForm(post);
   const href = `/postingan/${post.id}`;
   const ref = useRowSpan<HTMLElement>();
@@ -148,14 +151,14 @@ export function DiscoverTile({ post, index, comments, saved, onSave }: Props) {
 
       <div className="flex items-center gap-4 px-5 pt-1 pb-4 text-xs text-ink-muted @max-xl:col-span-full @max-xl:px-0 @max-xl:pb-6 @max-xl:text-[13px]">
         <span
-          aria-label={`Apresiasi ${post.appreciations}`}
+          aria-label={format(t.appreciation, { count: String(post.appreciations) })}
           className="flex items-center gap-1.5 tabular-nums"
         >
           <Heart size={16} aria-hidden />
           {post.appreciations}
         </span>
         <span
-          aria-label={`Komentar ${comments}`}
+          aria-label={format(t.comments, { count: String(comments) })}
           className="flex items-center gap-1.5 tabular-nums"
         >
           <ChatCircle size={16} aria-hidden />
@@ -163,7 +166,7 @@ export function DiscoverTile({ post, index, comments, saved, onSave }: Props) {
         </span>
         <button
           type="button"
-          aria-label={saved ? "Hapus dari Tersimpan" : "Simpan"}
+          aria-label={saved ? t.unsave : t.save}
           aria-pressed={saved}
           onClick={onSave}
           className="relative z-10 -my-2 -mr-2 ml-auto grid size-8 cursor-pointer place-items-center rounded-full hover:text-ink aria-pressed:text-ink"

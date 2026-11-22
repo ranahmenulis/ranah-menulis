@@ -4,6 +4,7 @@ import { AuthorAvatar } from "../author-avatar";
 import { Button } from "@/components/ui/button";
 import { AuthorLink } from "@/features/profile/author-link";
 import { profileOf, whereOf } from "@/features/profile/profile-model";
+import { useT } from "@/lib/i18n/provider";
 import type { Author } from "../../types";
 
 type Props = {
@@ -15,11 +16,12 @@ type Props = {
 
 /** "Ditulis oleh": the author at the end of the text, with their bio and a follow button. */
 export function AuthorCard({ author, showFollow, following, onFollow }: Props) {
+  const t = useT().post;
   const { bio } = profileOf(author.id);
   const where = whereOf(author);
   return (
-    <section aria-label="Tentang penulis" className="mt-12 border-t border-line pt-8">
-      <p className="mb-4 text-[13px] leading-[18px] text-ink-muted">Ditulis oleh</p>
+    <section aria-label={t.authorCard.label} className="mt-12 border-t border-line pt-8">
+      <p className="mb-4 text-[13px] leading-[18px] text-ink-muted">{t.authorCard.writtenBy}</p>
       <div className="flex items-start gap-4">
         <AuthorAvatar author={author} size={56} />
         <div className="grid min-w-0 flex-1 gap-1">
@@ -36,7 +38,7 @@ export function AuthorCard({ author, showFollow, following, onFollow }: Props) {
             aria-pressed={following}
             onClick={() => onFollow(author)}
           >
-            {following ? "Mengikuti" : "Ikuti"}
+            {following ? t.following : t.follow}
           </Button>
         )}
       </div>
