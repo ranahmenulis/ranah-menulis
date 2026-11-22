@@ -101,7 +101,7 @@ Kolom **Akses** menunjukkan siapa yang bisa membuka layar menurut kode saat ini.
 | `/projects/saya` | Semua pendaftaran, kiriman, dan status beserta tautan ke dasbor, kiriman, dan hasil. | Peserta | PRJ-04; PRD 17.5 (Proyek saya) |
 | `/projects/[slug]` | Detail proyek: tema, syarat naskah, blok khas kategori (alur Antologi, paket Solo, kurikulum Kelas, kriteria dan hadiah Lomba), jadwal, hak cipta, kolom kanan (biaya, kuota, tombol aksi sesuai status). | Semua | PRJ-01, SOL-01, KLS-01, LMB-01; PRD 17.5 (Detail proyek) |
 | `/projects/[slug]/daftar` | Pendaftaran: ringkasan, paket (Solo), ketentuan dan hak cipta, kotak setuju, tombol Daftar; atau status pendaftaran dan alasan tidak bisa mendaftar. | Masuk | PRJ-02, BR-PRJ-02/03/04; PRD 17.5 (Pendaftaran) |
-| `/projects/[slug]/bayar` | Pembayaran QRIS (IDR): kode contoh berlabel, sisa waktu tahanan kursi 24 jam, status menunggu/lunas/kedaluwarsa. | Pendaftar berbayar | PLT-07; Q-20 |
+| `/projects/[slug]/bayar` | Pembayaran QRIS (IDR): kode contoh berlabel, sisa waktu tahanan kursi 2 jam, status menunggu/lunas/kedaluwarsa. | Pendaftar berbayar | PLT-07; Q-20 |
 | `/projects/[slug]/kirim?dokumen=<id>` | Formulir kirim karya: pilih dokumen, judul, genre (Solo: jenis buku dan sinopsis), catatan editor, pernyataan keaslian, validasi tiap aturan. | Peserta `terdaftar` (Antologi, Lomba, Solo) | STD-09, PRJ-04 langkah 1–5; PRD 17.5 (Kirim karya) |
 | `/projects/[slug]/kiriman/[id]` | Detail kiriman: status, riwayat versi dan status, alasan editor, tombol Kirim revisi dan Tarik. | Pemilik kiriman | PRJ-04; PRD 10.5 (tabel status); PRD 17.5 (Detail submission) |
 | `/projects/[slug]/kiriman/[id]/revisi` | Kirim revisi: pilih dokumen (boleh lain), tenggat revisi 7 hari, maks 2 putaran; ditolak bila belum berubah. | Pemilik kiriman berstatus Perlu Revisi | PRJ-04; Q-22 |
@@ -250,7 +250,7 @@ Rujukan alur di PRD: perjalanan inti penulis (13.1) untuk A sampai D, pengiriman
 **Pendaftaran gagal** — `antologi-pulang-ke-pesisir` (ditutup), `lomba-puisi-pendek-nusantara` (kuota penuh). Harapan: alasan jelas, tidak ada formulir.
 
 **Pendaftaran berbayar + QRIS** — `lomba-cerpen-hujan-2026`
-1. Daftar → status **Menunggu pembayaran**, menahan satu kursi 24 jam.
+1. Daftar → status **Menunggu pembayaran**, menahan satu kursi 2 jam.
 2. Tombol detail "Bayar sekarang" → `/projects/lomba-cerpen-hujan-2026/bayar`: kode QRIS contoh berlabel (bukan kode asli).
 3. Konfirmasi pembayaran dilakukan Organizer (lihat skenario H.4). Setelah itu status "Terdaftar".
 4. Proyek berharga ringgit saja menampilkan pembayaran "menyusul".

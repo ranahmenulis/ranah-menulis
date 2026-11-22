@@ -2,10 +2,10 @@ import { moneyLabel, projectHref } from "./project-model";
 import type { Money, Registration, RegistrationMap } from "./types";
 
 /**
- * [usulan, Q-20] How long a registration that waits for payment keeps its seat. The client has not
- * decided the length; it is a sample and lives in one place so it can change.
+ * How long a registration that waits for payment keeps its seat: 2 hours, the length the client
+ * gave on 22 November 2026 (Q-20). It lives in one place so it can change.
  */
-export const HOLD_MS = 24 * 60 * 60 * 1000;
+export const HOLD_MS = 2 * 60 * 60 * 1000;
 
 export const payHref = (slug: string) => `${projectHref(slug)}/bayar`;
 

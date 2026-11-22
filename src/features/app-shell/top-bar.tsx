@@ -9,19 +9,18 @@ import {
 } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Avatar } from "@/components/ui/avatar";
 import { DisplayControls } from "@/components/ui/display-controls";
 import { ButtonLink } from "@/components/ui/button";
 import { IconButton, iconButtonClass } from "@/components/ui/icon-button";
 import { Monogram, Wordmark } from "@/components/ui/logo";
 import { cn } from "@/lib/cn";
-import { format, useT } from "@/lib/i18n/provider";
-import { useAccount } from "@/features/account/account-store";
-import { SETTINGS_HREF } from "@/features/account/redirect";
+import { formatNumber } from "@/lib/i18n/format";
+import { format, useLocale, useT } from "@/lib/i18n/provider";
 import { ManagerMenu } from "@/features/kelola/components/manager-menu";
 import { useUnreadCount } from "@/features/notifications/use-notifications";
 import { StudioTopBarSearch } from "@/features/studio/components/studio-top-bar-search";
-import { DISCOVER_HREF, DUMMY_USER, NEW_DOCUMENT_HREF, NOTIFICATIONS_HREF } from "./nav";
+import { AccountMenu } from "./account-menu";
+import { DISCOVER_HREF, NEW_DOCUMENT_HREF, NOTIFICATIONS_HREF } from "./nav";
 
 const studioSearchPaths = new Set(["/studio", "/studio/streak", "/studio/statistik"]);
 
@@ -61,14 +60,13 @@ export function TopBar({
   onToggleSidebar: () => void;
 }) {
   const { topBar } = useT().shell;
-  const account = useAccount();
+  const locale = useLocale();
   const pathname = usePathname();
-  const settingsActive = pathname === SETTINGS_HREF;
   const studioSearch = studioSearchPaths.has(pathname);
   const unread = useUnreadCount();
   const unreadLabel =
     unread > 0
-      ? format(topBar.notifications, { count: unread.toLocaleString("id-ID") })
+      ? format(topBar.notifications, { count: formatNumber(unread, locale) })
       : topBar.notificationsNone;
   const phoneOnly = back ? "max-md:hidden" : undefined;
   return (
@@ -132,19 +130,7 @@ export function TopBar({
           )}
         </span>
       </Link>
-      <Link
-        href={SETTINGS_HREF}
-        aria-label={topBar.account}
-        title={topBar.account}
-        aria-current={settingsActive ? "page" : undefined}
-        className={cn("grid min-h-11 min-w-11 place-items-center", phoneOnly)}
-      >
-        <Avatar
-          name={account.profile.name || DUMMY_USER.name}
-          src={account.profile.avatar}
-          size={32}
-        />
-      </Link>
+      <AccountMenu className={phoneOnly} />
     </header>
   );
 }

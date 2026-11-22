@@ -5,6 +5,14 @@ import type { CategoryId, Post } from "./types";
 export type Category = { id: CategoryId; label: string; description: string };
 
 /**
+ * Community shows one list of all public posts for now. The category chips are hidden because the
+ * client will replace them with the Fase 2 features (roasting, writer battle, and the like), 22
+ * November 2026. The categories and their rules stay in code; turn this on to bring the chips back.
+ * While off, Editor's Picks has no public place to appear.
+ */
+export const CATEGORY_CHIPS_VISIBLE = false;
+
+/**
  * Jelajahi categories (COM-09). Names stay in English like the PRD [konfirmasi]. "Semua" is the
  * first chip (DESIGN.md 6.8) and is not one of the eight PRD categories.
  */

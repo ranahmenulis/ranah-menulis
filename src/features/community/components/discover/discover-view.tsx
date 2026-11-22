@@ -9,12 +9,19 @@ import { StickyChipBar } from "@/components/ui/sticky-chip-bar";
 import { useViewer } from "@/lib/viewer";
 import { NEW_POST_HREF } from "@/features/app-shell/nav";
 import { editorPicks } from "../../curation/picks-store";
-import { PAGE_SIZE, categoryById, postsForCategory, visibleCategories } from "../../categories";
+import {
+  CATEGORY_CHIPS_VISIBLE,
+  PAGE_SIZE,
+  categoryById,
+  postsForCategory,
+  visibleCategories,
+} from "../../categories";
 import { usePostActions } from "../../hooks/use-post-actions";
 import { useCommunity } from "../../hooks/use-community";
 import { mark } from "../../storage/post-store";
 import { postStore } from "../../storage/store";
 import type { CategoryId } from "../../types";
+import { CommunityLinks } from "./community-links";
 import { DiscoverTile } from "./discover-tile";
 import { DiscoverSkeleton } from "./discover-skeleton";
 
@@ -66,6 +73,8 @@ export function DiscoverView() {
         )}
       </div>
 
+      <CommunityLinks />
+
       {data.status === "loading" && <DiscoverSkeleton />}
 
       {data.status === "error" && (
@@ -76,22 +85,28 @@ export function DiscoverView() {
 
       {data.status === "ready" && current && (
         <>
-          <StickyChipBar label="Kategori">
-            {categories.map((c) => (
-              <Chip
-                key={c.id}
-                pressed={c.id === current.id}
-                onClick={() => setPicked(c.id)}
-                className="shrink-0"
-              >
-                {c.label}
-              </Chip>
-            ))}
-          </StickyChipBar>
+          {CATEGORY_CHIPS_VISIBLE ? (
+            <>
+              <StickyChipBar label="Kategori">
+                {categories.map((c) => (
+                  <Chip
+                    key={c.id}
+                    pressed={c.id === current.id}
+                    onClick={() => setPicked(c.id)}
+                    className="shrink-0"
+                  >
+                    {c.label}
+                  </Chip>
+                ))}
+              </StickyChipBar>
 
-          <p className="mt-3 mb-4 text-sm text-ink-muted md:mt-4 md:mb-6">
-            {categoryById(current.id)?.description}
-          </p>
+              <p className="mt-3 mb-4 text-sm text-ink-muted md:mt-4 md:mb-6">
+                {categoryById(current.id)?.description}
+              </p>
+            </>
+          ) : (
+            <div className="mb-4 md:mb-6" />
+          )}
 
           <div className="grid @xl:grid-flow-row-dense @xl:auto-rows-[4px] @xl:grid-cols-2 @xl:gap-x-6 @4xl:grid-cols-3 @[77.5rem]:grid-cols-4">
             {visible.map((post, index) => (
@@ -116,7 +131,9 @@ export function DiscoverView() {
               </Button>
             ) : (
               <p className="text-[13px] leading-[18px] text-ink-muted">
-                Itu semua tulisan di kategori ini.
+                {CATEGORY_CHIPS_VISIBLE
+                  ? "Itu semua tulisan di kategori ini."
+                  : "Itu semua tulisan."}
               </p>
             )}
           </div>

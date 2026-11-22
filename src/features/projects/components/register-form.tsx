@@ -65,7 +65,7 @@ export function RegisterForm({ project, state, onSubmit }: Props) {
         </dl>
         {paid && (
           <p className="text-sm text-ink-muted">
-            Biaya dibayar lewat QRIS setelah mendaftar; kuotamu ditahan 24 jam [usulan].
+            Biaya dibayar lewat QRIS setelah mendaftar; kuotamu ditahan 2 jam.
           </p>
         )}
       </Section>

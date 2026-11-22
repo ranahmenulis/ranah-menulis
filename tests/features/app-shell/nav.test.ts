@@ -51,7 +51,7 @@ describe("navigation", () => {
 
   it("opens your own profile from Profil, and only that page counts as Profil", () => {
     expect(mainNav.find((n) => n.id === "profil")?.href).toBe("/penulis/rinjaniputri");
-    expect(bottomNav.find((n) => n.id === "profil")?.href).toBe("/penulis/rinjaniputri");
+    expect(bottomNav.some((n) => n.id === "profil")).toBe(false);
     expect(activeId("/penulis/rinjaniputri")).toBe("profil");
     expect(activeId("/penulis/hafizrahman")).toBeNull();
   });
@@ -61,14 +61,8 @@ describe("navigation", () => {
     expect(isPostPage("/jelajahi")).toBe(false);
   });
 
-  it("has five phone tabs, Community in the middle, and no Streak anywhere (it is a Studio tab)", () => {
-    expect(bottomNav.map((n) => n.id)).toEqual([
-      "beranda",
-      "studio",
-      "jelajahi",
-      "projects",
-      "profil",
-    ]);
+  it("has four phone tabs and no Streak anywhere (it is a Studio tab)", () => {
+    expect(bottomNav.map((n) => n.id)).toEqual(["beranda", "studio", "jelajahi", "projects"]);
     expect(mainNav.some((n) => n.id === "streak")).toBe(false);
   });
 

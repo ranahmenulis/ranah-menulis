@@ -70,8 +70,11 @@ const profile: NavEntry = { id: "profil", label: "Profil", Icon: User, href: OWN
  * so its pages light up Studio.
  */
 export const mainNav = [home, studio, discover, projects, saved, profile];
-/** Phones: five tabs (PRD 16); Community is the middle tab, Streak is reached from the Studio tabs. */
-export const bottomNav = [home, studio, discover, projects, profile];
+/**
+ * Phones: four tabs (client, 22 November 2026: no Profil tab, the avatar menu has it). Streak is
+ * reached from the Studio tabs.
+ */
+export const bottomNav = [home, studio, discover, projects];
 
 /** Which nav entry the current path belongs to. */
 export function activeId(pathname: string): string | null {

@@ -70,7 +70,7 @@ Alamat dasar: [ranah-menulis.vercel.app](https://ranah-menulis.vercel.app/berand
 |---|---|---|---|
 | E1 | [Katalog](https://ranah-menulis.vercel.app/projects) | Ganti kategori, filter Status dan Biaya. | Daftar proyek berubah. ☐ |
 | E2 | [Lomba berbayar](https://ranah-menulis.vercel.app/projects/lomba-cerpen-hujan-2026) | Baca detail, klik Daftar, centang ketentuan, Daftar. | Status "Menunggu pembayaran". Pengiriman karya menyusul setelah pembayaran dikonfirmasi di Bagian 2. ☐ |
-| E3 | [Bayar](https://ranah-menulis.vercel.app/projects/lomba-cerpen-hujan-2026/bayar) | Lihat kode QRIS. | Kode contoh berlabel dan sisa waktu 24 jam. ☐ |
+| E3 | [Bayar](https://ranah-menulis.vercel.app/projects/lomba-cerpen-hujan-2026/bayar) | Lihat kode QRIS. | Kode contoh berlabel dan sisa waktu 2 jam. ☐ |
 | E4 | [Lomba gratis](https://ranah-menulis.vercel.app/projects/lomba-esai-literasi-remaja) | Daftar, lalu klik Kirim karya, pilih dokumen dari B2. | Status "Terkirim". ☐ |
 | E5 | [Proyek saya](https://ranah-menulis.vercel.app/projects/saya) | Buka. | Pendaftaran dan kiriman terlihat dengan statusnya. ☐ |
 | E6 | [Kelas berjalan](https://ranah-menulis.vercel.app/projects/kelas-cerpen-untuk-pemula) | Daftar (gratis), klik Buka dasbor kelas. | Jadwal, materi, tugas, progres. ☐ |

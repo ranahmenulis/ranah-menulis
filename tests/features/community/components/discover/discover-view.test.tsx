@@ -33,14 +33,18 @@ const renderView = () =>
   );
 
 describe("DiscoverView", () => {
-  it("opens on Semua with that chip pressed and the other categories after it", async () => {
+  it("hides the category chips for now and lists every public post", async () => {
     renderView();
     await screen.findAllByRole("article");
-    const chips = within(screen.getByRole("toolbar", { name: "Kategori" })).getAllByRole("button");
-    expect(chips[0].textContent).toBe("Semua");
-    expect(chips[0].getAttribute("aria-pressed")).toBe("true");
-    expect(chips.filter((c) => c.getAttribute("aria-pressed") === "true")).toHaveLength(1);
-    expect(chips.map((c) => c.textContent)).toContain("Trending Today");
+    expect(screen.queryByRole("toolbar", { name: "Kategori" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Trending Today" })).toBeNull();
+  });
+
+  it("links to Event and Grup Penulis, which moved here from Beranda", async () => {
+    renderView();
+    await screen.findAllByRole("article");
+    expect(screen.getByRole("link", { name: "Event" }).getAttribute("href")).toBe("/event");
+    expect(screen.getByRole("link", { name: "Grup Penulis" }).getAttribute("href")).toBe("/grup");
   });
 
   it("shows one page and loads the next only on request, then says it is the end", async () => {
@@ -51,19 +55,7 @@ describe("DiscoverView", () => {
     fireEvent.click(screen.getByRole("button", { name: "Muat lebih banyak" }));
     expect(tiles().length).toBeGreaterThan(PAGE_SIZE);
     expect(screen.queryByRole("button", { name: "Muat lebih banyak" })).toBeNull();
-    expect(screen.getByText("Itu semua tulisan di kategori ini.")).toBeTruthy();
-  });
-
-  it("switches category and starts from the first page of it", async () => {
-    renderView();
-    await screen.findAllByRole("article");
-    fireEvent.click(screen.getByRole("button", { name: "Malaysia Writers" }));
-    expect(screen.getByText(/negara di profilnya Malaysia/)).toBeTruthy();
-    for (const tile of tiles()) {
-      expect(
-        within(tile).getByText(/Kuala Lumpur|Pulau Pinang|Johor Bahru|Kota Bharu/),
-      ).toBeTruthy();
-    }
+    expect(screen.getByText("Itu semua tulisan.")).toBeTruthy();
   });
 
   it("never shows a group post", async () => {
