@@ -1,3 +1,8 @@
+import type { Locale } from "@/lib/i18n/config";
+import { formatNumber } from "@/lib/i18n/format";
+import { fill } from "./copy/fill";
+import { studioStreak as streakEn } from "./copy/streak-en";
+import { studioStreak as streakId } from "./copy/streak-id";
 import { dayKey, totalWords, type DailyLog } from "./daily-progress";
 
 /** Calendar-day helpers on "YYYY-MM-DD" keys, using the device's local time zone. */
@@ -187,14 +192,16 @@ export type Milestone = {
 
 const WORD_MILESTONES = [10_000, 50_000];
 const STREAK_MILESTONES = [7, 14, 30];
-const number = new Intl.NumberFormat("id-ID");
 
 /** [konfirmasi] Q-10: the milestone list is a product decision; these are the board's examples. */
 export function milestones(
   words: Map<string, number>,
   changes: TargetChange[],
   today: string,
+  locale: Locale = "id",
 ): Milestone[] {
+  const t = (locale === "en" ? streakEn : streakId).milestones;
+  const number = (value: number) => formatNumber(value, locale);
   const days = [...words.keys()].sort();
   const lifetime = days.reduce((sum, d) => sum + (words.get(d) ?? 0), 0);
 
@@ -212,10 +219,10 @@ export function milestones(
 
   const streakItems = STREAK_MILESTONES.map((n) => ({
     id: `streak-${n}`,
-    title: `${n} hari berturut-turut`,
-    hint: "Menulis sampai target tanpa putus",
+    title: fill(t.streakTitle, { n: String(n) }),
+    hint: t.streakHint,
     achievedOn: reached.get(n) ?? null,
-    remaining: `${Math.max(0, n - current)} hari lagi`,
+    remaining: fill(t.streakRemaining, { n: String(Math.max(0, n - current)) }),
   }));
 
   let cumulative = 0;
@@ -227,10 +234,10 @@ export function milestones(
   }
   const wordItems = WORD_MILESTONES.map((n) => ({
     id: `words-${n}`,
-    title: `${number.format(n)} kata`,
-    hint: "Total kata bersih sejak kamu mulai",
+    title: fill(t.wordsTitle, { n: number(n) }),
+    hint: t.wordsHint,
     achievedOn: reachedWords.get(n) ?? null,
-    remaining: `${number.format(Math.max(0, n - lifetime))} kata lagi`,
+    remaining: fill(t.wordsRemaining, { n: number(Math.max(0, n - lifetime)) }),
   }));
 
   return [...streakItems, ...wordItems];

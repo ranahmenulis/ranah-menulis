@@ -5,6 +5,8 @@
  * editors own the final content of the inspiration kit.
  */
 
+import type { Locale } from "@/lib/i18n/config";
+
 export const prompts = [
   "Tulis satu adegan ketika tokohmu menunggu sesuatu yang tidak pernah ia sebut namanya.",
   "Ceritakan sebuah rumah lewat satu bau yang masih tertinggal di dalamnya.",
@@ -80,3 +82,78 @@ export const kits: Kit[] = [
     ],
   },
 ];
+
+const promptsEn = [
+  "Write a scene in which your character waits for something they never name.",
+  "Describe a house through one smell that still lingers in it.",
+  "Open with a sentence someone says in a kitchen. Do not explain who they are until the third paragraph.",
+  "Write a letter to someone who has moved away, without once using the word longing.",
+  "Pick one object on your desk and write its history from the object's point of view.",
+];
+
+const kitsEn: Kit[] = [
+  {
+    name: "Story ideas",
+    hint: "Short premises",
+    entries: [
+      "A tailor finds notes of body measurements belonging to a person who never came to collect the order.",
+      "Two siblings share an inherited house, but only one knows there is a locked room inside it.",
+      "The dawn market in a small town has an unwritten rule, and a newcomer breaks it on the first day.",
+    ],
+  },
+  {
+    name: "Opening lines",
+    hint: "For the first paragraph",
+    entries: [
+      "The door was never locked, and that was what made Mother uneasy.",
+      "Before the rain, our village always smelled of iron.",
+      "I only learned her name after she was gone.",
+    ],
+  },
+  {
+    name: "Word choice",
+    hint: "Alternatives for a word",
+    entries: [
+      "walk: stride, wander, tread, roam",
+      "look: gaze, stare, observe, glance",
+      "sad: sorrowful, gloomy, forlorn, wistful",
+    ],
+  },
+  {
+    name: "Reflection questions",
+    hint: "For personal writing",
+    entries: [
+      "What are you putting off today, and what do you actually fear about it?",
+      "Who was the last person who made you feel heard?",
+      "Which small habit quietly holds up your day?",
+    ],
+  },
+  {
+    name: "Title ideas",
+    hint: "Title patterns",
+    entries: ["The [Object] Left Behind in [Place]", "Before [Event]", "How [Character] Waits"],
+  },
+  {
+    name: "Closing lines",
+    hint: "For the end of a section",
+    entries: [
+      "The kitchen light stayed on until morning.",
+      "She did not turn around, and I did not call out.",
+      "Outside, the rain stopped without telling anyone.",
+    ],
+  },
+  {
+    name: "Transition words",
+    hint: "Links between paragraphs",
+    entries: [
+      "time: meanwhile, soon after, ever since",
+      "contrast: however, even so, on the other hand",
+      "result: therefore, in the end, instead",
+    ],
+  },
+];
+
+/** The inspiration kit and prompts in the interface language. The English text is a translation. */
+export function helpContent(locale: Locale): { prompts: string[]; kits: Kit[] } {
+  return locale === "en" ? { prompts: promptsEn, kits: kitsEn } : { prompts, kits };
+}

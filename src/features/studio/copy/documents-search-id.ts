@@ -1,0 +1,18 @@
+export const studioSearch = {
+  open: "Cari di Studio",
+  title: "Cari di Studio",
+  close: "Tutup",
+  keyword: "Kata kunci",
+  hint: "Ketik judul dokumen atau nama folder.",
+  loadingResults: "Memuat hasil",
+  noMatch: "Tidak ada dokumen atau folder yang cocok.",
+  count: "{count} hasil",
+  resultsLabel: "Hasil pencarian",
+  document: "Dokumen",
+  folder: "Folder",
+  showMore: "Tampilkan lagi",
+  opening: "Membuka hasil…",
+  unavailable: "Hasil ini sudah tidak tersedia.",
+  openFailed: "Hasil belum bisa dibuka. Coba lagi.",
+  libraryFailed: "Daftar pencarian gagal dimuat.",
+};

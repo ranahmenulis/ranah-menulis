@@ -54,26 +54,28 @@ export function useEditorMenu({
   onSprint,
   onTrash,
 }: Actions) {
-  const t = useT().studioLayout.pageLayout;
+  const copy = useT();
+  const t = copy.studioLayout.pageLayout;
+  const m = copy.studioEditor.menu;
   return useMemo<MenuEntry[]>(
     () => [
       {
         id: "help",
-        label: "Bantuan menulis",
+        label: m.help,
         icon: <Lightbulb />,
         mobileOnly: true,
         onSelect: onHelp,
       },
       {
         id: "focus",
-        label: "Mode fokus",
+        label: m.focus,
         icon: <ArrowsOut />,
         mobileOnly: true,
         onSelect: onFocus,
       },
       {
         id: "sprint",
-        label: "Timer sprint",
+        label: m.sprint,
         icon: <Timer />,
         mobileOnly: true,
         onSelect: onSprint,
@@ -81,22 +83,22 @@ export function useEditorMenu({
       { id: "sep-mobile", type: "separator", mobileOnly: true },
       {
         id: "send",
-        label: "Kirim ke proyek",
+        label: m.send,
         icon: <PaperPlaneTilt />,
         disabled: !canSend,
         onSelect: onSend,
       },
       {
         id: "history",
-        label: "Riwayat versi",
+        label: m.history,
         icon: <ClockCounterClockwise />,
-        hint: "3 hari",
+        hint: m.historyHint,
         disabled: !canHistory,
         onSelect: onHistory,
       },
       {
         id: "targets",
-        label: "Target dokumen",
+        label: m.targets,
         icon: <Target />,
         disabled: !canTarget,
         onSelect: onTargets,
@@ -110,9 +112,9 @@ export function useEditorMenu({
       },
       {
         id: "export",
-        label: "Ekspor",
+        label: m.export,
         icon: <DownloadSimple />,
-        hint: "TXT, PDF",
+        hint: m.exportHint,
         disabled: !canExport,
         onSelect: onExport,
       },
@@ -120,9 +122,9 @@ export function useEditorMenu({
       {
         // Reversible, so ink and not red (DESIGN.md 4.1).
         id: "trash",
-        label: "Pindah ke sampah",
+        label: m.trash,
         icon: <Trash />,
-        hint: canTrash ? "Bisa dipulihkan" : undefined,
+        hint: canTrash ? m.trashHint : undefined,
         disabled: !canTrash,
         onSelect: onTrash,
       },
@@ -143,6 +145,7 @@ export function useEditorMenu({
       onSprint,
       onTrash,
       t,
+      m,
     ],
   );
 }

@@ -3,6 +3,13 @@ import type { StudioDocument } from "./storage/document-store";
 export const ARCHIVE_HREF = "/studio?tab=arsip";
 export const RESTORE_ARCHIVED_MESSAGE = "Dokumen ini ada di Arsip. Pulihkan dulu untuk memakainya.";
 
+const RESTORE_ARCHIVED_EN = "This document is in the Archive. Restore it first to use it.";
+
+/** The same sentence in the interface language, for screens that already know it. */
+export function restoreArchivedMessage(locale: "id" | "en"): string {
+  return locale === "en" ? RESTORE_ARCHIVED_EN : RESTORE_ARCHIVED_MESSAGE;
+}
+
 type DocumentLocation = Pick<StudioDocument, "archivedAt" | "deletedAt">;
 
 export function isArchivedDocument(doc: DocumentLocation) {

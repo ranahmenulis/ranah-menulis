@@ -1,3 +1,6 @@
+import type { Locale } from "@/lib/i18n/config";
+import { studioDocuments as untitledEn } from "./copy/documents-en";
+import { studioDocuments as untitledId } from "./copy/documents-id";
 import { isActiveDocument } from "./document-archive";
 import { blockTexts } from "./editor-stats";
 import type { DocumentStore, DocumentSummary, StudioFolder } from "./storage/document-store";
@@ -8,12 +11,16 @@ export function searchText(value: string) {
   return value.normalize("NFC").toLowerCase().trim().replace(/\s+/gu, " ");
 }
 
-const documentName = ({ title }: DocumentSummary) => title.trim() || "Tanpa judul";
+const UNTITLED: Record<Locale, string> = { id: untitledId.untitled, en: untitledEn.untitled };
+
+const documentName = ({ title }: DocumentSummary, locale: Locale) =>
+  title.trim() || UNTITLED[locale];
 
 export function studioSearchResults(
   docs: DocumentSummary[],
   folders: StudioFolder[],
   query: string,
+  locale: Locale = "id",
 ): StudioSearchResult[] {
   const term = searchText(query);
   if (!term) return [];
@@ -22,7 +29,7 @@ export function studioSearchResults(
     ...docs.filter(isActiveDocument).map((doc) => ({
       kind: "document" as const,
       id: doc.id,
-      name: documentName(doc),
+      name: documentName(doc, locale),
     })),
     ...folders.map(({ id, name }) => ({ kind: "folder" as const, id, name })),
   ];
@@ -63,11 +70,12 @@ export async function scanDocumentMatches(
   candidates: readonly DocumentSummary[],
   term: string,
   signal: AbortSignal,
+  locale: Locale = "id",
 ): Promise<ReadonlySet<string>> {
   const matches = new Set<string>();
   const bodyIds: string[] = [];
   for (const doc of candidates) {
-    if (searchText(documentName(doc)).includes(term)) matches.add(doc.id);
+    if (searchText(documentName(doc, locale)).includes(term)) matches.add(doc.id);
     else bodyIds.push(doc.id);
   }
 

@@ -1,4 +1,6 @@
 import type { JSONContent } from "@tiptap/react";
+import type { Locale } from "@/lib/i18n/config";
+import { formatNumber } from "@/lib/i18n/format";
 import type { StudioDocument } from "./storage/document-store";
 
 /**
@@ -106,9 +108,14 @@ export const REASON_LABEL: Record<VersionReason, string> = {
 };
 
 /** "+12 kata", "−40 kata" or "sama dengan sekarang", relative to the words in the editor now. */
-export function deltaLabel(versionWords: number, currentWords: number): string {
+export function deltaLabel(
+  versionWords: number,
+  currentWords: number,
+  locale: Locale = "id",
+): string {
   const diff = versionWords - currentWords;
-  if (diff === 0) return "sama dengan sekarang";
-  const n = new Intl.NumberFormat("id-ID").format(Math.abs(diff));
-  return `${diff > 0 ? "+" : "−"}${n} kata dari sekarang`;
+  if (diff === 0) return locale === "en" ? "same as now" : "sama dengan sekarang";
+  const n = formatNumber(Math.abs(diff), locale);
+  const sign = diff > 0 ? "+" : "−";
+  return locale === "en" ? `${sign}${n} words from now` : `${sign}${n} kata dari sekarang`;
 }

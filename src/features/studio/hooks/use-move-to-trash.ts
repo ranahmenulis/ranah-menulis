@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 import { useToast } from "@/components/ui/toast";
 import { STUDIO_HREF } from "@/features/app-shell/nav";
+import { useT } from "@/lib/i18n/provider";
 import type { DocumentStore } from "../storage/document-store";
 
 /**
@@ -17,11 +18,11 @@ export function useMoveToTrash(
 ) {
   const router = useRouter();
   const toast = useToast();
+  const t = useT().studioEditor;
 
   return useCallback(async () => {
     const id = getId();
-    const failed = () =>
-      toast({ message: "Dokumen belum bisa dipindah. Coba lagi.", tone: "error" });
+    const failed = () => toast({ message: t.toasts.moveFailed, tone: "error" });
     if (!(await saveNow())) return failed();
     try {
       if (!(await store.updateMeta(id, { deletedAt: Date.now() }))) return failed();
@@ -33,16 +34,13 @@ export function useMoveToTrash(
         if (!(await store.updateMeta(id, { deletedAt: null }))) throw new Error("not found");
         router.push(`/studio/${id}`);
       } catch {
-        toast({
-          message: "Dokumen belum bisa dipulihkan. Buka Sampah untuk mencoba lagi.",
-          tone: "error",
-        });
+        toast({ message: t.toasts.restoreFailed, tone: "error" });
       }
     };
     toast({
-      message: "Dokumen dipindah ke Sampah.",
-      action: { label: "Urungkan", onSelect: () => void undo() },
+      message: t.toasts.moved,
+      action: { label: t.toasts.undo, onSelect: () => void undo() },
     });
     router.push(STUDIO_HREF);
-  }, [saveNow, getId, router, toast, store]);
+  }, [saveNow, getId, router, toast, store, t]);
 }

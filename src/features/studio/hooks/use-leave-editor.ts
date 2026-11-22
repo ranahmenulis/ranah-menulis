@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 import { useToast } from "@/components/ui/toast";
 import { STUDIO_HREF } from "@/features/app-shell/nav";
+import { useT } from "@/lib/i18n/provider";
 
 export function useLeaveEditor(
   saveNow: () => Promise<boolean>,
@@ -11,6 +12,7 @@ export function useLeaveEditor(
 ) {
   const router = useRouter();
   const toast = useToast();
+  const t = useT().studioEditor;
 
   const saveBeforeLeaving = useCallback(
     async (flushEvent: boolean) => {
@@ -19,12 +21,12 @@ export function useLeaveEditor(
         return true;
       }
       toast({
-        message: "Tulisanmu belum tersimpan di perangkat ini, jadi belum bisa ditutup. Coba lagi.",
+        message: t.toasts.unsavedLeave,
         tone: "error",
       });
       return false;
     },
-    [saveNow, saveEventProgress, toast],
+    [saveNow, saveEventProgress, toast, t],
   );
 
   const goBack = useCallback(

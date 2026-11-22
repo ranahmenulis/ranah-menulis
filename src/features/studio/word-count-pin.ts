@@ -1,4 +1,8 @@
 import type { WordCountPin } from "@/features/account/writing-preferences";
+import type { Locale } from "@/lib/i18n/config";
+import { formatNumber } from "@/lib/i18n/format";
+import { format } from "@/lib/i18n/provider";
+import { studioEditor } from "./copy/editor-id";
 import { sprintWords, type SprintState } from "./sprint";
 
 export type WordCountTarget = {
@@ -14,7 +18,8 @@ type CounterDisplay = {
   fallbackNote?: string;
 };
 
-const number = new Intl.NumberFormat("id-ID");
+/** The words of the counter, in the interface language (Indonesian when no copy is given). */
+export type PinCopy = typeof studioEditor.pin;
 
 export function wordCountDisplay(
   pin: WordCountPin | null,
@@ -22,13 +27,16 @@ export function wordCountDisplay(
   selectedWords: number | undefined,
   sprint: SprintState,
   target: WordCountTarget | null,
+  copy: PinCopy = studioEditor.pin,
+  locale: Locale = "id",
 ): CounterDisplay {
-  const total = number.format(words);
-  const documentLabel = `${total} kata`;
+  const number = (n: number) => formatNumber(n, locale);
+  const total = number(words);
+  const documentLabel = format(copy.words, { n: total });
   const normal =
     selectedWords === undefined
       ? documentLabel
-      : `${number.format(selectedWords)} dari ${documentLabel}`;
+      : format(copy.selectionOf, { selected: number(selectedWords), total });
 
   if (pin === "document") return { label: documentLabel };
 
@@ -36,24 +44,29 @@ export function wordCountDisplay(
     if (sprint.phase === "idle") {
       return {
         label: normal,
-        fallbackNote: "Belum ada sprint di halaman ini. Mulai sprint untuk melihat jumlah katanya.",
+        fallbackNote: copy.noSprint,
       };
     }
     const delta = sprint.phase === "running" ? sprintWords(sprint.startWords, words) : sprint.words;
-    const count = number.format(delta);
-    return { label: `+${count} kata`, accessibleLabel: `Sprint: +${count} kata` };
+    const count = number(delta);
+    return {
+      label: format(copy.sprintLabel, { n: count }),
+      accessibleLabel: format(copy.sprintAccessible, { n: count }),
+    };
   }
 
   if (pin === "target") {
     if (!target) {
-      return { label: normal, fallbackNote: "Belum ada target dokumen yang perlu ditampilkan." };
+      return { label: normal, fallbackNote: copy.noTarget };
     }
-    const label = `${total} / ${number.format(target.words)}`;
-    const qualifier = target.missed ? "terlewat" : undefined;
+    const label = `${total} / ${number(target.words)}`;
+    const qualifier = target.missed ? copy.missed : undefined;
     return {
       label,
       qualifier,
-      accessibleLabel: `Target dokumen: ${label}${qualifier ? ` · ${qualifier}` : ""}`,
+      accessibleLabel: qualifier
+        ? format(copy.targetAccessibleMissed, { label, qualifier })
+        : format(copy.targetAccessible, { label }),
     };
   }
 

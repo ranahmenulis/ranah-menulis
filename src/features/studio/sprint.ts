@@ -4,6 +4,8 @@
  *
  * A sprint never touches the daily log, so streak, daily target and statistics are unaffected.
  */
+import type { Locale } from "@/lib/i18n/config";
+import { formatNumber } from "@/lib/i18n/format";
 
 export const SPRINT_PRESETS = [10, 15, 25, 45];
 
@@ -39,13 +41,22 @@ export function sprintWords(startWords: number, currentWords: number): number {
   return Math.max(0, currentWords - startWords);
 }
 
+const UNITS: Record<Locale, { minute: (n: number) => string; second: (n: number) => string }> = {
+  id: { minute: (n) => `${n} menit`, second: (n) => `${n} detik` },
+  en: {
+    minute: (n) => `${n} ${n === 1 ? "minute" : "minutes"}`,
+    second: (n) => `${n} ${n === 1 ? "second" : "seconds"}`,
+  },
+};
+
 /** Minutes spoken aloud: "25 menit", or "1 menit 30 detik" for a sprint stopped early. */
-export function spokenDuration(ms: number): string {
+export function spokenDuration(ms: number, locale: Locale = "id"): string {
   const total = Math.round(ms / 1000);
   const minutes = Math.floor(total / 60);
   const seconds = total % 60;
-  if (minutes === 0) return `${seconds} detik`;
-  return seconds === 0 ? `${minutes} menit` : `${minutes} menit ${seconds} detik`;
+  const unit = UNITS[locale];
+  if (minutes === 0) return unit.second(seconds);
+  return seconds === 0 ? unit.minute(minutes) : `${unit.minute(minutes)} ${unit.second(seconds)}`;
 }
 
 export type SprintState =
@@ -54,7 +65,11 @@ export type SprintState =
   | { phase: "done"; minutes: number; elapsedMs: number; words: number; stopped: boolean };
 
 /** The sentence shown and announced when a sprint ends. */
-export function resultText(state: Extract<SprintState, { phase: "done" }>): string {
-  const words = new Intl.NumberFormat("id-ID").format(state.words);
-  return `${words} kata dalam ${spokenDuration(state.elapsedMs)}`;
+export function resultText(
+  state: Extract<SprintState, { phase: "done" }>,
+  locale: Locale = "id",
+): string {
+  const words = formatNumber(state.words, locale);
+  const duration = spokenDuration(state.elapsedMs, locale);
+  return locale === "en" ? `${words} words in ${duration}` : `${words} kata dalam ${duration}`;
 }

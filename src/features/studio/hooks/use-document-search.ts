@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import type { Locale } from "@/lib/i18n/config";
+import { useLocale } from "@/lib/i18n/provider";
 import { useViewer } from "@/lib/viewer";
 import { scanDocumentMatches, searchText } from "../document-search";
 import type { DocumentFilters } from "../document-classification";
@@ -18,6 +20,7 @@ export function useDocumentListSearch(
   activeReady: boolean,
 ) {
   const viewer = useViewer();
+  const locale = useLocale();
   const [keyword, setKeyword] = useState<{ folderId: string | null; text: string }>({
     folderId: null,
     text: "",
@@ -29,7 +32,7 @@ export function useDocumentListSearch(
     () => documentsInScope(docs, folderId, filters, true),
     [docs, folderId, filters],
   );
-  const state = useDocumentSearch(studioStore, candidates, enabled ? query : "");
+  const state = useDocumentSearch(studioStore, candidates, enabled ? query : "", locale);
   const matches = state.status === "ready" ? state.ids : null;
 
   function setQuery(text: string) {
@@ -48,6 +51,7 @@ export function useDocumentSearch(
   store: Pick<DocumentStore, "get">,
   candidates: readonly DocumentSummary[],
   query: string,
+  locale: Locale = "id",
 ) {
   const term = searchText(query);
   const [attempt, setAttempt] = useState(0);
@@ -66,7 +70,7 @@ export function useDocumentSearch(
       if (!signal.aborted) setFinished({ candidates, term, attempt, result });
     }
     const timer = window.setTimeout(() => {
-      void scanDocumentMatches(store, candidates, term, signal).then(
+      void scanDocumentMatches(store, candidates, term, signal, locale).then(
         (ids) => finish({ status: "ready", ids }),
         () => finish({ status: "error" }),
       );
@@ -75,7 +79,7 @@ export function useDocumentSearch(
       window.clearTimeout(timer);
       controller.abort();
     };
-  }, [store, candidates, term, attempt]);
+  }, [store, candidates, term, attempt, locale]);
 
   if (!term) return { status: "idle" } as const;
   if (

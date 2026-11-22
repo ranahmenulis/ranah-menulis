@@ -1,3 +1,8 @@
+import type { Locale } from "@/lib/i18n/config";
+import { format } from "@/lib/i18n/provider";
+import { formatNumber } from "@/lib/i18n/format";
+import { studioDocuments as copyEn } from "./copy/documents-en";
+import { studioDocuments as copyId } from "./copy/documents-id";
 import { addDays, parseDay } from "./streak";
 
 /**
@@ -20,7 +25,7 @@ export const MAX_TARGET_WORDS = 500_000;
 
 export type TargetStatus = "tercapai" | "terlewat" | "berjalan";
 
-const number = new Intl.NumberFormat("id-ID");
+const TEXT: Record<Locale, typeof copyId.target> = { id: copyId.target, en: copyEn.target };
 
 /** Whole words from what the writer typed, or null when it is not a valid target. */
 export function parseTargetWords(input: string): number | null {
@@ -90,18 +95,31 @@ export function daysLeft(due: string, today: string): number {
   return Math.round((parseDay(due).getTime() - parseDay(today).getTime()) / 86_400_000);
 }
 
-export function dueLabel(due: string, today: string): string {
+export function dueLabel(due: string, today: string, locale: Locale = "id"): string {
+  const t = TEXT[locale];
   const days = daysLeft(due, today);
-  if (days === 0) return "tenggat hari ini";
-  if (days === 1) return "tenggat besok";
-  return days > 0 ? `${days} hari lagi` : `terlewat ${-days} hari`;
+  if (days === 0) return t.dueToday;
+  if (days === 1) return t.dueTomorrow;
+  const count = Math.abs(days);
+  const values = { count: String(count) };
+  if (days > 0) return format(count === 1 ? t.daysLeftOne : t.daysLeft, values);
+  return format(count === 1 ? t.overdueOne : t.overdue, values);
 }
 
 /** Progress as the writer reads it: "320 / 1.000 kata · 5 hari lagi". */
-export function targetLine(target: DocumentTarget, words: number, today: string): string {
-  const base = `${number.format(Math.min(words, target.words))} / ${number.format(target.words)} kata`;
-  if (words >= target.words) return `${base} · tercapai`;
-  return target.due ? `${base} · ${dueLabel(target.due, today)}` : base;
+export function targetLine(
+  target: DocumentTarget,
+  words: number,
+  today: string,
+  locale: Locale = "id",
+): string {
+  const t = TEXT[locale];
+  const base = format(t.progress, {
+    done: formatNumber(Math.min(words, target.words), locale),
+    goal: formatNumber(target.words, locale),
+  });
+  if (words >= target.words) return `${base} · ${t.reached}`;
+  return target.due ? `${base} · ${dueLabel(target.due, today, locale)}` : base;
 }
 
 /**
@@ -120,9 +138,14 @@ export function nearestTarget(
 }
 
 /** One line for the document list and the counter, or null when there is nothing to show. */
-export function targetSummary(raw: unknown, words: number, today: string): string | null {
+export function targetSummary(
+  raw: unknown,
+  words: number,
+  today: string,
+  locale: Locale = "id",
+): string | null {
   const nearest = nearestTarget(sanitizeTargets(raw), words, today);
-  return nearest ? targetLine(nearest, words, today) : null;
+  return nearest ? targetLine(nearest, words, today, locale) : null;
 }
 
 /** The day the dialog offers as the earliest due day. */

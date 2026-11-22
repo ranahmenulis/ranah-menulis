@@ -3,7 +3,10 @@ import type { Editor } from "@tiptap/react";
 import { describe, expect, it } from "vitest";
 import { useViewMode } from "@/features/studio/hooks/use-view-mode";
 
-const editor = { getHTML: () => "<p>isi</p>" } as unknown as Editor;
+const editor = {
+  getHTML: () => "<p>isi</p>",
+  commands: { scrollIntoView: () => true },
+} as unknown as Editor;
 
 describe("useViewMode", () => {
   it("starts in Writing Mode", () => {
