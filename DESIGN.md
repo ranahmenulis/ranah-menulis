@@ -99,11 +99,11 @@ Semua nilai sudah dicek kontrasnya (WCAG 2.1). Rasio di kolom terakhir adalah te
 | Body Text (teks antarmuka) | **Inter** | Regular 400 |
 | Navigation | **Inter** | Medium 500 (aktif dan tidak aktif sama; aktif dibedakan warna `ink` dan ikon terisi) |
 | Button | **Inter** | SemiBold 600 |
-| Writing Editor | **Merriweather** | Regular 400 |
+| Writing Editor | **Times New Roman** (bawaan per dokumen, 12 pt; pilihan Inter atau Merriweather) | Regular 400, judul 20 pt Bold |
 | Article Preview (teks karya di halaman baca, feed, Jelajahi) | **Merriweather** | Regular 400 |
 | Quote (blockquote) | **Merriweather** | Italic 400 |
 
-Brief tidak mengatur judul karya dan angka besar; keduanya tetap serif (Merriweather 600 untuk judul karya, 400 untuk `figure`). Merriweather punya tinggi huruf kecil yang lebih besar (±0,55 em) dan lebih lebar daripada Source Serif 4, jadi ukuran serif di skala bacaan diturunkan 1–2px agar kolom 680px tetap ±65–75 karakter per baris.
+**Pengecualian Editor Studio** (client, 22 November 2026): editor menulis dalam tata letak halaman dokumen (Times New Roman 12 pt, judul 20 pt tebal, A5, margin 20 mm, jarak 1,5; semuanya bisa diubah per dokumen). Tinos (`--font-tinos`) adalah cadangan Times New Roman. Postingan dan halaman baca tetap Merriweather. Brief tidak mengatur judul karya dan angka besar; keduanya tetap serif (Merriweather 600 untuk judul karya, 400 untuk `figure`). Merriweather punya tinggi huruf kecil yang lebih besar (±0,55 em) dan lebih lebar daripada Source Serif 4, jadi ukuran serif di skala bacaan diturunkan 1–2px agar kolom 680px tetap ±65–75 karakter per baris.
 
 **Skala antarmuka (sans):**
 

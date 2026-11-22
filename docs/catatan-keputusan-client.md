@@ -220,7 +220,7 @@ Dari: Wafiy. Lembar: https://claude.ai/artifact/GzmNiosgKgkyVUxkRRttap. Kode but
 - **s17** Struktur buku (bagian dan papan alur): Fase 2 sesuai PRD, papan alur ikut di sana.
 - **s18** Kolaborasi naskah dan komentar di dalam teks: tidak di MVP; umpan balik lewat Projects (editor, mentor) dan komentar Community.
 - **s19** Tautan baca publik untuk naskah: tidak; berbagi lewat Bagikan ke Community (cuplikan maks 500 kata).
-- **s21** Pilihan font dan jarak baris per dokumen: tetap satu gaya tulis.
+- **s21** Pilihan font dan jarak baris per dokumen: tetap satu gaya tulis. **Digantikan 22 November 2026** oleh permintaan client di bagian "Format dokumen Studio" (paling bawah): font, ukuran, jarak baris, dan margin kini bisa diatur per dokumen.
 - **s22** Kamus diksi terhubung ke kata terpilih: tetap daftar statis di panel bantuan.
 - **s23** Mode ramah disleksia: tunda.
 - **p1** Kursus mandiri (rekaman): tidak; kelas tetap hidup dengan jadwal dan mentor.
@@ -305,3 +305,15 @@ Keputusan tim (user): butir tab Profil, tahanan 2 jam, Grup Penulis dan Event ke
 - **Unggah jpg, png, pdf, dll (koreksi, 22 November 2026, siang):** tim sempat salah menangkap dan menjawab seolah-olah ini soal folder penulis di Studio. Client meluruskan: *"Nggak bang, maksudnya nanti di folder lain. Karena gini, admin kan nanti misal mau upload poster yang berupa gambar jd butuh itu."* Jadi kebutuhannya adalah **admin mengunggah gambar** (contoh: poster) di tempat penyimpanan terpisah dari Studio. Lalu: *"Kalopun bs gapapa nanti aja fase 2 its ok."* Keputusan awal tim: ditunda ke Fase 2. **Diubah oleh user pada hari yang sama: poster proyek masuk MVP sebagai unggahan opsional**, dengan sampul otomatis dari judul sebagai cadangan bila belum diunggah (menggantikan catatan 20 November bahwa banner proyek belum dibangun; logo grup tetap belum). Lingkup: poster proyek saja (event tidak), dipotong ke 4:5, teks alternatif wajib, diunggah Organizer atau Administrator. Folder Studio tetap hanya memuat dokumen teks (keputusan tim, bukan permintaan client): cover buku adalah satu-satunya gambar. Belum ditanyakan: poster dipakai di mana (proyek, event, landing). Unggah gambar dan PDF oleh tim yang sudah ada (pratinjau Solo di tab Tahap Organizer) tidak berubah.
 - **Kirim buku utuh: ya** (jawaban client: "penulis 1 buku full bab dan sub bab"). Penulis perlu mengirim satu buku berisi seluruh bab dan subbab. Belum jelas: apakah bab dan subbab berarti dua tingkat folder (buku → bab → subbab), atau dokumen = bab dengan subbab sebagai judul di dalam dokumen. Dan proyek mana yang menerima buku utuh (Solo hampir pasti; Antologi dibatasi per karya).
 - **Bab dan subbab: satu tingkat (keputusan user, 22 November 2026, setelah ditanya):** dokumen = bab, subbab = judul di dalam dokumen. Dua tingkat folder bisa menyusul bila client memintanya. Client belum menjawab pertanyaan ini.
+
+**Format dokumen Studio** (pesan client, 22 November 2026, diteruskan user lewat tangkapan layar)
+
+> - Font isi: Times New Roman, 12 pt.
+> - Font judul: Times New Roman, 20 pt, Bold.
+> - Ukuran kertas: A5 (148 × 210 mm).
+> - Margin: 20 mm sebagai pengaturan awal.
+> - Line spacing: 1,5 untuk mode penulisan; bisa disesuaikan.
+> - Mode tampilan: Writing Mode dan Page Preview.
+> - Toolbar: Tetap minimalis, tetapi menyediakan pengaturan font, ukuran, heading, alignment, dan list.
+
+Keputusan user (22 November 2026, menjawab pertanyaan tim): (1) permintaan ini **menggantikan** keputusan s21 (satu gaya tulis); (2) pengaturan **per dokumen**, bukan per pilihan teks; (3) Page Preview berupa tampilan baca-saja yang dipecah per halaman A5, Writing Mode tetap mengalir; (4) berlaku untuk semua dokumen, termasuk yang lama, dan menggantikan pilihan ukuran teks Kecil/Standar/Besar di Pengaturan, sedangkan mode mesin tik dan kutip melengkung tetap. Diputuskan tim: daftar font Times New Roman (bawaan), Inter, dan Merriweather; heading Judul bagian dan Subjudul; ukuran 10, 11, 12, 13, 14, 16 pt; jarak baris 1, 1,15, 1,5, 2; margin 10 sampai 40 mm per 5 mm. Times New Roman dilengkapi font Tinos (metrik identik) untuk perangkat yang tidak punya Times New Roman. Pratinjau halaman adalah **perkiraan**; PDF tidak menanamkan font (Inter dicetak sebagai Helvetica, Merriweather sebagai Times).
