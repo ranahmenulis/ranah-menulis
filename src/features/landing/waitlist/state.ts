@@ -11,10 +11,13 @@ export type WaitlistValues = {
   interests: string[];
 };
 
+export type WaitlistErrorCode = "nameRequired" | "emailRequired" | "emailInvalid";
+
 export type WaitlistState = {
   status: "idle" | "success" | "exists" | "invalid" | "failed";
   values: WaitlistValues;
-  errors: { name?: string; email?: string };
+  /** Codes, not sentences: the form shows them in the reader's language. */
+  errors: { name?: WaitlistErrorCode; email?: WaitlistErrorCode };
 };
 
 export const initialWaitlistState: WaitlistState = {

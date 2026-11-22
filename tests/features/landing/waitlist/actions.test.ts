@@ -29,8 +29,8 @@ describe("joinWaitlist", () => {
     const state = await joinWaitlist(initialWaitlistState, form({ name: "  ", email: "" }));
 
     expect(state.status).toBe("invalid");
-    expect(state.errors.name).toBeTruthy();
-    expect(state.errors.email).toBeTruthy();
+    expect(state.errors.name).toBe("nameRequired");
+    expect(state.errors.email).toBe("emailRequired");
     expect(from).not.toHaveBeenCalled();
   });
 
@@ -41,7 +41,7 @@ describe("joinWaitlist", () => {
     );
 
     expect(state.status).toBe("invalid");
-    expect(state.errors.email).toBeTruthy();
+    expect(state.errors.email).toBe("emailInvalid");
     expect(state.errors.name).toBeUndefined();
     expect(from).not.toHaveBeenCalled();
   });

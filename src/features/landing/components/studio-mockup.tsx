@@ -12,6 +12,7 @@ import {
 import { Monogram } from "@/components/ui/logo";
 import { cn } from "@/lib/cn";
 import { VisibilityTag } from "@/components/ui/visibility-tag";
+import { formatNumber } from "@/lib/i18n/format";
 import { format, useLocale, useT } from "@/lib/i18n/provider";
 import { textStats } from "@/lib/text-stats";
 import { MARKERS } from "./studio-markers";
@@ -42,8 +43,8 @@ function Marker({ n }: { n: number }) {
 export function StudioMockup() {
   const { doc, hero, studio } = useT().landing;
   const stats = textStats(doc.page);
-  const numberLocale = useLocale() === "en" ? "en-US" : "id-ID";
-  const n = (value: number) => value.toLocaleString(numberLocale);
+  const locale = useLocale();
+  const n = (value: number) => formatNumber(value, locale);
   const ref = useRef<HTMLDivElement>(null);
   useReveal(ref);
 

@@ -1,10 +1,11 @@
 "use client";
 
+import { formatNumber } from "@/lib/i18n/format";
+import { useLocale } from "@/lib/i18n/provider";
 import { useCountUp } from "@/lib/use-count-up";
 
-const number = new Intl.NumberFormat("id-ID");
-
-/** A whole number that rolls to its value (`useCountUp`), formatted for Indonesian. */
+/** A whole number that rolls to its value (`useCountUp`), formatted for the interface language. */
 export function CountUp({ value, duration }: { value: number; duration?: number }) {
-  return <>{number.format(useCountUp(value, duration))}</>;
+  const locale = useLocale();
+  return <>{formatNumber(useCountUp(value, duration), locale)}</>;
 }

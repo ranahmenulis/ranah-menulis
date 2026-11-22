@@ -24,6 +24,9 @@ export const shell: typeof source = {
     notificationsNone: "Notifications",
     writeNew: "Write a new document",
     account: "Account settings",
+    accountMenu: "Account menu",
+    myProfile: "My profile",
+    saved: "Saved",
   },
   resume: {
     label: "Continue writing",
@@ -31,6 +34,7 @@ export const shell: typeof source = {
     untitled: "Untitled",
     railLabel: "Continue writing: {title}",
   },
+  communityLink: { label: "Official community", newTab: "new tab" },
   guest: {
     brand: "RanahMenulis",
     signIn: "Sign in",

@@ -2,6 +2,10 @@ import type { common as source } from "./id";
 
 export const common: typeof source = {
   close: "Close",
+  loading: "Loading",
+  retry: "Try again",
+  notifications: "Notices",
+  closeNotification: "Close notice",
   language: {
     label: "Language",
     active: "Current",

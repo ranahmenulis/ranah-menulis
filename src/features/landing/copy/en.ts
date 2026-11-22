@@ -200,6 +200,11 @@ export const landing: typeof source = {
       interestHint: "(optional, pick as many as you like)",
       exists:
         "This email is already on the waitlist. You don't need to sign up again; we'll send the opening news to this address.",
+      errors: {
+        nameRequired: "Enter your nickname first.",
+        emailRequired: "Enter your email address.",
+        emailInvalid: "That email address looks incomplete. Example: name@domain.com",
+      },
       failed:
         "Couldn't send because the connection dropped. Your entries are still here; try again.",
       submit: "Join RanahMenulis",

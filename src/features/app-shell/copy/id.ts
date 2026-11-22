@@ -22,6 +22,9 @@ export const shell = {
     notificationsNone: "Notifikasi",
     writeNew: "Tulis dokumen baru",
     account: "Pengaturan akun",
+    accountMenu: "Menu akun",
+    myProfile: "Profil saya",
+    saved: "Tersimpan",
   },
   resume: {
     label: "Lanjutkan menulis",
@@ -29,6 +32,7 @@ export const shell = {
     untitled: "Tanpa judul",
     railLabel: "Lanjutkan menulis: {title}",
   },
+  communityLink: { label: "Komunitas", newTab: "tab baru" },
   guest: {
     brand: "RanahMenulis",
     signIn: "Masuk",

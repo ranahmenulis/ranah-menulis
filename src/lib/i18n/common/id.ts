@@ -1,5 +1,9 @@
 export const common = {
   close: "Tutup",
+  loading: "Memuat",
+  retry: "Coba lagi",
+  notifications: "Pemberitahuan",
+  closeNotification: "Tutup pemberitahuan",
   language: {
     label: "Bahasa",
     active: "Aktif",

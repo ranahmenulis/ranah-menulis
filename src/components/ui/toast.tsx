@@ -11,6 +11,7 @@ import {
   type ReactNode,
 } from "react";
 import { cn } from "@/lib/cn";
+import { useT } from "@/lib/i18n/provider";
 
 export type ToastInput = {
   message: string;
@@ -40,6 +41,7 @@ export function useToast() {
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [entries, setEntries] = useState<ToastEntry[]>([]);
   const counter = useRef(0);
+  const notices = useT().common.notifications;
 
   const remove = useCallback((id: number) => {
     setEntries((list) => list.map((t) => (t.id === id ? { ...t, leaving: true } : t)));
@@ -59,7 +61,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       {children}
       <div
         role="region"
-        aria-label="Pemberitahuan"
+        aria-label={notices}
         className={cn(
           "pointer-events-none fixed z-[60] grid justify-items-start gap-2",
           "inset-x-4 bottom-[var(--toast-offset,1rem)] md:right-auto md:left-4",
@@ -75,6 +77,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 
 function ToastItem({ entry, onClose }: { entry: ToastEntry; onClose: (id: number) => void }) {
   const { id, message, action, tone = "status", leaving } = entry;
+  const closeNotice = useT().common.closeNotification;
   const [paused, setPaused] = useState(false);
   const isError = tone === "error";
 
@@ -114,7 +117,7 @@ function ToastItem({ entry, onClose }: { entry: ToastEntry; onClose: (id: number
       {isError && (
         <button
           type="button"
-          aria-label="Tutup pemberitahuan"
+          aria-label={closeNotice}
           onClick={() => onClose(id)}
           className="-mr-1 shrink-0 cursor-pointer"
         >

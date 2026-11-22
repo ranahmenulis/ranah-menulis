@@ -65,7 +65,11 @@ export function WaitlistForm() {
       ))}
 
       <div className="grid gap-4 md:grid-cols-2">
-        <Field id="f-name" label={form.name} error={state.errors.name}>
+        <Field
+          id="f-name"
+          label={form.name}
+          error={state.errors.name && form.errors[state.errors.name]}
+        >
           <Input
             id="f-name"
             name="name"
@@ -77,7 +81,11 @@ export function WaitlistForm() {
             aria-describedby={describedBy("f-name", { error: state.errors.name })}
           />
         </Field>
-        <Field id="f-email" label={form.email} error={state.errors.email}>
+        <Field
+          id="f-email"
+          label={form.email}
+          error={state.errors.email && form.errors[state.errors.email]}
+        >
           <Input
             id="f-email"
             name="email"

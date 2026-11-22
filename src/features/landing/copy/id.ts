@@ -202,6 +202,11 @@ export const landing = {
       interestHint: "(opsional, boleh lebih dari satu)",
       exists:
         "Email ini sudah ada di daftar tunggu. Kamu tidak perlu mendaftar lagi; kabar pembukaan akan dikirim ke alamat ini.",
+      errors: {
+        nameRequired: "Isi nama panggilanmu dulu.",
+        emailRequired: "Isi alamat emailmu.",
+        emailInvalid: "Alamat email belum lengkap. Contoh: nama@domain.com",
+      },
       failed: "Gagal mengirim karena koneksi terputus. Isianmu masih di sini; coba kirim lagi.",
       submit: "Gabung Bersama RanahMenulis",
       sending: "Mengirim…",

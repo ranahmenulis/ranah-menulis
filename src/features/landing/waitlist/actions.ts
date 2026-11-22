@@ -6,7 +6,7 @@ import { countries, type WaitlistState, type WaitlistValues } from "./state";
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const INTERESTS = ["Menulis rutin", "Antologi", "Buku solo", "Kelas", "Lomba", "Membaca"];
 
-/** Pesan galat dari docs/produk/Copy Landing RanahMenulis.md: pendek, spesifik, memberi langkah berikutnya. */
+/** Field errors are codes; the form turns them into short, specific messages (Copy Landing, section 5). */
 export async function joinWaitlist(
   _prev: WaitlistState,
   formData: FormData,
@@ -32,10 +32,9 @@ export async function joinWaitlist(
   }
 
   const errors: WaitlistState["errors"] = {};
-  if (!values.name) errors.name = "Isi nama panggilanmu dulu.";
-  if (!values.email) errors.email = "Isi alamat emailmu.";
-  else if (!EMAIL.test(values.email))
-    errors.email = "Alamat email belum lengkap. Contoh: nama@domain.com";
+  if (!values.name) errors.name = "nameRequired";
+  if (!values.email) errors.email = "emailRequired";
+  else if (!EMAIL.test(values.email)) errors.email = "emailInvalid";
   if (errors.name || errors.email) return { status: "invalid", values, errors };
 
   try {

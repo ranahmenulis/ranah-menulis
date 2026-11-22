@@ -3,6 +3,7 @@ import { Info, WarningCircle } from "@phosphor-icons/react/dist/ssr";
 import { cn } from "@/lib/cn";
 import { EMPTY_ART, type EmptyArtName } from "@/lib/empty-art";
 import { Button } from "./button";
+import { CommonText } from "./common-text";
 
 /**
  * A colour plate above a first-time empty state (DESIGN.md 5.4). Decorative: the sentence says
@@ -102,7 +103,10 @@ export function Skeleton({ className, ...props }: ComponentProps<"div">) {
 /** Contoh bentuk butir feed. Tampilkan hanya bila data datang lebih dari 300ms. */
 export function FeedItemSkeleton() {
   return (
-    <div role="status" aria-label="Memuat" className="grid gap-3 border-b border-line py-6">
+    <div role="status" className="grid gap-3 border-b border-line py-6">
+      <span className="sr-only">
+        <CommonText name="loading" />
+      </span>
       <div className="flex items-center gap-2">
         <Skeleton className="size-5 rounded-full" />
         <Skeleton className="h-3.5 w-40" />
@@ -146,7 +150,7 @@ export function RetryButton(
 ) {
   return (
     <Button variant="secondary" size="sm" className="-my-1" {...props}>
-      Coba lagi
+      <CommonText name="retry" />
     </Button>
   );
 }
