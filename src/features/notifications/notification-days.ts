@@ -1,3 +1,4 @@
+import { notifications as copyId } from "./copy/id";
 import type { NotificationView } from "./notification-model";
 
 /**
@@ -7,8 +8,7 @@ import type { NotificationView } from "./notification-model";
  */
 export type DayGroup = { key: string; label: string; items: NotificationView[] };
 
-const LABELS = { today: "Hari ini", yesterday: "Kemarin", week: "Minggu ini", older: "Lebih lama" };
-type Bucket = keyof typeof LABELS;
+type Bucket = keyof typeof copyId.days;
 
 const DAY = 24 * 60 * 60 * 1000;
 const startOfDay = (ms: number) => {
@@ -29,11 +29,15 @@ export function bucketOf(at: number, now: number): Bucket {
   return "older";
 }
 
-export function dayGroups(items: readonly NotificationView[], now: number): DayGroup[] {
+export function dayGroups(
+  items: readonly NotificationView[],
+  now: number,
+  labels: Record<Bucket, string> = copyId.days,
+): DayGroup[] {
   const groups = new Map<Bucket, DayGroup>();
   for (const item of items) {
     const bucket = bucketOf(happenedAt(item, now), now);
-    const group = groups.get(bucket) ?? { key: bucket, label: LABELS[bucket], items: [] };
+    const group = groups.get(bucket) ?? { key: bucket, label: labels[bucket], items: [] };
     group.items.push(item);
     groups.set(bucket, group);
   }

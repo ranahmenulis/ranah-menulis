@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { Tabs } from "@/components/ui/tabs";
+import { format, useT } from "@/lib/i18n/provider";
 import { useViewer } from "@/lib/viewer";
 import { ME_ID } from "@/features/community/fixtures/authors";
 import { useCommunity } from "@/features/community/hooks/use-community";
@@ -15,17 +16,12 @@ import { ProfileIdentity } from "./profile-identity";
 import { ProfileError, ProfileGone, ProfileSkeleton } from "./profile-states";
 import { AboutTab, ProjectsTab, WorksEmpty } from "./profile-tabs-content";
 
-const TABS = [
-  { id: "karya", label: "Karya" },
-  { id: "tentang", label: "Tentang" },
-  { id: "proyek", label: "Proyek" },
-];
-
 /**
  * Public author profile (COM-10, DESIGN.md 6.5): name, tabs Karya · Tentang · Proyek, and the
  * identity column. Anyone can read it; following needs an account. It lists Publik posts only.
  */
 export function ProfileView({ handle }: { handle: string }) {
+  const t = useT().profile;
   const data = useCommunity(postStore);
   const guest = useViewer() === "tamu";
   const actions = usePostActions(data, guest);
@@ -69,10 +65,14 @@ export function ProfileView({ handle }: { handle: string }) {
       />
 
       <Tabs
-        label={`Isi profil ${author.name}`}
+        label={format(t.tabsLabel, { name: author.name })}
         value={tab}
         onValueChange={setTab}
-        items={TABS}
+        items={[
+          { id: "karya", label: t.tabs.karya },
+          { id: "tentang", label: t.tabs.tentang },
+          { id: "proyek", label: t.tabs.proyek },
+        ]}
         className="lg:col-start-1 lg:row-start-2"
       />
 

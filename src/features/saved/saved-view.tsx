@@ -3,6 +3,8 @@
 import { useMemo, useState } from "react";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { EmptyState, ErrorBanner, FeedItemSkeleton, RetryButton } from "@/components/ui/states";
+import { format, useLocale, useT } from "@/lib/i18n/provider";
+import { formatNumber } from "@/lib/i18n/format";
 import { useViewer } from "@/lib/viewer";
 import { SignInButton } from "@/features/account/components/auth-buttons";
 import { DISCOVER_HREF } from "@/features/app-shell/nav";
@@ -16,14 +18,15 @@ import { postStore } from "@/features/community/storage/store";
 import { FeedItem } from "@/features/home/feed-item";
 import { savedPostIds, splitSaved } from "./saved-list";
 
-const number = new Intl.NumberFormat("id-ID");
-
 /**
  * Tersimpan (COM-06, DESIGN.md 6.6): the posts you saved, as a feed list. Private to the reader.
  * A post you take off stays on the page until you leave it, so a slip can be undone by saving it
  * again; the count follows what is saved right now.
  */
 export function SavedView() {
+  const t = useT();
+  const c = t.saved;
+  const locale = useLocale();
   const guest = useViewer() === "tamu";
   const data = useCommunity(postStore);
   const groups = writingGroups.use();
@@ -44,24 +47,26 @@ export function SavedView() {
 
   return (
     <div className="max-w-182">
-      <h1 className="heading-lg">Tersimpan</h1>
+      <h1 className="heading-lg">{c.title}</h1>
       {guest ? (
-        <EmptyState className="mt-4" action={<SignInButton>Masuk</SignInButton>}>
-          Masuk untuk melihat tulisan yang kamu simpan.
+        <EmptyState className="mt-4" action={<SignInButton>{t.shell.guest.signIn}</SignInButton>}>
+          {c.signInPrompt}
         </EmptyState>
       ) : (
         <>
           <p className="mt-1 text-sm text-ink-muted">
             {data.status === "ready" &&
               saved.length > 0 &&
-              `${number.format(saved.length)} tulisan · `}
-            Hanya kamu yang bisa melihat daftar ini.
+              format(saved.length === 1 ? c.countOne : c.count, {
+                count: formatNumber(saved.length, locale),
+              })}
+            {c.privacy}
           </p>
 
           {data.status === "loading" && (
             <div
               role="status"
-              aria-label="Memuat Tersimpan"
+              aria-label={c.loading}
               className="mt-4 animate-[rm-appear_0s_300ms_forwards] opacity-0"
             >
               {[0, 1, 2].map((i) => (
@@ -72,7 +77,7 @@ export function SavedView() {
 
           {data.status === "error" && (
             <ErrorBanner className="mt-6" action={<RetryButton onClick={data.reload} />}>
-              Tulisan tersimpan gagal dimuat. Dokumen di Studio tidak terpengaruh.
+              {c.loadError}
             </ErrorBanner>
           )}
 
@@ -82,11 +87,11 @@ export function SavedView() {
               art="library"
               action={
                 <ButtonLink href={DISCOVER_HREF} variant="secondary">
-                  Buka Community
+                  {c.openCommunity}
                 </ButtonLink>
               }
             >
-              Belum ada tulisan yang kamu simpan.
+              {c.empty}
             </EmptyState>
           )}
 
@@ -111,14 +116,14 @@ export function SavedView() {
                     key={id}
                     className="flex items-center justify-between gap-4 border-b border-line py-6"
                   >
-                    <p className="text-sm text-ink-muted">Tulisan ini sudah tidak tersedia.</p>
+                    <p className="text-sm text-ink-muted">{c.gone}</p>
                     <Button
                       variant="text"
                       size="sm"
                       className="shrink-0 text-ink"
                       onClick={() => actions.save(id)}
                     >
-                      Hapus dari Tersimpan
+                      {c.remove}
                     </Button>
                   </div>
                 ))}

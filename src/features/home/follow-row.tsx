@@ -1,16 +1,20 @@
+"use client";
+
 import { Plus } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import { Avatar } from "@/components/ui/avatar";
 import { cn } from "@/lib/cn";
+import { useT } from "@/lib/i18n/provider";
 
 /**
  * Phones only: authors and groups you follow, scrolling sideways, with an ink dot when there is
  * new work (DESIGN.md 2.1). The last entry leads to Jelajahi.
  */
 export function FollowRow({ items }: { items: { name: string; fresh: boolean; href: string }[] }) {
+  const t = useT().home.followRow;
   return (
     <ul
-      aria-label="Penulis dan grup yang kamu ikuti"
+      aria-label={t.label}
       className="scroll-edge-fade -mx-4 flex snap-x snap-proximity scroll-px-4 [scrollbar-width:none] gap-4 overflow-x-auto px-4 pt-4 pb-1 md:hidden [&::-webkit-scrollbar]:hidden"
     >
       {items.map((f) => {
@@ -23,7 +27,7 @@ export function FollowRow({ items }: { items: { name: string; fresh: boolean; hr
               {f.fresh && (
                 <i
                   role="img"
-                  aria-label="Ada karya baru"
+                  aria-label={t.fresh}
                   className="absolute top-0 right-0 size-2 rounded-full bg-ink ring-2 ring-canvas"
                 />
               )}
@@ -47,7 +51,7 @@ export function FollowRow({ items }: { items: { name: string; fresh: boolean; hr
           <Plus size={20} aria-hidden />
         </span>
         <span className="text-xs" aria-disabled="true">
-          Temukan
+          {t.discover}
         </span>
       </li>
     </ul>

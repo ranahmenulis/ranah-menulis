@@ -10,6 +10,9 @@ export type NotificationTarget =
   | { kind: "report" }
   | { kind: "pick"; postId: string };
 
+/** A key of `notifications.messages` in the dictionary and the values for its `{placeholders}`. */
+export type NotificationMessage = { key: string; params?: Record<string, string> };
+
 export type Notification = {
   id: string;
   kind: NotificationKind;
@@ -17,8 +20,13 @@ export type Notification = {
   actorId: string | null;
   /** People merged into this line besides the actor ("Hafiz dan 11 orang lain", PRD section 20). */
   others: number;
-  /** The sentence after the actor's name. */
-  text: string;
+  /**
+   * The sentence after the actor's name, ready-made. Producers that have not moved to `message` yet
+   * still set this (Indonesian only); `textOf` prefers `message`.
+   */
+  text?: string;
+  /** The sentence as a dictionary key plus values, so it follows the reader's language. */
+  message?: NotificationMessage;
   /** The object it points to, when there is a destination the reader may open. */
   href: string | null;
   /** Local objects whose access must be checked again when the notification is opened. */

@@ -9,21 +9,14 @@ import { useEffectiveRoles } from "@/features/kelola/use-effective-roles";
 import type { AssignmentStore } from "@/features/projects/kelas/storage/assignment-store";
 import type { SoloStore } from "@/features/projects/solo/storage/solo-store";
 import type { SubmissionStore } from "@/features/projects/storage/submission-store";
+import { format, useLocale, useT } from "@/lib/i18n/provider";
+import { formatNumber } from "@/lib/i18n/format";
 import { useViewer } from "@/lib/viewer";
 import { SignInButton } from "@/features/account/components/auth-buttons";
 import { NOTIFICATION_TABS, inTab } from "./notification-model";
 import { NotificationList } from "./notification-list";
 import type { NotificationTab } from "./types";
 import { useNotifications } from "./use-notifications";
-
-const number = new Intl.NumberFormat("id-ID");
-
-function unreadLabel(unread: number, loading: boolean, failed: boolean) {
-  if (unread > 0) return `${number.format(unread)} belum dibaca.`;
-  if (loading) return "Memuat notifikasi…";
-  if (failed) return "Tidak ada notifikasi belum dibaca yang bisa ditampilkan.";
-  return "Semua sudah dibaca.";
-}
 
 export function NotificationsView({
   store,
@@ -36,6 +29,8 @@ export function NotificationsView({
   solo?: SoloStore;
   posts?: PostStore;
 }) {
+  const copy = useT().notifications;
+  const locale = useLocale();
   const guest = useViewer() === "tamu";
   const roles = useEffectiveRoles();
   const {
@@ -56,6 +51,14 @@ export function NotificationsView({
   const heading = useRef<HTMLHeadingElement>(null);
   const focusedRow = useRef<string | null>(null);
   const visible = inTab(items, tab);
+  const unreadText =
+    unread > 0
+      ? format(copy.unread, { count: formatNumber(unread, locale) })
+      : loading
+        ? copy.loading
+        : failed
+          ? copy.failedNone
+          : copy.allRead;
 
   useLayoutEffect(() => {
     if (!focusedRow.current || visible.some((item) => item.id === focusedRow.current)) return;
@@ -67,7 +70,7 @@ export function NotificationsView({
     <div className="max-w-182">
       <div className="flex min-h-8 items-center justify-between gap-4">
         <h1 ref={heading} tabIndex={-1} className="heading-lg">
-          Notifikasi
+          {copy.title}
         </h1>
         {!guest && (
           <Button
@@ -77,38 +80,36 @@ export function NotificationsView({
             disabled={unread === 0}
             onClick={markAllRead}
           >
-            Tandai semua dibaca
+            {copy.markAll}
           </Button>
         )}
       </div>
       {!guest && (
         <p ref={status} role="status" tabIndex={-1} className="mt-1 text-sm text-ink-muted">
-          {unavailable ? "Notifikasi ini sudah tidak tersedia. " : null}
-          {unreadLabel(unread, loading, failed)}
+          {unavailable ? copy.unavailable : null}
+          {unreadText}
         </p>
       )}
 
       {guest ? (
         <EmptyState className="mt-4" action={<SignInButton>Masuk</SignInButton>}>
-          Masuk untuk melihat notifikasimu.
+          {copy.signInPrompt}
         </EmptyState>
       ) : (
         <>
           {roles.some((role) => role !== "organizer") && (
-            <p className="mt-1 text-sm text-ink-muted">
-              Notifikasi pengelola tampil selama masih perlu ditangani [usulan].
-            </p>
+            <p className="mt-1 text-sm text-ink-muted">{copy.staffNote}</p>
           )}
           <Tabs
-            label="Jenis notifikasi"
+            label={copy.tabsLabel}
             value={tab}
             className="mt-4"
             onValueChange={(id) => setTab(id as NotificationTab)}
-            items={NOTIFICATION_TABS}
+            items={NOTIFICATION_TABS.map((t) => ({ id: t.id, label: copy.tabs[t.id] }))}
           />
           {failed && (
             <ErrorBanner className="mt-3" action={<RetryButton onClick={retry} />}>
-              Sebagian notifikasi belum bisa dimuat.
+              {copy.partialFailed}
             </ErrorBanner>
           )}
           {(visible.length > 0 || (!loading && !failed)) && (

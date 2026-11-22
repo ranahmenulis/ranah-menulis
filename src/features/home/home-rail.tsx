@@ -1,13 +1,11 @@
 "use client";
 
-import { CalendarBlank, PencilSimpleLine, UsersThree } from "@phosphor-icons/react/dist/ssr";
+import { PencilSimpleLine } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { useT } from "@/lib/i18n/provider";
 import { CommunityLink } from "@/features/app-shell/community-link";
 import { NEW_POST_HREF } from "@/features/app-shell/nav";
-import { EVENTS_HREF } from "@/features/community/events/event-model";
-import { GROUPS_HREF, type WritingGroup } from "@/features/community/groups/group-model";
-import { GroupInvitations } from "@/features/community/groups/components/group-invitations";
 import type { AssignmentStore } from "@/features/projects/kelas/storage/assignment-store";
 import type { SubmissionStore } from "@/features/projects/storage/submission-store";
 import type { StreakData } from "@/features/studio/hooks/use-streak-data";
@@ -38,8 +36,6 @@ export function HomeRail({
   data,
   showProgress,
   showProjects,
-  groups,
-  reader,
   submissions,
   assignments,
 }: {
@@ -47,28 +43,20 @@ export function HomeRail({
   /** False while the first steps already ask for a target. */
   showProgress: boolean;
   showProjects: boolean;
-  groups: readonly WritingGroup[];
-  reader: string | null;
   /** Replaces the device store in tests. */
   submissions?: SubmissionStore;
   /** Replaces the class hand-in store in tests. */
   assignments?: AssignmentStore;
 }) {
+  const t = useT().home.rail;
   return (
     <div className="grid content-start">
       {showProgress && <ProgressSection data={data} />}
       {showProjects && <ProjectRows store={submissions} assignments={assignments} />}
-      <GroupInvitations groups={groups} reader={reader} variant="rail" />
-      <Section title="Bersama penulis lain">
+      <Section title={t.together}>
         <ul className="flex flex-wrap gap-x-6 gap-y-2.5 xl:grid">
-          <RailLink href={EVENTS_HREF} icon={<CalendarBlank size={20} aria-hidden />}>
-            Event
-          </RailLink>
-          <RailLink href={GROUPS_HREF} icon={<UsersThree size={20} aria-hidden />}>
-            Grup Penulis
-          </RailLink>
           <RailLink href={NEW_POST_HREF} icon={<PencilSimpleLine size={20} aria-hidden />}>
-            Tulis postingan
+            {t.writePost}
           </RailLink>
           <li className="empty:hidden">
             <CommunityLink variant="plain" />

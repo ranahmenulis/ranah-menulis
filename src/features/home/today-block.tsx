@@ -9,11 +9,11 @@ import { DocumentMark } from "@/features/studio/components/documents/document-ma
 import { TodayRing } from "@/features/studio/components/streak/today-ring";
 import type { StreakData } from "@/features/studio/hooks/use-streak-data";
 import { formatChanged } from "@/features/studio/relative-time";
+import { formatNumber } from "@/lib/i18n/format";
+import { format, useLocale, useT } from "@/lib/i18n/provider";
 import { FirstSteps } from "./steps";
 import { Section } from "./today-row";
 import { WordTotals } from "./week-summary";
-
-const number = new Intl.NumberFormat("id-ID");
 
 /** The box for the first steps and the loading placeholder. */
 const card = "border border-line p-5 md:p-6";
@@ -23,6 +23,8 @@ const card = "border border-line p-5 md:p-6";
  * its page, and today's ring when there is a daily target. The one filled button sits under it.
  */
 function Continue({ data }: { data: StreakData }) {
+  const t = useT().home.today;
+  const locale = useLocale();
   const doc = data.lastDocument;
   const ring = data.target !== null && (
     <TodayRing words={data.todayWords} target={data.target} compact />
@@ -36,19 +38,19 @@ function Continue({ data }: { data: StreakData }) {
             <DocumentMark page={doc ?? { id: "baru", wordCount: 0 }} className="rm-cover-enter" />
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-xs font-medium text-ink-muted">
-              {doc ? "Lanjutkan menulis" : "Halaman pertama"}
-            </p>
+            <p className="text-xs font-medium text-ink-muted">{doc ? t.continue : t.firstPage}</p>
             <p className="rm-rise-in mt-2 font-serif text-2xl leading-8 [overflow-wrap:anywhere] md:text-[30px] md:leading-10">
-              {doc ? doc.title || "Tanpa judul" : "Belum ada dokumen."}
+              {doc ? doc.title || t.untitled : t.noDocument}
             </p>
             {doc && (
               <p
                 className="rm-rise-in mt-2 text-sm text-ink-soft"
                 style={{ "--i": 1 } as CSSProperties}
               >
-                {number.format(doc.wordCount)} kata · diubah{" "}
-                {formatChanged(doc.updatedAt, data.nowMs)} · Pribadi
+                {format(t.meta, {
+                  words: formatNumber(doc.wordCount, locale),
+                  changed: formatChanged(doc.updatedAt, data.nowMs, locale),
+                })}
               </p>
             )}
           </div>
@@ -57,11 +59,11 @@ function Continue({ data }: { data: StreakData }) {
       </div>
       {doc ? (
         <ButtonLink href={`/studio/${doc.id}`} className="justify-self-start">
-          Lanjutkan
+          {t.continueButton}
         </ButtonLink>
       ) : (
         <ButtonLink href="/studio/baru" className="justify-self-start">
-          Mulai menulis
+          {t.start}
         </ButtonLink>
       )}
     </div>
@@ -69,10 +71,11 @@ function Continue({ data }: { data: StreakData }) {
 }
 
 function Loading() {
+  const t = useT().home.today;
   return (
     <div
       role="status"
-      aria-label="Memuat Hari ini"
+      aria-label={t.loading}
       className={`${card} grid animate-[rm-appear_0s_300ms_forwards] gap-2.5 opacity-0`}
     >
       <Skeleton className="h-3 w-28" />
@@ -87,18 +90,15 @@ function Loading() {
  * one filled button. A new writer sees the first steps there instead, so no action appears twice.
  */
 export function TodayCard({ data, showSteps }: { data: StreakData; showSteps: boolean }) {
+  const t = useT().home.today;
   if (data.status === "loading") return <Loading />;
   if (data.status === "error") {
-    return (
-      <ErrorBanner action={<RetryButton onClick={data.reload} />}>
-        Hari ini gagal dimuat. Isi dokumenmu tidak berubah; blok lain di Beranda tetap bisa dipakai.
-      </ErrorBanner>
-    );
+    return <ErrorBanner action={<RetryButton onClick={data.reload} />}>{t.loadError}</ErrorBanner>;
   }
   if (showSteps) {
     return (
       <div className={card}>
-        <p className="text-xs font-medium text-ink-muted">Tiga langkah awal</p>
+        <p className="text-xs font-medium text-ink-muted">{t.stepsTitle}</p>
         <FirstSteps hasTarget={data.target !== null} hasDocument={data.lastDocument !== null} />
       </div>
     );
@@ -111,27 +111,33 @@ export function TodayCard({ data, showSteps }: { data: StreakData; showSteps: bo
  * the three word totals. Drawn only once the data is ready.
  */
 export function ProgressSection({ data }: { data: StreakData }) {
+  const t = useT().home.progress;
+  const locale = useLocale();
   if (data.status !== "ready") return null;
   const { target, todayWords, summary } = data;
   if (target === null) {
     return (
-      <Section title="Progres hari ini">
-        <p className="text-sm text-ink-muted">Belum ada target harian.</p>
+      <Section title={t.title}>
+        <p className="text-sm text-ink-muted">{t.noTarget}</p>
         <ButtonLink
           href="/studio/streak"
           variant="text"
           size="sm"
           className="justify-self-start px-0 text-ink"
         >
-          Tetapkan target
+          {t.setTarget}
         </ButtonLink>
         <WordTotals data={data} />
       </Section>
     );
   }
-  const label = `Progres hari ini ${todayWords} dari ${target} kata, streak ${summary.current} hari. Buka Streak`;
+  const label = format(t.label, {
+    words: formatNumber(todayWords, locale),
+    target: formatNumber(target, locale),
+    streak: formatNumber(summary.current, locale),
+  });
   return (
-    <Section title="Progres hari ini">
+    <Section title={t.title}>
       <Link
         href="/studio/streak"
         aria-label={label}
@@ -141,9 +147,14 @@ export function ProgressSection({ data }: { data: StreakData }) {
           <CountUp value={summary.current} />
         </span>
         <span className="grid text-sm">
-          <span className="group-hover:underline group-hover:underline-offset-3">hari streak</span>
+          <span className="group-hover:underline group-hover:underline-offset-3">
+            {t.streakDays}
+          </span>
           <span className="text-xs text-ink-muted tabular-nums">
-            {number.format(todayWords)} / {number.format(target)} kata hari ini
+            {format(t.todayWords, {
+              words: formatNumber(todayWords, locale),
+              target: formatNumber(target, locale),
+            })}
           </span>
         </span>
       </Link>

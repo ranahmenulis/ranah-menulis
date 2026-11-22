@@ -1,6 +1,7 @@
 import { Check } from "@phosphor-icons/react/dist/ssr";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { cn } from "@/lib/cn";
+import { useT } from "@/lib/i18n/provider";
 import { dismissFirstSteps, useFirstStepsDismissed } from "./first-steps-store";
 
 type Step = { label: string; done: boolean; action?: { label: string; href: string } };
@@ -17,18 +18,20 @@ export function FirstSteps({
   hasTarget: boolean;
   hasDocument: boolean;
 }) {
+  const t = useT().home;
+  const s = t.steps;
   const steps: Step[] = [
     // [konfirmasi] Profile setup belongs to the account screens (step 6); shown done for now.
-    { label: "Lengkapi profil: negara dan zona waktu", done: true },
+    { label: s.profile, done: true },
     {
-      label: "Tetapkan target kata per hari",
+      label: s.target,
       done: hasTarget,
-      action: { label: "Tetapkan", href: "/studio/streak" },
+      action: { label: s.setTarget, href: "/studio/streak" },
     },
     {
-      label: "Tulis dokumen pertamamu di Studio",
+      label: s.firstDocument,
       done: hasDocument,
-      action: { label: "Buka Studio", href: "/studio/baru" },
+      action: { label: s.openStudio, href: "/studio/baru" },
     },
   ];
   const dismissed = useFirstStepsDismissed();
@@ -36,7 +39,7 @@ export function FirstSteps({
 
   return (
     <div className="mt-2">
-      <ol aria-label="Tiga langkah awal">
+      <ol aria-label={t.today.stepsTitle}>
         {steps.map((step) => (
           <li
             key={step.label}
@@ -55,7 +58,7 @@ export function FirstSteps({
               {step.label}
             </span>
             {step.done ? (
-              <span className="text-xs text-ink-muted">Selesai</span>
+              <span className="text-xs text-ink-muted">{s.done}</span>
             ) : (
               step.action && (
                 <ButtonLink href={step.action.href} variant="text" size="sm" className="text-ink">
@@ -76,7 +79,7 @@ export function FirstSteps({
             document.getElementById("beranda-title")?.focus();
           }}
         >
-          Tutup panduan
+          {s.close}
         </Button>
       </div>
     </div>

@@ -2,13 +2,15 @@
 
 import { ButtonLink } from "@/components/ui/button";
 import { ErrorBanner, RetryButton, Skeleton } from "@/components/ui/states";
+import { useT } from "@/lib/i18n/provider";
 
 /** Shape of a profile, shown only if loading takes more than 300ms (DESIGN.md 8). */
 export function ProfileSkeleton() {
+  const t = useT().profile;
   return (
     <div
       role="status"
-      aria-label="Memuat profil"
+      aria-label={t.loading}
       className="mx-auto grid max-w-274 animate-[rm-appear_0s_300ms_forwards] gap-4 opacity-0 lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-x-12"
     >
       <div className="grid content-start gap-3">
@@ -33,25 +35,23 @@ export function ProfileSkeleton() {
 }
 
 export function ProfileError({ onRetry }: { onRetry: () => void }) {
+  const t = useT().profile;
   return (
     <div className="mx-auto max-w-182 py-8">
-      <ErrorBanner action={<RetryButton onClick={onRetry} />}>
-        Profil ini gagal dimuat. Periksa koneksimu, lalu coba lagi.
-      </ErrorBanner>
+      <ErrorBanner action={<RetryButton onClick={onRetry} />}>{t.loadError}</ErrorBanner>
     </div>
   );
 }
 
 /** DESIGN.md 8, "Tidak tersedia": one sentence and a way back. */
 export function ProfileGone() {
+  const t = useT().profile;
   return (
     <div className="mx-auto grid max-w-182 justify-items-start gap-4 py-12">
-      <p className="font-serif text-xl leading-7 font-semibold">Penulis ini tidak ditemukan.</p>
-      <p className="text-sm text-ink-muted">
-        Nama penggunanya mungkin salah ketik, atau akunnya sudah tidak aktif.
-      </p>
+      <p className="font-serif text-xl leading-7 font-semibold">{t.goneTitle}</p>
+      <p className="text-sm text-ink-muted">{t.goneBody}</p>
       <ButtonLink href="/beranda" variant="secondary">
-        Kembali ke Beranda
+        {t.backHome}
       </ButtonLink>
     </div>
   );

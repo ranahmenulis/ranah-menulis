@@ -60,7 +60,7 @@ describe("contestNotifications", () => {
       },
       now: NOW,
     });
-    expect(out.map((n) => [n.text.split(" ")[0], n.at])).toEqual([
+    expect(out.map((n) => [(n.text ?? "").split(" ")[0], n.at])).toEqual([
       ["Pemenang", NOW + 9],
       ["Finalis", NOW + 5],
     ]);

@@ -2,6 +2,7 @@
 
 import { ArrowSquareOut } from "@phosphor-icons/react/dist/ssr";
 import { cn } from "@/lib/cn";
+import { useT } from "@/lib/i18n/provider";
 import { useCommunityLink } from "@/lib/platform-settings";
 
 /**
@@ -10,6 +11,7 @@ import { useCommunityLink } from "@/lib/platform-settings";
  */
 export function CommunityLink({ variant }: { variant: "sidebar" | "row" | "plain" }) {
   const href = useCommunityLink();
+  const t = useT().shell.communityLink;
   if (!href) return null;
   return (
     <a
@@ -23,8 +25,8 @@ export function CommunityLink({ variant }: { variant: "sidebar" | "row" | "plain
       )}
     >
       <ArrowSquareOut size={20} aria-hidden />
-      Komunitas
-      <span className="sr-only"> (tab baru)</span>
+      {t.label}
+      <span className="sr-only"> ({t.newTab})</span>
     </a>
   );
 }

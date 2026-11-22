@@ -26,24 +26,17 @@ function data(over: Partial<StreakData> = {}): StreakData {
 
 describe("HomeRail", () => {
   it("draws progress first, then the links to the community", () => {
-    render(<HomeRail data={data()} showProgress showProjects={false} groups={[]} reader={null} />);
+    render(<HomeRail data={data()} showProgress showProjects={false} />);
     const titles = screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent);
     expect(titles).toEqual(["Progres hari ini", "Bersama penulis lain"]);
-    expect(screen.getByRole("link", { name: "Event" }).getAttribute("href")).toBe("/event");
-    expect(screen.getByRole("link", { name: "Grup Penulis" }).getAttribute("href")).toBe("/grup");
+    // Event and Grup Penulis moved to Community (client, 22 November 2026).
+    expect(screen.queryByRole("link", { name: "Event" })).toBeNull();
+    expect(screen.queryByRole("link", { name: "Grup Penulis" })).toBeNull();
     expect(screen.getByRole("link", { name: "Tulis postingan" })).toBeTruthy();
   });
 
   it("leaves progress out while the first steps ask for a target", () => {
-    render(
-      <HomeRail
-        data={data({ target: null })}
-        showProgress={false}
-        showProjects={false}
-        groups={[]}
-        reader={null}
-      />,
-    );
+    render(<HomeRail data={data({ target: null })} showProgress={false} showProjects={false} />);
     expect(screen.queryByText("Progres hari ini")).toBeNull();
     expect(screen.queryByRole("link", { name: "Tetapkan target" })).toBeNull();
   });
@@ -54,8 +47,6 @@ describe("HomeRail", () => {
         data={data()}
         showProgress
         showProjects
-        groups={[]}
-        reader={null}
         submissions={createMemorySubmissionStore()}
       />,
     );

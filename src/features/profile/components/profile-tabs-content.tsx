@@ -1,5 +1,6 @@
 import { ButtonLink } from "@/components/ui/button";
 import { EmptyState, Notice } from "@/components/ui/states";
+import { useT } from "@/lib/i18n/provider";
 import { NEW_POST_HREF } from "@/features/app-shell/nav";
 import type { Author, Genre } from "@/features/community/types";
 import type { ProfileFixture } from "../fixtures";
@@ -17,10 +18,11 @@ export function AboutTab({
   genres: Genre[];
   own: boolean;
 }) {
+  const t = useT().profile.about;
   const facts: [string, string][] = [
-    ["Nama pengguna", `@${author.handle}`],
-    ["Asal", whereOf(author)],
-    ...(genres.length > 0 ? [["Genre", genres.join(" · ")] as [string, string]] : []),
+    [t.username, `@${author.handle}`],
+    [t.origin, whereOf(author)],
+    ...(genres.length > 0 ? [[t.genre, genres.join(" · ")] as [string, string]] : []),
   ];
   return (
     <div className="grid gap-6 py-6">
@@ -29,7 +31,7 @@ export function AboutTab({
           {profile.bio}
         </p>
       ) : (
-        <p className="text-sm text-ink-muted">Belum ada keterangan tentang penulis ini.</p>
+        <p className="text-sm text-ink-muted">{t.noBio}</p>
       )}
       <dl className="grid gap-3 text-sm">
         {facts.map(([term, value]) => (
@@ -39,26 +41,19 @@ export function AboutTab({
           </div>
         ))}
       </dl>
-      {own && (
-        <Notice>
-          Yang tampil di profil publik hanya tulisanmu yang berstatus Publik. Streak dan proyek baru
-          tampil bila kamu mengizinkannya.
-        </Notice>
-      )}
+      {own && <Notice>{t.ownNotice}</Notice>}
     </div>
   );
 }
 
 /** Proyek: results shown here come from Projects (R4) and only with the author's consent. */
 export function ProjectsTab({ own }: { own: boolean }) {
-  return (
-    <EmptyState className="py-6">
-      {own ? "Belum ada proyek yang kamu tampilkan." : "Belum ada proyek yang ditampilkan."}
-    </EmptyState>
-  );
+  const t = useT().profile.projects;
+  return <EmptyState className="py-6">{own ? t.own : t.other}</EmptyState>;
 }
 
 export function WorksEmpty({ own }: { own: boolean }) {
+  const t = useT().profile.works;
   return (
     <EmptyState
       className="py-6"
@@ -66,12 +61,12 @@ export function WorksEmpty({ own }: { own: boolean }) {
       action={
         own ? (
           <ButtonLink href={NEW_POST_HREF} variant="secondary">
-            Tulis postingan
+            {t.write}
           </ButtonLink>
         ) : undefined
       }
     >
-      {own ? "Kamu belum membagikan tulisan secara publik." : "Belum ada tulisan publik di sini."}
+      {own ? t.own : t.other}
     </EmptyState>
   );
 }

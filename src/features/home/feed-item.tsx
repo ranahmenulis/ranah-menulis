@@ -4,6 +4,7 @@ import { AuthorAvatar } from "@/features/community/components/author-avatar";
 import { BookmarkSimple, ChatCircle, DotsThree, Heart } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import { cn } from "@/lib/cn";
+import { useLocale, useT } from "@/lib/i18n/provider";
 import { formatAgo } from "@/features/community/format-time";
 import { authorOf, excerptOf, isNote, postLabel } from "@/features/community/post-model";
 import type { Post } from "@/features/community/types";
@@ -53,6 +54,8 @@ type Props = {
  * it. Every entry opens the post page.
  */
 export function FeedItem({ post, now, comments, appreciated, saved, onAppreciate, onSave }: Props) {
+  const t = useT().home.item;
+  const locale = useLocale();
   const author = authorOf(post.authorId);
   const note = isNote(post);
   const href = `/postingan/${post.id}`;
@@ -65,13 +68,13 @@ export function FeedItem({ post, now, comments, appreciated, saved, onAppreciate
         <span className="min-w-0">
           {post.visibility === "grup" && post.groupName && (
             <>
-              di <b className="font-medium">{post.groupName}</b> oleh{" "}
+              {t.inGroup} <b className="font-medium">{post.groupName}</b> {t.byAuthor}{" "}
             </>
           )}
           <AuthorLink handle={author.handle} className="font-medium">
             {author.name}
           </AuthorLink>
-          <span className="text-ink-muted"> · {formatAgo(post.publishedAt, now)}</span>
+          <span className="text-ink-muted"> · {formatAgo(post.publishedAt, now, locale)}</span>
         </span>
       </div>
 
@@ -89,7 +92,7 @@ export function FeedItem({ post, now, comments, appreciated, saved, onAppreciate
                 {post.blocks.map((b) => b.text).join("\n\n")}
               </p>
               <p className="text-[13px] leading-[18px] text-ink-muted md:text-xs md:leading-4">
-                {postLabel(post)} dari “
+                {postLabel(post)} {t.from} “
                 <Link href={href} className={link}>
                   {post.title}
                 </Link>
@@ -128,15 +131,15 @@ export function FeedItem({ post, now, comments, appreciated, saved, onAppreciate
       <div className={cn("relative z-10 flex items-center gap-4", !note && "-mt-1")}>
         <Action
           icon={Heart}
-          label="Apresiasi"
+          label={t.appreciate}
           count={post.appreciations}
           pressed={appreciated}
           onClick={onAppreciate}
         />
-        <Action icon={ChatCircle} label="Komentar" count={comments} />
+        <Action icon={ChatCircle} label={t.comment} count={comments} />
         <span className="flex-1" />
-        <Action icon={BookmarkSimple} label="Simpan" pressed={saved} onClick={onSave} />
-        <Action icon={DotsThree} label="Menu lainnya" />
+        <Action icon={BookmarkSimple} label={t.save} pressed={saved} onClick={onSave} />
+        <Action icon={DotsThree} label={t.more} />
       </div>
     </article>
   );

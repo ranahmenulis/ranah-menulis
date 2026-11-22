@@ -5,6 +5,7 @@ import { ErrorBanner, RetryButton } from "@/components/ui/states";
 import { StatusSubmission } from "@/components/ui/status-submission";
 import { TextLink } from "@/components/ui/text-link";
 import { cn } from "@/lib/cn";
+import { format, useT } from "@/lib/i18n/provider";
 import { useMyProjects, type MyProjectsData } from "@/features/projects/hooks/use-my-projects";
 import { ProjectCover } from "@/features/projects/components/project-cover";
 import { RunningClassList } from "@/features/projects/kelas/components/running-classes";
@@ -33,15 +34,16 @@ const MORE = "max-md:hidden";
  * registrations. Nothing is drawn when there is nothing.
  */
 export function Attention({ my }: { my: MyProjectsData }) {
+  const t = useT().home.attention;
   const real: Item[] =
     my.status === "ready"
       ? revisionItems(my.rows).map(({ project, work }) => {
           const due = revisionDueAt(work);
           return {
             key: `revisi-${work.id}`,
-            title: `Editor meminta revisi untuk “${work.title}”`,
-            meta: `${project.title}${due ? ` · tenggat revisi ${formatProjectDate(due, project.timeZone)}` : ""}`,
-            action: { label: "Baca catatan editor", href: submissionHref(work.slug, work.id) },
+            title: format(t.revisionTitle, { work: work.title }),
+            meta: `${project.title}${due ? ` · ${format(t.revisionDue, { date: formatProjectDate(due, project.timeZone) })}` : ""}`,
+            action: { label: t.readNotes, href: submissionHref(work.slug, work.id) },
           };
         })
       : [];
@@ -49,16 +51,16 @@ export function Attention({ my }: { my: MyProjectsData }) {
     my.status === "ready"
       ? paymentItems(my.rows, my.now).map(({ project, href, remaining }) => ({
           key: `bayar-${project.slug}`,
-          title: `Pembayaran ${project.title} menunggu`,
-          meta: `Kuotamu ditahan, ${remaining}`,
-          action: { label: "Bayar sekarang", href },
+          title: format(t.payTitle, { project: project.title }),
+          meta: format(t.payMeta, { remaining }),
+          action: { label: t.payNow, href },
         }))
       : [];
   const items = [...real, ...paying];
   if (!items.length) return null;
 
   return (
-    <Section title="Perlu perhatian">
+    <Section title={t.title}>
       <ul className="grid">
         {items.map((item, i) => (
           <li
@@ -85,7 +87,7 @@ export function Attention({ my }: { my: MyProjectsData }) {
         {items.length > 1 && (
           <li className="md:hidden">
             <Button variant="text" size="sm" className="px-0 text-ink" disabled>
-              Lihat {items.length - 1} lainnya
+              {format(t.more, { count: String(items.length - 1) })}
             </Button>
           </li>
         )}
@@ -105,6 +107,7 @@ function featured(row: MyProject) {
 }
 
 function ProjectLine({ row }: { row: MyProject }) {
+  const t = useT().home;
   const work = featured(row);
   const due = work ? revisionDueAt(work) : null;
   const waiting = row.registration.status !== "terdaftar";
@@ -120,15 +123,16 @@ function ProjectLine({ row }: { row: MyProject }) {
             {row.project.title}
           </TextLink>
           <span className="block text-xs wrap-anywhere text-ink-muted">
-            {work ? `“${work.title}”` : "Belum ada karya terkirim"}
-            {due !== null && ` · tenggat revisi ${formatProjectDate(due, row.project.timeZone)}`}
+            {work ? `“${work.title}”` : t.projects.noWork}
+            {due !== null &&
+              ` · ${format(t.attention.revisionDue, { date: formatProjectDate(due, row.project.timeZone) })}`}
           </span>
         </span>
         {work ? (
           <StatusSubmission status={work.status} outlineRevisi />
         ) : (
           <span className="text-xs text-ink-muted">
-            {waiting ? "Menunggu pembayaran" : "Terdaftar"}
+            {waiting ? t.projects.waitingPayment : t.projects.registered}
           </span>
         )}
       </span>
@@ -142,18 +146,17 @@ function ProjectLine({ row }: { row: MyProject }) {
  * is not drawn at all when you joined nothing.
  */
 export function MyProjectsRow({ my }: { my: MyProjectsData }) {
+  const t = useT().home.projects;
   if (my.status === "error") {
     return (
-      <Section title="Proyek saya">
-        <ErrorBanner action={<RetryButton onClick={my.reload} />}>
-          Proyek saya gagal dimuat. Bagian lain di Beranda tetap bisa dipakai.
-        </ErrorBanner>
+      <Section title={t.title}>
+        <ErrorBanner action={<RetryButton onClick={my.reload} />}>{t.loadError}</ErrorBanner>
       </Section>
     );
   }
   if (my.status !== "ready" || my.rows.length === 0) return null;
   return (
-    <Section title="Proyek saya">
+    <Section title={t.title}>
       <ul className="grid">
         {my.rows.slice(0, 2).map((row, i) => (
           <li
@@ -173,7 +176,7 @@ export function MyProjectsRow({ my }: { my: MyProjectsData }) {
         size="sm"
         className="justify-self-start px-0 text-ink"
       >
-        Lihat semua
+        {t.seeAll}
       </ButtonLink>
     </Section>
   );
@@ -184,19 +187,20 @@ export function MyProjectsRow({ my }: { my: MyProjectsData }) {
  * Not drawn when there is none; a failed read says so with a retry.
  */
 export function RunningClassesRow({ store }: { store?: AssignmentStore }) {
+  const t = useT().home.projects;
   const running = useRunningClasses({ store });
   if (running.status === "error") {
     return (
-      <Section title="Kelas yang sedang berjalan">
+      <Section title={t.runningTitle}>
         <ErrorBanner action={<RetryButton onClick={running.reload} />}>
-          Kelas yang sedang berjalan gagal dimuat. Bagian lain di Beranda tetap bisa dipakai.
+          {t.runningError}
         </ErrorBanner>
       </Section>
     );
   }
   if (running.status !== "ready" || running.rows.length === 0) return null;
   return (
-    <Section title="Kelas yang sedang berjalan">
+    <Section title={t.runningTitle}>
       <RunningClassList rows={running.rows} variant="rail" />
     </Section>
   );

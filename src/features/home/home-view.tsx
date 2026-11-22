@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
+import { format, useLocale, useT } from "@/lib/i18n/provider";
 import { ButtonLink } from "@/components/ui/button";
 import { EmptyPlate } from "@/components/ui/states";
 import { Tabs } from "@/components/ui/tabs";
@@ -33,6 +34,8 @@ import { greetingSentence } from "./week-summary";
  * plus what was published on this device.
  */
 export function HomeView() {
+  const t = useT().home;
+  const locale = useLocale();
   const data = useStreakData(studioStore);
   const community = useCommunity(postStore);
   const actions = usePostActions(community, false);
@@ -55,13 +58,13 @@ export function HomeView() {
   const dismissed = useFirstStepsDismissed();
   const showSteps = isNew && !dismissed;
   const firstName = useAccount().profile.name.trim().split(/\s+/)[0];
-  const sentence = greetingSentence(data);
+  const sentence = greetingSentence(data, t.week, locale);
 
   return (
     <div className="mx-auto grid max-w-182 xl:-mx-12 xl:-my-10 xl:min-h-[calc(100dvh-3.5rem-var(--safe-top))] xl:max-w-none xl:grid-cols-[minmax(0,1fr)_clamp(20rem,24vw,28rem)] xl:grid-rows-[auto_1fr]">
       <div className="min-w-0 xl:w-full xl:max-w-194 xl:justify-self-center xl:px-12 xl:pt-10">
         <h1 id="beranda-title" tabIndex={-1} className="heading-lg outline-none">
-          {firstName ? `Siap menulis, ${firstName}?` : "Siap menulis?"}
+          {firstName ? format(t.greeting, { name: firstName }) : t.greetingAnon}
         </h1>
         {sentence && <p className="mt-2 text-sm text-ink-muted">{sentence}</p>}
         <div className="mt-6">
@@ -83,28 +86,23 @@ export function HomeView() {
 
       <div className="min-w-0 xl:w-full xl:max-w-194 xl:justify-self-center xl:px-12 xl:pb-10">
         <Tabs
-          label="Feed"
+          label={t.feed.label}
           value="mengikuti"
           className="mt-8 xl:mt-10"
           onValueChange={(id) => id === "jelajahi" && router.push(DISCOVER_HREF)}
           items={[
-            { id: "mengikuti", label: "Mengikuti" },
-            { id: "jelajahi", label: "Community" },
+            { id: "mengikuti", label: t.feed.following },
+            { id: "jelajahi", label: t.feed.community },
           ]}
         />
 
         {isNew ? (
           <div className="grid justify-items-start gap-3 py-12">
             <EmptyPlate art="hikayat" className="mb-3" />
-            <p className="font-serif text-xl leading-7 font-semibold">
-              Kamu belum mengikuti siapa pun.
-            </p>
-            <p className="max-w-110 text-sm text-ink-muted">
-              Jelajahi tulisan dari penulis di Indonesia dan Malaysia, lalu ikuti yang suaranya
-              ingin kamu baca lagi.
-            </p>
+            <p className="font-serif text-xl leading-7 font-semibold">{t.feed.emptyTitle}</p>
+            <p className="max-w-110 text-sm text-ink-muted">{t.feed.emptyBody}</p>
             <ButtonLink href={DISCOVER_HREF} variant="secondary">
-              Buka Community
+              {t.feed.openCommunity}
             </ButtonLink>
           </div>
         ) : (
@@ -126,16 +124,10 @@ export function HomeView() {
       </div>
 
       <aside
-        aria-label="Progres dan kegiatan"
+        aria-label={t.aside}
         className="mt-4 border-t border-line-strong pt-6 xl:col-start-2 xl:row-span-2 xl:row-start-1 xl:mt-0 xl:border-t-0 xl:border-l xl:border-line xl:py-10 xl:pr-6 xl:pl-8"
       >
-        <HomeRail
-          data={data}
-          showProgress={!showSteps}
-          showProjects={ready && !isNew}
-          groups={groups}
-          reader={reader}
-        />
+        <HomeRail data={data} showProgress={!showSteps} showProjects={ready && !isNew} />
       </aside>
     </div>
   );

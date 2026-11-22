@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { AuthorAvatar } from "@/features/community/components/author-avatar";
 import { Button, ButtonLink } from "@/components/ui/button";
+import { format, useT } from "@/lib/i18n/provider";
 import { CountUp } from "@/components/ui/count-up";
 import { SETTINGS_HREF } from "@/features/account/redirect";
 import { SAVED_HREF } from "@/features/app-shell/nav";
@@ -27,18 +28,19 @@ type Props = {
  * Ikuti (COM-08); it offers editing in Settings instead.
  */
 export function ProfileIdentity(p: Props) {
+  const t = useT().profile;
   return (
     <aside
-      aria-label={`Profil ${p.author.name}`}
+      aria-label={format(t.aside, { name: p.author.name })}
       className="grid justify-items-start gap-3 py-5 lg:sticky lg:top-[calc(6rem+var(--safe-top))] lg:col-start-2 lg:row-span-3 lg:row-start-1 lg:self-start lg:py-0"
     >
       <AuthorAvatar author={p.author} size={88} />
       <dl className="grid w-full grid-cols-3 border-y border-line py-3">
         {(
           [
-            ["karya", p.works],
-            ["pengikut", p.followers],
-            ["mengikuti", p.following],
+            [t.counts.works, p.works],
+            [t.counts.followers, p.followers],
+            [t.counts.following, p.following],
           ] as const
         ).map(([label, value]) => (
           <div key={label} className="grid gap-0.5">
@@ -55,20 +57,22 @@ export function ProfileIdentity(p: Props) {
       <p className="text-sm [overflow-wrap:anywhere] text-ink-muted">{whereOf(p.author)}</p>
       {p.genres.length > 0 && <p className="text-sm text-ink-muted">{p.genres.join(" · ")}</p>}
       {p.profile.streak !== undefined && (
-        <p className="text-sm tabular-nums">Streak {p.profile.streak} hari</p>
+        <p className="text-sm tabular-nums">
+          {format(t.streak, { days: String(p.profile.streak) })}
+        </p>
       )}
 
       {p.own ? (
         <>
           <ButtonLink href={SETTINGS_HREF} variant="secondary" size="sm">
-            Ubah profil
+            {t.editProfile}
           </ButtonLink>
           {/* Phones have no sidebar, so this is how Tersimpan is reached there. */}
           <Link
             href={SAVED_HREF}
             className="inline-flex min-h-11 items-center text-sm text-ink underline lg:hidden"
           >
-            Tersimpan
+            {t.saved}
           </Link>
         </>
       ) : (
@@ -79,7 +83,7 @@ export function ProfileIdentity(p: Props) {
           onClick={p.onFollow}
           className="min-w-28 aria-pressed:bg-subtle"
         >
-          {p.isFollowing ? "Mengikuti" : "Ikuti"}
+          {p.isFollowing ? t.following : t.follow}
         </Button>
       )}
     </aside>

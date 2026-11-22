@@ -15,11 +15,12 @@ import { Avatar } from "@/components/ui/avatar";
 import { ButtonLink } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/states";
 import { cn } from "@/lib/cn";
+import { useLocale, useT } from "@/lib/i18n/provider";
 import { authorOf } from "@/features/community/post-model";
 import { mayActivateNotification } from "./notification-access";
 import type { NotificationView } from "./notification-model";
 import { dayGroups } from "./notification-days";
-import { agoLabel, leadOf } from "./notification-text";
+import { agoLabel, leadOf, textOf } from "./notification-text";
 
 type LinkActions = {
   confirmOpen?: (item: NotificationView) => Promise<boolean>;
@@ -111,7 +112,9 @@ function NotificationRow({
   now: number;
   onOpen: (id: string) => void;
 } & LinkActions) {
-  const lead = leadOf(item);
+  const copy = useT().notifications;
+  const locale = useLocale();
+  const lead = leadOf(item, copy);
   const unread = !item.read;
   const row = cn(
     "-mx-2 flex w-[calc(100%+1rem)] items-start gap-3 px-2 py-4 text-left no-underline",
@@ -141,11 +144,11 @@ function NotificationRow({
             unread ? "text-ink" : "text-ink-muted",
           )}
         >
-          {unread && <span className="sr-only">Belum dibaca. </span>}
-          {lead && <b className="font-medium">{lead}</b>} {item.text}
+          {unread && <span className="sr-only">{copy.unreadMark}</span>}
+          {lead && <b className="font-medium">{lead}</b>} {textOf(item, copy.messages)}
         </span>
         <span className="mt-0.5 block min-h-4 text-xs text-ink-muted">
-          {now > 0 && agoLabel(item, now)}
+          {now > 0 && agoLabel(item, now, locale)}
         </span>
       </span>
     </>
@@ -207,17 +210,18 @@ export function NotificationList({
   onFocusCapture?: ComponentProps<"ul">["onFocusCapture"];
 } & LinkActions) {
   const intent = useRef(0);
+  const copy = useT().notifications;
   if (items.length === 0) {
     return (
       <EmptyState
         art="lighthouse"
         action={
           <ButtonLink href="/beranda" variant="secondary">
-            Ke Beranda
+            {copy.toHome}
           </ButtonLink>
         }
       >
-        Belum ada notifikasi di sini.
+        {copy.empty}
       </EmptyState>
     );
   }
@@ -233,7 +237,7 @@ export function NotificationList({
         intent.current += 1;
       }}
     >
-      {dayGroups(items, now).flatMap((group, g) => [
+      {dayGroups(items, now, copy.days).flatMap((group, g) => [
         <li key={`day-${group.key}`} role="presentation" className="pt-6 first:pt-2">
           <h2
             className="rm-rise-in border-b border-line-strong pb-2 font-serif text-xl leading-7"

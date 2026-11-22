@@ -1,34 +1,44 @@
+"use client";
+
+import type { Locale } from "@/lib/i18n/config";
+import { format, useLocale, useT } from "@/lib/i18n/provider";
+import { formatNumber } from "@/lib/i18n/format";
 import type { StreakData } from "@/features/studio/hooks/use-streak-data";
 import { weekComparison, wordTotals } from "@/features/studio/word-totals";
+import { home as homeId } from "./copy/id";
 
-const number = new Intl.NumberFormat("id-ID");
+type WeekCopy = typeof homeId.week;
 
 /**
  * One warm sentence about the last 7 days against the 7 before. No percentages and no praise
  * scale (DESIGN.md): a quiet week is met with an invitation, not a penalty. Null when there is
- * nothing to say.
+ * nothing to say. Copy and locale default to Indonesian so pure callers and tests stay simple.
  */
-export function weekSentence(recent: number, before: number): string | null {
+export function weekSentence(
+  recent: number,
+  before: number,
+  copy: WeekCopy = homeId.week,
+  locale: Locale = "id",
+): string | null {
   if (recent === 0 && before === 0) return null;
-  const words = (n: number) => `${number.format(n)} kata`;
-  if (before === 0) return `7 hari terakhir kamu menulis ${words(recent)}. Awal yang baik.`;
-  if (recent === 0) {
-    return `7 hari terakhir belum ada tulisan, setelah ${words(before)} di 7 hari sebelumnya. Mulai lagi hari ini saja.`;
-  }
-  if (recent === before) {
-    return `7 hari terakhir kamu menulis ${words(recent)}, sama dengan 7 hari sebelumnya.`;
-  }
-  const gap = Math.abs(recent - before);
-  return recent > before
-    ? `7 hari terakhir kamu menulis ${words(recent)}, ${words(gap)} lebih banyak dari 7 hari sebelumnya.`
-    : `7 hari terakhir kamu menulis ${words(recent)}, ${words(gap)} lebih sedikit dari 7 hari sebelumnya. Mulai lagi hari ini saja.`;
+  const words = (n: number) =>
+    format(n === 1 ? copy.wordsOne : copy.words, { count: formatNumber(n, locale) });
+  if (before === 0) return format(copy.first, { recent: words(recent) });
+  if (recent === 0) return format(copy.none, { before: words(before) });
+  if (recent === before) return format(copy.same, { recent: words(recent) });
+  const gap = words(Math.abs(recent - before));
+  return format(recent > before ? copy.more : copy.less, { recent: words(recent), gap });
 }
 
 /** The sentence for the Beranda greeting, or null while loading, on error, or with no writing. */
-export function greetingSentence(data: StreakData): string | null {
+export function greetingSentence(
+  data: StreakData,
+  copy: WeekCopy = homeId.week,
+  locale: Locale = "id",
+): string | null {
   if (data.status !== "ready" || data.today === "") return null;
   const { recent, before } = weekComparison(data.words, data.today);
-  return weekSentence(recent, before);
+  return weekSentence(recent, before, copy, locale);
 }
 
 /**
@@ -37,12 +47,14 @@ export function greetingSentence(data: StreakData): string | null {
  * nothing to count.
  */
 export function WordTotals({ data }: { data: StreakData }) {
-  if (greetingSentence(data) === null) return null;
+  const copy = useT().home.week;
+  const locale = useLocale();
+  if (greetingSentence(data, copy, locale) === null) return null;
   const totals = wordTotals(data.words, data.today);
   const items = [
-    ["Minggu ini", totals.week],
-    ["Bulan ini", totals.month],
-    ["Tahun ini", totals.year],
+    [copy.thisWeek, totals.week],
+    [copy.thisMonth, totals.month],
+    [copy.thisYear, totals.year],
   ] as const;
 
   return (
@@ -51,8 +63,8 @@ export function WordTotals({ data }: { data: StreakData }) {
         <div key={label} className="min-w-0">
           <dt className="text-xs text-ink-muted">{label}</dt>
           <dd className="font-serif text-lg leading-6 font-semibold tabular-nums">
-            {number.format(value)}
-            <span className="ml-1 font-sans text-xs font-normal text-ink-muted">kata</span>
+            {formatNumber(value, locale)}
+            <span className="ml-1 font-sans text-xs font-normal text-ink-muted">{copy.unit}</span>
           </dd>
         </div>
       ))}
