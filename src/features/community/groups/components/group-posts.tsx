@@ -5,8 +5,8 @@ import { Button, ButtonLink } from "@/components/ui/button";
 import { ErrorBanner, FeedItemSkeleton, RetryButton } from "@/components/ui/states";
 import { TextLink } from "@/components/ui/text-link";
 import { NEW_POST_HREF } from "@/features/app-shell/nav";
-import { REASON_EMPTY } from "@/features/kelola/admin/admin-actions";
 import { ReasonDialog } from "@/features/kelola/components/reason-dialog";
+import { format, useT } from "@/lib/i18n/provider";
 import { useCommunity } from "../../hooks/use-community";
 import { authorOf } from "../../post-model";
 import type { PostStore } from "../../storage/post-store";
@@ -26,6 +26,8 @@ export function GroupPosts({
   store?: PostStore;
   onResult: (result: GroupResult, focus?: boolean) => void;
 }) {
+  const dict = useT();
+  const t = dict.groups.posts;
   const data = useCommunity(store);
   const [ask, setAsk] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -50,17 +52,15 @@ export function GroupPosts({
     <section className="grid gap-3 border-t border-line pt-5" aria-labelledby="group-posts">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 id="group-posts" className="heading-md">
-          Tulisan
+          {t.title}
         </h2>
         <ButtonLink href={NEW_POST_HREF} variant="secondary" size="sm">
-          Tulis postingan
+          {t.write}
         </ButtonLink>
       </div>
       {data.status === "loading" && <FeedItemSkeleton />}
       {data.status === "error" && (
-        <ErrorBanner action={<RetryButton onClick={data.reload} />}>
-          Tulisan grup gagal dimuat.
-        </ErrorBanner>
+        <ErrorBanner action={<RetryButton onClick={data.reload} />}>{t.loadError}</ErrorBanner>
       )}
       {data.status === "ready" &&
         (posts.length ? (
@@ -77,27 +77,27 @@ export function GroupPosts({
                   <Button
                     variant="text"
                     size="sm"
-                    aria-label={`Sembunyikan ${post.title}`}
+                    aria-label={format(t.hideAria, { title: post.title })}
                     onClick={(event) => {
                       trigger.current = event.currentTarget;
                       setAsk(post.id);
                     }}
                   >
-                    Sembunyikan
+                    {t.hide}
                   </Button>
                 )}
               </li>
             ))}
           </ul>
         ) : (
-          <p className="text-sm text-ink-muted">Belum ada tulisan yang dibagikan.</p>
+          <p className="text-sm text-ink-muted">{t.empty}</p>
         ))}
       {ask && manager && (
         <ReasonDialog
-          title="Sembunyikan tulisan"
-          confirmLabel="Sembunyikan"
-          hint="Tulisan tidak lagi bisa dibaca di grup ini."
-          emptyMessage={REASON_EMPTY}
+          title={t.hideTitle}
+          confirmLabel={t.hide}
+          hint={t.hideHint}
+          emptyMessage={dict.groups.messages.reasonEmpty}
           busy={busy}
           onClose={close}
           onConfirm={(reason) => void hide(reason)}

@@ -32,21 +32,23 @@ export type WritingGroup = GroupInput & {
 export const GROUP_NAME_LIMIT = 40;
 export const GROUP_DESCRIPTION_LIMIT = 240;
 
-export function groupErrors(input: GroupInput) {
+export type GroupFieldError =
+  "nameRequired" | "nameTooLong" | "descriptionTooLong" | "visibilityRequired";
+
+/** Codes (not sentences) of what is wrong with a form; `groupMessage` turns them into text. */
+export function groupErrors(input: GroupInput): {
+  name?: GroupFieldError;
+  description?: GroupFieldError;
+  visibility?: GroupFieldError;
+} {
   const name = input.name.trim();
   return {
-    name: !name
-      ? "Isi nama grup."
-      : name.length > GROUP_NAME_LIMIT
-        ? `Nama grup maksimal ${GROUP_NAME_LIMIT} karakter.`
-        : undefined,
+    name: !name ? "nameRequired" : name.length > GROUP_NAME_LIMIT ? "nameTooLong" : undefined,
     description:
-      input.description.trim().length > GROUP_DESCRIPTION_LIMIT
-        ? `Deskripsi maksimal ${GROUP_DESCRIPTION_LIMIT} karakter.`
-        : undefined,
+      input.description.trim().length > GROUP_DESCRIPTION_LIMIT ? "descriptionTooLong" : undefined,
     visibility:
       input.visibility !== "publik" && input.visibility !== "privat"
-        ? "Pilih visibilitas grup."
+        ? "visibilityRequired"
         : undefined,
   };
 }

@@ -5,7 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Field, Input, Select, Textarea, describedBy } from "@/components/ui/field";
 import { Notice } from "@/components/ui/states";
-import { joinByCode, saveGroup } from "../group-actions";
+import { format, useLocale, useT } from "@/lib/i18n/provider";
+import { joinByCode, saveGroup, type GroupResult } from "../group-actions";
+import { groupMessage } from "../group-messages";
 import {
   GROUP_DESCRIPTION_LIMIT,
   GROUP_NAME_LIMIT,
@@ -15,9 +17,10 @@ import {
 } from "../group-model";
 
 function Cancel({ onClose }: { onClose: () => void }) {
+  const t = useT().groups.dialogs;
   return (
     <Button variant="secondary" onClick={onClose}>
-      Batal
+      {t.cancel}
     </Button>
   );
 }
@@ -30,9 +33,12 @@ export function GroupSettingsDialog({
 }: {
   group?: WritingGroup;
   admin?: boolean;
-  onSaved: (id: string, message: string) => void;
+  onSaved: (id: string, result: GroupResult) => void;
   onClose: () => void;
 }) {
+  const dict = useT().groups;
+  const t = dict.dialogs;
+  const locale = useLocale();
   const [original] = useState(() =>
     group
       ? {
@@ -57,18 +63,20 @@ export function GroupSettingsDialog({
   const name = useRef<HTMLInputElement>(null);
   const description = useRef<HTMLTextAreaElement>(null);
   const errors = attempted ? groupErrors(input) : undefined;
-  const submitLabel = group ? "Simpan perubahan" : "Buat grup";
+  const submitLabel = group ? t.save : t.create;
+  const issue = (code?: Parameters<typeof groupMessage>[0]) =>
+    code ? groupMessage(code, dict.messages, locale) : undefined;
 
   function submit(event: FormEvent) {
     event.preventDefault();
     setAttempted(true);
     const result = saveGroup(input, { original, fromAdmin: admin });
-    if (result.ok && result.id) onSaved(result.id, result.message);
+    if (result.ok && result.id) onSaved(result.id, result);
     else {
       const found = groupErrors(input);
       if (found.name) name.current?.focus();
       else if (found.description) description.current?.focus();
-      else setFailure(result.message);
+      else setFailure(groupMessage(result.code, dict.messages, locale));
     }
   }
 
@@ -76,7 +84,7 @@ export function GroupSettingsDialog({
     <Dialog
       open
       onClose={onClose}
-      title={group ? "Ubah grup" : "Buat Grup Penulis"}
+      title={group ? t.editTitle : t.createTitle}
       actions={
         <>
           <Cancel onClose={onClose} />
@@ -89,9 +97,9 @@ export function GroupSettingsDialog({
       <form id={formId} onSubmit={submit} className="grid gap-4" noValidate>
         <Field
           id={nameId}
-          label="Nama grup"
-          hint={`Maksimal ${GROUP_NAME_LIMIT} karakter.`}
-          error={errors?.name}
+          label={t.nameLabel}
+          hint={format(t.limitHint, { limit: String(GROUP_NAME_LIMIT) })}
+          error={issue(errors?.name)}
         >
           <Input
             id={nameId}
@@ -99,15 +107,15 @@ export function GroupSettingsDialog({
             value={input.name}
             onChange={(event) => setInput({ ...input, name: event.target.value })}
             aria-invalid={Boolean(errors?.name)}
-            aria-describedby={describedBy(nameId, { hint: true, error: errors?.name })}
+            aria-describedby={describedBy(nameId, { hint: true, error: issue(errors?.name) })}
           />
         </Field>
         <Field
           id={descriptionId}
-          label="Deskripsi"
+          label={t.descriptionLabel}
           optional
-          hint={`Maksimal ${GROUP_DESCRIPTION_LIMIT} karakter.`}
-          error={errors?.description}
+          hint={format(t.limitHint, { limit: String(GROUP_DESCRIPTION_LIMIT) })}
+          error={issue(errors?.description)}
         >
           <Textarea
             id={descriptionId}
@@ -117,11 +125,11 @@ export function GroupSettingsDialog({
             aria-invalid={Boolean(errors?.description)}
             aria-describedby={describedBy(descriptionId, {
               hint: true,
-              error: errors?.description,
+              error: issue(errors?.description),
             })}
           />
         </Field>
-        <Field id={visibilityId} label="Visibilitas">
+        <Field id={visibilityId} label={t.visibilityLabel}>
           <Select
             id={visibilityId}
             value={input.visibility}
@@ -132,14 +140,11 @@ export function GroupSettingsDialog({
               })
             }
           >
-            <option value="privat">Privat · dengan kode atau undangan</option>
-            <option value="publik">Publik · bisa diikuti langsung</option>
+            <option value="privat">{t.privateOption}</option>
+            <option value="publik">{t.publicOption}</option>
           </Select>
         </Field>
-        <Notice>
-          [usulan] Anggota dapat melihat nama pengguna, judul dokumen, dan progres yang kamu pilih
-          untuk dibagikan.
-        </Notice>
+        <Notice>{t.notice}</Notice>
         {failure && (
           <p role="alert" className="text-sm text-danger">
             {failure}
@@ -157,6 +162,9 @@ export function JoinCodeDialog({
   onJoined: (id: string) => void;
   onClose: () => void;
 }) {
+  const dict = useT().groups;
+  const t = dict.dialogs;
+  const locale = useLocale();
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
   const formId = useId();
@@ -168,7 +176,7 @@ export function JoinCodeDialog({
     const result = joinByCode(code);
     if (result.ok && result.id) onJoined(result.id);
     else {
-      setError(result.message);
+      setError(groupMessage(result.code, dict.messages, locale));
       field.current?.focus();
     }
   }
@@ -177,19 +185,19 @@ export function JoinCodeDialog({
     <Dialog
       open
       onClose={onClose}
-      title="Gabung dengan kode"
-      description="Masukkan kode dari Admin Grup. Setelah bergabung, anggota dapat melihat progres yang kamu pilih untuk dibagikan."
+      title={t.codeTitle}
+      description={t.codeBody}
       actions={
         <>
           <Cancel onClose={onClose} />
           <Button type="submit" form={formId}>
-            Gabung
+            {t.join}
           </Button>
         </>
       }
     >
       <form id={formId} onSubmit={submit} noValidate>
-        <Field id={codeId} label="Kode undangan" error={error || undefined}>
+        <Field id={codeId} label={t.codeLabel} error={error || undefined}>
           <Input
             id={codeId}
             ref={field}

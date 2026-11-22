@@ -7,7 +7,8 @@ import { Field, Select } from "@/components/ui/field";
 import { Notice } from "@/components/ui/states";
 import { people, personLabel } from "@/features/kelola/admin/people";
 import { useSuspensions } from "@/features/kelola/admin/role-store";
-import { REASON_EMPTY } from "@/features/kelola/admin/admin-actions";
+import { format, useLocale, useT } from "@/lib/i18n/provider";
+import { groupMessage } from "@/features/community/groups/group-messages";
 import { ReasonDialog } from "@/features/kelola/components/reason-dialog";
 import {
   inviteToGroup,
@@ -35,6 +36,9 @@ function InviteDialog({
   onClose: () => void;
   onSuccess: (result: GroupResult) => void;
 }) {
+  const dict = useT().groups;
+  const t = dict.manage;
+  const locale = useLocale();
   const suspensions = useSuspensions();
   const [target, setTarget] = useState("");
   const [error, setError] = useState("");
@@ -51,22 +55,22 @@ function InviteDialog({
     event.preventDefault();
     const result = inviteToGroup(group.id, target);
     if (result.ok) onSuccess(result);
-    else setError(result.message);
+    else setError(groupMessage(result.code, dict.messages, locale));
   }
 
   return (
     <Dialog
       open
       onClose={onClose}
-      title="Undang anggota"
+      title={t.inviteTitle}
       actions={
         <>
           <Button variant="secondary" onClick={onClose}>
-            Batal
+            {t.cancel}
           </Button>
           {candidates.length > 0 && (
             <Button form={formId} type="submit" disabled={!target}>
-              Undang
+              {t.inviteConfirm}
             </Button>
           )}
         </>
@@ -74,7 +78,7 @@ function InviteDialog({
     >
       {candidates.length > 0 ? (
         <form id={formId} onSubmit={submit} className="grid gap-3">
-          <Field id={personId} label="Penulis">
+          <Field id={personId} label={t.personLabel}>
             <Select
               id={personId}
               value={target}
@@ -84,7 +88,7 @@ function InviteDialog({
               }}
             >
               <option value="" disabled>
-                Pilih penulis
+                {t.choosePerson}
               </option>
               {candidates.map((person) => (
                 <option key={person.id} value={person.id}>
@@ -100,7 +104,7 @@ function InviteDialog({
           )}
         </form>
       ) : (
-        <Notice>Semua penulis yang tersedia sudah bergabung atau diundang.</Notice>
+        <Notice>{t.noCandidates}</Notice>
       )}
     </Dialog>
   );
@@ -119,6 +123,8 @@ export function GroupManagement({
   admin: boolean;
   onResult: (result: GroupResult, focus?: boolean) => void;
 }) {
+  const t = useT().groups.manage;
+  const reasonEmpty = useT().groups.messages.reasonEmpty;
   const [ask, setAsk] = useState<ManagementAction | null>(null);
   const close = () => setAsk(null);
 
@@ -130,37 +136,34 @@ export function GroupManagement({
   return (
     <section aria-labelledby="manage-group" className="grid gap-4 border-t border-line pt-5">
       <h2 id="manage-group" className="heading-md">
-        Kelola grup
+        {t.title}
       </h2>
       <div className="flex flex-wrap gap-2">
         <Button variant="secondary" size="sm" onClick={() => setAsk({ type: "edit" })}>
-          Ubah grup
+          {t.edit}
         </Button>
         <Button variant="secondary" size="sm" onClick={() => setAsk({ type: "invite" })}>
-          Undang anggota
+          {t.invite}
         </Button>
       </div>
       <div className="flex flex-wrap items-center gap-3 text-sm">
         <p>
-          Kode undangan <code className="font-medium">{group.code}</code>
+          {t.code} <code className="font-medium">{group.code}</code>
         </p>
         <Button variant="text" size="sm" onClick={() => setAsk({ type: "code" })}>
-          Ganti kode
+          {t.rotate}
         </Button>
       </div>
       {group.invites.length > 0 && (
         <p className="text-sm wrap-anywhere text-ink-muted">
-          Menunggu jawaban dari{" "}
-          {group.invites.map((invite) => personLabel(invite.authorId)).join(", ")}.
+          {format(t.waiting, {
+            names: group.invites.map((invite) => personLabel(invite.authorId)).join(", "),
+          })}
         </p>
       )}
-      {!group.members.some((member) => member.admin) && (
-        <Notice>
-          Belum ada Admin Grup. Administrator bisa menunjuk pengganti dari anggota grup.
-        </Notice>
-      )}
+      {!group.members.some((member) => member.admin) && <Notice>{t.noAdminNotice}</Notice>}
       {group.members.length ? (
-        <ul aria-label="Kelola anggota" className="divide-y divide-line border-y border-line">
+        <ul aria-label={t.membersLabel} className="divide-y divide-line border-y border-line">
           {group.members.map((member) => (
             <li
               key={member.authorId}
@@ -168,7 +171,7 @@ export function GroupManagement({
             >
               <p className="min-w-0 text-sm wrap-anywhere">
                 {personLabel(member.authorId)}
-                {member.admin && " · Admin Grup"}
+                {member.admin && ` · ${t.adminTag}`}
               </p>
               <div className="flex flex-wrap gap-1">
                 {platform &&
@@ -176,29 +179,29 @@ export function GroupManagement({
                     <Button
                       variant="text"
                       size="sm"
-                      aria-label={`Cabut Admin Grup dari ${personLabel(member.authorId)}`}
+                      aria-label={format(t.revokeAria, { name: personLabel(member.authorId) })}
                       onClick={() => setAsk({ type: "revoke", member })}
                     >
-                      Cabut Admin Grup
+                      {t.revoke}
                     </Button>
                   ) : (
                     <Button
                       variant="secondary"
                       size="sm"
-                      aria-label={`Jadikan Admin Grup untuk ${personLabel(member.authorId)}`}
+                      aria-label={format(t.grantAria, { name: personLabel(member.authorId) })}
                       onClick={() => onResult(setGroupAdmin(group.id, member.authorId, true), true)}
                     >
-                      Jadikan Admin Grup
+                      {t.grant}
                     </Button>
                   ))}
                 {member.authorId !== reader && (!member.admin || platform) && (
                   <Button
                     variant="danger-text"
                     size="sm"
-                    aria-label={`Keluarkan ${personLabel(member.authorId)}`}
+                    aria-label={format(t.removeAria, { name: personLabel(member.authorId) })}
                     onClick={() => setAsk({ type: "remove", member })}
                   >
-                    Keluarkan
+                    {t.remove}
                   </Button>
                 )}
               </div>
@@ -206,14 +209,14 @@ export function GroupManagement({
           ))}
         </ul>
       ) : (
-        <p className="text-sm text-ink-muted">Belum ada anggota.</p>
+        <p className="text-sm text-ink-muted">{t.noMembers}</p>
       )}
       {ask?.type === "edit" && (
         <GroupSettingsDialog
           group={group}
           admin={admin}
           onClose={close}
-          onSaved={(_id, message) => complete({ ok: true, message })}
+          onSaved={(_id, result) => complete(result)}
         />
       )}
       {ask?.type === "invite" && (
@@ -223,25 +226,25 @@ export function GroupManagement({
         <Dialog
           open
           onClose={close}
-          title="Ganti kode undangan?"
-          description="Kode lama langsung berhenti berlaku. Undangan langsung tetap bisa diterima."
+          title={t.rotateTitle}
+          description={t.rotateBody}
           actions={
             <>
               <Button variant="secondary" onClick={close}>
-                Batal
+                {t.cancel}
               </Button>
-              <Button onClick={() => complete(rotateGroupCode(group.id))}>Ganti kode</Button>
+              <Button onClick={() => complete(rotateGroupCode(group.id))}>{t.rotate}</Button>
             </>
           }
         />
       )}
       {ask?.type === "remove" && (
         <ReasonDialog
-          title="Keluarkan anggota"
-          confirmLabel="Keluarkan"
-          emptyMessage={REASON_EMPTY}
+          title={t.removeTitle}
+          confirmLabel={t.remove}
+          emptyMessage={reasonEmpty}
           busy={false}
-          hint={`Akses dan kontribusi ${personLabel(ask.member.authorId)} di grup ini akan dicabut.`}
+          hint={format(t.removeHint, { name: personLabel(ask.member.authorId) })}
           onClose={close}
           onConfirm={(reason) =>
             complete(removeGroupMember(group.id, ask.member.authorId, reason), true)
@@ -250,11 +253,11 @@ export function GroupManagement({
       )}
       {ask?.type === "revoke" && (
         <ReasonDialog
-          title="Cabut Admin Grup"
-          confirmLabel="Cabut Admin Grup"
-          emptyMessage={REASON_EMPTY}
+          title={t.revokeTitle}
+          confirmLabel={t.revoke}
+          emptyMessage={reasonEmpty}
           busy={false}
-          hint={`${personLabel(ask.member.authorId)} tetap menjadi anggota grup.`}
+          hint={format(t.revokeHint, { name: personLabel(ask.member.authorId) })}
           onClose={close}
           onConfirm={(reason) =>
             complete(setGroupAdmin(group.id, ask.member.authorId, false, reason), true)

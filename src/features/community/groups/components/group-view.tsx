@@ -13,9 +13,11 @@ import { BackShell } from "@/features/kelola/components/back-shell";
 import { useEffectiveRoles } from "@/features/kelola/use-effective-roles";
 import type { DocumentStore } from "@/features/studio/storage/document-store";
 import { isPlatformAdmin } from "@/lib/roles";
+import { useLocale, useT } from "@/lib/i18n/provider";
 import { useViewer } from "@/lib/viewer";
 import type { PostStore } from "../../storage/post-store";
 import { joinGroup, removeGroupMember, type GroupResult } from "../group-actions";
+import { groupMessage } from "../group-messages";
 import {
   ADMIN_GROUPS_HREF,
   GROUPS_HREF,
@@ -44,6 +46,7 @@ function JoinPublicGroup({
   reader: string | null;
   onResult: OnResult;
 }) {
+  const t = useT().groups.view;
   const guest = useViewer() === "tamu";
   if (reader) {
     return (
@@ -54,11 +57,11 @@ function JoinPublicGroup({
             size="sm"
             onClick={() => onResult(joinGroup(id, { type: "public" }), true)}
           >
-            Gabung
+            {t.join}
           </Button>
         }
       >
-        Gabung untuk membaca tulisan dan progres yang dibagikan anggota.
+        {t.joinBody}
       </Notice>
     );
   }
@@ -67,34 +70,35 @@ function JoinPublicGroup({
       action={
         guest ? (
           <SignInButton variant="secondary" size="sm">
-            Masuk
+            {t.signIn}
           </SignInButton>
         ) : undefined
       }
     >
-      Akun aktif diperlukan untuk bergabung.
+      {t.needAccount}
     </Notice>
   );
 }
 
 function LeaveGroup({ id, reader, onResult }: { id: string; reader: string; onResult: OnResult }) {
+  const t = useT().groups.view;
   const [leaving, setLeaving] = useState(false);
   return (
     <div className="border-t border-line pt-4">
       <Button variant="text" onClick={() => setLeaving(true)}>
-        Keluar dari grup
+        {t.leave}
       </Button>
       {leaving && (
         <Dialog
           open
           role="alertdialog"
           onClose={() => setLeaving(false)}
-          title="Keluar dari grup?"
-          description="Anggota tidak bisa lagi membaca tulisan atau progres yang telah kamu bagikan di grup ini."
+          title={t.leaveTitle}
+          description={t.leaveBody}
           actions={
             <>
               <Button variant="secondary" onClick={() => setLeaving(false)}>
-                Batal
+                {t.cancel}
               </Button>
               <Button
                 onClick={() => {
@@ -102,7 +106,7 @@ function LeaveGroup({ id, reader, onResult }: { id: string; reader: string; onRe
                   onResult(removeGroupMember(id, reader), true);
                 }}
               >
-                Keluar
+                {t.leaveConfirm}
               </Button>
             </>
           }
@@ -113,18 +117,19 @@ function LeaveGroup({ id, reader, onResult }: { id: string; reader: string; onRe
 }
 
 function MemberList({ group }: { group: WritingGroup }) {
+  const t = useT().groups.view;
   return (
     <section className="grid gap-3 border-t border-line pt-5" aria-labelledby="group-members">
       <h2 id="group-members" className="heading-md">
-        Anggota
+        {t.membersTitle}
       </h2>
-      <ul aria-label="Anggota grup" className="divide-y divide-line">
+      <ul aria-label={t.membersLabel} className="divide-y divide-line">
         {group.members.map((member) => {
           const author = personById(member.authorId);
           return (
             <li key={member.authorId} className="py-2 text-sm wrap-anywhere">
-              {author ? `${author.name} · @${author.handle}` : "Penulis"}
-              {member.admin && " · Admin Grup"}
+              {author ? `${author.name} · @${author.handle}` : t.writer}
+              {member.admin && ` · ${t.adminTag}`}
             </li>
           );
         })}
@@ -205,6 +210,9 @@ export function GroupView({
   posts?: PostStore;
   documents?: DocumentStore;
 }) {
+  const t = useT().groups;
+  const dict = t;
+  const locale = useLocale();
   const groups = writingGroups.use();
   const reader = useGroupReader();
   const ready = useHydrated();
@@ -217,15 +225,15 @@ export function GroupView({
 
   function report(result: GroupResult, focus = false) {
     setFailed(!result.ok);
-    show(result.message, focus);
+    show(groupMessage(result.code, dict.messages, locale), focus);
   }
 
   return (
     <BackShell
       back={
         admin
-          ? { href: ADMIN_GROUPS_HREF, label: "Semua grup" }
-          : { href: GROUPS_HREF, label: "Grup Penulis" }
+          ? { href: ADMIN_GROUPS_HREF, label: t.view.allGroups }
+          : { href: GROUPS_HREF, label: t.list.title }
       }
     >
       <p
@@ -239,11 +247,7 @@ export function GroupView({
       {!ready ? (
         <GroupLoading />
       ) : !allowed ? (
-        <EmptyState>
-          {admin && !platform
-            ? "Hanya Administrator dan Super Admin yang bisa membuka halaman ini."
-            : "Grup ini tidak tersedia."}
-        </EmptyState>
+        <EmptyState>{admin && !platform ? t.view.adminOnlyPage : t.view.notAvailable}</EmptyState>
       ) : (
         <GroupDetail
           group={group}

@@ -4,6 +4,7 @@ import type { CSSProperties } from "react";
 import { CountUp } from "@/components/ui/count-up";
 import { slugHash, titleInitial } from "@/features/projects/cover-model";
 import { cn } from "@/lib/cn";
+import { useT } from "@/lib/i18n/provider";
 import type { WritingGroup } from "../group-model";
 
 /** Dots drawn around a seal: one per member up to this many. */
@@ -71,12 +72,13 @@ export function GroupSeal({
 
 /** The anchor of a group page: a dark band with the seal, the name, and the member count. */
 export function GroupHero({ group }: { group: WritingGroup }) {
+  const t = useT().groups.hero;
   return (
     <header className="theme-dark app-band grid items-center gap-6 p-6 text-ink sm:grid-cols-[auto_minmax(0,1fr)] md:p-8">
       <GroupSeal group={group} size="lg" className="rm-cover-enter" />
       <div className="grid min-w-0 content-start gap-3">
         <p className="text-sm text-ink-muted">
-          {group.visibility === "publik" ? "Grup publik" : "Grup privat"}
+          {group.visibility === "publik" ? t.publicGroup : t.privateGroup}
         </p>
         <h1 className="rm-rise-in font-serif text-3xl leading-tight wrap-anywhere md:text-[40px]">
           {group.name}
@@ -86,7 +88,8 @@ export function GroupHero({ group }: { group: WritingGroup }) {
             <CountUp value={group.members.length} />
           </span>
           <span className="text-sm text-ink-soft">
-            <span className="sr-only">{group.members.length} </span>anggota
+            <span className="sr-only">{group.members.length} </span>
+            {t.members}
           </span>
         </p>
         {group.description && (

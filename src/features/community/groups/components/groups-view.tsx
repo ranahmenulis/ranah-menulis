@@ -12,6 +12,7 @@ import { BackShell } from "@/features/kelola/components/back-shell";
 import { useEffectiveRoles } from "@/features/kelola/use-effective-roles";
 import { isPlatformAdmin } from "@/lib/roles";
 
+import { format, useT } from "@/lib/i18n/provider";
 import { useViewer } from "@/lib/viewer";
 import { adminGroupHref, groupHref, groupsFor, type WritingGroup } from "../group-model";
 import { writingGroups } from "../group-store";
@@ -27,6 +28,7 @@ function GroupList({
   groups: readonly WritingGroup[];
   admin?: boolean;
 }) {
+  const t = useT().groups.list;
   return (
     <ul className="divide-y divide-line border-y border-line">
       {groups.map((group, index) => (
@@ -47,8 +49,9 @@ function GroupList({
               {group.name}
             </TextLink>
             <p className="text-sm text-ink-muted">
-              {group.visibility === "publik" ? "Publik" : "Privat"} · {group.members.length} anggota
-              {admin && !group.members.some((member) => member.admin) && " · Belum ada Admin Grup"}
+              {group.visibility === "publik" ? t.public : t.private} ·{" "}
+              {format(t.members, { count: String(group.members.length) })}
+              {admin && !group.members.some((member) => member.admin) && ` · ${t.noAdmin}`}
             </p>
             {group.description && <p className="text-sm wrap-anywhere">{group.description}</p>}
           </div>
@@ -67,6 +70,7 @@ function PublicDirectory({
   reader: string | null;
   onCode: () => void;
 }) {
+  const t = useT().groups.list;
   const guest = useViewer() === "tamu";
   const mine = groupsFor(groups, reader);
   const discoverable = groups.filter(
@@ -78,7 +82,7 @@ function PublicDirectory({
       {reader && (
         <section aria-labelledby="my-groups" className="grid gap-3">
           <h2 id="my-groups" className="heading-md">
-            Grup saya
+            {t.mine}
           </h2>
           {mine.length > 0 ? (
             <GroupList groups={mine} />
@@ -87,18 +91,18 @@ function PublicDirectory({
               art="readingTogether"
               action={
                 <Button variant="secondary" onClick={onCode}>
-                  Gabung dengan kode
+                  {t.joinWithCode}
                 </Button>
               }
             >
-              Kamu belum bergabung dengan grup.
+              {t.none}
             </EmptyState>
           )}
         </section>
       )}
       <section aria-labelledby="public-groups" className="grid gap-3">
         <h2 id="public-groups" className="heading-md">
-          Grup publik
+          {t.publicTitle}
         </h2>
         {discoverable.length > 0 ? (
           <GroupList groups={discoverable} />
@@ -106,17 +110,16 @@ function PublicDirectory({
           <EmptyState
             action={
               <ButtonLink href={HOME_HREF} variant="secondary">
-                Kembali ke Beranda
+                {t.toHome}
               </ButtonLink>
             }
           >
-            Belum ada grup publik lain.
+            {t.noPublic}
           </EmptyState>
         )}
         {!reader && (
           <p className="text-sm text-ink-muted">
-            Akun aktif diperlukan untuk membuat atau bergabung dengan grup.{" "}
-            {guest && <SignInButton variant="text">Masuk</SignInButton>}
+            {t.needAccount} {guest && <SignInButton variant="text">{t.signIn}</SignInButton>}
           </p>
         )}
       </section>
@@ -125,6 +128,7 @@ function PublicDirectory({
 }
 
 export function GroupsView({ admin = false }: { admin?: boolean }) {
+  const t = useT().groups.list;
   const router = useRouter();
   const groups = writingGroups.use();
   const ready = useHydrated();
@@ -140,19 +144,21 @@ export function GroupsView({ admin = false }: { admin?: boolean }) {
   return (
     <BackShell
       back={
-        admin ? { href: "/kelola/admin", label: "Admin" } : { href: HOME_HREF, label: "Beranda" }
+        admin
+          ? { href: "/kelola/admin", label: t.backAdmin }
+          : { href: HOME_HREF, label: t.backHome }
       }
     >
       <header className="flex flex-wrap items-start justify-between gap-4">
-        <h1 className="heading-lg">{admin ? "Kelola Grup Penulis" : "Grup Penulis"}</h1>
+        <h1 className="heading-lg">{admin ? t.titleAdmin : t.title}</h1>
         {reader && (!admin || platform) && (
           <div className="flex flex-wrap gap-2">
             {!admin && (
               <Button variant="secondary" onClick={() => setDialog("code")}>
-                Masukkan kode
+                {t.enterCode}
               </Button>
             )}
-            <Button onClick={() => setDialog("create")}>Buat grup</Button>
+            <Button onClick={() => setDialog("create")}>{t.create}</Button>
           </div>
         )}
       </header>
@@ -163,10 +169,10 @@ export function GroupsView({ admin = false }: { admin?: boolean }) {
           groups.length > 0 ? (
             <GroupList groups={groups} admin />
           ) : (
-            <EmptyState>Belum ada grup.</EmptyState>
+            <EmptyState>{t.empty}</EmptyState>
           )
         ) : (
-          <Notice>Hanya Administrator dan Super Admin yang bisa membuka daftar ini.</Notice>
+          <Notice>{t.adminOnly}</Notice>
         )
       ) : (
         <PublicDirectory groups={groups} reader={reader} onCode={() => setDialog("code")} />

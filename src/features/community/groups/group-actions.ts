@@ -1,7 +1,7 @@
 import { appendAudit, type NewAuditEntry } from "@/features/kelola/audit/audit-log";
 import { personById } from "@/features/kelola/admin/people";
 import { suspensions } from "@/features/kelola/admin/role-store";
-import { reasonMessage, validateReason } from "@/features/kelola/reason";
+import { validateReason } from "@/features/kelola/reason";
 import { readEffectiveRoles } from "@/features/kelola/use-effective-roles";
 import { isPlatformAdmin } from "@/lib/roles";
 import {
@@ -11,14 +11,27 @@ import {
   type GroupInput,
   type WritingGroup,
 } from "./group-model";
+import { groupMessage, type GroupCode } from "./group-messages";
 import { writingGroups } from "./group-store";
 import { readGroupReader } from "./group-viewer";
 
-export type GroupResult = { ok: boolean; message: string };
-export const refuseGroup = (message: string): GroupResult => ({ ok: false, message });
-const done = (message: string): GroupResult => ({ ok: true, message });
-const blocked = () => refuseGroup("Kamu tidak punya akses untuk melakukan tindakan ini.");
-const unavailable = () => refuseGroup("Grup ini tidak tersedia.");
+/** `code` is what screens translate; `message` is the Indonesian default for the same code. */
+export type GroupResult = { ok: boolean; message: string; code: GroupCode };
+export const refuseGroup = (code: GroupCode): GroupResult => ({
+  ok: false,
+  code,
+  message: groupMessage(code),
+});
+export const doneGroup = (code: GroupCode): GroupResult => ({
+  ok: true,
+  code,
+  message: groupMessage(code),
+});
+const done = doneGroup;
+const blocked = () => refuseGroup("blocked");
+const unavailable = () => refuseGroup("unavailable");
+const reasonCode = (issue: "kosong" | "terlalu-panjang"): GroupCode =>
+  issue === "kosong" ? "reasonEmpty" : "reasonTooLong";
 const newCode = () => crypto.randomUUID().replaceAll("-", "").slice(0, 12).toUpperCase();
 
 function groupActor() {
@@ -84,12 +97,10 @@ export function saveGroup(
         group.description !== original.description ||
         group.visibility !== original.visibility
       ) {
-        return refuseGroup(
-          "Pengaturan grup sudah berubah. Buka ulang formulir untuk melihat perubahan terbaru.",
-        );
+        return refuseGroup("groupChanged");
       }
       saveGroupChange(groups, { ...group, ...fields }, authorId, { action: "group.update" });
-      return { ...done("Perubahan grup disimpan."), id: group.id };
+      return { ...done("saved"), id: group.id };
     });
   }
 
@@ -105,11 +116,10 @@ export function saveGroup(
     hiddenPosts: [],
   };
   saveGroupChange(writingGroups.read(), group, authorId, { action: "group.create" });
-  return { ...done("Grup dibuat."), id: group.id };
+  return { ...done("created"), id: group.id };
 }
 
 type JoinMethod = { type: "public" } | { type: "code"; value: string } | { type: "invite" };
-const invalidCode = "Kode undangan tidak berlaku. Minta kode terbaru dari Admin Grup.";
 
 function permitsJoin(group: WritingGroup, authorId: string, method: JoinMethod) {
   if (method.type === "code") return group.code === method.value;
@@ -120,11 +130,9 @@ function permitsJoin(group: WritingGroup, authorId: string, method: JoinMethod) 
 export function joinGroup(id: string, method: JoinMethod): GroupResult {
   return changeGroup(id, (group, groups, { authorId }) => {
     if (!permitsJoin(group, authorId, method)) {
-      return refuseGroup(
-        method.type === "code" ? invalidCode : "Undangan atau grup tidak tersedia.",
-      );
+      return refuseGroup(method.type === "code" ? "invalidCode" : "inviteUnavailable");
     }
-    if (memberOf(group, authorId)) return done("Kamu sudah menjadi anggota.");
+    if (memberOf(group, authorId)) return done("alreadyMember");
     const member = { authorId, membershipId: crypto.randomUUID(), admin: false };
     saveGroupChange(
       groups,
@@ -136,7 +144,7 @@ export function joinGroup(id: string, method: JoinMethod): GroupResult {
       authorId,
       { action: "group.join", targetId: authorId },
     );
-    return done("Kamu bergabung dengan grup.");
+    return done("joined");
   });
 }
 
@@ -144,7 +152,7 @@ export function joinByCode(raw: string): GroupResult & { id?: string } {
   if (!readGroupReader()) return blocked();
   const value = raw.trim().toUpperCase();
   const group = value && writingGroups.read().find((item) => item.code === value);
-  if (!group) return refuseGroup(invalidCode);
+  if (!group) return refuseGroup("invalidCode");
   const result = joinGroup(group.id, { type: "code", value });
   return result.ok ? { ...result, id: group.id } : result;
 }
@@ -157,7 +165,7 @@ export function declineInvite(id: string) {
       { ...group, invites: group.invites.filter((invite) => invite.authorId !== authorId) },
       authorId,
     );
-    return done("Undangan ditolak.");
+    return done("inviteDeclined");
   });
 }
 
@@ -165,10 +173,10 @@ export function inviteToGroup(id: string, targetId: string) {
   return changeGroup(id, (group, groups, { authorId, platform }) => {
     if (!canManageGroup(group, authorId, platform)) return blocked();
     if (!personById(targetId) || suspensions.read().some((item) => item.userId === targetId)) {
-      return refuseGroup("Penulis ini tidak tersedia.");
+      return refuseGroup("authorUnavailable");
     }
     if (memberOf(group, targetId) || group.invites.some((item) => item.authorId === targetId)) {
-      return refuseGroup("Penulis ini sudah menjadi anggota atau sudah diundang.");
+      return refuseGroup("alreadyInvited");
     }
     saveGroupChange(
       groups,
@@ -176,7 +184,7 @@ export function inviteToGroup(id: string, targetId: string) {
       authorId,
       { action: "group.invite", targetId },
     );
-    return done("Undangan ditambahkan.");
+    return done("inviteAdded");
   });
 }
 
@@ -184,20 +192,20 @@ export function rotateGroupCode(id: string) {
   return changeGroup(id, (group, groups, { authorId, platform }) => {
     if (!canManageGroup(group, authorId, platform)) return blocked();
     saveGroupChange(groups, { ...group, code: newCode() }, authorId, { action: "group.code" });
-    return done("Kode diganti. Kode lama tidak berlaku.");
+    return done("codeRotated");
   });
 }
 
 export function removeGroupMember(id: string, targetId: string, reason?: string) {
   return changeGroup(id, (group, groups, { authorId, platform }) => {
     const member = memberOf(group, targetId);
-    if (!member) return refuseGroup("Penulis ini sudah tidak menjadi anggota.");
+    if (!member) return refuseGroup("notMemberAnymore");
     const leaving = authorId === targetId;
     if (!leaving && (!canManageGroup(group, authorId, platform) || (member.admin && !platform))) {
       return blocked();
     }
     const issue = leaving ? null : validateReason(reason ?? "", true);
-    if (issue) return refuseGroup(reasonMessage[issue]);
+    if (issue) return refuseGroup(reasonCode(issue));
     saveGroupChange(
       groups,
       {
@@ -208,7 +216,7 @@ export function removeGroupMember(id: string, targetId: string, reason?: string)
       authorId,
       { action: leaving ? "group.leave" : "group.remove", targetId, reason: reason?.trim() },
     );
-    return done(leaving ? "Kamu keluar dari grup." : "Anggota dikeluarkan.");
+    return done(leaving ? "left" : "removed");
   });
 }
 
@@ -216,11 +224,10 @@ export function setGroupAdmin(id: string, targetId: string, admin: boolean, reas
   return changeGroup(id, (group, groups, { authorId, platform }) => {
     if (!platform) return blocked();
     const member = memberOf(group, targetId);
-    if (!member || member.admin === admin)
-      return refuseGroup("Keanggotaan atau peran sudah berubah.");
+    if (!member || member.admin === admin) return refuseGroup("roleChanged");
     // [usulan Q-48] Only platform admins appoint or revoke a group admin.
     const issue = admin ? null : validateReason(reason ?? "", true);
-    if (issue) return refuseGroup(reasonMessage[issue]);
+    if (issue) return refuseGroup(reasonCode(issue));
     saveGroupChange(
       groups,
       {
@@ -234,6 +241,6 @@ export function setGroupAdmin(id: string, targetId: string, admin: boolean, reas
         reason: reason?.trim(),
       },
     );
-    return done(admin ? "Admin Grup ditunjuk." : "Peran Admin Grup dicabut.");
+    return done(admin ? "adminGranted" : "adminRevoked");
   });
 }

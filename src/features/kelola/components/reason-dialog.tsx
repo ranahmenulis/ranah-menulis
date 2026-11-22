@@ -4,7 +4,8 @@ import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Field, Textarea, describedBy } from "@/components/ui/field";
-import { REASON_LIMIT, reasonMessage, validateReason, type ReasonProblem } from "../reason";
+import { format, useLocale, useT } from "@/lib/i18n/provider";
+import { REASON_LIMIT, validateReason, type ReasonProblem } from "../reason";
 
 /**
  * Asks for the note a reviewer writes before a decision the participant is told about (PRD 10.5,
@@ -14,7 +15,7 @@ import { REASON_LIMIT, reasonMessage, validateReason, type ReasonProblem } from 
 export function ReasonDialog({
   title,
   hint,
-  fieldLabel = "Alasan",
+  fieldLabel,
   required = true,
   confirmLabel,
   emptyMessage,
@@ -33,15 +34,20 @@ export function ReasonDialog({
   onConfirm: (reason: string) => void;
   onClose: () => void;
 }) {
+  const t = useT().common.reasonDialog;
+  const locale = useLocale();
+  const limit = REASON_LIMIT.toLocaleString(locale === "en" ? "en-US" : "id-ID");
   const [text, setText] = useState("");
   const [problem, setProblem] = useState<ReasonProblem | null>(null);
   const field = useRef<HTMLTextAreaElement>(null);
   const error =
     problem === "kosong" && emptyMessage
       ? emptyMessage
-      : problem
-        ? reasonMessage[problem]
-        : undefined;
+      : problem === "kosong"
+        ? t.empty
+        : problem
+          ? format(t.tooLong, { limit })
+          : undefined;
   const id = "alasan-keputusan";
 
   function submit() {
@@ -60,7 +66,7 @@ export function ReasonDialog({
       actions={
         <>
           <Button variant="secondary" onClick={onClose} disabled={busy}>
-            Batal
+            {t.cancel}
           </Button>
           <Button onClick={submit} loading={busy}>
             {confirmLabel}
@@ -70,9 +76,9 @@ export function ReasonDialog({
     >
       <Field
         id={id}
-        label={fieldLabel}
+        label={fieldLabel ?? t.field}
         optional={!required}
-        hint={`Paling banyak ${REASON_LIMIT.toLocaleString("id-ID")} karakter.`}
+        hint={format(t.limit, { limit })}
         error={error}
       >
         <Textarea
