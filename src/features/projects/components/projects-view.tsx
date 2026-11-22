@@ -3,9 +3,9 @@
 import { useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import { Button, ButtonLink } from "@/components/ui/button";
+import { format, useLocale, useT } from "@/lib/i18n/provider";
 import { EmptyState } from "@/components/ui/states";
 import {
-  CATEGORIES,
   DEFAULT_FILTERS,
   categoryLabel,
   filterProjects,
@@ -36,6 +36,8 @@ type Props = {
  * while no filter narrows it.
  */
 export function ProjectsView({ source }: Props) {
+  const t = useT().projectsCatalog;
+  const locale = useLocale();
   const data = useProjects(source);
 
   // The address is the source of truth. Next keeps the previous page mounted (cacheComponents),
@@ -64,17 +66,17 @@ export function ProjectsView({ source }: Props) {
 
   if (data.status === "loading") return <ProjectsSkeleton />;
 
-  const description = CATEGORIES.find((c) => c.id === filters.category)?.description;
+  const description = t.categories[filters.category].description;
   const narrowed = narrowedBy(filters);
 
   return (
     <div className="mx-auto max-w-260">
       <div className="flex items-center justify-between gap-4">
         <h1 className="text-[28px] leading-9 font-bold tracking-[-0.02em] md:text-[40px] md:leading-[48px]">
-          Projects
+          {t.view.title}
         </h1>
         <ButtonLink href={MY_PROJECTS_HREF} variant="text" size="sm" className="text-ink">
-          Proyek saya
+          {t.view.mine}
         </ButtonLink>
       </div>
 
@@ -83,7 +85,7 @@ export function ProjectsView({ source }: Props) {
 
       {/* The empty state below already says it on screen; this line is for screen readers then. */}
       <p role="status" className={list.length === 0 ? "sr-only" : "mt-5 text-sm text-ink-muted"}>
-        {list.length === 0 ? "Tidak ada proyek" : `${list.length} proyek`}
+        {list.length === 0 ? t.view.none : format(t.view.count, { n: String(list.length) })}
       </p>
 
       {list.length === 0 ? (
@@ -94,20 +96,20 @@ export function ProjectsView({ source }: Props) {
                 variant="secondary"
                 onClick={() => change({ ...filters, state: "semua", fee: "semua" })}
               >
-                Hapus penyaring
+                {t.view.clearFilters}
               </Button>
             ) : filters.category !== "semua" ? (
               <Button variant="secondary" onClick={() => change(DEFAULT_FILTERS)}>
-                Lihat semua Projects
+                {t.view.seeAll}
               </Button>
             ) : undefined
           }
         >
           {narrowed
-            ? "Tidak ada proyek yang cocok dengan penyaring ini."
+            ? t.view.noMatch
             : filters.category !== "semua"
-              ? `Belum ada proyek ${categoryLabel(filters.category)} yang dibuka.`
-              : "Belum ada proyek yang dibuka."}
+              ? format(t.view.noneInCategory, { category: categoryLabel(filters.category, locale) })
+              : t.view.noneOpen}
         </EmptyState>
       ) : (
         <>

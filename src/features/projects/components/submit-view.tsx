@@ -6,13 +6,14 @@ import {
   ARCHIVE_HREF,
   isActiveDocument,
   isArchivedDocument,
-  RESTORE_ARCHIVED_MESSAGE,
+  restoreArchivedMessage,
 } from "@/features/studio/document-archive";
 import Link from "next/link";
 import { useDocumentList } from "@/features/studio/hooks/use-document-list";
 import type { DocumentStore, StudioDocument } from "@/features/studio/storage/document-store";
 import { studioStore } from "@/features/studio/storage/store";
 import type { FileStore } from "@/lib/files/file-store";
+import { useLocale, useT } from "@/lib/i18n/provider";
 import { useViewer } from "@/lib/viewer";
 import { liveRegistration } from "../payment-model";
 import { useRegistrations } from "../registration-store";
@@ -47,12 +48,14 @@ type Props = {
 };
 
 function ArchivedSourceNotice({ id, docs }: { id: string | null; docs: StudioDocument[] }) {
+  const t = useT().projectsFlow.submit;
+  const locale = useLocale();
   if (!id || !docs.some((doc) => doc.id === id && isArchivedDocument(doc))) return null;
   return (
     <Notice>
-      {RESTORE_ARCHIVED_MESSAGE}{" "}
+      {restoreArchivedMessage(locale)}{" "}
       <Link href={ARCHIVE_HREF} className="underline">
-        Buka Arsip
+        {t.openArchive}
       </Link>
     </Notice>
   );

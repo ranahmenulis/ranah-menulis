@@ -26,7 +26,7 @@ export function paymentNotifications(
       out.push({
         ...base,
         id: `bayar-${project.slug}-${registration.registeredAt}-lunas`,
-        text: `Pembayaran ${project.title} diterima. Kamu sudah terdaftar.`,
+        message: { key: "payPaid", params: { project: project.title } },
         href: projectHref(project.slug),
         at: registration.paidAt,
       });
@@ -34,7 +34,7 @@ export function paymentNotifications(
       out.push({
         ...base,
         id: `bayar-${project.slug}-${registration.registeredAt}-habis`,
-        text: `Waktu pembayaran ${project.title} habis. Pendaftarannya berakhir dan kuotanya dibuka lagi.`,
+        message: { key: "payExpired", params: { project: project.title } },
         href: projectHref(project.slug),
         at: paymentDueAt(registration),
       });
@@ -42,7 +42,14 @@ export function paymentNotifications(
       out.push({
         ...base,
         id: `bayar-${project.slug}-${registration.registeredAt}-menunggu`,
-        text: `Pembayaran ${project.title} menunggu. Kuotamu ditahan sampai ${formatProjectDateTime(paymentDueAt(registration), project.timeZone)}.`,
+        message: {
+          key: "payWaiting",
+          params: {
+            project: project.title,
+            due: formatProjectDateTime(paymentDueAt(registration), project.timeZone),
+            dueEn: formatProjectDateTime(paymentDueAt(registration), project.timeZone, "en"),
+          },
+        },
         href: payHref(project.slug),
         at: registration.registeredAt,
       });

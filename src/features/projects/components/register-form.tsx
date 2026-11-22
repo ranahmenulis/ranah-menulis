@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { fill } from "@/features/studio/copy/fill";
+import { useLocale, useT } from "@/lib/i18n/provider";
 import { Button } from "@/components/ui/button";
 import { CheckChoice, RadioChoice } from "@/components/ui/choice";
 import { isFreeMoney, categoryLabel, moneyLabel } from "../project-model";
@@ -9,16 +11,6 @@ import { canRegister, registrationFee } from "../registration-model";
 import type { Project, ProjectState } from "../types";
 import { Section } from "./category-blocks";
 import { ProjectStrip } from "./project-strip";
-
-/**
- * The two statements every project shares, from the PRD (BR-PRJ-03: the author keeps the copyright
- * unless project terms say otherwise; BR-PRJ-02: terms of use and publication). Sample wording, not
- * legal text [konfirmasi Q-21].
- */
-const BASE_TERMS = [
-  "Hak cipta karyamu tetap padamu, kecuali ketentuan khusus di bawah menyatakan lain secara eksplisit.",
-  "Karya yang kamu kirim adalah karyamu sendiri, atau kamu berhak mengirimkannya.",
-];
 
 type Props = {
   project: Project;
@@ -37,6 +29,8 @@ function Row({ label, children }: { label: string; children: React.ReactNode }) 
 
 /** Registration form (PRJ-02): summary, package (Solo), terms to accept, and the one button. */
 export function RegisterForm({ project, state, onSubmit }: Props) {
+  const t = useT().projectsFlow.register.form;
+  const locale = useLocale();
   const [agreed, setAgreed] = useState(false);
   const [packageName, setPackageName] = useState<string | undefined>();
   const fee = registrationFee(project, packageName);
@@ -54,25 +48,21 @@ export function RegisterForm({ project, state, onSubmit }: Props) {
     >
       <header className="grid gap-6">
         <ProjectStrip project={project} />
-        <h1 className="heading-lg">Daftar</h1>
+        <h1 className="heading-lg">{t.title}</h1>
       </header>
 
-      <Section title="Ringkasan">
+      <Section title={t.summary}>
         <dl>
-          <Row label="Kategori">{categoryLabel(project.category)}</Row>
-          <Row label="Biaya">{moneyLabel(fee)}</Row>
-          <Row label="Pendaftaran">{deadlineText(project, state)}</Row>
+          <Row label={t.category}>{categoryLabel(project.category, locale)}</Row>
+          <Row label={t.fee}>{moneyLabel(fee, locale)}</Row>
+          <Row label={t.registration}>{deadlineText(project, state, locale)}</Row>
         </dl>
-        {paid && (
-          <p className="text-sm text-ink-muted">
-            Biaya dibayar lewat QRIS setelah mendaftar; kuotamu ditahan 2 jam.
-          </p>
-        )}
+        {paid && <p className="text-sm text-ink-muted">{t.paidNote}</p>}
       </Section>
 
       {project.block.kind === "solo" && (
         <fieldset className="grid gap-3">
-          <legend className="mb-3 heading-md">Pilih paket</legend>
+          <legend className="mb-3 heading-md">{t.choosePackage}</legend>
           {project.block.packages.map((pack) => (
             <RadioChoice
               key={pack.name}
@@ -81,19 +71,19 @@ export function RegisterForm({ project, state, onSubmit }: Props) {
               checked={packageName === pack.name}
               onChange={() => setPackageName(pack.name)}
               label={<span className="wrap-anywhere">{pack.name}</span>}
-              hint={`${moneyLabel(pack.fee)} · ${pack.includes.join(", ")}`}
+              hint={`${moneyLabel(pack.fee, locale)} · ${pack.includes.join(", ")}`}
             />
           ))}
         </fieldset>
       )}
 
-      <Section title="Ketentuan">
+      <Section title={t.terms}>
         <ul className="grid list-disc gap-1.5 pl-5 text-base marker:text-ink-muted">
-          {BASE_TERMS.map((text) => (
+          {t.baseTerms.map((text) => (
             <li key={text}>{text}</li>
           ))}
         </ul>
-        <h3 className="mt-2 text-sm font-semibold">Ketentuan khusus proyek</h3>
+        <h3 className="mt-2 text-sm font-semibold">{t.specialHeading}</h3>
         {project.terms.special.length > 0 ? (
           <ul className="grid list-disc gap-1.5 pl-5 text-base marker:text-ink-muted">
             {project.terms.special.map((text, i) => (
@@ -103,16 +93,18 @@ export function RegisterForm({ project, state, onSubmit }: Props) {
             ))}
           </ul>
         ) : (
-          <p className="text-base">Proyek ini tidak punya ketentuan khusus.</p>
+          <p className="text-base">{t.noSpecial}</p>
         )}
-        <p className="text-xs text-ink-muted">Versi ketentuan {project.terms.version}</p>
+        <p className="text-xs text-ink-muted">
+          {fill(t.version, { version: String(project.terms.version) })}
+        </p>
       </Section>
 
       <div className="grid gap-4">
         <CheckChoice
           checked={agreed}
           onChange={(event) => setAgreed(event.target.checked)}
-          label="Saya sudah membaca dan menyetujui ketentuan di atas."
+          label={t.agree}
         />
         <Button
           type="submit"
@@ -120,13 +112,11 @@ export function RegisterForm({ project, state, onSubmit }: Props) {
           aria-describedby={ready ? undefined : hintId}
           className="justify-self-start"
         >
-          Daftar
+          {t.submit}
         </Button>
         {!ready && (
           <p id={hintId} className="text-xs text-ink-muted">
-            {project.block.kind === "solo"
-              ? "Pilih paket dan setujui ketentuan untuk mendaftar."
-              : "Setujui ketentuan untuk mendaftar."}
+            {project.block.kind === "solo" ? t.hintSolo : t.hint}
           </p>
         )}
       </div>

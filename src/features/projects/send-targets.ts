@@ -1,3 +1,5 @@
+import type { Locale } from "@/lib/i18n/config";
+import { flowCopy } from "./copy/flow";
 import { activeSubmissions, submitBlock, type SubmitBlock } from "./submission-model";
 import { blockMessage } from "./submission-text";
 import type { Submission } from "./submission-types";
@@ -7,16 +9,17 @@ import type { Project, RegistrationMap } from "./types";
 export type SendTarget = { project: Project; reason: string | null };
 
 /** Short wording for the dialog; the three other blocks cannot happen for a registered project. */
-function reasonOf(block: SubmitBlock, project: Project): string {
+function reasonOf(block: SubmitBlock, project: Project, locale: Locale): string {
+  const text = flowCopy(locale).sendTargets;
   switch (block) {
     case "menunggu-pembayaran":
-      return "Menunggu pembayaran";
+      return text.waiting;
     case "ditutup":
-      return "Pengiriman ditutup";
+      return text.closed;
     case "batas-tercapai":
-      return "Batas karya tercapai";
+      return text.limit;
     default:
-      return blockMessage(block, project.submission);
+      return blockMessage(block, project.submission, locale);
   }
 }
 
@@ -32,8 +35,9 @@ export function sendTargets(input: {
   docId: string | null;
   now: number;
   guest: boolean;
+  locale?: Locale;
 }): SendTarget[] {
-  const { projects, registrations, submissions, docId, now, guest } = input;
+  const { projects, registrations, submissions, docId, now, guest, locale = "id" } = input;
   if (guest) return [];
   return projects
     .filter((p) => p.publication === "terbit" && p.submission && registrations[p.slug])
@@ -48,8 +52,8 @@ export function sendTargets(input: {
       });
       if (block === null) {
         const dup = docId !== null && mine.some((s) => s.docId === docId);
-        return { project, reason: dup ? "Dokumen ini sudah dikirim ke sini" : null };
+        return { project, reason: dup ? flowCopy(locale).sendTargets.duplicate : null };
       }
-      return { project, reason: reasonOf(block, project) };
+      return { project, reason: reasonOf(block, project, locale) };
     });
 }

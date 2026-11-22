@@ -11,7 +11,7 @@ export async function generateMetadata(): Promise<Metadata> {
 /** Thin route: registrations and submissions are read on this device by a client component. */
 export default function Page() {
   return (
-    <Suspense fallback={<MySkeleton label="Memuat Proyek saya" />}>
+    <Suspense fallback={<MySkeleton kind="mine" />}>
       <MyProjectsView />
     </Suspense>
   );

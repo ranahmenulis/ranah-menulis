@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { textOf } from "@/features/notifications/notification-text";
 import { paymentNotifications } from "@/features/projects/payment-notifications";
 import { HOLD_MS } from "@/features/projects/payment-model";
 import { NOW, project, registration } from "./helpers";
@@ -10,7 +11,7 @@ const waiting = registration(slug, { status: "menunggu-pembayaran", registeredAt
 describe("paymentNotifications", () => {
   it("tells that payment waits, pointing to the payment page", () => {
     const [n] = paymentNotifications(projects, { [slug]: waiting }, NOW + 1000);
-    expect(n.text).toMatch(/menunggu/);
+    expect(textOf(n)).toMatch(/menunggu/);
     expect(n.href).toBe(`/projects/${slug}/bayar`);
     expect(n.at).toBe(NOW);
   });
@@ -20,13 +21,13 @@ describe("paymentNotifications", () => {
     const result = paymentNotifications(projects, { [slug]: paid }, NOW + 9000);
     expect(result).toHaveLength(1);
     expect(result[0]).toMatchObject({ at: NOW + 5000, href: `/projects/${slug}` });
-    expect(result[0].text).toMatch(/diterima/);
+    expect(textOf(result[0])).toMatch(/diterima/);
   });
 
   it("tells that the hold ran out, with a new id so it is a new event", () => {
     const [waitingN] = paymentNotifications(projects, { [slug]: waiting }, NOW);
     const [expired] = paymentNotifications(projects, { [slug]: waiting }, NOW + HOLD_MS);
-    expect(expired.text).toMatch(/habis/);
+    expect(textOf(expired)).toMatch(/habis/);
     expect(expired.id).not.toBe(waitingN.id);
     expect(expired.at).toBe(NOW + HOLD_MS);
   });

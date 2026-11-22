@@ -1,5 +1,8 @@
+"use client";
+
 import { Check, Hourglass, X } from "@phosphor-icons/react/dist/ssr";
 import { cn } from "@/lib/cn";
+import { useT } from "@/lib/i18n/provider";
 
 export type SubmissionStatus =
   | "draf"
@@ -11,7 +14,8 @@ export type SubmissionStatus =
   | "ditolak"
   | "ditarik";
 
-const label: Record<SubmissionStatus, string> = {
+/** Indonesian labels, kept for non-React callers. */
+export const label: Record<SubmissionStatus, string> = {
   draf: "Draf",
   terkirim: "Terkirim",
   peninjauan: "Dalam Peninjauan",
@@ -39,7 +43,8 @@ type Props = {
 
 /** Monokrom: makin berisi, makin butuh tindakanmu. Label teks selalu ada. Ditolak bukan merah. */
 export function StatusSubmission({ status, outlineRevisi, filled, className }: Props) {
-  const text = label[status];
+  const labels = useT().projectsFlow.statusLabel;
+  const text = labels[status];
 
   if (status === "ditarik") {
     return <span className={cn("text-xs text-ink-muted", className)}>{text}</span>;

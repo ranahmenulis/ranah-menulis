@@ -1,18 +1,15 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { useLocale } from "@/lib/i18n/provider";
+import { problemText, type FileProblem } from "@/lib/files/problem-text";
 import type { StudioDocument } from "@/features/studio/storage/document-store";
 import type { FileStore } from "@/lib/files/file-store";
 import { saveUpload } from "@/lib/files/save-upload";
 import { fileStore } from "@/lib/files/store";
 import { loadDraft, saveDraft } from "../submission-draft";
-import {
-  initialForm,
-  validateSubmission,
-  type Problem,
-  type ProblemField,
-  type SubmitForm,
-} from "../submission-model";
+import { initialForm, validateSubmission, type SubmitForm } from "../submission-model";
+import { localizeProblem, type Problem, type ProblemField } from "../submission-problem";
 import { TITLE_LIMIT, type Submission } from "../submission-types";
 import type { SendResult } from "../submit-flow";
 import type { Project } from "../types";
@@ -35,6 +32,7 @@ type Input = {
  * check of the chosen document does. Nothing typed is ever cleared by a failure.
  */
 export function useSubmitForm({ project, now, docs, sent, documentId, files, onSend }: Input) {
+  const locale = useLocale();
   const [form, setForm] = useState(() =>
     initialForm({ project, draft: loadDraft(project.slug), docs, documentId }),
   );
@@ -44,16 +42,18 @@ export function useSubmitForm({ project, now, docs, sent, documentId, files, onS
   const [busy, setBusy] = useState(false);
   const [failed, setFailed] = useState(false);
   /** Why the last picked manuscript file was refused; shown beside the upload button. */
-  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [uploadProblem, setUploadProblem] = useState<FileProblem | null>(null);
   const [uploading, setUploading] = useState(false);
 
   const doc = docs.find((d) => d.id === form.docId) ?? null;
   const problems = validateSubmission({ project, form, doc, sent, now });
 
-  const shown = late.length > 0 ? late : attempted ? problems : [];
+  const shown = (late.length > 0 ? late : attempted ? problems : []).map((p) =>
+    localizeProblem(p, locale),
+  );
   const live =
     (form.docId !== null || form.upload !== null) && !shown.some((p) => p.field === "doc")
-      ? problems
+      ? problems.map((p) => localizeProblem(p, locale))
       : [];
   const errorOf = (field: ProblemField) =>
     [...shown, ...(field === "doc" ? live : [])].find((p) => p.field === field)?.message;
@@ -81,10 +81,10 @@ export function useSubmitForm({ project, now, docs, sent, documentId, files, onS
 
   async function pickFile(file: File) {
     setUploading(true);
-    setUploadError(null);
+    setUploadProblem(null);
     const saved = await saveUpload(file, "manuscript", files ?? fileStore());
     setUploading(false);
-    if (!saved.ok) return setUploadError(saved.message);
+    if (!saved.ok) return setUploadProblem(saved.problem);
     const { id, name, type, size } = saved.file;
     const current = form.title.trim();
     const follows = current === "" || current === doc?.title.trim().slice(0, TITLE_LIMIT);
@@ -97,7 +97,7 @@ export function useSubmitForm({ project, now, docs, sent, documentId, files, onS
   }
 
   function clearFile() {
-    setUploadError(null);
+    setUploadProblem(null);
     change({ upload: null });
   }
 
@@ -121,7 +121,7 @@ export function useSubmitForm({ project, now, docs, sent, documentId, files, onS
     pick,
     pickFile,
     clearFile,
-    uploadError,
+    uploadError: uploadProblem ? problemText(uploadProblem, "manuscript", locale) : null,
     uploading,
     submit,
     errorOf,

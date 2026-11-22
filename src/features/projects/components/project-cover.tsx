@@ -1,5 +1,8 @@
+"use client";
+
 import type { CSSProperties } from "react";
 import { cn } from "@/lib/cn";
+import { useLocale } from "@/lib/i18n/provider";
 import { coverOf, type Cover } from "../cover-model";
 import type { ProjectCategory, ProjectPoster } from "../types";
 import { PosterCover } from "./poster-cover";
@@ -168,7 +171,7 @@ export function ProjectCover({ project, showTitle = false, describe, className }
 }
 
 function GeneratedCover({ project, showTitle = false, className }: Props) {
-  const cover = coverOf(project);
+  const cover = coverOf(project, useLocale());
   const ink = cover.tone === "ink";
   return (
     <span

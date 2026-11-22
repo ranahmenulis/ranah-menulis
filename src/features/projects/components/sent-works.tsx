@@ -1,8 +1,10 @@
+"use client";
+
 import { StatusSubmission } from "@/components/ui/status-submission";
-import { versionSizeText } from "../submission-text";
+import { useLocale, useT } from "@/lib/i18n/provider";
 import { TextLink } from "@/components/ui/text-link";
 import { submissionHref } from "../submission-href";
-import { sentAtText } from "../submission-text";
+import { sentAtText, versionSizeText } from "../submission-text";
 import type { Submission } from "../submission-types";
 import { Section } from "./category-blocks";
 
@@ -11,9 +13,11 @@ import { Section } from "./category-blocks";
  * versions, revising, withdrawing).
  */
 export function SentWorks({ works }: { works: Submission[] }) {
+  const t = useT().projectsFlow.detail;
+  const locale = useLocale();
   if (works.length === 0) return null;
   return (
-    <Section title="Karya yang sudah kamu kirim">
+    <Section title={t.sentSection}>
       <ul>
         {works.map((work) => (
           <li
@@ -28,8 +32,8 @@ export function SentWorks({ works }: { works: Submission[] }) {
                 {work.title}
               </TextLink>
               <p className="text-xs wrap-anywhere text-ink-muted">
-                {work.docTitle} · {versionSizeText(work.versions.at(-1))} ·{" "}
-                {sentAtText(work.submittedAt)}
+                {work.docTitle} · {versionSizeText(work.versions.at(-1), locale)} ·{" "}
+                {sentAtText(work.submittedAt, locale)}
               </p>
             </div>
             <StatusSubmission status={work.status} />

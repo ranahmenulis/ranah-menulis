@@ -1,4 +1,6 @@
+import type { Locale } from "@/lib/i18n/config";
 import type { SubmissionStatus } from "@/components/ui/status-submission";
+import { flowCopy } from "./copy/flow";
 import type { StatusChange, Submission, SubmissionVersion } from "./submission-types";
 
 /** [usulan, Q-22 is unanswered] Two rounds of revision, seven days to send each. */
@@ -21,16 +23,10 @@ const NEXT: Record<SubmissionStatus, readonly SubmissionStatus[]> = {
 export const canMove = (from: SubmissionStatus, to: SubmissionStatus) => NEXT[from].includes(to);
 
 /** What the status means for the participant, in one sentence. */
-export const statusHint: Record<SubmissionStatus, string> = {
-  draf: "Kamu belum mengirim karya ini.",
-  terkirim: "Karyamu sudah diterima dan menunggu peninjau.",
-  peninjauan: "Karyamu sedang ditinjau.",
-  "perlu-revisi": "Editor meminta perbaikan. Baca catatannya, lalu kirim revisi sebelum tenggat.",
-  "revisi-terkirim": "Revisimu sudah terkirim dan menunggu peninjau.",
-  diterima: "Karyamu diterima.",
-  ditolak: "Karyamu tidak lolos.",
-  ditarik: "Kamu sudah menarik karya ini.",
-};
+export const statusHint: Record<SubmissionStatus, string> = flowCopy("id").statusHint;
+
+export const statusHintText = (status: SubmissionStatus, locale: Locale = "id"): string =>
+  flowCopy(locale).statusHint[status];
 
 /** Revisions the participant has sent so far. */
 export const revisionsSent = (s: Submission) =>
@@ -64,11 +60,10 @@ export function reviseBlock(s: Submission, now: number): ReviseBlock | null {
   return null;
 }
 
-export const reviseMessage: Record<ReviseBlock, string> = {
-  "bukan-perlu-revisi": "Revisi hanya bisa dikirim saat editor meminta perbaikan.",
-  "putaran-habis": "Batas putaran revisi sudah tercapai.",
-  "tenggat-lewat": "Tenggat revisi sudah lewat.",
-};
+export const reviseMessage: Record<ReviseBlock, string> = flowCopy("id").reviseBlocks;
+
+export const reviseMessageText = (block: ReviseBlock, locale: Locale = "id"): string =>
+  flowCopy(locale).reviseBlocks[block];
 
 function logged(s: Submission, status: SubmissionStatus, change: Omit<StatusChange, "status">) {
   return { ...s, status, statusLog: [...s.statusLog, { status, ...change }] };
@@ -132,5 +127,5 @@ export function withRevision(
 
 export function withWithdrawal(s: Submission, now: number): Submission | null {
   if (!canWithdraw(s)) return null;
-  return logged(s, "ditarik", { at: now, by: "peserta", reason: "Ditarik oleh peserta." });
+  return logged(s, "ditarik", { at: now, by: "peserta", reason: flowCopy("id").withdrawnReason });
 }

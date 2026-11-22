@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { versionSizeText } from "../submission-text";
+import { fill } from "@/features/studio/copy/fill";
+import { useLocale, useT } from "@/lib/i18n/provider";
 import { StatusSubmission } from "@/components/ui/status-submission";
 import { TextLink } from "@/components/ui/text-link";
 import { payHref } from "../payment-model";
@@ -11,43 +12,53 @@ import type { MyProject } from "../my-projects";
 import { submissionHref } from "../submission-href";
 import { kirimHref } from "../submission-model";
 import { revisionDueAt } from "../submission-status";
-import { sentAtText } from "../submission-text";
+import { sentAtText, versionSizeText } from "../submission-text";
 import type { Submission } from "../submission-types";
+import type { Locale } from "@/lib/i18n/config";
 import type { Project } from "../types";
 import { ProjectCover } from "./project-cover";
 
 /** The line under a work: how many versions, how long, when it was sent, and what is due. */
-function workMeta(work: Submission, project: Project): string {
+function workMeta(
+  work: Submission,
+  project: Project,
+  t: ReturnType<typeof useT>["projectsFlow"]["my"]["group"],
+  locale: Locale,
+): string {
   const last = work.versions.at(-1);
   const parts = [
-    work.versions.length > 1 ? `Versi ${work.versions.length}` : null,
-    versionSizeText(last),
-    `dikirim ${sentAtText(work.submittedAt)}`,
+    work.versions.length > 1 ? fill(t.version, { n: String(work.versions.length) }) : null,
+    versionSizeText(last, locale),
+    fill(t.sentAt, { at: sentAtText(work.submittedAt, locale) }),
   ];
   const due = revisionDueAt(work);
-  if (due !== null) parts.push(`tenggat revisi ${formatProjectDate(due, project.timeZone)}`);
+  if (due !== null) {
+    parts.push(fill(t.revisionDue, { date: formatProjectDate(due, project.timeZone, locale) }));
+  }
   return parts.filter(Boolean).join(" · ");
 }
 
 /** What a registration with no work says, and the way on when there is one. */
 function EmptyLine({ row }: { row: MyProject }) {
+  const t = useT().projectsFlow;
+  const g = t.my.group;
   const { project, registration } = row;
   if (!project.submission) {
     if (registration.status !== "terdaftar") {
       return (
         <p className="text-sm text-ink-muted">
-          Dasbor kelas terbuka setelah pembayaran selesai.{" "}
+          {g.classPayFirst}{" "}
           <TextLink href={payHref(project.slug)} className="text-ink underline">
-            Bayar sekarang
+            {t.common.payNow}
           </TextLink>
         </p>
       );
     }
     return (
       <p className="text-sm text-ink-muted">
-        Tugas kelas dikumpulkan di dasbor kelas.{" "}
+        {g.classTasks}{" "}
         <TextLink href={dashboardHref(project.slug)} className="text-ink underline">
-          Buka dasbor kelas
+          {g.openClass}
         </TextLink>
       </p>
     );
@@ -55,18 +66,18 @@ function EmptyLine({ row }: { row: MyProject }) {
   if (registration.status !== "terdaftar") {
     return (
       <p className="text-sm text-ink-muted">
-        Karya bisa dikirim setelah pembayaran selesai.{" "}
+        {g.sendAfterPay}{" "}
         <TextLink href={payHref(project.slug)} className="text-ink underline">
-          Bayar sekarang
+          {t.common.payNow}
         </TextLink>
       </p>
     );
   }
   return (
     <p className="text-sm text-ink-muted">
-      Belum ada karya terkirim.{" "}
+      {g.noWorks}{" "}
       <TextLink href={kirimHref(project.slug)} className="text-ink underline">
-        Kirim karya
+        {t.common.sendWork}
       </TextLink>
     </p>
   );
@@ -77,6 +88,8 @@ function EmptyLine({ row }: { row: MyProject }) {
  * registration, not a submission status, so the two are never mixed up (DESIGN.md 7.4).
  */
 export function MyProjectGroup({ row }: { row: MyProject }) {
+  const g = useT().projectsFlow.my.group;
+  const locale = useLocale();
   const { project, registration, works } = row;
   return (
     <section
@@ -86,8 +99,8 @@ export function MyProjectGroup({ row }: { row: MyProject }) {
       <ProjectCover project={project} className="row-span-2 self-start" />
       <div className="grid min-w-0 gap-1">
         <p className="text-xs text-ink-muted">
-          {categoryLabel(project.category)} ·{" "}
-          {registration.status === "terdaftar" ? "Terdaftar" : "Menunggu pembayaran"}
+          {categoryLabel(project.category, locale)} ·{" "}
+          {registration.status === "terdaftar" ? g.registered : g.waiting}
         </p>
         <h2 id={`saya-${project.slug}`} className="feed-title wrap-anywhere">
           <Link href={projectHref(project.slug)} className="text-ink no-underline hover:underline">
@@ -101,12 +114,12 @@ export function MyProjectGroup({ row }: { row: MyProject }) {
               href={soloDashboardHref(project.slug)}
               className="w-fit text-xs text-ink-muted"
             >
-              Buka dasbor penerbitan
+              {g.soloDashboard}
             </TextLink>
           )}
         {project.block.kind === "lomba" && (
           <TextLink href={resultsHref(project.slug)} className="w-fit text-xs text-ink-muted">
-            Lihat hasil lomba
+            {g.results}
           </TextLink>
         )}
       </div>
@@ -126,7 +139,9 @@ export function MyProjectGroup({ row }: { row: MyProject }) {
                 >
                   {work.title}
                 </TextLink>
-                <p className="text-xs wrap-anywhere text-ink-muted">{workMeta(work, project)}</p>
+                <p className="text-xs wrap-anywhere text-ink-muted">
+                  {workMeta(work, project, g, locale)}
+                </p>
               </div>
               <StatusSubmission status={work.status} />
             </li>

@@ -1,5 +1,9 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
+import { fill } from "@/features/studio/copy/fill";
+import { useT } from "@/lib/i18n/provider";
 
 /**
  * Withdrawing cannot be undone, so it says what stays and what goes before it happens. The danger
@@ -20,20 +24,21 @@ export function WithdrawDialog({
   onConfirm: () => void;
   onClose: () => void;
 }) {
+  const t = useT().projectsFlow.detail.withdrawDialog;
   return (
     <Dialog
       open={open}
       onClose={onClose}
       role="alertdialog"
-      title="Tarik karya ini?"
-      description={`“${title}” tidak akan ditinjau lagi di ${projectTitle} dan tidak bisa dikembalikan. Salinan yang sudah terkirim tetap tersimpan sebagai riwayat. Jatah karyamu terlepas, jadi kamu bisa mengirim dokumen lain atau dokumen yang sama.`}
+      title={t.title}
+      description={fill(t.body, { title, project: projectTitle })}
       actions={
         <>
           <Button variant="secondary" onClick={onClose} disabled={busy}>
-            Batal
+            {t.cancel}
           </Button>
           <Button variant="danger" onClick={onConfirm} loading={busy}>
-            Tarik karya
+            {t.confirm}
           </Button>
         </>
       }

@@ -1,12 +1,19 @@
+import type { Locale } from "@/lib/i18n/config";
+import { catalogCopy } from "./copy/catalog";
+import { formatNumber } from "./project-model";
 import { dashboardHref } from "./kelas/class-model";
 import { soloDashboardHref } from "./solo/solo-model";
 import { payHref, paymentState } from "./payment-model";
 import { registerAction, registerHref } from "./registration-model";
 import { kirimHref, submitAction, submitBlock } from "./submission-model";
-import { worksText } from "./submission-text";
 import type { Project, ProjectState, Registration } from "./types";
 
-const WAITING = { label: "Kirim karya", enabled: false };
+const sentLine = (n: number, maxWorks: number, locale: Locale) => {
+  const copy = catalogCopy(locale).action;
+  return copy.sentOf
+    .replace("{n}", String(n))
+    .replace("{works}", copy.works.replace("{n}", formatNumber(maxWorks, locale)));
+};
 
 export type ProjectAction = {
   label: string;
@@ -20,11 +27,12 @@ export type ProjectAction = {
 function classAction(
   project: Project,
   guest: boolean,
-  registration?: Registration,
+  registration: Registration | undefined,
+  locale: Locale,
 ): ProjectAction | null {
   if (guest || registration?.status !== "terdaftar" || project.block.kind !== "kelas") return null;
   return {
-    label: "Buka dasbor kelas",
+    label: catalogCopy(locale).action.openClassDashboard,
     enabled: true,
     href: dashboardHref(project.slug),
     sentLine: null,
@@ -37,14 +45,15 @@ function soloAction(
   guest: boolean,
   registration: Registration | undefined,
   sentCount: number | null,
+  locale: Locale,
 ): ProjectAction | null {
   if (guest || registration?.status !== "terdaftar" || project.block.kind !== "solo") return null;
   if (!sentCount) return null;
   return {
-    label: "Buka dasbor",
+    label: catalogCopy(locale).action.openDashboard,
     enabled: true,
     href: soloDashboardHref(project.slug),
-    sentLine: `${sentCount} dari ${worksText(project.submission?.maxWorks ?? 1)}`,
+    sentLine: sentLine(sentCount, project.submission?.maxWorks ?? 1, locale),
   };
 }
 
@@ -54,9 +63,11 @@ function dashboardAction(
   guest: boolean,
   registration: Registration | undefined,
   sentCount: number | null,
+  locale: Locale,
 ): ProjectAction | null {
   return (
-    classAction(project, guest, registration) ?? soloAction(project, guest, registration, sentCount)
+    classAction(project, guest, registration, locale) ??
+    soloAction(project, guest, registration, sentCount, locale)
   );
 }
 
@@ -69,6 +80,18 @@ function nextHref(
 ) {
   const paying = !guest && registration && paymentState(registration, now) === "menunggu";
   return paying ? payHref(project.slug) : registerHref(project.slug);
+}
+
+/** Until the count is known the button waits, so it never offers a send the limit would refuse. */
+function sendEntry(
+  block: ReturnType<typeof submitBlock>,
+  sentCount: number | null,
+  locale: Locale,
+) {
+  if (sentCount === null && block === null) {
+    return { label: catalogCopy(locale).action.sendWork, enabled: false };
+  }
+  return submitAction(block, locale);
 }
 
 /**
@@ -84,25 +107,24 @@ export function projectAction(input: {
   now: number;
   /** Works this reader sent here that still count against the limit; `null` while unknown. */
   sentCount: number | null;
+  locale?: Locale;
 }): ProjectAction {
-  const { project, state, guest, registration, now, sentCount } = input;
+  const { project, state, guest, registration, now, sentCount, locale = "id" } = input;
   const rules = project.submission;
-  const dashboardEntry = dashboardAction(project, guest, registration, sentCount);
+  const dashboardEntry = dashboardAction(project, guest, registration, sentCount, locale);
   if (dashboardEntry) return dashboardEntry;
   const sending = !guest && registration && rules ? { registration, rules } : null;
   const block = sending
     ? submitBlock({ project, guest, registration, now, sent: sentCount ?? 0 })
     : null;
-  // Until the count is known the button waits, so it never offers a send the limit would refuse.
-  const waiting = sentCount === null && block === null;
-  const send = sending ? (waiting ? WAITING : submitAction(block)) : null;
-  const action = send ?? registerAction(state, guest, registration, now);
+  const send = sending ? sendEntry(block, sentCount, locale) : null;
+  const action = send ?? registerAction(state, guest, registration, now, locale);
   return {
     ...action,
     href: send ? kirimHref(project.slug) : nextHref(project, guest, registration, now),
     sentLine:
       sending?.registration.status === "terdaftar"
-        ? `${sentCount ?? 0} dari ${worksText(sending.rules.maxWorks)}`
+        ? sentLine(sentCount ?? 0, sending.rules.maxWorks, locale)
         : null,
   };
 }

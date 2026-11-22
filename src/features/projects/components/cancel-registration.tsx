@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
+import { fill } from "@/features/studio/copy/fill";
+import { useLocale, useT } from "@/lib/i18n/provider";
 import { canOfferCancel, cancelMessage } from "../cancel-model";
 import { cancelOwnRegistration } from "../cancel-flow";
 import type { AssignmentStore } from "../kelas/storage/assignment-store";
@@ -13,6 +15,7 @@ import type { Project, Registration } from "../types";
 
 /** Said after cancelling. The cancel button is gone by then, so this line takes the focus. */
 export function CancelledNotice() {
+  const t = useT().projectsFlow.cancel;
   const ref = useRef<HTMLParagraphElement>(null);
   useEffect(() => {
     const frame = requestAnimationFrame(() => ref.current?.focus());
@@ -25,7 +28,7 @@ export function CancelledNotice() {
       tabIndex={-1}
       className="bg-subtle px-4 py-3 text-sm text-ink outline-none"
     >
-      Pendaftaranmu dibatalkan. Kuota dilepas, dan kamu bisa mendaftar lagi selama masih ada tempat.
+      {t.notice}
     </p>
   );
 }
@@ -54,6 +57,8 @@ export function CancelRegistration({
   submissions = submissionStore,
   assignments = assignmentStore,
 }: Props) {
+  const t = useT().projectsFlow.cancel;
+  const locale = useLocale();
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
@@ -72,11 +77,7 @@ export function CancelRegistration({
       onCancelled?.();
       return;
     }
-    setMessage(
-      result.kind === "blocked"
-        ? cancelMessage(result.block)
-        : "Pendaftaran gagal dibatalkan. Coba lagi sebentar lagi.",
-    );
+    setMessage(result.kind === "blocked" ? cancelMessage(result.block, locale) : t.failed);
   }
 
   return (
@@ -89,7 +90,7 @@ export function CancelRegistration({
           setOpen(true);
         }}
       >
-        Batalkan pendaftaran
+        {t.button}
       </Button>
       {message && (
         <p role="status" className="text-sm text-ink">
@@ -100,15 +101,15 @@ export function CancelRegistration({
         open={open}
         onClose={() => setOpen(false)}
         role="alertdialog"
-        title="Batalkan pendaftaran?"
-        description={`Pendaftaranmu di ${project.title} dicabut dan kuotamu dilepas. Kamu bisa mendaftar lagi selama kuota dan tenggat masih ada.`}
+        title={t.dialogTitle}
+        description={fill(t.dialogBody, { title: project.title })}
         actions={
           <>
             <Button variant="secondary" onClick={() => setOpen(false)} disabled={busy}>
-              Tetap terdaftar
+              {t.keep}
             </Button>
             <Button variant="danger" onClick={confirm} loading={busy}>
-              Batalkan pendaftaran
+              {t.button}
             </Button>
           </>
         }

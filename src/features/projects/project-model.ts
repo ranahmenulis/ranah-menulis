@@ -1,4 +1,7 @@
 import { PROJECTS_HREF } from "@/features/app-shell/nav";
+import type { Locale } from "@/lib/i18n/config";
+import { formatDate, formatNumber as formatLocaleNumber } from "@/lib/i18n/format";
+import { catalogCopy } from "./copy/catalog";
 import type {
   CategoryFilter,
   FeeFilter,
@@ -40,55 +43,26 @@ export function startOfDay(timestamp: number, zone: TimeZoneName): number {
   return dayNumber(timestamp, zone) * DAY - ZONES[zone].hours * HOUR;
 }
 
-export const CATEGORIES: { id: CategoryFilter; label: string; description: string }[] = [
-  {
-    id: "semua",
-    label: "Semua",
-    description: "Program untuk menulis, berkolaborasi, berkompetisi, dan menerbitkan buku.",
-  },
-  {
-    id: "antologi",
-    label: "Antologi",
-    description:
-      "Satu buku bertema dari banyak penulis. Naskahmu diseleksi, direvisi bersama editor, lalu masuk produksi.",
-  },
-  {
-    id: "solo",
-    label: "Solo",
-    description: "Menerbitkan satu bukumu sendiri, dari penyuntingan sampai produksi.",
-  },
-  {
-    id: "kelas",
-    label: "Kelas Menulis",
-    description: "Kelas, workshop, dan mentoring menulis dengan tugas dan umpan balik dari mentor.",
-  },
-  {
-    id: "lomba",
-    label: "Lomba",
-    description:
-      "Kompetisi menulis dengan tenggat, penjurian berkriteria, dan pengumuman pemenang.",
-  },
-];
+const ID_COPY = catalogCopy("id");
 
-export const STATE_FILTERS: { id: StateFilter; label: string }[] = [
-  { id: "semua", label: "Semua status" },
-  { id: "buka", label: "Buka" },
-  { id: "segera-tutup", label: "Segera tutup" },
-  { id: "ditutup", label: "Ditutup" },
-];
+export const CATEGORIES: { id: CategoryFilter; label: string; description: string }[] = (
+  ["semua", "antologi", "solo", "kelas", "lomba"] as const
+).map((id) => ({ id, ...ID_COPY.categories[id] }));
 
-export const FEE_FILTERS: { id: FeeFilter; label: string }[] = [
-  { id: "semua", label: "Semua biaya" },
-  { id: "gratis", label: "Gratis" },
-  { id: "berbayar", label: "Berbayar" },
-];
+export const STATE_FILTERS: { id: StateFilter; label: string }[] = (
+  ["semua", "buka", "segera-tutup", "ditutup"] as const
+).map((id) => ({ id, label: ID_COPY.stateFilters[id] }));
+
+export const FEE_FILTERS: { id: FeeFilter; label: string }[] = (
+  ["semua", "gratis", "berbayar"] as const
+).map((id) => ({ id, label: ID_COPY.feeFilters[id] }));
 
 export const DEFAULT_FILTERS: Filters = { category: "semua", state: "semua", fee: "semua" };
 
 export const projectHref = (slug: string) => `${PROJECTS_HREF}/${slug}`;
 
-export function categoryLabel(id: ProjectCategory): string {
-  return CATEGORIES.find((c) => c.id === id)?.label ?? id;
+export function categoryLabel(id: ProjectCategory, locale: Locale = "id"): string {
+  return catalogCopy(locale).categories[id]?.label ?? id;
 }
 
 /**
@@ -129,31 +103,37 @@ export function quotaLeft(project: Project): number | null {
   return Math.max(0, project.quota.total - project.quota.taken);
 }
 
-/** 1234567 → "1.234.567", like every other count in the app. */
-export const formatNumber = (n: number): string => n.toLocaleString("id-ID");
+/** 1234567 → "1.234.567" (id) or "1,234,567" (en), like every other count in the app. */
+export const formatNumber = (n: number, locale: Locale = "id"): string =>
+  formatLocaleNumber(n, locale);
 
-/** Rupiah as "Rp12.500.000"; ringgit from sen as "RM25" or "RM25,50". */
-export function formatMoney(amount: number, currency: "idr" | "myr"): string {
-  if (currency === "idr") return `Rp${formatNumber(amount)}`;
+/** Rupiah as "Rp12.500.000"; ringgit from sen as "RM25" or "RM25,50" ("RM25.50" in English). */
+export function formatMoney(
+  amount: number,
+  currency: "idr" | "myr",
+  locale: Locale = "id",
+): string {
+  if (currency === "idr") return `Rp${formatNumber(amount, locale)}`;
   const whole = Math.floor(amount / 100);
   const sen = amount % 100;
+  const point = locale === "en" ? "." : ",";
   return sen === 0
-    ? `RM${formatNumber(whole)}`
-    : `RM${formatNumber(whole)},${String(sen).padStart(2, "0")}`;
+    ? `RM${formatNumber(whole, locale)}`
+    : `RM${formatNumber(whole, locale)}${point}${String(sen).padStart(2, "0")}`;
 }
 
 /** Currencies that have a price above zero, rupiah first; empty means free. */
-function moneyParts(fee: Money): string[] {
+function moneyParts(fee: Money, locale: Locale = "id"): string[] {
   return [
-    fee.idr !== undefined && fee.idr > 0 ? formatMoney(fee.idr, "idr") : null,
-    fee.myr !== undefined && fee.myr > 0 ? formatMoney(fee.myr, "myr") : null,
+    fee.idr !== undefined && fee.idr > 0 ? formatMoney(fee.idr, "idr", locale) : null,
+    fee.myr !== undefined && fee.myr > 0 ? formatMoney(fee.myr, "myr", locale) : null,
   ].filter((v): v is string => v !== null);
 }
 
 /** "Rp75.000 · RM25", or "Gratis" when nothing is charged. */
-export function moneyLabel(fee: Money): string {
-  const parts = moneyParts(fee);
-  return parts.length > 0 ? parts.join(" · ") : "Gratis";
+export function moneyLabel(fee: Money, locale: Locale = "id"): string {
+  const parts = moneyParts(fee, locale);
+  return parts.length > 0 ? parts.join(" · ") : catalogCopy(locale).fee.free;
 }
 
 /** What the page charges: the cheapest paid package for Solo (a starting price), else the fee. */
@@ -177,40 +157,57 @@ export function isFree(project: Project): boolean {
 }
 
 /** One entry per currency that has a price, rupiah first. Empty when the project is free. */
-export function feeLines(project: Project): string[] {
-  return moneyParts(effectiveFee(project));
+export function feeLines(project: Project, locale: Locale = "id"): string[] {
+  return moneyParts(effectiveFee(project), locale);
 }
 
-export function feeLabel(project: Project): string {
-  if (isFree(project)) return "Gratis";
-  return `${project.block.kind === "solo" ? "Mulai dari " : ""}${feeLines(project).join(" · ")}`;
+export function feeLabel(project: Project, locale: Locale = "id"): string {
+  const copy = catalogCopy(locale);
+  if (isFree(project)) return copy.fee.free;
+  const prefix = project.block.kind === "solo" ? `${copy.fee.startingFrom} ` : "";
+  return `${prefix}${feeLines(project, locale).join(" · ")}`;
 }
 
 /** "25 Nov 2026" in the project's own zone, so the deadline reads the same for everyone (BR-PRJ-04). */
-export function formatProjectDate(timestamp: number, zone: TimeZoneName): string {
-  return new Intl.DateTimeFormat("id-ID", {
+export function formatProjectDate(
+  timestamp: number,
+  zone: TimeZoneName,
+  locale: Locale = "id",
+): string {
+  return formatDate(timestamp, locale, {
     timeZone: ZONES[zone].iana,
     day: "numeric",
     month: "short",
     year: "numeric",
-  }).format(timestamp);
+  });
 }
 
 /** "25 Nov 2026, 14.30" in the project's zone: a payment hold ends at a time, not a day. */
-export function formatProjectDateTime(timestamp: number, zone: TimeZoneName): string {
-  return new Intl.DateTimeFormat("id-ID", {
+export function formatProjectDateTime(
+  timestamp: number,
+  zone: TimeZoneName,
+  locale: Locale = "id",
+): string {
+  return formatDate(timestamp, locale, {
     timeZone: ZONES[zone].iana,
     day: "numeric",
     month: "short",
     year: "numeric",
     hour: "2-digit",
     minute: "2-digit",
-  }).format(timestamp);
+    hourCycle: "h23",
+  });
 }
 
-export function daysLeftLabel(closesAt: number, now: number, zone: TimeZoneName): string {
+export function daysLeftLabel(
+  closesAt: number,
+  now: number,
+  zone: TimeZoneName,
+  locale: Locale = "id",
+): string {
+  const copy = catalogCopy(locale).daysLeft;
   const days = Math.max(0, daysLeft(closesAt, now, zone));
-  return days === 0 ? "Hari ini hari terakhir" : `${days} hari lagi`;
+  return days === 0 ? copy.lastDay : copy.days.replace("{n}", String(days));
 }
 
 /** Buka still counts a project that is closing soon; Ditutup counts a full one (BR-PRJ-04). */

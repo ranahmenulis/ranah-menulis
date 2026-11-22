@@ -5,7 +5,7 @@ import { ErrorBanner, RetryButton } from "@/components/ui/states";
 import { StatusSubmission } from "@/components/ui/status-submission";
 import { TextLink } from "@/components/ui/text-link";
 import { cn } from "@/lib/cn";
-import { format, useT } from "@/lib/i18n/provider";
+import { format, useLocale, useT } from "@/lib/i18n/provider";
 import { useMyProjects, type MyProjectsData } from "@/features/projects/hooks/use-my-projects";
 import { ProjectCover } from "@/features/projects/components/project-cover";
 import { RunningClassList } from "@/features/projects/kelas/components/running-classes";
@@ -35,6 +35,7 @@ const MORE = "max-md:hidden";
  */
 export function Attention({ my }: { my: MyProjectsData }) {
   const t = useT().home.attention;
+  const locale = useLocale();
   const real: Item[] =
     my.status === "ready"
       ? revisionItems(my.rows).map(({ project, work }) => {
@@ -42,14 +43,14 @@ export function Attention({ my }: { my: MyProjectsData }) {
           return {
             key: `revisi-${work.id}`,
             title: format(t.revisionTitle, { work: work.title }),
-            meta: `${project.title}${due ? ` · ${format(t.revisionDue, { date: formatProjectDate(due, project.timeZone) })}` : ""}`,
+            meta: `${project.title}${due ? ` · ${format(t.revisionDue, { date: formatProjectDate(due, project.timeZone, locale) })}` : ""}`,
             action: { label: t.readNotes, href: submissionHref(work.slug, work.id) },
           };
         })
       : [];
   const paying: Item[] =
     my.status === "ready"
-      ? paymentItems(my.rows, my.now).map(({ project, href, remaining }) => ({
+      ? paymentItems(my.rows, my.now, locale).map(({ project, href, remaining }) => ({
           key: `bayar-${project.slug}`,
           title: format(t.payTitle, { project: project.title }),
           meta: format(t.payMeta, { remaining }),

@@ -1,8 +1,12 @@
+"use client";
+
 import { Button, ButtonLink } from "@/components/ui/button";
 import { versionSizeText } from "../submission-text";
 import { StatusSubmission } from "@/components/ui/status-submission";
 import { TextLink } from "@/components/ui/text-link";
 import { STUDIO_HREF } from "@/features/app-shell/nav";
+import { fill } from "@/features/studio/copy/fill";
+import { useLocale, useT } from "@/lib/i18n/provider";
 import { projectHref } from "../project-model";
 import { sentAtText } from "../submission-text";
 import type { Submission } from "../submission-types";
@@ -22,23 +26,25 @@ export function SubmitDone({
   canSendMore: boolean;
   onSendMore: () => void;
 }) {
+  const t = useT().projectsFlow;
+  const locale = useLocale();
   const version = submission.versions[0];
   return (
     <SubmitShell slug={project.slug}>
       <MilestoneHero
         project={project}
-        title="Karyamu terkirim."
+        title={t.submit.done.title}
         celebrate
         actions={
           <>
-            <ButtonLink href={projectHref(project.slug)}>Lihat proyek</ButtonLink>
+            <ButtonLink href={projectHref(project.slug)}>{t.common.viewProject}</ButtonLink>
             {canSendMore && (
               <Button variant="secondary" onClick={onSendMore}>
-                Kirim karya lain
+                {t.submit.done.more}
               </Button>
             )}
             <TextLink href={STUDIO_HREF} className="text-sm text-ink-muted">
-              Kembali ke Studio
+              {t.submit.done.studio}
             </TextLink>
           </>
         }
@@ -48,10 +54,11 @@ export function SubmitDone({
         </p>
         <StatusSubmission status={submission.status} />
         <p className="text-sm text-ink-soft">
-          Yang terkirim adalah salinan beku {version?.file ? "berkasmu" : "dokumenmu"}:{" "}
-          {versionSizeText(version)}, dibekukan{" "}
-          {sentAtText(version?.frozenAt ?? submission.submittedAt)}. Mengedit dokumen di Studio
-          tidak mengubahnya.
+          {fill(t.submit.done.frozen, {
+            what: version?.file ? t.submit.done.fileWhat : t.submit.done.docWhat,
+            size: versionSizeText(version, locale),
+            at: sentAtText(version?.frozenAt ?? submission.submittedAt, locale),
+          })}
         </p>
       </MilestoneHero>
     </SubmitShell>

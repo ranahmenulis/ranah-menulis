@@ -1,12 +1,14 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { useLocale } from "@/lib/i18n/provider";
+import { problemText, type FileProblem } from "@/lib/files/problem-text";
 import { saveUpload } from "@/lib/files/save-upload";
 import { fileStore } from "@/lib/files/store";
 import type { StudioDocument } from "@/features/studio/storage/document-store";
 import { revisionProblems } from "../revision-model";
 import type { ReviseResult } from "../revise-flow";
-import type { Problem } from "../submission-model";
+import { localizeProblem, type Problem } from "../submission-problem";
 import type { Submission, VersionFile } from "../submission-types";
 import type { Project } from "../types";
 
@@ -25,6 +27,7 @@ type Input = {
  * check of the chosen document does. Nothing typed is ever cleared by a failure.
  */
 export function useReviseForm({ project, work, all, docs, now, onSend }: Input) {
+  const locale = useLocale();
   const [docId, setDocId] = useState<string | null>(() =>
     docs.some((d) => d.id === work.docId) ? work.docId : null,
   );
@@ -32,7 +35,7 @@ export function useReviseForm({ project, work, all, docs, now, onSend }: Input) 
   const [upload, setUpload] = useState<VersionFile | null>(
     () => work.versions.at(-1)?.file ?? null,
   );
-  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [uploadProblem, setUploadProblem] = useState<FileProblem | null>(null);
   const [uploading, setUploading] = useState(false);
   const [note, setNote] = useState("");
   const [attempted, setAttempted] = useState(false);
@@ -43,10 +46,14 @@ export function useReviseForm({ project, work, all, docs, now, onSend }: Input) 
 
   const doc = docs.find((d) => d.id === docId) ?? null;
   const problems = revisionProblems({ project, work, docId, upload, note, doc, all, now });
-  const shown = late.length > 0 ? late : attempted ? problems : [];
+  const shown = (late.length > 0 ? late : attempted ? problems : []).map((p) =>
+    localizeProblem(p, locale),
+  );
   // Once a document is chosen its own problem (too short, too long) shows without waiting.
   const live =
-    (docId !== null || upload !== null) && !shown.some((p) => p.field === "doc") ? problems : [];
+    (docId !== null || upload !== null) && !shown.some((p) => p.field === "doc")
+      ? problems.map((p) => localizeProblem(p, locale))
+      : [];
 
   const messageOf = (field: Problem["field"]) =>
     [...shown, ...(field === "doc" ? live : [])].find((p) => p.field === field)?.message;
@@ -70,7 +77,7 @@ export function useReviseForm({ project, work, all, docs, now, onSend }: Input) 
     note,
     upload,
     uploading,
-    uploadError,
+    uploadError: uploadProblem ? problemText(uploadProblem, "manuscript", locale) : null,
     pickDoc: (next: StudioDocument) => {
       setDocId(next.id);
       setUpload(null);
@@ -78,10 +85,10 @@ export function useReviseForm({ project, work, all, docs, now, onSend }: Input) 
     },
     pickFile: async (file: File) => {
       setUploading(true);
-      setUploadError(null);
+      setUploadProblem(null);
       const saved = await saveUpload(file, "manuscript", fileStore());
       setUploading(false);
-      if (!saved.ok) return setUploadError(saved.message);
+      if (!saved.ok) return setUploadProblem(saved.problem);
       const { id, name, type, size } = saved.file;
       setUpload({ fileId: id, name, type, size });
       setDocId(null);
@@ -89,7 +96,7 @@ export function useReviseForm({ project, work, all, docs, now, onSend }: Input) 
     },
     clearFile: () => {
       setUpload(null);
-      setUploadError(null);
+      setUploadProblem(null);
       setLate([]);
     },
     changeNote: (value: string) => {

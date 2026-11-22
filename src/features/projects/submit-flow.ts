@@ -7,10 +7,9 @@ import {
   activeSubmissions,
   newSubmission,
   validateSubmission,
-  type Problem,
   type SubmitForm,
 } from "./submission-model";
-import { blockMessage } from "./submission-text";
+import { makeProblem, type Problem } from "./submission-problem";
 import { clearDraft } from "./submission-draft";
 import type { SubmissionStore } from "./storage/submission-store";
 import { uploadDocId, type Submission } from "./submission-types";
@@ -46,7 +45,7 @@ export async function sendSubmission(input: SendInput): Promise<SendResult> {
     if (registration.status !== "terdaftar") {
       return {
         kind: "invalid",
-        problems: [{ field: "limit", message: blockMessage("menunggu-pembayaran", null) }],
+        problems: [makeProblem("limit", "waitingPayment")],
       };
     }
     const sent = activeSubmissions(await store.list(), project.slug);
@@ -60,8 +59,7 @@ export async function sendSubmission(input: SendInput): Promise<SendResult> {
     if (form.upload) {
       const bytes = await readStoredBytes(files, form.upload.fileId);
       if (!bytes) {
-        const message = "Berkas yang kamu unggah tidak ditemukan lagi. Unggah ulang berkasnya.";
-        return { kind: "invalid", problems: [{ field: "doc", message }] };
+        return { kind: "invalid", problems: [makeProblem("doc", "fileMissing")] };
       }
       source = { id: uploadDocId(form.upload.fileId), title: form.upload.name };
       version = freezeFile(form.upload, bytes, now);
@@ -83,13 +81,12 @@ export async function sendSubmission(input: SendInput): Promise<SendResult> {
     });
     const verdict = await store.add(submission, project.submission.maxWorks);
     if (verdict === "duplicate") {
-      const message = "Dokumen ini sudah dikirim ke proyek ini.";
-      return { kind: "invalid", problems: [{ field: "doc", message }] };
+      return { kind: "invalid", problems: [makeProblem("doc", "docSent")] };
     }
     if (verdict === "limit") {
       return {
         kind: "invalid",
-        problems: [{ field: "limit", message: blockMessage("batas-tercapai", project.submission) }],
+        problems: [makeProblem("limit", "limit", { n: project.submission.maxWorks })],
       };
     }
     clearDraft(project.slug);

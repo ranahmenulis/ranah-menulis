@@ -3,9 +3,10 @@
 import Link from "next/link";
 import { useRef, type CSSProperties } from "react";
 import { cn } from "@/lib/cn";
+import { useLocale } from "@/lib/i18n/provider";
 import { revealDelay, useRevealOnce } from "@/lib/use-reveal-once";
 import { categoryLabel, feeLabel, projectHref, projectState } from "../project-model";
-import { deadlineText, quotaText, stateLabel } from "../project-text";
+import { deadlineText, quotaText, stateLabelOf } from "../project-text";
 import type { Project } from "../types";
 import { ProjectCover } from "./project-cover";
 
@@ -18,10 +19,11 @@ type Props = { project: Project; now: number; index: number };
  * is plain text, not a pill, so it is never mistaken for a submission status (7.4).
  */
 export function ProjectTile({ project, now, index }: Props) {
+  const locale = useLocale();
   const ref = useRef<HTMLElement>(null);
   const seen = useRevealOnce(ref);
   const state = projectState(project, now);
-  const quota = quotaText(project);
+  const quota = quotaText(project, locale);
 
   return (
     <article
@@ -35,10 +37,10 @@ export function ProjectTile({ project, now, index }: Props) {
       <ProjectCover project={project} />
       <div className="grid min-w-0 gap-1">
         <p className="flex flex-wrap items-center gap-x-1.5 text-xs text-ink-muted">
-          <span className="font-medium text-ink">{categoryLabel(project.category)}</span>
+          <span className="font-medium text-ink">{categoryLabel(project.category, locale)}</span>
           <span aria-hidden>·</span>
           <span className={cn(state === "segera-tutup" && "font-semibold text-ink")}>
-            {stateLabel[state]}
+            {stateLabelOf(state, locale)}
           </span>
         </p>
         <h2 className="font-serif text-[17px] leading-6 font-semibold wrap-anywhere md:text-lg">
@@ -53,9 +55,9 @@ export function ProjectTile({ project, now, index }: Props) {
           {project.summary}
         </p>
         <p className="mt-0.5 flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-ink-muted">
-          <span className="font-medium text-ink tabular-nums">{feeLabel(project)}</span>
+          <span className="font-medium text-ink tabular-nums">{feeLabel(project, locale)}</span>
           {quota && <span>{quota}</span>}
-          <span>{deadlineText(project, state)}</span>
+          <span>{deadlineText(project, state, locale)}</span>
         </p>
       </div>
     </article>

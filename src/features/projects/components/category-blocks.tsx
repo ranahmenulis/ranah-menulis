@@ -2,6 +2,7 @@
 
 import { useRef, type CSSProperties, type ReactNode } from "react";
 import { cn } from "@/lib/cn";
+import { format, useLocale, useT } from "@/lib/i18n/provider";
 import { useRevealOnce } from "@/lib/use-reveal-once";
 import { moneyLabel } from "../project-model";
 import type { CategoryBlock } from "../types";
@@ -95,11 +96,13 @@ function Prizes({ prizes }: { prizes: string[] }) {
  * dashboard, and judging are separate steps and screens.
  */
 export function CategoryBlockView({ block }: { block: CategoryBlock }) {
+  const t = useT().projectsCatalog.blocks;
+  const locale = useLocale();
   if (block.kind === "antologi") {
     return (
-      <Section title="Alur seleksi dan produksi">
+      <Section title={t.antologiTitle}>
         <p className="font-serif text-xl leading-8 wrap-anywhere">
-          <span className="font-sans text-sm text-ink-muted">Tema </span>
+          <span className="font-sans text-sm text-ink-muted">{t.theme}</span>
           <span className="font-semibold">{block.theme}</span>
         </p>
         <Steps items={block.stages.map((stage) => ({ title: stage }))} />
@@ -109,7 +112,7 @@ export function CategoryBlockView({ block }: { block: CategoryBlock }) {
 
   if (block.kind === "solo") {
     return (
-      <Section title="Paket layanan">
+      <Section title={t.soloTitle}>
         <ul className="grid gap-3 sm:grid-cols-2">
           {block.packages.map((pack, i) => (
             <li
@@ -123,7 +126,7 @@ export function CategoryBlockView({ block }: { block: CategoryBlock }) {
                 {pack.name}
               </p>
               <p className="text-2xl leading-8 font-semibold tabular-nums">
-                {moneyLabel(pack.fee)}
+                {moneyLabel(pack.fee, locale)}
               </p>
               <ul className="grid gap-1 text-sm text-ink-soft">
                 {pack.includes.map((item, j) => (
@@ -142,7 +145,7 @@ export function CategoryBlockView({ block }: { block: CategoryBlock }) {
 
   if (block.kind === "kelas") {
     return (
-      <Section title="Pengajar dan kurikulum">
+      <Section title={t.kelasTitle}>
         <div className="flex items-center gap-4 bg-subtle p-4">
           <span
             aria-hidden
@@ -159,11 +162,11 @@ export function CategoryBlockView({ block }: { block: CategoryBlock }) {
           items={block.modules.map((module, i) => ({
             title: (
               <>
-                <span className="sr-only">Modul {i + 1}. </span>
+                <span className="sr-only">{format(t.moduleSr, { n: String(i + 1) })}</span>
                 {module.title}
               </>
             ),
-            meta: `${module.meetings} pertemuan`,
+            meta: format(t.meetings, { n: String(module.meetings) }),
           }))}
         />
       </Section>
@@ -171,18 +174,13 @@ export function CategoryBlockView({ block }: { block: CategoryBlock }) {
   }
 
   return (
-    <Section title="Kriteria dan hadiah">
+    <Section title={t.lombaTitle}>
       <Weights criteria={block.criteria} />
       <div className="mt-2 grid gap-3 border-t border-line pt-5">
-        <h3 className="text-sm font-medium text-ink-muted">Hadiah</h3>
+        <h3 className="text-sm font-medium text-ink-muted">{t.prizes}</h3>
         <Prizes prizes={block.prizes} />
       </div>
-      {block.anonymous && (
-        <p className="text-sm text-ink-muted">
-          Penilaian anonim: nama dan profil peserta disembunyikan dari juri sampai penilaian
-          ditutup.
-        </p>
-      )}
+      {block.anonymous && <p className="text-sm text-ink-muted">{t.anonymous}</p>}
     </Section>
   );
 }

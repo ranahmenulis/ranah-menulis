@@ -1,3 +1,5 @@
+import type { Locale } from "@/lib/i18n/config";
+import { flowCopy } from "./copy/flow";
 import { isFreeMoney } from "./project-model";
 import { registrationFee } from "./registration-model";
 import type { ContestStage } from "./lomba/types";
@@ -41,16 +43,5 @@ export function cancelBlock(input: {
   return null;
 }
 
-const MESSAGES: Record<CancelBlock, string> = {
-  "tidak-ada": "Pendaftaranmu sudah tidak ada.",
-  berbayar: "Pendaftaran proyek berbayar belum bisa dibatalkan.",
-  "menunggu-pembayaran": "Pendaftaran yang menunggu pembayaran belum bisa dibatalkan.",
-  "tidak-terbit": "Proyek ini sedang tidak terbit, jadi pendaftarannya tidak bisa diubah.",
-  "ada-kiriman":
-    "Kamu masih punya karya terkirim di proyek ini. Tarik karyamu dulu di halaman kiriman, lalu batalkan pendaftaran.",
-  "ada-tugas":
-    "Kamu sudah mengumpulkan tugas di kelas ini, jadi pendaftaran tidak bisa dibatalkan.",
-  "lomba-dinilai": "Lomba ini sudah masuk penilaian, jadi pendaftaran tidak bisa dibatalkan.",
-};
-
-export const cancelMessage = (block: CancelBlock): string => MESSAGES[block];
+export const cancelMessage = (block: CancelBlock, locale: Locale = "id"): string =>
+  flowCopy(locale).cancel.blocks[block];

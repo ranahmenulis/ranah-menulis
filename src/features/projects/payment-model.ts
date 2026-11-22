@@ -1,3 +1,6 @@
+import type { Locale } from "@/lib/i18n/config";
+import { fill } from "@/features/studio/copy/fill";
+import { flowCopy } from "./copy/flow";
 import { moneyLabel, projectHref } from "./project-model";
 import type { Money, Registration, RegistrationMap } from "./types";
 
@@ -47,15 +50,18 @@ export function payableIdr(fee: Money): number | null {
   return idr !== undefined && idr > 0 ? idr : null;
 }
 
-export const idrLabel = (amount: number): string => moneyLabel({ idr: amount });
+export const idrLabel = (amount: number, locale: Locale = "id"): string =>
+  moneyLabel({ idr: amount }, locale);
 
 /** "sisa 5 jam 12 menit" until the hold ends; minutes are rounded up so it never shows 0 early. */
-export function remainingLabel(dueAt: number, now: number): string {
+export function remainingLabel(dueAt: number, now: number, locale: Locale = "id"): string {
+  const text = flowCopy(locale).remaining;
   const minutes = Math.max(1, Math.ceil((dueAt - now) / 60000));
   const hours = Math.floor(minutes / 60);
   const rest = minutes % 60;
-  if (hours === 0) return `sisa ${rest} menit`;
-  return rest === 0 ? `sisa ${hours} jam` : `sisa ${hours} jam ${rest} menit`;
+  const values = { h: String(hours), m: String(rest) };
+  if (hours === 0) return fill(text.minutes, values);
+  return fill(rest === 0 ? text.hours : text.hoursMinutes, values);
 }
 
 /** The registration unless its payment hold ran out: an expired one no longer counts anywhere. */

@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useLocale } from "@/lib/i18n/provider";
 import { cn } from "@/lib/cn";
 import { categoryLabel, projectHref } from "../project-model";
 import type { ProjectCategory } from "../types";
@@ -23,6 +26,7 @@ type Props = {
  */
 export function ProjectStrip({ project, titleAs = "p", linked = false, className }: Props) {
   const Title = titleAs;
+  const locale = useLocale();
   return (
     <div
       className={cn(
@@ -33,7 +37,7 @@ export function ProjectStrip({ project, titleAs = "p", linked = false, className
     >
       <ProjectCover project={project} className="w-12" />
       <div className="grid min-w-0 gap-0.5">
-        <p className="text-xs text-ink-muted">{categoryLabel(project.category)}</p>
+        <p className="text-xs text-ink-muted">{categoryLabel(project.category, locale)}</p>
         <Title
           className={cn(
             "wrap-anywhere",

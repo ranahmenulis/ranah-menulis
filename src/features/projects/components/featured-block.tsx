@@ -4,13 +4,16 @@ import { ArrowRight } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import { useRef } from "react";
 import { cn } from "@/lib/cn";
+import { useLocale, useT } from "@/lib/i18n/provider";
 import { useRevealOnce } from "@/lib/use-reveal-once";
 import { categoryLabel, feeLabel, projectHref, projectState } from "../project-model";
-import { deadlineText, stateLabel } from "../project-text";
+import { deadlineText, stateLabelOf } from "../project-text";
 import type { Project } from "../types";
 import { ProjectCover } from "./project-cover";
 
 function FeaturedBand({ project, now, wide }: { project: Project; now: number; wide: boolean }) {
+  const t = useT().projectsCatalog.featured;
+  const locale = useLocale();
   const ref = useRef<HTMLElement>(null);
   const seen = useRevealOnce(ref);
   const state = projectState(project, now);
@@ -27,8 +30,8 @@ function FeaturedBand({ project, now, wide }: { project: Project; now: number; w
     >
       <div className="grid min-w-0 gap-3">
         <p className="text-xs text-ink-muted">
-          <span className="font-medium text-ink">Unggulan</span> · {categoryLabel(project.category)}{" "}
-          · {stateLabel[state]}
+          <span className="font-medium text-ink">{t.label}</span> ·{" "}
+          {categoryLabel(project.category, locale)} · {stateLabelOf(state, locale)}
         </p>
         <h3
           className={cn(
@@ -45,10 +48,10 @@ function FeaturedBand({ project, now, wide }: { project: Project; now: number; w
         </h3>
         <p className="max-w-prose text-base wrap-anywhere text-ink-soft">{project.summary}</p>
         <p className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-ink-muted">
-          <span className="font-medium text-ink tabular-nums">{feeLabel(project)}</span>
-          <span>{deadlineText(project, state)}</span>
+          <span className="font-medium text-ink tabular-nums">{feeLabel(project, locale)}</span>
+          <span>{deadlineText(project, state, locale)}</span>
           <span className="inline-flex items-center gap-1 font-medium text-ink">
-            Lihat proyek
+            {t.view}
             <ArrowRight
               size={14}
               aria-hidden
@@ -76,11 +79,12 @@ export function FeaturedBlock({
   showsRest: boolean;
   now: number;
 }) {
+  const t = useT().projectsCatalog.featured;
   if (featured.length === 0) return null;
   return (
     <section aria-labelledby="unggulan-title" className="mt-6">
       <h2 id="unggulan-title" className="sr-only">
-        Unggulan
+        {t.label}
       </h2>
       <div className={cn("grid gap-4", featured.length > 1 && "lg:grid-cols-2")}>
         {featured.map((project) => (
@@ -92,7 +96,7 @@ export function FeaturedBlock({
           />
         ))}
       </div>
-      {showsRest && <h2 className="mt-12 heading-md">Semua proyek</h2>}
+      {showsRest && <h2 className="mt-12 heading-md">{t.all}</h2>}
     </section>
   );
 }

@@ -1,3 +1,5 @@
+import type { Locale } from "@/lib/i18n/config";
+import { flowCopy } from "./copy/flow";
 import { holdsSeat, paymentState } from "./payment-model";
 import { isFreeMoney, effectiveFee, projectHref } from "./project-model";
 import type { Money, Project, ProjectState, Registration, RegistrationMap } from "./types";
@@ -50,17 +52,19 @@ export function registerAction(
   guest: boolean,
   registration: Registration | undefined,
   now: number,
+  locale: Locale = "id",
 ): { label: string; enabled: boolean } {
+  const text = flowCopy(locale);
   if (!guest && registration) {
     const paying = paymentState(registration, now);
-    if (paying === "lunas") return { label: "Terdaftar", enabled: false };
-    if (paying === "menunggu") return { label: "Bayar sekarang", enabled: true };
+    if (paying === "lunas") return { label: text.action.registered, enabled: false };
+    if (paying === "menunggu") return { label: text.common.payNow, enabled: true };
     // The hold ran out: the seat is free again, so registering again is offered below.
   }
-  if (state === "kuota-penuh") return { label: "Kuota penuh", enabled: false };
-  if (state === "ditutup") return { label: "Pendaftaran ditutup", enabled: false };
-  if (guest) return { label: "Masuk untuk mendaftar", enabled: false };
-  return { label: "Daftar", enabled: true };
+  if (state === "kuota-penuh") return { label: text.action.full, enabled: false };
+  if (state === "ditutup") return { label: text.action.closed, enabled: false };
+  if (guest) return { label: text.action.signInToRegister, enabled: false };
+  return { label: text.action.register, enabled: true };
 }
 
 /**

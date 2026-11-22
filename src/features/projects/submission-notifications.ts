@@ -1,29 +1,34 @@
-import type { Notification } from "@/features/notifications/types";
+import type { Notification, NotificationMessage } from "@/features/notifications/types";
 import { projectFixtures } from "./fixtures/all-projects";
 import { formatProjectDate } from "./project-model";
 import { submissionHref } from "./submission-href";
 import type { StatusChange, Submission } from "./submission-types";
 import type { ProjectFixture } from "./types";
 
-function sentenceOf(
+function messageOf(
   change: StatusChange,
   work: Submission,
   project: ProjectFixture,
-): string | null {
-  const title = `“${work.title}”`;
+): NotificationMessage | null {
+  const params = { title: work.title, project: project.title };
   switch (change.status) {
     case "terkirim":
-      return `Karyamu ${title} untuk ${project.title} sudah diterima sistem.`;
-    case "perlu-revisi": {
-      const due = change.dueAt
-        ? ` Tenggat revisi ${formatProjectDate(change.dueAt, project.timeZone)}.`
-        : "";
-      return `Editor meminta revisi untuk ${title} di ${project.title}.${due}`;
-    }
+      return { key: "subReceived", params };
+    case "perlu-revisi":
+      return change.dueAt
+        ? {
+            key: "subRevisionDue",
+            params: {
+              ...params,
+              due: formatProjectDate(change.dueAt, project.timeZone),
+              dueEn: formatProjectDate(change.dueAt, project.timeZone, "en"),
+            },
+          }
+        : { key: "subRevision", params };
     case "diterima":
-      return `Karyamu ${title} diterima di ${project.title}.`;
+      return { key: "subAccepted", params };
     case "ditolak":
-      return `Karyamu ${title} tidak lolos di ${project.title}. Alasannya ada di detail kiriman.`;
+      return { key: "subRejected", params };
     default:
       return null;
   }
@@ -42,15 +47,15 @@ export function submissionNotifications(
     const project = catalog.find((p) => p.slug === work.slug);
     if (!project) return [];
     return work.statusLog.flatMap((change) => {
-      const text = sentenceOf(change, work, project);
-      if (!text) return [];
+      const message = messageOf(change, work, project);
+      if (!message) return [];
       return [
         {
           id: `sub-${work.id}-${change.status}-${change.at}`,
           kind: "project" as const,
           actorId: null,
           others: 0,
-          text,
+          message,
           href: submissionHref(work.slug, work.id),
           agoMs: 0,
           at: change.at,

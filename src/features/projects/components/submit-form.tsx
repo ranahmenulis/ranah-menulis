@@ -5,10 +5,13 @@ import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { CheckChoice } from "@/components/ui/choice";
 import { ErrorBanner, Notice } from "@/components/ui/states";
+import { fill } from "@/features/studio/copy/fill";
+import { useLocale, useT } from "@/lib/i18n/provider";
 import type { FileStore } from "@/lib/files/file-store";
 import type { StudioDocument } from "@/features/studio/storage/document-store";
 import { useSubmitForm } from "../hooks/use-submit-form";
-import { formatNumber, projectState } from "../project-model";
+import { formatNumber } from "@/lib/i18n/format";
+import { projectState } from "../project-model";
 import { deadlineText } from "../project-text";
 import { isAnonymousContest, wordsOf, type SubmitForm } from "../submission-model";
 import { wordRuleText, worksText } from "../submission-text";
@@ -53,6 +56,8 @@ export function SubmitFormScreen(props: Props) {
   const { project, now, docs, sent } = props;
   const rules = project.submission;
   const f = useSubmitForm(props);
+  const t = useT().projectsFlow.submit.form;
+  const locale = useLocale();
   if (!rules) return null;
 
   const docError = f.errorOf("doc");
@@ -62,27 +67,22 @@ export function SubmitFormScreen(props: Props) {
     <form className="grid gap-8" noValidate onSubmit={(e) => void f.submit(e)}>
       <header className="grid gap-2">
         <ProjectStrip project={project} className="mb-4" />
-        <h1 className="heading-lg">Kirim karya</h1>
+        <h1 className="heading-lg">{t.title}</h1>
         <p className="text-sm text-ink-muted">
-          Naskah {wordRuleText(rules)}. Kamu sudah mengirim {formatNumber(sent.length)} dari{" "}
-          {worksText(rules.maxWorks)}. {deadlineText(project, projectState(project, now))}.
+          {fill(t.rule, {
+            rule: wordRuleText(rules, locale),
+            sent: formatNumber(sent.length, locale),
+            works: worksText(rules.maxWorks, locale),
+            deadline: deadlineText(project, projectState(project, now), locale),
+          })}
         </p>
       </header>
 
-      {isAnonymousContest(project) && (
-        <Notice>
-          Penilaian lomba ini anonim. Jangan mencantumkan namamu di dalam isi karya; sistem tidak
-          bisa memeriksanya.
-        </Notice>
-      )}
-      {f.pickedGone && (
-        <Notice>Dokumen yang kamu pilih tidak tersedia lagi. Pilih dokumen lain di bawah.</Notice>
-      )}
+      {isAnonymousContest(project) && <Notice>{t.anonymous}</Notice>}
+      {f.pickedGone && <Notice>{t.pickedGone}</Notice>}
 
-      <Section title="Naskah">
-        <p className="text-sm text-ink-muted">
-          Yang dikirim adalah salinan beku dokumenmu pada saat kamu menekan Kirim.
-        </p>
+      <Section title={t.manuscript}>
+        <p className="text-sm text-ink-muted">{t.frozen}</p>
         <SubmitDocumentPicker
           docs={docs}
           value={f.form.docId}
@@ -102,7 +102,10 @@ export function SubmitFormScreen(props: Props) {
         )}
         {f.doc && !docError && (
           <p className="text-sm text-ink-muted">
-            {formatNumber(wordsOf(f.doc))} kata, sesuai batas {wordRuleText(rules)}.
+            {fill(t.wordsOk, {
+              words: formatNumber(wordsOf(f.doc), locale),
+              rule: wordRuleText(rules, locale),
+            })}
           </p>
         )}
         {docError && <ErrorLine id="kirim-doc-error">{docError}</ErrorLine>}
@@ -115,25 +118,20 @@ export function SubmitFormScreen(props: Props) {
           checked={f.form.agreed}
           onChange={(e) => f.change({ agreed: e.target.checked })}
           aria-describedby={agreedError ? "kirim-agreed-error" : undefined}
-          label="Saya menyatakan karya ini adalah karya saya sendiri, atau saya berhak mengirimkannya."
+          label={t.agree}
         />
         {agreedError && <ErrorLine id="kirim-agreed-error">{agreedError}</ErrorLine>}
-        {f.failed && (
-          <ErrorBanner>
-            Karya belum terkirim karena data di perangkat ini tidak bisa ditulis. Isianmu masih ada;
-            coba lagi sebentar lagi.
-          </ErrorBanner>
-        )}
+        {f.failed && <ErrorBanner>{t.writeFailed}</ErrorBanner>}
         {!f.failed && f.blocked && (
           <ErrorBanner>
-            Karya belum bisa dikirim.{" "}
-            {f.general.length > 0
-              ? f.general.map((p) => p.message).join(" ")
-              : "Periksa bagian yang ditandai di atas."}
+            {fill(t.blocked, {
+              detail:
+                f.general.length > 0 ? f.general.map((p) => p.message).join(" ") : t.checkAbove,
+            })}
           </ErrorBanner>
         )}
         <Button type="submit" loading={f.busy} className="justify-self-start">
-          Kirim karya
+          {t.submit}
         </Button>
       </div>
     </form>

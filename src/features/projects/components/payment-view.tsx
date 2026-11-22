@@ -1,5 +1,6 @@
 "use client";
 
+import { useT } from "@/lib/i18n/provider";
 import { useViewer } from "@/lib/viewer";
 import { isFreeMoney, projectState } from "../project-model";
 import { payableIdr, paymentState } from "../payment-model";
@@ -17,6 +18,7 @@ import { RegisterBlocked, RegisterSkeleton } from "./register-states";
  * and leaves a way back. The status of the registration decides the rest: waiting, paid, expired.
  */
 export function PaymentView({ slug, source }: { slug: string; source?: ProjectFixture[] }) {
+  const t = useT().projectsFlow.payment;
   const data = useProjects(source);
   const guest = useViewer() === "tamu";
   const registrations = useRegistrations();
@@ -29,23 +31,17 @@ export function PaymentView({ slug, source }: { slug: string; source?: ProjectFi
   if (guest) {
     return (
       <RegisterBlocked project={project} signIn>
-        Masuk untuk membayar pendaftaranmu.
+        {t.signIn}
       </RegisterBlocked>
     );
   }
   if (!registration) {
-    return (
-      <RegisterBlocked project={project}>
-        Kamu belum mendaftar ke proyek ini, jadi belum ada yang perlu dibayar.
-      </RegisterBlocked>
-    );
+    return <RegisterBlocked project={project}>{t.notRegistered}</RegisterBlocked>;
   }
 
   const fee = registrationFee(project, registration.packageName);
   if (isFreeMoney(fee)) {
-    return (
-      <RegisterBlocked project={project}>Proyek ini gratis; tidak ada pembayaran.</RegisterBlocked>
-    );
+    return <RegisterBlocked project={project}>{t.free}</RegisterBlocked>;
   }
   const state = paymentState(registration, data.now);
   if (state === "lunas") return <PayDone project={project} registration={registration} />;
@@ -55,12 +51,7 @@ export function PaymentView({ slug, source }: { slug: string; source?: ProjectFi
   }
   const amount = payableIdr(fee);
   if (amount === null) {
-    return (
-      <RegisterBlocked project={project}>
-        Pembayaran dalam ringgit (MYR) menyusul; saat ini QRIS hanya untuk rupiah. Pendaftaranmu
-        tercatat.
-      </RegisterBlocked>
-    );
+    return <RegisterBlocked project={project}>{t.myr}</RegisterBlocked>;
   }
   return (
     <PayWaiting project={project} registration={registration} amount={amount} now={data.now} />

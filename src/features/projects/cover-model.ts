@@ -1,3 +1,5 @@
+import type { Locale } from "@/lib/i18n/config";
+import { catalogCopy } from "./copy/catalog";
 import type { ProjectCategory } from "./types";
 
 /**
@@ -22,13 +24,6 @@ export type Cover = {
 
 export const COVER_VARIANTS = 3;
 export const COVER_LINES = 9;
-
-const MARKS: Record<ProjectCategory, string> = {
-  antologi: "Antologi",
-  lomba: "Lomba",
-  kelas: "Kelas Menulis",
-  solo: "Solo",
-};
 
 /** FNV-1a, 32 bit: small, fast, and the same in every browser. */
 export function slugHash(slug: string): number {
@@ -58,18 +53,17 @@ function seeded(seed: number) {
   };
 }
 
-export function coverOf(project: {
-  slug: string;
-  category: ProjectCategory;
-  title: string;
-}): Cover {
+export function coverOf(
+  project: { slug: string; category: ProjectCategory; title: string },
+  locale: Locale = "id",
+): Cover {
   const hash = slugHash(project.slug);
   const random = seeded(hash);
   return {
     pattern: project.category,
     tone: hash % 2 === 0 ? "ink" : "paper",
     variant: Math.floor(hash / 2) % COVER_VARIANTS,
-    mark: MARKS[project.category],
+    mark: catalogCopy(locale).categories[project.category].label,
     initial: titleInitial(project.title),
     lines: Array.from(
       { length: COVER_LINES },

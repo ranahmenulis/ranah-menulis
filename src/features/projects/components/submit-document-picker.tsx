@@ -1,8 +1,10 @@
+import { fill } from "@/features/studio/copy/fill";
+import { formatNumber } from "@/lib/i18n/format";
+import { useLocale, useT } from "@/lib/i18n/provider";
 import { ButtonLink } from "@/components/ui/button";
 import { RadioChoice } from "@/components/ui/choice";
 import { EmptyState } from "@/components/ui/states";
 import type { StudioDocument } from "@/features/studio/storage/document-store";
-import { formatNumber } from "../project-model";
 
 type Props = {
   docs: StudioDocument[];
@@ -14,10 +16,12 @@ type Props = {
   invalid?: boolean;
 };
 
-function hintOf(doc: StudioDocument, sent: boolean): string {
-  if (sent) return "Sudah dikirim ke proyek ini";
-  if (doc.wordCount === 0) return "Belum ada teks";
-  return `${formatNumber(doc.wordCount)} kata`;
+type Text = ReturnType<typeof useT>["projectsFlow"]["submit"]["picker"];
+
+function hintOf(doc: StudioDocument, sent: boolean, t: Text, locale: "id" | "en"): string {
+  if (sent) return t.alreadySent;
+  if (doc.wordCount === 0) return t.noText;
+  return fill(t.words, { n: formatNumber(doc.wordCount, locale) });
 }
 
 /**
@@ -32,16 +36,19 @@ export function SubmitDocumentPicker({
   describedBy,
   invalid,
 }: Props) {
+  const flow = useT().projectsFlow;
+  const t = flow.submit.picker;
+  const locale = useLocale();
   if (docs.length === 0) {
     return (
       <EmptyState
         action={
           <ButtonLink href="/studio/baru" variant="secondary">
-            Mulai menulis
+            {t.start}
           </ButtonLink>
         }
       >
-        Belum ada dokumen di Studio.
+        {t.empty}
       </EmptyState>
     );
   }
@@ -51,7 +58,7 @@ export function SubmitDocumentPicker({
       aria-invalid={invalid || undefined}
       className="grid max-h-72 gap-3 overflow-auto border border-line p-3"
     >
-      <legend className="sr-only">Pilih dokumen</legend>
+      <legend className="sr-only">{t.legend}</legend>
       {docs.map((doc) => {
         const sent = sentDocIds.has(doc.id);
         return (
@@ -62,8 +69,10 @@ export function SubmitDocumentPicker({
             checked={value === doc.id}
             disabled={sent || doc.wordCount === 0}
             onChange={() => onChange(doc)}
-            label={<span className="wrap-anywhere">{doc.title.trim() || "Tanpa judul"}</span>}
-            hint={hintOf(doc, sent)}
+            label={
+              <span className="wrap-anywhere">{doc.title.trim() || flow.common.untitled}</span>
+            }
+            hint={hintOf(doc, sent, t, locale)}
           />
         );
       })}

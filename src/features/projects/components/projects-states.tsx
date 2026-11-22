@@ -1,13 +1,17 @@
+"use client";
+
 import { ButtonLink } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/states";
 import { PROJECTS_HREF } from "@/features/app-shell/nav";
+import { useT } from "@/lib/i18n/provider";
 
 /** Shape of the catalog, shown only if loading takes more than 300ms (DESIGN.md 8). */
 export function ProjectsSkeleton() {
+  const t = useT().projectsCatalog;
   return (
     <div
       role="status"
-      aria-label="Memuat Projects"
+      aria-label={t.screens.loadingProjects}
       className="mx-auto grid max-w-260 animate-[rm-appear_0s_300ms_forwards] gap-3 opacity-0"
     >
       <Skeleton className="h-9 w-40" />
@@ -32,10 +36,11 @@ export function ProjectsSkeleton() {
 
 /** Shape of a project page: title, the right column, then a few sections. */
 export function ProjectDetailSkeleton() {
+  const t = useT().projectsCatalog;
   return (
     <div
       role="status"
-      aria-label="Memuat proyek"
+      aria-label={t.screens.loadingProject}
       className="mx-auto grid max-w-260 animate-[rm-appear_0s_300ms_forwards] gap-x-10 gap-y-4 opacity-0 lg:grid-cols-[minmax(0,1fr)_20rem]"
     >
       <div className="grid content-start gap-3">
@@ -57,14 +62,13 @@ export function ProjectDetailSkeleton() {
 
 /** DESIGN.md 8, "Tidak tersedia": one sentence and a way back. Also used for drafts (PRJ-01). */
 export function ProjectGone() {
+  const t = useT().projectsCatalog.screens;
   return (
     <div className="mx-auto grid max-w-170 justify-items-start gap-4 py-12">
-      <p className="font-serif text-xl leading-7 font-semibold">Proyek ini tidak ditemukan.</p>
-      <p className="text-sm text-ink-muted">
-        Alamatnya mungkin salah ketik, atau proyeknya belum dibuka untuk umum.
-      </p>
+      <p className="font-serif text-xl leading-7 font-semibold">{t.goneTitle}</p>
+      <p className="text-sm text-ink-muted">{t.goneBody}</p>
       <ButtonLink href={PROJECTS_HREF} variant="secondary">
-        Lihat semua Projects
+        {t.goneBack}
       </ButtonLink>
     </div>
   );

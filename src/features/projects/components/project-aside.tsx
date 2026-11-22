@@ -1,6 +1,10 @@
+"use client";
+
 import type { ComponentProps, ReactNode } from "react";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { TextLink } from "@/components/ui/text-link";
+import type { Locale } from "@/lib/i18n/config";
+import { format, useLocale, useT } from "@/lib/i18n/provider";
 import { SignInButton } from "@/features/account/components/auth-buttons";
 import { daysLeftLabel, feeLines, formatProjectDate } from "../project-model";
 import { deadlineText, quotaText } from "../project-text";
@@ -45,13 +49,17 @@ function OwnRegistration({
   registration?: Registration;
   stores?: Props["stores"];
 }) {
+  const t = useT().projectsCatalog.aside;
+  const locale = useLocale();
   return (
     <>
       {registration && (
         <>
-          <p className="text-xs text-ink-muted">{registrationNote(project, registration)}</p>
+          <p className="text-xs text-ink-muted">
+            {registrationNote(project, registration, t, locale)}
+          </p>
           <TextLink href={registerHref(project.slug)} className="text-xs text-ink-muted">
-            Lihat pendaftaran
+            {t.viewRegistration}
           </TextLink>
         </>
       )}
@@ -73,11 +81,19 @@ type Props = {
   stores?: Pick<ComponentProps<typeof CancelRegistration>, "submissions" | "assignments">;
 };
 
-function registrationNote(project: Project, registration: Registration): string {
-  const pack = registration.packageName ? ` Paket ${registration.packageName}.` : "";
+function registrationNote(
+  project: Project,
+  registration: Registration,
+  t: ReturnType<typeof useT>["projectsCatalog"]["aside"],
+  locale: Locale,
+): string {
+  const pack = registration.packageName
+    ? format(t.packageNote, { name: registration.packageName })
+    : "";
+  const date = formatProjectDate(registration.registeredAt, project.timeZone, locale);
   return registration.status === "terdaftar"
-    ? `Terdaftar pada ${formatProjectDate(registration.registeredAt, project.timeZone)}.${pack}`
-    : `Menunggu pembayaran; kuotamu ditahan.${pack}`;
+    ? `${format(t.registeredOn, { date })}${pack}`
+    : `${t.awaitingPayment}${pack}`;
 }
 
 /**
@@ -95,30 +111,34 @@ export function ProjectAside({
   sentCount = 0,
   stores,
 }: Props) {
-  const action = projectAction({ project, state, guest, registration, now, sentCount });
-  const lines = feeLines(project);
+  const t = useT().projectsCatalog;
+  const locale = useLocale();
+  const action = projectAction({ project, state, guest, registration, now, sentCount, locale });
+  const lines = feeLines(project, locale);
   const quota = project.quota;
   const open = state === "buka" || state === "segera-tutup";
 
   return (
-    <aside aria-label="Pendaftaran" className="grid content-start gap-5 border border-line p-5">
+    <aside aria-label={t.aside.label} className="grid content-start gap-5 border border-line p-5">
       <dl className="grid gap-4">
-        <Fact label={project.block.kind === "solo" ? "Biaya paket" : "Biaya"}>
+        <Fact label={project.block.kind === "solo" ? t.aside.feePackage : t.aside.fee}>
           {lines.length === 0 ? (
-            "Gratis"
+            t.fee.free
           ) : (
             <span className="grid">
-              {project.block.kind === "solo" && <span className="text-ink-muted">Mulai dari</span>}
+              {project.block.kind === "solo" && (
+                <span className="text-ink-muted">{t.fee.startingFrom}</span>
+              )}
               {lines.map((line, i) => (
                 <span key={i}>{line}</span>
               ))}
             </span>
           )}
         </Fact>
-        <Fact label="Kuota">
+        <Fact label={t.quota.label}>
           {quota ? (
             <span className="grid gap-2">
-              <span>{quotaText(project)}</span>
+              <span>{quotaText(project, locale)}</span>
               <span aria-hidden className="block h-1 bg-line">
                 <span
                   className="block h-1 bg-ink"
@@ -129,26 +149,26 @@ export function ProjectAside({
               </span>
             </span>
           ) : (
-            "Tanpa kuota"
+            t.quota.none
           )}
         </Fact>
-        <Fact label="Pendaftaran">
+        <Fact label={t.aside.label}>
           <span className="grid">
-            <span>{deadlineText(project, state)}</span>
+            <span>{deadlineText(project, state, locale)}</span>
             {open && project.closesAt !== null && (
               <span className="text-ink-muted">
-                {daysLeftLabel(project.closesAt, now, project.timeZone)}
+                {daysLeftLabel(project.closesAt, now, project.timeZone, locale)}
               </span>
             )}
           </span>
         </Fact>
-        {action.sentLine && <Fact label="Karya terkirim">{action.sentLine}</Fact>}
+        {action.sentLine && <Fact label={t.aside.sent}>{action.sentLine}</Fact>}
       </dl>
       <div className="grid gap-2">
         <ActionButton action={action} signIn={guest && open} />
         {project.block.kind === "lomba" && (
           <TextLink href={resultsHref(project.slug)} className="w-fit text-sm text-ink-muted">
-            Lihat hasil lomba
+            {t.aside.results}
           </TextLink>
         )}
         {!guest && (

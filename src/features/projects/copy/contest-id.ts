@@ -1,0 +1,48 @@
+export const projectsContest = {
+  loading: "Memuat hasil lomba",
+  back: "Kembali ke proyek",
+  kicker: "Hasil lomba",
+  ownFinalist: "Karyamu “{title}” masuk finalis.",
+  stageLabel: {
+    terbuka: "Penerimaan karya",
+    dinilai: "Sedang dinilai",
+    finalis: "Finalis diumumkan",
+    pemenang: "Pemenang diumumkan",
+  },
+  sentence: {
+    open: "Penerimaan karya masih dibuka{until}. Hasil diumumkan setelah penilaian.{next}",
+    until: " sampai {date}",
+    judging: "Penerimaan karya sudah ditutup dan karya sedang dinilai juri.{next}",
+    finalists: "Finalis sudah diumumkan.{next}",
+    winners: "Pemenang sudah diumumkan{on}. Pengumuman tidak diubah tanpa catatan audit.",
+    on: " pada {date}",
+    next: " {label} diumumkan {date}.",
+    winnersWord: "Pemenang",
+    finalistsWord: "Finalis",
+  },
+  finalistName: "Finalis {n}",
+  lists: {
+    sectionBoth: "Finalis dan pemenang",
+    notYet: "Finalis belum diumumkan. Daftarnya tampil di halaman ini begitu diumumkan.",
+    finalists: "Finalis",
+    noFinalists: "Daftar finalis belum tersedia.",
+    mine: " · karyamu",
+    winners: "Pemenang",
+    noWinners: "Daftar pemenang belum tersedia.",
+    place: "Juara {rank}",
+    tie: " (seri)",
+    jurorNote: "Catatan juri: {note}",
+  },
+  schedule: {
+    title: "Jadwal",
+    closed: "Penerimaan karya ditutup",
+    finalists: "Pengumuman finalis",
+    winners: "Pengumuman pemenang",
+    done: " · selesai",
+  },
+  criteria: {
+    title: "Kriteria penilaian",
+    anonymous:
+      "Penilaian anonim: juri tidak melihat nama penulis. Nama penulis dibuka saat pemenang diumumkan.",
+  },
+};

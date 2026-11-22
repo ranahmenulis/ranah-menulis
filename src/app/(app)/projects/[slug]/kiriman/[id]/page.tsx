@@ -16,7 +16,7 @@ async function DetailRoute({ params }: Pick<PageProps<"/projects/[slug]/kiriman/
 /** Thin route: the submission is read and changed on this device by a client component. */
 export default function Page({ params }: PageProps<"/projects/[slug]/kiriman/[id]">) {
   return (
-    <Suspense fallback={<MySkeleton label="Memuat kiriman" />}>
+    <Suspense fallback={<MySkeleton kind="submission" />}>
       <DetailRoute params={params} />
     </Suspense>
   );

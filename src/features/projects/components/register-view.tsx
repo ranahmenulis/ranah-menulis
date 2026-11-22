@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type ComponentProps } from "react";
+import { useT } from "@/lib/i18n/provider";
 import { useViewer } from "@/lib/viewer";
 import { projectState } from "../project-model";
 import { isExpired } from "../payment-model";
@@ -32,6 +33,7 @@ type Props = {
  * A draft or unknown address is "not found" like on the detail page.
  */
 export function RegisterView({ slug, source, stores }: Props) {
+  const t = useT().projectsFlow.register;
   const data = useProjects(source);
   const guest = useViewer() === "tamu";
   const registrations = useRegistrations();
@@ -64,17 +66,15 @@ export function RegisterView({ slug, source, stores }: Props) {
   if (guest) {
     return (
       <RegisterBlocked project={project} signIn>
-        Masuk untuk mendaftar ke proyek ini.
+        {t.signInRequired}
       </RegisterBlocked>
     );
   }
   if (state === "kuota-penuh") {
-    return <RegisterBlocked project={project}>Kuota proyek ini sudah penuh.</RegisterBlocked>;
+    return <RegisterBlocked project={project}>{t.full}</RegisterBlocked>;
   }
   if (state === "ditutup") {
-    return (
-      <RegisterBlocked project={project}>Pendaftaran proyek ini sudah ditutup.</RegisterBlocked>
-    );
+    return <RegisterBlocked project={project}>{t.closed}</RegisterBlocked>;
   }
 
   return (

@@ -6,8 +6,9 @@ import { notifySubmissionsChanged } from "./storage/submission-events";
 import type { SubmissionStore } from "./storage/submission-store";
 import { freezeFile, freezeVersion } from "./submission-freeze";
 import { revisionProblems } from "./revision-model";
-import { activeSubmissions, type Problem } from "./submission-model";
-import { reviseBlock, reviseMessage, withRevision } from "./submission-status";
+import { activeSubmissions } from "./submission-model";
+import { makeProblem, type Problem, type ProblemCode } from "./submission-problem";
+import { reviseBlock, withRevision, type ReviseBlock } from "./submission-status";
 import {
   uploadDocId,
   type Submission,
@@ -35,7 +36,7 @@ type Input = {
 
 type Frozen =
   | { ok: true; source: { id: string; title: string }; frozen: SubmissionVersion }
-  | { ok: false; message: string };
+  | { ok: false; code: ProblemCode };
 
 /**
  * The manuscript of a revision as frozen now (the uploaded file's bytes, or the document), or why
@@ -53,10 +54,7 @@ async function freezeSource(
   if (upload) {
     const bytes = await readStoredBytes(files, upload.fileId);
     if (!bytes) {
-      return {
-        ok: false,
-        message: "Berkas yang kamu unggah tidak ditemukan lagi. Unggah ulang berkasnya.",
-      };
+      return { ok: false, code: "fileMissing" };
     }
     source = { id: uploadDocId(upload.fileId), title: upload.name };
     frozen = freezeFile(upload, bytes, now);
@@ -64,27 +62,28 @@ async function freezeSource(
     source = { id: doc.id, title: doc.title };
     frozen = freezeVersion(doc.content, now);
   } else {
-    return { ok: false, message: "Dokumen ini tidak ada lagi di Studio." };
+    return { ok: false, code: "docGone" };
   }
   if (frozen.hash !== latestHash) return { ok: true, source, frozen };
-  return {
-    ok: false,
-    message: upload
-      ? "Berkas ini sama dengan versi terakhir. Unggah berkas yang sudah diperbarui."
-      : "Dokumen ini belum berubah sejak versi terakhir. Edit dulu di Studio, atau pilih dokumen lain.",
-  };
+  return { ok: false, code: upload ? "fileSame" : "docSame" };
 }
 
 /** The answer when `update` said no: the reason found inside it, or a general one. */
 const refused = (refusal: Problem | null): ReviseResult => ({
   kind: "invalid",
-  problems: [refusal ?? { field: "closed", message: "Revisi tidak bisa dikirim sekarang." }],
+  problems: [refusal ?? makeProblem("closed", "revisionRefused")],
 });
 
-const invalid = (field: Problem["field"], message: string): ReviseResult => ({
+const invalid = (field: Problem["field"], code: ProblemCode): ReviseResult => ({
   kind: "invalid",
-  problems: [{ field, message }],
+  problems: [makeProblem(field, code)],
 });
+
+const BLOCK_CODE: Record<ReviseBlock, ProblemCode> = {
+  "bukan-perlu-revisi": "reviseNotRequested",
+  "putaran-habis": "reviseRounds",
+  "tenggat-lewat": "reviseOverdue",
+};
 
 /**
  * Sends a revision (PRD 10.5, step 7). Read again at the moment of sending: the submission itself,
@@ -99,9 +98,9 @@ export async function sendRevision(input: Input): Promise<ReviseResult> {
   try {
     const all = await store.list();
     const current = all.find((s) => s.id === submission.id);
-    if (!current) return invalid("limit", "Kiriman ini tidak ditemukan.");
+    if (!current) return invalid("limit", "workMissing");
     const block = reviseBlock(current, now);
-    if (block) return invalid("closed", reviseMessage[block]);
+    if (block) return invalid("closed", BLOCK_CODE[block]);
 
     const doc = docId && !upload ? await documents.get(docId) : null;
     const problems = revisionProblems({
@@ -117,7 +116,7 @@ export async function sendRevision(input: Input): Promise<ReviseResult> {
     if (problems.length > 0) return { kind: "invalid", problems };
 
     const result = await freezeSource(doc, upload, files, now, current.versions.at(-1)?.hash);
-    if (!result.ok) return invalid("doc", result.message);
+    if (!result.ok) return invalid("doc", result.code);
     const { source, frozen } = result;
     // Why the change was refused, since `update` itself only says "rejected".
     let refusal: Problem | null = null;
@@ -127,12 +126,12 @@ export async function sendRevision(input: Input): Promise<ReviseResult> {
         (s) => s.id !== latest.id && s.docId === source.id,
       );
       if (duplicate) {
-        refusal = { field: "doc", message: "Dokumen ini sudah dikirim ke proyek ini." };
+        refusal = makeProblem("doc", "docSent");
         return null;
       }
       const stop = reviseBlock(latest, now);
       if (stop) {
-        refusal = { field: "closed", message: reviseMessage[stop] };
+        refusal = makeProblem("closed", BLOCK_CODE[stop]);
         return null;
       }
       revised = withRevision(latest, {
@@ -147,7 +146,7 @@ export async function sendRevision(input: Input): Promise<ReviseResult> {
       });
       return revised;
     });
-    if (verdict === "missing") return invalid("limit", "Kiriman ini tidak ditemukan.");
+    if (verdict === "missing") return invalid("limit", "workMissing");
     if (verdict !== "ok" || !revised) return refused(refusal);
     notifySubmissionsChanged();
     return { kind: "sent", submission: revised };

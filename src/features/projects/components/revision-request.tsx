@@ -1,12 +1,16 @@
+"use client";
+
 import { ButtonLink } from "@/components/ui/button";
 import { Notice } from "@/components/ui/states";
+import { fill } from "@/features/studio/copy/fill";
+import { useLocale, useT } from "@/lib/i18n/provider";
 import { formatProjectDate } from "../project-model";
 import { reviseHref } from "../submission-href";
 import {
   latestFeedback,
   MAX_REVISIONS,
   reviseBlock,
-  reviseMessage,
+  reviseMessageText,
   revisionDueAt,
   revisionsSent,
 } from "../submission-status";
@@ -28,28 +32,34 @@ export function RevisionRequest({
   work: Submission;
   now: number;
 }) {
+  const t = useT().projectsFlow.revise.request;
+  const locale = useLocale();
   const feedback = latestFeedback(work);
   const due = revisionDueAt(work);
   const block = reviseBlock(work, now);
   const round = Math.min(revisionsSent(work) + 1, MAX_REVISIONS);
   return (
-    <Section title="Catatan editor">
+    <Section title={t.section}>
       {feedback ? (
         <p className="font-serif text-base leading-7 wrap-anywhere">{feedback}</p>
       ) : (
-        <p className="text-sm text-ink-muted">Editor tidak menulis catatan.</p>
+        <p className="text-sm text-ink-muted">{t.none}</p>
       )}
       {due !== null && (
         <p className="text-sm text-ink-muted">
-          Tenggat revisi {formatProjectDate(due, project.timeZone)} {project.timeZone}. Revisi ke-
-          {round} dari {MAX_REVISIONS}.
+          {fill(t.due, {
+            date: formatProjectDate(due, project.timeZone, locale),
+            zone: project.timeZone,
+            n: String(round),
+            max: String(MAX_REVISIONS),
+          })}
         </p>
       )}
       {block ? (
-        <Notice>{reviseMessage[block]}</Notice>
+        <Notice>{reviseMessageText(block, locale)}</Notice>
       ) : (
         <ButtonLink href={reviseHref(work.slug, work.id)} className="justify-self-start">
-          Kirim revisi
+          {t.send}
         </ButtonLink>
       )}
     </Section>
@@ -58,10 +68,11 @@ export function RevisionRequest({
 
 /** The editor's note on a decision (Diterima or Ditolak), shown where the reader will look for it. */
 export function DecisionNote({ work }: { work: Submission }) {
+  const t = useT().projectsFlow.revise.request;
   const feedback = latestFeedback(work);
   if (!feedback) return null;
   return (
-    <Section title="Catatan editor">
+    <Section title={t.section}>
       <p className="font-serif text-base leading-7 wrap-anywhere">{feedback}</p>
     </Section>
   );

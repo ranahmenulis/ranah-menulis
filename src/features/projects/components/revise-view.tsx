@@ -1,6 +1,5 @@
 "use client";
 
-import { versionSizeText } from "../submission-text";
 import { useState } from "react";
 import { ButtonLink } from "@/components/ui/button";
 import { Notice } from "@/components/ui/states";
@@ -10,13 +9,15 @@ import { useDocumentList } from "@/features/studio/hooks/use-document-list";
 import { isActiveDocument } from "@/features/studio/document-archive";
 import type { DocumentStore } from "@/features/studio/storage/document-store";
 import { studioStore } from "@/features/studio/storage/store";
+import { fill } from "@/features/studio/copy/fill";
+import { useLocale, useT } from "@/lib/i18n/provider";
 import { useViewer } from "@/lib/viewer";
 import { sendRevision } from "../revise-flow";
 import { submissionStore } from "../storage/store";
 import type { SubmissionStore } from "../storage/submission-store";
 import { MY_PROJECTS_HREF, submissionHref } from "../submission-href";
-import { reviseBlock, reviseMessage } from "../submission-status";
-import { sentAtText } from "../submission-text";
+import { reviseBlock, reviseMessageText } from "../submission-status";
+import { sentAtText, versionSizeText } from "../submission-text";
 import type { Submission } from "../submission-types";
 import type { ProjectFixture } from "../types";
 import { useProjects } from "../use-projects";
@@ -37,18 +38,20 @@ type Props = {
 };
 
 function Done({ work, slug, project }: { work: Submission; slug: string; project?: Project }) {
+  const t = useT().projectsFlow.revise;
+  const locale = useLocale();
   const latest = work.versions.at(-1);
   return (
-    <MyShell back={{ href: submissionHref(slug, work.id), label: "Kembali ke karya" }}>
+    <MyShell back={{ href: submissionHref(slug, work.id), label: t.backToWork }}>
       <MilestoneHero
         project={project ?? { slug, category: "antologi", title: work.title }}
-        title="Revisimu terkirim."
+        title={t.done.title}
         celebrate
         actions={
           <>
-            <ButtonLink href={submissionHref(slug, work.id)}>Lihat karya</ButtonLink>
+            <ButtonLink href={submissionHref(slug, work.id)}>{t.viewWork}</ButtonLink>
             <TextLink href={MY_PROJECTS_HREF} className="text-sm text-ink-muted">
-              Proyek saya
+              {t.myProjects}
             </TextLink>
           </>
         }
@@ -56,8 +59,11 @@ function Done({ work, slug, project }: { work: Submission; slug: string; project
         <p className="text-base wrap-anywhere">{work.title}</p>
         <StatusSubmission status={work.status} />
         <p className="text-sm text-ink-soft">
-          Versi {latest?.version}: {versionSizeText(latest)}, dibekukan{" "}
-          {sentAtText(latest?.frozenAt ?? work.submittedAt)}. Versi sebelumnya tetap tersimpan.
+          {fill(t.done.body, {
+            version: String(latest?.version ?? ""),
+            size: versionSizeText(latest, locale),
+            at: sentAtText(latest?.frozenAt ?? work.submittedAt, locale),
+          })}
         </p>
       </MilestoneHero>
     </MyShell>
@@ -76,13 +82,15 @@ export function ReviseView({
   store = submissionStore,
   documents = studioStore,
 }: Props) {
+  const t = useT().projectsFlow.revise;
+  const locale = useLocale();
   const catalog = useProjects(source);
   const guest = useViewer() === "tamu";
   const submissions = useSubmissions(store);
   const list = useDocumentList(documents);
   const [sent, setSent] = useState<Submission | null>(null);
 
-  const back = { href: submissionHref(slug, id), label: "Kembali ke karya" };
+  const back = { href: submissionHref(slug, id), label: t.backToWork };
   if (guest) return <MyGuest back="saya" />;
   if (submissions.status === "error" || list.status === "error") {
     return (
@@ -93,7 +101,7 @@ export function ReviseView({
           list.reload();
         }}
       >
-        Halaman revisi belum bisa dibuka. Data di perangkat ini tidak terbaca.
+        {t.loadError}
       </MyError>
     );
   }
@@ -102,7 +110,7 @@ export function ReviseView({
     submissions.status === "loading" ||
     list.status === "loading"
   ) {
-    return <MySkeleton label="Memuat halaman revisi" />;
+    return <MySkeleton label={t.loading} />;
   }
 
   if (sent)
@@ -112,9 +120,9 @@ export function ReviseView({
   if (!project || !work) {
     return (
       <MyShell back="saya">
-        <h1 className="heading-lg">Karya ini tidak ditemukan.</h1>
+        <h1 className="heading-lg">{t.notFound}</h1>
         <ButtonLink href={MY_PROJECTS_HREF} variant="secondary" className="justify-self-start">
-          Lihat Proyek saya
+          {t.viewMine}
         </ButtonLink>
       </MyShell>
     );
@@ -126,9 +134,9 @@ export function ReviseView({
       <MyShell back={back}>
         <ProjectStrip project={project} />
         <h1 className="heading-lg wrap-anywhere">{work.title}</h1>
-        <Notice>{reviseMessage[block]}</Notice>
+        <Notice>{reviseMessageText(block, locale)}</Notice>
         <ButtonLink href={back.href} variant="secondary" className="justify-self-start">
-          Lihat karya
+          {t.viewWork}
         </ButtonLink>
       </MyShell>
     );

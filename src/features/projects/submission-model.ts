@@ -1,8 +1,11 @@
 import type { JSONContent } from "@tiptap/react";
 import { GENRES } from "@/features/community/types";
 import { docStats } from "@/features/studio/editor-stats";
-import { isActiveDocument, RESTORE_ARCHIVED_MESSAGE } from "@/features/studio/document-archive";
-import { formatNumber, projectHref } from "./project-model";
+import type { Locale } from "@/lib/i18n/config";
+import { isActiveDocument } from "@/features/studio/document-archive";
+import { flowCopy } from "./copy/flow";
+import { projectHref } from "./project-model";
+import { makeProblem, type Problem, type ProblemField } from "./submission-problem";
 import {
   BOOK_TYPES,
   NOTE_LIMIT,
@@ -72,10 +75,12 @@ export function submitBlock(input: {
  */
 export function submitAction(
   block: SubmitBlock | null,
+  locale: Locale = "id",
 ): { label: string; enabled: boolean } | null {
-  if (block === null) return { label: "Kirim karya", enabled: true };
-  if (block === "ditutup") return { label: "Pengiriman ditutup", enabled: false };
-  if (block === "batas-tercapai") return { label: "Batas karya tercapai", enabled: false };
+  const text = flowCopy(locale);
+  if (block === null) return { label: text.common.sendWork, enabled: true };
+  if (block === "ditutup") return { label: text.action.submitClosed, enabled: false };
+  if (block === "batas-tercapai") return { label: text.action.limitReached, enabled: false };
   return null;
 }
 
@@ -110,9 +115,7 @@ export type SubmitDoc = {
   archivedAt?: number | null;
 };
 
-export type ProblemField =
-  "doc" | "title" | "genre" | "note" | "synopsis" | "agreed" | "closed" | "limit";
-export type Problem = { field: ProblemField; message: string };
+export type { Problem, ProblemField };
 
 export const wordsOf = (doc: SubmitDoc) => docStats(doc.content).words;
 
@@ -143,33 +146,32 @@ export function initialForm(input: {
   return form;
 }
 
-function docProblem(project: Project, form: SubmitForm, doc: SubmitDoc | null, sent: Submission[]) {
+type Found = Pick<Problem, "code" | "values"> | null;
+
+function docProblem(
+  project: Project,
+  form: SubmitForm,
+  doc: SubmitDoc | null,
+  sent: Submission[],
+): Found {
   const rules = project.submission;
   if (!rules || !form.docId) {
     if (form.docId !== null) return null;
-    return isSolo(project)
-      ? "Pilih dokumen dari Studio atau unggah berkas."
-      : "Pilih dokumen dari Studio.";
+    return { code: isSolo(project) ? "pickDocSolo" : "pickDoc" };
   }
-  if (!doc || doc.deletedAt) return "Dokumen ini tidak ada lagi di Studio.";
-  if (doc.archivedAt != null) return RESTORE_ARCHIVED_MESSAGE;
+  if (!doc || doc.deletedAt) return { code: "docGone" };
+  if (doc.archivedAt != null) return { code: "docArchived" };
   const words = wordsOf(doc);
-  if (words === 0) return "Dokumen ini masih kosong.";
-  if (sent.some((s) => s.docId === doc.id)) return "Dokumen ini sudah dikirim ke proyek ini.";
-  if (words < rules.minWords) {
-    return `Naskahmu ${formatNumber(words)} kata, kurang dari batas minimal ${formatNumber(rules.minWords)} kata.`;
-  }
-  if (words > rules.maxWords) {
-    return `Naskahmu ${formatNumber(words)} kata, melebihi batas ${formatNumber(rules.maxWords)} kata.`;
-  }
+  if (words === 0) return { code: "docEmpty" };
+  if (sent.some((s) => s.docId === doc.id)) return { code: "docSent" };
+  if (words < rules.minWords) return { code: "tooShort", values: { words, min: rules.minWords } };
+  if (words > rules.maxWords) return { code: "tooLong", values: { words, max: rules.maxWords } };
   return null;
 }
 
-function uploadProblem(project: Project, upload: VersionFile, sent: Submission[]) {
-  if (!isSolo(project)) return "Proyek ini hanya menerima dokumen dari Studio.";
-  if (sent.some((s) => s.docId === uploadDocId(upload.fileId))) {
-    return "Berkas ini sudah dikirim ke proyek ini.";
-  }
+function uploadProblem(project: Project, upload: VersionFile, sent: Submission[]): Found {
+  if (!isSolo(project)) return { code: "soloUploadOnly" };
+  if (sent.some((s) => s.docId === uploadDocId(upload.fileId))) return { code: "fileSent" };
   return null;
 }
 
@@ -187,45 +189,39 @@ export function validateSubmission(input: {
   const { project, form, doc, sent, now } = input;
   const rules = project.submission;
   const problems: Problem[] = [];
-  const add = (field: ProblemField, message: string | null | false) => {
-    if (message) problems.push({ field, message });
+  const add = (field: ProblemField, found: Found | false) => {
+    if (found) problems.push(makeProblem(field, found.code, found.values));
   };
-  if (!rules) return [{ field: "limit", message: "Proyek ini tidak menerima kiriman karya." }];
+  if (!rules) return [makeProblem("limit", "noSubmission")];
 
-  add(
-    "closed",
-    project.closesAt !== null &&
-      project.closesAt < now &&
-      "Pengiriman ke proyek ini sudah ditutup.",
-  );
-  add(
-    "limit",
-    sent.length >= rules.maxWorks &&
-      `Kamu sudah mengirim ${rules.maxWorks} karya, batas untuk proyek ini.`,
-  );
+  add("closed", project.closesAt !== null && project.closesAt < now && { code: "closed" });
+  add("limit", sent.length >= rules.maxWorks && { code: "limit", values: { n: rules.maxWorks } });
   add(
     "doc",
     form.upload ? uploadProblem(project, form.upload, sent) : docProblem(project, form, doc, sent),
   );
   const title = form.title.trim();
-  add("title", title === "" && "Isi judul karya.");
-  add("title", title.length > TITLE_LIMIT && `Judul maksimal ${TITLE_LIMIT} karakter.`);
+  add("title", title === "" && { code: "titleRequired" });
+  add("title", title.length > TITLE_LIMIT && { code: "titleLong", values: { n: TITLE_LIMIT } });
   add(
     "genre",
-    !genreOptions(project).includes(form.genre) &&
-      (isSolo(project) ? "Pilih jenis buku." : "Pilih genre."),
+    !genreOptions(project).includes(form.genre) && {
+      code: isSolo(project) ? "chooseBookType" : "chooseGenre",
+    },
   );
-  add("note", form.note.trim().length > NOTE_LIMIT && `Catatan maksimal ${NOTE_LIMIT} karakter.`);
+  add(
+    "note",
+    form.note.trim().length > NOTE_LIMIT && { code: "noteLong", values: { n: NOTE_LIMIT } },
+  );
   if (isSolo(project)) {
     const synopsis = form.synopsis.trim();
-    add("synopsis", synopsis === "" && "Isi sinopsis.");
+    add("synopsis", synopsis === "" && { code: "synopsisRequired" });
     add(
       "synopsis",
-      synopsis.length > SYNOPSIS_LIMIT &&
-        `Sinopsis maksimal ${formatNumber(SYNOPSIS_LIMIT)} karakter.`,
+      synopsis.length > SYNOPSIS_LIMIT && { code: "synopsisLong", values: { n: SYNOPSIS_LIMIT } },
     );
   }
-  add("agreed", !form.agreed && "Setujui pernyataan keaslian karya.");
+  add("agreed", !form.agreed && { code: "agreeRequired" });
   return problems;
 }
 

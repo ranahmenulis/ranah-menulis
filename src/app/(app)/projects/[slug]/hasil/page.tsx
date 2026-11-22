@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { pageTitle, titleWith } from "@/lib/i18n/metadata";
-import { MySkeleton } from "@/features/projects/components/my-states";
 import { projectFixtures } from "@/features/projects/fixtures/all-projects";
+import { ResultsSkeleton } from "@/features/projects/lomba/components/results-skeleton";
 import { ResultsView } from "@/features/projects/lomba/components/results-view";
 
 export async function generateMetadata({
@@ -25,7 +25,7 @@ async function ResultsRoute({ params }: Pick<PageProps<"/projects/[slug]/hasil">
 /** Thin route: the results are public; the stage and the reader's own work are read on this device. */
 export default function Page({ params }: PageProps<"/projects/[slug]/hasil">) {
   return (
-    <Suspense fallback={<MySkeleton label="Memuat hasil lomba" />}>
+    <Suspense fallback={<ResultsSkeleton />}>
       <ResultsRoute params={params} />
     </Suspense>
   );

@@ -1,3 +1,4 @@
+import type { Locale } from "@/lib/i18n/config";
 import { paymentDueAt, paymentState, payHref, remainingLabel } from "./payment-model";
 import { revisionDueAt } from "./submission-status";
 import type { Submission } from "./submission-types";
@@ -65,6 +66,7 @@ export function revisionItems(rows: MyProject[]): { project: Project; work: Subm
 export function paymentItems(
   rows: MyProject[],
   now: number,
+  locale: Locale = "id",
 ): { project: Project; href: string; remaining: string }[] {
   return rows
     .filter((row) => paymentState(row.registration, now) === "menunggu")
@@ -72,6 +74,6 @@ export function paymentItems(
     .map(({ project, registration }) => ({
       project,
       href: payHref(project.slug),
-      remaining: remainingLabel(paymentDueAt(registration), now),
+      remaining: remainingLabel(paymentDueAt(registration), now, locale),
     }));
 }

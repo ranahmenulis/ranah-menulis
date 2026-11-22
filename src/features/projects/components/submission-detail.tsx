@@ -1,17 +1,18 @@
 "use client";
 
-import { versionSizeText } from "../submission-text";
 import { useEffect, useRef, useState, type Ref } from "react";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { ErrorBanner, Notice } from "@/components/ui/states";
 import { StatusSubmission } from "@/components/ui/status-submission";
+import { fill } from "@/features/studio/copy/fill";
+import { useLocale, useT } from "@/lib/i18n/provider";
 import { useViewer } from "@/lib/viewer";
 import { submissionStore } from "../storage/store";
 import type { SubmissionStore } from "../storage/submission-store";
 import { withdrawSubmission, type ActionResult } from "../submission-actions";
 import { MY_PROJECTS_HREF } from "../submission-href";
-import { canWithdraw, statusHint } from "../submission-status";
-import { sentAtText } from "../submission-text";
+import { canWithdraw, statusHintText } from "../submission-status";
+import { sentAtText, versionSizeText } from "../submission-text";
 import type { Submission } from "../submission-types";
 import type { Project, ProjectFixture } from "../types";
 import { useProjects } from "../use-projects";
@@ -31,20 +32,16 @@ type Props = {
   store?: SubmissionStore;
 };
 
-const MESSAGE: Partial<Record<ActionResult, string>> = {
-  rejected: "Status karya ini sudah berubah, jadi tidak bisa ditarik lagi.",
-  missing: "Karya ini tidak ditemukan lagi.",
-};
-
 function Information({ work }: { work: Submission }) {
+  const t = useT().projectsFlow.detail.info;
   if (!work.note && !work.synopsis && !work.packageName) return null;
   const rows = [
-    ["Paket", work.packageName],
-    ["Sinopsis", work.synopsis],
-    ["Catatan untuk editor", work.note],
+    [t.package, work.packageName],
+    [t.synopsis, work.synopsis],
+    [t.note, work.note],
   ].filter((row): row is [string, string] => Boolean(row[1]));
   return (
-    <Section title="Informasi karya">
+    <Section title={t.section}>
       <dl className="grid gap-3 text-sm">
         {rows.map(([label, value]) => (
           <div key={label} className="grid gap-0.5">
@@ -66,6 +63,8 @@ function Header({
   work: Submission;
   titleRef: Ref<HTMLHeadingElement>;
 }) {
+  const t = useT().projectsFlow.detail;
+  const locale = useLocale();
   const latest = work.versions.at(-1);
   return (
     <header className="grid gap-2">
@@ -74,11 +73,15 @@ function Header({
         {work.title}
       </h1>
       <p className="text-sm text-ink-muted">
-        {work.genre} · {versionSizeText(latest)} · dikirim {sentAtText(work.submittedAt)}
+        {fill(t.meta, {
+          genre: work.genre,
+          size: versionSizeText(latest, locale),
+          at: sentAtText(work.submittedAt, locale),
+        })}
       </p>
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1 pt-1">
         <StatusSubmission status={work.status} />
-        <p className="text-sm">{statusHint[work.status]}</p>
+        <p className="text-sm">{statusHintText(work.status, locale)}</p>
       </div>
     </header>
   );
@@ -95,6 +98,7 @@ function Body({
   now: number;
   store: SubmissionStore;
 }) {
+  const t = useT().projectsFlow.detail;
   const [asking, setAsking] = useState(false);
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<ActionResult | null>(null);
@@ -121,7 +125,7 @@ function Body({
     setResult(verdict);
   }
 
-  const message = result ? MESSAGE[result] : undefined;
+  const message = result === "rejected" ? t.rejected : result === "missing" ? t.missing : undefined;
   return (
     <MyShell back="saya">
       <Header project={project} work={work} titleRef={titleRef} />
@@ -136,17 +140,12 @@ function Body({
       <StatusHistory work={work} />
       <VersionHistory work={work} />
 
-      {result === "failed" && (
-        <ErrorBanner>
-          Karya belum ditarik karena data di perangkat ini tidak bisa ditulis. Coba lagi sebentar
-          lagi.
-        </ErrorBanner>
-      )}
+      {result === "failed" && <ErrorBanner>{t.withdrawFailed}</ErrorBanner>}
       {message && <Notice>{message}</Notice>}
       {canWithdraw(work) && (
         <div>
           <Button variant="danger-text" onClick={() => setAsking(true)}>
-            Tarik karya
+            {t.withdraw}
           </Button>
         </div>
       )}
@@ -163,14 +162,13 @@ function Body({
 }
 
 function NotFound() {
+  const t = useT().projectsFlow;
   return (
     <MyShell back="saya">
-      <h1 className="heading-lg">Karya ini tidak ditemukan.</h1>
-      <Notice>
-        Kiriman ini tidak ada di perangkat ini. Alamatnya mungkin salah, atau datanya sudah dihapus.
-      </Notice>
+      <h1 className="heading-lg">{t.revise.notFound}</h1>
+      <Notice>{t.detail.notFoundNote}</Notice>
       <ButtonLink href={MY_PROJECTS_HREF} variant="secondary" className="justify-self-start">
-        Lihat Proyek saya
+        {t.revise.viewMine}
       </ButtonLink>
     </MyShell>
   );
@@ -182,6 +180,7 @@ function NotFound() {
  * when the editor asked for it, Tarik karya before a decision. The way out is "Proyek saya".
  */
 export function SubmissionDetail({ slug, id, source, store = submissionStore }: Props) {
+  const t = useT().projectsFlow.detail;
   const catalog = useProjects(source);
   const guest = useViewer() === "tamu";
   const submissions = useSubmissions(store);
@@ -190,12 +189,12 @@ export function SubmissionDetail({ slug, id, source, store = submissionStore }: 
   if (submissions.status === "error") {
     return (
       <MyError back="saya" onRetry={submissions.reload}>
-        Karya ini belum bisa dibuka. Data di perangkat ini tidak terbaca.
+        {t.loadError}
       </MyError>
     );
   }
   if (catalog.status === "loading" || submissions.status === "loading") {
-    return <MySkeleton label="Memuat kiriman" />;
+    return <MySkeleton label={t.loading} />;
   }
   const project = catalog.projects.find((p) => p.slug === slug && p.publication === "terbit");
   const work = submissions.submissions.find((s) => s.id === id && s.slug === slug);

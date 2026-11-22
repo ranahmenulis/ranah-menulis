@@ -27,6 +27,16 @@ import { groups as groupsId } from "@/features/community/copy/groups-id";
 import { groups as groupsEn } from "@/features/community/copy/groups-en";
 import { events as eventsId } from "@/features/community/copy/events-id";
 import { events as eventsEn } from "@/features/community/copy/events-en";
+import { projectsCatalog as projectsCatalogId } from "@/features/projects/copy/catalog-id";
+import { projectsCatalog as projectsCatalogEn } from "@/features/projects/copy/catalog-en";
+import { projectsFlow as projectsFlowId } from "@/features/projects/copy/flow-id";
+import { projectsFlow as projectsFlowEn } from "@/features/projects/copy/flow-en";
+import { projectsClass as projectsClassId } from "@/features/projects/copy/class-id";
+import { projectsClass as projectsClassEn } from "@/features/projects/copy/class-en";
+import { projectsContest as projectsContestId } from "@/features/projects/copy/contest-id";
+import { projectsContest as projectsContestEn } from "@/features/projects/copy/contest-en";
+import { projectsSolo as projectsSoloId } from "@/features/projects/copy/solo-id";
+import { projectsSolo as projectsSoloEn } from "@/features/projects/copy/solo-en";
 import { studioLayout as studioLayoutId } from "@/features/studio/copy/layout-id";
 import { studioLayout as studioLayoutEn } from "@/features/studio/copy/layout-en";
 import { studioEditor as studioEditorId } from "@/features/studio/copy/editor-id";
@@ -65,6 +75,11 @@ export const id = {
   studioStats: studioStatsId,
   studioDocuments: studioDocumentsId,
   studioSearch: studioSearchId,
+  projectsCatalog: projectsCatalogId,
+  projectsFlow: projectsFlowId,
+  projectsClass: projectsClassId,
+  projectsContest: projectsContestId,
+  projectsSolo: projectsSoloId,
 };
 export type Dictionary = typeof id;
 
@@ -90,6 +105,11 @@ const en: Dictionary = {
   studioStats: studioStatsEn,
   studioDocuments: studioDocumentsEn,
   studioSearch: studioSearchEn,
+  projectsCatalog: projectsCatalogEn,
+  projectsFlow: projectsFlowEn,
+  projectsClass: projectsClassEn,
+  projectsContest: projectsContestEn,
+  projectsSolo: projectsSoloEn,
 };
 
 export const dictionaries: Record<Locale, Dictionary> = { id, en };

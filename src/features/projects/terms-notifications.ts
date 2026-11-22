@@ -24,7 +24,7 @@ export function termsNotifications(
         kind: "project" as const,
         actorId: null,
         others: 0,
-        text: `Ketentuan ${project.title} diperbarui oleh pengelola. Baca ulang sebelum melanjutkan.`,
+        message: { key: "termsUpdated", params: { project: project.title } },
         href: projectHref(project.slug),
         agoMs: 0,
         at: project.termsUpdatedAt,

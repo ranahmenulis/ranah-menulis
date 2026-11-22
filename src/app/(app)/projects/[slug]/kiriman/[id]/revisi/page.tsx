@@ -18,7 +18,7 @@ async function ReviseRoute({
 /** Thin route: documents and submissions are read and saved on this device by a client component. */
 export default function Page({ params }: PageProps<"/projects/[slug]/kiriman/[id]/revisi">) {
   return (
-    <Suspense fallback={<MySkeleton label="Memuat halaman revisi" />}>
+    <Suspense fallback={<MySkeleton kind="revise" />}>
       <ReviseRoute params={params} />
     </Suspense>
   );

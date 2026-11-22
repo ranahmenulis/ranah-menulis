@@ -4,9 +4,12 @@ import { WarningCircle } from "@phosphor-icons/react/dist/ssr";
 import { Button } from "@/components/ui/button";
 import { describedBy, Field, Textarea } from "@/components/ui/field";
 import { ErrorBanner } from "@/components/ui/states";
+import { formatNumber } from "@/lib/i18n/format";
+import { fill } from "@/features/studio/copy/fill";
+import { useLocale, useT } from "@/lib/i18n/provider";
 import type { StudioDocument } from "@/features/studio/storage/document-store";
 import { useReviseForm } from "../hooks/use-revise-form";
-import { formatNumber, formatProjectDate } from "../project-model";
+import { formatProjectDate } from "../project-model";
 import type { ReviseResult } from "../revise-flow";
 import { wordsOf } from "../submission-model";
 import { MAX_REVISIONS, latestFeedback, revisionDueAt, revisionsSent } from "../submission-status";
@@ -29,9 +32,6 @@ type Props = {
   onSend: (docId: string | null, note: string, upload: VersionFile | null) => Promise<ReviseResult>;
 };
 
-const counter = (text: string) =>
-  `${formatNumber(text.trim().length)} dari ${formatNumber(NOTE_LIMIT)} karakter`;
-
 function ErrorLine({ id, children }: { id: string; children: string }) {
   return (
     <p id={id} className="flex items-start gap-1.5 text-sm text-danger">
@@ -43,6 +43,8 @@ function ErrorLine({ id, children }: { id: string; children: string }) {
 
 /** Heading of the form: which round, the deadline, the rules, and what the editor wrote. */
 function Heading({ project, work }: { project: Project; work: Submission }) {
+  const t = useT().projectsFlow.revise.form;
+  const locale = useLocale();
   const rules = project.submission;
   const due = revisionDueAt(work);
   const feedback = latestFeedback(work);
@@ -50,12 +52,18 @@ function Heading({ project, work }: { project: Project; work: Submission }) {
   return (
     <header className="grid gap-2">
       <ProjectStrip project={project} className="mb-4" />
-      <h1 className="heading-lg wrap-anywhere">Kirim revisi: {work.title}</h1>
+      <h1 className="heading-lg wrap-anywhere">{fill(t.heading, { title: work.title })}</h1>
       <p className="text-sm text-ink-muted">
-        Revisi ke-{Math.min(revisionsSent(work) + 1, MAX_REVISIONS)} dari {MAX_REVISIONS}.
+        {fill(t.round, {
+          n: String(Math.min(revisionsSent(work) + 1, MAX_REVISIONS)),
+          max: String(MAX_REVISIONS),
+        })}
         {due !== null &&
-          ` Tenggat ${formatProjectDate(due, project.timeZone)} ${project.timeZone}.`}{" "}
-        Naskah {wordRuleText(rules)}.
+          fill(t.deadline, {
+            date: formatProjectDate(due, project.timeZone, locale),
+            zone: project.timeZone,
+          })}{" "}
+        {fill(t.rule, { rule: wordRuleText(rules, locale) })}
       </p>
       {feedback && <p className="font-serif text-base leading-7 wrap-anywhere">{feedback}</p>}
     </header>
@@ -71,6 +79,14 @@ export function ReviseForm(props: Props) {
   const { project, work, all, docs } = props;
   const rules = project.submission;
   const f = useReviseForm(props);
+  const flow = useT().projectsFlow;
+  const t = flow.revise.form;
+  const locale = useLocale();
+  const counter = (text: string) =>
+    fill(flow.submit.info.counter, {
+      n: formatNumber(text.trim().length, locale),
+      limit: formatNumber(NOTE_LIMIT, locale),
+    });
   if (!rules) return null;
 
   const sentElsewhere = new Set(
@@ -83,11 +99,8 @@ export function ReviseForm(props: Props) {
     <form className="grid gap-8" noValidate onSubmit={(e) => void f.submit(e)}>
       <Heading project={project} work={work} />
 
-      <Section title="Naskah">
-        <p className="text-sm text-ink-muted">
-          Yang dikirim adalah salinan beku dokumenmu pada saat kamu menekan Kirim. Versi yang sudah
-          terkirim tetap tersimpan.
-        </p>
+      <Section title={t.manuscript}>
+        <p className="text-sm text-ink-muted">{t.frozen}</p>
         <SubmitDocumentPicker
           docs={docs}
           value={f.docId}
@@ -107,19 +120,16 @@ export function ReviseForm(props: Props) {
         )}
         {f.doc && !f.docError && (
           <p className="text-sm text-ink-muted">
-            {formatNumber(wordsOf(f.doc))} kata, sesuai batas {wordRuleText(rules)}.
+            {fill(flow.submit.form.wordsOk, {
+              words: formatNumber(wordsOf(f.doc), locale),
+              rule: wordRuleText(rules, locale),
+            })}
           </p>
         )}
         {f.docError && <ErrorLine id="revisi-doc-error">{f.docError}</ErrorLine>}
       </Section>
 
-      <Field
-        id="revisi-note"
-        label="Catatan untuk editor"
-        optional
-        hint={counter(f.note)}
-        error={f.noteError}
-      >
+      <Field id="revisi-note" label={t.note} optional hint={counter(f.note)} error={f.noteError}>
         <Textarea
           id="revisi-note"
           value={f.note}
@@ -130,22 +140,17 @@ export function ReviseForm(props: Props) {
       </Field>
 
       <div className="grid gap-4">
-        {f.failed && (
-          <ErrorBanner>
-            Revisi belum terkirim karena data di perangkat ini tidak bisa ditulis. Isianmu masih
-            ada; coba lagi sebentar lagi.
-          </ErrorBanner>
-        )}
+        {f.failed && <ErrorBanner>{t.writeFailed}</ErrorBanner>}
         {!f.failed && f.blocked && (
           <ErrorBanner>
-            Revisi belum bisa dikirim.{" "}
-            {f.general.length > 0
-              ? f.general.map((p) => p.message).join(" ")
-              : "Periksa bagian yang ditandai di atas."}
+            {fill(t.blocked, {
+              detail:
+                f.general.length > 0 ? f.general.map((p) => p.message).join(" ") : t.checkAbove,
+            })}
           </ErrorBanner>
         )}
         <Button type="submit" loading={f.busy} className="justify-self-start">
-          Kirim revisi
+          {t.submit}
         </Button>
       </div>
     </form>

@@ -1,6 +1,8 @@
 "use client";
 
 import { FileText, WarningCircle } from "@phosphor-icons/react/dist/ssr";
+import { fill } from "@/features/studio/copy/fill";
+import { useLocale, useT } from "@/lib/i18n/provider";
 import { Button } from "@/components/ui/button";
 import { FilePickButton } from "@/components/ui/file-pick-button";
 import { fileKindLabel, formatFileSize } from "@/lib/files/format-size";
@@ -20,24 +22,26 @@ type Props = {
  * stored; its text is not read, so the word range is not checked and the team reads it as it is.
  */
 export function ManuscriptUpload({ upload, uploading, error, onPick, onClear }: Props) {
+  const t = useT().projectsFlow.submit.upload;
+  const locale = useLocale();
   return (
     <div className="grid gap-3 border-t border-line pt-4">
-      <p className="text-sm font-medium">Atau unggah berkas naskah</p>
+      <p className="text-sm font-medium">{t.or}</p>
       {upload ? (
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
           <p className="flex min-w-0 items-center gap-2 text-sm">
             <FileText size={20} aria-hidden className="shrink-0" />
             <span className="min-w-0 wrap-anywhere">{upload.name}</span>
             <span className="shrink-0 text-ink-muted">
-              {fileKindLabel(upload.type)} · {formatFileSize(upload.size)}
+              {fileKindLabel(upload.type, locale)} · {formatFileSize(upload.size, locale)}
             </span>
           </p>
           <div className="flex gap-2">
-            <FilePickButton kind="manuscript" label="Ganti berkas naskah" onPick={onPick}>
-              Ganti berkas
+            <FilePickButton kind="manuscript" label={t.replaceLabel} onPick={onPick}>
+              {t.replace}
             </FilePickButton>
             <Button variant="text" size="sm" onClick={onClear}>
-              Hapus berkas
+              {t.remove}
             </Button>
           </div>
         </div>
@@ -45,15 +49,14 @@ export function ManuscriptUpload({ upload, uploading, error, onPick, onClear }: 
         <div className="flex flex-wrap items-center gap-3">
           <FilePickButton
             kind="manuscript"
-            label="Unggah berkas naskah"
+            label={t.uploadLabel}
             onPick={onPick}
             disabled={uploading}
           >
-            {uploading ? "Menyimpan…" : "Unggah PDF atau DOCX"}
+            {uploading ? t.saving : t.button}
           </FilePickButton>
           <p className="text-xs text-ink-muted">
-            Maksimal {Math.round(FILE_MAX_BYTES / (1024 * 1024))} MB. Jumlah kata tidak diperiksa
-            untuk berkas.
+            {fill(t.limit, { mb: String(Math.round(FILE_MAX_BYTES / (1024 * 1024))) })}
           </p>
         </div>
       )}

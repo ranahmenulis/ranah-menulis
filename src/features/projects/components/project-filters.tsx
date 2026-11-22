@@ -7,6 +7,7 @@ import { RadioChoice } from "@/components/ui/choice";
 import { Popover } from "@/components/ui/popover";
 import { StickyChipBar } from "@/components/ui/sticky-chip-bar";
 import { cn } from "@/lib/cn";
+import { useT } from "@/lib/i18n/provider";
 import { CATEGORIES, FEE_FILTERS, STATE_FILTERS } from "../project-model";
 import type { Filters } from "../types";
 
@@ -14,8 +15,12 @@ type Props = { filters: Filters; onChange: (next: Filters) => void };
 
 /** The category chips, with the status and fee menus on the same sticky row. */
 export function CategoryBar({ filters, onChange }: Props) {
+  const t = useT().projectsCatalog;
   return (
-    <StickyChipBar label="Kategori" end={<ProjectFilters filters={filters} onChange={onChange} />}>
+    <StickyChipBar
+      label={t.filters.category}
+      end={<ProjectFilters filters={filters} onChange={onChange} />}
+    >
       {CATEGORIES.map((c) => (
         <Chip
           key={c.id}
@@ -23,7 +28,7 @@ export function CategoryBar({ filters, onChange }: Props) {
           onClick={() => onChange({ ...filters, category: c.id })}
           className="shrink-0"
         >
-          {c.label}
+          {t.categories[c.id].label}
         </Chip>
       ))}
     </StickyChipBar>
@@ -120,17 +125,20 @@ function FilterMenu<T extends string>({
 
 /** Status and fee: two single-choice menus beside the category chips. */
 export function ProjectFilters({ filters, onChange }: Props) {
+  const t = useT().projectsCatalog;
+  const states = STATE_FILTERS.map((o) => ({ id: o.id, label: t.stateFilters[o.id] }));
+  const fees = FEE_FILTERS.map((o) => ({ id: o.id, label: t.feeFilters[o.id] }));
   return (
     <>
       <FilterMenu
-        title="Status"
-        options={STATE_FILTERS}
+        title={t.filters.status}
+        options={states}
         value={filters.state}
         onPick={(state) => onChange({ ...filters, state })}
       />
       <FilterMenu
-        title="Biaya"
-        options={FEE_FILTERS}
+        title={t.filters.fee}
+        options={fees}
         value={filters.fee}
         onPick={(fee) => onChange({ ...filters, fee })}
       />
