@@ -1,5 +1,8 @@
+"use client";
+
 import { Avatar } from "@/components/ui/avatar";
 import { useAccount } from "@/features/account/account-store";
+import { useT } from "@/lib/i18n/provider";
 import { hasDropCap, PostText, ScopeLine } from "../post/post-article";
 import type { Genre, PostBlock, PostImage, PostKind } from "../../types";
 import { PostFigure } from "../post/post-figure";
@@ -17,14 +20,17 @@ type Props = {
 /** The post exactly as a reader sees it, in the same typography as the post page (STD-10). */
 export function PreviewPanel({ title, kind, genre, blocks, image, sourceTitle, groupOnly }: Props) {
   const { profile } = useAccount();
-  const mark = `${kind === "prolog" ? "Prolog" : "Cuplikan"}${genre ? ` · ${genre}` : ""}`;
+  const dict = useT();
+  const t = dict.compose.preview;
+  const labels = dict.community.labels;
+  const mark = `${labels[kind]}${genre ? ` · ${labels.genres[genre]}` : ""}`;
   return (
-    <section aria-label="Pratinjau untuk pembaca">
-      <h2 className="mb-3 text-sm font-medium">Pratinjau untuk pembaca</h2>
+    <section aria-label={t.label}>
+      <h2 className="mb-3 text-sm font-medium">{t.label}</h2>
       <div className="border border-line p-5">
         <p className="mb-3 text-[13px] leading-[18px] text-ink-muted">{mark}</p>
         <p className="mb-4 font-serif text-[26px] leading-8 font-semibold wrap-anywhere text-ink-read">
-          {title.trim() || <span className="text-ink-faint">Tanpa judul</span>}
+          {title.trim() || <span className="text-ink-faint">{t.untitled}</span>}
         </p>
         <div className="mb-1 flex items-center gap-2 text-sm">
           <Avatar name={profile.name} src={profile.avatar} size={32} />
@@ -36,9 +42,7 @@ export function PreviewPanel({ title, kind, genre, blocks, image, sourceTitle, g
           {blocks.length > 0 ? (
             <PostText blocks={blocks} kind={kind} dropCap={hasDropCap(genre || "Esai")} />
           ) : (
-            <p className="text-sm text-ink-muted">
-              Teks yang kamu pilih atau tulis tampil di sini.
-            </p>
+            <p className="text-sm text-ink-muted">{t.empty}</p>
           )}
         </div>
       </div>

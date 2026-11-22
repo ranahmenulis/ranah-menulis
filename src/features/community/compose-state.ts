@@ -1,3 +1,4 @@
+import { compose as idCompose } from "./copy/compose-id";
 import { MAX_POST_WORDS, wordsOf } from "./post-model";
 import { groupIdOf } from "./groups/group-model";
 import type { StoredPost } from "./storage/post-store";
@@ -142,14 +143,6 @@ export function publicBlocks(state: ComposeState): PostBlock[] {
 
 export type Missing = "title" | "text" | "genre" | "visibility" | "imageAlt";
 
-const LABEL: Record<Missing, string> = {
-  title: "judul",
-  text: "teks",
-  genre: "genre",
-  visibility: "pilihan siapa yang bisa membaca",
-  imageAlt: "teks alternatif gambar",
-};
-
 /** What still stands between this form and "Terbitkan". Too long is separate (see `isTooLong`). */
 export function missingFor(state: ComposeState): Missing[] {
   const missing: Missing[] = [];
@@ -167,14 +160,21 @@ export const isTooLong = (state: ComposeState) => wordsOf(publicBlocks(state)) >
 export const canPublish = (state: ComposeState) =>
   missingFor(state).length === 0 && !isTooLong(state);
 
-/** "Untuk menerbitkan: isi judul dan pilih genre." Null when nothing is missing. */
-export function missingHint(state: ComposeState): string | null {
+type HintCopy = { missingHint: string; missing: Record<Missing, string> };
+
+/** "Untuk menerbitkan, lengkapi judul dan genre." Null when nothing is missing. */
+export function missingHint(
+  state: ComposeState,
+  copy: HintCopy = idCompose.form,
+  locale: "id" | "en" = "id",
+): string | null {
   const missing = missingFor(state).filter((m) => m !== "text" || state.tab === "direct");
   if (missing.length === 0) return null;
-  const parts = missing.map((m) => LABEL[m]);
-  const text =
-    parts.length === 1 ? parts[0] : `${parts.slice(0, -1).join(", ")} dan ${parts.at(-1)}`;
-  return `Untuk menerbitkan, lengkapi ${text}.`;
+  const parts = missing.map((m) => copy.missing[m]);
+  const and = locale === "en" ? ", and " : " dan ";
+  const list =
+    parts.length === 1 ? parts[0] : `${parts.slice(0, -1).join(", ")}${and}${parts.at(-1)}`;
+  return copy.missingHint.replace("{list}", list);
 }
 
 /** A draft keeps whatever is there, including gaps. It needs only something worth keeping. */

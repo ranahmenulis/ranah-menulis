@@ -4,10 +4,11 @@ import type { CSSProperties } from "react";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
 import { DISCOVER_HREF, HOME_HREF, STUDIO_HREF } from "@/features/app-shell/nav";
-import { postLabel, wordsOf } from "../../post-model";
+import { format, useT } from "@/lib/i18n/provider";
+import { useFormat } from "@/lib/i18n/use-format";
+import { usePostLabel } from "../../hooks/use-post-label";
+import { wordsOf } from "../../post-model";
 import type { StoredPost } from "../../storage/post-store";
-
-const VISIBILITY = { publik: "Publik", grup: "Grup" } as const;
 
 const step = (i: number) => ({ "--i": i }) as CSSProperties;
 
@@ -18,15 +19,18 @@ const step = (i: number) => ({ "--i": i }) as CSSProperties;
  */
 export function PublishDone({ post }: { post: StoredPost }) {
   const toast = useToast();
+  const postLabel = usePostLabel();
+  const t = useT().compose.done;
+  const { number } = useFormat();
   const href = `/postingan/${post.id}`;
   const label = post.genre ? postLabel({ kind: post.kind, genre: post.genre }) : "";
 
   async function copy() {
     try {
       await navigator.clipboard.writeText(`${window.location.origin}${href}`);
-      toast({ message: "Tautan disalin.", key: "copy" });
+      toast({ message: t.linkCopied, key: "copy" });
     } catch {
-      toast({ message: "Tautan belum bisa disalin.", tone: "error", key: "copy" });
+      toast({ message: t.linkFailed, tone: "error", key: "copy" });
     }
   }
 
@@ -36,13 +40,13 @@ export function PublishDone({ post }: { post: StoredPost }) {
         style={step(-3)}
         className="rm-rise-in font-serif text-[28px] leading-9 font-semibold md:text-[32px] md:leading-10"
       >
-        Postinganmu sudah terbit.
+        {t.title}
       </h1>
       <p className="rm-rise-in max-w-140 text-base text-ink-muted" style={step(-2)}>
         {post.visibility === "grup"
-          ? `Anggota ${post.groupName} bisa membacanya.`
-          : "Siapa pun bisa membacanya di Community."}
-        {post.sourceTitle && ` Dokumen “${post.sourceTitle}” tetap pribadi di Studio.`}
+          ? format(t.groupBody, { group: post.groupName ?? "" })
+          : t.publicBody}
+        {post.sourceTitle && ` ${format(t.sourceKept, { title: post.sourceTitle })}`}
       </p>
       <div className="rm-rise-in relative grid w-full gap-1 py-5" style={step(-1)}>
         <span
@@ -56,32 +60,32 @@ export function PublishDone({ post }: { post: StoredPost }) {
           style={step(5)}
         />
         <span className="text-[13px] leading-[18px] text-ink-muted">
-          {label} · {post.visibility ? VISIBILITY[post.visibility] : ""} ·{" "}
-          {wordsOf(post.blocks).toLocaleString("id-ID")} kata
+          {label} · {post.visibility ? t.visibility[post.visibility] : ""} ·{" "}
+          {format(t.wordsMeta, { words: number(wordsOf(post.blocks)) })}
         </span>
         <b className="font-serif text-xl leading-7 font-semibold wrap-anywhere">{post.title}</b>
       </div>
       <div className="rm-rise-in flex flex-wrap items-center gap-2" style={step(0)}>
-        <ButtonLink href={href}>Lihat postingan</ButtonLink>
+        <ButtonLink href={href}>{t.view}</ButtonLink>
         <Button variant="secondary" onClick={() => void copy()}>
-          Salin tautan
+          {t.copyLink}
         </Button>
       </div>
       <nav
-        aria-label="Kembali ke"
+        aria-label={t.navLabel}
         className="rm-rise-in flex flex-wrap items-center gap-x-2"
         style={step(1)}
       >
         <ButtonLink href={HOME_HREF} variant="text" className="px-0!">
-          Kembali ke Beranda
+          {t.toHome}
         </ButtonLink>
         {post.sourceDocId && (
           <ButtonLink href={STUDIO_HREF} variant="text" className="px-0!">
-            Kembali ke Studio
+            {t.toStudio}
           </ButtonLink>
         )}
         <ButtonLink href={DISCOVER_HREF} variant="text" className="px-0!">
-          Kembali ke Community
+          {t.toCommunity}
         </ButtonLink>
       </nav>
     </div>

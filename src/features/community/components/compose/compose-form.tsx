@@ -6,12 +6,10 @@ import { Button } from "@/components/ui/button";
 import { ErrorBanner, Notice } from "@/components/ui/states";
 import { Tabs } from "@/components/ui/tabs";
 import { NEW_POST_HREF } from "@/features/app-shell/nav";
+import { format, useLocale, useT } from "@/lib/i18n/provider";
+import type { Dictionary } from "@/lib/i18n/dictionaries";
 import { useDocumentList } from "@/features/studio/hooks/use-document-list";
-import {
-  isActiveDocument,
-  isArchivedDocument,
-  RESTORE_ARCHIVED_MESSAGE,
-} from "@/features/studio/document-archive";
+import { isActiveDocument, isArchivedDocument } from "@/features/studio/document-archive";
 import { studioStore } from "@/features/studio/storage/store";
 import {
   canSaveDraft,
@@ -44,56 +42,52 @@ type Props = {
   onSaveDraft: () => void;
 };
 
-const SOURCE_PARAM_NOTICE: Partial<Record<SourceParam, string>> = {
-  archived: RESTORE_ARCHIVED_MESSAGE,
-  gone: "Dokumen yang ingin kamu bagikan tidak ditemukan atau sudah ada di Sampah. Pilih dokumen lain di bawah.",
-  empty: "Dokumen itu belum ada isinya. Tulis dulu di Studio, atau pilih dokumen lain di bawah.",
-  error: "Dokumen itu gagal dibuka. Pilih dari daftar di bawah.",
-};
+function paramNotice(param: SourceParam, t: Dictionary["compose"]["form"]): string | undefined {
+  if (param === "archived") return t.archived;
+  if (param === "gone") return t.paramGone;
+  if (param === "empty") return t.paramEmpty;
+  if (param === "error") return t.paramError;
+  return undefined;
+}
 
 function Notices({ state, failed, sourceGone, sourceParam, onPublish }: Props) {
+  const t = useT().compose.form;
+  const notice = paramNotice(sourceParam, t);
   return (
     <div className="mt-6 grid gap-4 empty:hidden">
       {failed === "publish" && (
         <ErrorBanner
           action={
             <Button variant="secondary" size="sm" className="-my-1" onClick={onPublish}>
-              Terbitkan lagi
+              {t.publishAgain}
             </Button>
           }
         >
-          Postingan belum terbit karena koneksi terputus saat mengirim. Teks dan pengaturanmu tetap
-          di sini.
+          {t.publishFailed}
         </ErrorBanner>
       )}
       {failed === "group" && state.visibility === "grup" && (
-        <ErrorBanner>
-          Grup yang dipilih sudah tidak tersedia. Pilih audiens lain untuk menerbitkan.
-        </ErrorBanner>
+        <ErrorBanner>{t.groupGone}</ErrorBanner>
       )}
-      {SOURCE_PARAM_NOTICE[sourceParam] && state.pick === null && (
-        <Notice>{SOURCE_PARAM_NOTICE[sourceParam]}</Notice>
-      )}
+      {notice && state.pick === null && <Notice>{notice}</Notice>}
       {sourceGone && state.draftSource && (
-        <Notice>
-          Dokumen sumbernya, “{state.draftSource.title}”, sudah dipindahkan ke Sampah. Draf
-          postingan ini tidak berubah: teksnya sudah disalin saat kamu memilihnya.
-        </Notice>
+        <Notice>{format(t.sourceTrashed, { title: state.draftSource.title })}</Notice>
       )}
     </div>
   );
 }
 
 function DraftLinks({ drafts }: { drafts: StoredPost[] }) {
+  const t = useT().compose.form;
   if (drafts.length === 0) return null;
   return (
     <p className="mt-4 text-sm text-ink-muted">
-      Draf postingan:{" "}
+      {t.draftLinks}{" "}
       {drafts.slice(0, 3).map((d, i) => (
         <span key={d.id}>
           {i > 0 && ", "}
           <Link href={`${NEW_POST_HREF}/${d.id}`} className="text-ink underline underline-offset-3">
-            {d.title || "Tanpa judul"}
+            {d.title || t.untitled}
           </Link>
         </span>
       ))}
@@ -108,12 +102,13 @@ function PhoneFooter(p: {
   onReview: () => void;
   onSaveDraft: () => void;
 }) {
+  const t = useT().compose.form;
   return (
     <div className="fixed inset-x-0 bottom-0 z-30 flex h-14 items-center gap-3 border-t border-line bg-canvas px-4 pb-[env(safe-area-inset-bottom)] md:hidden">
       <WordCounter words={p.words} compact className="min-w-0 flex-1" />
       {p.blocksOnly ? (
         <Button variant="secondary" size="sm" onClick={p.onReview}>
-          Pratinjau
+          {t.preview}
         </Button>
       ) : (
         <Button
@@ -122,7 +117,7 @@ function PhoneFooter(p: {
           onClick={p.onSaveDraft}
           className="text-ink!"
         >
-          Simpan draf
+          {t.saveDraftShort}
         </Button>
       )}
     </div>
@@ -132,6 +127,8 @@ function PhoneFooter(p: {
 /** Everything under the bar: tabs, notices, the text column, and the settings column. */
 export function ComposeForm(props: Props) {
   const { state, dispatch } = props;
+  const t = useT().compose.form;
+  const locale = useLocale();
   const docs = useDocumentList(studioStore);
   const [selectedDoc, setSelectedDoc] = useState<string | null>(null);
   const [pickError, setPickError] = useState("");
@@ -146,21 +143,21 @@ export function ComposeForm(props: Props) {
     setPickError("");
     try {
       const doc = await studioStore.get(selectedDoc);
-      if (doc && isArchivedDocument(doc)) return setPickError(RESTORE_ARCHIVED_MESSAGE);
+      if (doc && isArchivedDocument(doc)) return setPickError(t.archived);
       if (!doc || !isActiveDocument(doc) || doc.wordCount <= 0) {
-        return setPickError("Dokumen ini tidak bisa dipilih. Pilih dokumen lain.");
+        return setPickError(t.pickUnavailable);
       }
       dispatch({
         type: "pick",
         pick: {
           docId: doc.id,
-          docTitle: doc.title.trim() || "Tanpa judul",
+          docTitle: doc.title.trim() || t.untitled,
           blocks: blocksFromDocument(doc.content),
           chosen: [],
         },
       });
     } catch {
-      setPickError("Dokumen gagal dibaca. Coba lagi.");
+      setPickError(t.pickFailed);
     }
   }
 
@@ -169,12 +166,12 @@ export function ComposeForm(props: Props) {
       <main className="px-4 pt-2 pb-28 md:px-12 md:pb-16">
         <div className="mx-auto max-w-266">
           <Tabs
-            label="Cara menulis postingan"
+            label={t.tabsLabel}
             value={state.tab}
             onValueChange={(id) => dispatch({ type: "tab", tab: id as "direct" | "doc" })}
             items={[
-              { id: "direct", label: "Tulis langsung" },
-              { id: "doc", label: "Dari dokumen Studio" },
+              { id: "direct", label: t.tabDirect },
+              { id: "doc", label: t.tabDoc },
             ]}
             className={review ? "max-md:hidden" : undefined}
           />
@@ -190,7 +187,7 @@ export function ComposeForm(props: Props) {
           >
             {state.tab === "direct" && (
               <DirectEditor
-                key={state.draftId ?? "new"}
+                key={`${state.draftId ?? "new"}-${locale}`}
                 title={state.title}
                 initialBlocks={state.directBlocks}
                 onTitleChange={(value) => dispatch({ type: "title", value })}
@@ -226,14 +223,14 @@ export function ComposeForm(props: Props) {
             )}
             {!picking && (
               <aside
-                aria-label="Pengaturan postingan"
+                aria-label={t.settingsLabel}
                 className={`grid content-start gap-8 ${blocksOnly ? "max-md:hidden" : ""}`}
               >
                 <SettingsPanel
                   state={state}
                   dispatch={dispatch}
                   showTitle={fromDoc}
-                  hint={missingHint(state)}
+                  hint={missingHint(state, t, locale)}
                 />
                 <WordCounter words={words} className="max-md:hidden" />
                 <PreviewPanel

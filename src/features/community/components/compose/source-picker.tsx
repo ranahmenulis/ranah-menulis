@@ -8,6 +8,8 @@ import { countWords } from "@/lib/text-stats";
 import { formatChanged } from "@/features/studio/relative-time";
 import type { StudioDocument } from "@/features/studio/storage/document-store";
 import { cn } from "@/lib/cn";
+import { useFormat } from "@/lib/i18n/use-format";
+import { format, useT } from "@/lib/i18n/provider";
 import type { PostBlock } from "../../types";
 
 type DocsProps = {
@@ -24,18 +26,19 @@ type DocsProps = {
 
 /** Step one of "Dari dokumen Studio": which document to take a part of. Nothing leaves it yet. */
 export function DocumentChoices(p: DocsProps) {
+  const t = useT().compose;
+  const s = t.source;
+  const { locale, number } = useFormat();
   return (
     <div className="grid gap-4">
-      <h2 className="text-base font-semibold">Pilih dokumen Studio</h2>
-      <p className="-mt-2 text-sm text-ink-muted">
-        Kamu akan memilih bagian yang menjadi salinan publik. Dokumennya sendiri tidak ikut terbit.
-      </p>
+      <h2 className="text-base font-semibold">{s.chooseTitle}</h2>
+      <p className="-mt-2 text-sm text-ink-muted">{s.chooseBody}</p>
       {p.error && <ErrorBanner>{p.error}</ErrorBanner>}
 
       {p.status === "loading" && (
         <div
           role="status"
-          aria-label="Memuat dokumen"
+          aria-label={s.loading}
           className="animate-[rm-appear_0s_300ms_forwards] opacity-0"
         >
           {["72%", "56%", "40%", "64%"].map((w) => (
@@ -48,41 +51,42 @@ export function DocumentChoices(p: DocsProps) {
       )}
 
       {p.status === "error" && (
-        <ErrorBanner action={<RetryButton onClick={p.onRetry} />}>
-          Daftar dokumen Studio gagal dimuat. Kamu tetap bisa menulis langsung.
-        </ErrorBanner>
+        <ErrorBanner action={<RetryButton onClick={p.onRetry} />}>{s.loadError}</ErrorBanner>
       )}
 
       {p.status === "ready" && p.docs.length === 0 && (
         <EmptyState
           action={
             <Button variant="secondary" onClick={p.onWriteDirect}>
-              Tulis langsung
+              {s.writeDirect}
             </Button>
           }
         >
-          Belum ada tulisan di Studio yang bisa dipilih.
+          {s.empty}
         </EmptyState>
       )}
 
       {p.status === "ready" && p.docs.length > 0 && (
         <>
-          <div role="radiogroup" aria-label="Dokumen Studio" className="border-t border-line">
+          <div role="radiogroup" aria-label={s.groupLabel} className="border-t border-line">
             {p.docs.map((doc) => (
               <div key={doc.id} className="border-b border-line py-4">
                 <RadioChoice
                   name="source-doc"
                   checked={p.selectedId === doc.id}
                   onChange={() => p.onSelect(doc.id)}
-                  label={<b className="font-medium">{doc.title.trim() || "Tanpa judul"}</b>}
-                  hint={`${doc.wordCount.toLocaleString("id-ID")} kata · diubah ${formatChanged(doc.updatedAt, p.now)}`}
+                  label={<b className="font-medium">{doc.title.trim() || t.form.untitled}</b>}
+                  hint={format(s.meta, {
+                    words: number(doc.wordCount),
+                    changed: formatChanged(doc.updatedAt, p.now, locale),
+                  })}
                 />
               </div>
             ))}
           </div>
           <div>
             <Button variant="secondary" disabled={p.selectedId === null} onClick={p.onChoose}>
-              Pilih bagian dari dokumen ini
+              {s.pickBlocks}
             </Button>
           </div>
         </>
@@ -101,24 +105,21 @@ type BlocksProps = {
 
 /** Step two: tick the parts to share. What is not ticked stays private (STD-10). */
 export function BlockChoices({ docTitle, blocks, chosen, onToggle, onChangeDoc }: BlocksProps) {
+  const s = useT().compose.source;
   return (
     <div>
       <div className="flex items-center gap-2 text-sm">
         <Lock size={16} aria-hidden className="shrink-0 text-ink-muted" />
         <b className="min-w-0 truncate font-medium">{docTitle}</b>
         <Button variant="text" size="sm" onClick={onChangeDoc} className="ml-auto shrink-0">
-          Ganti dokumen
+          {s.changeDoc}
         </Button>
       </div>
-      <p className="my-3 text-sm text-ink-muted">
-        Ketuk bagian yang ingin kamu bagikan. Bagian yang tidak dipilih tetap pribadi.
-      </p>
+      <p className="my-3 text-sm text-ink-muted">{s.tapBlocks}</p>
       {blocks.length === 0 ? (
-        <p className="border-t border-line py-6 text-sm text-ink-muted">
-          Dokumen ini belum ada isinya yang bisa dipilih.
-        </p>
+        <p className="border-t border-line py-6 text-sm text-ink-muted">{s.noBlocks}</p>
       ) : (
-        <div role="group" aria-label="Bagian dokumen" className="border-t border-line">
+        <div role="group" aria-label={s.partsLabel} className="border-t border-line">
           {blocks.map((block, i) => {
             const on = chosen.includes(i);
             return (
@@ -134,7 +135,10 @@ export function BlockChoices({ docTitle, blocks, chosen, onToggle, onChangeDoc }
                   type="checkbox"
                   checked={on}
                   onChange={() => onToggle(i)}
-                  aria-label={`${on ? "Dipilih" : "Tidak dipilih"}, ${countWords(block.text)} kata`}
+                  aria-label={format(s.blockAria, {
+                    state: on ? s.selected : s.notSelected,
+                    words: String(countWords(block.text)),
+                  })}
                   className="sr-only"
                 />
                 <CheckMark checked={on} />

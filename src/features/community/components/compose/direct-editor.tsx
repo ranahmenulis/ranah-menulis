@@ -3,14 +3,15 @@
 import Placeholder from "@tiptap/extension-placeholder";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import { useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useMemo, useRef } from "react";
+import { useT } from "@/lib/i18n/provider";
 import "@/features/studio/components/editor.css";
 import { blocksFromDocument, blocksToDocument } from "../../doc-blocks";
 import type { PostBlock } from "../../types";
 
 // Module-level so a parent re-render (typing in the title) does not hand the editor new options:
 // that would reset its attributes and drop the writing-surface class.
-const EXTENSIONS = [
+const BASE_EXTENSIONS = [
   StarterKit.configure({
     heading: false,
     bold: false,
@@ -26,9 +27,7 @@ const EXTENSIONS = [
     link: false,
     underline: false,
   }),
-  Placeholder.configure({ placeholder: "Tulis prolog atau cuplikan, paling banyak 500 kata." }),
 ];
-const EDITOR_PROPS = { attributes: { class: "studio-prose", "aria-label": "Isi postingan" } };
 
 type Props = {
   title: string;
@@ -43,13 +42,24 @@ type Props = {
  * not, because the public text is just text (STD-10).
  */
 export function DirectEditor({ title, initialBlocks, onTitleChange, onBlocksChange }: Props) {
+  const t = useT().compose.direct;
   const titleRef = useRef<HTMLTextAreaElement>(null);
+  // Stable between renders (typing in the title must not reset the editor); the parent remounts
+  // this component when the interface language changes.
+  const extensions = useMemo(
+    () => [...BASE_EXTENSIONS, Placeholder.configure({ placeholder: t.placeholder })],
+    [t.placeholder],
+  );
+  const editorProps = useMemo(
+    () => ({ attributes: { class: "studio-prose", "aria-label": t.bodyLabel } }),
+    [t.bodyLabel],
+  );
 
   const editor = useEditor({
     immediatelyRender: false,
     content: blocksToDocument(initialBlocks),
-    extensions: EXTENSIONS,
-    editorProps: EDITOR_PROPS,
+    extensions,
+    editorProps,
     onUpdate: ({ editor: e }) => onBlocksChange(blocksFromDocument(e.getJSON())),
   });
 
@@ -67,8 +77,8 @@ export function DirectEditor({ title, initialBlocks, onTitleChange, onBlocksChan
         ref={titleRef}
         rows={1}
         value={title}
-        placeholder="Judul"
-        aria-label="Judul postingan"
+        placeholder={t.titlePlaceholder}
+        aria-label={t.titleLabel}
         onChange={(e) => onTitleChange(e.target.value)}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
@@ -79,10 +89,7 @@ export function DirectEditor({ title, initialBlocks, onTitleChange, onBlocksChan
         className="mb-5 block w-full resize-none overflow-hidden border-0 bg-transparent p-0 font-serif text-[28px] leading-9 font-semibold wrap-anywhere text-ink-read outline-none placeholder:text-ink-faint md:text-[32px] md:leading-10"
       />
       <EditorContent editor={editor} />
-      <p className="mt-4 text-xs text-ink-muted">
-        Awali baris dengan &gt; untuk kutipan. Tekan Shift+Enter untuk pindah baris di dalam satu
-        bagian, misalnya pada puisi.
-      </p>
+      <p className="mt-4 text-xs text-ink-muted">{t.hint}</p>
     </div>
   );
 }

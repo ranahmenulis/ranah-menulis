@@ -4,6 +4,7 @@ import type { Dispatch } from "react";
 import { RadioChoice } from "@/components/ui/choice";
 import { Field, Input, Select } from "@/components/ui/field";
 import { Notice } from "@/components/ui/states";
+import { useT } from "@/lib/i18n/provider";
 import type { ComposeAction, ComposeState } from "../../compose-state";
 import { groupsFor } from "../../groups/group-model";
 import { writingGroups } from "../../groups/group-store";
@@ -24,13 +25,16 @@ type Props = {
  * this text becomes public. Visibility has no default and the notice cannot be closed (AC-14, AC-15).
  */
 export function SettingsPanel({ state, dispatch, showTitle, hint }: Props) {
+  const dict = useT();
+  const t = dict.compose.settings;
+  const labels = dict.community.labels;
   const groups = groupsFor(writingGroups.use(), useGroupReader());
   const lostGroup =
     state.visibility === "grup" && !groups.some((group) => group.id === state.groupId);
   return (
     <div className="grid gap-6">
       {showTitle && (
-        <Field id="post-title" label="Judul postingan">
+        <Field id="post-title" label={t.title}>
           <Input
             id="post-title"
             type="text"
@@ -42,34 +46,34 @@ export function SettingsPanel({ state, dispatch, showTitle, hint }: Props) {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <fieldset className="grid content-start gap-2">
-          <legend className="mb-2 text-sm font-medium">Jenis</legend>
-          <div role="radiogroup" aria-label="Jenis" className="flex gap-5">
+          <legend className="mb-2 text-sm font-medium">{t.kind}</legend>
+          <div role="radiogroup" aria-label={t.kind} className="flex gap-5">
             <RadioChoice
               name="post-kind"
-              label="Prolog"
+              label={labels.prolog}
               checked={state.kind === "prolog"}
               onChange={() => dispatch({ type: "kind", value: "prolog" })}
             />
             <RadioChoice
               name="post-kind"
-              label="Cuplikan"
+              label={labels.cuplikan}
               checked={state.kind === "cuplikan"}
               onChange={() => dispatch({ type: "kind", value: "cuplikan" })}
             />
           </div>
         </fieldset>
-        <Field id="post-genre" label="Genre">
+        <Field id="post-genre" label={t.genre}>
           <Select
             id="post-genre"
             value={state.genre}
             onChange={(e) => dispatch({ type: "genre", value: e.target.value as Genre | "" })}
           >
             <option value="" disabled>
-              Pilih genre
+              {t.chooseGenre}
             </option>
             {GENRES.map((g) => (
               <option key={g} value={g}>
-                {g}
+                {labels.genres[g]}
               </option>
             ))}
           </Select>
@@ -79,11 +83,11 @@ export function SettingsPanel({ state, dispatch, showTitle, hint }: Props) {
       <CoverImageField image={state.image} dispatch={dispatch} />
 
       <fieldset className="grid gap-3">
-        <legend className="mb-3 text-sm font-medium">Siapa yang bisa membaca</legend>
+        <legend className="mb-3 text-sm font-medium">{t.whoCanRead}</legend>
         <RadioChoice
           name="post-visibility"
-          label="Publik"
-          hint="Semua orang, termasuk yang belum punya akun. Muncul di feed pengikut dan Community."
+          label={t.public}
+          hint={t.publicHint}
           checked={state.visibility === "publik"}
           onChange={() => dispatch({ type: "visibility", value: "publik" })}
         />
@@ -92,31 +96,18 @@ export function SettingsPanel({ state, dispatch, showTitle, hint }: Props) {
             key={group.id}
             name="post-visibility"
             label={group.name}
-            hint="Hanya anggota grup ini."
+            hint={t.groupHint}
             checked={state.visibility === "grup" && state.groupId === group.id}
             onChange={() => dispatch({ type: "visibility", value: "grup", groupId: group.id })}
           />
         ))}
-        {lostGroup && (
-          <p className="text-sm text-danger">
-            Grup sebelumnya tidak tersedia. Pilih siapa yang bisa membaca.
-          </p>
-        )}
-        {state.visibility === null && (
-          <p className="text-xs text-ink-muted">
-            Pilih salah satu sebelum menerbitkan. Postingan tidak pernah publik tanpa pilihanmu.
-          </p>
-        )}
+        {lostGroup && <p className="text-sm text-danger">{t.lostGroup}</p>}
+        {state.visibility === null && <p className="text-xs text-ink-muted">{t.pickOne}</p>}
       </fieldset>
 
       <Notice>
-        {state.visibility === "grup"
-          ? "Hanya anggota grup pilihanmu yang bisa membaca cuplikan ini."
-          : state.image
-            ? "Yang menjadi publik hanya teks dan gambar ini."
-            : "Yang menjadi publik hanya teks ini."}{" "}
-        Dokumenmu di Studio tetap pribadi. Mengubah dokumen tidak mengubah postingan ini kecuali
-        kamu memperbaruinya sendiri.
+        {state.visibility === "grup" ? t.noticeGroup : state.image ? t.noticeImage : t.noticeText}{" "}
+        {t.noticeTail}
       </Notice>
 
       {hint && <p className="text-sm text-ink-muted">{hint}</p>}

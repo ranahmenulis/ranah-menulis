@@ -5,6 +5,7 @@ import type { Dispatch } from "react";
 import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/field";
 import { FilePickButton } from "@/components/ui/file-pick-button";
+import { useT } from "@/lib/i18n/provider";
 import type { ComposeAction } from "../../compose-state";
 import { usePostImage } from "../../hooks/use-post-image";
 import type { PostImage } from "../../types";
@@ -17,12 +18,13 @@ type Props = { image: PostImage | null; dispatch: Dispatch<ComposeAction> };
  * published (a reader who cannot see the photo still gets a description).
  */
 export function CoverImageField({ image, dispatch }: Props) {
+  const t = useT().compose.cover;
   const upload = usePostImage((next) => dispatch({ type: "image", image: next }));
   const altMissing = image !== null && image.alt.trim() === "";
   return (
     <fieldset className="grid gap-3">
       <legend className="mb-1 text-sm font-medium">
-        Gambar <span className="font-normal text-ink-muted">(opsional)</span>
+        {t.legend} <span className="font-normal text-ink-muted">{t.optional}</span>
       </legend>
       {image ? (
         <div className="grid gap-3">
@@ -37,9 +39,9 @@ export function CoverImageField({ image, dispatch }: Props) {
           />
           <Field
             id="post-image-alt"
-            label="Teks alternatif"
-            hint="Jelaskan gambar ini untuk pembaca yang tidak bisa melihatnya."
-            error={altMissing ? "Isi teks alternatif gambar untuk menerbitkan." : undefined}
+            label={t.altLabel}
+            hint={t.altHint}
+            error={altMissing ? t.altError : undefined}
           >
             <Input
               id="post-image-alt"
@@ -53,8 +55,8 @@ export function CoverImageField({ image, dispatch }: Props) {
             />
           </Field>
           <div className="flex flex-wrap gap-2">
-            <FilePickButton kind="image" label="Ganti gambar" onPick={upload.pick}>
-              Ganti gambar
+            <FilePickButton kind="image" label={t.change} onPick={upload.pick}>
+              {t.change}
             </FilePickButton>
             <Button
               variant="text"
@@ -64,24 +66,17 @@ export function CoverImageField({ image, dispatch }: Props) {
                 dispatch({ type: "image", image: null });
               }}
             >
-              Hapus gambar
+              {t.remove}
             </Button>
           </div>
         </div>
       ) : (
         <div className="flex flex-wrap items-center gap-3">
-          <FilePickButton
-            kind="image"
-            label="Tambah gambar"
-            onPick={upload.pick}
-            disabled={upload.busy}
-          >
+          <FilePickButton kind="image" label={t.add} onPick={upload.pick} disabled={upload.busy}>
             <ImageSquare size={18} aria-hidden />
-            {upload.busy ? "Memproses…" : "Tambah gambar"}
+            {upload.busy ? t.processing : t.add}
           </FilePickButton>
-          <p className="text-xs text-ink-muted">
-            JPG, PNG, atau WebP. Diperkecil dan diubah ke WebP di perangkatmu.
-          </p>
+          <p className="text-xs text-ink-muted">{t.formats}</p>
         </div>
       )}
       {upload.error && (
@@ -89,11 +84,7 @@ export function CoverImageField({ image, dispatch }: Props) {
           {upload.error}
         </p>
       )}
-      {image && (
-        <p className="text-xs text-ink-muted">
-          Gambar ini ikut menjadi publik bersama teks. Hanya satu gambar per postingan.
-        </p>
-      )}
+      {image && <p className="text-xs text-ink-muted">{t.publicNote}</p>}
     </fieldset>
   );
 }

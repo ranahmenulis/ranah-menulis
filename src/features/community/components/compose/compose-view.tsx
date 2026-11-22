@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/toast";
 import { DISCOVER_HREF } from "@/features/app-shell/nav";
+import { useT } from "@/lib/i18n/provider";
 import { canPublish, canSaveDraft, layoutOf } from "../../compose-state";
 import { useCommunity } from "../../hooks/use-community";
 import { useCompose } from "../../hooks/use-compose";
@@ -28,6 +29,9 @@ export function ComposeView({
   /** Studio document chosen before arriving (`?dokumen=`); ignored when reopening a draft. */
   sourceDocId?: string | null;
 }) {
+  const dict = useT().compose;
+  const t = dict.view;
+  const bar = dict.bar;
   const c = useCompose(postStore, draftId, sourceDocId);
   const { state, dispatch } = c;
   const router = useRouter();
@@ -47,19 +51,19 @@ export function ComposeView({
   // Saving a draft is also a way out: the author lands where they came from, with the toast.
   async function saveDraft() {
     if (await c.saveDraft()) {
-      toast({ message: "Draf disimpan di perangkat ini.", key: "draft" });
+      toast({ message: t.draftSaved, key: "draft" });
       leave();
     } else {
-      toast({ message: "Draf belum tersimpan. Coba lagi.", tone: "error", key: "draft" });
+      toast({ message: t.draftFailed, tone: "error", key: "draft" });
     }
   }
 
   if (c.load === "loading" || c.sourceParam === "loading") return <ComposeLoading />;
   if (c.load !== "ready") return <ComposeMissing failed={c.load === "error"} />;
 
-  const bar = (
+  const barElement = (
     <ComposeBar
-      name={c.done ? "Postingan terbit" : state.draftId ? "Draf postingan" : "Postingan baru"}
+      name={c.done ? bar.nameDone : state.draftId ? bar.nameDraft : bar.nameNew}
       isDraft={state.draftId !== null && !c.done}
       actions={!c.done}
       backToText={review && !c.done}
@@ -77,7 +81,7 @@ export function ComposeView({
   if (c.done) {
     return (
       <>
-        {bar}
+        {barElement}
         <main className="px-4 md:px-12">
           <PublishDone post={c.done} />
         </main>
@@ -87,7 +91,7 @@ export function ComposeView({
 
   return (
     <>
-      {bar}
+      {barElement}
       <ComposeForm
         state={state}
         dispatch={dispatch}
@@ -102,12 +106,12 @@ export function ComposeView({
       <Dialog
         open={leaving}
         onClose={() => setLeaving(false)}
-        title="Tutup tanpa menerbitkan?"
-        description="Postingan ini belum diterbitkan dan perubahannya belum disimpan sebagai draf."
+        title={t.leaveTitle}
+        description={t.leaveBody}
         actions={
           <>
             <Button variant="danger-text" onClick={leave}>
-              Buang
+              {t.discard}
             </Button>
             <Button
               onClick={() =>
@@ -117,7 +121,7 @@ export function ComposeView({
                 })
               }
             >
-              Simpan sebagai draf
+              {bar.saveDraft}
             </Button>
           </>
         }

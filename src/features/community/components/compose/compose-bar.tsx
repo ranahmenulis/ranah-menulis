@@ -4,6 +4,7 @@ import { ArrowLeft, X } from "@phosphor-icons/react/dist/ssr";
 import { Button } from "@/components/ui/button";
 import { IconButton, iconButtonClass } from "@/components/ui/icon-button";
 import { cn } from "@/lib/cn";
+import { useT } from "@/lib/i18n/provider";
 
 type Props = {
   name: string;
@@ -27,12 +28,13 @@ type Props = {
  * moves to the footer.
  */
 export function ComposeBar(p: Props) {
+  const t = useT().compose.bar;
   // Once the post is out there is nothing left that "without publishing" could refer to.
-  const closeLabel = p.actions ? "Tutup tanpa menerbitkan" : "Tutup";
+  const closeLabel = p.actions ? t.closeNoPublish : t.close;
   return (
     <header className="sticky top-0 z-40 flex h-[calc(3.25rem+var(--safe-top))] items-center gap-2 border-b border-line bg-canvas pt-(--safe-top) pr-3 pl-2 md:h-[calc(3.5rem+var(--safe-top))] md:gap-3 md:px-4">
       {p.backToText ? (
-        <IconButton label="Kembali memilih bagian" onClick={p.onBackToText}>
+        <IconButton label={t.backToPick} onClick={p.onBackToText}>
           <ArrowLeft size={20} aria-hidden />
         </IconButton>
       ) : (
@@ -48,13 +50,13 @@ export function ComposeBar(p: Props) {
           )}
         >
           <X size={20} aria-hidden />
-          <span className="max-md:hidden">Tutup</span>
+          <span className="max-md:hidden">{t.close}</span>
         </button>
       )}
       <span className="min-w-0 truncate text-[15px] leading-[22px] font-medium">{p.name}</span>
       {p.isDraft && (
         <span className="shrink-0 rounded-full border border-dashed border-ink-muted px-2.5 py-0.5 text-xs text-ink-muted">
-          Draf
+          {t.draftBadge}
         </span>
       )}
       <span className="flex-1" />
@@ -67,7 +69,7 @@ export function ComposeBar(p: Props) {
             onClick={p.onDraft}
             className="max-md:hidden"
           >
-            Simpan sebagai draf
+            {t.saveDraft}
           </Button>
           <Button
             size="sm"
@@ -75,7 +77,7 @@ export function ComposeBar(p: Props) {
             loading={p.publishing}
             onClick={p.onPublish}
           >
-            Terbitkan
+            {t.publish}
           </Button>
         </>
       )}

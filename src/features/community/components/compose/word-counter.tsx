@@ -1,5 +1,9 @@
+"use client";
+
 import { WarningCircle } from "@phosphor-icons/react/dist/ssr";
 import { cn } from "@/lib/cn";
+import { useFormat } from "@/lib/i18n/use-format";
+import { format, useT } from "@/lib/i18n/provider";
 import { MAX_POST_WORDS } from "../../post-model";
 
 /**
@@ -16,6 +20,8 @@ export function WordCounter({
   compact?: boolean;
   className?: string;
 }) {
+  const t = useT().compose.counter;
+  const { number } = useFormat();
   const over = words > MAX_POST_WORDS;
   const by = words - MAX_POST_WORDS;
   return (
@@ -27,10 +33,12 @@ export function WordCounter({
             over ? "text-danger" : "text-ink",
           )}
         >
-          {words.toLocaleString("id-ID")}
+          {number(words)}
         </b>
-        <span>/ {MAX_POST_WORDS} kata</span>
-        {over && compact && <span className="text-danger">· lebih {by}</span>}
+        <span>{format(t.unit, { max: String(MAX_POST_WORDS) })}</span>
+        {over && compact && (
+          <span className="text-danger">{format(t.overShort, { by: String(by) })}</span>
+        )}
       </p>
       <div aria-hidden className="h-1 bg-line">
         <div
@@ -41,10 +49,7 @@ export function WordCounter({
       {over && !compact && (
         <p className="flex items-start gap-1.5 text-sm text-danger">
           <WarningCircle size={20} aria-hidden className="shrink-0" />
-          <span>
-            Lebih {by} kata dari batas {MAX_POST_WORDS}. Kurangi teks atau bagian yang dipilih, atau
-            simpan sebagai draf; tidak ada teks yang terhapus.
-          </span>
+          <span>{format(t.overFull, { by: String(by), max: String(MAX_POST_WORDS) })}</span>
         </p>
       )}
     </div>
