@@ -9,32 +9,26 @@ import { ErrorBanner, FeedItemSkeleton, Notice, RetryButton } from "@/components
 import type { DocumentStore } from "@/features/studio/storage/document-store";
 import { ARCHIVE_HREF, isArchivedDocument } from "@/features/studio/document-archive";
 import { onDocumentListChanged } from "@/features/studio/storage/document-events";
+import { format, useT } from "@/lib/i18n/provider";
+import { useFormat } from "@/lib/i18n/use-format";
 import { beginEventSprint, leaveEvent } from "../event-actions";
+import { eventMessage } from "../event-messages";
 import { eventStudioHref, type EventEntry, type WritingEvent } from "../event-model";
 
 type DocumentState = "loading" | "ready" | "missing" | "archived" | "error";
-const number = new Intl.NumberFormat("id-ID");
 
 function DocumentNotice({ state, retry }: { state: DocumentState; retry: () => void }) {
+  const t = useT().events.participation;
   if (state === "loading") return <FeedItemSkeleton />;
   if (state === "error")
-    return (
-      <ErrorBanner action={<RetryButton onClick={retry} />}>
-        Dokumen Studio belum bisa dibuka.
-      </ErrorBanner>
-    );
-  if (state === "missing")
-    return (
-      <Notice>
-        Dokumen tantangan tidak tersedia. Pulihkan dokumen yang sama dari Sampah untuk melanjutkan.
-      </Notice>
-    );
+    return <ErrorBanner action={<RetryButton onClick={retry} />}>{t.docLoadError}</ErrorBanner>;
+  if (state === "missing") return <Notice>{t.docMissing}</Notice>;
   if (state === "archived")
     return (
       <Notice>
-        Dokumen tantangan ada di Arsip. Pulihkan untuk melanjutkan.{" "}
+        {t.docArchived}{" "}
         <Link href={ARCHIVE_HREF} className="underline">
-          Buka Arsip
+          {t.openArchive}
         </Link>
       </Notice>
     );
@@ -55,6 +49,9 @@ export function EventParticipation({
   show: (message: string) => void;
 }) {
   const router = useRouter();
+  const dict = useT().events;
+  const t = dict.participation;
+  const { number } = useFormat();
   const [docState, setDocState] = useState<DocumentState>("loading");
   const [attempt, setAttempt] = useState(0);
   const [pending, setPending] = useState<"sprint" | "leave" | null>(null);
@@ -98,7 +95,7 @@ export function EventParticipation({
     const result = await beginEventSprint(event.id, entry.id, store);
     setPending(null);
     if (result.ok) router.push(href);
-    else setError(result.message);
+    else setError(eventMessage(result, dict.messages, dict.status));
   }
 
   async function leave() {
@@ -109,25 +106,25 @@ export function EventParticipation({
     setPending(null);
     if (result.ok) {
       setConfirm(false);
-      show(result.message);
-    } else setError(result.message);
+      show(eventMessage(result, dict.messages, dict.status));
+    } else setError(eventMessage(result, dict.messages, dict.status));
   }
 
   return (
     <section className="grid gap-3 border-t border-line pt-6">
-      <h2 className="heading-md">Progresmu</h2>
+      <h2 className="heading-md">{t.title}</h2>
       <p className="tabular-nums">
-        {number.format(entry.words)} dari {number.format(event.target)} kata
+        {format(t.progress, { words: number(entry.words), target: number(event.target) })}
       </p>
       <progress
         className="h-1 w-full accent-ink"
-        aria-label="Progres kata tantangan"
+        aria-label={t.progressLabel}
         value={Math.min(entry.words, event.target)}
         max={event.target}
       />
       {event.sprint && now >= event.sprint.endsAt && entry.sprint && (
         <p className="text-sm text-ink-muted">
-          Hasil sprintmu · {number.format(entry.sprint.words)} kata
+          {format(t.sprintResult, { words: number(entry.sprint.words) })}
         </p>
       )}
       {active && <DocumentNotice state={docState} retry={() => setAttempt((value) => value + 1)} />}
@@ -137,10 +134,10 @@ export function EventParticipation({
           docState === "ready" &&
           (sprintOpen ? (
             <Button disabled={pending !== null} onClick={() => void sprint()}>
-              {entry.sprint ? "Lanjutkan sprint" : "Ikut sprint"}
+              {entry.sprint ? t.continueSprint : t.joinSprint}
             </Button>
           ) : (
-            <ButtonLink href={href}>Lanjutkan menulis</ButtonLink>
+            <ButtonLink href={href}>{t.continueWriting}</ButtonLink>
           ))}
         <Button
           variant="text"
@@ -150,7 +147,7 @@ export function EventParticipation({
             setConfirm(true);
           }}
         >
-          Keluar dari event
+          {t.leave}
         </Button>
       </div>
       {confirm && (
@@ -159,8 +156,8 @@ export function EventParticipation({
           onClose={() => setConfirm(false)}
           role="alertdialog"
           dismissible={pending !== "leave"}
-          title="Keluar dari event?"
-          description="Pendaftaran dan progres event akan dihapus. Dokumenmu tetap tersimpan di Studio."
+          title={t.leaveTitle}
+          description={t.leaveBody}
           actions={
             <>
               <Button
@@ -168,10 +165,10 @@ export function EventParticipation({
                 disabled={pending !== null}
                 onClick={() => setConfirm(false)}
               >
-                Batal
+                {t.cancel}
               </Button>
               <Button variant="danger" disabled={pending !== null} onClick={() => void leave()}>
-                Keluar
+                {t.leaveConfirm}
               </Button>
             </>
           }

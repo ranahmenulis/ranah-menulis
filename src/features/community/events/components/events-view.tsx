@@ -5,42 +5,38 @@ import type { CSSProperties } from "react";
 import { ButtonLink } from "@/components/ui/button";
 import { EmptyState, ErrorBanner, FeedItemSkeleton, RetryButton } from "@/components/ui/states";
 import { HOME_HREF } from "@/features/app-shell/nav";
+import { format, useLocale, useT } from "@/lib/i18n/provider";
 import { BackShell } from "@/features/kelola/components/back-shell";
-import {
-  eventHref,
-  eventState,
-  eventStatus,
-  formatEventTime,
-  type WritingEvent,
-} from "../event-model";
+import { eventHref, eventState, formatEventTime, type WritingEvent } from "../event-model";
 import { countdownLabel } from "../event-face";
 import { refreshEvents, useEvents } from "../event-store";
 import { useEventClock } from "../use-event-clock";
 import { DateLeaf } from "./date-leaf";
 
 export function EventsError() {
-  return (
-    <ErrorBanner action={<RetryButton onClick={refreshEvents} />}>
-      Data event di perangkat ini belum bisa dibuka.
-    </ErrorBanner>
-  );
+  const t = useT().events.list;
+  return <ErrorBanner action={<RetryButton onClick={refreshEvents} />}>{t.loadError}</ErrorBanner>;
 }
 
 export function EventSummary({ event, now }: { event: WritingEvent; now: number }) {
+  const t = useT().events;
+  const locale = useLocale();
   return (
     <p className="text-sm wrap-anywhere text-ink-muted">
-      {eventStatus[eventState(event, now)]} · {formatEventTime(event.startsAt, event.zone)} ·{" "}
-      {event.participants.length} peserta
+      {t.status[eventState(event, now)]} · {formatEventTime(event.startsAt, event.zone, locale)} ·{" "}
+      {format(t.list.participants, { count: String(event.participants.length) })}
     </p>
   );
 }
 
 export function EventsView() {
+  const t = useT().events.list;
+  const locale = useLocale();
   const data = useEvents();
   const now = useEventClock(1000);
   return (
-    <BackShell back={{ href: HOME_HREF, label: "Beranda" }}>
-      <h1 className="heading-lg">Event</h1>
+    <BackShell back={{ href: HOME_HREF, label: t.back }}>
+      <h1 className="heading-lg">{t.title}</h1>
       {data.status === "error" ? (
         <EventsError />
       ) : data.status === "loading" || now === null ? (
@@ -50,11 +46,11 @@ export function EventsView() {
           art="clouds"
           action={
             <ButtonLink variant="secondary" href={HOME_HREF}>
-              Kembali ke Beranda
+              {t.toHome}
             </ButtonLink>
           }
         >
-          Belum ada event.
+          {t.empty}
         </EmptyState>
       ) : (
         <ul>
@@ -80,7 +76,9 @@ export function EventsView() {
                       {event.title}
                     </h2>
                     <EventSummary event={event} now={now} />
-                    <span className="text-sm font-medium">{countdownLabel(event, now)}</span>
+                    <span className="text-sm font-medium">
+                      {countdownLabel(event, now, locale)}
+                    </span>
                     <p className="line-clamp-2 text-sm wrap-anywhere text-ink-soft">
                       {event.description}
                     </p>

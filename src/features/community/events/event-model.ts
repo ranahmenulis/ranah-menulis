@@ -1,3 +1,4 @@
+import type { Locale } from "@/lib/i18n/config";
 import { zoneIana } from "@/features/projects/project-model";
 import type { TimeZoneName } from "@/features/projects/types";
 import { sprintWords } from "@/features/studio/sprint";
@@ -42,15 +43,15 @@ export type WritingEvent = EventSettings & {
   participants: EventParticipant[];
 };
 
-type EventState = "upcoming" | "open" | "full" | "finished";
+export type EventStateName = "upcoming" | "open" | "full" | "finished";
 
-export function eventState(event: WritingEvent, now: number): EventState {
+export function eventState(event: WritingEvent, now: number): EventStateName {
   if (now < event.startsAt) return "upcoming";
   if (now >= event.endsAt) return "finished";
   return event.capacity !== null && event.participants.length >= event.capacity ? "full" : "open";
 }
 
-export const eventStatus: Record<EventState, string> = {
+export const eventStatus: Record<EventStateName, string> = {
   upcoming: "Akan datang",
   open: "Sedang berlangsung",
   full: "Kuota penuh",
@@ -74,8 +75,8 @@ export function visibleParticipantIds(
     .map(({ authorId }) => authorId);
 }
 
-export function formatEventTime(timestamp: number, zone: TimeZoneName) {
-  return `${new Intl.DateTimeFormat("id-ID", {
+export function formatEventTime(timestamp: number, zone: TimeZoneName, locale: Locale = "id") {
+  return `${new Intl.DateTimeFormat(locale === "en" ? "en-US" : "id-ID", {
     dateStyle: "medium",
     timeStyle: "short",
     timeZone: zoneIana(zone),

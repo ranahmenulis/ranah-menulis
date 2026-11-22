@@ -1,4 +1,5 @@
 import { cn } from "@/lib/cn";
+import { useLocale } from "@/lib/i18n/provider";
 import type { TimeZoneName } from "@/features/projects/types";
 import { dateLeaf } from "../event-face";
 
@@ -17,7 +18,7 @@ export function DateLeaf({
   size?: "sm" | "lg";
   className?: string;
 }) {
-  const leaf = dateLeaf(at, zone);
+  const leaf = dateLeaf(at, zone, useLocale());
   const large = size === "lg";
   return (
     <span

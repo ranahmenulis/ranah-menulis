@@ -9,7 +9,9 @@ import { STUDIO_HREF } from "@/features/app-shell/nav";
 import { isActiveDocument } from "@/features/studio/document-archive";
 import { onDocumentListChanged } from "@/features/studio/storage/document-events";
 import type { DocumentStore, StudioDocument } from "@/features/studio/storage/document-store";
+import { useT } from "@/lib/i18n/provider";
 import { joinEvent } from "../event-actions";
+import { eventMessage } from "../event-messages";
 
 type DocumentOptions =
   { status: "loading" | "error" } | { status: "ready"; documents: StudioDocument[] };
@@ -25,6 +27,8 @@ export function EventJoin({
   close: () => void;
   joined: (message: string) => void;
 }) {
+  const dict = useT().events;
+  const t = dict.join;
   const id = useId();
   const [state, setState] = useState<DocumentOptions>({ status: "loading" });
   const [attempt, setAttempt] = useState(0);
@@ -55,9 +59,9 @@ export function EventJoin({
     const result = await joinEvent(eventId, docId, store);
     if (result.ok) {
       close();
-      joined(result.message);
+      joined(eventMessage(result, dict.messages, dict.status));
     } else {
-      setError(result.message);
+      setError(eventMessage(result, dict.messages, dict.status));
       setPending(false);
     }
   }
@@ -66,16 +70,16 @@ export function EventJoin({
     <Dialog
       open
       onClose={close}
-      title="Gabung event"
-      description="Pilih dokumen Studio untuk menghitung progresmu. Judul dan isi dokumen tetap pribadi."
+      title={t.title}
+      description={t.description}
       dismissible={!pending}
       actions={
         <>
           <Button variant="secondary" onClick={close} disabled={pending}>
-            Batal
+            {t.cancel}
           </Button>
           <Button disabled={!docId || pending} onClick={() => void submit()}>
-            {pending ? "Mendaftarkan…" : "Gabung"}
+            {pending ? t.submitting : t.submit}
           </Button>
         </>
       }
@@ -93,20 +97,20 @@ export function EventJoin({
             />
           }
         >
-          Dokumen Studio belum bisa dibuka.
+          {t.loadError}
         </ErrorBanner>
       ) : state.status === "ready" && state.documents.length > 0 ? (
-        <Field id={id} label="Dokumen Studio">
+        <Field id={id} label={t.docLabel}>
           <Select
             id={id}
             value={docId}
             disabled={pending}
             onChange={(e) => setDocId(e.target.value)}
           >
-            <option value="">Pilih dokumen</option>
+            <option value="">{t.choose}</option>
             {state.documents.map((doc) => (
               <option key={doc.id} value={doc.id}>
-                {doc.title || "Tanpa judul"}
+                {doc.title || t.untitled}
               </option>
             ))}
           </Select>
@@ -115,11 +119,11 @@ export function EventJoin({
         <Notice
           action={
             <ButtonLink variant="secondary" href={STUDIO_HREF} onClick={close}>
-              Buka Studio
+              {t.openStudio}
             </ButtonLink>
           }
         >
-          Simpan satu dokumen di Studio untuk mengikuti tantangan ini.
+          {t.noDocs}
         </Notice>
       )}
       {error && <ErrorBanner className="mt-4">{error}</ErrorBanner>}

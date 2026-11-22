@@ -8,6 +8,7 @@ import { CommunityLink } from "@/features/app-shell/community-link";
 import { BackShell } from "@/features/kelola/components/back-shell";
 import type { DocumentStore } from "@/features/studio/storage/document-store";
 import { studioStore } from "@/features/studio/storage/store";
+import { format, useLocale, useT } from "@/lib/i18n/provider";
 import { useViewer } from "@/lib/viewer";
 import { writingGroups } from "../../groups/group-store";
 import { useGroupReader } from "../../groups/group-viewer";
@@ -16,7 +17,6 @@ import {
   entryOf,
   EVENTS_HREF,
   eventState,
-  eventStatus,
   formatEventTime,
   visibleParticipantIds,
   type WritingEvent,
@@ -37,6 +37,8 @@ function EventDetail({
   now: number;
   store: DocumentStore;
 }) {
+  const t = useT().events;
+  const locale = useLocale();
   const groups = writingGroups.use();
   const actor = useGroupReader();
   const guest = useViewer() === "tamu";
@@ -75,43 +77,48 @@ function EventDetail({
         <div className="grid justify-items-start gap-3">
           {state !== "open" ? (
             <>
-              <Button disabled>Gabung</Button>
+              <Button disabled>{t.detail.join}</Button>
               <p className="text-sm text-ink-muted">
-                Pendaftaran tidak tersedia. {eventStatus[state]}.
+                {format(t.detail.closed, { status: t.status[state] })}
               </p>
             </>
           ) : actor ? (
-            <Button onClick={() => setJoin(true)}>Gabung</Button>
+            <Button onClick={() => setJoin(true)}>{t.detail.join}</Button>
           ) : guest ? (
-            <SignInButton>Masuk untuk bergabung</SignInButton>
+            <SignInButton>{t.detail.signInToJoin}</SignInButton>
           ) : (
-            <Notice>Akun aktif diperlukan untuk mengikuti event.</Notice>
+            <Notice>{t.detail.needAccount}</Notice>
           )}
         </div>
       )}
       <section className="grid gap-2 border-t border-line pt-6">
-        <h2 className="heading-md">Aturan tantangan</h2>
-        <p className="text-sm">Target {event.target.toLocaleString("id-ID")} kata</p>
+        <h2 className="heading-md">{t.detail.rulesTitle}</h2>
+        <p className="text-sm">
+          {format(t.detail.target, {
+            words: event.target.toLocaleString(locale === "en" ? "en-US" : "id-ID"),
+          })}
+        </p>
         <p className="wrap-anywhere whitespace-pre-line">{event.rules}</p>
       </section>
       {sprint && (
         <section className="grid gap-2 border-t border-line pt-6">
-          <h2 className="heading-md">Sprint bersama</h2>
+          <h2 className="heading-md">{t.detail.sprintTitle}</h2>
           <p className="text-sm">
-            {formatEventTime(sprint.startsAt, zone)} – {formatEventTime(sprint.endsAt, zone)}
+            {formatEventTime(sprint.startsAt, zone, locale)} –{" "}
+            {formatEventTime(sprint.endsAt, zone, locale)}
           </p>
           <p className="text-sm text-ink-muted">
             {now < sprint.startsAt
-              ? "Terjadwal"
+              ? t.detail.sprintScheduled
               : now < sprint.endsAt
-                ? "Sedang berlangsung"
-                : "Sesi selesai"}
+                ? t.detail.sprintRunning
+                : t.detail.sprintOver}
           </p>
         </section>
       )}
       {participants.length > 0 && (
         <section className="grid gap-2 border-t border-line pt-6">
-          <h2 className="heading-md">Peserta dari grupmu</h2>
+          <h2 className="heading-md">{t.detail.peersTitle}</h2>
           <ul className="divide-y divide-line">
             {participants.map((id) => (
               <li key={id} className="py-2">
@@ -135,11 +142,12 @@ function EventDetail({
 }
 
 export function EventView({ id, store = studioStore }: { id: string; store?: DocumentStore }) {
+  const t = useT().events.detail;
   const data = useEvents();
   const now = useEventClock(1000);
   const event = data.status === "ready" ? data.events.find((item) => item.id === id) : undefined;
   return (
-    <BackShell back={{ href: EVENTS_HREF, label: "Semua Event" }}>
+    <BackShell back={{ href: EVENTS_HREF, label: t.allEvents }}>
       {data.status === "error" ? (
         <EventsError />
       ) : data.status === "loading" || now === null ? (
@@ -148,8 +156,8 @@ export function EventView({ id, store = studioStore }: { id: string; store?: Doc
         <EventDetail key={id} event={event} now={now} store={store} />
       ) : (
         <>
-          <h1 className="heading-lg">Event tidak tersedia</h1>
-          <Notice>Alamat ini tidak mengarah ke event yang tersedia.</Notice>
+          <h1 className="heading-lg">{t.notFoundTitle}</h1>
+          <Notice>{t.notFoundBody}</Notice>
         </>
       )}
     </BackShell>

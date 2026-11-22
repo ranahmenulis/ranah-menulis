@@ -2,6 +2,7 @@
 
 import { useCallback, useRef } from "react";
 import { useToast } from "@/components/ui/toast";
+import { useT } from "@/lib/i18n/provider";
 import { isActiveDocument } from "@/features/studio/document-archive";
 import { readGroupReader } from "../groups/group-viewer";
 import { recordEventSave, type EventSaveSnapshot } from "./event-actions";
@@ -9,6 +10,7 @@ import { tracksEventDocument } from "./event-store";
 
 export function useEventSave(eventId?: string) {
   const toast = useToast();
+  const t = useT().events;
   const pending = useRef<EventSaveSnapshot[]>([]);
   const running = useRef<Promise<void> | null>(null);
   const trackedDocuments = useRef(new Set<string>());
@@ -27,9 +29,9 @@ export function useEventSave(eventId?: string) {
         .catch(() => {
           toast({
             key: "event-progress-error",
-            message: "Progres event belum tersimpan. Coba lagi.",
+            message: t.saveFailed,
             tone: "error",
-            action: { label: "Coba lagi", onSelect: () => void flushPending() },
+            action: { label: t.retry, onSelect: () => void flushPending() },
           });
         })
         .finally(() => {
@@ -37,7 +39,7 @@ export function useEventSave(eventId?: string) {
         });
       return running.current;
     },
-    [toast],
+    [toast, t],
   );
 
   const onSaved = useCallback(

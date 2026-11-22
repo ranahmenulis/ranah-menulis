@@ -1,6 +1,8 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { format, useT } from "@/lib/i18n/provider";
+import { useFormat } from "@/lib/i18n/use-format";
 import { formatRemaining } from "@/features/studio/sprint";
 import { useGroupReader } from "../../groups/group-viewer";
 import { entryOf, eventHref } from "../event-model";
@@ -16,6 +18,8 @@ export function EventEditorPanel({
   documentId: string;
   onBack: (href: string) => void;
 }) {
+  const t = useT().events.editor;
+  const { number } = useFormat();
   const actor = useGroupReader();
   const data = useEvents();
   const now = useEventClock(250);
@@ -30,16 +34,16 @@ export function EventEditorPanel({
     <div className="border-b border-line bg-canvas px-4 md:px-6">
       <div className="mx-auto flex max-w-170 flex-wrap items-center justify-between gap-x-4 py-1">
         <Button variant="text" size="sm" onClick={() => onBack(eventHref(event.id))}>
-          Kembali ke event
+          {t.back}
         </Button>
         {running && (
           <p className="text-sm tabular-nums">
-            Sprint bersama · <time>{formatRemaining(session.endsAt - now)}</time>
+            {t.sprintRunning} · <time>{formatRemaining(session.endsAt - now)}</time>
           </p>
         )}
         {hasSprint && !running && (
           <p role="status" className="text-sm">
-            Sprint selesai · {result.words.toLocaleString("id-ID")} kata
+            {format(t.sprintDone, { words: number(result.words) })}
           </p>
         )}
       </div>

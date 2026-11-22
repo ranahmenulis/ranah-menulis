@@ -1,3 +1,4 @@
+import type { Locale } from "@/lib/i18n/config";
 import { zoneIana } from "@/features/projects/project-model";
 import type { TimeZoneName } from "@/features/projects/types";
 import type { WritingEvent } from "./event-model";
@@ -8,9 +9,12 @@ import type { WritingEvent } from "./event-model";
  */
 export type DateLeaf = { day: string; month: string; weekday: string };
 
-export function dateLeaf(timestamp: number, zone: TimeZoneName): DateLeaf {
+export function dateLeaf(timestamp: number, zone: TimeZoneName, locale: Locale = "id"): DateLeaf {
   const part = (options: Intl.DateTimeFormatOptions) =>
-    new Intl.DateTimeFormat("id-ID", { ...options, timeZone: zoneIana(zone) }).format(timestamp);
+    new Intl.DateTimeFormat(locale === "en" ? "en-US" : "id-ID", {
+      ...options,
+      timeZone: zoneIana(zone),
+    }).format(timestamp);
   return {
     day: part({ day: "numeric" }),
     month: part({ month: "short" }).replace(".", ""),
@@ -22,22 +26,51 @@ const MINUTE = 60_000;
 const HOUR = 60 * MINUTE;
 const DAY = 24 * HOUR;
 
+const WORDS = {
+  id: {
+    lessThanMinute: "kurang dari 1 menit",
+    day: "hari",
+    hour: "jam",
+    minute: "menit",
+    startsIn: "Mulai dalam",
+    endsIn: "Berakhir dalam",
+    over: "Event sudah selesai",
+  },
+  en: {
+    lessThanMinute: "less than 1 minute",
+    day: "days",
+    hour: "hr",
+    minute: "min",
+    startsIn: "Starts in",
+    endsIn: "Ends in",
+    over: "The event is over",
+  },
+} as const;
+
 /** "2 hari 3 jam", "5 jam 12 menit", "4 menit", "kurang dari 1 menit": the two largest units. */
-export function spanLabel(ms: number): string {
-  if (ms < MINUTE) return "kurang dari 1 menit";
+export function spanLabel(ms: number, locale: Locale = "id"): string {
+  const w = WORDS[locale];
+  if (ms < MINUTE) return w.lessThanMinute;
   const days = Math.floor(ms / DAY);
   const hours = Math.floor((ms % DAY) / HOUR);
   const minutes = Math.floor((ms % HOUR) / MINUTE);
-  if (days > 0) return hours > 0 ? `${days} hari ${hours} jam` : `${days} hari`;
-  if (hours > 0) return minutes > 0 ? `${hours} jam ${minutes} menit` : `${hours} jam`;
-  return `${minutes} menit`;
+  if (days > 0) return hours > 0 ? `${days} ${w.day} ${hours} ${w.hour}` : `${days} ${w.day}`;
+  if (hours > 0) {
+    return minutes > 0 ? `${hours} ${w.hour} ${minutes} ${w.minute}` : `${hours} ${w.hour}`;
+  }
+  return `${minutes} ${w.minute}`;
 }
 
 /** What the clock says about an event right now. */
-export function countdownLabel(event: Pick<WritingEvent, "startsAt" | "endsAt">, now: number) {
-  if (now < event.startsAt) return `Mulai dalam ${spanLabel(event.startsAt - now)}`;
-  if (now < event.endsAt) return `Berakhir dalam ${spanLabel(event.endsAt - now)}`;
-  return "Event sudah selesai";
+export function countdownLabel(
+  event: Pick<WritingEvent, "startsAt" | "endsAt">,
+  now: number,
+  locale: Locale = "id",
+) {
+  const w = WORDS[locale];
+  if (now < event.startsAt) return `${w.startsIn} ${spanLabel(event.startsAt - now, locale)}`;
+  if (now < event.endsAt) return `${w.endsIn} ${spanLabel(event.endsAt - now, locale)}`;
+  return w.over;
 }
 
 /** How far through its window an event is, 0 to 1. */
