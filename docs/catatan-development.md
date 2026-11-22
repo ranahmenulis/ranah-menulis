@@ -2,7 +2,7 @@
 
 Sumber status terkini. **Wajib dibaca di awal setiap permintaan, sebelum menyentuh apa pun.** Jangan menebak posisi proyek: kalau yang dicari tidak ada di sini, baca [Catatan Slicing](desain/Catatan%20Slicing.md) (arsip fase slicing) atau tanyakan. Perbarui berkas ini di akhir setiap sesi yang mengubah status.
 
-Terakhir diperbarui: **21 November 2026**.
+Terakhir diperbarui: **22 November 2026**.
 
 ## 1. Posisi sekarang
 
@@ -15,7 +15,8 @@ Terakhir diperbarui: **21 November 2026**.
 - **Layar akun (21 November 2026):** dipoles dengan pelat kertas marmer, lihat Log sesi.
 - **Poles alur Projects dan dasbor (21 November 2026):** kepala kecil `ProjectStrip` di langkah alur dan pita `DashboardBand` di dasbor Kelas dan Solo (Backlog 0a butir 1 dan 2), di-commit lokal, belum di-push. Gate: `npm run check` lulus (241 berkas, 1.921 tes); `npm run build` belum dijalankan (server dev memakai `.next` yang sama).
 - **Poles lanjutan (21 November 2026):** satu foto di Pengaturan (`7b56511`), filter katalog Projects satu baris (`a1abfd2`), keadaan kosong Dokumen (gambar dan tata letak baru); di-commit lokal, belum di-push.
-- **Berikutnya:** uji klik dan keyboard sungguhan di semua layar yang diubah 21 November 2026, perangkat ponsel fisik oleh user, lalu push setelah user setuju. Pengaturan akun (0a butir 3) juga selesai.
+- **Sesi berikutnya (keputusan user, 22 November 2026): kerjakan semua masukan client di Backlog butir 00** (14 butir; urutan disarankan 1 sampai 4, lalu 5, lalu 7 sampai 10, lalu 6; 12 dan 13 bersama backend). Butir 14 (poster proyek) sudah dikerjakan dan di-commit, tetapi belum diuji di peramban, belum `npm run build`, belum tes penuh. Butir yang menyentuh lebih dari 5 berkas (4, 5, 7 sampai 10, 6) wajib rencana dan persetujuan dulu. Satu keputusan terbuka: struktur bab dan subbab (butir 9; usul satu tingkat). Pertanyaan ke client yang sudah dijawab: unggah gambar adalah kebutuhan admin (poster), buku utuh dikirim penuh bab dan subbab.
+- **Berikutnya (sebelum itu):** uji klik dan keyboard sungguhan di semua layar yang diubah 21 November 2026, perangkat ponsel fisik oleh user, lalu push setelah user setuju. Pengaturan akun (0a butir 3) juga selesai.
 - **Hook git:** `pre-commit` = lint-staged; `pre-push` = `typecheck` saja. Tes penuh lewat `npm run check` dan CI.
 - **Saklar demo peran:** `NEXT_PUBLIC_DEMO_ROLES=1` aktif di Vercel Production, jadi `?sebagai=` (tamu dan peran kelola) berlaku di produksi. **Wajib dihapus bersama bypass login saat auth sungguhan masuk.**
 - **Panduan uji:** `docs/panduan-uji-pengguna.md` (juga `.html`, `.pdf`), versi web `/panduan-uji.html`, berkas contoh `/contoh-naskah.txt` dan `.pdf`. Diuji di Vercel lewat Chrome CDP pada 21 November 2026. Perbarui panduan bila alur atau nama tombol berubah.
@@ -25,6 +26,23 @@ Terakhir diperbarui: **21 November 2026**.
 Landing; Beranda; Studio (Dokumen, Editor, Streak, Statistik, riwayat versi, target, sprint, pencarian, arsip, jenis dan tag); Community (rename dari Jelajahi, detail artikel, Tulis postingan, unggah gambar); Grup; Event umum; Projects semua kategori (daftar, QRIS contoh, kirim karya, revisi, dasbor Kelas dan Solo, hasil Lomba, batal daftar, kelas berjalan, testimoni); Profil; Tersimpan dan Notifikasi (termasuk preferensi dan notifikasi pengelola); Akun dan Pengaturan (tanpa backend); semua area Kelola (Editor, Mentor, Organizer, Juri, Admin: pengguna, moderasi, audit, kurasi, pengaturan, grup). Rincian per fitur ada di CLAUDE.md dan Catatan Slicing.
 
 ## 3. Backlog dekat (belum dikerjakan)
+
+00. **Masukan client setelah uji (22 November 2026)**: rincian dan jawaban client di `docs/catatan-keputusan-client.md` bagian "Masukan client setelah uji". Kesimpulan dan solusi (keputusan user, 22 November 2026). Urutan kerja yang disarankan: 1 sampai 4, lalu 5, lalu 7 sampai 10, lalu 6, lalu 12 dan 13 bersama backend. Butir yang menyentuh lebih dari 5 berkas wajib rencana dan persetujuan dulu.
+    1. **Tahanan kuota 24 jam menjadi 2 jam**: ubah `HOLD_MS` di `projects/payment-model.ts` (berlaku semua proyek berbayar); cari teks "24 jam" di layar, notifikasi, panduan uji, tes. Belum.
+    2. **Hapus tab Profil dari bilah bawah ponsel** (empat tab + tombol Tulis): "Tersimpan" yang kini dibuka dari Profil dipindah ke menu avatar kanan atas (cek dulu apakah avatar sudah berupa menu). Belum.
+    3. **Chip kategori Community disembunyikan dulu** (Trending Today dan seterusnya; diganti fitur roasting dan writer battle di Fase 2). Catatan: kurasi Editor's Picks kehilangan tempat tampil publik selama chip tersembunyi. Belum.
+    4. **Grup Penulis, Event, dan undangan grup pindah dari Beranda ke Community**: hapus blok "Bersama penulis lain" dan undangan di `home/home-rail.tsx`, pasang tautannya di Community. "Fitur tersembunyi" dibaca: bila ditaruh di Beranda ia sulit ditemukan, jadi dipindah supaya terlihat. Belum.
+    5. **Multi bahasa Indonesia dan Inggris dilengkapi di semua halaman**: audit teks yang masih Indonesia saja (Beranda, Studio, Community, Projects, Akun; Kelola terakhir; teks contoh fixture boleh tetap), lalu pindah per fitur ke kamus. Perlu rencana bertahap. Belum.
+    6. **Demo Studio sebelum daftar (A1)**: editor Tiptap ringkas di landing tanpa akun, tidak tersimpan, dengan ajakan daftar. Usulan tim, client belum menjawab. Belum.
+    7. **Studio, folder dan dokumen dipisah**: sebagian besar sudah ada (folder satu tingkat, pindah dokumen); cek membuat dokumen langsung di dalam folder. Belum.
+    8. **Studio, folder = naskah buku** dengan judul dan cover (opsional; unggah gambar atau otomatis dari judul), dokumen = bab, urutan bab manual, total kata buku. `StudioFolder` kini hanya `id`, `name`, `createdAt`. Belum, perlu rencana.
+    9. **Bab dan subbab**: tafsir yang disarankan satu tingkat (dokumen = bab, subbab = judul di dalam dokumen); dua tingkat folder bisa menyusul. Belum diputuskan user atau client.
+    10. **Kirim buku utuh** dari folder: bab digabung berurutan menjadi satu versi beku (kata dijumlah, hash baru). Solo jelas; Antologi tetap batas per karya. Belum.
+    11. **Folder Studio tidak menyimpan berkas lain** (keputusan tim, bukan permintaan client): hanya dokumen teks; cover buku satu-satunya gambar; impor .docx Fase 2 (N26).
+    12. **Login Google masuk MVP** (Supabase Auth, butuh OAuth client Google Cloud). Tahap backend.
+    13. **Email verifikasi**: bawaan Supabase dulu, Resend setelah domain dibeli. Peringatan (belum diverifikasi di dokumentasi Supabase): email bawaan hanya untuk uji, kuota kecil dan hanya ke alamat tim proyek, jadi pendaftar umum mungkin belum menerima email sebelum Resend; login Google tidak terpengaruh. Tahap backend.
+    14. **Poster proyek opsional** (client: admin perlu mengunggah gambar seperti poster; sampul otomatis jadi cadangan): **selesai dan di-commit 22 November 2026**. Poster proyek dulu, event tidak; dipotong 4:5; teks alternatif wajib. Belum diuji di peramban. Lihat Log sesi 22 November.
+    - Jawaban untuk client sudah dibuat: A1 demo, A2 Google, A3 email, dan klarifikasi unggah gambar.
 
 0. **Lanjutan perombakan UI** (rencana disetujui 21 November 2026, monokrom tetap, gerak tidak dibatasi): fase 4a sampai 6 dan pelonggaran (hati, tekan tombol) selesai lokal; berikutnya uji ponsel (termasuk keputusan bilah navigasi yang bersembunyi di halaman baca), mode gelap, dan klik/keyboard sungguhan untuk semua layar yang diubah, lalu push setelah user setuju. Fase 3 selesai (Beranda dan Dokumen dikerjakan 21 November 2026, belum di-commit). Gerak, hover, dan keyboard belum diuji dengan klik sungguhan.
 0a. **Poles layar yang tertinggal** (audit 21 November 2026). Butir 1, 2, dan 3 **selesai** 21 November 2026 (lihat Log sesi). Catatan asli:
@@ -60,6 +78,15 @@ Isi pekerjaannya (urutan belum diputuskan):
 - Hal yang "perlu dibahas" client tidak boleh dibangun (lihat CLAUDE.md, Keputusan Lembar Novlr).
 
 ## 6. Log sesi
+
+### 22 November 2026 (poster proyek)
+- Rencana disetujui user (tiga rekomendasi diikuti: proyek saja, dipotong 4:5, teks alternatif wajib). Dikerjakan: `ProjectBase.poster`, isian di form Organizer (`poster-field.tsx`, `poster-files.ts`), validasi di `project-build`, `PosterCover` di `ProjectCover` dengan sampul otomatis sebagai cadangan, penjaga bentuk di `stored-projects`, DESIGN.md 7.6 dan CLAUDE.md diperbarui.
+- Tes baru: `tests/features/kelola/organizer/poster.test.ts` dan `tests/features/projects/project-cover.test.tsx`. `tsc` lulus; ESLint dan Prettier bersih untuk berkas yang disentuh.
+- Belum: uji di peramban (unggah, ganti, hapus, terang dan gelap, ponsel), `npm run build`, tes penuh. Tes folder organizer dan projects sempat gagal sebagian karena worker Vitest tidak bisa dijalankan (`spawn UNKNOWN`, bukan kegagalan tes); diulang dengan 2 worker dan lulus (74 berkas, 677 tes).
+
+### 22 November 2026 (masukan client setelah uji)
+- User meneruskan masukan Wafiy (dua tangkapan layar dan teks) dan meminta dicatat. Hanya dokumentasi: `docs/catatan-keputusan-client.md` mendapat bagian baru, butir 00 ditambah di Backlog. Tidak ada kode yang diubah dan tidak ada tes yang dijalankan.
+- Catatan: keputusan 20 November ("sampul dokumen Studio tidak dibangun") perlu ditinjau karena client kini meminta cover untuk folder.
 
 ### 21 November 2026 (tiga poles dari masukan user)
 - User: Studio kosong terasa aneh (foto Dürer), foto Pengaturan tampil dua kali, katalog Projects perlu tata letak lain. Rencana disetujui: "1 gabung, 2 setuju, 3 a".

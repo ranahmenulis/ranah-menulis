@@ -257,3 +257,50 @@ User mengirim ulang daftar scope MVP founder (tiga modul inti dan delapan suppor
 - **Sampul dokumen Studio, banner proyek, dan logo grup**: tidak dibangun (tidak ada di PRD atau Fase 2, PLT-09).
 - **Unggah naskah Solo (DOCX/PDF)** mengikuti Q-13 dan **pratinjau sampul/isi buku dari tim** mengikuti SOL-02 (keduanya MVP). Batas ukuran berkas **10 MB bersifat sementara**: client belum memberi angka (konstanta `FILE_MAX_BYTES` di `src/lib/files/limits.ts`).
 - Berkas disimpan di perangkat (IndexedDB `ranah-files`). Saat backend ada: Supabase Storage dengan RLS (naskah hanya penulis dan tim yang ditugaskan; pratinjau hanya penulis buku itu), pemindaian berkas, dan batas ukuran dari client.
+
+### Masukan client setelah uji (Wafiy, WhatsApp, 22 November 2026)
+
+Dicatat apa adanya dari pesan dan dua tangkapan layar yang diteruskan user. **Belum ada yang dikerjakan.** Perubahan di bawah ini belum dipecah menjadi rencana; tiap butir yang mengubah perilaku atau menyentuh lebih dari 5 berkas perlu rencana dan persetujuan dulu (CLAUDE.md aturan 2 dan 3).
+
+**Dari tangkapan layar (ditandai penting oleh client)**
+
+- **Beranda, blok "Bersama penulis lain"** (tautan Event, Grup Penulis, Tulis postingan; tangkapan juga memuat kartu "Undangan grup"): *"Yang wajib diganti bagian ini bang, grup menulis, usahain ada di komunitas, kalo ditaro dibagian sini. Nanti dia bakal jadi fitur yg tersembunyi."* Maksud yang ditangkap: Grup Penulis ditempatkan di Community, bukan di Beranda, dan nanti menjadi fitur tersembunyi. Belum jelas: apakah Event dan kartu Undangan grup ikut pindah, dan apakah "tersembunyi" berarti dimatikan lewat pengaturan atau hanya dikeluarkan dari MVP.
+- **Community, chip kategori** ("Trending Today", "New Writers", "Editor's Picks", dan seterusnya): *"bagian 'trending today..' dan seterusnya nanti bakal diganti pakai fitur yg 3 (roasting, writter battle dll) di fase ke 2 ya bang."* Jadi chip ini diganti fitur ketiga (Roast My Writing, writer battle, dan sejenisnya) di Fase 2. Untuk sekarang belum ada perintah mengubah; hanya pemberitahuan arah.
+
+**Pertanyaan client untuk kita jawab**
+
+- **A1.** Bagian Ranah Studio ("Ruang Menulismu yang Fokus dan Nyaman") di landing: bisakah dibuat demo langsung supaya calon pengguna bisa merasakan pengalaman menulis sebelum mendaftar?
+- **A2.** Apakah akan ada login dengan Google?
+- **A3.** Email verifikasi memakai penyedia apa? Client menilai email standar Supabase sangat terbatas kuotanya. (Terkait tahap backend: SMTP khusus.)
+
+**Revisi dan perbaikan**
+
+- **Multi bahasa**: masih banyak teks yang tidak ikut berganti ke bahasa yang dipilih. (Sudah diketahui: Studio, Community, Beranda, galat daftar tunggu, dan teks contoh fixture masih Indonesia, lihat CLAUDE.md bagian i18n.)
+- **Bilah bawah ponsel**: hapus tab Profil, karena profil sudah ada di kanan atas (ikon avatar) dan jadi dobel. Berdampak pada keputusan lima tab di bilah bawah (Beranda, Jelajahi, Studio, Projects, Profil) dan pada tautan "Tersimpan" yang kini dibuka dari profil sendiri di ponsel.
+- **Tahanan kuota pembayaran**: *"kuotamu ditahan 24 jam, 2 jam aja bang"*. `HOLD_MS` (`projects/payment-model.ts`) 24 jam menjadi 2 jam. Menjawab Q-20 dengan angka dari client; teks "24 jam" di layar, notifikasi, dan panduan uji ikut diperiksa.
+
+**Revisi fitur Studio** (teks client, disalin utuh)
+
+> 1. Folder dan dokumen dipisah. Penulis bisa membuat folder untuk mengelompokkan dokumen, serta membuat dokumen baru secara terpisah. Dokumen lama maupun baru bisa dimasukkan ke dalam folder.
+> 2. Folder sebagai tempat menyimpan naskah buku. Setiap folder bisa diberi cover dan judul buku. Di dalamnya, penulis bisa membuat beberapa dokumen untuk menyusun naskah per bab atau subbab.
+>
+> Jadi, folder berfungsi sebagai tempat menyimpan dan mengorganisasi naskah buku, sedangkan dokumen digunakan untuk menulis isi naskah.
+
+Penjelasan tambahan dari user: sistemnya seperti folder di Google Drive; dari folder nanti bisa memasukkan Google Docs, spreadsheet, dan seterusnya.
+
+Pengamatan terhadap kode saat ini (belum diputuskan): Studio sudah punya folder satu tingkat dan memindahkan dokumen ke folder, tetapi folder hanya punya nama; **tidak ada cover dan judul buku**. Keputusan 20 November 2026 di atas ("sampul dokumen Studio tidak dibangun") perlu ditinjau ulang karena sekarang yang diminta adalah cover untuk **folder**, bukan dokumen. Hal yang perlu ditanyakan sebelum rencana:
+
+1. Apakah "folder dan dokumen dipisah" hanya berarti membuat folder dan dokumen terpisah dengan aksi "pindahkan ke folder" (yang sebagian sudah ada), atau tampilan Dokumen dipecah jadi dua bagian/tab (Folder dan Dokumen)?
+2. Apakah semua folder otomatis jadi "buku" (punya cover dan judul), atau ada jenis folder biasa dan folder buku? Apakah judul buku berbeda dari nama folder?
+3. Cover: unggah gambar (pakai jalur unggahan yang ada), atau cover tipografis yang dibuat otomatis seperti sampul Projects?
+4. Urutan bab: perlu urutan manual (seret atau naik-turun) dan penomoran bab, atau tetap urut abjad/terakhir diubah?
+5. Folder bersarang (subfolder): perlu atau cukup satu tingkat? Client menyebut "per bab atau subbab".
+6. Apakah ada ekspor atau hitung kata per folder (naskah utuh)? Dan hubungannya dengan Projects: kirim satu naskah buku (gabungan bab) ke Antologi atau Solo?
+7. "Memasukkan Google Docs, spreadsheet, dll": apakah artinya folder bisa memuat berkas jenis lain (unggah atau tautan), atau hanya perumpamaan dengan Google Drive? Spreadsheet tidak ada di PRD dan di luar editor teks Studio; jangan dibangun sebelum client memastikan.
+
+**Keputusan tim dan jawaban client (22 November 2026, menjawab pertanyaan di atas)**
+
+Keputusan tim (user): butir tab Profil, tahanan 2 jam, Grup Penulis dan Event ke Community, chip Community disembunyikan dulu, Indonesia dan Inggris dilengkapi di semua halaman, Login Google masuk MVP, email verifikasi memakai email bawaan Supabase sampai domain dibeli lalu Resend. Demo Studio: editor ringkas di landing tanpa akun (usulan tim, belum dijawab client).
+
+- **Unggah jpg, png, pdf, dll (koreksi, 22 November 2026, siang):** tim sempat salah menangkap dan menjawab seolah-olah ini soal folder penulis di Studio. Client meluruskan: *"Nggak bang, maksudnya nanti di folder lain. Karena gini, admin kan nanti misal mau upload poster yang berupa gambar jd butuh itu."* Jadi kebutuhannya adalah **admin mengunggah gambar** (contoh: poster) di tempat penyimpanan terpisah dari Studio. Lalu: *"Kalopun bs gapapa nanti aja fase 2 its ok."* Keputusan awal tim: ditunda ke Fase 2. **Diubah oleh user pada hari yang sama: poster proyek masuk MVP sebagai unggahan opsional**, dengan sampul otomatis dari judul sebagai cadangan bila belum diunggah (menggantikan catatan 20 November bahwa banner proyek belum dibangun; logo grup tetap belum). Lingkup: poster proyek saja (event tidak), dipotong ke 4:5, teks alternatif wajib, diunggah Organizer atau Administrator. Folder Studio tetap hanya memuat dokumen teks (keputusan tim, bukan permintaan client): cover buku adalah satu-satunya gambar. Belum ditanyakan: poster dipakai di mana (proyek, event, landing). Unggah gambar dan PDF oleh tim yang sudah ada (pratinjau Solo di tab Tahap Organizer) tidak berubah.
+- **Kirim buku utuh: ya** (jawaban client: "penulis 1 buku full bab dan sub bab"). Penulis perlu mengirim satu buku berisi seluruh bab dan subbab. Belum jelas: apakah bab dan subbab berarti dua tingkat folder (buku → bab → subbab), atau dokumen = bab dengan subbab sebagai judul di dalam dokumen. Dan proyek mana yang menerima buku utuh (Solo hampir pasti; Antologi dibatasi per karya).
