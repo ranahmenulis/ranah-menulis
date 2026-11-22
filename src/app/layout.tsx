@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, JetBrains_Mono, Merriweather } from "next/font/google";
+import { Inter, JetBrains_Mono, Merriweather, Tinos } from "next/font/google";
 import { Suspense } from "react";
 import { ToastProvider } from "@/components/ui/toast";
 import { I18nRoot } from "@/lib/i18n/i18n-root";
@@ -31,6 +31,16 @@ const mono = JetBrains_Mono({
   display: "swap",
 });
 
+// Studio documents default to Times New Roman (client brief, 22 November 2026). Tinos has the same
+// metrics, so pages break alike on devices that do not have Times New Roman installed.
+const times = Tinos({
+  subsets: ["latin"],
+  variable: "--font-tinos",
+  weight: ["400", "700"],
+  style: ["normal", "italic"],
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: "RanahMenulis",
   description: "Ekosistem digital untuk menulis, komunitas literasi, dan penerbitan buku.",
@@ -46,7 +56,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="id"
       data-scroll-behavior="smooth"
       suppressHydrationWarning // the landing script adds lp-motion and the theme script data-theme before hydration
-      className={`${sans.variable} ${serif.variable} ${mono.variable} h-full antialiased`}
+      className={`${sans.variable} ${serif.variable} ${times.variable} ${mono.variable} h-full antialiased`}
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />

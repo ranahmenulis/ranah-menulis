@@ -54,7 +54,7 @@ describe("parseAccount", () => {
     const raw = JSON.stringify({
       prefs: {
         writing: {
-          textSize: "huge",
+          textSize: "huge", // an old field that no longer exists is ignored
           mode: "typewriter",
           typewriterPosition: "low",
           curlyQuotes: true,
@@ -147,7 +147,7 @@ describe("saveAccount and resetAccount", () => {
 
   it("merges separate writing changes without overwriting other account preferences", () => {
     saveAccount({
-      prefs: { notifications: { comments: { email: false } }, writing: { textSize: "large" } },
+      prefs: { notifications: { comments: { email: false } }, writing: { mode: "typewriter" } },
     });
     saveAccount({ prefs: { writing: { wordCountPin: "target" } } });
     saveAccount({ prefs: { writing: { curlyQuotes: true } } });
@@ -155,7 +155,7 @@ describe("saveAccount and resetAccount", () => {
     expect(account.prefs.notifications.comments.email).toBe(false);
     expect(account.prefs.writing).toEqual({
       ...DEFAULT_WRITING_PREFERENCES,
-      textSize: "large",
+      mode: "typewriter",
       curlyQuotes: true,
       wordCountPin: "target",
     });

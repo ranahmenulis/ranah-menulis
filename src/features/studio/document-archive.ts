@@ -32,7 +32,7 @@ export function copyActiveDocument(
   now: number,
 ): StudioDocument | null {
   if (!source || !isActiveDocument(source)) return null;
-  const { content, wordCount, folderId, kind, tags } = source;
+  const { content, wordCount, folderId, kind, tags, layout } = source;
   return {
     id,
     title: `${source.title.trim() || "Tanpa judul"} (salinan)`,
@@ -41,6 +41,7 @@ export function copyActiveDocument(
     folderId,
     kind,
     tags,
+    layout,
     version: 1,
     updatedAt: now,
   };

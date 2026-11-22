@@ -1,6 +1,7 @@
 import { act, renderHook } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { emptyLog } from "@/features/studio/daily-progress";
+import { DEFAULT_LAYOUT } from "@/features/studio/document-layout";
 import type {
   DocumentStore,
   SaveResult,
@@ -445,6 +446,57 @@ describe("useStudioDocument: document targets", () => {
       await result.current.resolveConflict("remote");
     });
     expect(result.current.targets).toEqual([remoteTarget]);
+  });
+});
+
+describe("useStudioDocument: page layout", () => {
+  const layout = { font: "sans", sizePt: 14, lineSpacing: 2, marginMm: 25 } as const;
+
+  it("uses the defaults and leaves the layout out of the save until it is changed", async () => {
+    const { store, save } = makeStore();
+    const { result } = renderHook(() => useStudioDocument("doc-1", store));
+    await advance(0);
+    expect(result.current.layout).toEqual(DEFAULT_LAYOUT);
+    act(() => result.current.setTitle("Baru"));
+    await advance(900);
+    expect(save.mock.calls[0][0]).not.toHaveProperty("layout");
+  });
+
+  it("loads a stored layout and repairs invalid fields", async () => {
+    const { store } = makeStore({
+      get: vi.fn(async () =>
+        stored({ layout: { ...layout, sizePt: 99 } as unknown as StudioDocument["layout"] }),
+      ),
+    });
+    const { result } = renderHook(() => useStudioDocument("doc-1", store));
+    await advance(0);
+    expect(result.current.layout).toEqual({ ...layout, sizePt: 12 });
+  });
+
+  it("saves a changed layout with the text, on the version it opened, with no conflict", async () => {
+    const { store, save } = makeStore();
+    const { result } = renderHook(() => useStudioDocument("doc-1", store));
+    await advance(0);
+    act(() => result.current.setLayout(layout));
+    await advance(900);
+    expect(save.mock.calls[0][0].layout).toEqual(layout);
+    expect(save.mock.calls[0][1]).toBe(2);
+    expect(result.current.conflict).toBeNull();
+  });
+
+  it("adopts the other version's layout when 'remote' is chosen in a conflict", async () => {
+    const remote = stored({ version: 5, layout });
+    const { store } = makeStore({
+      save: vi.fn(async () => ({ ok: false as const, conflict: remote })),
+    });
+    const { result } = renderHook(() => useStudioDocument("doc-1", store));
+    await advance(0);
+    act(() => result.current.setTitle("Lokal"));
+    await advance(900);
+    await act(async () => {
+      await result.current.resolveConflict("remote");
+    });
+    expect(result.current.layout).toEqual(layout);
   });
 });
 

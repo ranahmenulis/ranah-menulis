@@ -55,14 +55,30 @@ afterEach(() => {
 });
 
 describe("Studio editor writing preferences", () => {
-  it("renders the loading state on the server and mounts with the saved text size", async () => {
-    saveAccount({ prefs: { writing: { textSize: "large" } } });
+  it("renders the loading state on the server and mounts with the document layout", async () => {
     const html = renderToString(<EditorCanvas {...canvasProps()} />);
     expect(html).toContain("Membuka dokumen");
     expect(html).not.toContain("Judul uji");
-    expect(html).not.toContain("data-studio-text-size");
     const { container } = await openEditor();
-    expect(container.querySelector("article")?.dataset.studioTextSize).toBe("large");
+    const page = container.querySelector<HTMLElement>("article")!;
+    expect(page.style.getPropertyValue("--doc-size")).toBe("12pt");
+    expect(page.style.getPropertyValue("--doc-text-width")).toBe("108mm");
+    expect(page.style.getPropertyValue("--doc-font")).toContain("Times New Roman");
+  });
+
+  it("applies the layout given by the document", async () => {
+    const props = canvasProps();
+    const layout = { font: "serif", sizePt: 14, lineSpacing: 2, marginMm: 10 } as const;
+    const { container } = render(
+      <main>
+        <EditorCanvas {...props} layout={layout} />
+      </main>,
+    );
+    await waitFor(() => expect(container.querySelector("article")).toBeTruthy());
+    const page = container.querySelector<HTMLElement>("article")!;
+    expect(page.style.getPropertyValue("--doc-size")).toBe("14pt");
+    expect(page.style.getPropertyValue("--doc-line")).toBe("2");
+    expect(page.style.getPropertyValue("--doc-text-width")).toBe("128mm");
   });
 
   it("updates input rules without recreating the editor, moving the caret, or rewriting text", async () => {
@@ -73,7 +89,7 @@ describe("Studio editor writing preferences", () => {
     const position = editor.state.selection.from;
     const surface = editor.view.dom;
 
-    act(() => saveAccount({ prefs: { writing: { textSize: "large", substitutions: true } } }));
+    act(() => saveAccount({ prefs: { writing: { substitutions: true } } }));
     expect(props.onEditorChange.mock.lastCall?.[0]).toBe(editor);
     expect(editor.view.dom).toBe(surface);
     expect(surface.classList.contains("studio-prose")).toBe(true);

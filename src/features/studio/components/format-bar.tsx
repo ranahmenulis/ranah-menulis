@@ -4,124 +4,170 @@ import {
   ListBullets,
   ListNumbers,
   Quotes,
+  TextAlignCenter,
+  TextAlignJustify,
+  TextAlignLeft,
+  TextAlignRight,
   TextB,
-  TextH,
   TextItalic,
 } from "@phosphor-icons/react/dist/ssr";
-import { AllSelection, Selection } from "@tiptap/pm/state";
 import { useEditorState, type Editor } from "@tiptap/react";
 import type { ReactNode } from "react";
+import { format, useT } from "@/lib/i18n/provider";
+import {
+  DEFAULT_LAYOUT,
+  LAYOUT_FONTS,
+  LAYOUT_SIZES_PT,
+  type DocumentLayout,
+  type LayoutFont,
+} from "../document-layout";
+import { FormatButton, runFormat } from "./format/format-button";
+import { ToolbarSelect } from "./format/toolbar-select";
+import { ToolRow } from "./format/tool-row";
 
-type ButtonProps = {
-  label: string;
-  pressed: boolean;
-  onClick: () => void;
-  children: ReactNode;
-};
+type Alignment = "left" | "center" | "right" | "justify";
+type Style = "p" | "h2" | "h3";
 
-function FormatButton({ label, pressed, onClick, children }: ButtonProps) {
-  return (
-    <button
-      type="button"
-      aria-label={label}
-      title={label}
-      aria-pressed={pressed}
-      // Keep the caret and selection: do not let the toolbar take focus from the editor.
-      onMouseDown={(e) => e.preventDefault()}
-      onClick={onClick}
-      className="grid h-9 w-10 cursor-pointer place-items-center rounded-full text-ink hover:opacity-(--opacity-hover) aria-pressed:rounded-none aria-pressed:shadow-[inset_0_-2px_0_var(--ink)] md:h-8 md:w-9"
-    >
-      {children}
-    </button>
-  );
-}
+const Divider = () => <span aria-hidden className="mx-1 h-5 w-px flex-none bg-line" />;
 
 /**
- * Ctrl+A gives ProseMirror an `AllSelection`, for which list commands misbehave: `isActive` stays
- * false and a second click wraps the text again instead of undoing the list. Swapping it for the
- * equivalent text range first keeps every button a clean on and off.
+ * Format toolbar: a hairline pill under the editor bar, centered over the writing column. Minimal
+ * on purpose (client brief, 22 November 2026): font, size, paragraph style, alignment, the basic
+ * marks and lists. Font and size belong to the whole document, so they change the layout; the rest
+ * are commands on the selection. The active format is underlined, not recolored. On a phone the
+ * row scrolls sideways.
  */
-function selectTextRange(editor: Editor) {
-  const { doc, selection } = editor.state;
-  if (!(selection instanceof AllSelection)) return;
-  editor.commands.setTextSelection({
-    from: Selection.atStart(doc).from,
-    to: Selection.atEnd(doc).to,
-  });
-}
-
-/**
- * Format toolbar: a hairline pill that stays under the editor bar, centered over the writing column
- * (the landing mockup's promise; it replaces the floating selection pill of DESIGN.md 6.3). Only the
- * six formats STD-01 allows. The active one is underlined, not recolored.
- */
-export function FormatBar({ editor }: { editor: Editor }) {
+export function FormatBar({
+  editor,
+  layout = DEFAULT_LAYOUT,
+  onLayoutChange,
+  trailing,
+}: {
+  editor: Editor;
+  layout?: DocumentLayout;
+  onLayoutChange?: (next: DocumentLayout) => void;
+  /** Shown after the toolbar in the same row (the view mode switch). */
+  trailing?: ReactNode;
+}) {
+  const t = useT().studioLayout;
   const active = useEditorState({
     editor,
     selector: ({ editor: e }) => ({
+      style: (e.isActive("heading", { level: 2 })
+        ? "h2"
+        : e.isActive("heading", { level: 3 })
+          ? "h3"
+          : "p") as Style,
+      align:
+        (["center", "right", "justify"] as const).find((a) => e.isActive({ textAlign: a })) ??
+        ("left" as Alignment),
       bold: e.isActive("bold"),
       italic: e.isActive("italic"),
-      heading: e.isActive("heading", { level: 2 }),
       quote: e.isActive("blockquote"),
       bullets: e.isActive("bulletList"),
       numbers: e.isActive("orderedList"),
     }),
   });
-  const run = () => {
-    selectTextRange(editor);
-    return editor.chain().focus();
+
+  const setStyle = (style: string) => {
+    const chain = runFormat(editor);
+    if (style === "p") chain.setParagraph().run();
+    else chain.setHeading({ level: style === "h2" ? 2 : 3 }).run();
   };
 
+  const aligns: { value: Alignment; label: string; icon: typeof TextAlignLeft }[] = [
+    { value: "left", label: t.toolbar.alignLeft, icon: TextAlignLeft },
+    { value: "center", label: t.toolbar.alignCenter, icon: TextAlignCenter },
+    { value: "right", label: t.toolbar.alignRight, icon: TextAlignRight },
+    { value: "justify", label: t.toolbar.alignJustify, icon: TextAlignJustify },
+  ];
+
   return (
-    <div className="flex flex-none justify-center border-b border-line bg-canvas px-4 py-1.5 md:py-2">
+    <ToolRow>
       <div
         role="toolbar"
-        aria-label="Format teks"
-        className="inline-flex items-center gap-0.5 rounded-full border border-line p-0.5 md:px-1.5"
+        aria-label={t.toolbar.label}
+        className="scroll-edge-fade flex min-w-0 items-center gap-0.5 overflow-x-auto rounded-full border border-line p-0.5 md:px-1.5"
       >
+        <ToolbarSelect
+          label={t.toolbar.font}
+          value={layout.font}
+          widthClass="w-40"
+          options={LAYOUT_FONTS.map((f) => ({ value: f, label: t.fonts[f] }))}
+          onChange={(font) => onLayoutChange?.({ ...layout, font: font as LayoutFont })}
+        />
+        <ToolbarSelect
+          label={t.toolbar.size}
+          value={String(layout.sizePt)}
+          widthClass="w-20"
+          options={LAYOUT_SIZES_PT.map((n) => ({
+            value: String(n),
+            label: format(t.toolbar.sizeOption, { n: String(n) }),
+          }))}
+          onChange={(size) =>
+            onLayoutChange?.({ ...layout, sizePt: Number(size) as DocumentLayout["sizePt"] })
+          }
+        />
+        <ToolbarSelect
+          label={t.toolbar.heading}
+          value={active.style}
+          widthClass="w-32"
+          options={[
+            { value: "p", label: t.toolbar.paragraph },
+            { value: "h2", label: t.toolbar.heading2 },
+            { value: "h3", label: t.toolbar.heading3 },
+          ]}
+          onChange={setStyle}
+        />
+        <Divider />
+        {aligns.map(({ value, label, icon: Icon }) => (
+          <FormatButton
+            key={value}
+            label={label}
+            pressed={active.align === value}
+            onClick={() => runFormat(editor).setTextAlign(value).run()}
+          >
+            <Icon size={18} aria-hidden />
+          </FormatButton>
+        ))}
+        <Divider />
         <FormatButton
-          label="Tebal (Ctrl+B)"
+          label={t.toolbar.bold}
           pressed={active.bold}
-          onClick={() => run().toggleBold().run()}
+          onClick={() => runFormat(editor).toggleBold().run()}
         >
           <TextB size={18} aria-hidden />
         </FormatButton>
         <FormatButton
-          label="Miring (Ctrl+I)"
+          label={t.toolbar.italic}
           pressed={active.italic}
-          onClick={() => run().toggleItalic().run()}
+          onClick={() => runFormat(editor).toggleItalic().run()}
         >
           <TextItalic size={18} aria-hidden />
         </FormatButton>
         <FormatButton
-          label="Judul"
-          pressed={active.heading}
-          onClick={() => run().toggleHeading({ level: 2 }).run()}
-        >
-          <TextH size={18} aria-hidden />
-        </FormatButton>
-        <FormatButton
-          label="Kutipan"
+          label={t.toolbar.quote}
           pressed={active.quote}
-          onClick={() => run().toggleBlockquote().run()}
+          onClick={() => runFormat(editor).toggleBlockquote().run()}
         >
           <Quotes size={18} aria-hidden />
         </FormatButton>
         <FormatButton
-          label="Daftar berpoin"
+          label={t.toolbar.bullets}
           pressed={active.bullets}
-          onClick={() => run().toggleBulletList().run()}
+          onClick={() => runFormat(editor).toggleBulletList().run()}
         >
           <ListBullets size={18} aria-hidden />
         </FormatButton>
         <FormatButton
-          label="Daftar bernomor"
+          label={t.toolbar.numbers}
           pressed={active.numbers}
-          onClick={() => run().toggleOrderedList().run()}
+          onClick={() => runFormat(editor).toggleOrderedList().run()}
         >
           <ListNumbers size={18} aria-hidden />
         </FormatButton>
       </div>
-    </div>
+      {trailing}
+    </ToolRow>
   );
 }

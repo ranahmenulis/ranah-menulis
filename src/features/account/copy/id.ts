@@ -164,9 +164,8 @@ export const account = {
     },
     writing: {
       title: "Menulis",
-      description: "Berlaku untuk semua dokumen yang kamu buka di Editor Studio.",
-      textSize: "Ukuran teks",
-      sizes: { small: "Kecil", standard: "Standar", large: "Besar" },
+      description:
+        "Berlaku untuk semua dokumen di Editor Studio. Font, ukuran, jarak baris, dan margin diatur per dokumen di Editor.",
       mode: "Mode tulis",
       modes: { standard: "Standar", typewriter: "Mesin Tik" },
       typewriterPosition: "Posisi baris saat mengetik",

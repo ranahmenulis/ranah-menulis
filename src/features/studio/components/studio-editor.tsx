@@ -3,7 +3,6 @@
 import type { Editor } from "@tiptap/react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { useToast } from "@/components/ui/toast";
 import { postFromDocumentHref, STUDIO_HREF } from "@/features/app-shell/nav";
 import { EventEditorPanel } from "@/features/community/events/components/event-editor-panel";
 import { useEventSave } from "@/features/community/events/use-event-save";
@@ -21,6 +20,8 @@ import { studioStore as store } from "../storage/store";
 import { useDailyTarget } from "../hooks/use-daily-target";
 import { useEditorMenu } from "../hooks/use-editor-menu";
 import { useLeaveEditor } from "../hooks/use-leave-editor";
+import { useMoveToTrash } from "../hooks/use-move-to-trash";
+import { useViewMode } from "../hooks/use-view-mode";
 import { useEditorSearchShortcut } from "../hooks/use-studio-search-shortcut";
 import { EditorConflictDialog } from "./conflict-dialog";
 import { EditorBar } from "./editor-bar";
@@ -29,7 +30,9 @@ import { DocumentTargetsDialog } from "./document-targets-dialog";
 import { ExportDialog } from "./export-dialog";
 import { EditorUnavailable } from "./editor-states";
 import { FocusHud } from "./focus-hud";
-import { FormatBar } from "./format-bar";
+import { EditorTools } from "./format/editor-tools";
+import { PageLayoutDialog } from "./page-layout-dialog";
+import { EditorStage } from "./preview/editor-stage";
 import { HelpDrawer } from "./help-drawer";
 import { SendToProjectDialog } from "./send-to-project-dialog";
 import { ShareDialog } from "./share-dialog";
@@ -67,14 +70,13 @@ export function StudioEditor({ documentId, eventId }: { documentId: string; even
   const doc = useStudioDocument(documentId, store, onSaved);
   const online = useOnlineStatus();
   const target = useDailyTarget();
-  const toast = useToast();
   const side = useSidePanel();
   const [focusMode, setFocusMode] = useState(false);
   const sprint = useSprint(doc.words);
   const sprintPanel = useSprintPanel(sprint);
-  const [dialog, setDialog] = useState<"share" | "send" | "export" | "targets" | "search" | null>(
-    null,
-  );
+  const [dialog, setDialog] = useState<
+    "share" | "send" | "export" | "targets" | "search" | "layout" | null
+  >(null);
   const [stats, setStats] = useState<EditorStats | null>(null);
   const [selection, setSelection] = useState<EditorStats | null>(null);
   const [editor, setEditor] = useState<Editor | null>(null);
@@ -117,6 +119,8 @@ export function StudioEditor({ documentId, eventId }: { documentId: string; even
   const openSend = useCallback(() => setDialog("send"), []);
   const openExport = useCallback(() => setDialog("export"), []);
   const openTargets = useCallback(() => setDialog("targets"), []);
+  const openPageLayout = useCallback(() => setDialog("layout"), []);
+  const view = useViewMode(editor, focusMode);
   const docTargets = useDocumentTargets(doc.targets, doc.words);
   const getContent = useCallback(() => editor?.getJSON() ?? null, [editor]);
 
@@ -134,34 +138,7 @@ export function StudioEditor({ documentId, eventId }: { documentId: string; even
 
   const { goBack, saveBeforeLeaving } = useLeaveEditor(saveNow, saveEventProgress);
 
-  // Reversible: the document keeps its text in Sampah, and "Urungkan" opens it again.
-  const moveToTrash = useCallback(async () => {
-    const id = getId();
-    const failed = () =>
-      toast({ message: "Dokumen belum bisa dipindah. Coba lagi.", tone: "error" });
-    if (!(await saveNow())) return failed();
-    try {
-      if (!(await store.updateMeta(id, { deletedAt: Date.now() }))) return failed();
-    } catch {
-      return failed();
-    }
-    const undo = async () => {
-      try {
-        if (!(await store.updateMeta(id, { deletedAt: null }))) throw new Error("not found");
-        router.push(`/studio/${id}`);
-      } catch {
-        toast({
-          message: "Dokumen belum bisa dipulihkan. Buka Sampah untuk mencoba lagi.",
-          tone: "error",
-        });
-      }
-    };
-    toast({
-      message: "Dokumen dipindah ke Sampah.",
-      action: { label: "Urungkan", onSelect: () => void undo() },
-    });
-    router.push(STUDIO_HREF);
-  }, [saveNow, getId, router, toast]);
+  const moveToTrash = useMoveToTrash(saveNow, getId, store);
 
   const menuItems = useEditorMenu({
     canTrash: stored,
@@ -174,6 +151,7 @@ export function StudioEditor({ documentId, eventId }: { documentId: string; even
     onSend: openSend,
     onExport: openExport,
     onTargets: openTargets,
+    onPageLayout: openPageLayout,
     onHistory: side.openVersions,
     onSprint: sprintPanel.show,
     onTrash: () => void moveToTrash(),
@@ -189,6 +167,7 @@ export function StudioEditor({ documentId, eventId }: { documentId: string; even
       onStatsChange={onStatsChange}
       onSelectionStatsChange={onSelectionStatsChange}
       onEditorChange={setEditor}
+      layout={doc.layout}
       autoFocusTitle={documentId === "baru"}
     />
   ) : (
@@ -231,11 +210,23 @@ export function StudioEditor({ documentId, eventId }: { documentId: string; even
           onBack={(href) => void goBack(href)}
         />
       )}
-      {!focusMode && editor && <FormatBar editor={editor} />}
+      {!focusMode && editor && (
+        <EditorTools
+          editor={editor}
+          mode={view.mode}
+          onModeChange={view.change}
+          layout={doc.layout}
+          onLayoutChange={doc.setLayout}
+        />
+      )}
 
-      <main aria-label="Kanvas menulis" className={canvasClass(side.panel !== null, focusMode)}>
+      <EditorStage
+        className={canvasClass(side.panel !== null, focusMode)}
+        showPreview={view.showPreview}
+        preview={{ title: doc.title, html: view.html, layout: doc.layout }}
+      >
         {body}
-      </main>
+      </EditorStage>
 
       {ready && focusMode && (
         <FocusHud
@@ -270,6 +261,12 @@ export function StudioEditor({ documentId, eventId }: { documentId: string; even
         documentTitle={doc.title}
         onContinue={share}
       />
+      <PageLayoutDialog
+        open={dialog === "layout"}
+        onClose={closeDialog}
+        layout={doc.layout}
+        onChange={doc.setLayout}
+      />
       <DocumentTargetsDialog
         open={dialog === "targets"}
         onClose={closeDialog}
@@ -282,6 +279,7 @@ export function StudioEditor({ documentId, eventId }: { documentId: string; even
         open={dialog === "export"}
         onClose={closeDialog}
         title={doc.title}
+        layout={doc.layout}
         getContent={getContent}
       />
       <SendToProjectDialog

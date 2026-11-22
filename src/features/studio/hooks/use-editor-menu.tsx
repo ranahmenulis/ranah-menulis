@@ -4,6 +4,7 @@ import {
   ArrowsOut,
   ClockCounterClockwise,
   DownloadSimple,
+  FileText,
   Lightbulb,
   PaperPlaneTilt,
   Target,
@@ -12,6 +13,7 @@ import {
 } from "@phosphor-icons/react/dist/ssr";
 import { useMemo } from "react";
 import type { MenuEntry } from "@/components/ui/menu";
+import { useT } from "@/lib/i18n/provider";
 
 type Actions = {
   /** Nothing is stored yet, so there is nothing to move to Sampah. */
@@ -30,6 +32,7 @@ type Actions = {
   onExport: () => void;
   onHistory: () => void;
   onTargets: () => void;
+  onPageLayout: () => void;
   onSprint: () => void;
   onTrash: () => void;
 };
@@ -47,9 +50,11 @@ export function useEditorMenu({
   onExport,
   onHistory,
   onTargets,
+  onPageLayout,
   onSprint,
   onTrash,
 }: Actions) {
+  const t = useT().studioLayout.pageLayout;
   return useMemo<MenuEntry[]>(
     () => [
       {
@@ -97,6 +102,13 @@ export function useEditorMenu({
         onSelect: onTargets,
       },
       {
+        id: "page-layout",
+        label: t.menu,
+        icon: <FileText />,
+        hint: t.menuHint,
+        onSelect: onPageLayout,
+      },
+      {
         id: "export",
         label: "Ekspor",
         icon: <DownloadSimple />,
@@ -127,8 +139,10 @@ export function useEditorMenu({
       onExport,
       onHistory,
       onTargets,
+      onPageLayout,
       onSprint,
       onTrash,
+      t,
     ],
   );
 }

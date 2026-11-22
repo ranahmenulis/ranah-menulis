@@ -2,10 +2,12 @@
 
 import Placeholder from "@tiptap/extension-placeholder";
 import { EditorContent, useEditor, type Editor, type JSONContent } from "@tiptap/react";
+import TextAlign from "@tiptap/extension-text-align";
 import StarterKit from "@tiptap/starter-kit";
-import { useEffect, useLayoutEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef, type CSSProperties } from "react";
 import { useAccount } from "@/features/account/account-store";
 import { useHydrated } from "@/features/account/hooks/use-hydrated";
+import { DEFAULT_LAYOUT, layoutVars, type DocumentLayout } from "../document-layout";
 import { docStats, selectionStats, type EditorStats } from "../editor-stats";
 import { useTypewriterScroll } from "../hooks/use-typewriter-scroll";
 import { StudioTypography } from "../studio-typography";
@@ -25,11 +27,13 @@ type EditorCanvasProps = {
   onEditorChange?: (editor: Editor | null) => void;
   /** A brand-new draft puts the caret in the title. */
   autoFocusTitle?: boolean;
+  /** Page layout of the document; the defaults apply while it is not given. */
+  layout?: DocumentLayout;
 };
 
 const EDITOR_EXTENSIONS = [
   StarterKit.configure({
-    heading: { levels: [2] },
+    heading: { levels: [2, 3] },
     code: false,
     codeBlock: false,
     strike: false,
@@ -38,6 +42,7 @@ const EDITOR_EXTENSIONS = [
     underline: false,
   }),
   Placeholder.configure({ placeholder: "Mulai dari satu kalimat." }),
+  TextAlign.configure({ types: ["heading", "paragraph"] }),
   StudioTypography,
 ];
 
@@ -60,6 +65,7 @@ function HydratedEditorCanvas({
   onSelectionStatsChange,
   onEditorChange,
   autoFocusTitle,
+  layout = DEFAULT_LAYOUT,
 }: EditorCanvasProps) {
   const titleRef = useRef<HTMLTextAreaElement>(null);
   const pageRef = useRef<HTMLElement>(null);
@@ -118,8 +124,8 @@ function HydratedEditorCanvas({
   return (
     <article
       ref={pageRef}
-      className="studio-editor-page mx-auto w-full max-w-170"
-      data-studio-text-size={writing.textSize}
+      className="studio-editor-page mx-auto w-full"
+      style={layoutVars(layout) as CSSProperties}
     >
       <textarea
         ref={titleRef}
@@ -135,7 +141,7 @@ function HydratedEditorCanvas({
             editor?.commands.focus("start");
           }
         }}
-        className="mb-6 block w-full resize-none overflow-hidden border-0 bg-transparent p-0 read-title text-ink-read outline-none md:mb-8"
+        className="studio-title mb-6 block w-full resize-none overflow-hidden border-0 bg-transparent p-0 text-ink-read outline-none md:mb-8"
       />
       <EditorContent editor={editor} />
     </article>

@@ -1,4 +1,5 @@
 import type { JSONContent } from "@tiptap/react";
+import type { DocumentLayout } from "../document-layout";
 import type { DocumentTarget } from "../document-targets";
 import type { DocumentVersion } from "../versions";
 import { isActiveDocument } from "../document-archive";
@@ -25,6 +26,8 @@ export type StudioDocument = DocumentClassification & {
   archivedAt?: number | null;
   /** Word targets of this document (STK-08). Absent on documents saved before they existed. */
   targets?: DocumentTarget[];
+  /** Page layout; absent until the writer changes it, then the defaults apply. */
+  layout?: DocumentLayout;
 };
 
 export type StudioFolder = { id: string; name: string; createdAt: number };
@@ -69,6 +72,8 @@ export type SaveInput = {
   wordCount: number;
   /** Targets travel with the text, like the title, so setting one never causes a version clash. */
   targets?: DocumentTarget[];
+  /** The layout travels the same way; left out while the writer has not changed it. */
+  layout?: DocumentLayout;
 };
 
 export type SaveResult =

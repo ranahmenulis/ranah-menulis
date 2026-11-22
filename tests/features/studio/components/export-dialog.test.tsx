@@ -1,3 +1,4 @@
+import { DEFAULT_LAYOUT } from "@/features/studio/document-layout";
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { ExportDialog } from "@/features/studio/components/export-dialog";
@@ -42,15 +43,15 @@ describe("ExportDialog", () => {
   it("downloads a PDF with the chosen options by default", async () => {
     const { onClose } = setup();
     fireEvent.click(screen.getByLabelText(/Judul di halaman depan/));
-    fireEvent.change(screen.getByLabelText("Jarak baris"), { target: { value: "2" } });
     fireEvent.click(screen.getByRole("button", { name: "Unduh PDF" }));
 
     await waitFor(() => expect(downloadBlob).toHaveBeenCalled());
-    expect(buildPdf).toHaveBeenCalledWith("Arutala", content, {
-      titlePage: true,
-      pageNumbers: true,
-      lineSpacing: 2,
-    });
+    expect(buildPdf).toHaveBeenCalledWith(
+      "Arutala",
+      content,
+      { titlePage: true, pageNumbers: true },
+      DEFAULT_LAYOUT,
+    );
     expect(downloadBlob.mock.calls[0][1]).toBe("Arutala.pdf");
     expect(onClose).toHaveBeenCalled();
   });
@@ -58,7 +59,7 @@ describe("ExportDialog", () => {
   it("downloads plain text without the PDF options", async () => {
     setup();
     fireEvent.click(screen.getByLabelText(/^TXT/));
-    expect(screen.queryByLabelText("Jarak baris")).toBeNull();
+    expect(screen.queryByLabelText(/Nomor halaman/)).toBeNull();
     fireEvent.click(screen.getByRole("button", { name: "Unduh TXT" }));
 
     await waitFor(() => expect(downloadBlob).toHaveBeenCalled());
@@ -82,5 +83,24 @@ describe("ExportDialog", () => {
     setup(() => null);
     fireEvent.click(screen.getByRole("button", { name: "Unduh PDF" }));
     expect(await screen.findByText(/Berkas belum bisa dibuat/)).toBeTruthy();
+  });
+
+  it("hands the layout of the document to the PDF and says how a font is drawn", async () => {
+    const layout = { ...DEFAULT_LAYOUT, font: "sans", marginMm: 30 } as const;
+    render(
+      <ToastProvider>
+        <ExportDialog
+          open
+          onClose={vi.fn()}
+          title="Arutala"
+          layout={layout}
+          getContent={() => content}
+        />
+      </ToastProvider>,
+    );
+    expect(screen.getByText("Font Inter dicetak sebagai Helvetica di PDF.")).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "Unduh PDF" }));
+    await waitFor(() => expect(downloadBlob).toHaveBeenCalled());
+    expect(buildPdf.mock.calls[0][3]).toEqual(layout);
   });
 });

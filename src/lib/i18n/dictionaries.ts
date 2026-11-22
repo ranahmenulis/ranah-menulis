@@ -27,6 +27,8 @@ import { groups as groupsId } from "@/features/community/copy/groups-id";
 import { groups as groupsEn } from "@/features/community/copy/groups-en";
 import { events as eventsId } from "@/features/community/copy/events-id";
 import { events as eventsEn } from "@/features/community/copy/events-en";
+import { studioLayout as studioLayoutId } from "@/features/studio/copy/layout-id";
+import { studioLayout as studioLayoutEn } from "@/features/studio/copy/layout-en";
 import { profile as profileId } from "@/features/profile/copy/id";
 import { profile as profileEn } from "@/features/profile/copy/en";
 
@@ -47,6 +49,7 @@ export const id = {
   compose: composeId,
   groups: groupsId,
   events: eventsId,
+  studioLayout: studioLayoutId,
 };
 export type Dictionary = typeof id;
 
@@ -66,6 +69,7 @@ const en: Dictionary = {
   compose: composeEn,
   groups: groupsEn,
   events: eventsEn,
+  studioLayout: studioLayoutEn,
 };
 
 export const dictionaries: Record<Locale, Dictionary> = { id, en };

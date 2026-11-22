@@ -10,7 +10,6 @@ import { saveAccount } from "../../account-store";
 import {
   TYPEWRITER_POSITIONS,
   WRITING_MODES,
-  WRITING_TEXT_SIZES,
   type WritingPreferences,
 } from "../../writing-preferences";
 import { SettingsSection } from "./settings-section";
@@ -18,7 +17,7 @@ import { SettingsSection } from "./settings-section";
 export function WritingSection({ prefs }: { prefs: WritingPreferences }) {
   const { writing } = useT().account.settings;
   const [failed, setFailed] = useState(false);
-  const sizeField = useRef<HTMLSelectElement>(null);
+  const modeField = useRef<HTMLSelectElement>(null);
 
   function save(patch: Partial<WritingPreferences>) {
     setFailed(!saveAccount({ prefs: { writing: patch } }));
@@ -27,31 +26,16 @@ export function WritingSection({ prefs }: { prefs: WritingPreferences }) {
   function retry() {
     if (!saveAccount({})) return;
     setFailed(false);
-    sizeField.current?.focus();
+    modeField.current?.focus();
   }
 
   return (
     <SettingsSection id="writing" title={writing.title} subtitle={writing.description}>
       <div className="grid gap-4">
-        <Field id="writing-size" label={writing.textSize} className="max-w-72">
-          <Select
-            id="writing-size"
-            ref={sizeField}
-            value={prefs.textSize}
-            onChange={(event) =>
-              save({ textSize: event.target.value as WritingPreferences["textSize"] })
-            }
-          >
-            {WRITING_TEXT_SIZES.map((size) => (
-              <option key={size} value={size}>
-                {writing.sizes[size]}
-              </option>
-            ))}
-          </Select>
-        </Field>
         <Field id="writing-mode" label={writing.mode} className="max-w-72">
           <Select
             id="writing-mode"
+            ref={modeField}
             value={prefs.mode}
             onChange={(event) => save({ mode: event.target.value as WritingPreferences["mode"] })}
           >

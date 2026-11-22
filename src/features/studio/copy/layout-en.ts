@@ -1,0 +1,61 @@
+import type { studioLayout as source } from "./layout-id";
+
+export const studioLayout: typeof source = {
+  toolbar: {
+    label: "Text formatting",
+    font: "Font",
+    size: "Font size",
+    sizeOption: "{n} pt",
+    heading: "Paragraph style",
+    paragraph: "Normal text",
+    heading2: "Section heading",
+    heading3: "Subheading",
+    alignLeft: "Align left",
+    alignCenter: "Align center",
+    alignRight: "Align right",
+    alignJustify: "Justify",
+    bold: "Bold (Ctrl+B)",
+    italic: "Italic (Ctrl+I)",
+    quote: "Quote",
+    bullets: "Bulleted list",
+    numbers: "Numbered list",
+  },
+  pageLayout: {
+    menu: "Page layout",
+    menuHint: "A5",
+    title: "Page layout",
+    description: "Applies to this whole document. A5 paper (148 × 210 mm).",
+    margin: "Margin",
+    marginOption: "{n} mm",
+    lineSpacing: "Line spacing",
+    reset: "Restore defaults",
+    done: "Done",
+  },
+  mode: {
+    label: "View mode",
+    write: "Write",
+    writeTitle: "Writing Mode",
+    preview: "Pages",
+    previewTitle: "Page Preview",
+  },
+  preview: {
+    region: "Page preview",
+    note: "An estimate of the A5 pages. A printout or the PDF can differ slightly.",
+    pageOf: "Page {n} of {total}",
+    sheet: "Page {n}",
+    untitled: "Untitled",
+    empty: "Nothing written yet.",
+  },
+  export: {
+    fontNote: {
+      times: "",
+      sans: "The PDF draws Inter as Helvetica.",
+      serif: "The PDF draws Merriweather as Times.",
+    },
+  },
+  fonts: {
+    times: "Times New Roman",
+    sans: "Inter",
+    serif: "Merriweather",
+  },
+};

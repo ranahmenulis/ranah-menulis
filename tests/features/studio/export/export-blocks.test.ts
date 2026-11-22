@@ -65,6 +65,39 @@ describe("exportBlocks", () => {
   });
 });
 
+describe("exportBlocks, alignment", () => {
+  const aligned = (textAlign: string | null): JSONContent => ({
+    type: "paragraph",
+    attrs: { textAlign },
+    content: [{ type: "text", text: "isi" }],
+  });
+
+  it("carries the alignment of paragraphs and headings, left by default", () => {
+    const blocks = exportBlocks({
+      type: "doc",
+      content: [
+        aligned("center"),
+        aligned("justify"),
+        aligned(null),
+        aligned("diagonal"),
+        {
+          type: "heading",
+          attrs: { level: 3, textAlign: "right" },
+          content: [{ type: "text", text: "Judul" }],
+        },
+      ],
+    });
+    expect(
+      blocks.map((b) => (b.kind === "paragraph" || b.kind === "heading" ? b.align : "")),
+    ).toEqual(["center", "justify", "left", "left", "right"]);
+    expect(blocks[4]).toMatchObject({ kind: "heading", level: 3 });
+  });
+
+  it("does not change the plain text export", () => {
+    expect(toPlainText("", { type: "doc", content: [aligned("center")] })).toBe("isi\n");
+  });
+});
+
 describe("toPlainText", () => {
   it("puts the title first and a blank line between blocks, without formatting marks", () => {
     expect(toPlainText("  Arutala ", doc)).toBe(

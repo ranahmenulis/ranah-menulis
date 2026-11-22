@@ -1,3 +1,4 @@
+import { DEFAULT_LAYOUT } from "@/features/studio/document-layout";
 import { cleanup, configure, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { ToastProvider } from "@/components/ui/toast";
@@ -40,6 +41,8 @@ vi.mock("@/features/studio/hooks/use-studio-document", () => ({
     words: h.doc.words,
     targets: [],
     setTargets: vi.fn(),
+    layout: DEFAULT_LAYOUT,
+    setLayout: vi.fn(),
     restoreVersion: vi.fn(),
     onContentChange: vi.fn(),
     status: "saved",
@@ -239,6 +242,14 @@ describe("StudioEditor, menu", () => {
     openMenu();
     fireEvent.click(screen.getByRole("menuitem", { name: /Ekspor/ }));
     expect(screen.getByRole("dialog", { name: "Ekspor dokumen" })).toBeTruthy();
+  });
+
+  it("opens the page layout dialog from the menu, even for an empty draft", () => {
+    h.doc.words = 0;
+    renderEditor();
+    openMenu();
+    fireEvent.click(screen.getByRole("menuitem", { name: /Tata letak halaman/ }));
+    expect(screen.getByRole("dialog", { name: "Tata letak halaman" })).toBeTruthy();
   });
 
   it("offers Target dokumen only for a document with content, and opens its dialog", () => {

@@ -84,9 +84,15 @@ describe("Studio document duplication", () => {
       folderId: "folder",
       kind: "cerpen",
       tags: ["Hujan"],
+      layout: undefined,
       version: 1,
       updatedAt: 20,
     });
+  });
+
+  it("keeps the page layout of the source, since it belongs to how the text is set", () => {
+    const layout = { font: "sans", sizePt: 14, lineSpacing: 2, marginMm: 25 } as const;
+    expect(copyActiveDocument({ ...source, layout }, "copy", 20)?.layout).toEqual(layout);
   });
 
   it("refuses an unavailable source and gives an untitled copy a usable name", () => {

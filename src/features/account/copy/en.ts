@@ -164,9 +164,8 @@ export const account: typeof source = {
     },
     writing: {
       title: "Writing",
-      description: "Applies to every document you open in the Studio editor.",
-      textSize: "Text size",
-      sizes: { small: "Small", standard: "Standard", large: "Large" },
+      description:
+        "Applies to every document in the Studio editor. Font, size, line spacing, and margins are set per document in the editor.",
       mode: "Writing mode",
       modes: { standard: "Standard", typewriter: "Typewriter" },
       typewriterPosition: "Typing line position",

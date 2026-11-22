@@ -1,4 +1,3 @@
-export const WRITING_TEXT_SIZES = ["small", "standard", "large"] as const;
 export const WRITING_MODES = ["standard", "typewriter"] as const;
 export const TYPEWRITER_POSITIONS = ["high", "middle", "low"] as const;
 export const WORD_COUNT_PINS = ["document", "sprint", "target"] as const;
@@ -6,7 +5,6 @@ export const WORD_COUNT_PINS = ["document", "sprint", "target"] as const;
 export type WordCountPin = (typeof WORD_COUNT_PINS)[number];
 
 export type WritingPreferences = {
-  textSize: (typeof WRITING_TEXT_SIZES)[number];
   mode: (typeof WRITING_MODES)[number];
   typewriterPosition: (typeof TYPEWRITER_POSITIONS)[number];
   curlyQuotes: boolean;
@@ -15,7 +13,6 @@ export type WritingPreferences = {
 };
 
 export const DEFAULT_WRITING_PREFERENCES: WritingPreferences = {
-  textSize: "standard",
   mode: "standard",
   typewriterPosition: "middle",
   curlyQuotes: false,
@@ -29,7 +26,6 @@ export function parseWritingPreferences(value: unknown): WritingPreferences {
 
   const input = value as Record<string, unknown>;
   return {
-    textSize: WRITING_TEXT_SIZES.find((size) => size === input.textSize) ?? defaults.textSize,
     mode: WRITING_MODES.find((mode) => mode === input.mode) ?? defaults.mode,
     typewriterPosition:
       TYPEWRITER_POSITIONS.find((position) => position === input.typewriterPosition) ??

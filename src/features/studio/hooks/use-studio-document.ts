@@ -4,9 +4,11 @@ import type { JSONContent } from "@tiptap/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { emptyLog, type DailyLog } from "../daily-progress";
 import { isArchivedDocument } from "../document-archive";
+import { DEFAULT_LAYOUT, type DocumentLayout } from "../document-layout";
 import { sanitizeTargets, type DocumentTarget } from "../document-targets";
 import { versionId, type DocumentVersion } from "../versions";
 import type { DocumentStore, SaveInput, StudioDocument } from "../storage/document-store";
+import { EMPTY_DOC, isBlankDraft, storedLayout, type LatestDocument } from "./document-state";
 
 const AUTOSAVE_DELAY_MS = 800;
 const RETRY_DELAY_MS = 5000;
@@ -16,12 +18,6 @@ export type LoadState = "loading" | "ready" | "missing" | "archived" | "error";
 export type SaveStatus = "draft" | "saved" | "saving" | "failed";
 export type ConflictChoice = "local" | "remote" | "both";
 export type Conflict = { local: SaveInput; remote: StudioDocument };
-
-const EMPTY_DOC: JSONContent = { type: "doc", content: [{ type: "paragraph" }] };
-
-function isBlankDraft(version: number, title: string, words: number): boolean {
-  return version === 0 && title.trim() === "" && words === 0;
-}
 
 /**
  * Loads one document and keeps it saved. Saving happens after a short typing pause, never twice at
@@ -46,6 +42,7 @@ export function useStudioDocument(
   const [title, setTitleState] = useState("");
   const [words, setWords] = useState(0);
   const [targets, setTargetsState] = useState<DocumentTarget[]>([]);
+  const [layout, setLayoutState] = useState<DocumentLayout | undefined>(undefined);
   const [status, setStatus] = useState<SaveStatus>("draft");
   const [savedAt, setSavedAt] = useState<Date | null>(null);
   const [progress, setProgress] = useState<DailyLog>(emptyLog());
@@ -53,12 +50,7 @@ export function useStudioDocument(
 
   const id = useRef(isNew ? "" : documentId);
   const version = useRef(0);
-  const latest = useRef<{
-    title: string;
-    content: JSONContent;
-    words: number;
-    targets: DocumentTarget[];
-  }>({ title: "", content: EMPTY_DOC, words: 0, targets: [] });
+  const latest = useRef<LatestDocument>({ title: "", content: EMPTY_DOC, words: 0, targets: [] });
   const dirty = useRef(false);
   const activityBaseWords = useRef<number | null | undefined>(undefined);
   const inFlight = useRef(false);
@@ -69,7 +61,7 @@ export function useStudioDocument(
 
   const flush = useCallback(async () => {
     window.clearTimeout(timer.current);
-    const { title: t, content, words: w, targets: tg } = latest.current;
+    const { title: t, content, words: w, targets: tg, layout: lay } = latest.current;
     if (!dirty.current || inFlight.current || blocked.current) return;
     if (isBlankDraft(version.current, t, w)) return;
 
@@ -84,6 +76,7 @@ export function useStudioDocument(
         content,
         wordCount: w,
         targets: tg,
+        ...(lay ? { layout: lay } : {}),
       };
       const result = await store.save(input, version.current, {
         activityBaseWords: activityBaseWords.current,
@@ -143,12 +136,15 @@ export function useStudioDocument(
         if (isArchivedDocument(doc)) return setLoad("archived");
         version.current = doc.version;
         const stored = sanitizeTargets(doc.targets);
+        const layoutOfDoc = storedLayout(doc.layout);
         latest.current = {
           title: doc.title,
           content: doc.content,
           words: doc.wordCount,
           targets: stored,
+          layout: layoutOfDoc,
         };
+        setLayoutState(layoutOfDoc);
         setInitial({ title: doc.title, content: doc.content });
         setTitleState(doc.title);
         setWords(doc.wordCount);
@@ -221,6 +217,15 @@ export function useStudioDocument(
     [schedule],
   );
 
+  const setLayout = useCallback(
+    (next: DocumentLayout) => {
+      latest.current.layout = next;
+      setLayoutState(next);
+      schedule();
+    },
+    [schedule],
+  );
+
   const onContentChange = useCallback(
     (content: JSONContent, wordCount: number) => {
       latest.current.content = content;
@@ -240,7 +245,7 @@ export function useStudioDocument(
     async (target: DocumentVersion) => {
       if (!id.current || blocked.current || !(await saveNow())) return false;
       if (version.current === 0) return false; // a draft that was never stored has no history
-      const { title: t, content, words: w, targets: tg } = latest.current;
+      const { title: t, content, words: w, targets: tg, layout: lay } = latest.current;
       try {
         await store.addVersion({
           id: versionId(id.current, version.current),
@@ -259,6 +264,7 @@ export function useStudioDocument(
         content: target.content,
         words: target.wordCount,
         targets: tg,
+        layout: lay,
       };
       activityBaseWords.current = target.wordCount;
       setInitial({ title: target.title, content: target.content });
@@ -285,12 +291,15 @@ export function useStudioDocument(
         activityBaseWords.current = undefined;
         dirty.current = false;
         const remoteTargets = sanitizeTargets(remote.targets);
+        const remoteLayout = storedLayout(remote.layout);
         latest.current = {
           title: remote.title,
           content: remote.content,
           words: remote.wordCount,
           targets: remoteTargets,
+          layout: remoteLayout,
         };
+        setLayoutState(remoteLayout);
         setInitial({ title: remote.title, content: remote.content });
         setTitleState(remote.title);
         setWords(remote.wordCount);
@@ -318,6 +327,8 @@ export function useStudioDocument(
     words,
     targets,
     setTargets,
+    layout: layout ?? DEFAULT_LAYOUT,
+    setLayout,
     onContentChange,
     status: status === "draft" && (title.trim() !== "" || words > 0) ? "saving" : status,
     savedAt,

@@ -123,7 +123,7 @@ describe("SettingsView", () => {
 
   it("saves writing choices immediately and keeps the chosen position when switching modes", () => {
     wrap(<SettingsView />);
-    const size = screen.getByLabelText<HTMLSelectElement>("Ukuran teks");
+    const size = screen.getByLabelText<HTMLSelectElement>("Mode tulis");
     const quotes = screen.getByRole<HTMLInputElement>("checkbox", { name: /^Kutip melengkung/ });
     const substitutions = screen.getByRole<HTMLInputElement>("checkbox", {
       name: /^Tanda baca otomatis/,
@@ -132,7 +132,7 @@ describe("SettingsView", () => {
     expect(quotes.checked).toBe(false);
     expect(substitutions.checked).toBe(false);
     expect(screen.queryByLabelText("Posisi baris saat mengetik")).toBeNull();
-    type("Ukuran teks", "large");
+    expect(screen.queryByLabelText("Ukuran teks")).toBeNull();
     type("Mode tulis", "typewriter");
     expect(screen.getByLabelText<HTMLSelectElement>("Posisi baris saat mengetik").value).toBe(
       "middle",
@@ -143,7 +143,6 @@ describe("SettingsView", () => {
     fireEvent.click(quotes);
     fireEvent.click(substitutions);
     expect(saved().prefs.writing).toEqual({
-      textSize: "large",
       mode: "standard",
       typewriterPosition: "low",
       curlyQuotes: true,
@@ -158,17 +157,17 @@ describe("SettingsView", () => {
       throw new DOMException("full", "QuotaExceededError");
     });
     try {
-      type("Ukuran teks", "large");
-      expect(screen.getByLabelText<HTMLSelectElement>("Ukuran teks").value).toBe("large");
-      expect(saved().prefs.writing.textSize).toBe("standard");
+      type("Mode tulis", "typewriter");
+      expect(screen.getByLabelText<HTMLSelectElement>("Mode tulis").value).toBe("typewriter");
+      expect(saved().prefs.writing.mode).toBe("standard");
       expect(screen.getByRole("alert").textContent).toContain("Preferensi menulis belum tersimpan");
     } finally {
       blocked.mockRestore();
     }
     fireEvent.click(screen.getByRole("button", { name: "Coba lagi" }));
     expect(screen.queryByRole("alert")).toBeNull();
-    expect(saved().prefs.writing.textSize).toBe("large");
-    expect(document.activeElement).toBe(screen.getByLabelText("Ukuran teks"));
+    expect(saved().prefs.writing.mode).toBe("typewriter");
+    expect(document.activeElement).toBe(screen.getByLabelText("Mode tulis"));
   });
 });
 
