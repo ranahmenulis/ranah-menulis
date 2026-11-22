@@ -1,3 +1,4 @@
+import { textOf as notificationText } from "@/features/notifications/notification-text";
 import {
   act,
   cleanup,
@@ -100,7 +101,7 @@ describe("ReviewView", () => {
     expect(last?.reason).toBe("Perkuat paragraf pembuka.");
     expect(last?.by).toBe("editor");
     expect(last?.dueAt).toBeGreaterThan(NOW());
-    expect(submissionNotifications([saved]).map((n) => n.text)).toContainEqual(
+    expect(submissionNotifications([saved]).map((n) => notificationText(n))).toContainEqual(
       expect.stringMatching(/Editor meminta revisi untuk/),
     );
     expect(screen.queryByRole("region", { name: "Langkah berikutnya" })).toBeNull();

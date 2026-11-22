@@ -29,7 +29,7 @@ describe("writing a testimonial", () => {
   it("saves one for a participant whose task is marked Selesai, name hidden by default", async () => {
     register(CERPEN);
     const result = await saveTestimonial(input(), NOW, await storeWith("selesai"));
-    expect(result).toEqual({ ok: true, message: "Testimoni terkirim." });
+    expect(result).toMatchObject({ ok: true, message: "Testimoni terkirim." });
     expect(testimonials.read()).toHaveLength(1);
     expect(testimonials.read()[0]).toMatchObject({
       slug: CERPEN,
@@ -89,7 +89,7 @@ describe("writing a testimonial", () => {
     register(CERPEN);
     sessionStorage.setItem("rm-viewer", "tamu");
     const result = await saveTestimonial(input(), NOW, await storeWith("selesai"));
-    expect(result).toEqual({ ok: false, message: "Masuk dulu untuk menulis testimoni." });
+    expect(result).toMatchObject({ ok: false, message: "Masuk dulu untuk menulis testimoni." });
   });
 
   it("refuses a project that is not a class", async () => {

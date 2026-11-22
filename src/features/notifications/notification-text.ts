@@ -25,11 +25,28 @@ export function leadOf(
   });
 }
 
+/**
+ * Producers cannot know the reader's language, so values that differ per language (dates, stage
+ * names) come twice: `due` for Indonesian and `dueEn` for English. English readers get the `En` one.
+ */
+function paramsFor(params: Record<string, string>, locale: Locale): Record<string, string> {
+  if (locale !== "en") return params;
+  const out = { ...params };
+  for (const key of Object.keys(params)) {
+    if (key.endsWith("En")) out[key.slice(0, -2)] = params[key];
+  }
+  return out;
+}
+
 /** The sentence after the actor: from the dictionary when the producer gave a key, else its own text. */
-export function textOf(n: Notification, messages: Copy["messages"] = copyId.messages): string {
+export function textOf(
+  n: Notification,
+  messages: Copy["messages"] = copyId.messages,
+  locale: Locale = "id",
+): string {
   if (n.message) {
     const template = (messages as Record<string, string>)[n.message.key];
-    if (template) return format(template, n.message.params ?? {});
+    if (template) return format(template, paramsFor(n.message.params ?? {}, locale));
   }
   return n.text ?? "";
 }

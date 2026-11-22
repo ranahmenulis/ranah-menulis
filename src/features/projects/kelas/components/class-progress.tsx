@@ -1,4 +1,9 @@
+"use client";
+
 import { CountUp } from "@/components/ui/count-up";
+import { useT } from "@/lib/i18n/provider";
+import { useFormat } from "@/lib/i18n/use-format";
+import { fill } from "@/features/studio/copy/fill";
 import { BandFigure } from "../../components/dashboard-band";
 import { progressText } from "../class-text";
 import type { Progress } from "../class-model";
@@ -8,11 +13,13 @@ import type { Progress } from "../class-model";
  * mentor marked Selesai. The percent rolls to its value, with a 4px line under it (DESIGN.md 5.3).
  */
 export function ClassProgress({ progress, mentor }: { progress: Progress; mentor: string | null }) {
-  const by = mentor ? `Mentor: ${mentor}` : null;
+  const t = useT().projectsClass.progress;
+  const { locale } = useFormat();
+  const by = mentor ? fill(t.mentor, { name: mentor }) : null;
   if (progress.total === 0) {
     return (
       <>
-        <p className="text-sm text-ink-soft">Belum ada materi atau tugas di kelas ini.</p>
+        <p className="text-sm text-ink-soft">{t.empty}</p>
         {by && <p className="text-sm wrap-anywhere text-ink-soft">{by}</p>}
       </>
     );
@@ -25,11 +32,13 @@ export function ClassProgress({ progress, mentor }: { progress: Progress; mentor
             <CountUp value={progress.percent} />%
           </>
         }
-        caption={`Progres belajar · ${progressText(progress.done, progress.total)}`}
+        caption={fill(t.caption, {
+          progress: progressText(progress.done, progress.total, locale),
+        })}
       />
       <div
         role="progressbar"
-        aria-label="Progres belajar"
+        aria-label={t.label}
         aria-valuemin={0}
         aria-valuemax={100}
         aria-valuenow={progress.percent}
@@ -47,11 +56,7 @@ export function ClassProgress({ progress, mentor }: { progress: Progress; mentor
 
 /** Where the percent comes from, kept on the page under the band. */
 export function ProgressNote({ progress }: { progress: Progress }) {
+  const t = useT().projectsClass.progress;
   if (progress.total === 0) return null;
-  return (
-    <p className="text-xs text-ink-muted">
-      Progres dihitung dari materi yang kamu tandai selesai dan tugas yang dinilai selesai oleh
-      mentor.
-    </p>
-  );
+  return <p className="text-xs text-ink-muted">{t.note}</p>;
 }

@@ -1,3 +1,6 @@
+import type { Locale } from "@/lib/i18n/config";
+import { fill } from "@/features/studio/copy/fill";
+import { classCopy } from "./class-copy";
 import type { AssignmentRow } from "./class-model";
 
 /** [usulan] Longest testimonial, in characters. */
@@ -81,5 +84,31 @@ export function visibleTestimonials(
     .sort((a, b) => b.updatedAt - a.updatedAt);
 }
 
-export const publicName = (t: Pick<Testimonial, "name" | "showName">) =>
-  t.showName && t.name.trim() !== "" ? t.name.trim() : ANONYMOUS_NAME;
+export const publicName = (
+  t: Pick<Testimonial, "name" | "showName">,
+  anonymous: string = ANONYMOUS_NAME,
+) => (t.showName && t.name.trim() !== "" ? t.name.trim() : anonymous);
+
+/** Why a save or delete answered as it did; `message` on the result is the Indonesian default. */
+export type TestimonialCode =
+  | "guest"
+  | "notRegistered"
+  | "classNotFound"
+  | "dataUnreadable"
+  | "updated"
+  | "sent"
+  | "deleted"
+  | "gone"
+  | `problem-${TestimonialProblem}`
+  | `block-${WriteBlock}`;
+
+/** The sentence for a result code in the interface language. */
+export function testimonialCodeText(code: TestimonialCode, locale: Locale = "id"): string {
+  const t = classCopy(locale).testimonial;
+  if (code.startsWith("problem-")) {
+    const problem = code.slice("problem-".length) as TestimonialProblem;
+    return fill(t.problem[problem], { limit: String(TESTIMONIAL_LIMIT) });
+  }
+  if (code.startsWith("block-")) return t.writeBlock[code.slice("block-".length) as WriteBlock];
+  return t.result[code as keyof typeof t.result];
+}

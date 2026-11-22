@@ -1,7 +1,9 @@
+import type { Locale } from "@/lib/i18n/config";
+import { soloCopy } from "../copy/solo-copy";
 import type { Submission } from "../submission-types";
 import { projectHref } from "../project-model";
 import type { Project, Registration } from "../types";
-import { packageStages, STAGE_LABEL, stagePosition } from "./stage-model";
+import { packageStages, stagePosition } from "./stage-model";
 import type { SoloProgress, SoloStage } from "./types";
 
 export const soloDashboardHref = (slug: string) => `${projectHref(slug)}/dasbor`;
@@ -61,14 +63,16 @@ export function soloFigure(
   work: Submission | undefined,
   stages: SoloStage[],
   progress: SoloProgress | null,
+  locale: Locale = "id",
 ): SoloFigure {
+  const c = soloCopy(locale);
   const phase = soloPhase(work);
-  if (phase === "belum-mengajukan") return { kind: "status", label: "Naskah belum diajukan" };
-  if (phase === "ditolak") return { kind: "status", label: "Pengajuan tidak lolos" };
+  if (phase === "belum-mengajukan") return { kind: "status", label: c.figure.notSubmitted };
+  if (phase === "ditolak") return { kind: "status", label: c.figure.rejected };
   if (phase === "diajukan") {
-    const label = work?.status === "perlu-revisi" ? "Perlu revisi" : "Sedang ditinjau";
+    const label = work?.status === "perlu-revisi" ? c.figure.revision : c.figure.reviewing;
     return { kind: "status", label };
   }
   const { index, total, stage } = stagePosition(stages, progress);
-  return { kind: "stage", index, total, label: STAGE_LABEL[stage] };
+  return { kind: "stage", index, total, label: c.stage.label[stage] };
 }

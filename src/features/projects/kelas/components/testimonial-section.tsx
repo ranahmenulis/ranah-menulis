@@ -4,12 +4,14 @@ import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Notice } from "@/components/ui/states";
+import { fill } from "@/features/studio/copy/fill";
+import { useLocale, useT } from "@/lib/i18n/provider";
 import { ME_ID } from "@/features/community/fixtures/authors";
 import { Section } from "../../components/category-blocks";
 import type { AssignmentRow } from "../class-model";
 import type { AssignmentStore } from "../storage/assignment-store";
 import { deleteTestimonial } from "../testimonial-actions";
-import { isHidden, publicName, writeBlock, writeBlockText } from "../testimonial-model";
+import { isHidden, publicName, testimonialCodeText, writeBlock } from "../testimonial-model";
 import { useAllTestimonials } from "../testimonial-store";
 import { TestimonialForm } from "./testimonial-form";
 
@@ -29,6 +31,8 @@ export function TestimonialSection({
   started: boolean;
   store?: AssignmentStore;
 }) {
+  const t = useT().projectsClass.testimonial;
+  const locale = useLocale();
   const { items, decisions } = useAllTestimonials();
   const mine = items.find((t) => t.slug === slug && t.authorId === ME_ID && !t.sample);
   const [editing, setEditing] = useState(false);
@@ -46,11 +50,11 @@ export function TestimonialSection({
     const result = deleteTestimonial(slug);
     setDeleting(false);
     setEditing(false);
-    say(result.message);
+    say(testimonialCodeText(result.code, locale));
   }
 
   return (
-    <Section title="Testimoni">
+    <Section title={t.sectionTitle}>
       <p ref={line} tabIndex={-1} role="status" className="min-h-5 text-sm outline-none">
         {said}
       </p>
@@ -59,15 +63,15 @@ export function TestimonialSection({
           <p className="text-base wrap-anywhere whitespace-pre-line">{mine.text}</p>
           <p className="text-xs text-ink-muted">
             {isHidden(mine.id, decisions)
-              ? "Disembunyikan oleh pengelola kelas. Hanya kamu yang melihatnya."
-              : `Tampil di halaman kelas sebagai ${publicName(mine)}.`}
+              ? t.mine.hidden
+              : fill(t.mine.shown, { name: publicName(mine, t.anonymous) })}
           </p>
           <div className="flex flex-wrap gap-2">
             <Button variant="secondary" size="sm" onClick={() => setEditing(true)}>
-              Ubah testimoni
+              {t.mine.edit}
             </Button>
             <Button variant="danger-text" size="sm" onClick={() => setDeleting(true)}>
-              Hapus testimoni
+              {t.mine.delete}
             </Button>
           </div>
         </div>
@@ -83,21 +87,21 @@ export function TestimonialSection({
           }}
         />
       ) : (
-        <Notice>{writeBlockText[block]}</Notice>
+        <Notice>{t.writeBlock[block]}</Notice>
       )}
       {deleting && (
         <Dialog
           open
           onClose={() => setDeleting(false)}
-          title="Hapus testimonimu?"
-          description="Testimoni ini hilang dari halaman kelas. Kamu bisa menulis yang baru nanti."
+          title={t.mine.dialogTitle}
+          description={t.mine.dialogBody}
           actions={
             <>
               <Button variant="secondary" onClick={() => setDeleting(false)}>
-                Batal
+                {t.mine.cancel}
               </Button>
               <Button variant="danger" onClick={remove}>
-                Hapus testimoni
+                {t.mine.delete}
               </Button>
             </>
           }

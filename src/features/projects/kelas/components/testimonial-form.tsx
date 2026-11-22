@@ -4,9 +4,12 @@ import { useId, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { CheckChoice } from "@/components/ui/choice";
 import { Field, Textarea, describedBy } from "@/components/ui/field";
+import { fill } from "@/features/studio/copy/fill";
+import { useT } from "@/lib/i18n/provider";
+import { useFormat } from "@/lib/i18n/use-format";
 import { saveTestimonial } from "../testimonial-actions";
 import type { AssignmentStore } from "../storage/assignment-store";
-import { TESTIMONIAL_LIMIT, type Testimonial } from "../testimonial-model";
+import { TESTIMONIAL_LIMIT, testimonialCodeText, type Testimonial } from "../testimonial-model";
 
 /**
  * Writes or changes the reader's testimonial (KLS-07). Showing their name is a choice that starts
@@ -25,6 +28,8 @@ export function TestimonialForm({
   onCancel?: () => void;
   store?: AssignmentStore;
 }) {
+  const t = useT().projectsClass.testimonial.form;
+  const { locale } = useFormat();
   const id = useId();
   const [text, setText] = useState(initial?.text ?? "");
   const [showName, setShowName] = useState(initial?.showName ?? false);
@@ -37,16 +42,16 @@ export function TestimonialForm({
     setBusy(true);
     const result = await saveTestimonial({ slug, text, showName }, Date.now(), store);
     setBusy(false);
-    if (result.ok) onDone(result.message);
-    else setError(result.message);
+    if (result.ok) onDone(testimonialCodeText(result.code, locale));
+    else setError(testimonialCodeText(result.code, locale));
   }
 
   return (
     <form noValidate onSubmit={submit} className="grid gap-3">
       <Field
         id={id}
-        label="Testimonimu"
-        hint={`${length} dari ${TESTIMONIAL_LIMIT} karakter. Testimoni tampil di halaman kelas.`}
+        label={t.label}
+        hint={fill(t.hint, { length: String(length), limit: String(TESTIMONIAL_LIMIT) })}
         error={error}
       >
         <Textarea
@@ -63,16 +68,16 @@ export function TestimonialForm({
       <CheckChoice
         checked={showName}
         onChange={(e) => setShowName(e.target.checked)}
-        label="Tampilkan nama saya di halaman kelas"
-        hint="Bila tidak dicentang, testimoni tampil sebagai “Peserta kelas”."
+        label={t.showName}
+        hint={t.showNameHint}
       />
       <div className="flex flex-wrap gap-2">
         <Button type="submit" variant="secondary" loading={busy}>
-          {initial ? "Simpan perubahan" : "Kirim testimoni"}
+          {initial ? t.save : t.send}
         </Button>
         {onCancel && (
           <Button type="button" variant="text" onClick={onCancel} disabled={busy}>
-            Batal
+            {t.cancel}
           </Button>
         )}
       </div>

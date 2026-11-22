@@ -1,35 +1,32 @@
+"use client";
+
 import { ButtonLink } from "@/components/ui/button";
 import { Notice } from "@/components/ui/states";
+import { useT } from "@/lib/i18n/provider";
 import { MyShell } from "../../components/my-states";
 import { projectHref } from "../../project-model";
 import { registerHref } from "../../registration-model";
 import type { Project } from "../../types";
+import { classCopy } from "../class-copy";
 import type { DashboardBlock } from "../class-model";
 import { ProjectStrip } from "../../components/project-strip";
 
-const MESSAGE: Record<DashboardBlock, string> = {
-  tamu: "Masuk untuk membuka dasbor kelas.",
-  "belum-terdaftar": "Dasbor kelas hanya terbuka untuk peserta. Daftar dulu untuk masuk.",
-  "menunggu-pembayaran":
-    "Dasbor kelas terbuka setelah pembayaranmu dikonfirmasi. Pendaftaranmu sudah tercatat.",
-  "bukan-kelas": "Proyek ini bukan kelas, jadi tidak punya dasbor kelas.",
-};
-
 /** The way back to the project, always on top of a class screen. */
-export const backToProject = (slug: string) => ({
+export const backToProject = (slug: string, label = classCopy("id").backProject) => ({
   href: projectHref(slug),
-  label: "Kembali ke proyek",
+  label,
 });
 
 /** Why the dashboard is not offered. The way back stays; being unregistered offers the way on. */
 export function ClassBlocked({ project, block }: { project: Project; block: DashboardBlock }) {
+  const t = useT().projectsClass;
   return (
-    <MyShell back={backToProject(project.slug)}>
+    <MyShell back={backToProject(project.slug, t.backProject)}>
       <ProjectStrip project={project} titleAs="h1" />
-      <Notice>{MESSAGE[block]}</Notice>
+      <Notice>{t.blocked[block]}</Notice>
       {block === "belum-terdaftar" ? (
         <ButtonLink href={registerHref(project.slug)} className="justify-self-start">
-          Daftar
+          {t.blocked.register}
         </ButtonLink>
       ) : (
         <ButtonLink
@@ -37,7 +34,7 @@ export function ClassBlocked({ project, block }: { project: Project; block: Dash
           variant="secondary"
           className="justify-self-start"
         >
-          Lihat proyek
+          {t.blocked.viewProject}
         </ButtonLink>
       )}
     </MyShell>

@@ -35,7 +35,7 @@ export function useAssignmentForm({ docs, onSend }: Input) {
   const shown = late.length > 0 ? late : attempted ? problems : [];
   const live = form.docId !== null && !shown.some((p) => p.field === "doc") ? problems : [];
   const errorOf = (field: AssignmentProblem["field"]) =>
-    [...shown, ...(field === "doc" ? live : [])].find((p) => p.field === field)?.message;
+    [...shown, ...(field === "doc" ? live : [])].find((p) => p.field === field);
 
   function change(patch: Partial<AssignmentForm>) {
     setForm((prev) => ({ ...prev, ...patch }));

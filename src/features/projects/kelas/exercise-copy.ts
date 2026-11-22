@@ -1,13 +1,16 @@
+import type { Locale } from "@/lib/i18n/config";
+import { fill } from "@/features/studio/copy/fill";
 import type { JSONContent } from "@tiptap/react";
 import { isActiveDocument } from "@/features/studio/document-archive";
 import { docStats } from "@/features/studio/editor-stats";
 import type { DocumentStore, StudioDocument } from "@/features/studio/storage/document-store";
 import { textToDoc } from "./assignment-model";
+import { classCopy } from "./class-copy";
 import { classCopies, copyKey } from "./copy-store";
 import type { ClassMaterial } from "./types";
 
-export const exerciseTitle = (material: Pick<ClassMaterial, "title">) =>
-  `Latihan: ${material.title}`;
+export const exerciseTitle = (material: Pick<ClassMaterial, "title">, locale: Locale = "id") =>
+  fill(classCopy(locale).exercise.title, { title: material.title });
 
 /** The exercise text, then an empty paragraph where the participant starts writing. */
 export function exerciseContent(exercise: string): JSONContent {
@@ -28,6 +31,7 @@ export async function copyExercise(
   material: Pick<ClassMaterial, "id" | "title" | "exercise">,
   store: Pick<DocumentStore, "get" | "duplicate">,
   now = Date.now(),
+  locale: Locale = "id",
 ): Promise<{ docId: string; created: boolean }> {
   const key = copyKey(slug, material.id);
   const existing = classCopies.read().find((c) => c.key === key);
@@ -38,7 +42,7 @@ export async function copyExercise(
   if (!material.exercise) throw new Error(`Material ${material.id} has no exercise`);
 
   const content = exerciseContent(material.exercise);
-  const title = exerciseTitle(material);
+  const title = exerciseTitle(material, locale);
   const draft: StudioDocument = {
     id: "",
     title,

@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { textOf } from "@/features/notifications/notification-text";
 import { contestNotifications } from "@/features/projects/lomba/contest-notifications";
 import { fixtures } from "./notification-helpers";
 import { NOW, registration } from "../helpers";
@@ -13,7 +14,7 @@ describe("contestNotifications", () => {
       overrides: {},
       now: NOW,
     });
-    expect(out.map((n) => n.text)).toEqual([
+    expect(out.map((n) => textOf(n))).toEqual([
       "Pemenang Lomba Cerita Mini Pesisir 2026 sudah diumumkan.",
       "Finalis Lomba Cerita Mini Pesisir 2026 sudah diumumkan.",
     ]);
@@ -47,7 +48,9 @@ describe("contestNotifications", () => {
       ownWorks: { [open.slug]: "Hujan di Atap" },
     });
     expect(out).toHaveLength(1);
-    expect(out[0].text).toBe("Karyamu “Hujan di Atap” masuk finalis di Lomba Cerpen Hujan 2026.");
+    expect(textOf(out[0])).toBe(
+      "Karyamu “Hujan di Atap” masuk finalis di Lomba Cerpen Hujan 2026.",
+    );
     expect(out[0].at).toBe(NOW + 5);
   });
 
@@ -60,7 +63,7 @@ describe("contestNotifications", () => {
       },
       now: NOW,
     });
-    expect(out.map((n) => [(n.text ?? "").split(" ")[0], n.at])).toEqual([
+    expect(out.map((n) => [textOf(n).split(" ")[0], n.at])).toEqual([
       ["Pemenang", NOW + 9],
       ["Finalis", NOW + 5],
     ]);
@@ -86,7 +89,7 @@ describe("contestNotifications", () => {
       overrides: {},
       now: NOW + 40 * 86_400_000,
     });
-    expect(out.map((n) => n.text)).toEqual([`Pemenang ${esai.title} sudah diumumkan.`]);
+    expect(out.map((n) => textOf(n))).toEqual([`Pemenang ${esai.title} sudah diumumkan.`]);
   });
 
   it("gives each announcement one stable id", () => {

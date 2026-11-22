@@ -1,5 +1,6 @@
 "use client";
 
+import { useT } from "@/lib/i18n/provider";
 import { Section } from "../../components/category-blocks";
 import { publicName, visibleTestimonials } from "../testimonial-model";
 import { useAllTestimonials } from "../testimonial-store";
@@ -9,19 +10,22 @@ import { useAllTestimonials } from "../testimonial-store";
  * hidden; the section is not drawn at all when there is none. Text is shown as plain text.
  */
 export function ClassTestimonials({ slug }: { slug: string }) {
+  const t = useT().projectsClass.testimonial;
   const { items, decisions } = useAllTestimonials();
   const shown = visibleTestimonials(items, decisions, slug);
   if (shown.length === 0) return null;
   return (
-    <Section title="Testimoni peserta">
+    <Section title={t.publicTitle}>
       <ul className="grid gap-5">
-        {shown.map((t) => (
-          <li key={t.id}>
+        {shown.map((item) => (
+          <li key={item.id}>
             <figure className="grid gap-1">
               <blockquote className="text-base wrap-anywhere whitespace-pre-line">
-                {t.text}
+                {item.text}
               </blockquote>
-              <figcaption className="text-sm text-ink-muted">{publicName(t)}</figcaption>
+              <figcaption className="text-sm text-ink-muted">
+                {publicName(item, t.anonymous)}
+              </figcaption>
             </figure>
           </li>
         ))}

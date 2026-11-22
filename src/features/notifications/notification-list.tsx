@@ -145,7 +145,7 @@ function NotificationRow({
           )}
         >
           {unread && <span className="sr-only">{copy.unreadMark}</span>}
-          {lead && <b className="font-medium">{lead}</b>} {textOf(item, copy.messages)}
+          {lead && <b className="font-medium">{lead}</b>} {textOf(item, copy.messages, locale)}
         </span>
         <span className="mt-0.5 block min-h-4 text-xs text-ink-muted">
           {now > 0 && agoLabel(item, now, locale)}

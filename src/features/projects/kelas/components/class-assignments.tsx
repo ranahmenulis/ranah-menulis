@@ -1,8 +1,12 @@
+"use client";
+
+import { useT } from "@/lib/i18n/provider";
+import { useFormat } from "@/lib/i18n/use-format";
 import { TextLink } from "@/components/ui/text-link";
 import { Section } from "../../components/category-blocks";
 import type { TimeZoneName } from "../../types";
 import { assignmentHref, type AssignmentRow } from "../class-model";
-import { dueText, stateHint } from "../class-text";
+import { dueText, moduleLabel, stateHintOf } from "../class-text";
 import { StatusTugas } from "./status-tugas";
 
 /** The assignments of the class, one per module, each a way into its own page (KLS-03). */
@@ -15,10 +19,12 @@ export function ClassAssignments({
   rows: AssignmentRow[];
   zone: TimeZoneName;
 }) {
+  const t = useT().projectsClass.assignments;
+  const { locale } = useFormat();
   return (
-    <Section title="Tugas">
+    <Section title={t.title}>
       {rows.length === 0 ? (
-        <p className="text-sm text-ink-muted">Belum ada tugas di kelas ini.</p>
+        <p className="text-sm text-ink-muted">{t.none}</p>
       ) : (
         <ul className="grid">
           {rows.map(({ assignment, submission, state }) => (
@@ -34,11 +40,12 @@ export function ClassAssignments({
                   {assignment.title}
                 </TextLink>
                 <p className="text-xs wrap-anywhere text-ink-muted">
-                  {assignment.module} · {dueText(assignment.dueAt, zone)}
+                  {moduleLabel(assignment.module, locale)} ·{" "}
+                  {dueText(assignment.dueAt, zone, locale)}
                 </p>
                 <p className="text-xs text-ink-muted">
-                  {submission?.late && state !== "selesai" ? "Dikumpulkan terlambat. " : ""}
-                  {stateHint[state]}
+                  {submission?.late && state !== "selesai" ? t.late : ""}
+                  {stateHintOf(state, locale)}
                 </p>
               </div>
               <StatusTugas state={state} />

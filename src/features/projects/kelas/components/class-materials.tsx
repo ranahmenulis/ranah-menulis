@@ -1,6 +1,11 @@
+"use client";
+
 import { Check } from "@phosphor-icons/react/dist/ssr";
 import { CheckChoice } from "@/components/ui/choice";
 import { Notice } from "@/components/ui/states";
+import { fill } from "@/features/studio/copy/fill";
+import { useT } from "@/lib/i18n/provider";
+import { useFormat } from "@/lib/i18n/use-format";
 import { ExerciseBlock } from "./exercise-block";
 import { ExternalLink } from "./external-link";
 import { Section } from "../../components/category-blocks";
@@ -20,6 +25,7 @@ function Material({
   material: ClassMaterial;
   done: boolean;
 }) {
+  const t = useT().projectsClass.materials;
   return (
     <details
       id={materialAnchor(material.id)}
@@ -31,10 +37,10 @@ function Material({
           {done && (
             <span className="flex items-center gap-1 text-ink">
               <Check size={14} aria-hidden />
-              Selesai
+              {t.done}
             </span>
           )}
-          {material.minutes} mnt
+          {fill(t.minutes, { n: String(material.minutes) })}
         </span>
       </summary>
       <div className="grid gap-3 pt-3">
@@ -43,12 +49,12 @@ function Material({
             {paragraph}
           </p>
         ))}
-        {material.url && <ExternalLink href={material.url}>Buka rekaman</ExternalLink>}
+        {material.url && <ExternalLink href={material.url}>{t.openRecording}</ExternalLink>}
         <ExerciseBlock slug={slug} material={material} />
         <CheckChoice
           checked={done}
           onChange={(e) => setMaterialDone(slug, material.id, e.target.checked)}
-          label="Tandai selesai"
+          label={t.markDone}
         />
       </div>
     </details>
@@ -70,12 +76,14 @@ export function ClassMaterials({
   started: boolean;
   zone: TimeZoneName;
 }) {
+  const t = useT().projectsClass.materials;
+  const { locale } = useFormat();
   useMaterialFocus(started);
   return (
-    <Section title="Materi">
+    <Section title={t.title}>
       {!started ? (
         <Notice>
-          Materi dibuka saat kelas dimulai pada {formatProjectDate(content.startsAt, zone)}.
+          {fill(t.locked, { date: formatProjectDate(content.startsAt, zone, locale) })}
         </Notice>
       ) : (
         content.modules
@@ -84,7 +92,7 @@ export function ClassMaterials({
             <div key={m.title} className="grid gap-1">
               <h3 className="text-sm font-medium wrap-anywhere text-ink-muted">{m.title}</h3>
               {m.materials.length === 0 ? (
-                <p className="text-sm text-ink-muted">Belum ada materi di modul ini.</p>
+                <p className="text-sm text-ink-muted">{t.none}</p>
               ) : (
                 m.materials.map((material) => (
                   <Material

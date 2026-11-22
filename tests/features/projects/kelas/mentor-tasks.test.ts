@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { textOf } from "@/features/notifications/notification-text";
 import {
   assignmentNotifications,
   newTaskNotifications,
@@ -176,7 +177,7 @@ describe("notifications for tasks", () => {
 
   it("tells a registered participant about a task written after they joined", () => {
     const [n] = newTaskNotifications([task({ createdAt: NOW })], registered(NOW - DAY));
-    expect(n.text).toMatch(/Mentor menambahkan tugas “Surat untuk tokohmu”/);
+    expect(textOf(n)).toMatch(/Mentor menambahkan tugas “Surat untuk tokohmu”/);
     expect(n.href).toBe(`/projects/${CERPEN}/tugas/mt-1`);
     expect(n.id).toBe("tugas-baru-mt-1");
   });
@@ -199,7 +200,7 @@ describe("notifications for tasks", () => {
         { status: "selesai", at: NOW + 1, by: "mentor" },
       ],
     });
-    expect(assignmentNotifications([work], undefined, undefined, [task()])[0].text).toMatch(
+    expect(textOf(assignmentNotifications([work], undefined, undefined, [task()])[0])).toMatch(
       /Surat untuk tokohmu/,
     );
     expect(assignmentNotifications([work])).toEqual([]);

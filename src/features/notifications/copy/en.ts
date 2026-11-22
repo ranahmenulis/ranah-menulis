@@ -29,5 +29,27 @@ export const notifications: typeof source = {
     editorPick: "Your post “{title}” was chosen for Editor’s Picks.",
     hiddenPost: "Your post was hidden by a moderator.",
     hiddenComment: "Your comment was hidden by a moderator.",
+    payPaid: "Payment for {project} was received. You are registered.",
+    payExpired:
+      "The payment time for {project} ran out. The registration ended and the seat is open again.",
+    payWaiting: "Payment for {project} is pending. Your seat is held until {due}.",
+    subReceived: "Your work “{title}” for {project} was received by the system.",
+    subRevision: "The editor asked for a revision of “{title}” in {project}.",
+    subRevisionDue:
+      "The editor asked for a revision of “{title}” in {project}. Revision due {due}.",
+    subAccepted: "Your work “{title}” was accepted in {project}.",
+    subRejected:
+      "Your work “{title}” did not make it in {project}. The reason is in the submission details.",
+    termsUpdated:
+      "The terms of {project} were updated by the organizers. Read them again before continuing.",
+    taskDone: "The mentor marked the task “{title}” in {project} as done.",
+    taskRework: "The mentor asked for improvements to the task “{title}” in {project}.",
+    taskNew: "The mentor added the task “{title}” in {project}.",
+    soloDone: "The publishing of your book in {project} is done.",
+    soloStage: "The {stage} stage started for your book in {project}.",
+    soloPreview: "The {kind} preview, version {version}, is ready to view in {project}.",
+    contestOwnFinalist: "Your work “{title}” is a finalist in {project}.",
+    contestFinalists: "The finalists of {project} were announced.",
+    contestWinners: "The winners of {project} were announced.",
   },
 };

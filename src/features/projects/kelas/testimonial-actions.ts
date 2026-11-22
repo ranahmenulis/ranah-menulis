@@ -12,18 +12,29 @@ import { readMentorTasks } from "./mentor-task-store";
 import type { AssignmentStore } from "./storage/assignment-store";
 import { assignmentStore } from "./storage/store";
 import {
+  testimonialCodeText,
   testimonialId,
   validateTestimonial,
-  testimonialMessage,
   writeBlock,
-  writeBlockText,
   type Testimonial,
+  type TestimonialCode,
 } from "./testimonial-model";
 import { testimonials } from "./testimonial-store";
 
-export type TestimonialResult = { ok: true; message: string } | { ok: false; message: string };
+export type TestimonialResult =
+  | { ok: true; code: TestimonialCode; message: string }
+  | { ok: false; code: TestimonialCode; message: string };
 
-const refuse = (message: string): TestimonialResult => ({ ok: false, message });
+const refuse = (code: TestimonialCode): TestimonialResult => ({
+  ok: false,
+  code,
+  message: testimonialCodeText(code),
+});
+const done = (code: TestimonialCode): TestimonialResult => ({
+  ok: true,
+  code,
+  message: testimonialCodeText(code),
+});
 
 /**
  * Saves the reader's testimonial for a class, or changes the one they wrote (one per class). Reads
@@ -37,12 +48,12 @@ export async function saveTestimonial(
   store: AssignmentStore = assignmentStore,
 ): Promise<TestimonialResult> {
   const { slug, text, showName } = input;
-  if (readViewerNow().viewer === "tamu") return refuse("Masuk dulu untuk menulis testimoni.");
+  if (readViewerNow().viewer === "tamu") return refuse("guest");
   const problem = validateTestimonial(text);
-  if (problem) return refuse(testimonialMessage[problem]);
+  if (problem) return refuse(`problem-${problem}`);
 
   if (liveRegistration(readRegistrations()[slug], now)?.status !== "terdaftar") {
-    return refuse("Kamu belum terdaftar di kelas ini.");
+    return refuse("notRegistered");
   }
   const catalog = mergeCatalog(storedProjects.read());
   const project = resolveProjects(catalog, now).find(
@@ -50,16 +61,16 @@ export async function saveTestimonial(
   );
   const fixture = classesFor(catalog).find((c) => c.slug === slug);
   const content = project && fixture ? resolveClass(fixture, project, readMentorTasks()) : null;
-  if (!content) return refuse("Kelas ini tidak ditemukan.");
+  if (!content) return refuse("classNotFound");
 
   let mine;
   try {
     mine = (await store.list()).filter((s) => s.slug === slug);
   } catch {
-    return refuse("Data tugasmu belum terbaca. Coba lagi.");
+    return refuse("dataUnreadable");
   }
   const block = writeBlock(hasStarted(content, now), assignmentRows(content, mine, now));
-  if (block) return refuse(writeBlockText[block]);
+  if (block) return refuse(`block-${block}`);
 
   const trimmed = text.trim();
   const name = readAccount().profile.name.trim();
@@ -68,7 +79,7 @@ export async function saveTestimonial(
   if (existing) {
     const changed: Testimonial = { ...existing, text: trimmed, showName, name, updatedAt: now };
     testimonials.write(all.map((t) => (t.id === existing.id ? changed : t)));
-    return { ok: true, message: "Testimoni diperbarui." };
+    return done("updated");
   }
   const fresh: Testimonial = {
     id: testimonialId(slug, ME_ID, now),
@@ -81,14 +92,14 @@ export async function saveTestimonial(
     updatedAt: now,
   };
   testimonials.write([...all, fresh]);
-  return { ok: true, message: "Testimoni terkirim." };
+  return done("sent");
 }
 
 /** Removes the reader's own testimonial. A curator's earlier decision stays in the log. */
 export function deleteTestimonial(slug: string): TestimonialResult {
   const all = testimonials.read();
   const mine = all.find((t) => t.slug === slug && t.authorId === ME_ID);
-  if (!mine) return refuse("Testimoni ini sudah tidak ada.");
+  if (!mine) return refuse("gone");
   testimonials.write(all.filter((t) => t.id !== mine.id));
-  return { ok: true, message: "Testimoni dihapus." };
+  return done("deleted");
 }

@@ -1,3 +1,6 @@
+import type { Locale } from "@/lib/i18n/config";
+import { fill } from "@/features/studio/copy/fill";
+import { contestCopy } from "../copy/contest-copy";
 import { projectHref } from "../project-model";
 import type { Project } from "../types";
 import type { ContestEntry, ContestResults, ContestStage, ContestWinner } from "./types";
@@ -60,7 +63,8 @@ export function namesRevealed(anonymous: boolean, stage: ContestStage): boolean 
 }
 
 /** "Finalis 3": how an unnamed finalist is called. */
-export const finalistLabel = (index: number) => `Finalis ${index + 1}`;
+export const finalistLabel = (index: number, locale: Locale = "id") =>
+  fill(contestCopy(locale).finalistName, { n: String(index + 1) });
 
 export type RankedWinner = ContestWinner & { entry: ContestEntry; tie: boolean };
 

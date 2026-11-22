@@ -1,7 +1,12 @@
 import type { JSONContent } from "@tiptap/react";
 import { docStats } from "@/features/studio/editor-stats";
-import { RESTORE_ARCHIVED_MESSAGE } from "@/features/studio/document-archive";
+import type { Locale } from "@/lib/i18n/config";
+import {
+  RESTORE_ARCHIVED_MESSAGE,
+  restoreArchivedMessage,
+} from "@/features/studio/document-archive";
 import type { SubmissionVersion } from "../submission-types";
+import { classCopy } from "./class-copy";
 import type { AssignmentSource, AssignmentSubmission } from "./types";
 
 /** [usulan] Typed text is capped so a paste cannot fill the device. */
@@ -25,7 +30,44 @@ export type AssignmentDoc = {
   archivedAt?: number | null;
 };
 
-export type AssignmentProblem = { field: "doc" | "text" | "closed"; message: string };
+/** Codes map to `projectsClass.problem` (and the Studio archive sentence); `message` is Indonesian. */
+export type AssignmentProblemCode =
+  | "textRequired"
+  | "textNoWords"
+  | "textTooLong"
+  | "docRequired"
+  | "docGone"
+  | "docArchived"
+  | "docEmpty"
+  | "notStarted"
+  | "notFound"
+  | "duplicate"
+  | "notRepair"
+  | "unchanged"
+  | "cannotNow";
+
+export type AssignmentProblem = {
+  field: "doc" | "text" | "closed";
+  code: AssignmentProblemCode;
+  message: string;
+};
+
+const MESSAGES = classCopy("id").problem;
+
+/** The sentence for a problem in the interface language. */
+export function problemText(problem: AssignmentProblem, locale: Locale = "id"): string {
+  if (problem.code === "docArchived") return restoreArchivedMessage(locale);
+  return classCopy(locale).problem[problem.code];
+}
+
+/** Builds a problem; the Indonesian sentence stays as the fallback text. */
+export function problemOf(
+  field: AssignmentProblem["field"],
+  code: AssignmentProblemCode,
+): AssignmentProblem {
+  const message = code === "docArchived" ? RESTORE_ARCHIVED_MESSAGE : MESSAGES[code];
+  return { field, code, message };
+}
 
 /** Typed text becomes paragraphs: a blank line starts a new one, a single line break stays inside. */
 export function textToDoc(text: string): JSONContent {
@@ -58,21 +100,21 @@ export function validateAssignment(input: {
   const { form, doc } = input;
   if (form.source === "teks") {
     const text = form.text.trim();
-    if (text === "") return [{ field: "text", message: "Tulis tugasmu dulu." }];
+    if (text === "") return [problemOf("text", "textRequired")];
     if (docStats(textToDoc(text)).words === 0) {
-      return [{ field: "text", message: "Tugasmu belum berisi kata." }];
+      return [problemOf("text", "textNoWords")];
     }
     if (text.length > TEXT_LIMIT) {
-      return [{ field: "text", message: "Tugasmu terlalu panjang untuk diketik di sini." }];
+      return [problemOf("text", "textTooLong")];
     }
     return [];
   }
-  if (form.docId === null) return [{ field: "doc", message: "Pilih dokumen dari Studio." }];
+  if (form.docId === null) return [problemOf("doc", "docRequired")];
   if (!doc || doc.deletedAt) {
-    return [{ field: "doc", message: "Dokumen ini tidak ada lagi di Studio." }];
+    return [problemOf("doc", "docGone")];
   }
-  if (doc.archivedAt != null) return [{ field: "doc", message: RESTORE_ARCHIVED_MESSAGE }];
-  if (wordsInDoc(doc) === 0) return [{ field: "doc", message: "Dokumen ini masih kosong." }];
+  if (doc.archivedAt != null) return [problemOf("doc", "docArchived")];
+  if (wordsInDoc(doc) === 0) return [problemOf("doc", "docEmpty")];
   return [];
 }
 

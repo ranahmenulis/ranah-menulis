@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { textOf } from "@/features/notifications/notification-text";
 import { soloNotifications } from "@/features/projects/solo/solo-notifications";
 import { withAdvance, withApproval, withFile } from "@/features/projects/solo/stage-model";
 import { BASE, FULL, walked, withPreviews } from "./helpers";
@@ -8,7 +9,7 @@ describe("soloNotifications", () => {
     let row = walked(FULL, "cover");
     row = withFile(row, BASE, "cover", 5000);
     const out = soloNotifications([row]);
-    expect(out.map((n) => n.text)).toEqual([
+    expect(out.map((n) => textOf(n))).toEqual([
       "Pratinjau sampul versi 1 siap dilihat di Solo: Menerbitkan Bukumu Sendiri.",
       "Tahap desain cover dimulai untuk bukumu di Solo: Menerbitkan Bukumu Sendiri.",
       "Tahap proofreading dimulai untuk bukumu di Solo: Menerbitkan Bukumu Sendiri.",

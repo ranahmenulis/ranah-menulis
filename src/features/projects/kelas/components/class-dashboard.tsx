@@ -1,6 +1,9 @@
 "use client";
 
 import { Notice } from "@/components/ui/states";
+import { fill } from "@/features/studio/copy/fill";
+import { useT } from "@/lib/i18n/provider";
+import { useFormat } from "@/lib/i18n/use-format";
 import { DashboardBand } from "../../components/dashboard-band";
 import { MyError, MyShell, MySkeleton } from "../../components/my-states";
 import { ProjectGone } from "../../components/projects-states";
@@ -32,14 +35,16 @@ type Props = {
  * the materials shut.
  */
 export function ClassDashboard({ slug, source, classes, store }: Props) {
+  const t = useT().projectsClass;
+  const { locale } = useFormat();
   const data = useClass(slug, { source, classes, store });
 
-  if (data.status === "loading") return <MySkeleton label="Memuat dasbor kelas" />;
+  if (data.status === "loading") return <MySkeleton label={t.loadingDashboard} />;
   if (data.status === "gone") return <ProjectGone />;
   if (data.status === "error") {
     return (
-      <MyError back={backToProject(slug)} onRetry={data.reload}>
-        Dasbor kelas belum bisa dibuka. Data di perangkat ini tidak terbaca.
+      <MyError back={backToProject(slug, t.backProject)} onRetry={data.reload}>
+        {t.dashboard.loadError}
       </MyError>
     );
   }
@@ -51,14 +56,15 @@ export function ClassDashboard({ slug, source, classes, store }: Props) {
   const teacher = project.block.kind === "kelas" ? project.block.teacher.name : null;
 
   return (
-    <MyShell back={backToProject(slug)}>
-      <DashboardBand project={project} eyebrow="Dasbor kelas">
+    <MyShell back={backToProject(slug, t.backProject)}>
+      <DashboardBand project={project} eyebrow={t.dashboard.eyebrow}>
         <ClassProgress progress={progress} mentor={teacher} />
       </DashboardBand>
       {!started && (
         <Notice>
-          Kelas belum dimulai. Materi dan tugas dibuka pada{" "}
-          {formatProjectDate(content.startsAt, zone)}.
+          {fill(t.dashboard.notStarted, {
+            date: formatProjectDate(content.startsAt, zone, locale),
+          })}
         </Notice>
       )}
       <ProgressNote progress={progress} />

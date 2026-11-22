@@ -1,6 +1,7 @@
 "use client";
 
 import { Notice } from "@/components/ui/states";
+import { useT } from "@/lib/i18n/provider";
 import { useDocumentList } from "@/features/studio/hooks/use-document-list";
 import { isActiveDocument } from "@/features/studio/document-archive";
 import type { DocumentStore } from "@/features/studio/storage/document-store";
@@ -39,24 +40,25 @@ export function AssignmentView({
   store = assignmentStore,
   documents = studioStore,
 }: Props) {
+  const t = useT().projectsClass;
   const data = useClass(slug, { source, classes, store });
   const list = useDocumentList(documents);
 
-  if (data.status === "loading") return <MySkeleton label="Memuat tugas" />;
+  if (data.status === "loading") return <MySkeleton label={t.loadingTask} />;
   if (data.status === "gone") return <ProjectGone />;
   // Why it cannot open comes first: a failed read of the Studio documents says nothing about that.
   if (data.status === "blocked") return <ClassBlocked project={data.project} block={data.block} />;
-  if (list.status === "loading") return <MySkeleton label="Memuat tugas" />;
+  if (list.status === "loading") return <MySkeleton label={t.loadingTask} />;
   if (data.status === "error" || list.status === "error") {
     return (
       <MyError
-        back={backToProject(slug)}
+        back={backToProject(slug, t.backProject)}
         onRetry={() => {
           if (data.status === "error") data.reload();
           list.reload();
         }}
       >
-        Tugas belum bisa dibuka. Data di perangkat ini tidak terbaca.
+        {t.page.loadError}
       </MyError>
     );
   }
@@ -64,8 +66,8 @@ export function AssignmentView({
   const row = data.rows.find((r) => r.assignment.id === id);
   if (!row) {
     return (
-      <MyShell back={{ href: dashboardHref(slug), label: "Dasbor kelas" }}>
-        <Notice>Tugas ini tidak ditemukan di kelas ini.</Notice>
+      <MyShell back={{ href: dashboardHref(slug), label: t.backDashboard }}>
+        <Notice>{t.page.notFound}</Notice>
       </MyShell>
     );
   }

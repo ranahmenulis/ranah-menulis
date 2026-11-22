@@ -1,6 +1,7 @@
 "use client";
 
 import { ButtonLink } from "@/components/ui/button";
+import { format, useLocale, useT } from "@/lib/i18n/provider";
 import { Notice } from "@/components/ui/states";
 import { TextLink } from "@/components/ui/text-link";
 import { CountUp } from "@/components/ui/count-up";
@@ -43,29 +44,32 @@ const focusTitle = () =>
   requestAnimationFrame(() => setTimeout(() => document.getElementById(TITLE_ID)?.focus(), 0));
 
 function PhaseNotice({ slug, work }: { slug: string; work: Submission | undefined }) {
+  const c = useT().projectsSolo.phase;
   if (!work) {
     return (
       <Notice
         action={
           <ButtonLink href={kirimHref(slug)} size="sm">
-            Kirim naskah
+            {c.sendManuscript}
           </ButtonLink>
         }
       >
-        Tahap penerbitan dimulai setelah naskahmu diajukan dan diterima.
+        {c.notStarted}
       </Notice>
     );
   }
   const reason = latestFeedback(work);
+  const note = reason ? format(c.teamNote, { reason }) : "";
   const link = (
     <TextLink href={submissionHref(slug, work.id)} className="text-ink underline">
-      Lihat pengajuan
+      {c.viewSubmission}
     </TextLink>
   );
   if (work.status === "ditolak") {
     return (
       <Notice action={link}>
-        Pengajuanmu tidak lolos.{reason ? ` Catatan tim: ${reason}` : ""}
+        {c.rejected}
+        {note}
       </Notice>
     );
   }
@@ -74,19 +78,16 @@ function PhaseNotice({ slug, work }: { slug: string; work: Submission | undefine
       <Notice
         action={
           <TextLink href={reviseHref(slug, work.id)} className="text-ink underline">
-            Kirim revisi
+            {c.sendRevision}
           </TextLink>
         }
       >
-        Tim meminta revisi naskahmu.{reason ? ` Catatan tim: ${reason}` : ""}
+        {c.revision}
+        {note}
       </Notice>
     );
   }
-  return (
-    <Notice action={link}>
-      Pengajuanmu sedang ditinjau. Tahap berikutnya dimulai setelah diterima.
-    </Notice>
-  );
+  return <Notice action={link}>{c.reviewing}</Notice>;
 }
 
 /**
@@ -95,14 +96,15 @@ function PhaseNotice({ slug, work }: { slug: string; work: Submission | undefine
  * submission stage and why nothing else moves. [usulan, Q-24]
  */
 export function SoloDashboard({ slug, source, submissions, store = soloStore }: Props) {
+  const c = useT().projectsSolo;
   const data = useSolo(slug, { source, submissions, store });
 
-  if (data.status === "loading") return <MySkeleton label="Memuat dasbor penerbitan" />;
+  if (data.status === "loading") return <MySkeleton label={c.loading} />;
   if (data.status === "gone") return <ProjectGone />;
   if (data.status === "error") {
     return (
-      <MyError back={backToProject(slug)} onRetry={data.reload}>
-        Dasbor penerbitan belum bisa dibuka. Data di perangkat ini tidak terbaca.
+      <MyError back={backToProject(slug, c.back)} onRetry={data.reload}>
+        {c.loadError}
       </MyError>
     );
   }
@@ -115,13 +117,15 @@ type Ready = Extract<SoloData, { status: "ready" }>;
 
 function SoloBand({ data }: { data: Ready }) {
   const { project, registration, work, stages, progress } = data;
-  const figure = soloFigure(work, stages, progress);
+  const c = useT().projectsSolo;
+  const locale = useLocale();
+  const figure = soloFigure(work, stages, progress, locale);
   const facts = [
-    registration.packageName && `Paket ${registration.packageName}`,
-    work && `Naskah: ${work.title}`,
+    registration.packageName && format(c.packageFact, { name: registration.packageName }),
+    work && format(c.workFact, { title: work.title }),
   ].filter(Boolean);
   return (
-    <DashboardBand project={project} eyebrow="Dasbor penerbitan" titleId={TITLE_ID}>
+    <DashboardBand project={project} eyebrow={c.eyebrow} titleId={TITLE_ID}>
       {figure.kind === "stage" ? (
         <BandFigure
           figure={
@@ -130,7 +134,11 @@ function SoloBand({ data }: { data: Ready }) {
               <span className="text-ink-soft">/{figure.total}</span>
             </>
           }
-          caption={`Tahap ${figure.index} dari ${figure.total} · ${figure.label}`}
+          caption={format(c.stagePosition, {
+            index: String(figure.index),
+            total: String(figure.total),
+            label: figure.label,
+          })}
         />
       ) : (
         <BandFigure words figure={figure.label} />
@@ -145,13 +153,12 @@ function SoloBand({ data }: { data: Ready }) {
 }
 
 function ApprovedNotice({ progress, zone }: { progress: SoloProgress | null; zone: TimeZoneName }) {
+  const c = useT().projectsSolo;
+  const locale = useLocale();
   const approved = progress?.log.findLast((c) => c.kind === "setuju");
   if (!approved) return null;
   return (
-    <Notice>
-      Kamu menyetujui versi final pada {formatProjectDate(approved.at, zone)}. Produksi tidak bisa
-      diubah lagi.
-    </Notice>
+    <Notice>{format(c.approved, { date: formatProjectDate(approved.at, zone, locale) })}</Notice>
   );
 }
 
@@ -165,6 +172,7 @@ function rowsOf(data: Ready, accepted: boolean) {
 }
 
 function SoloReady({ data, slug, store }: { data: Ready; slug: string; store: SoloStore }) {
+  const c = useT().projectsSolo;
   const { project, work, phase, stages, progress } = data;
   const zone = project.timeZone;
   // Only an accepted submission has stages that run; the target is what the actions work on.
@@ -174,7 +182,7 @@ function SoloReady({ data, slug, store }: { data: Ready; slug: string; store: So
   const approving = target && currentStage(stages, progress) === "persetujuan-final";
 
   return (
-    <MyShell back={backToProject(slug)}>
+    <MyShell back={backToProject(slug, c.back)}>
       <SoloBand data={data} />
       {!target && <PhaseNotice slug={slug} work={work} />}
       <ApprovedNotice progress={progress} zone={zone} />

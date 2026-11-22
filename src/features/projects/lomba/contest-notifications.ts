@@ -1,4 +1,4 @@
-import type { Notification } from "@/features/notifications/types";
+import type { Notification, NotificationMessage } from "@/features/notifications/types";
 import type { Project, RegistrationMap } from "../types";
 import { announcementDates, contestStage, resultsHref, stageRank } from "./contest-model";
 import type { ContestOverrides } from "./types";
@@ -50,17 +50,16 @@ export function contestNotifications(input: Input): Notification[] {
     for (const stage of STAGES) {
       if (stageRank(current) < stageRank(stage) || !announced(project, stage, input)) continue;
       const own = stage === "finalis" ? ownWorks[project.slug] : undefined;
-      const text = own
-        ? `Karyamu “${own}” masuk finalis di ${project.title}.`
-        : stage === "finalis"
-          ? `Finalis ${project.title} sudah diumumkan.`
-          : `Pemenang ${project.title} sudah diumumkan.`;
+      const params = { project: project.title };
+      const message: NotificationMessage = own
+        ? { key: "contestOwnFinalist", params: { ...params, title: own } }
+        : { key: stage === "finalis" ? "contestFinalists" : "contestWinners", params };
       out.push({
         id: `lomba-${project.slug}-${stage}`,
         kind: "project",
         actorId: null,
         others: 0,
-        text,
+        message,
         href: resultsHref(project.slug),
         agoMs: 0,
         at: announcedAt(project, stage, input),

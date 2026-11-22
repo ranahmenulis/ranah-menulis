@@ -5,10 +5,12 @@ import {
   contentOf,
   docTitleOf,
   newAssignmentSubmission,
+  problemOf,
   validateAssignment,
   type AssignmentDoc,
   type AssignmentForm,
   type AssignmentProblem,
+  type AssignmentProblemCode,
 } from "./assignment-model";
 import { resubmitBlock, withResubmission } from "./assignment-status";
 import { handInBlock } from "./class-model";
@@ -29,9 +31,9 @@ type Input = {
   store: AssignmentStore;
 };
 
-const invalid = (field: AssignmentProblem["field"], message: string): HandInResult => ({
+const invalid = (field: AssignmentProblem["field"], code: AssignmentProblemCode): HandInResult => ({
   kind: "invalid",
-  problems: [{ field, message }],
+  problems: [problemOf(field, code)],
 });
 
 type Prepared =
@@ -51,9 +53,6 @@ async function prepare(
   return { kind: "ready", doc, frozen: freezeVersion(content, now) };
 }
 
-const NOT_STARTED = "Tugas dibuka saat kelas dimulai.";
-const NOT_FOUND = "Tugas ini tidak ditemukan.";
-
 /**
  * Hands in an assignment (KLS-03). Everything is read again at the moment of sending: the clock
  * and the document, which may have been edited or trashed since the page opened. A deadline that
@@ -65,8 +64,8 @@ export async function handInAssignment(input: Input): Promise<HandInResult> {
   const now = Date.now();
   try {
     const block = handInBlock(content, assignmentId, now);
-    if (block === "tidak-ada") return invalid("closed", NOT_FOUND);
-    if (block === "belum-dimulai") return invalid("closed", NOT_STARTED);
+    if (block === "tidak-ada") return invalid("closed", "notFound");
+    if (block === "belum-dimulai") return invalid("closed", "notStarted");
 
     const prepared = await prepare(form, documents, now);
     if (prepared.kind === "invalid") return prepared;
@@ -84,7 +83,7 @@ export async function handInAssignment(input: Input): Promise<HandInResult> {
       now,
     });
     const verdict = await store.add(submission);
-    if (verdict === "duplicate") return invalid("closed", "Tugas ini sudah dikumpulkan.");
+    if (verdict === "duplicate") return invalid("closed", "duplicate");
     notifyAssignmentsChanged();
     return { kind: "sent", submission };
   } catch {
@@ -104,9 +103,9 @@ export async function resubmitAssignment(input: ResubmitInput): Promise<HandInRe
   const now = Date.now();
   try {
     const current = (await store.list()).find((s) => s.id === submissionId);
-    if (!current) return invalid("closed", NOT_FOUND);
+    if (!current) return invalid("closed", "notFound");
     if (resubmitBlock(current)) {
-      return invalid("closed", "Tugas ini tidak sedang diminta diperbaiki.");
+      return invalid("closed", "notRepair");
     }
     const prepared = await prepare(form, documents, now);
     if (prepared.kind === "invalid") return prepared;
@@ -126,13 +125,13 @@ export async function resubmitAssignment(input: ResubmitInput): Promise<HandInRe
       });
       return revised;
     });
-    if (verdict === "missing") return invalid("closed", NOT_FOUND);
+    if (verdict === "missing") return invalid("closed", "notFound");
     if (unchanged) {
       const field = form.source === "teks" ? "text" : "doc";
-      return invalid(field, "Tugasmu belum berubah sejak versi terakhir. Perbaiki dulu isinya.");
+      return invalid(field, "unchanged");
     }
     if (verdict !== "ok" || !revised) {
-      return invalid("closed", "Tugas ini tidak bisa dikumpulkan lagi sekarang.");
+      return invalid("closed", "cannotNow");
     }
     notifyAssignmentsChanged();
     return { kind: "sent", submission: revised };

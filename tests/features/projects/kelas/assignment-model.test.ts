@@ -57,7 +57,7 @@ describe("validateAssignment", () => {
       "Tugasmu terlalu panjang untuk diketik di sini.",
     ],
   ] as const)("refuses %s", (_, form, d, field, message) => {
-    expect(validateAssignment({ form, doc: d })).toEqual([{ field, message }]);
+    expect(validateAssignment({ form, doc: d })).toMatchObject([{ field, message }]);
   });
 
   it("ignores a document when the source is typed text", () => {

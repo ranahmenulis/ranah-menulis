@@ -1,9 +1,21 @@
-import type { Notification } from "@/features/notifications/types";
+import type { Notification, NotificationMessage } from "@/features/notifications/types";
 import { projectFixtures } from "../fixtures/all-projects";
 import type { ProjectFixture } from "../types";
 import { soloDashboardHref } from "./solo-model";
 import { STAGE_LABEL } from "./stage-model";
-import type { SoloProgress } from "./types";
+import type { SoloProgress, SoloStage } from "./types";
+
+/** Lowercase English stage names for the English sentence. */
+const STAGE_EN: Record<SoloStage, string> = {
+  pengajuan: "submission",
+  penyuntingan: "editing",
+  proofreading: "proofreading",
+  cover: "cover design",
+  layout: "interior layout",
+  "persetujuan-final": "final approval",
+  produksi: "production",
+  selesai: "completed",
+};
 
 /**
  * Notifications from the Solo progress on this device (PRD 20, "Tahap produksi buku berubah"): the
@@ -23,22 +35,37 @@ export function soloNotifications(
       .map((c) => ({
         id: `solo-${row.id}-${c.stage}-${c.at}`,
         at: c.at,
-        text:
+        message:
           c.stage === "selesai"
-            ? `Penerbitan bukumu di ${project.title} selesai.`
-            : `Tahap ${STAGE_LABEL[c.stage].toLowerCase()} dimulai untuk bukumu di ${project.title}.`,
+            ? { key: "soloDone", params: { project: project.title } }
+            : {
+                key: "soloStage",
+                params: {
+                  project: project.title,
+                  stage: STAGE_LABEL[c.stage].toLowerCase(),
+                  stageEn: STAGE_EN[c.stage],
+                },
+              },
       }));
     const files = row.files.map((f) => ({
       id: `solo-${row.id}-${f.id}`,
       at: f.at,
-      text: `Pratinjau ${f.kind === "cover" ? "sampul" : "isi buku"} versi ${f.version} siap dilihat di ${project.title}.`,
+      message: {
+        key: "soloPreview",
+        params: {
+          project: project.title,
+          version: String(f.version),
+          kind: f.kind === "cover" ? "sampul" : "isi buku",
+          kindEn: f.kind === "cover" ? "cover" : "book interior",
+        },
+      },
     }));
     return [...stages, ...files].map((n) => ({
       id: n.id,
       kind: "project" as const,
       actorId: null,
       others: 0,
-      text: n.text,
+      message: n.message as NotificationMessage,
       href,
       agoMs: 0,
       at: n.at,

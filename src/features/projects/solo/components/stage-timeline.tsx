@@ -1,23 +1,20 @@
+import { useLocale, useT } from "@/lib/i18n/provider";
 import { cn } from "@/lib/cn";
 import { formatProjectDate } from "../../project-model";
 import type { TimeZoneName } from "../../types";
-import { STAGE_HINT, STAGE_LABEL, type StageRow } from "../stage-model";
-
-const STATE_TEXT: Record<StageRow["state"], string> = {
-  selesai: "Selesai",
-  berjalan: "Sedang berjalan",
-  menunggu: "Belum dimulai",
-};
+import type { StageRow } from "../stage-model";
 
 /**
  * The stages of this book, in order (SOL-02, AC-29): where it stands now and when each stage that
  * began did so. The state is written out, not carried by color alone (DESIGN.md 7.4).
  */
 export function StageTimeline({ rows, zone }: { rows: StageRow[]; zone: TimeZoneName }) {
+  const c = useT().projectsSolo.stage;
+  const locale = useLocale();
   return (
     <section aria-labelledby="solo-tahap" className="grid gap-3">
       <h2 id="solo-tahap" className="heading-sm">
-        Tahap penerbitan
+        {c.title}
       </h2>
       <ol className="grid">
         {rows.map((row) => (
@@ -45,15 +42,15 @@ export function StageTimeline({ rows, zone }: { rows: StageRow[]; zone: TimeZone
                     row.state === "menunggu" ? "text-ink-muted" : "font-medium text-ink",
                   )}
                 >
-                  {STAGE_LABEL[row.stage]}
+                  {c.label[row.stage]}
                 </p>
                 <p className="text-xs text-ink-muted">
-                  {STATE_TEXT[row.state]}
-                  {row.at !== null && ` · ${formatProjectDate(row.at, zone)}`}
+                  {c.state[row.state]}
+                  {row.at !== null && ` · ${formatProjectDate(row.at, zone, locale)}`}
                 </p>
               </div>
               {row.state === "berjalan" && (
-                <p className="text-sm text-ink-muted">{STAGE_HINT[row.stage]}</p>
+                <p className="text-sm text-ink-muted">{c.hint[row.stage]}</p>
               )}
             </div>
           </li>

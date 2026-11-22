@@ -1,3 +1,4 @@
+import { textOf } from "@/features/notifications/notification-text";
 import {
   act,
   cleanup,
@@ -368,7 +369,7 @@ describe("MentorReviewView", () => {
     const [saved] = await store.list();
     expect(saved.status).toBe("perlu-perbaikan");
     expect(saved.statusLog.at(-1)).toMatchObject({ by: "mentor", reason: "Perjelas tokohnya." });
-    expect(assignmentNotifications([saved]).map((n) => n.text)).toContainEqual(
+    expect(assignmentNotifications([saved]).map((n) => textOf(n))).toContainEqual(
       expect.stringMatching(/Mentor meminta perbaikan untuk tugas/),
     );
     await waitFor(() =>

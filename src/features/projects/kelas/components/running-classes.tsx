@@ -1,12 +1,18 @@
+"use client";
+
 import { ButtonLink } from "@/components/ui/button";
 import { TextLink } from "@/components/ui/text-link";
+import { fill } from "@/features/studio/copy/fill";
+import { useT } from "@/lib/i18n/provider";
 import { dashboardHref } from "../class-model";
 import type { ContinueTarget, RunningClass } from "../continue-model";
 
-function nextText(next: ContinueTarget): string {
-  if (next.kind === "materi") return `Berikutnya: materi “${next.title}”`;
-  if (next.kind === "tugas") return `Berikutnya: tugas “${next.title}”`;
-  return "Semua tugas sudah dikumpulkan, menunggu penilaian mentor";
+type RunningCopy = ReturnType<typeof useT>["projectsClass"]["running"];
+
+function nextText(next: ContinueTarget, t: RunningCopy): string {
+  if (next.kind === "materi") return fill(t.nextMaterial, { title: next.title });
+  if (next.kind === "tugas") return fill(t.nextTask, { title: next.title });
+  return t.allSent;
 }
 
 /**
@@ -22,6 +28,7 @@ export function RunningClassList({
   rows: RunningClass[];
   variant: "rail" | "page";
 }) {
+  const t = useT().projectsClass.running;
   return (
     <ul className="grid">
       {rows.map(({ project, progress, next }) => (
@@ -36,18 +43,18 @@ export function RunningClassList({
             {project.title}
           </TextLink>
           <p className="text-xs wrap-anywhere text-ink-muted">
-            {progress.percent}% selesai · {nextText(next)}
+            {fill(t.line, { percent: String(progress.percent), next: nextText(next, t) })}
           </p>
           <ButtonLink
             href={next.href}
             variant={variant === "rail" ? "text" : "secondary"}
             size="sm"
-            aria-label={`Lanjutkan ${project.title}`}
+            aria-label={fill(t.continueAria, { title: project.title })}
             className={
               variant === "rail" ? "justify-self-start px-0 text-ink" : "justify-self-start"
             }
           >
-            Lanjutkan
+            {t.continue}
           </ButtonLink>
         </li>
       ))}

@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { textOf } from "@/features/notifications/notification-text";
 import { assignmentNotifications } from "@/features/projects/kelas/assignment-notifications";
 import { withMentorDecision } from "@/features/projects/kelas/assignment-status";
 import { CERPEN, handedIn } from "./helpers";
@@ -14,7 +15,7 @@ describe("assignmentNotifications", () => {
       now: NOW + 20,
     })!;
     const out = assignmentNotifications([repair, done]);
-    expect(out.map((n) => n.text)).toEqual([
+    expect(out.map((n) => textOf(n))).toEqual([
       "Mentor menandai tugas “Profil singkat tokoh utama” di Kelas Cerpen untuk Pemula selesai.",
       "Mentor meminta perbaikan untuk tugas “Kerangka cerpenmu” di Kelas Cerpen untuk Pemula.",
     ]);

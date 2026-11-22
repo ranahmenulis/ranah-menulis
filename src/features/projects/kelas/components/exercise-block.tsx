@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { useLocale, useT } from "@/lib/i18n/provider";
 import { studioStore } from "@/features/studio/storage/store";
 import type { DocumentStore } from "@/features/studio/storage/document-store";
 import { copyExercise } from "../exercise-copy";
@@ -25,6 +26,8 @@ export function ExerciseBlock({
   store?: Pick<DocumentStore, "get" | "duplicate">;
 }) {
   const router = useRouter();
+  const t = useT().projectsClass.exercise;
+  const locale = useLocale();
   const copied = useExerciseCopy(slug, material.id, store);
   const [state, setState] = useState<"idle" | "working" | "error">("idle");
   if (!material.exercise) return null;
@@ -33,7 +36,7 @@ export function ExerciseBlock({
   async function press() {
     setState("working");
     try {
-      const { docId } = await copyExercise(slug, material, store);
+      const { docId } = await copyExercise(slug, material, store, Date.now(), locale);
       setState("idle");
       router.push(`/studio/${docId}`);
     } catch {
@@ -43,7 +46,7 @@ export function ExerciseBlock({
 
   return (
     <div className="grid gap-2 border-t border-line pt-3">
-      <p className="text-xs font-medium text-ink-muted">Latihan menulis</p>
+      <p className="text-xs font-medium text-ink-muted">{t.heading}</p>
       {paragraphs.map((paragraph, i) => (
         <p key={i} className="text-base wrap-anywhere">
           {paragraph}
@@ -51,12 +54,12 @@ export function ExerciseBlock({
       ))}
       <div>
         <Button variant="secondary" size="sm" onClick={press} disabled={state === "working"}>
-          {copied ? "Buka salinan di Studio" : "Salin latihan ke Studio"}
+          {copied ? t.open : t.copy}
         </Button>
       </div>
       {state === "error" && (
         <p role="alert" className="text-sm text-danger">
-          Latihan belum bisa disalin. Coba lagi.
+          {t.error}
         </p>
       )}
     </div>

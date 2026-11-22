@@ -1,5 +1,9 @@
+import type { Locale } from "@/lib/i18n/config";
+import { formatNumber } from "@/lib/i18n/format";
+import { fill } from "@/features/studio/copy/fill";
 import { endOfDay } from "../project-model";
 import type { TimeZoneName } from "../types";
+import { classCopy } from "./class-copy";
 import type { AssignmentSubmission, ClassContent } from "./types";
 
 /**
@@ -53,23 +57,27 @@ export const dueAtOf = (dueDate: string, zone: TimeZoneName): number | null => {
  */
 export function validateTask(
   input: TaskInput,
-  context: { zone: TimeZoneName; now: number; current?: string },
+  context: { zone: TimeZoneName; now: number; current?: string; locale?: Locale },
 ): TaskErrors {
   const errors: TaskErrors = {};
+  const t = classCopy(context.locale).task;
+  const locale = context.locale ?? "id";
   const title = input.title.trim();
-  if (!title) errors.title = "Tulis judul tugas.";
+  if (!title) errors.title = t.titleRequired;
   else if (title.length > TASK_TITLE_LIMIT) {
-    errors.title = `Judul paling banyak ${TASK_TITLE_LIMIT} karakter.`;
+    errors.title = fill(t.titleTooLong, { limit: String(TASK_TITLE_LIMIT) });
   }
   const instructions = input.instructions.trim();
-  if (!instructions) errors.instructions = "Tulis petunjuk untuk peserta.";
+  if (!instructions) errors.instructions = t.instructionsRequired;
   else if (instructions.length > TASK_INSTRUCTIONS_LIMIT) {
-    errors.instructions = `Petunjuk paling banyak ${TASK_INSTRUCTIONS_LIMIT.toLocaleString("id-ID")} karakter.`;
+    errors.instructions = fill(t.instructionsTooLong, {
+      limit: formatNumber(TASK_INSTRUCTIONS_LIMIT, locale),
+    });
   }
   const due = dueAtOf(input.dueDate, context.zone);
-  if (due === null) errors.dueDate = "Pilih tanggal tenggat.";
+  if (due === null) errors.dueDate = t.dueRequired;
   else if (input.dueDate !== context.current && due < context.now) {
-    errors.dueDate = "Tenggat tidak boleh di hari yang sudah lewat.";
+    errors.dueDate = t.duePast;
   }
   return errors;
 }

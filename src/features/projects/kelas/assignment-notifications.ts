@@ -1,4 +1,4 @@
-import type { Notification } from "@/features/notifications/types";
+import type { Notification, NotificationMessage } from "@/features/notifications/types";
 import { projectFixtures } from "../fixtures/all-projects";
 import type { ProjectFixture } from "../types";
 import type { RegistrationMap } from "../types";
@@ -7,11 +7,16 @@ import { classFixtures } from "./fixtures/all";
 import type { MentorTask } from "./mentor-tasks";
 import type { AssignmentChange, AssignmentSubmission, ClassFixture } from "./types";
 
-function sentenceOf(change: AssignmentChange, title: string, project: string): string | null {
+function messageOf(
+  change: AssignmentChange,
+  title: string,
+  project: string,
+): NotificationMessage | null {
   if (change.by !== "mentor") return null;
-  return change.status === "selesai"
-    ? `Mentor menandai tugas “${title}” di ${project} selesai.`
-    : `Mentor meminta perbaikan untuk tugas “${title}” di ${project}.`;
+  return {
+    key: change.status === "selesai" ? "taskDone" : "taskRework",
+    params: { title, project },
+  };
 }
 
 /**
@@ -34,15 +39,15 @@ export function assignmentNotifications(
       tasks.find((t) => t.slug === work.slug && t.id === work.assignmentId)?.title;
     if (!project || !title) return [];
     return work.statusLog.flatMap((change) => {
-      const text = sentenceOf(change, title, project.title);
-      if (!text) return [];
+      const message = messageOf(change, title, project.title);
+      if (!message) return [];
       return [
         {
           id: `tugas-${work.id}-${change.status}-${change.at}`,
           kind: "project" as const,
           actorId: null,
           others: 0,
-          text,
+          message,
           href: assignmentHref(work.slug, work.assignmentId),
           agoMs: 0,
           at: change.at,
@@ -74,7 +79,7 @@ export function newTaskNotifications(
         kind: "project" as const,
         actorId: null,
         others: 0,
-        text: `Mentor menambahkan tugas “${task.title}” di ${project.title}.`,
+        message: { key: "taskNew", params: { title: task.title, project: project.title } },
         href: assignmentHref(task.slug, task.id),
         agoMs: 0,
         at: task.createdAt,

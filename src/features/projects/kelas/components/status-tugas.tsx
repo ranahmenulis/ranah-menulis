@@ -1,6 +1,9 @@
+"use client";
+
 import { Check } from "@phosphor-icons/react/dist/ssr";
 import { cn } from "@/lib/cn";
-import { stateLabel } from "../class-text";
+import { useLocale } from "@/lib/i18n/provider";
+import { stateLabelOf } from "../class-text";
 import type { AssignmentState } from "../types";
 
 const pill =
@@ -20,13 +23,14 @@ const tone: Record<Exclude<AssignmentState, "terkunci">, string> = {
  * the more there is for you to do, the heavier it looks. A text label is always there.
  */
 export function StatusTugas({ state, className }: { state: AssignmentState; className?: string }) {
+  const label = stateLabelOf(state, useLocale());
   if (state === "terkunci") {
-    return <span className={cn("text-xs text-ink-muted", className)}>{stateLabel[state]}</span>;
+    return <span className={cn("text-xs text-ink-muted", className)}>{label}</span>;
   }
   return (
     <span className={cn(pill, tone[state], className)}>
       {state === "selesai" && <Check size={14} aria-hidden />}
-      {stateLabel[state]}
+      {label}
     </span>
   );
 }

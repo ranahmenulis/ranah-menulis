@@ -1,4 +1,5 @@
 import { cleanup, configure, fireEvent, render, screen, within } from "@testing-library/react";
+import { textOf } from "@/features/notifications/notification-text";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { NotificationsView } from "@/features/notifications/notifications-view";
 import { createMemorySubmissionStore } from "@/features/projects/storage/memory-submission-store";
@@ -25,7 +26,7 @@ describe("submissionNotifications", () => {
       at: NOW,
       href: `/projects/${CERPEN}/kiriman/a`,
     });
-    expect(n.text).toBe(
+    expect(textOf(n)).toBe(
       "Karyamu “Buku yang Mengubahku” untuk Lomba Cerpen Hujan 2026 sudah diterima sistem.",
     );
   });
@@ -43,7 +44,7 @@ describe("submissionNotifications", () => {
         { status: "ditolak", at: NOW - DAY, by: "editor", reason: "Tidak sesuai tema." },
       ],
     });
-    const texts = submissionNotifications([work]).map((n) => n.text);
+    const texts = submissionNotifications([work]).map((n) => textOf(n));
     expect(texts).toHaveLength(3);
     // Newest first: the decision, then the request, then the first receipt.
     expect(texts[0]).toContain("tidak lolos");
