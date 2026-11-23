@@ -125,7 +125,7 @@ export function FeedItem({ post, now, comments, appreciated, saved, onAppreciate
             height={107}
             loading="lazy"
             decoding="async"
-            className="aspect-3/2 w-full bg-subtle object-cover"
+            className="aspect-3/2 w-full rounded-xl bg-subtle object-cover"
           />
         )}
       </div>

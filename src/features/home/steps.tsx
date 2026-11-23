@@ -48,8 +48,8 @@ export function FirstSteps({
             <span
               aria-hidden
               className={cn(
-                "grid size-5 shrink-0 place-items-center rounded-full border-[1.5px] border-ink",
-                step.done && "bg-ink text-on-ink",
+                "grid size-5 shrink-0 place-items-center rounded-full border-[1.5px] border-accent-ink",
+                step.done && "bg-accent text-on-accent",
               )}
             >
               {step.done && <Check size={12} weight="bold" />}

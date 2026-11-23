@@ -48,16 +48,15 @@ describe("TodayCard", () => {
     expect(filled).toHaveLength(1);
   });
 
-  it("shows today's ring beside the document when there is a daily target", () => {
+  it("shows no ring in the hero, since the side column carries today's progress", () => {
     render(<TodayCard data={data()} showSteps={false} />);
-    const ring = screen.getByRole("progressbar", { name: "Progres hari ini" });
-    expect(ring.getAttribute("aria-valuenow")).toBe("320");
-    expect(ring.getAttribute("aria-valuemax")).toBe("500");
+    expect(screen.queryByRole("progressbar")).toBeNull();
+    expect(screen.getByText("320 / 500 kata hari ini")).toBeTruthy();
   });
 
-  it("leaves the ring out without a daily target", () => {
+  it("leaves the words line out without a daily target", () => {
     render(<TodayCard data={data({ target: null })} showSteps={false} />);
-    expect(screen.queryByRole("progressbar")).toBeNull();
+    expect(screen.queryByText(/kata hari ini/)).toBeNull();
   });
 
   it("invites the first document when there is none", () => {

@@ -3,8 +3,6 @@
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 import { format, useLocale, useT } from "@/lib/i18n/provider";
-import { ButtonLink } from "@/components/ui/button";
-import { EmptyPlate } from "@/components/ui/states";
 import { Tabs } from "@/components/ui/tabs";
 import { useAccount } from "@/features/account/account-store";
 import { DISCOVER_HREF } from "@/features/app-shell/nav";
@@ -19,6 +17,7 @@ import { postStore } from "@/features/community/storage/store";
 import { profileHref } from "@/features/profile/profile-href";
 import { useStreakData } from "@/features/studio/hooks/use-streak-data";
 import { studioStore } from "@/features/studio/storage/store";
+import { EmptyFeed } from "./empty-feed";
 import { useFirstStepsDismissed } from "./first-steps-store";
 import { followed } from "./fixtures";
 import { FeedItem } from "./feed-item";
@@ -85,47 +84,44 @@ export function HomeView() {
       </div>
 
       <div className="min-w-0 xl:w-full xl:max-w-194 xl:justify-self-center xl:px-12 xl:pb-10">
-        <Tabs
-          label={t.feed.label}
-          value="mengikuti"
-          className="mt-8 xl:mt-10"
-          onValueChange={(id) => id === "jelajahi" && router.push(DISCOVER_HREF)}
-          items={[
-            { id: "mengikuti", label: t.feed.following },
-            { id: "jelajahi", label: t.feed.community },
-          ]}
-        />
+        <div className="mt-6 overflow-hidden rounded-2xl border border-line bg-surface shadow-card xl:mt-8">
+          <Tabs
+            label={t.feed.label}
+            value="mengikuti"
+            className="px-5 pt-1"
+            onValueChange={(id) => id === "jelajahi" && router.push(DISCOVER_HREF)}
+            items={[
+              { id: "mengikuti", label: t.feed.following },
+              { id: "jelajahi", label: t.feed.community },
+            ]}
+          />
 
-        {isNew ? (
-          <div className="grid justify-items-start gap-3 py-12">
-            <EmptyPlate art="hikayat" className="mb-3" />
-            <p className="font-serif text-xl leading-7 font-semibold">{t.feed.emptyTitle}</p>
-            <p className="max-w-110 text-sm text-ink-muted">{t.feed.emptyBody}</p>
-            <ButtonLink href={DISCOVER_HREF} variant="secondary">
-              {t.feed.openCommunity}
-            </ButtonLink>
-          </div>
-        ) : (
-          ready &&
-          community.status === "ready" &&
-          entries.map((post) => (
-            <FeedItem
-              key={post.id}
-              post={post}
-              now={community.now}
-              comments={commentCounts.get(post.id) ?? 0}
-              appreciated={community.marks[mark.appreciated(post.id)] ?? false}
-              saved={community.marks[mark.saved(post.id)] ?? false}
-              onAppreciate={() => actions.appreciate(post.id)}
-              onSave={() => actions.save(post.id)}
-            />
-          ))
-        )}
+          {isNew ? (
+            <EmptyFeed nowMs={data.nowMs} />
+          ) : (
+            <div className="px-5 md:px-6 [&>article:last-child]:border-b-0">
+              {ready &&
+                community.status === "ready" &&
+                entries.map((post) => (
+                  <FeedItem
+                    key={post.id}
+                    post={post}
+                    now={community.now}
+                    comments={commentCounts.get(post.id) ?? 0}
+                    appreciated={community.marks[mark.appreciated(post.id)] ?? false}
+                    saved={community.marks[mark.saved(post.id)] ?? false}
+                    onAppreciate={() => actions.appreciate(post.id)}
+                    onSave={() => actions.save(post.id)}
+                  />
+                ))}
+            </div>
+          )}
+        </div>
       </div>
 
       <aside
         aria-label={t.aside}
-        className="mt-4 border-t border-line-strong pt-6 xl:col-start-2 xl:row-span-2 xl:row-start-1 xl:mt-0 xl:border-t-0 xl:border-l xl:border-line xl:py-10 xl:pr-6 xl:pl-8"
+        className="mt-6 xl:col-start-2 xl:row-span-2 xl:row-start-1 xl:mt-0 xl:py-10 xl:pr-6 xl:pl-2"
       >
         <HomeRail data={data} showProgress={!showSteps} showProjects={ready && !isNew} />
       </aside>

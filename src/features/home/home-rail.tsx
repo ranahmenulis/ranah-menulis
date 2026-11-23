@@ -50,7 +50,7 @@ export function HomeRail({
 }) {
   const t = useT().home.rail;
   return (
-    <div className="grid content-start">
+    <div className="grid content-start gap-4">
       {showProgress && <ProgressSection data={data} />}
       {showProjects && <ProjectRows store={submissions} assignments={assignments} />}
       <Section title={t.together}>

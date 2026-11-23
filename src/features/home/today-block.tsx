@@ -2,36 +2,50 @@
 
 import Link from "next/link";
 import type { CSSProperties } from "react";
+import { SkyByHour } from "@/components/illustrations/home-art";
 import { ButtonLink } from "@/components/ui/button";
+import { cardClass, heroCardClass, heroSceneClass } from "@/components/ui/card";
 import { CountUp } from "@/components/ui/count-up";
+import { cn } from "@/lib/cn";
 import { ErrorBanner, RetryButton, Skeleton } from "@/components/ui/states";
 import { DocumentMark } from "@/features/studio/components/documents/document-mark";
-import { TodayRing } from "@/features/studio/components/streak/today-ring";
 import type { StreakData } from "@/features/studio/hooks/use-streak-data";
 import { formatChanged } from "@/features/studio/relative-time";
 import { formatNumber } from "@/lib/i18n/format";
 import { format, useLocale, useT } from "@/lib/i18n/provider";
 import { FirstSteps } from "./steps";
 import { Section } from "./today-row";
+import { useDayPart } from "./use-day-part";
 import { WordTotals } from "./week-summary";
 
 /** The box for the first steps and the loading placeholder. */
-const card = "border border-line p-5 md:p-6";
+const card = cardClass;
 
 /**
- * The anchor of Beranda (DESIGN.md 6.2): a dark band with the document you were writing, drawn as
- * its page, and today's ring when there is a daily target. The one filled button sits under it.
+ * The sky of the writer's hour behind a hero card (DESIGN.md 7.10). Nothing is drawn until the
+ * clock has been read in an effect, so server and first paint agree; then it rises in once.
+ */
+function Sky({ nowMs }: { nowMs: number }) {
+  const part = useDayPart(nowMs);
+  // On a phone the text runs under the scene, so it is dimmed there to keep the lines readable.
+  return part && <SkyByHour part={part} className={cn(heroSceneClass, "max-md:opacity-50")} />;
+}
+
+/**
+ * The anchor of Beranda (DESIGN.md 6.2, 7.10): a hero card over the sky of the writer's hour with
+ * the document you were writing, drawn as its page. No ring: the side column already shows today's
+ * progress; below xl, where that column follows the feed, one line carries the count. The one filled button sits
+ * under it.
  */
 function Continue({ data }: { data: StreakData }) {
   const t = useT().home.today;
+  const p = useT().home.progress;
   const locale = useLocale();
   const doc = data.lastDocument;
-  const ring = data.target !== null && (
-    <TodayRing words={data.todayWords} target={data.target} compact />
-  );
   return (
     <div className="grid gap-4">
-      <div className="theme-dark app-band grid items-center gap-6 p-6 text-ink sm:grid-cols-[minmax(0,1fr)_auto] md:p-8">
+      <div className={cn(heroCardClass, "grid items-center gap-6 md:min-h-48")}>
+        <Sky nowMs={data.nowMs} />
         <div className="flex min-w-0 items-start gap-5">
           {/* The wrapper sets the width: DocumentMark is w-full and cn() does not merge classes. */}
           <div className="w-14 shrink-0 md:w-16">
@@ -53,9 +67,16 @@ function Continue({ data }: { data: StreakData }) {
                 })}
               </p>
             )}
+            {data.target !== null && (
+              <p className="mt-2 text-sm text-ink-soft tabular-nums xl:hidden">
+                {format(p.todayWords, {
+                  words: formatNumber(data.todayWords, locale),
+                  target: formatNumber(data.target, locale),
+                })}
+              </p>
+            )}
           </div>
         </div>
-        {ring}
       </div>
       {doc ? (
         <ButtonLink href={`/studio/${doc.id}`} className="justify-self-start">

@@ -27,7 +27,7 @@ export function StatisticsCards({ summary, period }: { summary: Summary; period:
   const { total, average, best, targetDays, metDays } = summary;
   return (
     <div className={`${heroCardClass} md:p-6`}>
-      <RisingPath className="absolute top-0 right-0 -z-10 h-[58%] w-[66%] [mask-image:linear-gradient(to_right,transparent,#000_45%),linear-gradient(to_bottom,#000_60%,transparent)] [mask-composite:intersect] md:h-[68%] md:w-[56%]" />
+      <RisingPath className="absolute inset-y-0 right-0 -z-10 h-full w-[72%] [mask-image:linear-gradient(to_right,transparent,#000_45%),linear-gradient(to_bottom,#000_70%,transparent_96%)] [mask-composite:intersect] md:w-[48%]" />
       <dl className="grid gap-6">
         <div className="flex min-w-0 flex-col-reverse justify-end gap-2">
           <dt className="text-sm text-ink-muted">
