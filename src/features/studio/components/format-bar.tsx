@@ -28,14 +28,14 @@ import { ToolRow } from "./format/tool-row";
 type Alignment = "left" | "center" | "right" | "justify";
 type Style = "p" | "h2" | "h3";
 
-const Divider = () => <span aria-hidden className="mx-1 h-5 w-px flex-none bg-line" />;
+const Divider = () => <span aria-hidden className="mx-1.5 h-5 w-px flex-none bg-line" />;
 
 /**
  * Format toolbar: a hairline pill under the editor bar, centered over the writing column. Minimal
  * on purpose (client brief, 22 November 2026): font, size, paragraph style, alignment, the basic
  * marks and lists. Font and size belong to the whole document, so they change the layout; the rest
- * are commands on the selection. The active format is underlined, not recolored. On a phone the
- * row scrolls sideways.
+ * are commands on the selection. The active format takes the accent tint (DESIGN.md 4.1). On a
+ * phone the row scrolls sideways without a visible scrollbar.
  */
 export function FormatBar({
   editor,
@@ -87,12 +87,12 @@ export function FormatBar({
       <div
         role="toolbar"
         aria-label={t.toolbar.label}
-        className="scroll-edge-fade flex min-w-0 items-center gap-0.5 overflow-x-auto rounded-full border border-line p-0.5 md:px-1.5"
+        className="scroll-edge-fade flex min-w-0 [scrollbar-width:none] items-center gap-0.5 overflow-x-auto rounded-full border border-line bg-surface p-1 md:px-1.5 md:shadow-card [&::-webkit-scrollbar]:hidden"
       >
         <ToolbarSelect
           label={t.toolbar.font}
           value={layout.font}
-          widthClass="w-40"
+          widthClass="w-44"
           options={LAYOUT_FONTS.map((f) => ({ value: f, label: t.fonts[f] }))}
           onChange={(font) => onLayoutChange?.({ ...layout, font: font as LayoutFont })}
         />

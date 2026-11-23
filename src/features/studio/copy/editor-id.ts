@@ -50,18 +50,6 @@ export const studioEditor = {
     undo: "Urungkan",
     versionRestored: "Versi dipulihkan. Tulisan sebelumnya masih ada di riwayat.",
   },
-  share: {
-    title: "Bagikan sebagai postingan",
-    cancel: "Batal",
-    next: "Pilih bagian untuk dibagikan",
-    notice:
-      "Dokumen ini tetap Pribadi. Yang menjadi publik hanya teks yang kamu pilih di langkah berikutnya, sebagai salinan. Mengubah dokumen sesudahnya tidak mengubah postingan.",
-    explain:
-      "Kamu memilih bagiannya, memberi judul dan genre, lalu menentukan siapa yang bisa melihatnya. Satu postingan maksimal 500 kata.",
-    failed:
-      "Tulisanmu belum tersimpan di perangkat ini, jadi belum bisa dibagikan. Coba lagi sebentar lagi.",
-    untitled: "Tanpa judul",
-  },
   menu: {
     help: "Bantuan menulis",
     focus: "Mode fokus",
@@ -79,8 +67,6 @@ export const studioEditor = {
     back: "Kembali ke Studio",
     untitled: "Tanpa judul",
     search: "Cari di Studio",
-    share: "Bagikan",
-    shareEmpty: "Tulis sesuatu dulu untuk dibagikan",
     menu: "Menu dokumen",
     help: "Bantuan menulis",
     focus: "Mode fokus",

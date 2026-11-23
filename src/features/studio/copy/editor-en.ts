@@ -53,18 +53,6 @@ export const studioEditor: typeof source = {
     undo: "Undo",
     versionRestored: "Version restored. The earlier text is still in the history.",
   },
-  share: {
-    title: "Share as a post",
-    cancel: "Cancel",
-    next: "Choose what to share",
-    notice:
-      "This document stays Private. Only the text you choose in the next step becomes public, as a copy. Changing the document afterwards does not change the post.",
-    explain:
-      "You choose the part, give it a title and genre, then decide who can see it. One post is 500 words at most.",
-    failed:
-      "Your writing is not saved on this device yet, so it cannot be shared. Try again in a moment.",
-    untitled: "Untitled",
-  },
   menu: {
     help: "Writing help",
     focus: "Focus mode",
@@ -82,8 +70,6 @@ export const studioEditor: typeof source = {
     back: "Back to Studio",
     untitled: "Untitled",
     search: "Search Studio",
-    share: "Share",
-    shareEmpty: "Write something first to share it",
     menu: "Document menu",
     help: "Writing help",
     focus: "Focus mode",

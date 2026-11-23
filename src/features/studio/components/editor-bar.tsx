@@ -1,7 +1,6 @@
 "use client";
 
 import { ArrowLeft, ArrowsOut, Lightbulb, MagnifyingGlass } from "@phosphor-icons/react/dist/ssr";
-import { Button } from "@/components/ui/button";
 import { IconButton } from "@/components/ui/icon-button";
 import { Menu, type MenuEntry } from "@/components/ui/menu";
 import { VisibilityTag } from "@/components/ui/visibility-tag";
@@ -29,7 +28,7 @@ type EditorBarProps = {
   progress: DailyLog;
   target: number;
   helpOpen: boolean;
-  /** Nothing written yet: sharing has nothing to share. */
+  /** Nothing written yet: the save state reads "draft". */
   empty: boolean;
   /** False while loading or when the document did not open: no counts or save state to show. */
   ready: boolean;
@@ -43,7 +42,6 @@ type EditorBarProps = {
   /** Back to the document list; the screen saves first so nothing written is left behind. */
   onBack: () => void;
   onSearch?: () => void;
-  onShare: () => void;
   onToggleHelp: () => void;
   onFocusMode: () => void;
 };
@@ -74,13 +72,12 @@ export function EditorBar({
   onSprintOpenChange,
   onBack,
   onSearch,
-  onShare,
   onToggleHelp,
   onFocusMode,
 }: EditorBarProps) {
   const t = useT().studioEditor;
   return (
-    <header className="relative z-40 flex flex-none flex-wrap items-center gap-x-2 border-b border-line bg-canvas pt-(--safe-top) pr-2 pl-4 md:h-[calc(3.5rem+var(--safe-top))] md:flex-nowrap md:gap-x-4 md:px-4">
+    <header className="relative z-40 flex flex-none flex-wrap items-center gap-x-2 border-b border-line bg-surface pt-(--safe-top) pr-2 pl-4 md:h-[calc(3.5rem+var(--safe-top))] md:flex-nowrap md:gap-x-4 md:px-4">
       <IconButton label={t.bar.back} onClick={onBack} className="order-1 -ml-2 md:-ml-1">
         <ArrowLeft size={20} aria-hidden />
       </IconButton>
@@ -98,15 +95,6 @@ export function EditorBar({
           <MagnifyingGlass size={20} aria-hidden />
         </IconButton>
       )}
-      <Button
-        size="sm"
-        disabled={!ready || words === 0}
-        title={ready && words === 0 ? t.bar.shareEmpty : undefined}
-        onClick={onShare}
-        className="order-3 md:order-6"
-      >
-        {t.bar.share}
-      </Button>
       <Menu label={t.bar.menu} items={menuItems} className="order-4 md:order-7" />
       <span aria-hidden className="order-5 basis-full md:hidden" />
 

@@ -90,7 +90,6 @@ function registerEsai() {
 }
 
 const openMenu = () => fireEvent.click(screen.getByRole("button", { name: "Menu dokumen" }));
-const bagikan = () => screen.getByRole("button", { name: "Bagikan" }) as HTMLButtonElement;
 
 describe("StudioEditor, word count pin", () => {
   it("keeps the document total in focus mode even during a pinned sprint", () => {
@@ -123,62 +122,10 @@ describe("StudioEditor, quick search", () => {
   });
 });
 
-describe("StudioEditor, Bagikan", () => {
-  it("opens a dialog that keeps the document Pribadi, without leaving the editor", () => {
+describe("StudioEditor, no sharing from Studio", () => {
+  it("has no share button: Studio only keeps documents (client, 23 November 2026)", () => {
     renderEditor();
-    fireEvent.click(bagikan());
-
-    expect(screen.getByRole("dialog", { name: "Bagikan sebagai postingan" })).toBeTruthy();
-    expect(h.push).not.toHaveBeenCalled();
-  });
-
-  it("stores the text first, then opens Tulis postingan with this document chosen", async () => {
-    renderEditor();
-    fireEvent.click(bagikan());
-    fireEvent.click(screen.getByRole("button", { name: "Pilih bagian untuk dibagikan" }));
-
-    await waitFor(() => expect(h.push).toHaveBeenCalledWith("/tulis?dokumen=doc-1"));
-    expect(h.saveNow).toHaveBeenCalledTimes(1);
-    expect(h.saveNow.mock.invocationCallOrder[0]).toBeLessThan(h.push.mock.invocationCallOrder[0]);
-  });
-
-  it("closes the dialog when it hands over, so coming back to the editor does not reopen it", async () => {
-    renderEditor();
-    fireEvent.click(bagikan());
-    fireEvent.click(screen.getByRole("button", { name: "Pilih bagian untuk dibagikan" }));
-
-    await waitFor(() => expect(h.push).toHaveBeenCalled());
-    await waitFor(() =>
-      expect(screen.queryByRole("dialog", { name: "Bagikan sebagai postingan" })).toBeNull(),
-    );
-  });
-
-  it("does not leave when the text could not be stored", async () => {
-    h.saveNow.mockResolvedValue(false);
-    renderEditor();
-    fireEvent.click(bagikan());
-    fireEvent.click(screen.getByRole("button", { name: "Pilih bagian untuk dibagikan" }));
-
-    await screen.findByText(/belum tersimpan di perangkat ini/);
-    expect(h.push).not.toHaveBeenCalled();
-  });
-
-  it("is disabled, with the reason, while nothing is written", () => {
-    h.doc.title = "";
-    h.doc.words = 0;
-    renderEditor();
-
-    expect(bagikan().disabled).toBe(true);
-    expect(bagikan().title).toBe("Tulis sesuatu dulu untuk dibagikan");
-  });
-});
-
-describe("StudioEditor, Bagikan with only a title", () => {
-  it("stays disabled until there is text, since there is nothing to pick from yet", () => {
-    h.doc.title = "Hanya judul";
-    h.doc.words = 0;
-    renderEditor();
-    expect(bagikan().disabled).toBe(true);
+    expect(screen.queryByRole("button", { name: "Bagikan" })).toBeNull();
   });
 });
 

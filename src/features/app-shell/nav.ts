@@ -34,9 +34,6 @@ export const DISCOVER_HREF = "/jelajahi";
 export const PROJECTS_HREF = "/projects";
 export const KELOLA_NAV_HREF = "/kelola";
 export const NEW_POST_HREF = "/tulis";
-/** Opens "Tulis postingan" with a Studio document already chosen as the source (STD-10). */
-export const postFromDocumentHref = (documentId: string) =>
-  `${NEW_POST_HREF}?dokumen=${encodeURIComponent(documentId)}`;
 
 const home: NavEntry = { id: "beranda", label: "Beranda", Icon: House, href: HOME_HREF };
 const discover: NavEntry = {

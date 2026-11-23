@@ -119,16 +119,20 @@ export function BlockChoices({ docTitle, blocks, chosen, onToggle, onChangeDoc }
       {blocks.length === 0 ? (
         <p className="border-t border-line py-6 text-sm text-ink-muted">{s.noBlocks}</p>
       ) : (
-        <div role="group" aria-label={s.partsLabel} className="border-t border-line">
+        <div
+          role="group"
+          aria-label={s.partsLabel}
+          className="grid gap-1 border-t border-line pt-2"
+        >
           {blocks.map((block, i) => {
             const on = chosen.includes(i);
             return (
               <label
                 key={i}
                 className={cn(
-                  "flex cursor-pointer items-start gap-3 border-b border-line py-3.5 pr-3 pl-2",
+                  "flex cursor-pointer items-start gap-3 rounded-xl py-3.5 pr-3 pl-2 transition-colors duration-150 hover:bg-subtle",
                   "has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-ink",
-                  on && "bg-subtle",
+                  on && "bg-accent-subtle hover:bg-accent-subtle",
                 )}
               >
                 <input

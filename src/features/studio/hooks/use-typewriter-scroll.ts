@@ -42,7 +42,9 @@ export function useTypewriterScroll(
 ) {
   useLayoutEffect(() => {
     const page = pageRef.current;
-    const port = page?.parentElement;
+    // The scrolling area is the editor stage (<main>); the page sits in a wrapper inside it that
+    // hides while the Page Preview is open, so its direct parent never scrolls.
+    const port = page?.closest("main") ?? page?.parentElement;
     if (!editor || !page || !port || !position) return;
     const viewport = window.visualViewport;
     let frame = 0;

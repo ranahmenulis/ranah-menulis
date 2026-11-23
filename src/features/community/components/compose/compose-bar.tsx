@@ -32,7 +32,7 @@ export function ComposeBar(p: Props) {
   // Once the post is out there is nothing left that "without publishing" could refer to.
   const closeLabel = p.actions ? t.closeNoPublish : t.close;
   return (
-    <header className="sticky top-0 z-40 flex h-[calc(3.25rem+var(--safe-top))] items-center gap-2 border-b border-line bg-canvas pt-(--safe-top) pr-3 pl-2 md:h-[calc(3.5rem+var(--safe-top))] md:gap-3 md:px-4">
+    <header className="sticky top-0 z-40 flex h-[calc(3.25rem+var(--safe-top))] items-center gap-2 border-b border-line bg-surface pt-(--safe-top) pr-3 pl-2 md:h-[calc(3.5rem+var(--safe-top))] md:gap-3 md:px-4">
       {p.backToText ? (
         <IconButton label={t.backToPick} onClick={p.onBackToText}>
           <ArrowLeft size={20} aria-hidden />
@@ -55,7 +55,7 @@ export function ComposeBar(p: Props) {
       )}
       <span className="min-w-0 truncate text-[15px] leading-[22px] font-medium">{p.name}</span>
       {p.isDraft && (
-        <span className="shrink-0 rounded-full border border-dashed border-ink-muted px-2.5 py-0.5 text-xs text-ink-muted">
+        <span className="shrink-0 rounded-full bg-accent-subtle px-2.5 py-0.5 text-xs font-medium text-accent-ink">
           {t.draftBadge}
         </span>
       )}

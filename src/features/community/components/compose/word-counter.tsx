@@ -40,9 +40,12 @@ export function WordCounter({
           <span className="text-danger">{format(t.overShort, { by: String(by) })}</span>
         )}
       </p>
-      <div aria-hidden className="h-1 bg-line">
+      <div aria-hidden className="h-1.5 overflow-hidden rounded-full bg-subtle">
         <div
-          className={cn("h-full", over ? "bg-danger" : "bg-ink")}
+          className={cn(
+            "h-full rounded-full transition-[width] duration-300 ease-out",
+            over ? "bg-danger" : "bg-accent",
+          )}
           style={{ width: `${Math.min(100, (words / MAX_POST_WORDS) * 100)}%` }}
         />
       </div>

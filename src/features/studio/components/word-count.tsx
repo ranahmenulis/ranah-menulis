@@ -171,7 +171,7 @@ export function WordCount({ words, stats, selection, sprint, target, className }
       )}
       <div className="mt-3 border-t border-line pt-3">
         <p className="text-xs font-medium">{t.pinTitle}</p>
-        <div className="mt-1 flex flex-wrap gap-x-3" role="group" aria-label={t.pinTitle}>
+        <div className="mt-2 flex flex-wrap gap-1.5" role="group" aria-label={t.pinTitle}>
           {PIN_OPTIONS.map((pin) => (
             <button
               key={pin ?? "none"}
@@ -179,13 +179,15 @@ export function WordCount({ words, stats, selection, sprint, target, className }
               ref={pin === wordCountPin ? activeOption : undefined}
               aria-pressed={pin === wordCountPin}
               onClick={() => choose(pin)}
-              className="min-h-9 cursor-pointer text-xs text-ink-muted hover:text-ink aria-pressed:font-medium aria-pressed:text-ink aria-pressed:underline aria-pressed:underline-offset-3"
+              className="h-8 cursor-pointer rounded-full border border-line px-3 text-xs text-ink-muted transition-colors duration-150 hover:bg-subtle hover:text-ink aria-pressed:border-transparent aria-pressed:bg-accent-subtle aria-pressed:font-medium aria-pressed:text-accent-ink"
             >
               {pin === null ? t.pinNone : pinLabels[pin]}
             </button>
           ))}
         </div>
-        {display.fallbackNote && <p className="text-xs text-ink-muted">{display.fallbackNote}</p>}
+        {display.fallbackNote && (
+          <p className="mt-2 text-xs text-ink-muted">{display.fallbackNote}</p>
+        )}
         {saveFailed && (
           <div className="mt-2 text-xs text-danger">
             <p role="alert">{t.pinFailed}</p>

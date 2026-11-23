@@ -54,7 +54,9 @@ function StartForm({ onStart }: { onStart: (minutes: number) => void }) {
             onClick={() => setText(String(n))}
             className={cn(
               "h-8 cursor-pointer rounded-full px-4 text-sm",
-              minutes === n ? "bg-ink text-on-ink" : "bg-subtle text-ink",
+              minutes === n
+                ? "bg-accent text-on-accent"
+                : "bg-subtle text-ink hover:bg-accent-subtle",
             )}
           >
             {format(t.sprint.preset, { n: String(n) })}

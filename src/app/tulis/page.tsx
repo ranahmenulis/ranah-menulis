@@ -10,7 +10,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 async function ComposeRoute({ searchParams }: Pick<PageProps<"/tulis">, "searchParams">) {
   const { dokumen } = await searchParams;
-  // `?dokumen=<id>` arrives from "Bagikan" in the editor; anything else starts a blank post.
+  // `?dokumen=<id>` can name a Studio document to start from (the editor no longer links here, client 23 November 2026); anything else starts a blank post.
   return <ComposeView draftId={null} sourceDocId={typeof dokumen === "string" ? dokumen : null} />;
 }
 

@@ -49,7 +49,7 @@ export function PreviewSheet({ number, total, window: page, layout, title, html,
         ref={ref}
         role="img"
         aria-label={format(t.sheet, { n: String(number) })}
-        className="border border-line bg-surface"
+        className="rounded-md border border-line bg-surface shadow-card"
         style={{
           width: `${PAGE_MM.width}mm`,
           height: `${PAGE_MM.height}mm`,

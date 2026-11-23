@@ -258,6 +258,11 @@ User mengirim ulang daftar scope MVP founder (tiga modul inti dan delapan suppor
 - **Unggah naskah Solo (DOCX/PDF)** mengikuti Q-13 dan **pratinjau sampul/isi buku dari tim** mengikuti SOL-02 (keduanya MVP). Batas ukuran berkas **10 MB bersifat sementara**: client belum memberi angka (konstanta `FILE_MAX_BYTES` di `src/lib/files/limits.ts`).
 - Berkas disimpan di perangkat (IndexedDB `ranah-files`). Saat backend ada: Supabase Storage dengan RLS (naskah hanya penulis dan tim yang ditugaskan; pratinjau hanya penulis buku itu), pemindaian berkas, dan batas ukuran dari client.
 
+### Studio tidak membagikan ke Community (Wafiy, WhatsApp, 23 November 2026)
+
+- Client: "Nanti bagian studio khususin untuk disimpan aja ke folder, jadi ga perlu disinkronin ke postingan di komuniti. Karena di komuniti udah ada fitur tulis postingan." (dengan tangkapan layar dialog Bagikan dan tab "Dari dokumen Studio").
+- Keputusan user: **hanya tombol Bagikan di Editor yang dicabut** (beserta dialognya). Tab "Dari dokumen Studio" di Tulis postingan, penanda "Dibagikan" di daftar dokumen, dan postingan lama yang dibuat dari dokumen tetap ada.
+
 ### Masukan client setelah uji (Wafiy, WhatsApp, 22 November 2026)
 
 Dicatat apa adanya dari pesan dan dua tangkapan layar yang diteruskan user. **Belum ada yang dikerjakan.** Perubahan di bawah ini belum dipecah menjadi rencana; tiap butir yang mengubah perilaku atau menyentuh lebih dari 5 berkas perlu rencana dan persetujuan dulu (CLAUDE.md aturan 2 dan 3).

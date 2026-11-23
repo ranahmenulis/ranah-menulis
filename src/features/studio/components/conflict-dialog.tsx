@@ -69,8 +69,8 @@ export function EditorConflictDialog({
 }
 
 const radio =
-  "mt-px grid size-[18px] shrink-0 appearance-none place-items-center rounded-full border-[1.5px] border-ink bg-transparent " +
-  "checked:after:size-2 checked:after:rounded-full checked:after:bg-ink checked:after:content-['']";
+  "mt-px grid size-[18px] shrink-0 appearance-none place-items-center rounded-full border-[1.5px] border-ink-muted bg-transparent checked:border-accent " +
+  "checked:after:size-2 checked:after:rounded-full checked:after:bg-accent checked:after:content-['']";
 
 function VersionCard({
   name,
@@ -97,8 +97,10 @@ function VersionCard({
   return (
     <label
       className={cn(
-        "grid min-w-0 cursor-pointer content-start gap-3 border bg-surface p-4",
-        picked ? "border-line-strong shadow-[inset_0_0_0_1px_var(--line-strong)]" : "border-line",
+        "grid min-w-0 cursor-pointer content-start gap-3 rounded-xl border bg-surface p-4 transition-colors duration-150",
+        picked
+          ? "border-accent bg-accent-subtle/40 shadow-[inset_0_0_0_1px_var(--accent)]"
+          : "border-line hover:border-line-strong",
       )}
     >
       <span className="flex items-start gap-3 text-sm font-medium">
@@ -116,7 +118,9 @@ function VersionCard({
       {shown.length === 0 && <span className="text-xs text-ink-muted">{t.conflict.titleOnly}</span>}
       {shown.map(({ text, index }) => (
         <p key={index} className="font-serif text-base leading-[26px] break-words">
-          <span className="bg-subtle underline decoration-1 underline-offset-3">{text}</span>
+          <span className="bg-accent-subtle box-decoration-clone px-0.5 underline decoration-accent decoration-1 underline-offset-3">
+            {text}
+          </span>
         </p>
       ))}
     </label>
@@ -126,7 +130,7 @@ function VersionCard({
 /**
  * Shown when the same document was changed in two places before they synced (BR-STD-04). It cannot
  * be dismissed: no close button, Escape and the backdrop do nothing. The writer must choose, and
- * "Lanjutkan" stays disabled until they do. Differences are marked monochrome (tint + underline).
+ * "Lanjutkan" stays disabled until they do. Differences are marked with the accent tint and an underline.
  */
 export function ConflictDialog({ open, local, remote, onResolve }: ConflictDialogProps) {
   const t = useT().studioEditor;

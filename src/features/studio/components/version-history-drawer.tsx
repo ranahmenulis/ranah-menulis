@@ -64,7 +64,7 @@ function List({
             onClick={() => onSelect(v.id)}
             className={cn(
               "grid w-full cursor-pointer gap-0.5 px-4 py-3 text-left text-sm md:px-5",
-              selected === v.id ? "bg-subtle" : "hover:bg-subtle",
+              selected === v.id ? "bg-accent-subtle text-accent-ink" : "hover:bg-subtle",
             )}
           >
             <span className="font-medium">{whenLabel(v.savedAt, now, locale)}</span>

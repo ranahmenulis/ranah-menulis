@@ -72,7 +72,7 @@ export function DirectEditor({ title, initialBlocks, onTitleChange, onBlocksChan
   });
 
   return (
-    <div>
+    <div className="flex flex-1 flex-col">
       <textarea
         ref={titleRef}
         rows={1}
@@ -88,8 +88,8 @@ export function DirectEditor({ title, initialBlocks, onTitleChange, onBlocksChan
         }}
         className="mb-5 block w-full resize-none overflow-hidden border-0 bg-transparent p-0 font-serif text-[28px] leading-9 font-semibold wrap-anywhere text-ink-read outline-none placeholder:text-ink-faint md:text-[32px] md:leading-10"
       />
-      <EditorContent editor={editor} />
-      <p className="mt-4 text-xs text-ink-muted">{t.hint}</p>
+      <EditorContent editor={editor} className="grow" />
+      <p className="mt-auto pt-4 text-xs text-ink-muted">{t.hint}</p>
     </div>
   );
 }

@@ -27,7 +27,7 @@ export function PreviewPanel({ title, kind, genre, blocks, image, sourceTitle, g
   return (
     <section aria-label={t.label}>
       <h2 className="mb-3 text-sm font-medium">{t.label}</h2>
-      <div className="border border-line p-5">
+      <div className="rounded-2xl border border-line bg-surface p-5 shadow-card md:p-6">
         <p className="mb-3 text-[13px] leading-[18px] text-ink-muted">{mark}</p>
         <p className="mb-4 font-serif text-[26px] leading-8 font-semibold wrap-anywhere text-ink-read">
           {title.trim() || <span className="text-ink-faint">{t.untitled}</span>}

@@ -1,5 +1,8 @@
 "use client";
 
+import { CaretDown } from "@phosphor-icons/react/dist/ssr";
+import { cn } from "@/lib/cn";
+
 type Option = { value: string; label: string };
 
 type Props = {
@@ -18,18 +21,28 @@ type Props = {
  */
 export function ToolbarSelect({ label, value, options, onChange, widthClass }: Props) {
   return (
-    <select
-      aria-label={label}
-      title={label}
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      className={`h-9 flex-none cursor-pointer rounded-full bg-canvas px-2 text-sm text-ink hover:opacity-(--opacity-hover) md:h-8 ${widthClass}`}
-    >
-      {options.map((o) => (
-        <option key={o.value} value={o.value}>
-          {o.label}
-        </option>
-      ))}
-    </select>
+    <span className="relative flex-none">
+      <select
+        aria-label={label}
+        title={label}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className={cn(
+          "rm-select h-9 cursor-pointer appearance-none truncate rounded-full bg-transparent pr-7 pl-3 text-sm text-ink transition-colors duration-150 hover:bg-subtle md:h-8",
+          widthClass,
+        )}
+      >
+        {options.map((o) => (
+          <option key={o.value} value={o.value}>
+            {o.label}
+          </option>
+        ))}
+      </select>
+      <CaretDown
+        size={14}
+        aria-hidden
+        className="pointer-events-none absolute top-1/2 right-2.5 -translate-y-1/2 text-ink-muted"
+      />
+    </span>
   );
 }

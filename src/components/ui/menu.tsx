@@ -119,7 +119,7 @@ export function Menu({ items, label, icon, className }: MenuProps) {
           // Small screens: bottom sheet.
           "fixed inset-x-0 bottom-0 border-x-0 border-b-0 px-4 pt-3 pb-[calc(1rem+env(safe-area-inset-bottom))]",
           // md+: popover under the trigger, aligned to its right edge.
-          "md:absolute md:inset-x-auto md:top-[calc(100%+4px)] md:right-0 md:bottom-auto md:min-w-60",
+          "md:absolute md:inset-x-auto md:top-[calc(100%+4px)] md:right-0 md:bottom-auto md:w-max md:max-w-80 md:min-w-60",
           "md:origin-top-right md:border md:p-0 md:py-1.5",
           open
             ? "visible translate-y-0 opacity-100 duration-200 md:scale-100"

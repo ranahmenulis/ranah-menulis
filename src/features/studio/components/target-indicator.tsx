@@ -102,17 +102,17 @@ function Dot({ reached, fresh }: { reached: boolean; fresh: boolean }) {
     return (
       <i
         aria-hidden
-        className="size-2.5 shrink-0 rounded-full shadow-[inset_0_0_0_1.5px_var(--ink)]"
+        className="size-2.5 shrink-0 rounded-full shadow-[inset_0_0_0_1.5px_var(--accent)]"
       />
     );
   }
-  if (!fresh) return <i aria-hidden className="size-2.5 shrink-0 rounded-full bg-ink" />;
+  if (!fresh) return <i aria-hidden className="size-2.5 shrink-0 rounded-full bg-accent" />;
   return (
     <i
       aria-hidden
       className={cn(
-        "relative size-2.5 shrink-0 rounded-full shadow-[inset_0_0_0_1.5px_var(--ink)]",
-        "after:absolute after:inset-0 after:scale-0 after:rounded-full after:bg-ink after:content-['']",
+        "relative size-2.5 shrink-0 rounded-full shadow-[inset_0_0_0_1.5px_var(--accent)]",
+        "after:absolute after:inset-0 after:scale-0 after:rounded-full after:bg-accent after:content-['']",
         "motion-safe:after:animate-[rm-fill_300ms_cubic-bezier(0.2,0,0,1)_forwards]",
         "motion-reduce:after:scale-100",
       )}

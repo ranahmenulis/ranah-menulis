@@ -24,6 +24,9 @@ type Props = {
  * Settings beside the text (COM-01, STD-10): kind, genre, who may read, and the notice that only
  * this text becomes public. Visibility has no default and the notice cannot be closed (AC-14, AC-15).
  */
+/** Each settings group starts under a hairline, so the card reads as three short steps. */
+const divided = "border-t border-line pt-6";
+
 export function SettingsPanel({ state, dispatch, showTitle, hint }: Props) {
   const dict = useT();
   const t = dict.compose.settings;
@@ -44,7 +47,7 @@ export function SettingsPanel({ state, dispatch, showTitle, hint }: Props) {
         </Field>
       )}
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-6">
         <fieldset className="grid content-start gap-2">
           <legend className="mb-2 text-sm font-medium">{t.kind}</legend>
           <div role="radiogroup" aria-label={t.kind} className="flex gap-5">
@@ -80,37 +83,43 @@ export function SettingsPanel({ state, dispatch, showTitle, hint }: Props) {
         </Field>
       </div>
 
-      <CoverImageField image={state.image} dispatch={dispatch} />
+      <div className={divided}>
+        <CoverImageField image={state.image} dispatch={dispatch} />
+      </div>
 
-      <fieldset className="grid gap-3">
-        <legend className="mb-3 text-sm font-medium">{t.whoCanRead}</legend>
-        <RadioChoice
-          name="post-visibility"
-          label={t.public}
-          hint={t.publicHint}
-          checked={state.visibility === "publik"}
-          onChange={() => dispatch({ type: "visibility", value: "publik" })}
-        />
-        {groups.map((group) => (
+      <div className={divided}>
+        <fieldset className="grid gap-3">
+          <legend className="mb-3 text-sm font-medium">{t.whoCanRead}</legend>
           <RadioChoice
-            key={group.id}
             name="post-visibility"
-            label={group.name}
-            hint={t.groupHint}
-            checked={state.visibility === "grup" && state.groupId === group.id}
-            onChange={() => dispatch({ type: "visibility", value: "grup", groupId: group.id })}
+            label={t.public}
+            hint={t.publicHint}
+            checked={state.visibility === "publik"}
+            onChange={() => dispatch({ type: "visibility", value: "publik" })}
           />
-        ))}
-        {lostGroup && <p className="text-sm text-danger">{t.lostGroup}</p>}
-        {state.visibility === null && <p className="text-xs text-ink-muted">{t.pickOne}</p>}
-      </fieldset>
+          {groups.map((group) => (
+            <RadioChoice
+              key={group.id}
+              name="post-visibility"
+              label={group.name}
+              hint={t.groupHint}
+              checked={state.visibility === "grup" && state.groupId === group.id}
+              onChange={() => dispatch({ type: "visibility", value: "grup", groupId: group.id })}
+            />
+          ))}
+          {lostGroup && <p className="text-sm text-danger">{t.lostGroup}</p>}
+          {state.visibility === null && <p className="text-xs text-ink-muted">{t.pickOne}</p>}
+        </fieldset>
+      </div>
 
-      <Notice>
-        {state.visibility === "grup" ? t.noticeGroup : state.image ? t.noticeImage : t.noticeText}{" "}
-        {t.noticeTail}
-      </Notice>
+      <div className="-mt-2 grid gap-3">
+        <Notice>
+          {state.visibility === "grup" ? t.noticeGroup : state.image ? t.noticeImage : t.noticeText}{" "}
+          {t.noticeTail}
+        </Notice>
 
-      {hint && <p className="text-sm text-ink-muted">{hint}</p>}
+        {hint && <p className="text-sm text-ink-muted">{hint}</p>}
+      </div>
     </div>
   );
 }

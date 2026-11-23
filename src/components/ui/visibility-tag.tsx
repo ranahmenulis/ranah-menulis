@@ -1,19 +1,23 @@
+"use client";
+
 import { Globe, Lock, UsersThree } from "@phosphor-icons/react/dist/ssr";
 import { cn } from "@/lib/cn";
+import { format, useT } from "@/lib/i18n/provider";
 
 type Props =
   | { visibility: "pribadi" | "publik"; groupName?: undefined; className?: string }
   | { visibility: "grup"; groupName: string; className?: string };
 
-/** Selalu terlihat di dekat judul dokumen dan di dialog Bagikan; tidak pernah disembunyikan di menu. */
+/** Always visible next to the document title; never hidden in a menu. */
 export function VisibilityTag(props: Props) {
   const { className } = props;
+  const t = useT().common.visibility;
   const [Icon, text] =
     props.visibility === "pribadi"
-      ? [Lock, "Pribadi"]
+      ? [Lock, t.private]
       : props.visibility === "publik"
-        ? [Globe, "Publik"]
-        : [UsersThree, `Grup: ${props.groupName}`];
+        ? [Globe, t.public]
+        : [UsersThree, format(t.group, { name: props.groupName ?? "" })];
 
   return (
     <span

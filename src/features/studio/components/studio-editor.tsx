@@ -1,9 +1,8 @@
 "use client";
 
 import type { Editor } from "@tiptap/react";
-import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { postFromDocumentHref, STUDIO_HREF } from "@/features/app-shell/nav";
+import { STUDIO_HREF } from "@/features/app-shell/nav";
 import { EventEditorPanel } from "@/features/community/events/components/event-editor-panel";
 import { useEventSave } from "@/features/community/events/use-event-save";
 import { cn } from "@/lib/cn";
@@ -36,18 +35,22 @@ import { PageLayoutDialog } from "./page-layout-dialog";
 import { EditorStage } from "./preview/editor-stage";
 import { HelpDrawer } from "./help-drawer";
 import { SendToProjectDialog } from "./send-to-project-dialog";
-import { ShareDialog } from "./share-dialog";
 import { SprintAnnouncer } from "./sprint-control";
 import { StudioSearchDialog } from "./studio-search-dialog";
 import { VersionHistoryDrawer } from "./version-history-drawer";
 
-/** The writing area makes room for an open side panel, and sits lower in focus mode. */
-function canvasClass(panelOpen: boolean, focusMode: boolean) {
+/**
+ * The writing area makes room for an open side panel, and sits lower in focus mode. From md up it
+ * is the desk under the paper sheet; on a phone it is the paper itself, except in the Page Preview,
+ * where the A5 sheets need the desk around them.
+ */
+function canvasClass(panelOpen: boolean, focusMode: boolean, preview: boolean) {
   return cn(
-    "min-h-0 flex-1 overflow-auto px-4 pt-8 pb-32 md:px-12 md:pt-24 md:pb-40",
+    "min-h-0 flex-1 overflow-auto px-4 pt-8 pb-32 md:bg-canvas md:px-12 md:pt-10 md:pb-24",
+    preview ? "bg-canvas" : "bg-surface",
     "transition-[padding] duration-200 ease-out",
     panelOpen && !focusMode && "md:pr-100",
-    focusMode && "md:pt-36",
+    focusMode && "studio-focus md:pt-24",
   );
 }
 
@@ -84,13 +87,12 @@ export function StudioEditor({
   const [focusMode, setFocusMode] = useState(false);
   const sprint = useSprint(doc.words);
   const sprintPanel = useSprintPanel(sprint);
-  const [dialog, setDialog] = useState<
-    "share" | "send" | "export" | "targets" | "search" | "layout" | null
-  >(null);
+  const [dialog, setDialog] = useState<"send" | "export" | "targets" | "search" | "layout" | null>(
+    null,
+  );
   const [stats, setStats] = useState<EditorStats | null>(null);
   const [selection, setSelection] = useState<EditorStats | null>(null);
   const [editor, setEditor] = useState<Editor | null>(null);
-  const router = useRouter();
   const openSearch = useCallback(() => setDialog("search"), []);
   const search = useEditorSearchShortcut(dialog, Boolean(doc.conflict), openSearch);
 
@@ -133,14 +135,6 @@ export function StudioEditor({
   const view = useViewMode(editor, focusMode);
   const docTargets = useDocumentTargets(doc.targets, doc.words);
   const getContent = useCallback(() => editor?.getJSON() ?? null, [editor]);
-
-  const share = useCallback(async () => {
-    if (!(await saveNow())) return false;
-    // This editor stays mounted in the background; coming back must not reopen the dialog.
-    setDialog(null);
-    router.push(postFromDocumentHref(getId()));
-    return true;
-  }, [saveNow, getId, router]);
 
   const closeDialog = useCallback(() => setDialog(null), []);
   const restoreVersion = useRestoreVersion(doc.restoreVersion, closePanel);
@@ -208,7 +202,6 @@ export function StudioEditor({
           onSprintOpenChange={sprintPanel.setOpen}
           onBack={() => void goBack()}
           onSearch={search.onOpen}
-          onShare={() => setDialog("share")}
           onToggleHelp={side.toggleHelp}
           onFocusMode={enterFocus}
         />
@@ -231,7 +224,7 @@ export function StudioEditor({
       )}
 
       <EditorStage
-        className={canvasClass(side.panel !== null, focusMode)}
+        className={canvasClass(side.panel !== null, focusMode, view.showPreview)}
         showPreview={view.showPreview}
         preview={{ title: doc.title, html: view.html, layout: doc.layout }}
       >
@@ -264,12 +257,6 @@ export function StudioEditor({
         docId={getId()}
         currentWords={doc.words}
         onRestore={restoreVersion}
-      />
-      <ShareDialog
-        open={dialog === "share"}
-        onClose={() => setDialog(null)}
-        documentTitle={doc.title}
-        onContinue={share}
       />
       <PageLayoutDialog
         open={dialog === "layout"}

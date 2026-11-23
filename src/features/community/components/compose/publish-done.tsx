@@ -35,7 +35,10 @@ export function PublishDone({ post }: { post: StoredPost }) {
   }
 
   return (
-    <div role="status" className="mx-auto grid max-w-170 justify-items-start gap-4 py-12 md:py-18">
+    <div
+      role="status"
+      className="mx-auto my-8 grid max-w-170 justify-items-start gap-4 rounded-2xl border border-line bg-surface bg-linear-to-br from-surface from-50% to-accent-subtle p-6 shadow-card md:my-14 md:p-10"
+    >
       <h1
         style={step(-3)}
         className="rm-rise-in font-serif text-[28px] leading-9 font-semibold md:text-[32px] md:leading-10"
