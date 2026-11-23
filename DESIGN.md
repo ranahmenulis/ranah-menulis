@@ -528,19 +528,19 @@ Selalu di dekat judul dokumen dan di dialog Bagikan: ikon + teks `text-xs`. **Pr
 
 **Kepala Pengaturan** (21 November 2026): `account/components/settings/settings-head.tsx` (`SettingsHead`) di bawah h1 "Pengaturan akun": avatar 88px (`rm-pop`), nama serif 30/40px dan @username (`rm-rise-in`), seperti kepala profil publik, lalu Ganti foto · Hapus foto (`PhotoControls`). Isian foto ada di kepala saja (satu foto per halaman): fotonya milik formulir, jadi foto baru langsung tampil sebagai pratinjau dan tersimpan lewat "Simpan perubahan"; nama dan username tetap nilai tersimpan. Bukan heading. Tanpa garis sendiri, karena bagian di bawahnya sudah bergaris atas. Onboarding `/mulai` tetap memakai `PhotoPicker` di dalam formulir.
 
-### 7.8 Pita peran Kelola (21 November 2026)
+### 7.8 Kelola: kartu peran (21 November 2026, dirombak tahap G 23 November 2026)
 
-Kelola adalah "dunia lain": layar utama tiap area dibuka pita gelap `RoleBand` (`kelola/components/role-band.tsx`, model murni `kelola/role-band.ts`) supaya pengelola langsung tahu ia sedang bekerja, bukan menulis. Isi pita: baris kecil "Ruang kerja · {peran}", judul layar serif 28/36px (h1 layar), satu kalimat, **satu angka kerja** serif 56/88px yang bergulung (`CountUp`; "—" saat memuat, disembunyikan bila data gagal dibaca karena layar di bawahnya sudah menyebut galatnya), dan satu tautan teks ke pekerjaan utamanya (tombol terisi tetap di permukaan halaman, mis. "Buat proyek"). Tautan hilang saat angkanya nol, kecuali Organizer ("Kelola Event").
+Layar utama tiap area dibuka kartu hero `RoleBand` (`kelola/components/role-band.tsx`, model murni `kelola/role-band.ts`; `heroCardClass`, bukan lagi pita hitam): baris kecil "Ruang kerja · {peran}", judul layar sans tebal 28/36px (h1 layar), satu kalimat, **satu angka kerja** sans tebal 56/72px yang bergulung (`CountUp`; "—" saat memuat, disembunyikan bila data gagal dibaca), dan satu tautan pil `accent-subtle` ke pekerjaan utamanya (tombol terisi tetap di halaman, mis. "Buat proyek"). Ilustrasi benda per peran dari `illustrations/role-art.tsx` di kanan bawah (`data-mark`, `aria-hidden`; di ponsel kecil di kanan atas, 60% opasitas): kaca pembesar di atas naskah (Editor), timbangan (Juri), papan tulis (Mentor), papan jadwal berpin (Organizer), perisai (Administrator). Penanda tipografis `role-mark.tsx` dan matriks titik pengguna Admin dicabut.
 
-| Peran | Penanda (`role-mark.tsx`) | Angka | Jalan masuk |
-|---|---|---|---|
-| Editor | lembar naskah dengan tanda koreksi (coret, sisip, lingkar) | karya Perlu tindakan | filter Perlu tindakan |
-| Juri | tiga bobot kriteria di atas skala 1–10 | karya belum dinilai di lomba yang penilaiannya dibuka | lomba pertama yang masih punya |
-| Mentor | daftar tugas yang dicentang satu per satu | pengumpulan menunggu penilaian | kelas pertama yang punya |
-| Organizer | garis tahap dengan simpul dan bendera tenggat | proyek aktif | Kelola Event |
-| Administrator | matriks titik, satu per pengguna (cincin = ditangguhkan) | kasus moderasi Baru | Moderasi |
+| Peran | Angka | Jalan masuk |
+|---|---|---|
+| Editor | karya Perlu tindakan | filter Perlu tindakan |
+| Juri | karya belum dinilai di lomba yang penilaiannya dibuka | lomba pertama yang masih punya |
+| Mentor | pengumpulan menunggu penilaian | kelas pertama yang punya |
+| Organizer | proyek aktif | Kelola Event |
+| Administrator | kasus moderasi Baru | Moderasi |
 
-Penanda adalah SVG tipografis sekeluarga dengan sampul proyek (7.6), `aria-hidden`, memakai gerak yang sudah ada: garis `rm-page-line`, goresan `rm-ring` (pathLength 1), titik dan tanda `rm-pop`, gerigi `rm-bar` (`.rm-mark` memberi `transform-box: fill-box`). Pita hanya di layar utama area; layar dalam (tinjauan, detail kelas, skor) tetap padat tanpa pita. Admin memasang pita di layout hanya di akar tiap tab, dengan nama area sebagai teks biasa karena h1 milik tab. `/kelola` memakai `RoleBandLink`: satu pita ringkas per area yang dipegang (seluruh pita satu tautan, naik bertahap `rm-row-in`, grid dua kolom dari xl). Ponsel: penanda 64px di samping judul, angka di bawahnya. Reduced motion: semua langsung tampil. Pita ini tampilan, bukan kontrol akses.
+Kartu hanya di layar utama area; Admin memasangnya di layout hanya di akar tiap tab. `/kelola` memakai `RoleBandLink`: satu kartu hero berilustrasi per area (seluruh kartu satu tautan, naik bertahap `rm-row-in`, terangkat saat hover hanya bila gerak diizinkan, grid dua kolom dari xl). **Menu area** (`kelola-frame.tsx`): dari lg kolom 13rem berisi pil berikon (Phosphor: SquaresFour, Kanban, Tray, Scales, ChalkboardTeacher, ShieldCheck), aktif `accent-subtle`; di bawah lg baris chip lengket, aktif `accent`. Halaman selebar 1280. **Daftar** (proyek, antrean, lomba, kelas, tugas, peserta, pembayaran, tahap Solo, testimoni, pengguna, moderasi, audit, event) dibungkus `listCardClass`, tabel (antrean Editor, pengumpulan dan peserta Mentor) dibungkus `tableCardClass` (`kelola/components/list-card.ts`); baris proyek Organizer memakai pil status (Terbit `accent-subtle`, lainnya `subtle`). Tab Admin dan tab detail kelas Mentor serta proyek Organizer memakai `Tabs variant="pill"`. **Layar kerja** (formulir proyek dan Event, tinjauan Editor dan Mentor, skor Juri, kasus moderasi, detail pengguna, panel tahap lomba, penilaian, hasil) tanpa hero dan ilustrasi: tiap bagian kartu `cardClass` dengan `SectionIcon` di judul; kelompok isian lewat `FieldGroup` (`kelola/components/field-group.tsx`: kartu membungkus `fieldset`, karena garis pada `fieldset` terpotong `legend`). Reduced motion: semua langsung tampil. Ini tampilan, bukan kontrol akses.
 
 ### 7.9 Gerak tambahan (fase 6, 21 November 2026)
 
