@@ -28,6 +28,10 @@ import { FrozenText } from "../../components/frozen-text";
 import { EDITOR_HREF } from "../area-hrefs";
 import { resolveReview } from "../review-model";
 import { DecisionPanel } from "./decision-panel";
+import { FileText } from "@phosphor-icons/react/dist/ssr";
+import { cardClass } from "@/components/ui/card";
+import { SectionIcon } from "@/components/ui/section-card";
+import { cn } from "@/lib/cn";
 
 function Shell({ children }: { children: React.ReactNode }) {
   const t = useT().kelolaEditor.review;
@@ -54,7 +58,7 @@ function Information({ work }: { work: Submission }) {
   ].filter((row): row is [string, string] => Boolean(row[1]));
   if (rows.length === 0) return null;
   return (
-    <dl className="grid gap-3 border-t border-line pt-6 text-sm">
+    <dl className={cn(cardClass, "grid gap-3 text-sm")}>
       {rows.map(([label, value]) => (
         <div key={label} className="grid gap-0.5">
           <dt className="text-xs text-ink-muted">{label}</dt>
@@ -74,8 +78,9 @@ function Text({ work }: { work: Submission }) {
   const version = work.versions.find((v) => v.version === current) ?? work.versions.at(-1);
   if (!version) return <Notice>{t.noFrozen}</Notice>;
   return (
-    <section aria-labelledby="naskah-title" className="grid gap-4 border-t border-line pt-6">
-      <h2 id="naskah-title" className="heading-md">
+    <section aria-labelledby="naskah-title" className={cn(cardClass, "grid min-w-0 gap-4")}>
+      <h2 id="naskah-title" className="flex items-center gap-2.5 heading-md">
+        <SectionIcon icon={FileText} />
         {t.title}
       </h2>
       {latest > 1 && (

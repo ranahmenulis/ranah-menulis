@@ -11,6 +11,7 @@ import { MANAGER_ROLES } from "@/lib/roles";
 import { ADMIN_HREF, userHref } from "../area-hrefs";
 import { useAdminUsers } from "../use-admin-data";
 import { filterUsers, parseRoleFilter, usersQuery, type RoleFilter } from "../user-model";
+import { listCardClass } from "../../components/list-card";
 
 /**
  * Admin: users and roles (PLT-05). Search and the role filter live in the address so a view can be
@@ -70,7 +71,7 @@ export function UsersView() {
       {shown.length === 0 ? (
         <EmptyState>{t.none}</EmptyState>
       ) : (
-        <ul aria-label={t.listLabel} className="border-t border-line">
+        <ul aria-label={t.listLabel} className={listCardClass}>
           {shown.map((u) => (
             <li key={u.id} className="border-b border-line">
               <Link

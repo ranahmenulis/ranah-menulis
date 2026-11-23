@@ -27,6 +27,10 @@ import {
   type ResultsErrors,
   type ResultsInput,
 } from "../results-model";
+import { Trophy } from "@phosphor-icons/react/dist/ssr";
+import { cardClass } from "@/components/ui/card";
+import { SectionIcon } from "@/components/ui/section-card";
+import { cn } from "@/lib/cn";
 
 /**
  * Finalists and winners of a contest (LMB-02), decided from the Judges' scores. Saving does not
@@ -59,8 +63,9 @@ export function ResultsEditor({
   const amend = lock === "terkunci" && admin && saved !== undefined;
 
   return (
-    <section aria-labelledby="hasil-title" className="grid gap-3 border-t border-line pt-5">
-      <h3 id="hasil-title" className="heading-sm">
+    <section aria-labelledby="hasil-title" className={cn(cardClass, "grid gap-3")}>
+      <h3 id="hasil-title" className="flex items-center gap-2.5 heading-md">
+        <SectionIcon icon={Trophy} />
         {t.title}
       </h3>
       {lock !== "terbuka" && <Notice>{amend ? t.amendNotice : t.lock[lock]}</Notice>}

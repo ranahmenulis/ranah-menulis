@@ -1,5 +1,6 @@
 "use client";
 
+import { tableCardClass } from "../../components/list-card";
 import { useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -97,7 +98,9 @@ export function QueueView({ store }: { store?: SubmissionStore }) {
               {t.empty[filter]}
             </EmptyState>
           ) : (
-            <QueueTable rows={shown} label={label} />
+            <div className={tableCardClass}>
+              <QueueTable rows={shown} label={label} />
+            </div>
           )}
         </>
       )}

@@ -24,6 +24,7 @@ import {
   type JudgeFilter,
 } from "../judge-model";
 import { useJudgeContest } from "../use-judge-data";
+import { listCardClass } from "../../components/list-card";
 
 /** The works of one contest to score. The filter lives in the address and opens on "Belum dinilai". */
 export function ContestWorksView({ slug, store }: { slug: string; store?: SubmissionStore }) {
@@ -103,7 +104,7 @@ export function ContestWorksView({ slug, store }: { slug: string; store?: Submis
           {copy.empty[filter]}
         </EmptyState>
       ) : (
-        <ul aria-label={t.list} className="border-t border-line">
+        <ul aria-label={t.list} className={listCardClass}>
           {shown.map((row) => {
             const mine = row.mine ? weightedScore(data.criteria, row.mine.scores) : null;
             return (

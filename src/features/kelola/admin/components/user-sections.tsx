@@ -8,6 +8,10 @@ import type { AuditEntry } from "../../audit/audit-log";
 import { auditSentence } from "../../audit/audit-text";
 import { blockText, type RuleBlock } from "../role-rules";
 import type { UserAssignment } from "../use-admin-data";
+import { ClipboardText, ClockCounterClockwise, UserCircle } from "@phosphor-icons/react/dist/ssr";
+import { cardClass } from "@/components/ui/card";
+import { SectionIcon } from "@/components/ui/section-card";
+import { cn } from "@/lib/cn";
 
 const LONG_DATE: Intl.DateTimeFormatOptions = { day: "numeric", month: "long", year: "numeric" };
 
@@ -23,8 +27,9 @@ export function AccountSection({
   const t = useT().kelolaAdmin.user;
   const locale = useLocale();
   return (
-    <section aria-labelledby="akun-title" className="grid gap-2">
-      <h2 id="akun-title" className="heading-md">
+    <section aria-labelledby="akun-title" className={cn(cardClass, "grid min-w-0 gap-2")}>
+      <h2 id="akun-title" className="flex items-center gap-2.5 heading-md">
+        <SectionIcon icon={UserCircle} />
         {t.accountTitle}
       </h2>
       {suspended && <Notice>{t.suspendedNotice}</Notice>}
@@ -44,8 +49,9 @@ export function AccountSection({
 export function AssignmentsSection({ assignments }: { assignments: UserAssignment[] }) {
   const t = useT().kelolaAdmin;
   return (
-    <section aria-labelledby="tugas-title" className="grid gap-2">
-      <h2 id="tugas-title" className="heading-md">
+    <section aria-labelledby="tugas-title" className={cn(cardClass, "grid min-w-0 gap-2")}>
+      <h2 id="tugas-title" className="flex items-center gap-2.5 heading-md">
+        <SectionIcon icon={ClipboardText} />
         {t.user.assignmentsTitle}
       </h2>
       {assignments.length === 0 ? (
@@ -70,8 +76,9 @@ export function HistorySection({ history }: { history: AuditEntry[] }) {
   const t = useT().kelolaAdmin.user;
   const locale = useLocale();
   return (
-    <section aria-labelledby="riwayat-title" className="grid gap-2">
-      <h2 id="riwayat-title" className="heading-md">
+    <section aria-labelledby="riwayat-title" className={cn(cardClass, "grid min-w-0 gap-2")}>
+      <h2 id="riwayat-title" className="flex items-center gap-2.5 heading-md">
+        <SectionIcon icon={ClockCounterClockwise} />
         {t.historyTitle}
       </h2>
       {history.length === 0 ? (

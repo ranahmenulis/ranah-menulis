@@ -9,6 +9,7 @@ import { pluralOf } from "../copy/mentor-copy";
 import { classHref } from "../area-hrefs";
 import { useMentorClasses } from "../use-mentor-data";
 import type { AssignmentStore } from "@/features/projects/kelas/storage/assignment-store";
+import { listCardClass } from "../../components/list-card";
 
 /**
  * The classes the viewer manages (KLS-03), with what needs a mentor first: how many hand-ins wait
@@ -38,7 +39,7 @@ export function MentorClassesView({ store }: { store?: AssignmentStore }) {
       ) : data.items.length === 0 ? (
         <EmptyState>{t.empty}</EmptyState>
       ) : (
-        <ul className="border-t border-line">
+        <ul className={listCardClass}>
           {data.items.map(({ project, started, participants, tasks, toGrade }) => (
             <li key={project.slug} className="border-b border-line">
               <Link

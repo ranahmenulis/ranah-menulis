@@ -10,6 +10,10 @@ import type { AssignmentStore } from "@/features/projects/kelas/storage/assignme
 import type { AssignmentSubmission } from "@/features/projects/kelas/types";
 import { ReasonDialog } from "../../components/reason-dialog";
 import { mentorStepCopyOf, mentorStepsFor } from "../mentor-review";
+import { Gavel } from "@phosphor-icons/react/dist/ssr";
+import { cardClass } from "@/components/ui/card";
+import { SectionIcon } from "@/components/ui/section-card";
+import { cn } from "@/lib/cn";
 
 /**
  * The steps the status allows (KLS-03): ask for a repair (a note is required) or mark it done (a
@@ -55,8 +59,9 @@ export function MentorDecisionPanel({
 
   const step = steps.find((s) => s.decision === asking);
   return (
-    <section aria-labelledby="langkah-title" className="grid gap-3 border-t border-line pt-6">
-      <h2 id="langkah-title" className="heading-md">
+    <section aria-labelledby="langkah-title" className={cn(cardClass, "grid min-w-0 gap-3")}>
+      <h2 id="langkah-title" className="flex items-center gap-2.5 heading-md">
+        <SectionIcon icon={Gavel} />
         {t.title}
       </h2>
       {result === "failed" && <ErrorBanner>{t.failed}</ErrorBanner>}

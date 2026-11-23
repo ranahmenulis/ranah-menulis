@@ -10,6 +10,10 @@ import type { Submission } from "@/features/projects/submission-types";
 import { useLocale, useT } from "@/lib/i18n/provider";
 import { stepsFor } from "../review-model";
 import { ReasonDialog } from "../../components/reason-dialog";
+import { Gavel } from "@phosphor-icons/react/dist/ssr";
+import { cardClass } from "@/components/ui/card";
+import { SectionIcon } from "@/components/ui/section-card";
+import { cn } from "@/lib/cn";
 
 /**
  * The steps the status allows, nothing else (PRD 10.5). A lone step ("Mulai tinjau") is the filled
@@ -52,8 +56,9 @@ export function DecisionPanel({
 
   const step = steps.find((s) => s.decision === asking);
   return (
-    <section aria-labelledby="langkah-title" className="grid gap-3 border-t border-line pt-6">
-      <h2 id="langkah-title" className="heading-md">
+    <section aria-labelledby="langkah-title" className={cn(cardClass, "grid min-w-0 gap-3")}>
+      <h2 id="langkah-title" className="flex items-center gap-2.5 heading-md">
+        <SectionIcon icon={Gavel} />
         {t.decision.title}
       </h2>
       {result === "failed" && <ErrorBanner>{t.decision.saveFailed}</ErrorBanner>}

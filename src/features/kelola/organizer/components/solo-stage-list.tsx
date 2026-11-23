@@ -19,6 +19,7 @@ import { fileKindLabel, formatFileSize } from "@/lib/files/format-size";
 import { problemText } from "@/lib/files/problem-text";
 import { saveUpload, type SaveUploadResult } from "@/lib/files/save-upload";
 import { fileStore } from "@/lib/files/store";
+import { listCardClass } from "../../components/list-card";
 
 type Book = {
   id: string;
@@ -135,7 +136,7 @@ export function SoloStageList({
       {books.length === 0 ? (
         <EmptyState>{t.empty}</EmptyState>
       ) : (
-        <ul aria-label={t.list} className="border-t border-line">
+        <ul aria-label={t.list} className={listCardClass}>
           {books.map((book) => (
             <BookRow key={book.id} book={book} onAsk={setAsking} />
           ))}

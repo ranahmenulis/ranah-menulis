@@ -10,6 +10,7 @@ import { bandFrom, judgeWork } from "../../role-band";
 import { contestHref } from "../area-hrefs";
 import { judgingLabel } from "../judge-model";
 import { useJudgeContests } from "../use-judge-data";
+import { listCardClass } from "../../components/list-card";
 
 /**
  * The contests the viewer judges (LMB-01), with how many works they have scored. Only contests
@@ -39,7 +40,7 @@ export function ContestsView({ store }: { store?: SubmissionStore }) {
       ) : data.items.length === 0 ? (
         <EmptyState>{t.empty}</EmptyState>
       ) : (
-        <ul className="border-t border-line">
+        <ul className={listCardClass}>
           {data.items.map(({ project, total, scored, judging }) => (
             <li key={project.slug} className="border-b border-line">
               <Link

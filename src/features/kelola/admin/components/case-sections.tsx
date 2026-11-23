@@ -5,6 +5,10 @@ import { authorOf } from "@/features/community/post-model";
 import type { ReportReason } from "@/features/community/types";
 import { userHref } from "../area-hrefs";
 import { reportReasonLabel, type CaseContent, type CaseRow } from "../moderation/moderation-model";
+import { FileText, Flag } from "@phosphor-icons/react/dist/ssr";
+import { cardClass } from "@/components/ui/card";
+import { SectionIcon } from "@/components/ui/section-card";
+import { cn } from "@/lib/cn";
 
 export function CaseContentSection({
   kind,
@@ -16,8 +20,9 @@ export function CaseContentSection({
   const t = useT().kelolaModeration.case;
   const author = content ? authorOf(content.authorId) : null;
   return (
-    <section aria-labelledby="isi-title" className="grid gap-2">
-      <h2 id="isi-title" className="heading-md">
+    <section aria-labelledby="isi-title" className={cn(cardClass, "grid min-w-0 gap-2")}>
+      <h2 id="isi-title" className="flex items-center gap-2.5 heading-md">
+        <SectionIcon icon={FileText} />
         {t.contentTitle}
       </h2>
       {content && author ? (
@@ -44,8 +49,9 @@ export function CaseReasonsSection({ reasons }: { reasons: CaseRow["reasons"] })
   const t = useT().kelolaModeration.case;
   const locale = useLocale();
   return (
-    <section aria-labelledby="alasan-title" className="grid gap-2">
-      <h2 id="alasan-title" className="heading-md">
+    <section aria-labelledby="alasan-title" className={cn(cardClass, "grid min-w-0 gap-2")}>
+      <h2 id="alasan-title" className="flex items-center gap-2.5 heading-md">
+        <SectionIcon icon={Flag} />
         {t.reasonsTitle}
       </h2>
       <ul className="border-t border-line">

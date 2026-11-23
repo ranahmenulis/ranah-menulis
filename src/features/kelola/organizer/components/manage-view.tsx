@@ -91,6 +91,7 @@ export function ManageView({
         <p className="text-sm text-ink-muted">{t.status[row.status]}</p>
       </header>
       <Tabs
+        variant="pill"
         label={t.manage.tabsLabel}
         value={tab}
         items={MANAGE_TABS.filter((tabItem) => shown(tabItem.id, project)).map((tabItem) => ({

@@ -3,6 +3,7 @@
 import { ButtonLink } from "@/components/ui/button";
 import { EmptyState, FeedItemSkeleton, Notice } from "@/components/ui/states";
 import { TextLink } from "@/components/ui/text-link";
+import { cn } from "@/lib/cn";
 import { useT } from "@/lib/i18n/provider";
 import { EventSummary, EventsError } from "@/features/community/events/components/events-view";
 import { eventHref } from "@/features/community/events/event-model";
@@ -18,6 +19,7 @@ import {
   NEW_EVENT_HREF,
 } from "./event-access";
 import { EventForm } from "./event-form";
+import { listCardClass } from "../../components/list-card";
 
 export function ManageEventsView() {
   const t = useT().kelolaOrganizerEvents;
@@ -42,7 +44,7 @@ export function ManageEventsView() {
       ) : events.length === 0 ? (
         <EmptyState>{t.list.empty}</EmptyState>
       ) : (
-        <ul className="divide-y divide-line border-y border-line">
+        <ul className={cn(listCardClass, "divide-y divide-line")}>
           {events.map((event) => (
             <li className="grid gap-1 py-4" key={event.id}>
               <TextLink href={manageEventHref(event.id)} className="font-medium wrap-anywhere">

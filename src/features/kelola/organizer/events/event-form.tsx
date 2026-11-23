@@ -11,6 +11,10 @@ import { useActionStatus } from "@/features/kelola/admin/use-action-status";
 import { manageEventHref } from "./event-access";
 import { inputOf, type EventInput, type FormIssues } from "./event-input";
 import { saveWritingEvent } from "./manage-event-actions";
+import { CalendarBlank, Timer } from "@phosphor-icons/react/dist/ssr";
+import { cardClass } from "@/components/ui/card";
+import { cn } from "@/lib/cn";
+import { FieldGroup } from "../../components/field-group";
 
 type Key = keyof EventInput;
 type FieldInfo = {
@@ -183,22 +187,20 @@ export function EventForm({ event, now }: { event?: WritingEvent; now: number })
           {t.stale}
         </Notice>
       )}
-      <div className="grid gap-4">{basics.map((name) => field(name))}</div>
-      <fieldset className="grid min-w-0 gap-4 border-t border-line pt-4">
-        <legend className="pr-3 heading-md">{t.schedule}</legend>
+      <div className={cn(cardClass, "grid gap-4")}>{basics.map((name) => field(name))}</div>
+      <FieldGroup title={t.schedule} icon={CalendarBlank}>
         {locked && <Notice>{t.scheduleLocked}</Notice>}
         <p className="text-sm text-ink-muted">{t.capacityHint}</p>
         {schedule.map(field)}
-      </fieldset>
-      <fieldset className="grid min-w-0 gap-4 border-t border-line pt-4">
-        <legend className="pr-3 heading-md">{t.sprint}</legend>
+      </FieldGroup>
+      <FieldGroup title={t.sprint} icon={Timer}>
         {sprintLocked ? (
           <Notice>{t.sprintLocked}</Notice>
         ) : (
           <p className="text-sm text-ink-muted">{t.sprintHint}</p>
         )}
         {sprint.map(field)}
-      </fieldset>
+      </FieldGroup>
       <Button className="justify-self-start" type="submit" disabled={pending || Boolean(stale)}>
         {event ? t.save : t.create}
       </Button>

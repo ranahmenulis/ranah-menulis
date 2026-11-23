@@ -13,7 +13,7 @@ export const kelolaOrganizer = {
     filterLabel: "Saring proyek",
     listLabel: "Daftar proyek",
     showActive: "Lihat proyek aktif",
-    row: "{category} · {status} · {registrants} peserta di perangkat ini · {submissions} kiriman",
+    row: "{category} · {registrants} peserta di perangkat ini · {submissions} kiriman",
     sampleSuffix: " · Proyek contoh",
     filters: {
       aktif: "Aktif",

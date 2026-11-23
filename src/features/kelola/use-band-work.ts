@@ -6,7 +6,6 @@ import type { PostStore } from "@/features/community/storage/post-store";
 import type { AssignmentStore } from "@/features/projects/kelas/storage/assignment-store";
 import type { SubmissionStore } from "@/features/projects/storage/submission-store";
 import { useCaseList } from "./admin/moderation/use-moderation-data";
-import { useAdminUsers } from "./admin/use-admin-data";
 import { useEditorQueue } from "./editor/use-editor-queue";
 import { useJudgeContests } from "./juri/use-judge-data";
 import { useMentorClasses } from "./mentor/use-mentor-data";
@@ -19,7 +18,6 @@ import {
   judgeWork,
   mentorWork,
   organizerWork,
-  peopleDots,
   type BandWork,
 } from "./role-band";
 
@@ -55,14 +53,8 @@ export function useOrganizerBand(store?: SubmissionStore): BandWork {
   );
 }
 
-export function useAdminBand(store?: PostStore): {
-  work: BandWork;
-  people: ("full" | "ring")[];
-} {
+export function useAdminBand(store?: PostStore): BandWork {
   const cases = useCaseList(store);
-  const users = useAdminUsers();
   const locale = useLocale();
-  const work = useMemo(() => bandFrom(cases, (d) => adminWork(d.rows, locale)), [cases, locale]);
-  const people = useMemo(() => peopleDots(users), [users]);
-  return { work, people };
+  return useMemo(() => bandFrom(cases, (d) => adminWork(d.rows, locale)), [cases, locale]);
 }

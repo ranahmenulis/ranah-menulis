@@ -7,6 +7,7 @@ import { Button, ButtonLink } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
 import { EmptyState, ErrorBanner, RetryButton, Skeleton } from "@/components/ui/states";
 import { useFormat } from "@/lib/i18n/use-format";
+import { cn } from "@/lib/cn";
 import { format, useLocale, useT } from "@/lib/i18n/provider";
 import { categoryLabel } from "@/features/projects/project-model";
 import type { SubmissionStore } from "@/features/projects/storage/submission-store";
@@ -23,6 +24,7 @@ import { countByList, matchesList } from "../list-model";
 import { RoleBand } from "../../components/role-band";
 import { organizerWork, type BandWork } from "../../role-band";
 import { useOrganizerList, type OrganizerRow } from "../use-organizer-data";
+import { listCardClass } from "../../components/list-card";
 
 function ListSkeleton() {
   const t = useT().kelolaOrganizer;
@@ -44,13 +46,22 @@ function ProjectRow({ row }: { row: OrganizerRow }) {
     <li className="border-b border-line">
       <Link
         href={manageHref(project.slug)}
-        className="grid gap-1 py-4 no-underline hover:bg-subtle"
+        className="group grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-4 gap-y-1 py-4 no-underline"
       >
-        <span className="heading-sm wrap-anywhere">{project.title}</span>
-        <span className="text-sm text-ink-muted">
+        <span className="heading-sm wrap-anywhere group-hover:underline">{project.title}</span>
+        <span
+          className={cn(
+            "rounded-full px-2.5 py-0.5 text-xs font-medium whitespace-nowrap",
+            row.status === "terbit"
+              ? "bg-accent-subtle text-accent-ink"
+              : "bg-subtle text-ink-soft",
+          )}
+        >
+          {t.status[row.status]}
+        </span>
+        <span className="col-span-2 text-sm text-ink-muted">
           {format(t.list.row, {
             category: categoryLabel(project.category, f.locale),
-            status: t.status[row.status],
             registrants: f.number(row.registrants),
             submissions: f.number(row.submissions),
           })}
@@ -128,7 +139,7 @@ export function OrganizerView({ store }: { store?: SubmissionStore }) {
               {t.list.empty[filter]}
             </EmptyState>
           ) : (
-            <ul aria-label={t.list.listLabel} className="border-t border-line">
+            <ul aria-label={t.list.listLabel} className={listCardClass}>
               {shown.map((row) => (
                 <ProjectRow key={row.project.slug} row={row} />
               ))}

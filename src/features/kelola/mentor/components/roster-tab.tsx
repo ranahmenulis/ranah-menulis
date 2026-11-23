@@ -1,4 +1,5 @@
 import { format, useT } from "@/lib/i18n/provider";
+import { tableCardClass } from "../../components/list-card";
 import { Notice } from "@/components/ui/states";
 import type { AssignmentSubmission, ClassContent } from "@/features/projects/kelas/types";
 import type { Project, Registration } from "@/features/projects/types";
@@ -29,7 +30,7 @@ export function RosterTab({
       {rows.length === 0 ? (
         <p className="text-sm text-ink-muted">{t.empty}</p>
       ) : (
-        <div className="overflow-x-auto">
+        <div className={tableCardClass}>
           <table aria-label={t.tableLabel} className="w-full min-w-136 border-collapse text-sm">
             <thead>
               <tr className="border-b border-line">

@@ -32,14 +32,13 @@ export function AdminBand({ store }: { store?: PostStore }) {
 
 function AdminBandContent({ store }: { store?: PostStore }) {
   const t = useT().kelolaAdmin.band;
-  const { work, people } = useAdminBand(store);
+  const work = useAdminBand(store);
   return (
     <RoleBand
       area="admin"
       title={t.title}
       description={t.description}
       work={work}
-      people={people}
       className="mb-6"
     />
   );

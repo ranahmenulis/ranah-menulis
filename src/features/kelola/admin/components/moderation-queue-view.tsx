@@ -24,6 +24,7 @@ import {
 import { useUrlFilter } from "../../use-url-filter";
 import { useCaseList } from "../moderation/use-moderation-data";
 import { sentAtText } from "@/features/projects/submission-text";
+import { listCardClass } from "../../components/list-card";
 
 const NO_ROWS: CaseRow[] = [];
 
@@ -92,7 +93,7 @@ export function ModerationQueueView({ store }: { store?: PostStore }) {
               {t.empty[filter]}
             </EmptyState>
           ) : (
-            <ul aria-label={t.queue.listLabel} className="border-t border-line">
+            <ul aria-label={t.queue.listLabel} className={listCardClass}>
               {shown.map((row) => {
                 const content = list.contentOf(row);
                 return (

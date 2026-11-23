@@ -23,6 +23,7 @@ export function AdminTabs() {
     <Tabs
       label={t.label}
       value={current(pathname)}
+      variant="pill"
       className="mb-6"
       items={[
         { id: "pengguna", label: t.users, href: ADMIN_HREF },

@@ -22,6 +22,10 @@ import { useMentorClass, type MentorClassData } from "../use-mentor-data";
 import { MentorDecisionPanel } from "./mentor-decision-panel";
 import { MentorHistory } from "./mentor-history";
 import { BackShell } from "../../components/back-shell";
+import { FileText, Info } from "@phosphor-icons/react/dist/ssr";
+import { cardClass } from "@/components/ui/card";
+import { SectionIcon } from "@/components/ui/section-card";
+import { cn } from "@/lib/cn";
 
 type Ready = Extract<MentorClassData, { status: "ready" }>;
 
@@ -34,8 +38,9 @@ function Text({ work }: { work: AssignmentSubmission }) {
     work.versions.find((v) => v.version === (picked ?? latest)) ?? work.versions.at(-1);
   if (!version) return <Notice>{t.noFrozenCopy}</Notice>;
   return (
-    <section aria-labelledby="naskah-title" className="grid gap-4 border-t border-line pt-6">
-      <h2 id="naskah-title" className="heading-md">
+    <section aria-labelledby="naskah-title" className={cn(cardClass, "grid min-w-0 gap-4")}>
+      <h2 id="naskah-title" className="flex items-center gap-2.5 heading-md">
+        <SectionIcon icon={FileText} />
         {t.textTitle}
       </h2>
       {latest > 1 && (
@@ -105,8 +110,9 @@ function Body({
         onRejected={notifyAssignmentsChanged}
       />
       {assignment && (
-        <section aria-labelledby="petunjuk-title" className="grid gap-2 border-t border-line pt-6">
-          <h2 id="petunjuk-title" className="heading-md">
+        <section aria-labelledby="petunjuk-title" className={cn(cardClass, "grid min-w-0 gap-2")}>
+          <h2 id="petunjuk-title" className="flex items-center gap-2.5 heading-md">
+            <SectionIcon icon={Info} />
             {t.instructionsTitle}
           </h2>
           {assignment.instructions.map((p, i) => (

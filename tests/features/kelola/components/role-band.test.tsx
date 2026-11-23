@@ -26,13 +26,11 @@ describe("RoleBand", () => {
     );
   });
 
-  it("keeps the mark out of the accessibility tree", () => {
+  it("keeps the role illustration out of the accessibility tree", () => {
     const { container } = render(
       <RoleBand area="juri" title="Penilaian" titleId="t" work={{ status: "loading" }} />,
     );
-    expect(container.querySelector("svg[data-mark='juri']")?.getAttribute("aria-hidden")).toBe(
-      "true",
-    );
+    expect(container.querySelector("[data-mark='juri']")?.getAttribute("aria-hidden")).toBe("true");
   });
 
   it("shows a dash while loading and no number when the data cannot be read", () => {
@@ -48,12 +46,7 @@ describe("RoleBand", () => {
 
   it("is a plain labelled region when the tabs under it carry the h1 (Admin)", () => {
     render(
-      <RoleBand
-        area="admin"
-        title="Admin"
-        people={["full", "ring"]}
-        work={{ status: "ready", count: 0, entry: null }}
-      />,
+      <RoleBand area="admin" title="Admin" work={{ status: "ready", count: 0, entry: null }} />,
     );
     expect(screen.queryByRole("heading")).toBeNull();
     expect(screen.getByRole("region", { name: "Ruang kerja Administrator" })).toBeTruthy();

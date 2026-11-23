@@ -11,6 +11,10 @@ import { ReasonDialog } from "../../components/reason-dialog";
 import type { ContestStage } from "@/features/projects/lomba/types";
 import { isPlatformAdmin } from "@/lib/roles";
 import { useEffectiveRoles } from "@/features/kelola/use-effective-roles";
+import { Scales } from "@phosphor-icons/react/dist/ssr";
+import { cardClass } from "@/components/ui/card";
+import { SectionIcon } from "@/components/ui/section-card";
+import { cn } from "@/lib/cn";
 
 /**
  * Closing judging (BR-PRJ-09). The Organizer closes it; once closed no Judge can change a score.
@@ -34,11 +38,9 @@ export function JudgingControls({ slug, stage }: { slug: string; stage: ContestS
   }
 
   return (
-    <section
-      aria-labelledby="penilaian-juri-title"
-      className="grid gap-3 border-t border-line pt-5"
-    >
-      <h3 id="penilaian-juri-title" className="heading-sm">
+    <section aria-labelledby="penilaian-juri-title" className={cn(cardClass, "grid gap-3")}>
+      <h3 id="penilaian-juri-title" className="flex items-center gap-2.5 heading-md">
+        <SectionIcon icon={Scales} />
         {j.title}
       </h3>
       <p className="text-sm">{j.status[status]}</p>

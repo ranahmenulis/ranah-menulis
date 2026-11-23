@@ -1,14 +1,12 @@
 import { describe, expect, it } from "vitest";
 import {
   BAND_COPY,
-  MARK_PEOPLE_MAX,
   adminWork,
   bandFrom,
   editorWork,
   judgeWork,
   mentorWork,
   organizerWork,
-  peopleDots,
 } from "@/features/kelola/role-band";
 
 const counts = (n: number) => ({
@@ -98,11 +96,5 @@ describe("role bands", () => {
       status: "error",
     });
     expect(bandFrom<Data>({ status: "ready", n: 2 }, count)).toMatchObject({ count: 2 });
-  });
-
-  it("draws one dot per person, suspended ones as rings, up to the mark's size", () => {
-    expect(peopleDots([{ suspended: false }, { suspended: true }])).toEqual(["full", "ring"]);
-    const many = Array.from({ length: MARK_PEOPLE_MAX + 5 }, () => ({ suspended: false }));
-    expect(peopleDots(many)).toHaveLength(MARK_PEOPLE_MAX);
   });
 });

@@ -9,6 +9,7 @@ import { formatProjectDateTime } from "@/features/projects/project-model";
 import { paymentState } from "@/features/projects/payment-model";
 import type { Submission } from "@/features/projects/submission-types";
 import type { Project, Registration } from "@/features/projects/types";
+import { listCardClass } from "../../components/list-card";
 
 /**
  * Who registered. Registrations exist only on this device for now, so the list is honest: at most
@@ -34,7 +35,7 @@ export function ParticipantsTab({
       {!registration ? (
         <EmptyState>{t.participantsEmpty}</EmptyState>
       ) : (
-        <ul className="border-t border-line">
+        <ul className={listCardClass}>
           <li className="grid gap-1 border-b border-line py-3">
             <span className="font-medium">{t.registrant}</span>
             <span className="text-sm text-ink-muted">
@@ -70,7 +71,7 @@ export function WorksTab({ project, works }: { project: Project; works: Submissi
       {works.length === 0 ? (
         <EmptyState>{t.worksEmpty}</EmptyState>
       ) : (
-        <ul aria-label={t.worksList} className="border-t border-line">
+        <ul aria-label={t.worksList} className={listCardClass}>
           {works.map((work) => (
             <li
               key={work.id}

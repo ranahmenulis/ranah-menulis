@@ -20,6 +20,7 @@ import {
   type AuditKind,
 } from "./audit-model";
 import { auditSentence } from "./audit-text";
+import { listCardClass } from "../components/list-card";
 
 const AUDIT_HREF = `${ADMIN_HREF}/audit`;
 
@@ -60,7 +61,7 @@ export function AuditView() {
         <EmptyState>{t.empty}</EmptyState>
       ) : (
         <>
-          <ul aria-label={t.list} className="border-t border-line">
+          <ul aria-label={t.list} className={listCardClass}>
             {rows.slice(0, shown).map((e) => (
               <li key={e.id} className="grid gap-0.5 border-b border-line py-3 text-sm">
                 <span className="wrap-anywhere">{auditSentence(e, locale)}</span>

@@ -10,6 +10,7 @@ import { formatProjectDateTime } from "@/features/projects/project-model";
 import type { Project, Registration } from "@/features/projects/types";
 import { confirmPaymentFor } from "../organizer-actions";
 import { paymentRow, takesPayment } from "../payment-rows";
+import { listCardClass } from "../../components/list-card";
 
 /**
  * Payments of the project (PLT-07): confirm that money arrived, until the QRIS webhook does it.
@@ -58,7 +59,7 @@ export function PaymentsTab({
         (!row ? (
           <EmptyState>{t.none}</EmptyState>
         ) : (
-          <ul className="border-t border-line">
+          <ul className={listCardClass}>
             <li className="flex flex-wrap items-start justify-between gap-x-4 gap-y-2 border-b border-line py-3">
               <div className="grid min-w-0 gap-0.5">
                 <span className="font-medium">{t.state[row.state]}</span>

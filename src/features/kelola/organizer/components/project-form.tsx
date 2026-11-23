@@ -23,6 +23,15 @@ import { fileStore } from "@/lib/files/store";
 import { discardImage } from "@/lib/files/store-image";
 import { CategoryFields, TextField, ZoneSelect, type FormApi } from "./form-fields";
 import { PosterField } from "./poster-field";
+import {
+  CalendarBlank,
+  Coins,
+  Image as ImageIcon,
+  Info,
+  ListChecks,
+  Scroll,
+} from "@phosphor-icons/react/dist/ssr";
+import { FieldGroup } from "../../components/field-group";
 
 const ORDER: (keyof ProjectInput | "block")[] = [
   "title",
@@ -39,15 +48,6 @@ const ORDER: (keyof ProjectInput | "block")[] = [
   "maxWorks",
   "block",
 ];
-
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <fieldset className="grid gap-4 border-t border-line pt-5">
-      <legend className="pr-2 heading-sm">{title}</legend>
-      {children}
-    </fieldset>
-  );
-}
 
 /**
  * Write a new draft or change a project written here (PRJ-03). Every failing rule shows at its
@@ -134,42 +134,42 @@ export function ProjectForm({
       )}
       {locked && <Notice>{format(t.locked, { n: String(registrants) })}</Notice>}
 
-      <Section title={t.sections.basics}>
+      <FieldGroup title={t.sections.basics} icon={Info}>
         <TextField api={api} name="title" />
         <TextField api={api} name="summary" />
         <TextField api={api} name="about" rows={5} />
         <TextField api={api} name="requirements" rows={4} />
-      </Section>
+      </FieldGroup>
 
-      <Section title={t.sections.poster}>
+      <FieldGroup title={t.sections.poster} icon={ImageIcon}>
         <PosterField api={api} savedId={savedPoster} />
-      </Section>
+      </FieldGroup>
 
-      <Section title={t.sections.schedule}>
+      <FieldGroup title={t.sections.schedule} icon={CalendarBlank}>
         <ZoneSelect api={api} disabled={locked} />
         {!isOpenService(input.category) && <TextField api={api} name="closesDate" type="date" />}
         <TextField api={api} name="milestones" rows={3} optional={input.category !== "kelas"} />
-      </Section>
+      </FieldGroup>
 
       {!isOpenService(input.category) && (
-        <Section title={t.sections.money}>
+        <FieldGroup title={t.sections.money} icon={Coins}>
           <TextField api={api} name="feeIdr" optional disabled={locked} />
           <TextField api={api} name="feeMyr" optional disabled={locked} />
           <TextField api={api} name="quota" optional />
-        </Section>
+        </FieldGroup>
       )}
 
       {takesSubmissions(input.category) && (
-        <Section title={t.sections.rules}>
+        <FieldGroup title={t.sections.rules} icon={ListChecks}>
           <TextField api={api} name="minWords" />
           <TextField api={api} name="maxWords" />
           <TextField api={api} name="maxWorks" />
-        </Section>
+        </FieldGroup>
       )}
 
-      <Section title={t.sections.special}>
+      <FieldGroup title={t.sections.special} icon={Scroll}>
         <TextField api={api} name="special" rows={3} optional />
-      </Section>
+      </FieldGroup>
 
       <CategoryFields api={api} />
 

@@ -1,16 +1,42 @@
 "use client";
 
+import { ArrowRight } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
-import type { CSSProperties } from "react";
+import type { CSSProperties, ReactNode } from "react";
+import {
+  AdminArt,
+  EditorArt,
+  JudgeArt,
+  MentorArt,
+  OrganizerArt,
+} from "@/components/illustrations/role-art";
+import { heroCardClass } from "@/components/ui/card";
 import { CountUp } from "@/components/ui/count-up";
 import { cn } from "@/lib/cn";
 import { useT } from "@/lib/i18n/provider";
 import { fill } from "@/features/studio/copy/fill";
 import type { Area } from "../access";
 import type { BandWork } from "../role-band";
-import { RoleMark } from "./role-mark";
 
 const step = (i: number) => ({ "--i": i }) as CSSProperties;
+
+/** One painted object per role (DESIGN.md 7.8, 7.10). */
+const ROLE_ART: Record<Area, (props: { className?: string }) => ReactNode> = {
+  editor: EditorArt,
+  juri: JudgeArt,
+  mentor: MentorArt,
+  organizer: OrganizerArt,
+  admin: AdminArt,
+};
+
+function RoleArt({ area, className }: { area: Area; className: string }) {
+  const Art = ROLE_ART[area];
+  return (
+    <span aria-hidden data-mark={area} className={cn("absolute -z-10", className)}>
+      <Art className="size-full" />
+    </span>
+  );
+}
 
 /** The number of work, or a dash while it loads. Hidden when the data cannot be read: the screen
  * under the band already says so. */
@@ -21,13 +47,13 @@ function WorkNumber({ work, unit, compact }: { work: BandWork; unit: string; com
   const Wrap = compact ? "span" : "p";
   return (
     <Wrap
-      className="flex flex-wrap items-baseline gap-x-3 gap-y-1"
+      className={cn("flex flex-wrap items-baseline gap-x-2.5 gap-y-1", compact && "max-w-[62%]")}
       aria-busy={work.status === "loading"}
     >
       <span
         className={cn(
-          "font-serif leading-[0.9] font-light tabular-nums",
-          compact ? "text-[44px]" : "text-[56px] md:text-[88px]",
+          "leading-[0.95] font-bold tracking-tight tabular-nums",
+          compact ? "text-[40px]" : "text-[56px] md:text-[72px]",
         )}
       >
         {work.status === "ready" ? <CountUp value={work.count} duration={1000} /> : "—"}
@@ -48,16 +74,15 @@ type Props = {
   titleId?: string;
   description?: string;
   work: BandWork;
-  people?: readonly ("full" | "ring")[];
   className?: string;
 };
 
 /**
- * The band that opens a management area (DESIGN.md 7.8): a dark surface with the role, the screen
- * title, one number of work that rolls in, the way into that work, and the role's mark. The way in
- * is a text link: the one filled button of the screen stays on the page surface.
+ * The hero card that opens a management area (DESIGN.md 7.8): the role, the screen title, one
+ * number of work that rolls in, the way into that work, and the role's illustration at the right.
+ * The way in is a quiet pill: the one filled button of the screen stays on the page.
  */
-export function RoleBand({ area, title, titleId, description, work, people, className }: Props) {
+export function RoleBand({ area, title, titleId, description, work, className }: Props) {
   const t = useT().kelolaShared.band;
   const copy = t.roles[area];
   const Title = titleId ? "h1" : "p";
@@ -66,18 +91,19 @@ export function RoleBand({ area, title, titleId, description, work, people, clas
       aria-label={titleId ? undefined : fill(t.sectionLabel, { role: copy.role })}
       aria-labelledby={titleId}
       data-band={area}
-      className={cn(
-        "theme-dark app-band grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-5 gap-y-5 p-5 text-ink md:p-8",
-        className,
-      )}
+      className={cn(heroCardClass, "grid gap-4 md:gap-5", className)}
     >
-      <div className="grid min-w-0 content-start gap-3">
+      <RoleArt
+        area={area}
+        className="right-0 bottom-0 h-[78%] w-[62%] max-md:top-3 max-md:bottom-auto max-md:h-[34%] max-md:w-[44%] max-md:opacity-60"
+      />
+      <div className="grid max-w-xl content-start gap-2">
         <p className="rm-rise-in text-sm font-medium text-ink-muted" style={step(-3)}>
           {fill(t.eyebrow, { role: copy.role })}
         </p>
         <Title
           id={titleId}
-          className="rm-rise-in font-serif text-[28px] leading-9 font-semibold text-balance md:text-[36px] md:leading-[44px]"
+          className="rm-rise-in text-[28px] leading-9 font-bold tracking-[-0.02em] text-balance md:text-[36px] md:leading-[44px]"
           style={step(-2)}
         >
           {title}
@@ -88,21 +114,19 @@ export function RoleBand({ area, title, titleId, description, work, people, clas
           </p>
         )}
       </div>
-      <RoleMark area={area} people={people} className="size-16 md:row-span-2 md:size-36" />
-      <div className="col-span-2 grid content-end justify-items-start gap-3 md:col-span-1">
+      <div className="grid content-end justify-items-start gap-3">
         <WorkNumber work={work} unit={copy.unit} />
         {work.status === "ready" && work.entry && (
           <Link
             href={work.entry.href}
-            className="group inline-flex items-center gap-1.5 text-sm font-medium text-ink underline-offset-4 hover:underline"
+            className="group inline-flex items-center gap-1.5 rounded-full bg-accent-subtle px-3.5 py-1.5 text-sm font-medium text-accent-ink no-underline transition-colors hover:bg-accent-subtle/70"
           >
             {work.entry.label}
-            <span
+            <ArrowRight
+              size={14}
               aria-hidden
-              className="transition-transform duration-200 group-hover:translate-x-1"
-            >
-              →
-            </span>
+              className="transition-transform duration-200 group-hover:translate-x-0.5"
+            />
           </Link>
         )}
       </div>
@@ -110,14 +134,13 @@ export function RoleBand({ area, title, titleId, description, work, people, clas
   );
 }
 
-/** The short band of one area on /kelola: the whole band is the link into the area. */
+/** The card of one area on /kelola: the whole card is the link into the area. */
 export function RoleBandLink({
   area,
   label,
   summary,
   href,
   work,
-  people,
   index = 0,
 }: {
   area: Area;
@@ -125,7 +148,6 @@ export function RoleBandLink({
   summary: string;
   href: string;
   work: BandWork;
-  people?: readonly ("full" | "ring")[];
   index?: number;
 }) {
   const copy = useT().kelolaShared.band.roles[area];
@@ -133,18 +155,21 @@ export function RoleBandLink({
     <Link
       href={href}
       data-band={area}
-      className="rm-row-in theme-dark app-band group grid grid-cols-[minmax(0,1fr)_auto] items-center gap-5 p-5 text-ink no-underline transition-transform duration-200 hover:-translate-y-0.5 md:p-6"
+      className={cn(
+        heroCardClass,
+        "rm-row-in group hover:shadow-lg grid content-between gap-4 no-underline transition-[translate,box-shadow] duration-200 motion-safe:hover:-translate-y-0.5 md:p-6",
+      )}
       style={step(index)}
     >
-      <span className="grid min-w-0 gap-2">
+      <RoleArt area={area} className="right-0 bottom-0 h-[58%] w-[46%] opacity-90" />
+      <span className="grid max-w-[70%] gap-1.5">
         <span className="text-sm font-medium text-ink-muted">{copy.role}</span>
-        <span className="font-serif text-[22px] leading-7 font-semibold group-hover:underline">
+        <span className="text-[22px] leading-7 font-bold tracking-[-0.01em] group-hover:underline">
           {label}
         </span>
         <span className="text-sm text-ink-soft">{summary}</span>
-        <WorkNumber work={work} unit={copy.unit} compact />
       </span>
-      <RoleMark area={area} people={people} className="size-16 md:size-24" />
+      <WorkNumber work={work} unit={copy.unit} compact />
     </Link>
   );
 }

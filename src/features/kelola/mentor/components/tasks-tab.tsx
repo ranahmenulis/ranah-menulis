@@ -15,6 +15,7 @@ import type { AssignmentSubmission, ClassContent } from "@/features/projects/kel
 import type { TimeZoneName } from "@/features/projects/types";
 import { pluralOf } from "../copy/mentor-copy";
 import { TaskDialog } from "./task-dialog";
+import { listCardClass } from "../../components/list-card";
 
 type Props = {
   slug: string;
@@ -78,7 +79,7 @@ export function TasksTab({
       <p role="status" className="min-h-5 text-sm">
         {said}
       </p>
-      <ul className="border-t border-line">
+      <ul className={listCardClass}>
         {content.modules.map(({ assignment, custom }) => {
           const task = custom ? tasks.find((t) => t.id === assignment.id) : undefined;
           const handed = countOf(assignment.id);

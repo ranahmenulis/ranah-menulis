@@ -14,7 +14,7 @@ export const kelolaOrganizer: typeof source = {
     filterLabel: "Filter projects",
     listLabel: "Project list",
     showActive: "See active projects",
-    row: "{category} · {status} · {registrants} participants on this device · {submissions} submissions",
+    row: "{category} · {registrants} participants on this device · {submissions} submissions",
     sampleSuffix: " · Sample project",
     filters: {
       aktif: "Active",

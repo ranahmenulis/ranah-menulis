@@ -37,8 +37,7 @@ function OrganizerBand(props: BandProps) {
   return <RoleBandLink {...useLink(props)} work={useOrganizerBand(props.stores.submissions)} />;
 }
 function AdminBand(props: BandProps) {
-  const { work, people } = useAdminBand(props.stores.posts);
-  return <RoleBandLink {...useLink(props)} work={work} people={people} />;
+  return <RoleBandLink {...useLink(props)} work={useAdminBand(props.stores.posts)} />;
 }
 
 const BANDS = {

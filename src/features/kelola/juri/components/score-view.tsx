@@ -11,6 +11,10 @@ import { FrozenText } from "../../components/frozen-text";
 import { contestHref } from "../area-hrefs";
 import { useJudgeWork } from "../use-judge-data";
 import { ScoreForm } from "./score-form";
+import { FileText } from "@phosphor-icons/react/dist/ssr";
+import { cardClass } from "@/components/ui/card";
+import { SectionIcon } from "@/components/ui/section-card";
+import { cn } from "@/lib/cn";
 
 /**
  * One work to score (LMB-01): the frozen text of its latest version and the form. In an anonymous
@@ -79,8 +83,9 @@ export function ScoreView({
           })}
         </p>
       </header>
-      <section aria-labelledby="naskah-title" className="grid gap-4 border-t border-line pt-6">
-        <h2 id="naskah-title" className="heading-md">
+      <section aria-labelledby="naskah-title" className={cn(cardClass, "grid min-w-0 gap-4")}>
+        <h2 id="naskah-title" className="flex items-center gap-2.5 heading-md">
+          <SectionIcon icon={FileText} />
           {c.manuscript}
         </h2>
         {version ? <FrozenText content={version.content} /> : <Notice>{c.noFrozen}</Notice>}

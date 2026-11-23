@@ -73,6 +73,7 @@ export function MentorClassView({ slug, store }: { slug: string; store?: Assignm
         </p>
       </header>
       <Tabs
+        variant="pill"
         label={t.classView.tabsLabel}
         value={tab}
         items={tabsOf(locale).map((t) => ({ ...t, href: classHref(slug, t.id) }))}

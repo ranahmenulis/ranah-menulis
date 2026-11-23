@@ -7,6 +7,10 @@ import { blockText, roleChangeBlock, type RuleBlock } from "../role-rules";
 import type { RoleGrant, Suspension } from "../role-store";
 import type { UserRow } from "../user-model";
 import { ME_ID } from "../../identity";
+import { ShieldCheck } from "@phosphor-icons/react/dist/ssr";
+import { cardClass } from "@/components/ui/card";
+import { SectionIcon } from "@/components/ui/section-card";
+import { cn } from "@/lib/cn";
 
 export type RoleAsk = { change: "grant" | "revoke"; role: ManagerRole };
 
@@ -39,8 +43,9 @@ export function RoleSection({
   const t = useT().kelolaAdmin;
   const locale = useLocale();
   return (
-    <section aria-labelledby="role-title" className="grid gap-2">
-      <h2 id="role-title" className="heading-md">
+    <section aria-labelledby="role-title" className={cn(cardClass, "grid min-w-0 gap-2")}>
+      <h2 id="role-title" className="flex items-center gap-2.5 heading-md">
+        <SectionIcon icon={ShieldCheck} />
         {t.user.roleTitle}
       </h2>
       <ul className="border-t border-line">

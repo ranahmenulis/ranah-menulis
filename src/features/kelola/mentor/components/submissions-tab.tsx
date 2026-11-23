@@ -1,5 +1,6 @@
 "use client";
 
+import { tableCardClass } from "../../components/list-card";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -82,59 +83,61 @@ export function SubmissionsTab({
           {mentorEmptyTextOf(filter, locale)}
         </EmptyState>
       ) : (
-        <table aria-label={label} className="w-full border-collapse text-sm max-sm:block">
-          <thead className="max-sm:sr-only">
-            <tr className="border-b border-line">
-              <th scope="col" className={th}>
-                {t.task}
-              </th>
-              <th scope="col" className={th}>
-                {t.participant}
-              </th>
-              <th scope="col" className={th}>
-                {t.status}
-              </th>
-              <th scope="col" className={th}>
-                {t.waitingSince}
-              </th>
-              <th scope="col" className={th}>
-                {t.version}
-              </th>
-            </tr>
-          </thead>
-          <tbody className="max-sm:block">
-            {shown.map((row) => (
-              <tr
-                key={row.id}
-                className="min-h-11 border-b border-line max-sm:grid max-sm:gap-0.5 max-sm:py-3"
-              >
-                <td className={`${td} min-w-0 sm:max-w-72`}>
-                  <Link
-                    href={handInHref(content.slug, row.id)}
-                    className="block font-medium wrap-anywhere text-ink no-underline hover:underline"
-                  >
-                    {row.title}
-                  </Link>
-                </td>
-                <td className={`${td} wrap-anywhere`}>{DUMMY_USER.name}</td>
-                <td className={td}>
-                  <span className="inline-flex flex-wrap items-center gap-2">
-                    <StatusTugas state={row.status} />
-                    {row.late && <span className="text-xs text-ink-muted">{t.late}</span>}
-                  </span>
-                </td>
-                <td className={`${td} text-ink-muted`}>
-                  <span className="sm:hidden">{t.waitingSince} </span>
-                  {sentAtText(row.since, locale)}
-                </td>
-                <td className={`${td} text-ink-muted tabular-nums`}>
-                  <span className="sm:hidden">{t.version} </span>
-                  {row.versions}
-                </td>
+        <div className={tableCardClass}>
+          <table aria-label={label} className="w-full border-collapse text-sm max-sm:block">
+            <thead className="max-sm:sr-only">
+              <tr className="border-b border-line">
+                <th scope="col" className={th}>
+                  {t.task}
+                </th>
+                <th scope="col" className={th}>
+                  {t.participant}
+                </th>
+                <th scope="col" className={th}>
+                  {t.status}
+                </th>
+                <th scope="col" className={th}>
+                  {t.waitingSince}
+                </th>
+                <th scope="col" className={th}>
+                  {t.version}
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="max-sm:block">
+              {shown.map((row) => (
+                <tr
+                  key={row.id}
+                  className="min-h-11 border-b border-line max-sm:grid max-sm:gap-0.5 max-sm:py-3"
+                >
+                  <td className={`${td} min-w-0 sm:max-w-72`}>
+                    <Link
+                      href={handInHref(content.slug, row.id)}
+                      className="block font-medium wrap-anywhere text-ink no-underline hover:underline"
+                    >
+                      {row.title}
+                    </Link>
+                  </td>
+                  <td className={`${td} wrap-anywhere`}>{DUMMY_USER.name}</td>
+                  <td className={td}>
+                    <span className="inline-flex flex-wrap items-center gap-2">
+                      <StatusTugas state={row.status} />
+                      {row.late && <span className="text-xs text-ink-muted">{t.late}</span>}
+                    </span>
+                  </td>
+                  <td className={`${td} text-ink-muted`}>
+                    <span className="sm:hidden">{t.waitingSince} </span>
+                    {sentAtText(row.since, locale)}
+                  </td>
+                  <td className={`${td} text-ink-muted tabular-nums`}>
+                    <span className="sm:hidden">{t.version} </span>
+                    {row.versions}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );

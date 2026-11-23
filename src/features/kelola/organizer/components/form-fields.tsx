@@ -3,6 +3,8 @@ import { CheckChoice } from "@/components/ui/choice";
 import { Field, Input, Select, Textarea, describedBy } from "@/components/ui/field";
 import { useT } from "@/lib/i18n/provider";
 import type { InputErrors, ProjectInput } from "../project-input";
+import { Stack } from "@phosphor-icons/react/dist/ssr";
+import { FieldGroup } from "../../components/field-group";
 
 export type FormApi = {
   input: ProjectInput;
@@ -56,8 +58,7 @@ export function CategoryFields({ api }: { api: FormApi }) {
   const t = useT().kelolaOrganizer.form;
   const blockError = errors.block;
   return (
-    <fieldset className="grid gap-4 border-t border-line pt-5">
-      <legend className="pr-2 heading-sm">{t.legend[input.category]}</legend>
+    <FieldGroup title={t.legend[input.category]} icon={Stack}>
       {blockError && (
         <p role="alert" className="text-sm text-danger">
           {blockError}
@@ -89,7 +90,7 @@ export function CategoryFields({ api }: { api: FormApi }) {
           />
         </>
       )}
-    </fieldset>
+    </FieldGroup>
   );
 }
 

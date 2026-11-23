@@ -101,10 +101,3 @@ export function adminWork(
   const count = cases.filter((c) => c.status === "baru").length;
   return ready(count, { label: entries(locale).admin, href: `${ADMIN_HREF}/moderasi` });
 }
-
-/** People drawn in the Admin mark: one dot each, the suspended ones as rings. */
-export const MARK_PEOPLE_MAX = 36;
-
-export function peopleDots(people: readonly { suspended: boolean }[]): ("full" | "ring")[] {
-  return people.slice(0, MARK_PEOPLE_MAX).map((p) => (p.suspended ? "ring" : "full"));
-}

@@ -15,6 +15,7 @@ import { useAllTestimonials } from "@/features/projects/kelas/testimonial-store"
 import type { Project } from "@/features/projects/types";
 import { ReasonDialog } from "../../components/reason-dialog";
 import { decideTestimonial, decisionText } from "../testimonial-actions";
+import { listCardClass } from "../../components/list-card";
 
 type Asking = { testimonial: Testimonial; hide: boolean };
 
@@ -60,7 +61,7 @@ export function TestimonialsTab({ project }: { project: Project }) {
       {list.length === 0 ? (
         <EmptyState>{t.empty}</EmptyState>
       ) : (
-        <ul className="border-t border-line">
+        <ul className={listCardClass}>
           {list.map((item) => {
             const hidden = isHidden(item.id, decisions);
             const last = latestDecision(item.id, decisions);

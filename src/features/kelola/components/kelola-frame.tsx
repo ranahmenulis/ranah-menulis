@@ -1,5 +1,14 @@
 "use client";
 
+import {
+  ChalkboardTeacher,
+  Kanban,
+  Scales,
+  ShieldCheck,
+  SquaresFour,
+  Tray,
+} from "@phosphor-icons/react/dist/ssr";
+import type { Icon } from "@phosphor-icons/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
@@ -9,18 +18,28 @@ import { cn } from "@/lib/cn";
 import { useT } from "@/lib/i18n/provider";
 import { useViewer } from "@/lib/viewer";
 import { useEffectiveRoles } from "@/features/kelola/use-effective-roles";
-import { KELOLA_HREF, areaOf, areasFor, canAccess } from "../access";
+import { KELOLA_HREF, areaOf, areasFor, canAccess, type Area } from "../access";
 import { AccessDenied } from "./access-denied";
 
+const ICONS: Record<Area | "ringkasan", Icon> = {
+  ringkasan: SquaresFour,
+  organizer: Kanban,
+  editor: Tray,
+  juri: Scales,
+  mentor: ChalkboardTeacher,
+  admin: ShieldCheck,
+};
+
+// A chip row below lg, a column of pills with icons from lg (like the Settings menu).
 const linkBase =
-  "inline-flex h-8 shrink-0 items-center rounded-full px-3.5 text-sm font-medium whitespace-nowrap no-underline lg:h-10 lg:rounded-none lg:px-3";
-const linkOn = "bg-ink text-on-ink lg:bg-transparent lg:text-ink";
+  "inline-flex h-8 shrink-0 items-center gap-2.5 rounded-full px-3.5 text-sm font-medium whitespace-nowrap no-underline transition-colors lg:h-10 lg:px-3";
+const linkOn = "bg-accent text-on-accent lg:bg-accent-subtle lg:text-accent-ink";
 const linkOff =
-  "bg-subtle text-ink hover:bg-line lg:bg-transparent lg:text-ink-muted lg:hover:bg-transparent lg:hover:text-ink";
+  "bg-subtle text-ink hover:bg-line lg:bg-transparent lg:font-normal lg:text-ink-soft lg:hover:bg-subtle lg:hover:text-ink";
 
 /**
- * Frame of every /kelola screen: a menu of the areas you hold (a column from lg, a sticky chip row
- * below) and the screen. Roles are known only in the browser, so the first render is a skeleton.
+ * Frame of every /kelola screen: a menu of the areas you hold (a column of pills with icons from
+ * lg, a sticky chip row below) and the screen. Roles are known only in the browser, so the first render is a skeleton.
  */
 export function KelolaFrame({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -46,11 +65,11 @@ export function KelolaFrame({ children }: { children: ReactNode }) {
   }
 
   const items = [
-    { id: "ringkasan", label: t.frame.summary, href: KELOLA_HREF },
+    { id: "ringkasan" as const, label: t.frame.summary, href: KELOLA_HREF },
     ...areas.map((a) => ({ id: a.id, label: t.areas[a.id].label, href: a.href })),
   ];
   return (
-    <div className="mx-auto grid w-full max-w-260 grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[14rem_minmax(0,1fr)] lg:gap-10">
+    <div className="mx-auto grid w-full max-w-320 grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[13rem_minmax(0,1fr)] lg:gap-8">
       <nav
         aria-label={t.frame.navLabel}
         className={cn(
@@ -58,8 +77,9 @@ export function KelolaFrame({ children }: { children: ReactNode }) {
           "lg:top-[calc(5.5rem+var(--safe-top))] lg:self-start lg:border-b-0",
         )}
       >
-        <ul className="scroll-edge-fade flex [scrollbar-width:none] gap-2 overflow-x-auto px-4 py-3 md:px-0 lg:grid lg:gap-0.5 lg:p-0 [&::-webkit-scrollbar]:hidden">
+        <ul className="scroll-edge-fade flex [scrollbar-width:none] gap-2 overflow-x-auto px-4 py-3 md:px-0 lg:grid lg:gap-1 lg:p-0 [&::-webkit-scrollbar]:hidden">
           {items.map((item) => {
+            const ItemIcon = ICONS[item.id];
             const on =
               item.href === KELOLA_HREF ? pathname === KELOLA_HREF : current?.id === item.id;
             return (
@@ -69,6 +89,7 @@ export function KelolaFrame({ children }: { children: ReactNode }) {
                   aria-current={on ? "page" : undefined}
                   className={cn(linkBase, on ? linkOn : linkOff)}
                 >
+                  <ItemIcon size={18} aria-hidden className="max-lg:hidden" />
                   {item.label}
                 </Link>
               </li>

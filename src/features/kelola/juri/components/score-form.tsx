@@ -20,6 +20,10 @@ import {
   type ScoreErrors,
 } from "../judge-model";
 import type { JuryScore } from "../score-store";
+import { ListChecks } from "@phosphor-icons/react/dist/ssr";
+import { cardClass } from "@/components/ui/card";
+import { SectionIcon } from "@/components/ui/section-card";
+import { cn } from "@/lib/cn";
 
 type Props = {
   slug: string;
@@ -76,13 +80,16 @@ export function ScoreForm({ slug, submissionId, criteria, judging, mine }: Props
     <form
       noValidate
       aria-label={t.aria}
-      className="grid gap-4 border-t border-line pt-6"
+      className={cn(cardClass, "grid min-w-0 gap-4")}
       onSubmit={(e) => {
         e.preventDefault();
         submit();
       }}
     >
-      <h2 className="heading-md">{t.heading}</h2>
+      <h2 className="flex items-center gap-2.5 heading-md">
+        <SectionIcon icon={ListChecks} />
+        {t.heading}
+      </h2>
       <Notice>{judgingLabel(judging, fmt.locale)}</Notice>
       {criteria.map(({ name, weight }) => {
         const id = `skor-${name}`;

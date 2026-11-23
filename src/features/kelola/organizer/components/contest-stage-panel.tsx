@@ -17,6 +17,10 @@ import { JudgingControls } from "./judging-controls";
 import { ResultsEditor } from "./results-editor";
 import type { Submission } from "@/features/projects/submission-types";
 import type { Project } from "@/features/projects/types";
+import { FlagCheckered } from "@phosphor-icons/react/dist/ssr";
+import { cardClass } from "@/components/ui/card";
+import { SectionIcon } from "@/components/ui/section-card";
+import { cn } from "@/lib/cn";
 
 const STEPS: { stage: Exclude<ContestStage, "terbuka"> }[] = [
   { stage: "dinilai" },
@@ -59,42 +63,45 @@ export function ContestStagePanel({
 
   return (
     <section aria-labelledby="tahap-title" className="grid max-w-170 gap-4">
-      <h2 id="tahap-title" className="heading-md">
-        {t.contest.title}
-      </h2>
-      <p className="text-sm">
-        {t.contest.now} <b className="font-medium">{stageLabel[stage]}</b>
-      </p>
-      <p className="text-xs text-ink-muted">
-        {format(t.contest.schedule, {
-          finalists:
-            dates.finalists === null
-              ? t.contest.noDate
-              : formatProjectDate(dates.finalists, project.timeZone, locale),
-          winners:
-            dates.winners === null
-              ? t.contest.noDate
-              : formatProjectDate(dates.winners, project.timeZone, locale),
-        })}
-      </p>
-      <p ref={line} tabIndex={-1} role="status" className="min-h-5 text-sm outline-none">
-        {said}
-      </p>
-      {next.length === 0 ? (
-        <Notice>{t.contest.ended}</Notice>
-      ) : (
-        <div className="flex flex-wrap gap-2">
-          {next.map((step, i) => (
-            <Button
-              key={step.stage}
-              variant={i === 0 ? "secondary" : "text"}
-              onClick={() => setAsking(step)}
-            >
-              {t.contest.steps[step.stage].label}
-            </Button>
-          ))}
-        </div>
-      )}
+      <div className={cn(cardClass, "grid gap-4")}>
+        <h2 id="tahap-title" className="flex items-center gap-2.5 heading-md">
+          <SectionIcon icon={FlagCheckered} />
+          {t.contest.title}
+        </h2>
+        <p className="text-sm">
+          {t.contest.now} <b className="font-medium">{stageLabel[stage]}</b>
+        </p>
+        <p className="text-xs text-ink-muted">
+          {format(t.contest.schedule, {
+            finalists:
+              dates.finalists === null
+                ? t.contest.noDate
+                : formatProjectDate(dates.finalists, project.timeZone, locale),
+            winners:
+              dates.winners === null
+                ? t.contest.noDate
+                : formatProjectDate(dates.winners, project.timeZone, locale),
+          })}
+        </p>
+        <p ref={line} tabIndex={-1} role="status" className="min-h-5 text-sm outline-none">
+          {said}
+        </p>
+        {next.length === 0 ? (
+          <Notice>{t.contest.ended}</Notice>
+        ) : (
+          <div className="flex flex-wrap gap-2">
+            {next.map((step, i) => (
+              <Button
+                key={step.stage}
+                variant={i === 0 ? "secondary" : "text"}
+                onClick={() => setAsking(step)}
+              >
+                {t.contest.steps[step.stage].label}
+              </Button>
+            ))}
+          </div>
+        )}
+      </div>
       <JudgingControls slug={project.slug} stage={stage} />
       <ResultsEditor project={project} stage={stage} works={works} />
       {asking && (
