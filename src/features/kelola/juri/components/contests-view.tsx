@@ -3,10 +3,12 @@
 import Link from "next/link";
 import { EmptyState, ErrorBanner, RetryButton, Skeleton } from "@/components/ui/states";
 import type { SubmissionStore } from "@/features/projects/storage/submission-store";
+import { fill } from "@/features/studio/copy/fill";
+import { useT, useLocale } from "@/lib/i18n/provider";
 import { RoleBand } from "../../components/role-band";
 import { bandFrom, judgeWork } from "../../role-band";
 import { contestHref } from "../area-hrefs";
-import { judgingText } from "../judge-model";
+import { judgingLabel } from "../judge-model";
 import { useJudgeContests } from "../use-judge-data";
 
 /**
@@ -14,28 +16,28 @@ import { useJudgeContests } from "../use-judge-data";
  * assigned to the viewer are listed.
  */
 export function ContestsView({ store }: { store?: SubmissionStore }) {
+  const t = useT().kelolaJuri.contests;
+  const locale = useLocale();
   const data = useJudgeContests({ store });
   const work = bandFrom(data, (d) => judgeWork(d.items));
   return (
     <section aria-labelledby="penilaian-title" className="grid max-w-170 gap-5">
       <RoleBand
         area="juri"
-        title="Penilaian"
+        title={t.title}
         titleId="penilaian-title"
-        description="Lomba yang ditugaskan kepadamu."
+        description={t.description}
         work={work}
       />
       {data.status === "error" ? (
-        <ErrorBanner action={<RetryButton onClick={data.reload} />}>
-          Lomba belum bisa dibuka karena data di perangkat ini tidak terbaca.
-        </ErrorBanner>
+        <ErrorBanner action={<RetryButton onClick={data.reload} />}>{t.loadError}</ErrorBanner>
       ) : data.status === "loading" ? (
-        <div role="status" aria-label="Memuat lomba" className="grid gap-3">
+        <div role="status" aria-label={t.loading} className="grid gap-3">
           <Skeleton className="h-16 w-full" />
           <Skeleton className="h-16 w-full" />
         </div>
       ) : data.items.length === 0 ? (
-        <EmptyState>Belum ada lomba yang ditugaskan kepadamu.</EmptyState>
+        <EmptyState>{t.empty}</EmptyState>
       ) : (
         <ul className="border-t border-line">
           {data.items.map(({ project, total, scored, judging }) => (
@@ -46,9 +48,9 @@ export function ContestsView({ store }: { store?: SubmissionStore }) {
               >
                 <span className="heading-sm wrap-anywhere">{project.title}</span>
                 <span className="text-sm text-ink-muted">
-                  {scored} dari {total} karya sudah kamu nilai
+                  {fill(t.progress, { scored: String(scored), total: String(total) })}
                 </span>
-                <span className="text-xs text-ink-muted">{judgingText[judging]}</span>
+                <span className="text-xs text-ink-muted">{judgingLabel(judging, locale)}</span>
               </Link>
             </li>
           ))}

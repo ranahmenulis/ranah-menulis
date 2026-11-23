@@ -1,7 +1,12 @@
+import type { Locale } from "@/lib/i18n/config";
+import { formatNumber } from "@/lib/i18n/format";
+import { fill } from "@/features/studio/copy/fill";
 import { stageRank } from "@/features/projects/lomba/contest-model";
 import type { ContestStage } from "@/features/projects/lomba/types";
 import type { Submission } from "@/features/projects/submission-types";
 import { canonicalId } from "../identity";
+import { juriCopy } from "./copy/juri-copy";
+import { kelolaJuri as idCopy } from "./copy/id";
 import type { JudgingEntry, JuryScore } from "./score-store";
 
 export const SCORE_MIN = 1;
@@ -37,11 +42,11 @@ export function judgingStatus(
   return stageRank(stage) >= stageRank("dinilai") ? "dibuka" : "belum-dibuka";
 }
 
-export const judgingText: Record<JudgingStatus, string> = {
-  "belum-dibuka": "Penilaian dimulai setelah penerimaan karya ditutup.",
-  dibuka: "Penilaian dibuka. Skormu bisa diubah sampai penilaian ditutup.",
-  ditutup: "Penilaian ditutup. Skor tidak bisa diubah lagi.",
-};
+/** Indonesian text; screens that follow the interface language use `judgingLabel`. */
+export const judgingText: Record<JudgingStatus, string> = idCopy.judging;
+
+export const judgingLabel = (status: JudgingStatus, locale: Locale = "id"): string =>
+  juriCopy(locale).judging[status];
 
 // ---- scores --------------------------------------------------------------------------------
 
@@ -52,18 +57,20 @@ export function validateScores(
   criteria: readonly Criterion[],
   input: Record<string, string>,
   note: string,
+  locale: Locale = "id",
 ): { errors: ScoreErrors; scores: Record<string, number> } {
+  const copy = juriCopy(locale);
   const errors: ScoreErrors = {};
   const scores: Record<string, number> = {};
   for (const { name } of criteria) {
     const text = (input[name] ?? "").trim();
     const value = /^\d{1,2}$/.test(text) ? Number(text) : NaN;
     if (!Number.isInteger(value) || value < SCORE_MIN || value > SCORE_MAX) {
-      errors[name] = `Isi angka bulat ${SCORE_MIN} sampai ${SCORE_MAX}.`;
+      errors[name] = fill(copy.scoreError, { min: String(SCORE_MIN), max: String(SCORE_MAX) });
     } else scores[name] = value;
   }
   if (note.trim().length > NOTE_LIMIT) {
-    errors.note = `Catatan paling banyak ${NOTE_LIMIT.toLocaleString("id-ID")} karakter.`;
+    errors.note = fill(copy.noteError, { limit: formatNumber(NOTE_LIMIT, locale) });
   }
   return { errors, scores };
 }
@@ -100,15 +107,16 @@ export function aggregateScore(
   return Math.round((each.reduce((a, b) => a + b, 0) / each.length) * 100) / 100;
 }
 
-export const scoreText = (value: number): string => value.toLocaleString("id-ID");
+export const scoreText = (value: number, locale: Locale = "id"): string =>
+  formatNumber(value, locale);
 
 // ---- the list ------------------------------------------------------------------------------
 
 export type JudgeFilter = "belum" | "sudah" | "semua";
 export const JUDGE_FILTERS: { id: JudgeFilter; label: string }[] = [
-  { id: "belum", label: "Belum dinilai" },
-  { id: "sudah", label: "Sudah dinilai" },
-  { id: "semua", label: "Semua" },
+  { id: "belum", label: idCopy.filters.belum },
+  { id: "sudah", label: idCopy.filters.sudah },
+  { id: "semua", label: idCopy.filters.semua },
 ];
 export const DEFAULT_JUDGE_FILTER: JudgeFilter = "belum";
 
@@ -135,10 +143,12 @@ export function judgeRows(
   works: readonly Submission[],
   scores: readonly JuryScore[],
   judgeId: string,
+  locale: Locale = "id",
 ): JudgeRow[] {
+  const { workLabel } = juriCopy(locale);
   return works.map((work, i) => ({
     id: work.id,
-    label: `Karya ${i + 1}`,
+    label: fill(workLabel, { n: String(i + 1) }),
     title: work.title,
     genre: work.genre,
     words: work.versions.at(-1)?.wordCount ?? 0,
@@ -157,8 +167,5 @@ export const countJudgeFilters = (rows: readonly JudgeRow[]): Record<JudgeFilter
   semua: rows.length,
 });
 
-export const judgeEmptyText: Record<JudgeFilter, string> = {
-  belum: "Semua karya sudah kamu nilai.",
-  sudah: "Belum ada karya yang kamu nilai.",
-  semua: "Belum ada karya yang dikirim ke lomba ini.",
-};
+/** Indonesian text; screens that follow the interface language use `juriCopy(locale).empty`. */
+export const judgeEmptyText: Record<JudgeFilter, string> = idCopy.empty;

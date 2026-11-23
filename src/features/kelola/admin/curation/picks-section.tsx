@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/field";
 import { IconButton } from "@/components/ui/icon-button";
+import { format, useLocale, useT } from "@/lib/i18n/provider";
 import { authorOf } from "@/features/community/post-model";
 import type { EditorPick } from "@/features/community/curation/picks-store";
 import type { Post } from "@/features/community/types";
@@ -24,26 +25,23 @@ export function PicksSection({
   posts: readonly Post[];
   report: Report;
 }) {
+  const t = useT().kelolaAdmin.curation.picks;
+  const locale = useLocale();
   const [query, setQuery] = useState("");
-  const rows = useMemo(() => pickRows(picks, posts), [picks, posts]);
+  const rows = useMemo(() => pickRows(picks, posts, locale), [picks, posts, locale]);
   const found = useMemo(() => candidates(posts, picks, query), [posts, picks, query]);
 
   return (
     <section aria-labelledby="picks-title" className="grid gap-4">
       <div className="grid gap-1">
         <h2 id="picks-title" className="heading-md">
-          Editor&apos;s Picks
+          {t.title}
         </h2>
-        <p className="text-sm text-ink-muted">
-          Tampil di kategori Editor&apos;s Picks di Community, sesuai urutan di sini. Kategori
-          disembunyikan bila daftar kosong.
-        </p>
+        <p className="text-sm text-ink-muted">{t.intro}</p>
       </div>
 
       {rows.length === 0 ? (
-        <p className="text-sm text-ink-muted">
-          Belum ada pilihan. Kategori Editor&apos;s Picks disembunyikan di Community.
-        </p>
+        <p className="text-sm text-ink-muted">{t.empty}</p>
       ) : (
         <ol className="grid">
           {rows.map((row, i) => (
@@ -53,19 +51,17 @@ export function PicksSection({
             >
               <div className="min-w-0 flex-1">
                 <p className="font-medium wrap-anywhere text-ink">{row.title}</p>
-                <p className="text-xs text-ink-muted">
-                  {row.shown ? row.author : "Tidak tampil: tulisan ini sudah tidak publik"}
-                </p>
+                <p className="text-xs text-ink-muted">{row.shown ? row.author : t.notShown}</p>
               </div>
               <IconButton
-                label={`Naikkan ${row.title}`}
+                label={format(t.up, { title: row.title })}
                 disabled={i === 0}
                 onClick={() => report(movePick(row.postId, -1))}
               >
                 <ArrowUp size={20} aria-hidden />
               </IconButton>
               <IconButton
-                label={`Turunkan ${row.title}`}
+                label={format(t.down, { title: row.title })}
                 disabled={i === rows.length - 1}
                 onClick={() => report(movePick(row.postId, 1))}
               >
@@ -74,27 +70,27 @@ export function PicksSection({
               <Button
                 variant="text"
                 size="sm"
-                aria-label={`Cabut ${row.title}`}
+                aria-label={format(t.removeAria, { title: row.title })}
                 onClick={() => report(removePick(row.postId), true)}
               >
-                Cabut
+                {t.remove}
               </Button>
             </li>
           ))}
         </ol>
       )}
 
-      <Field id="cari-pilihan" label="Tambah tulisan">
+      <Field id="cari-pilihan" label={t.addLabel}>
         <Input
           id="cari-pilihan"
           type="search"
           value={query}
-          placeholder="Judul atau nama penulis"
+          placeholder={t.addPlaceholder}
           onChange={(e) => setQuery(e.target.value)}
         />
       </Field>
       {found.length === 0 ? (
-        <p className="text-sm text-ink-muted">Tidak ada tulisan publik yang cocok.</p>
+        <p className="text-sm text-ink-muted">{t.noMatch}</p>
       ) : (
         <ul className="grid">
           {found.map((post) => (
@@ -106,10 +102,10 @@ export function PicksSection({
               <Button
                 variant="secondary"
                 size="sm"
-                aria-label={`Tambahkan ${post.title}`}
+                aria-label={format(t.addAria, { title: post.title })}
                 onClick={() => report(addPick(post.id, posts), true)}
               >
-                Tambah
+                {t.add}
               </Button>
             </li>
           ))}

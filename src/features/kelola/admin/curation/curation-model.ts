@@ -1,6 +1,8 @@
 import { authorOf } from "@/features/community/post-model";
 import type { EditorPick } from "@/features/community/curation/picks-store";
 import type { Post } from "@/features/community/types";
+import type { Locale } from "@/lib/i18n/config";
+import { adminCopy } from "../copy/admin-copy";
 import type { FeaturedProject } from "@/features/projects/featured-store";
 import type { ProjectFixture } from "@/features/projects/types";
 
@@ -13,14 +15,18 @@ export type PickRow = { postId: string; title: string; author: string; shown: bo
  * The picks as rows, in their order. A pick whose post is no longer public (hidden, deleted, made
  * private) stays in the list marked "not shown", so nothing leaves the list without a click.
  */
-export function pickRows(picks: readonly EditorPick[], posts: readonly Post[]): PickRow[] {
+export function pickRows(
+  picks: readonly EditorPick[],
+  posts: readonly Post[],
+  locale: Locale = "id",
+): PickRow[] {
   const byId = new Map(posts.map((p) => [p.id, p]));
   return picks.map((pick) => {
     const post = byId.get(pick.postId);
     const shown = post?.visibility === "publik";
     return {
       postId: pick.postId,
-      title: post?.title ?? pick.title ?? "Tulisan tidak tersedia",
+      title: post?.title ?? pick.title ?? adminCopy(locale).curation.unavailablePost,
       author: post ? authorOf(post.authorId).name : "",
       shown: shown === true,
     };

@@ -1,21 +1,23 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { MANAGER_ROLES, roleLabel, type ManagerRole } from "@/lib/roles";
-import { blockMessage, roleChangeBlock, type RuleBlock } from "../role-rules";
+import { format, useLocale, useT } from "@/lib/i18n/provider";
+import { MANAGER_ROLES, type ManagerRole } from "@/lib/roles";
+import { blockText, roleChangeBlock, type RuleBlock } from "../role-rules";
 import type { RoleGrant, Suspension } from "../role-store";
 import type { UserRow } from "../user-model";
 import { ME_ID } from "../../identity";
 
 export type RoleAsk = { change: "grant" | "revoke"; role: ManagerRole };
 
-/** What to show beside a role when the viewer cannot change it: short, not the full sentence. */
-const shortBlock: Partial<Record<RuleBlock, string>> = {
-  "hanya-super-admin": "Hanya Super Admin",
-  "target-tingkat-administrator": "Hanya Super Admin",
-  "super-admin-terakhir": "Super Admin terakhir",
-  "diri-sendiri": "Bukan untuk akunmu sendiri",
-};
+type ShortBlock = keyof ReturnType<typeof useT>["kelolaAdmin"]["user"]["short"];
+
+/** Blocks that get a short note beside the role instead of the full sentence. */
+const isShort = (block: RuleBlock): block is RuleBlock & ShortBlock =>
+  block === "hanya-super-admin" ||
+  block === "target-tingkat-administrator" ||
+  block === "super-admin-terakhir" ||
+  block === "diri-sendiri";
 
 /**
  * One row per management role: held or not, and the button that gives or takes it. The buttons only
@@ -34,10 +36,12 @@ export function RoleSection({
   suspensions: readonly Suspension[];
   onAsk: (ask: RoleAsk) => void;
 }) {
+  const t = useT().kelolaAdmin;
+  const locale = useLocale();
   return (
     <section aria-labelledby="role-title" className="grid gap-2">
       <h2 id="role-title" className="heading-md">
-        Role
+        {t.user.roleTitle}
       </h2>
       <ul className="border-t border-line">
         {MANAGER_ROLES.map((role) => {
@@ -54,21 +58,23 @@ export function RoleSection({
               className="flex min-h-12 flex-wrap items-center justify-between gap-x-4 gap-y-1 border-b border-line py-2"
             >
               <span className="text-sm">
-                <span className="font-medium">{roleLabel[role]}</span>
-                <span className="text-ink-muted"> · {holds ? "Dipegang" : "Tidak dipegang"}</span>
+                <span className="font-medium">{t.roles[role]}</span>
+                <span className="text-ink-muted"> · {holds ? t.user.held : t.user.notHeld}</span>
               </span>
               {block ? (
-                <span title={blockMessage[block]} className="text-xs text-ink-muted">
-                  {shortBlock[block] ?? "Tidak tersedia"}
+                <span title={blockText(block, locale)} className="text-xs text-ink-muted">
+                  {isShort(block) ? t.user.short[block] : t.user.unavailable}
                 </span>
               ) : (
                 <Button
                   variant={holds ? "danger-text" : "secondary"}
                   size="sm"
-                  aria-label={`${holds ? "Cabut" : "Beri"} role ${roleLabel[role]}`}
+                  aria-label={format(holds ? t.user.revokeAria : t.user.grantAria, {
+                    role: t.roles[role],
+                  })}
                   onClick={() => onAsk({ change, role })}
                 >
-                  {holds ? "Cabut" : "Beri"}
+                  {holds ? t.user.revoke : t.user.grant}
                 </Button>
               )}
             </li>

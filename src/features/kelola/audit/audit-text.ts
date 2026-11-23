@@ -1,67 +1,32 @@
-import { personLabel } from "../admin/people";
-import { roleLabel, type ManagerRole } from "@/lib/roles";
-import type { AuditAction, AuditEntry } from "./audit-log";
+import type { Locale } from "@/lib/i18n/config";
+import { fill } from "@/features/studio/copy/fill";
+import { personById } from "../admin/people";
+import { ME_ID, SETUP_ID } from "../identity";
+import type { AuditEntry } from "./audit-log";
+import { auditCopy } from "./copy/audit-copy";
 
-const roleName = (role: string | undefined) =>
-  role && role in roleLabel ? roleLabel[role as ManagerRole] : (role ?? "");
+type Copy = ReturnType<typeof auditCopy>;
 
-const contentName = (ref: string | undefined) =>
-  ref?.startsWith("comment:") ? "komentar" : "tulisan";
+const roleName = (copy: Copy, role: string | undefined) =>
+  role && role in copy.roles ? copy.roles[role as keyof Copy["roles"]] : (role ?? "");
 
-type Parts = {
-  actor: string;
-  target: string;
-  role: string;
-  project: string;
-  content: string;
-  label: string;
-};
-
-const SENTENCES: Record<AuditAction, (p: Parts) => string> = {
-  "role.grant": (p) => `${p.actor} memberi role ${p.role} kepada ${p.target}.`,
-  "role.revoke": (p) => `${p.actor} mencabut role ${p.role} dari ${p.target}.`,
-  "account.suspend": (p) => `${p.actor} menangguhkan akun ${p.target}.`,
-  "account.restore": (p) => `${p.actor} memulihkan akun ${p.target}.`,
-  "staff.assign": (p) => `${p.actor} menugaskan ${p.target} sebagai ${p.role} di ${p.project}.`,
-  "staff.unassign": (p) => `${p.actor} mencabut penugasan ${p.role} ${p.target} di ${p.project}.`,
-  "report.dismiss": (p) => `${p.actor} mengabaikan laporan atas ${p.content} ${p.target}.`,
-  "content.hide": (p) => `${p.actor} menyembunyikan ${p.content} ${p.target}.`,
-  "content.restore": (p) => `${p.actor} memulihkan ${p.content} ${p.target}.`,
-  "content.delete": (p) => `${p.actor} menghapus ${p.content} ${p.target}.`,
-  "contest.results.amend": (p) => `${p.actor} mengubah hasil lomba ${p.project} setelah diumumkan.`,
-  "contest.reopen": (p) => `${p.actor} membuka kembali penilaian lomba ${p.project}.`,
-  "pick.add": (p) => `${p.actor} menambahkan "${p.label}" ke Editor's Picks.`,
-  "pick.remove": (p) => `${p.actor} mencabut "${p.label}" dari Editor's Picks.`,
-  "pick.move": (p) => `${p.actor} mengubah urutan "${p.label}" di Editor's Picks.`,
-  "featured.add": (p) => `${p.actor} menandai ${p.project} sebagai proyek unggulan.`,
-  "featured.remove": (p) => `${p.actor} melepas ${p.project} dari proyek unggulan.`,
-  "setting.communityLink.set": (p) => `${p.actor} mengatur tautan komunitas.`,
-  "setting.communityLink.clear": (p) => `${p.actor} menghapus tautan komunitas.`,
-  "group.create": (p) => `${p.actor} membuat grup ${p.label}.`,
-  "group.update": (p) => `${p.actor} mengubah pengaturan grup ${p.label}.`,
-  "group.invite": (p) => `${p.actor} mengundang ${p.target} ke ${p.label}.`,
-  "group.join": (p) => `${p.actor} bergabung dengan ${p.label}.`,
-  "group.leave": (p) => `${p.actor} keluar dari ${p.label}.`,
-  "group.remove": (p) => `${p.actor} mengeluarkan ${p.target} dari ${p.label}.`,
-  "group.admin.grant": (p) => `${p.actor} menunjuk ${p.target} sebagai Admin Grup ${p.label}.`,
-  "group.admin.revoke": (p) => `${p.actor} mencabut peran Admin Grup ${p.label} dari ${p.target}.`,
-  "group.code": (p) => `${p.actor} mengganti kode undangan grup ${p.label}.`,
-  "group.post.hide": (p) => `${p.actor} menyembunyikan tulisan ${p.target} dari ${p.label}.`,
-  "event.create": (p) => `${p.actor} membuat event ${p.label}.`,
-  "event.update": (p) => `${p.actor} mengubah pengaturan event ${p.label}.`,
-  "testimonial.hide": (p) => `${p.actor} menyembunyikan testimoni ${p.label} di ${p.project}.`,
-  "testimonial.restore": (p) => `${p.actor} memulihkan testimoni ${p.label} di ${p.project}.`,
+const personName = (copy: Copy, id: string): string => {
+  if (id === SETUP_ID) return copy.names.setup;
+  const person = personById(id);
+  if (!person) return id;
+  return id === ME_ID ? `${person.name} ${copy.names.you}` : person.name;
 };
 
 /** One sentence per entry, from the actor's side: "Super Admin memberi Editor kepada Hafiz". */
-export function auditSentence(entry: AuditEntry): string {
-  return SENTENCES[entry.action]({
+export function auditSentence(entry: AuditEntry, locale: Locale = "id"): string {
+  const copy = auditCopy(locale);
+  return fill(copy.sentences[entry.action], {
     // A reopening read from the judging log does not say who did it; only Administrators can.
-    actor: entry.actorId === "" ? "Administrator" : personLabel(entry.actorId),
-    target: entry.targetId ? personLabel(entry.targetId) : "",
-    role: roleName(entry.role),
-    project: entry.slug ?? "proyek",
-    content: contentName(entry.ref),
-    label: entry.label ?? "tulisan",
+    actor: entry.actorId === "" ? copy.names.administrator : personName(copy, entry.actorId),
+    target: entry.targetId ? personName(copy, entry.targetId) : "",
+    role: roleName(copy, entry.role),
+    project: entry.slug ?? copy.names.project,
+    content: entry.ref?.startsWith("comment:") ? copy.names.comment : copy.names.post,
+    label: entry.label ?? copy.names.post,
   });
 }

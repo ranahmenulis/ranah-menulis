@@ -6,7 +6,8 @@ import { useMemo, useState } from "react";
 import { Chip } from "@/components/ui/chip";
 import { Field, Input } from "@/components/ui/field";
 import { EmptyState } from "@/components/ui/states";
-import { MANAGER_ROLES, roleLabel } from "@/lib/roles";
+import { useT } from "@/lib/i18n/provider";
+import { MANAGER_ROLES } from "@/lib/roles";
 import { ADMIN_HREF, userHref } from "../area-hrefs";
 import { useAdminUsers } from "../use-admin-data";
 import { filterUsers, parseRoleFilter, usersQuery, type RoleFilter } from "../user-model";
@@ -16,6 +17,8 @@ import { filterUsers, parseRoleFilter, usersQuery, type RoleFilter } from "../us
  * linked. Who may change what is decided on the person's own screen.
  */
 export function UsersView() {
+  const copy = useT().kelolaAdmin;
+  const t = copy.users;
   const rows = useAdminUsers();
   const params = useSearchParams();
   const askedRole = params?.get("peran") ?? null;
@@ -41,35 +44,33 @@ export function UsersView() {
     <section aria-labelledby="pengguna-title" className="grid gap-5">
       <div className="grid gap-1">
         <h1 id="pengguna-title" className="heading-lg">
-          Pengguna dan role
+          {t.title}
         </h1>
-        <p className="text-sm text-ink-muted">
-          Beri atau cabut role, dan tangguhkan akun. Setiap perubahan dicatat.
-        </p>
+        <p className="text-sm text-ink-muted">{t.intro}</p>
       </div>
-      <Field id="cari-pengguna" label="Cari pengguna">
+      <Field id="cari-pengguna" label={t.searchLabel}>
         <Input
           id="cari-pengguna"
           type="search"
           value={q}
-          placeholder="Nama atau nama pengguna"
+          placeholder={t.searchPlaceholder}
           onChange={(e) => change(e.target.value, role)}
         />
       </Field>
-      <div role="group" aria-label="Saring menurut role" className="flex flex-wrap gap-2">
+      <div role="group" aria-label={t.filterLabel} className="flex flex-wrap gap-2">
         <Chip pressed={role === "semua"} onClick={() => change(q, "semua")}>
-          Semua
+          {t.all}
         </Chip>
         {MANAGER_ROLES.map((r) => (
           <Chip key={r} pressed={role === r} onClick={() => change(q, r)}>
-            {roleLabel[r]}
+            {copy.roles[r]}
           </Chip>
         ))}
       </div>
       {shown.length === 0 ? (
-        <EmptyState>Tidak ada pengguna yang cocok.</EmptyState>
+        <EmptyState>{t.none}</EmptyState>
       ) : (
-        <ul aria-label="Pengguna" className="border-t border-line">
+        <ul aria-label={t.listLabel} className="border-t border-line">
           {shown.map((u) => (
             <li key={u.id} className="border-b border-line">
               <Link
@@ -79,14 +80,12 @@ export function UsersView() {
                 <span className="font-medium wrap-anywhere text-ink">
                   {u.name}
                   {u.suspended && (
-                    <span className="font-normal text-ink-muted"> · Ditangguhkan</span>
+                    <span className="font-normal text-ink-muted"> · {t.suspendedTag}</span>
                   )}
                 </span>
                 <span className="text-xs text-ink-muted">
                   @{u.handle} ·{" "}
-                  {u.roles.length === 0
-                    ? "Tanpa role"
-                    : u.roles.map((r) => roleLabel[r]).join(", ")}
+                  {u.roles.length === 0 ? t.noRole : u.roles.map((r) => copy.roles[r]).join(", ")}
                 </span>
               </Link>
             </li>

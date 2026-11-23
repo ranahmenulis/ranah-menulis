@@ -1,4 +1,6 @@
 import { NO_ROLES, isPlatformAdmin, type ManagerRole } from "@/lib/roles";
+import type { Locale } from "@/lib/i18n/config";
+import { adminCopy } from "./copy/admin-copy";
 import type { RoleGrant, Suspension } from "./role-store";
 
 /**
@@ -21,18 +23,25 @@ export type RuleBlock =
   | "sudah-ditangguhkan"
   | "tidak-ditangguhkan";
 
-export const blockMessage: Record<RuleBlock, string> = {
-  "bukan-wewenang": "Hanya Administrator dan Super Admin yang bisa mengubah role.",
-  "hanya-super-admin": "Hanya Super Admin yang bisa memberi atau mencabut role ini.",
-  "target-tingkat-administrator":
-    "Pengguna ini memegang role tingkat Administrator. Hanya Super Admin yang bisa mengubahnya.",
-  "diri-sendiri": "Kamu tidak bisa melakukan ini pada akunmu sendiri.",
-  "sudah-memegang": "Pengguna ini sudah memegang role itu.",
-  "tidak-memegang": "Pengguna ini tidak memegang role itu lagi.",
-  "super-admin-terakhir": "Sistem harus menyisakan minimal satu Super Admin aktif.",
-  "sudah-ditangguhkan": "Akun ini sudah ditangguhkan.",
-  "tidak-ditangguhkan": "Akun ini tidak sedang ditangguhkan.",
-};
+const BLOCKS: readonly RuleBlock[] = [
+  "bukan-wewenang",
+  "hanya-super-admin",
+  "target-tingkat-administrator",
+  "diri-sendiri",
+  "sudah-memegang",
+  "tidak-memegang",
+  "super-admin-terakhir",
+  "sudah-ditangguhkan",
+  "tidak-ditangguhkan",
+];
+
+/** The Indonesian sentence for each block; screens use `blockText` with the interface language. */
+export const blockMessage = Object.fromEntries(
+  BLOCKS.map((block) => [block, adminCopy("id").results[block]]),
+) as Record<RuleBlock, string>;
+
+export const blockText = (block: RuleBlock, locale: Locale = "id"): string =>
+  adminCopy(locale).results[block];
 
 type Context = {
   actorRoles: readonly ManagerRole[];

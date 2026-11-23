@@ -9,12 +9,11 @@ import { contentState } from "@/features/community/moderation/removed";
 import { isPlatformAdmin } from "@/lib/roles";
 import { appendAudit, type AuditAction } from "../../audit/audit-log";
 import { ME_ID } from "../../identity";
-import { reasonMessage, validateReason } from "../../reason";
+import { REASON_LIMIT, validateReason } from "../../reason";
+import { formatNumber } from "@/lib/i18n/format";
 import { readEffectiveRoles } from "../../use-effective-roles";
-import { REASON_EMPTY, suspendUser, type AdminResult } from "../admin-actions";
-import { allowedDecisions, decisionLabel, decisionNeedsReason } from "./moderation-model";
-
-const refuse = (message: string): AdminResult => ({ ok: false, message });
+import { done, refuse, suspendUser, type AdminResult } from "../admin-actions";
+import { allowedDecisions, decisionNeedsReason } from "./moderation-model";
 
 const AUDIT_OF: Record<Exclude<Decision, "tangguhkan">, AuditAction> = {
   abaikan: "report.dismiss",
@@ -36,17 +35,21 @@ export function decideCase(
   reason = "",
 ): AdminResult {
   if (!isPlatformAdmin(readEffectiveRoles())) {
-    return refuse("Hanya Administrator dan Super Admin yang bisa memutuskan laporan.");
+    return refuse("moderationNotAllowed");
   }
   if (!reports.read().some((r) => r.kind === kind && r.targetId === targetId)) {
-    return refuse("Laporan ini tidak ditemukan.");
+    return refuse("reportGone");
   }
   const entries = moderation.read();
   if (!allowedDecisions(contentState(entries, kind, targetId)).includes(decision)) {
-    return refuse("Keputusan ini tidak bisa diambil lagi untuk konten ini.");
+    return refuse("decisionUnavailable");
   }
   const found = validateReason(reason, decisionNeedsReason(decision));
-  if (found) return refuse(found === "kosong" ? REASON_EMPTY : reasonMessage[found]);
+  if (found) {
+    return found === "kosong"
+      ? refuse("reasonEmpty")
+      : refuse("reasonTooLong", { limit: formatNumber(REASON_LIMIT, "id") });
+  }
 
   const note = reason.trim();
   const authorId = contentAuthor(kind, targetId);
@@ -68,5 +71,5 @@ export function decideCase(
     ...entries,
     { kind, targetId, decision, by: ME_ID, at: Date.now(), reason: note || undefined },
   ]);
-  return { ok: true, message: `${decisionLabel[decision]}: selesai.` };
+  return done("decided", { decision });
 }

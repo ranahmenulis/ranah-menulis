@@ -1,4 +1,4 @@
-import { REPORT_REASON_LABEL } from "@/features/community/moderation/reasons";
+import { REPORT_REASON_LABEL, reportReasonLabel } from "@/features/community/moderation/reasons";
 import { applyDecision, type ContentState } from "@/features/community/moderation/removed";
 import type {
   Decision,
@@ -7,7 +7,9 @@ import type {
   ReportKind,
 } from "@/features/community/moderation/report-store";
 import type { Comment, Post, ReportReason } from "@/features/community/types";
+import type { Locale } from "@/lib/i18n/config";
 import { ADMIN_HREF } from "../area-hrefs";
+import { moderationCopy } from "../copy/admin-copy";
 
 /**
  * The moderation queue (PLT-06). One case per reported content; reports on the same content are
@@ -19,7 +21,9 @@ export const caseKey = (kind: ReportKind, targetId: string) => `${kind}:${target
 export const caseHref = (kind: ReportKind, targetId: string) =>
   `${MODERATION_HREF}/${encodeURIComponent(caseKey(kind, targetId))}`;
 
+/** Indonesian labels; screens use `reportReasonLabel` with the interface language. */
 export const reasonLabel = REPORT_REASON_LABEL;
+export { reportReasonLabel };
 
 export type CaseStatus = "baru" | "selesai";
 
@@ -92,10 +96,14 @@ export function buildCases(
 
 export type CaseFilter = "baru" | "selesai" | "semua";
 export const CASE_FILTERS: readonly { id: CaseFilter; label: string }[] = [
-  { id: "baru", label: "Baru" },
-  { id: "selesai", label: "Selesai" },
-  { id: "semua", label: "Semua" },
+  { id: "baru", label: moderationCopy("id").filters.baru },
+  { id: "selesai", label: moderationCopy("id").filters.selesai },
+  { id: "semua", label: moderationCopy("id").filters.semua },
 ];
+
+/** The filter chips with labels in the interface language. */
+export const caseFilters = (locale: Locale = "id") =>
+  CASE_FILTERS.map((f) => ({ id: f.id, label: moderationCopy(locale).filters[f.id] }));
 
 export const parseCaseFilter = (raw: string | null): CaseFilter =>
   CASE_FILTERS.some((f) => f.id === raw) ? (raw as CaseFilter) : "baru";
@@ -113,11 +121,7 @@ export function countCases(rows: readonly CaseRow[]): Record<CaseFilter, number>
   };
 }
 
-export const emptyText: Record<CaseFilter, string> = {
-  baru: "Tidak ada laporan baru.",
-  selesai: "Belum ada kasus yang selesai.",
-  semua: "Belum ada laporan.",
-};
+export const emptyText: Record<CaseFilter, string> = moderationCopy("id").empty;
 
 /** What a moderator may do next. A deleted content is final; only the author can still be acted on. */
 export function allowedDecisions(state: ContentState): Decision[] {
@@ -130,19 +134,10 @@ export function allowedDecisions(state: ContentState): Decision[] {
 export const decisionNeedsReason = (decision: Decision) =>
   decision !== "abaikan" && decision !== "pulihkan";
 
-export const decisionLabel: Record<Decision, string> = {
-  abaikan: "Abaikan laporan",
-  sembunyikan: "Sembunyikan",
-  hapus: "Hapus",
-  pulihkan: "Pulihkan",
-  tangguhkan: "Tangguhkan penulis",
-};
+/** Indonesian labels; screens use the `moderationCopy(locale)` tables. */
+export const decisionLabel: Record<Decision, string> = moderationCopy("id").decisions;
 
-export const stateLabel: Record<ContentState, string> = {
-  tampil: "Tampil",
-  disembunyikan: "Disembunyikan",
-  dihapus: "Dihapus",
-};
+export const stateLabel: Record<ContentState, string> = moderationCopy("id").states;
 
 /** The content a case is about, found among everything Community holds. */
 export type CaseContent = {
@@ -159,6 +154,7 @@ export function contentOf(
   targetId: string,
   posts: readonly Post[],
   comments: readonly Comment[],
+  locale: Locale = "id",
 ): CaseContent | null {
   if (kind === "post") {
     const post = posts.find((p) => p.id === targetId);
@@ -175,7 +171,7 @@ export function contentOf(
   const post = posts.find((p) => p.id === comment.postId);
   return {
     authorId: comment.authorId,
-    title: post?.title ?? "Tulisan tidak ditemukan",
+    title: post?.title ?? moderationCopy(locale).postMissing,
     text: comment.text,
     href: post ? `/postingan/${post.id}` : null,
   };

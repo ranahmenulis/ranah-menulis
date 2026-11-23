@@ -4,12 +4,15 @@ import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Field, Input, Textarea, describedBy } from "@/components/ui/field";
 import { Notice } from "@/components/ui/states";
+import { fill } from "@/features/studio/copy/fill";
+import { useFormat } from "@/lib/i18n/use-format";
+import { useT } from "@/lib/i18n/provider";
 import { saveJuryScore } from "../judge-actions";
 import {
   NOTE_LIMIT,
   SCORE_MAX,
   SCORE_MIN,
-  judgingText,
+  judgingLabel,
   scoreText,
   weightedScore,
   type Criterion,
@@ -32,6 +35,8 @@ type Props = {
  * the page says why (BR-PRJ-09); the closing is read again when the button is pressed.
  */
 export function ScoreForm({ slug, submissionId, criteria, judging, mine }: Props) {
+  const t = useT().kelolaJuri.form;
+  const fmt = useFormat();
   const [input, setInput] = useState<Record<string, string>>(() =>
     Object.fromEntries(
       criteria.map((c) => [c.name, mine ? String(mine.scores[c.name] ?? "") : ""]),
@@ -44,14 +49,23 @@ export function ScoreForm({ slug, submissionId, criteria, judging, mine }: Props
   const locked = judging !== "dibuka";
 
   function submit() {
-    const result = saveJuryScore({ slug, submissionId, criteria }, input, note, Date.now());
+    const result = saveJuryScore(
+      { slug, submissionId, criteria },
+      input,
+      note,
+      Date.now(),
+      fmt.locale,
+    );
     if (result.ok) {
       setErrors({});
       const total = weightedScore(criteria, result.score.scores);
-      setSaid(`Penilaian disimpan.${total === null ? "" : ` Skormu ${scoreText(total)}.`}`);
+      setSaid(
+        t.saved +
+          (total === null ? "" : fill(t.savedScore, { score: scoreText(total, fmt.locale) })),
+      );
       return;
     }
-    setSaid(result.reason === "ditutup" ? judgingText.ditutup : "");
+    setSaid(result.reason === "ditutup" ? judgingLabel("ditutup", fmt.locale) : "");
     setErrors(result.errors);
     const first = [...criteria.map((c) => c.name), "note"].find((k) => result.errors[k]);
     if (first) document.getElementById(`skor-${first}`)?.focus();
@@ -61,15 +75,15 @@ export function ScoreForm({ slug, submissionId, criteria, judging, mine }: Props
   return (
     <form
       noValidate
-      aria-label="Penilaian karya"
+      aria-label={t.aria}
       className="grid gap-4 border-t border-line pt-6"
       onSubmit={(e) => {
         e.preventDefault();
         submit();
       }}
     >
-      <h2 className="heading-md">Penilaianmu</h2>
-      <Notice>{judgingText[judging]}</Notice>
+      <h2 className="heading-md">{t.heading}</h2>
+      <Notice>{judgingLabel(judging, fmt.locale)}</Notice>
       {criteria.map(({ name, weight }) => {
         const id = `skor-${name}`;
         const error = errors[name];
@@ -77,8 +91,8 @@ export function ScoreForm({ slug, submissionId, criteria, judging, mine }: Props
           <Field
             key={name}
             id={id}
-            label={`${name} (bobot ${weight}%)`}
-            hint={`Angka bulat ${SCORE_MIN} sampai ${SCORE_MAX}.`}
+            label={fill(t.criterion, { name, weight: String(weight) })}
+            hint={fill(t.hint, { min: String(SCORE_MIN), max: String(SCORE_MAX) })}
             error={error}
           >
             <Input
@@ -95,9 +109,9 @@ export function ScoreForm({ slug, submissionId, criteria, judging, mine }: Props
       })}
       <Field
         id="skor-note"
-        label="Catatan"
+        label={t.note}
         optional
-        hint={`Paling banyak ${NOTE_LIMIT.toLocaleString("id-ID")} karakter.`}
+        hint={fill(t.noteHint, { limit: fmt.number(NOTE_LIMIT) })}
         error={errors.note}
       >
         <Textarea
@@ -115,7 +129,7 @@ export function ScoreForm({ slug, submissionId, criteria, judging, mine }: Props
       </p>
       {!locked && (
         <Button type="submit" className="justify-self-start">
-          Simpan penilaian
+          {t.submit}
         </Button>
       )}
     </form>

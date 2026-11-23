@@ -124,6 +124,7 @@ export function GroupManagement({
   onResult: (result: GroupResult, focus?: boolean) => void;
 }) {
   const t = useT().groups.manage;
+  const locale = useLocale();
   const reasonEmpty = useT().groups.messages.reasonEmpty;
   const [ask, setAsk] = useState<ManagementAction | null>(null);
   const close = () => setAsk(null);
@@ -157,7 +158,7 @@ export function GroupManagement({
       {group.invites.length > 0 && (
         <p className="text-sm wrap-anywhere text-ink-muted">
           {format(t.waiting, {
-            names: group.invites.map((invite) => personLabel(invite.authorId)).join(", "),
+            names: group.invites.map((invite) => personLabel(invite.authorId, locale)).join(", "),
           })}
         </p>
       )}
@@ -170,7 +171,7 @@ export function GroupManagement({
               className="flex flex-wrap items-center justify-between gap-2 py-2"
             >
               <p className="min-w-0 text-sm wrap-anywhere">
-                {personLabel(member.authorId)}
+                {personLabel(member.authorId, locale)}
                 {member.admin && ` · ${t.adminTag}`}
               </p>
               <div className="flex flex-wrap gap-1">
@@ -179,7 +180,9 @@ export function GroupManagement({
                     <Button
                       variant="text"
                       size="sm"
-                      aria-label={format(t.revokeAria, { name: personLabel(member.authorId) })}
+                      aria-label={format(t.revokeAria, {
+                        name: personLabel(member.authorId, locale),
+                      })}
                       onClick={() => setAsk({ type: "revoke", member })}
                     >
                       {t.revoke}
@@ -188,7 +191,9 @@ export function GroupManagement({
                     <Button
                       variant="secondary"
                       size="sm"
-                      aria-label={format(t.grantAria, { name: personLabel(member.authorId) })}
+                      aria-label={format(t.grantAria, {
+                        name: personLabel(member.authorId, locale),
+                      })}
                       onClick={() => onResult(setGroupAdmin(group.id, member.authorId, true), true)}
                     >
                       {t.grant}
@@ -198,7 +203,9 @@ export function GroupManagement({
                   <Button
                     variant="danger-text"
                     size="sm"
-                    aria-label={format(t.removeAria, { name: personLabel(member.authorId) })}
+                    aria-label={format(t.removeAria, {
+                      name: personLabel(member.authorId, locale),
+                    })}
                     onClick={() => setAsk({ type: "remove", member })}
                   >
                     {t.remove}
@@ -244,7 +251,7 @@ export function GroupManagement({
           confirmLabel={t.remove}
           emptyMessage={reasonEmpty}
           busy={false}
-          hint={format(t.removeHint, { name: personLabel(ask.member.authorId) })}
+          hint={format(t.removeHint, { name: personLabel(ask.member.authorId, locale) })}
           onClose={close}
           onConfirm={(reason) =>
             complete(removeGroupMember(group.id, ask.member.authorId, reason), true)
@@ -257,7 +264,7 @@ export function GroupManagement({
           confirmLabel={t.revoke}
           emptyMessage={reasonEmpty}
           busy={false}
-          hint={format(t.revokeHint, { name: personLabel(ask.member.authorId) })}
+          hint={format(t.revokeHint, { name: personLabel(ask.member.authorId, locale) })}
           onClose={close}
           onConfirm={(reason) =>
             complete(setGroupAdmin(group.id, ask.member.authorId, false, reason), true)

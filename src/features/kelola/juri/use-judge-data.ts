@@ -1,6 +1,8 @@
 "use client";
 
 import { useMemo } from "react";
+import { useLocale } from "@/lib/i18n/provider";
+import { fill } from "@/features/studio/copy/fill";
 import { contestStage } from "@/features/projects/lomba/contest-model";
 import { useContestOverrides } from "@/features/projects/lomba/stage-store";
 import type { SubmissionStore } from "@/features/projects/storage/submission-store";
@@ -11,6 +13,7 @@ import { useProjects } from "@/features/projects/use-projects";
 import { useSubmissions } from "@/features/projects/use-submissions";
 import { useEffectiveRoles } from "@/features/kelola/use-effective-roles";
 import { useStaffAssignments } from "../staff-assignments";
+import { juriCopy } from "./copy/juri-copy";
 import { judgeAccess, type JudgeAccess } from "./judge-access";
 import {
   judgeRows,
@@ -102,6 +105,7 @@ export type JudgeContestData =
 /** One contest the viewer may judge: its works as rows, without any author. */
 export function useJudgeContest(slug: string, sources: Sources = {}): JudgeContestData {
   const { catalog, submissions, roles, assigned, scores, log, overrides } = useJudging(sources);
+  const locale = useLocale();
   return useMemo<JudgeContestData>(() => {
     if (submissions.status === "error") return { status: "error", reload: submissions.reload };
     if (catalog.status === "loading" || submissions.status === "loading") {
@@ -118,9 +122,9 @@ export function useJudgeContest(slug: string, sources: Sources = {}): JudgeConte
       criteria: criteriaOf(project),
       anonymous: anonymousOf(project),
       judging: judgingStatus(stage, log, slug),
-      rows: judgeRows(judgeableWorks(submissions.submissions, slug), scores, JUDGE_ID),
+      rows: judgeRows(judgeableWorks(submissions.submissions, slug), scores, JUDGE_ID, locale),
     };
-  }, [catalog, submissions, roles, assigned, scores, log, overrides, slug]);
+  }, [catalog, submissions, roles, assigned, scores, log, overrides, slug, locale]);
 }
 
 export type JudgeWorkData =
@@ -142,6 +146,7 @@ export type JudgeWorkData =
 export function useJudgeWork(slug: string, id: string, sources: Sources = {}): JudgeWorkData {
   const contest = useJudgeContest(slug, sources);
   const { submissions } = useJudging(sources);
+  const locale = useLocale();
   return useMemo<JudgeWorkData>(() => {
     if (contest.status !== "ready") return contest;
     if (submissions.status !== "ready") return { status: "loading" };
@@ -152,8 +157,8 @@ export function useJudgeWork(slug: string, id: string, sources: Sources = {}): J
     return {
       ...rest,
       work: works[index],
-      label: `Karya ${index + 1}`,
+      label: fill(juriCopy(locale).workLabel, { n: String(index + 1) }),
       mine: rows[index].mine,
     };
-  }, [contest, submissions, slug, id]);
+  }, [contest, submissions, slug, id, locale]);
 }

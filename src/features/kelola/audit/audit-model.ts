@@ -1,20 +1,15 @@
 import type { JudgingEntry } from "../juri/score-store";
 import type { AuditAction, AuditEntry } from "./audit-log";
+import { kelolaAudit as idCopy } from "./copy/id";
 
 /** Groups the audit log can be narrowed to (PLT-05). */
 export type AuditKind =
   "semua" | "role" | "penugasan" | "moderasi" | "lomba" | "kurasi" | "grup" | "event";
 
-export const AUDIT_KINDS: readonly { id: AuditKind; label: string }[] = [
-  { id: "semua", label: "Semua" },
-  { id: "role", label: "Role dan akun" },
-  { id: "penugasan", label: "Penugasan" },
-  { id: "moderasi", label: "Moderasi" },
-  { id: "lomba", label: "Lomba" },
-  { id: "kurasi", label: "Kurasi dan pengaturan" },
-  { id: "grup", label: "Grup" },
-  { id: "event", label: "Event" },
-];
+/** Indonesian labels; the view reads the labels of the interface language from the dictionary. */
+export const AUDIT_KINDS: readonly { id: AuditKind; label: string }[] = (
+  Object.keys(idCopy.kinds) as AuditKind[]
+).map((id) => ({ id, label: idCopy.kinds[id] }));
 
 const KIND_OF: Record<AuditAction, Exclude<AuditKind, "semua">> = {
   "role.grant": "role",

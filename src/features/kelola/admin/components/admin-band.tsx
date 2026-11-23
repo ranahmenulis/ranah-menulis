@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import { ADMIN_GROUPS_HREF } from "@/features/community/groups/group-model";
 import type { PostStore } from "@/features/community/storage/post-store";
+import { useT } from "@/lib/i18n/provider";
 import { RoleBand } from "../../components/role-band";
 import { useAdminBand } from "../../use-band-work";
 import { ADMIN_HREF } from "../area-hrefs";
@@ -30,12 +31,13 @@ export function AdminBand({ store }: { store?: PostStore }) {
 }
 
 function AdminBandContent({ store }: { store?: PostStore }) {
+  const t = useT().kelolaAdmin.band;
   const { work, people } = useAdminBand(store);
   return (
     <RoleBand
       area="admin"
-      title="Admin"
-      description="Pengguna dan role, moderasi, kurasi, grup, dan audit log."
+      title={t.title}
+      description={t.description}
       work={work}
       people={people}
       className="mb-6"

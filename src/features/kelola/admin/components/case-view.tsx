@@ -2,44 +2,38 @@
 
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { format, useLocale, useT } from "@/lib/i18n/provider";
 import { EmptyState, ErrorBanner, RetryButton, Skeleton } from "@/components/ui/states";
 import type { PostStore } from "@/features/community/storage/post-store";
 import type { Decision } from "@/features/community/moderation/report-store";
 import { sentAtText } from "@/features/projects/submission-text";
 import { BackShell } from "../../components/back-shell";
 import { ReasonDialog } from "../../components/reason-dialog";
-import { REASON_EMPTY, type AdminResult } from "../admin-actions";
+import type { AdminResult } from "../admin-actions";
+import { adminMessage } from "../copy/admin-copy";
 import { decideCase } from "../moderation/moderation-actions";
 import {
   MODERATION_HREF,
   allowedDecisions,
-  decisionLabel,
   decisionNeedsReason,
-  stateLabel,
 } from "../moderation/moderation-model";
 import { useCase } from "../moderation/use-moderation-data";
 import { CaseContentSection, CaseReasonsSection } from "./case-sections";
 
-const hint: Record<Decision, string> = {
-  abaikan: "Laporan ditutup dan konten tetap tampil.",
-  sembunyikan: "Konten hilang dari semua daftar dan bisa dipulihkan. Tercatat di log.",
-  hapus: "Konten dihapus dan tidak bisa dipulihkan. Tercatat di log.",
-  pulihkan: "Konten tampil lagi. Tercatat di log.",
-  tangguhkan: "Akun penulis ditangguhkan dan rolenya berhenti berlaku. Tercatat di log.",
-};
-
 /** One reported content with what a moderator may do. The result is said in the status line. */
 export function CaseView({ caseKey, store }: { caseKey: string; store?: PostStore }) {
+  const t = useT().kelolaModeration;
+  const locale = useLocale();
   const state = useCase(caseKey, store);
   const [ask, setAsk] = useState<Decision | null>(null);
   const [said, setSaid] = useState<AdminResult | null>(null);
   const status = useRef<HTMLParagraphElement>(null);
-  const back = { href: MODERATION_HREF, label: "Antrean moderasi" };
+  const back = { href: MODERATION_HREF, label: t.case.back };
 
   if (state.status === "loading") {
     return (
       <BackShell back={back}>
-        <div role="status" aria-label="Memuat laporan" className="grid gap-3">
+        <div role="status" aria-label={t.queue.loading} className="grid gap-3">
           <Skeleton className="h-8 w-2/3" />
           <Skeleton className="h-32 w-full" />
         </div>
@@ -50,7 +44,7 @@ export function CaseView({ caseKey, store }: { caseKey: string; store?: PostStor
     return (
       <BackShell back={back}>
         <ErrorBanner action={<RetryButton onClick={state.reload} />}>
-          Laporan belum bisa dibuka karena data di perangkat ini tidak terbaca.
+          {t.queue.loadError}
         </ErrorBanner>
       </BackShell>
     );
@@ -58,7 +52,7 @@ export function CaseView({ caseKey, store }: { caseKey: string; store?: PostStor
   if (state.status === "gone") {
     return (
       <BackShell back={back}>
-        <EmptyState>Laporan ini tidak ditemukan.</EmptyState>
+        <EmptyState>{t.case.gone}</EmptyState>
       </BackShell>
     );
   }
@@ -80,11 +74,14 @@ export function CaseView({ caseKey, store }: { caseKey: string; store?: PostStor
     <BackShell back={back}>
       <header className="grid gap-1">
         <h1 className="heading-lg">
-          {row.kind === "post" ? "Tulisan dilaporkan" : "Komentar dilaporkan"}
+          {row.kind === "post" ? t.case.postTitle : t.case.commentTitle}
         </h1>
         <p className="text-sm text-ink-muted">
-          {stateLabel[row.state]} · {row.status === "baru" ? "Laporan baru" : "Selesai"} ·{" "}
-          {row.reports} laporan
+          {format(t.case.summary, {
+            state: t.states[row.state],
+            status: row.status === "baru" ? t.case.statusNew : t.case.statusDone,
+            reports: String(row.reports),
+          })}
         </p>
       </header>
       <p
@@ -93,19 +90,22 @@ export function CaseView({ caseKey, store }: { caseKey: string; store?: PostStor
         tabIndex={-1}
         className={`min-h-5 text-sm outline-none ${said && !said.ok ? "text-danger" : ""}`}
       >
-        {said?.message}
+        {said ? adminMessage(said, locale) : ""}
       </p>
       <CaseContentSection kind={row.kind} content={content} />
       <CaseReasonsSection reasons={row.reasons} />
       {row.last && (
         <p className="text-sm text-ink-muted">
-          Keputusan terakhir: {decisionLabel[row.last.decision]}, {sentAtText(row.last.at)}
-          {row.last.reason ? ` · ${row.last.reason}` : ""}
+          {format(row.last.reason ? t.case.lastWithReason : t.case.last, {
+            decision: t.decisions[row.last.decision],
+            when: sentAtText(row.last.at, locale),
+            reason: row.last.reason ?? "",
+          })}
         </p>
       )}
       <section aria-labelledby="putusan-title" className="grid gap-3">
         <h2 id="putusan-title" className="heading-md">
-          Keputusan
+          {t.case.decisionTitle}
         </h2>
         <div className="flex flex-wrap gap-3">
           {decisions.map((d) => (
@@ -114,18 +114,18 @@ export function CaseView({ caseKey, store }: { caseKey: string; store?: PostStor
               variant={d === "hapus" || d === "tangguhkan" ? "danger-text" : "secondary"}
               onClick={() => setAsk(d)}
             >
-              {decisionLabel[d]}
+              {t.decisions[d]}
             </Button>
           ))}
         </div>
       </section>
       {ask && (
         <ReasonDialog
-          title={decisionLabel[ask]}
-          hint={hint[ask]}
+          title={t.decisions[ask]}
+          hint={t.hints[ask]}
           required={decisionNeedsReason(ask)}
-          emptyMessage={REASON_EMPTY}
-          confirmLabel={decisionLabel[ask]}
+          emptyMessage={adminMessage({ message: "", code: "reasonEmpty" }, locale)}
+          confirmLabel={t.decisions[ask]}
           busy={false}
           onConfirm={confirm}
           onClose={() => setAsk(null)}

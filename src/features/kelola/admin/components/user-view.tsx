@@ -2,14 +2,14 @@
 
 import { useRef, useState } from "react";
 import { EmptyState } from "@/components/ui/states";
-import { roleLabel } from "@/lib/roles";
+import { format, useLocale, useT } from "@/lib/i18n/provider";
 import { BackShell } from "../../components/back-shell";
 import { ReasonDialog } from "../../components/reason-dialog";
 import { ME_ID } from "../../identity";
 import { useEffectiveRoles } from "../../use-effective-roles";
 import { ADMIN_HREF } from "../area-hrefs";
+import { adminMessage } from "../copy/admin-copy";
 import {
-  REASON_EMPTY,
   restoreUser,
   revokeRole,
   grantRole,
@@ -24,34 +24,12 @@ import { AccountSection, AssignmentsSection, HistorySection } from "./user-secti
 
 type Ask = RoleAsk | { change: "suspend" | "restore"; role?: undefined };
 
-function dialogText(ask: Ask) {
-  const role = ask.role ? roleLabel[ask.role] : "";
-  switch (ask.change) {
-    case "grant":
-      return {
-        title: `Beri role ${role}`,
-        hint: "Pemberian role dicatat di log.",
-        ok: "Beri role",
-      };
-    case "revoke":
-      return {
-        title: `Cabut role ${role}`,
-        hint: "Penugasan orang ini pada role itu ikut dicabut. Pencabutan dicatat di log.",
-        ok: "Cabut role",
-      };
-    case "suspend":
-      return {
-        title: "Tangguhkan akun",
-        hint: "Rolenya berhenti berlaku dan ia tidak bisa ditugaskan. Dicatat di log.",
-        ok: "Tangguhkan",
-      };
-    case "restore":
-      return {
-        title: "Pulihkan akun",
-        hint: "Rolenya berlaku lagi. Dicatat di log.",
-        ok: "Pulihkan",
-      };
-  }
+type DialogCopy = ReturnType<typeof useT>["kelolaAdmin"];
+
+function dialogText(ask: Ask, copy: DialogCopy) {
+  const role = ask.role ? copy.roles[ask.role] : "";
+  const text = copy.user.dialog[ask.change];
+  return { title: format(text.title, { role }), hint: text.hint, ok: text.ok };
 }
 
 function run(id: string, ask: Ask, reason: string): AdminResult {
@@ -66,6 +44,9 @@ function run(id: string, ask: Ask, reason: string): AdminResult {
  * button that opened the dialog may no longer be there.
  */
 export function UserView({ id }: { id: string }) {
+  const copy = useT().kelolaAdmin;
+  const t = copy.user;
+  const locale = useLocale();
   const state = useAdminUser(id);
   const roles = useEffectiveRoles();
   const grants = useRoleGrants();
@@ -74,11 +55,11 @@ export function UserView({ id }: { id: string }) {
   const [said, setSaid] = useState<AdminResult | null>(null);
   const status = useRef<HTMLParagraphElement>(null);
 
-  const back = { href: ADMIN_HREF, label: "Semua pengguna" };
+  const back = { href: ADMIN_HREF, label: t.back };
   if (state.status === "gone") {
     return (
       <BackShell back={back}>
-        <EmptyState>Pengguna ini tidak ditemukan.</EmptyState>
+        <EmptyState>{t.gone}</EmptyState>
       </BackShell>
     );
   }
@@ -92,7 +73,7 @@ export function UserView({ id }: { id: string }) {
   };
   const accountChange = user.suspended ? "restore" : "suspend";
   const accountBlock = accountChangeBlock(context, accountChange);
-  const text = ask ? dialogText(ask) : null;
+  const text = ask ? dialogText(ask, copy) : null;
 
   function confirm(reason: string) {
     if (!ask) return;
@@ -108,8 +89,8 @@ export function UserView({ id }: { id: string }) {
         <h1 className="heading-lg wrap-anywhere">{user.name}</h1>
         <p className="text-sm text-ink-muted">
           @{user.handle}
-          {user.suspended && " · Ditangguhkan"}
-          {id === ME_ID && " · Akunmu"}
+          {user.suspended && ` · ${t.suspendedTag}`}
+          {id === ME_ID && ` · ${t.you}`}
         </p>
       </header>
       <p
@@ -118,7 +99,7 @@ export function UserView({ id }: { id: string }) {
         tabIndex={-1}
         className={`min-h-5 text-sm outline-none ${said && !said.ok ? "text-danger" : ""}`}
       >
-        {said?.message}
+        {said ? adminMessage(said, locale) : ""}
       </p>
       <RoleSection
         user={user}
@@ -138,9 +119,9 @@ export function UserView({ id }: { id: string }) {
         <ReasonDialog
           title={text.title}
           hint={text.hint}
-          fieldLabel="Alasan"
+          fieldLabel={t.reasonField}
           required={needsReason(ask.role ?? null, ask.change)}
-          emptyMessage={REASON_EMPTY}
+          emptyMessage={adminMessage({ message: "", code: "reasonEmpty" }, locale)}
           confirmLabel={text.ok}
           busy={false}
           onConfirm={confirm}

@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { format, useT } from "@/lib/i18n/provider";
 import type { FeaturedProject } from "@/features/projects/featured-store";
 import type { ProjectFixture } from "@/features/projects/types";
 import type { AdminResult } from "../admin-actions";
@@ -17,20 +18,18 @@ export function FeaturedSection({
   featured: readonly FeaturedProject[];
   report: (result: AdminResult) => void;
 }) {
+  const t = useT().kelolaAdmin.curation.featured;
   const rows = featuredRows(catalog, featured);
   return (
     <section aria-labelledby="featured-title" className="grid gap-4">
       <div className="grid gap-1">
         <h2 id="featured-title" className="heading-md">
-          Proyek unggulan
+          {t.title}
         </h2>
-        <p className="text-sm text-ink-muted">
-          Proyek yang ditandai tampil di bagian Unggulan di atas daftar Projects, sesuai urutan
-          menandai. Hanya proyek yang terbit.
-        </p>
+        <p className="text-sm text-ink-muted">{t.intro}</p>
       </div>
       {rows.length === 0 ? (
-        <p className="text-sm text-ink-muted">Belum ada proyek yang terbit.</p>
+        <p className="text-sm text-ink-muted">{t.none}</p>
       ) : (
         <ul className="grid">
           {rows.map((row) => (
@@ -43,10 +42,10 @@ export function FeaturedSection({
                 variant={row.featured ? "text" : "secondary"}
                 size="sm"
                 aria-pressed={row.featured}
-                aria-label={`${row.featured ? "Lepas unggulan" : "Tandai unggulan"} ${row.title}`}
+                aria-label={format(row.featured ? t.releaseAria : t.markAria, { title: row.title })}
                 onClick={() => report(setFeatured(row.slug, !row.featured, catalog))}
               >
-                {row.featured ? "Lepas" : "Tandai"}
+                {row.featured ? t.release : t.mark}
               </Button>
             </li>
           ))}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import { useLocale } from "@/lib/i18n/provider";
 import { useCommunity } from "@/features/community/hooks/use-community";
 import { useModeration, useReports } from "@/features/community/moderation/report-store";
 import { postStore } from "@/features/community/storage/store";
@@ -18,6 +19,7 @@ export type CaseListState =
 
 /** The cases with the content they are about. Hidden and deleted content stays readable here. */
 export function useCaseList(store: PostStore = postStore): CaseListState {
+  const locale = useLocale();
   const data = useCommunity(store, { includeRemoved: true });
   const reports = useReports();
   const entries = useModeration();
@@ -28,9 +30,9 @@ export function useCaseList(store: PostStore = postStore): CaseListState {
     return {
       status: "ready",
       rows,
-      contentOf: (row) => contentOf(row.kind, row.targetId, data.posts, data.comments),
+      contentOf: (row) => contentOf(row.kind, row.targetId, data.posts, data.comments, locale),
     };
-  }, [data.status, data.posts, data.comments, data.reload, rows]);
+  }, [data.status, data.posts, data.comments, data.reload, rows, locale]);
 }
 
 export type CaseState =

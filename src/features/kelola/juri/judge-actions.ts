@@ -1,3 +1,4 @@
+import type { Locale } from "@/lib/i18n/config";
 import { stageRank } from "@/features/projects/lomba/contest-model";
 import type { ContestStage } from "@/features/projects/lomba/types";
 import { ME_ID, canonicalId } from "../identity";
@@ -18,11 +19,12 @@ export function saveJuryScore(
   input: Record<string, string>,
   note: string,
   now: number,
+  locale: Locale = "id",
 ): SaveResult {
   if (isClosed(judgingLog.read(), target.slug)) {
     return { ok: false, reason: "ditutup", errors: {} };
   }
-  const { errors, scores } = validateScores(target.criteria, input, note);
+  const { errors, scores } = validateScores(target.criteria, input, note, locale);
   if (Object.keys(errors).length > 0) return { ok: false, reason: "salah", errors };
   const score: JuryScore = {
     submissionId: target.submissionId,

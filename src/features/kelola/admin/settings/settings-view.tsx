@@ -4,10 +4,12 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Field, Input, describedBy } from "@/components/ui/field";
+import { adminMessage } from "../copy/admin-copy";
+import { useLocale, useT } from "@/lib/i18n/provider";
 import { platformSettings } from "@/lib/platform-settings";
 import { useActionStatus } from "../use-action-status";
 import { clearCommunityLink, saveCommunityLink } from "./settings-actions";
-import { linkMessage, validateCommunityLink } from "./settings-model";
+import { linkProblemText, validateCommunityLink } from "./settings-model";
 
 type Ask = "simpan" | "hapus" | null;
 
@@ -16,6 +18,8 @@ type Ask = "simpan" | "hapus" | null;
  * not define other settings. Saving or removing asks first, because everyone sees the result.
  */
 export function SettingsView() {
+  const t = useT().kelolaAdmin.settings;
+  const locale = useLocale();
   const current = platformSettings.use()[0]?.communityLink ?? "";
   const [text, setText] = useState(current);
   const [seen, setSeen] = useState(current);
@@ -30,14 +34,14 @@ export function SettingsView() {
 
   function request() {
     const problem = validateCommunityLink(text);
-    setError(problem ? linkMessage[problem] : undefined);
+    setError(problem ? linkProblemText(problem, locale) : undefined);
     if (!problem) setAsk("simpan");
   }
 
   function confirm() {
     const result = ask === "hapus" ? clearCommunityLink() : saveCommunityLink(text);
     setAsk(null);
-    show(result.message, true);
+    show(adminMessage(result, locale), true);
   }
 
   const id = "tautan-komunitas";
@@ -45,11 +49,9 @@ export function SettingsView() {
     <section aria-labelledby="pengaturan-title" className="grid max-w-xl gap-5">
       <div className="grid gap-1">
         <h1 id="pengaturan-title" className="heading-lg">
-          Pengaturan platform
+          {t.title}
         </h1>
-        <p className="text-sm text-ink-muted">
-          Berlaku untuk semua pengguna. Setiap perubahan dicatat.
-        </p>
+        <p className="text-sm text-ink-muted">{t.intro}</p>
       </div>
       <p
         ref={statusRef}
@@ -59,12 +61,7 @@ export function SettingsView() {
       >
         {message}
       </p>
-      <Field
-        id={id}
-        label="Tautan komunitas"
-        hint="Satu alamat Discord atau WhatsApp tempat percakapan diarahkan. Tanpa tautan, bagian Komunitas tidak tampil."
-        error={error}
-      >
+      <Field id={id} label={t.linkLabel} hint={t.linkHint} error={error}>
         <Input
           id={id}
           type="url"
@@ -77,10 +74,10 @@ export function SettingsView() {
         />
       </Field>
       <div className="flex flex-wrap items-center gap-3">
-        <Button onClick={request}>Simpan</Button>
+        <Button onClick={request}>{t.save}</Button>
         {current !== "" && (
           <Button variant="text" onClick={() => setAsk("hapus")}>
-            Hapus tautan
+            {t.remove}
           </Button>
         )}
       </div>
@@ -88,18 +85,14 @@ export function SettingsView() {
         <Dialog
           open
           onClose={() => setAsk(null)}
-          title={ask === "hapus" ? "Hapus tautan komunitas?" : "Simpan tautan komunitas?"}
-          description={
-            ask === "hapus"
-              ? "Bagian Komunitas tidak lagi tampil bagi siapa pun."
-              : "Semua pengguna akan melihat tautan ini."
-          }
+          title={ask === "hapus" ? t.removeTitle : t.saveTitle}
+          description={ask === "hapus" ? t.removeBody : t.saveBody}
           actions={
             <>
               <Button variant="secondary" onClick={() => setAsk(null)}>
-                Batal
+                {t.cancel}
               </Button>
-              <Button onClick={confirm}>{ask === "hapus" ? "Hapus" : "Simpan"}</Button>
+              <Button onClick={confirm}>{ask === "hapus" ? t.removeConfirm : t.saveConfirm}</Button>
             </>
           }
         >

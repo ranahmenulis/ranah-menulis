@@ -1,15 +1,15 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Notice } from "@/components/ui/states";
+import { formatDate } from "@/lib/i18n/format";
+import { useLocale, useT } from "@/lib/i18n/provider";
 import { projectHref } from "@/features/projects/project-model";
 import type { AuditEntry } from "../../audit/audit-log";
 import { auditSentence } from "../../audit/audit-text";
-import { staffRoleLabel } from "../../staff-assignments";
-import { blockMessage, type RuleBlock } from "../role-rules";
+import { blockText, type RuleBlock } from "../role-rules";
 import type { UserAssignment } from "../use-admin-data";
 
-const dateText = (at: number) =>
-  new Date(at).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" });
+const LONG_DATE: Intl.DateTimeFormatOptions = { day: "numeric", month: "long", year: "numeric" };
 
 export function AccountSection({
   suspended,
@@ -20,18 +20,20 @@ export function AccountSection({
   block: RuleBlock | null;
   onAsk: () => void;
 }) {
+  const t = useT().kelolaAdmin.user;
+  const locale = useLocale();
   return (
     <section aria-labelledby="akun-title" className="grid gap-2">
       <h2 id="akun-title" className="heading-md">
-        Akun
+        {t.accountTitle}
       </h2>
-      {suspended && <Notice>Akun ini ditangguhkan: rolenya tidak berlaku.</Notice>}
+      {suspended && <Notice>{t.suspendedNotice}</Notice>}
       {block ? (
-        <p className="text-sm text-ink-muted">{blockMessage[block]}</p>
+        <p className="text-sm text-ink-muted">{blockText(block, locale)}</p>
       ) : (
         <div>
           <Button variant={suspended ? "secondary" : "danger-text"} onClick={onAsk}>
-            {suspended ? "Pulihkan akun" : "Tangguhkan akun"}
+            {suspended ? t.restore : t.suspend}
           </Button>
         </div>
       )}
@@ -40,13 +42,14 @@ export function AccountSection({
 }
 
 export function AssignmentsSection({ assignments }: { assignments: UserAssignment[] }) {
+  const t = useT().kelolaAdmin;
   return (
     <section aria-labelledby="tugas-title" className="grid gap-2">
       <h2 id="tugas-title" className="heading-md">
-        Penugasan
+        {t.user.assignmentsTitle}
       </h2>
       {assignments.length === 0 ? (
-        <p className="text-sm text-ink-muted">Belum ditugaskan di proyek mana pun.</p>
+        <p className="text-sm text-ink-muted">{t.user.noAssignments}</p>
       ) : (
         <ul className="border-t border-line">
           {assignments.map((a) => (
@@ -54,7 +57,7 @@ export function AssignmentsSection({ assignments }: { assignments: UserAssignmen
               <Link href={projectHref(a.slug)} className="wrap-anywhere">
                 {a.title}
               </Link>
-              <span className="text-ink-muted"> · {staffRoleLabel[a.role]}</span>
+              <span className="text-ink-muted"> · {t.roles[a.role]}</span>
             </li>
           ))}
         </ul>
@@ -64,20 +67,22 @@ export function AssignmentsSection({ assignments }: { assignments: UserAssignmen
 }
 
 export function HistorySection({ history }: { history: AuditEntry[] }) {
+  const t = useT().kelolaAdmin.user;
+  const locale = useLocale();
   return (
     <section aria-labelledby="riwayat-title" className="grid gap-2">
       <h2 id="riwayat-title" className="heading-md">
-        Riwayat
+        {t.historyTitle}
       </h2>
       {history.length === 0 ? (
-        <p className="text-sm text-ink-muted">Belum ada perubahan tercatat.</p>
+        <p className="text-sm text-ink-muted">{t.noHistory}</p>
       ) : (
         <ul className="border-t border-line">
           {history.map((e) => (
             <li key={e.id} className="grid gap-0.5 border-b border-line py-2 text-sm">
-              <span>{auditSentence(e)}</span>
+              <span>{auditSentence(e, locale)}</span>
               <span className="text-xs text-ink-muted">
-                {dateText(e.at)}
+                {formatDate(e.at, locale, LONG_DATE)}
                 {e.reason ? ` · ${e.reason}` : ""}
               </span>
             </li>
