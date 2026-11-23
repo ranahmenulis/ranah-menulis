@@ -3,7 +3,7 @@ import type { PostImage } from "../../types";
 
 /**
  * The lead photo of a post: edge to edge on phones (the page has a 16px gutter), the column width
- * from md up. No caption and no credit; the alt text is the only description (client decision).
+ * from md up, with the card radius. No caption and no credit; the alt text is the only description (client decision).
  */
 export function PostFigure({ image, bleed = true }: { image: PostImage; bleed?: boolean }) {
   return (
@@ -16,7 +16,7 @@ export function PostFigure({ image, bleed = true }: { image: PostImage; bleed?: 
         width={image.width}
         height={image.height}
         decoding="async"
-        className="block h-auto max-h-[70svh] w-full bg-subtle object-cover"
+        className="block h-auto max-h-[70svh] w-full bg-subtle object-cover md:rounded-2xl"
       />
     </figure>
   );

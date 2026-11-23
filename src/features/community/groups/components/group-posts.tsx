@@ -1,5 +1,7 @@
 "use client";
 
+import { Article } from "@phosphor-icons/react/dist/ssr";
+import { Section } from "@/components/ui/section-card";
 import { useRef, useState } from "react";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { ErrorBanner, FeedItemSkeleton, RetryButton } from "@/components/ui/states";
@@ -49,15 +51,17 @@ export function GroupPosts({
   }
 
   return (
-    <section className="grid gap-3 border-t border-line pt-5" aria-labelledby="group-posts">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 id="group-posts" className="heading-md">
-          {t.title}
-        </h2>
+    <Section
+      id="group-posts"
+      title={t.title}
+      icon={Article}
+      className="gap-3"
+      action={
         <ButtonLink href={NEW_POST_HREF} variant="secondary" size="sm">
           {t.write}
         </ButtonLink>
-      </div>
+      }
+    >
       {data.status === "loading" && <FeedItemSkeleton />}
       {data.status === "error" && (
         <ErrorBanner action={<RetryButton onClick={data.reload} />}>{t.loadError}</ErrorBanner>
@@ -103,6 +107,6 @@ export function GroupPosts({
           onConfirm={(reason) => void hide(reason)}
         />
       )}
-    </section>
+    </Section>
   );
 }

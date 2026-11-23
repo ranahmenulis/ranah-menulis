@@ -1,7 +1,9 @@
 "use client";
 
+import { ListChecks, Timer, UsersThree } from "@phosphor-icons/react/dist/ssr";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Section } from "@/components/ui/section-card";
 import { FeedItemSkeleton, Notice } from "@/components/ui/states";
 import { SignInButton } from "@/features/account/components/auth-buttons";
 import { CommunityLink } from "@/features/app-shell/community-link";
@@ -12,12 +14,14 @@ import { format, useLocale, useT } from "@/lib/i18n/provider";
 import { useViewer } from "@/lib/viewer";
 import { writingGroups } from "../../groups/group-store";
 import { useGroupReader } from "../../groups/group-viewer";
+import { AuthorAvatar } from "../../components/author-avatar";
 import { authorOf } from "../../post-model";
 import {
   entryOf,
   EVENTS_HREF,
   eventState,
   formatEventTime,
+  type EventStateName,
   visibleParticipantIds,
   type WritingEvent,
 } from "../event-model";
@@ -27,6 +31,39 @@ import { EventHero } from "./event-hero";
 import { EventJoin } from "./event-join";
 import { EventParticipation } from "./event-participation";
 import { EventsError } from "./events-view";
+
+/** Joining, for someone who is not in the event yet: the button, a sign-in, or why not. */
+function JoinArea({
+  state,
+  actor,
+  guest,
+  onJoin,
+}: {
+  state: EventStateName;
+  actor: string | null;
+  guest: boolean;
+  onJoin: () => void;
+}) {
+  const t = useT().events;
+  return (
+    <div className="grid justify-items-start gap-3">
+      {state !== "open" ? (
+        <>
+          <Button disabled>{t.detail.join}</Button>
+          <p className="text-sm text-ink-muted">
+            {format(t.detail.closed, { status: t.status[state] })}
+          </p>
+        </>
+      ) : actor ? (
+        <Button onClick={onJoin}>{t.detail.join}</Button>
+      ) : guest ? (
+        <SignInButton>{t.detail.signInToJoin}</SignInButton>
+      ) : (
+        <Notice>{t.detail.needAccount}</Notice>
+      )}
+    </div>
+  );
+}
 
 function EventDetail({
   event,
@@ -60,7 +97,9 @@ function EventDetail({
   return (
     <>
       <EventHero event={event} now={now} state={state} />
-      <p className="wrap-anywhere whitespace-pre-line">{event.description}</p>
+      <p className="text-base wrap-anywhere whitespace-pre-line text-ink-soft md:text-lg">
+        {event.description}
+      </p>
       <p role="status" tabIndex={-1} ref={statusRef} className="empty:hidden">
         {message}
       </p>
@@ -74,35 +113,18 @@ function EventDetail({
           show={setMessage}
         />
       ) : (
-        <div className="grid justify-items-start gap-3">
-          {state !== "open" ? (
-            <>
-              <Button disabled>{t.detail.join}</Button>
-              <p className="text-sm text-ink-muted">
-                {format(t.detail.closed, { status: t.status[state] })}
-              </p>
-            </>
-          ) : actor ? (
-            <Button onClick={() => setJoin(true)}>{t.detail.join}</Button>
-          ) : guest ? (
-            <SignInButton>{t.detail.signInToJoin}</SignInButton>
-          ) : (
-            <Notice>{t.detail.needAccount}</Notice>
-          )}
-        </div>
+        <JoinArea state={state} actor={actor} guest={guest} onJoin={() => setJoin(true)} />
       )}
-      <section className="grid gap-2 border-t border-line pt-6">
-        <h2 className="heading-md">{t.detail.rulesTitle}</h2>
-        <p className="text-sm">
+      <Section title={t.detail.rulesTitle} icon={ListChecks} className="gap-2">
+        <p className="text-sm font-medium">
           {format(t.detail.target, {
             words: event.target.toLocaleString(locale === "en" ? "en-US" : "id-ID"),
           })}
         </p>
         <p className="wrap-anywhere whitespace-pre-line">{event.rules}</p>
-      </section>
+      </Section>
       {sprint && (
-        <section className="grid gap-2 border-t border-line pt-6">
-          <h2 className="heading-md">{t.detail.sprintTitle}</h2>
+        <Section title={t.detail.sprintTitle} icon={Timer} className="gap-2">
           <p className="text-sm">
             {formatEventTime(sprint.startsAt, zone, locale)} –{" "}
             {formatEventTime(sprint.endsAt, zone, locale)}
@@ -114,19 +136,19 @@ function EventDetail({
                 ? t.detail.sprintRunning
                 : t.detail.sprintOver}
           </p>
-        </section>
+        </Section>
       )}
       {participants.length > 0 && (
-        <section className="grid gap-2 border-t border-line pt-6">
-          <h2 className="heading-md">{t.detail.peersTitle}</h2>
+        <Section title={t.detail.peersTitle} icon={UsersThree} className="gap-2">
           <ul className="divide-y divide-line">
             {participants.map((id) => (
-              <li key={id} className="py-2">
+              <li key={id} className="flex items-center gap-3 py-2.5">
+                <AuthorAvatar author={authorOf(id)} size={32} />
                 {authorOf(id).name}
               </li>
             ))}
           </ul>
-        </section>
+        </Section>
       )}
       <CommunityLink variant="row" />
       {join && actor && !entry && (

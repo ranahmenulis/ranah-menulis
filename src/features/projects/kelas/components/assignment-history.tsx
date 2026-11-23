@@ -5,7 +5,7 @@ import { formatDateTime, formatNumber } from "@/lib/i18n/format";
 import type { Locale } from "@/lib/i18n/config";
 import { useT } from "@/lib/i18n/provider";
 import { useFormat } from "@/lib/i18n/use-format";
-import { Section } from "../../components/category-blocks";
+import { Section } from "@/components/ui/section-card";
 import { sentAtText } from "../../submission-text";
 import type { AssignmentChange, AssignmentSubmission } from "../types";
 

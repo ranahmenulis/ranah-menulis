@@ -54,14 +54,16 @@ function Photo({ image, form }: { image: PostImage; form: TileForm }) {
       decoding="async"
       className={cn(
         "block h-auto w-full bg-line object-cover",
-        form === "inset" && "@xl:mx-5 @xl:mb-1 @xl:max-h-88 @xl:w-[calc(100%-2.5rem)]",
-        "@max-xl:col-start-2 @max-xl:row-start-1 @max-xl:mt-7 @max-xl:aspect-3/2 @max-xl:w-20",
+        form === "inset" &&
+          "@xl:mx-5 @xl:mb-1 @xl:max-h-88 @xl:w-[calc(100%-2.5rem)] @xl:rounded-xl",
+        "@max-xl:col-start-2 @max-xl:row-start-1 @max-xl:mt-7 @max-xl:aspect-3/2 @max-xl:w-20 @max-xl:rounded-lg",
       )}
     />
   );
 }
 
 function Text({ post, form, href }: { post: Post; form: TileForm; href: string }) {
+  const t = useT().discover;
   const label = usePostLabel()(post);
   const linkClass = "text-ink no-underline after:absolute after:inset-0 hover:underline";
   if (form === "note" || form === "inset") {
@@ -76,7 +78,7 @@ function Text({ post, form, href }: { post: Post; form: TileForm; href: string }
           {post.blocks.map((b) => b.text).join("\n\n")}
         </p>
         <p className="text-[13px] leading-[18px] text-ink-muted">
-          {label} dari “
+          {label} {t.from} “
           <Link href={href} className={linkClass}>
             {post.title}
           </Link>
@@ -108,8 +110,8 @@ function Text({ post, form, href }: { post: Post; form: TileForm; href: string }
 }
 
 /**
- * One tile of the Jelajahi grid (DESIGN.md 6.8, Substack Explore). A quiet `subtle` surface with
- * no border and square corners, in one of five shapes (`tileForm`): note, titled, a wide tile led
+ * One tile of the Jelajahi grid (DESIGN.md 6.8, Substack Explore). A card (rounded, thin border,
+ * light shadow; tahap E of the Streak-style redesign), in one of five shapes (`tileForm`): note, titled, a wide tile led
  * by its photo ("cover", two lanes), a photo above the title ("image"), or a note with its photo
  * under the text ("inset"). The title is a stretched link that opens the post; counts are not
  * buttons. Below 576px of width the tile is a plain row with a small photo on the right.
@@ -128,15 +130,17 @@ export function DiscoverTile({ post, index, comments, saved, onSave }: Props) {
       style={{ transitionDelay: seen ? `${revealDelay(index)}ms` : undefined }}
       className={cn(
         "relative grid self-start overflow-hidden",
-        "@xl:[grid-row-end:span_var(--span,40)] @xl:bg-subtle",
+        "@xl:[grid-row-end:span_var(--span,40)]",
+        // A card in lanes (client reference); a plain row of the list card on a phone.
+        "@xl:rounded-2xl @xl:border @xl:border-line @xl:bg-surface @xl:shadow-card @xl:hover:border-accent-ink/40",
         form === "cover" && "@4xl:col-span-2",
         // Reveal: a tile rises 12px and fades in once, the first time it is on screen (also new tiles
         // from "Muat lebih banyak" or a category change). Only transform and opacity; none under
         // reduced motion.
-        "transition-[opacity,translate] duration-500 ease-(--ease-out)",
+        "transition-[opacity,translate,border-color] duration-500 ease-(--ease-out)",
         !seen && "translate-y-3 opacity-0",
         "motion-reduce:translate-y-0 motion-reduce:opacity-100 motion-reduce:transition-none",
-        "@max-xl:border-b @max-xl:border-line",
+        "@max-xl:border-b @max-xl:border-line @max-xl:last:border-b-0",
         post.image && "@max-xl:grid-cols-[minmax(0,1fr)_5rem] @max-xl:items-start @max-xl:gap-x-4",
       )}
     >

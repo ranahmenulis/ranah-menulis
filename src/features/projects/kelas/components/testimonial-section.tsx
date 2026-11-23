@@ -7,7 +7,7 @@ import { Notice } from "@/components/ui/states";
 import { fill } from "@/features/studio/copy/fill";
 import { useLocale, useT } from "@/lib/i18n/provider";
 import { ME_ID } from "@/features/community/fixtures/authors";
-import { Section } from "../../components/category-blocks";
+import { Section } from "@/components/ui/section-card";
 import type { AssignmentRow } from "../class-model";
 import type { AssignmentStore } from "../storage/assignment-store";
 import { deleteTestimonial } from "../testimonial-actions";

@@ -2,6 +2,8 @@
 
 import { AuthorAvatar } from "../author-avatar";
 import { Button } from "@/components/ui/button";
+import { cardClass } from "@/components/ui/card";
+import { cn } from "@/lib/cn";
 import { AuthorLink } from "@/features/profile/author-link";
 import { profileOf, whereOf } from "@/features/profile/profile-model";
 import { useT } from "@/lib/i18n/provider";
@@ -20,7 +22,7 @@ export function AuthorCard({ author, showFollow, following, onFollow }: Props) {
   const { bio } = profileOf(author.id);
   const where = whereOf(author);
   return (
-    <section aria-label={t.authorCard.label} className="mt-12 border-t border-line pt-8">
+    <section aria-label={t.authorCard.label} className={cn(cardClass, "mt-10")}>
       <p className="mb-4 text-[13px] leading-[18px] text-ink-muted">{t.authorCard.writtenBy}</p>
       <div className="flex items-start gap-4">
         <AuthorAvatar author={author} size={56} />

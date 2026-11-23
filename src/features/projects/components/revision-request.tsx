@@ -16,7 +16,7 @@ import {
 } from "../submission-status";
 import type { Submission } from "../submission-types";
 import type { Project } from "../types";
-import { Section } from "./category-blocks";
+import { Section } from "@/components/ui/section-card";
 
 /**
  * A work the editor asked to revise: the note, the deadline, and the one way on. The button is the

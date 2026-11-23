@@ -16,7 +16,7 @@ import { MAX_REVISIONS, latestFeedback, revisionDueAt, revisionsSent } from "../
 import { wordRuleText } from "../submission-text";
 import { NOTE_LIMIT, type Submission, type VersionFile } from "../submission-types";
 import type { Project } from "../types";
-import { Section } from "./category-blocks";
+import { Section } from "@/components/ui/section-card";
 import { ManuscriptUpload } from "./manuscript-upload";
 import { SubmitDocumentPicker } from "./submit-document-picker";
 import { ProjectStrip } from "./project-strip";

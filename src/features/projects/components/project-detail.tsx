@@ -25,7 +25,8 @@ import { useSubmissions } from "../use-submissions";
 import { useProjects } from "../use-projects";
 import type { Project, ProjectFixture, ProjectState } from "../types";
 import { ClassTestimonials } from "../kelas/components/class-testimonials";
-import { CategoryBlockView, Section } from "./category-blocks";
+import { Section } from "@/components/ui/section-card";
+import { CategoryBlockView } from "./category-blocks";
 import { ProjectAside } from "./project-aside";
 import { ProjectDetailSkeleton, ProjectGone } from "./projects-states";
 

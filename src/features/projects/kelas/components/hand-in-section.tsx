@@ -4,7 +4,7 @@ import { Notice } from "@/components/ui/states";
 import { fill } from "@/features/studio/copy/fill";
 import { useT } from "@/lib/i18n/provider";
 import type { StudioDocument } from "@/features/studio/storage/document-store";
-import { Section } from "../../components/category-blocks";
+import { Section } from "@/components/ui/section-card";
 import type { AssignmentForm } from "../assignment-model";
 import type { HandInResult } from "../assignment-flow";
 import type { AssignmentRow } from "../class-model";

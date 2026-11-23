@@ -5,7 +5,7 @@ import { describedBy, Field, Input, Select, Textarea } from "@/components/ui/fie
 import { genreOptions, type ProblemField, type SubmitForm } from "../submission-model";
 import { NOTE_LIMIT, SYNOPSIS_LIMIT, TITLE_LIMIT } from "../submission-types";
 import type { Project } from "../types";
-import { Section } from "./category-blocks";
+import { Section } from "@/components/ui/section-card";
 
 type Props = {
   project: Project;

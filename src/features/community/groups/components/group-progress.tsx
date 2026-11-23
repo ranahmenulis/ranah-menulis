@@ -1,5 +1,7 @@
 "use client";
 
+import { ChartLineUp } from "@phosphor-icons/react/dist/ssr";
+import { Section } from "@/components/ui/section-card";
 import { useId, useState } from "react";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
@@ -150,15 +152,17 @@ export function GroupProgressSection({
     (item) => memberOf(group, item.authorId)?.membershipId === item.membershipId,
   );
   return (
-    <section className="grid gap-3 border-t border-line pt-5" aria-labelledby="group-progress">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 id="group-progress" className="heading-md">
-          {t.title}
-        </h2>
+    <Section
+      id="group-progress"
+      title={t.title}
+      icon={ChartLineUp}
+      className="gap-3"
+      action={
         <Button variant="secondary" size="sm" onClick={() => setOpen(true)}>
           {t.share}
         </Button>
-      </div>
+      }
+    >
       {progress.length ? (
         <ul className="divide-y divide-line">
           {progress.map((item) => (
@@ -185,6 +189,6 @@ export function GroupProgressSection({
           }}
         />
       )}
-    </section>
+    </Section>
   );
 }

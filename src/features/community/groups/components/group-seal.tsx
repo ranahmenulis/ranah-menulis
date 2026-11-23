@@ -1,10 +1,13 @@
 "use client";
 
 import type { CSSProperties } from "react";
+import { Campfire } from "@/components/illustrations/community-art";
+import { heroCardClass } from "@/components/ui/card";
 import { CountUp } from "@/components/ui/count-up";
 import { slugHash, titleInitial } from "@/features/projects/cover-model";
 import { cn } from "@/lib/cn";
 import { useT } from "@/lib/i18n/provider";
+import { HeroBanner } from "../../components/community-hero";
 import type { WritingGroup } from "../group-model";
 
 /** Dots drawn around a seal: one per member up to this many. */
@@ -12,8 +15,8 @@ export const SEAL_DOTS = 24;
 
 /**
  * A group as a round seal (DESIGN.md 6.7, Grup Penulis): the first letter of its name in serif, a ring of dots
- * with one dot per member, and a tone and tilt that come from the group id, so one group always
- * looks the same. Decorative: the name and member count are always also text.
+ * with one dot per member, and one of two accent tones and a tilt that come from the group id, so one
+ * group always looks the same. Decorative: the name and member count are always also text.
  */
 export function GroupSeal({
   group,
@@ -34,9 +37,7 @@ export function GroupSeal({
       data-seal={ink ? "ink" : "paper"}
       className={cn(
         "rm-seal relative grid shrink-0 place-items-center rounded-full",
-        ink
-          ? "bg-ink text-on-ink"
-          : "bg-subtle text-ink outline -outline-offset-1 outline-line-strong",
+        ink ? "bg-accent text-on-accent" : "bg-accent-subtle text-accent-ink",
         size === "lg" ? "size-32 md:size-36" : "size-12",
         className,
       )}
@@ -70,21 +71,30 @@ export function GroupSeal({
   );
 }
 
-/** The anchor of a group page: a dark band with the seal, the name, and the member count. */
+/**
+ * The anchor of a group page: a hero card with the campfire as a band on top (DESIGN.md 7.10), the
+ * seal, the name, the visibility as a pill and the member count as the one large number.
+ */
 export function GroupHero({ group }: { group: WritingGroup }) {
   const t = useT().groups.hero;
   return (
-    <header className="theme-dark app-band grid items-center gap-6 p-6 text-ink sm:grid-cols-[auto_minmax(0,1fr)] md:p-8">
+    <header
+      className={cn(heroCardClass, "grid items-center gap-6 sm:grid-cols-[auto_minmax(0,1fr)]")}
+    >
+      <HeroBanner art={Campfire} className="sm:col-span-2" />
       <GroupSeal group={group} size="lg" className="rm-cover-enter" />
       <div className="grid min-w-0 content-start gap-3">
-        <p className="text-sm text-ink-muted">
+        <span className="inline-flex h-6 w-fit items-center rounded-full bg-accent-subtle px-2.5 text-xs font-medium text-accent-ink">
           {group.visibility === "publik" ? t.publicGroup : t.privateGroup}
-        </p>
-        <h1 className="rm-rise-in font-serif text-3xl leading-tight wrap-anywhere md:text-[40px]">
+        </span>
+        <h1 className="rm-rise-in text-[28px] leading-9 font-bold tracking-[-0.02em] wrap-anywhere md:text-[40px] md:leading-[48px]">
           {group.name}
         </h1>
         <p className="flex flex-wrap items-baseline gap-x-3">
-          <span aria-hidden className="font-serif text-5xl leading-none font-light tabular-nums">
+          <span
+            aria-hidden
+            className="text-[56px] leading-[0.95] font-bold tracking-tight tabular-nums md:text-[64px]"
+          >
             <CountUp value={group.members.length} />
           </span>
           <span className="text-sm text-ink-soft">
@@ -93,7 +103,9 @@ export function GroupHero({ group }: { group: WritingGroup }) {
           </span>
         </p>
         {group.description && (
-          <p className="max-w-130 text-sm wrap-anywhere text-ink-soft">{group.description}</p>
+          <p className="max-w-130 text-sm wrap-anywhere text-ink-soft md:text-base">
+            {group.description}
+          </p>
         )}
       </div>
     </header>

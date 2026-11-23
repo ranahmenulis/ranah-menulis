@@ -9,7 +9,7 @@ import { isFreeMoney, categoryLabel, moneyLabel } from "../project-model";
 import { deadlineText } from "../project-text";
 import { canRegister, registrationFee } from "../registration-model";
 import type { Project, ProjectState } from "../types";
-import { Section } from "./category-blocks";
+import { Section } from "@/components/ui/section-card";
 import { ProjectStrip } from "./project-strip";
 
 type Props = {

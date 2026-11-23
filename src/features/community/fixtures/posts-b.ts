@@ -159,7 +159,6 @@ export const postsB: FixturePost[] = [
     visibility: "publik",
     appreciations: 15,
     saves: 4,
-    image: photos.typewriter,
     agoMs: 3 * HOUR,
     blocks: [
       {

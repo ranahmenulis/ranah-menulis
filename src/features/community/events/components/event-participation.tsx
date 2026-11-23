@@ -1,5 +1,7 @@
 "use client";
 
+import { ChartLineUp } from "@phosphor-icons/react/dist/ssr";
+import { Section } from "@/components/ui/section-card";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -111,13 +113,12 @@ export function EventParticipation({
   }
 
   return (
-    <section className="grid gap-3 border-t border-line pt-6">
-      <h2 className="heading-md">{t.title}</h2>
+    <Section title={t.title} icon={ChartLineUp} className="gap-3">
       <p className="tabular-nums">
         {format(t.progress, { words: number(entry.words), target: number(event.target) })}
       </p>
       <progress
-        className="h-1 w-full accent-ink"
+        className="h-1.5 w-full accent-accent"
         aria-label={t.progressLabel}
         value={Math.min(entry.words, event.target)}
         max={event.target}
@@ -176,6 +177,6 @@ export function EventParticipation({
           {error && <ErrorBanner>{error}</ErrorBanner>}
         </Dialog>
       )}
-    </section>
+    </Section>
   );
 }

@@ -10,6 +10,7 @@ export const groups: typeof source = {
     none: "You have not joined a group yet.",
     joinWithCode: "Join with a code",
     publicTitle: "Public groups",
+    toCommunity: "Read Community writing",
     noPublic: "There are no other public groups yet.",
     toHome: "Back to Home",
     needAccount: "An active account is needed to create or join a group.",
@@ -21,7 +22,13 @@ export const groups: typeof source = {
     members: "{count} members",
     noAdmin: "No Group Admin yet",
     backAdmin: "Admin",
-    backHome: "Home",
+    hero: {
+      body: "Small rooms to read each other's excerpts and share progress with writers you trust.",
+      mine: "groups you are in",
+      public: "public groups",
+      invitations: "Invitations",
+      publicStat: "Public groups",
+    },
   },
   invitations: {
     label: "Group invitations",

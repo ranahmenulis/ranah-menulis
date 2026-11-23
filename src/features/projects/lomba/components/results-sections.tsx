@@ -1,5 +1,5 @@
 import { useLocale, useT } from "@/lib/i18n/provider";
-import { Section } from "../../components/category-blocks";
+import { Section } from "@/components/ui/section-card";
 import { formatProjectDate } from "../../project-model";
 import type { Project } from "../../types";
 import { announcementDates, stageRank } from "../contest-model";

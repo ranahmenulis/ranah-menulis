@@ -6,7 +6,7 @@ import { fill } from "@/features/studio/copy/fill";
 import { useT } from "@/lib/i18n/provider";
 import { useFormat } from "@/lib/i18n/use-format";
 import type { DocumentStore, StudioDocument } from "@/features/studio/storage/document-store";
-import { Section } from "../../components/category-blocks";
+import { Section } from "@/components/ui/section-card";
 import { MyShell } from "../../components/my-states";
 import { formatProjectDate } from "../../project-model";
 import { latestFeedback } from "../assignment-status";

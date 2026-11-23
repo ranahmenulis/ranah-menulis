@@ -1,7 +1,11 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { ChatCircle } from "@phosphor-icons/react/dist/ssr";
 import { Button } from "@/components/ui/button";
+import { cardClass } from "@/components/ui/card";
+import { SectionIcon } from "@/components/ui/section-card";
+import { cn } from "@/lib/cn";
 import { Dialog } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/toast";
 import { format, useT } from "@/lib/i18n/provider";
@@ -129,9 +133,10 @@ export function CommentsSection({ post, data, guest, actions }: Props) {
   const shown = threads.slice(0, visibleThreads);
 
   return (
-    <section id="komentar" aria-label={t.label} className="mt-14">
-      <h2 className="mb-4 text-xl leading-7 font-semibold">
-        {t.label}{" "}
+    <section id="komentar" aria-label={t.label} className={cn(cardClass, "mt-6 scroll-mt-24")}>
+      <h2 className="mb-2 flex items-center gap-2.5 heading-md">
+        <SectionIcon icon={ChatCircle} />
+        {t.label}
         <span className="text-base font-normal text-ink-muted tabular-nums">
           {data.comments.filter((c) => c.postId === post.id).length}
         </span>

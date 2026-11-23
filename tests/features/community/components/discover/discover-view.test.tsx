@@ -14,6 +14,12 @@ vi.mock("@/features/community/storage/store", () => ({
   },
 }));
 
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ push: vi.fn() }),
+  usePathname: () => "/jelajahi",
+  useSearchParams: () => new URLSearchParams(),
+}));
+
 installDialogShim();
 // Several jsdom files run at once; the editor and stores can be slow to settle under load.
 configure({ asyncUtilTimeout: 5000 });
@@ -40,11 +46,23 @@ describe("DiscoverView", () => {
     expect(screen.queryByRole("button", { name: "Trending Today" })).toBeNull();
   });
 
-  it("links to Event and Grup Penulis, which moved here from Beranda", async () => {
+  it("opens Tulisan, Event and Grup Penulis as three tabs of Community", async () => {
     renderView();
     await screen.findAllByRole("article");
-    expect(screen.getByRole("link", { name: "Event" }).getAttribute("href")).toBe("/event");
-    expect(screen.getByRole("link", { name: "Grup Penulis" }).getAttribute("href")).toBe("/grup");
+    const tabs = within(screen.getByRole("navigation", { name: "Bagian Community" }));
+    expect(tabs.getByRole("link", { name: "Tulisan" }).getAttribute("aria-current")).toBe("page");
+    expect(tabs.getByRole("link", { name: "Event" }).getAttribute("href")).toBe("/event");
+    expect(tabs.getByRole("link", { name: "Grup Penulis" }).getAttribute("href")).toBe("/grup");
+  });
+
+  it("leads with a hero: the title, new writing this week, and your own figures", async () => {
+    renderView();
+    await screen.findAllByRole("article");
+    expect(screen.getByRole("heading", { level: 1, name: "Community" })).toBeTruthy();
+    expect(screen.getByText("tulisan baru dalam 7 hari")).toBeTruthy();
+    expect(screen.getByRole("link", { name: /^Tersimpan: \d+$/ }).getAttribute("href")).toBe(
+      "/tersimpan",
+    );
   });
 
   it("shows one page and loads the next only on request, then says it is the end", async () => {

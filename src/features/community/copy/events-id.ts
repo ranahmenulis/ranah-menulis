@@ -9,7 +9,13 @@ export const events = {
   },
   list: {
     title: "Event",
-    back: "Beranda",
+    hero: {
+      body: "Tantangan menulis bersama. Pilih satu dokumen Studio, kejar targetnya, dan lihat berapa penulis yang ikut.",
+      figure: "event sedang berlangsung",
+      joined: "Kamu ikuti",
+      upcoming: "Akan datang",
+      finished: "Selesai",
+    },
     loadError: "Data event di perangkat ini belum bisa dibuka.",
     empty: "Belum ada event.",
     toHome: "Kembali ke Beranda",

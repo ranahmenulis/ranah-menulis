@@ -1,5 +1,7 @@
 "use client";
 
+import { UsersThree } from "@phosphor-icons/react/dist/ssr";
+import { Section } from "@/components/ui/section-card";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
@@ -84,7 +86,7 @@ function LeaveGroup({ id, reader, onResult }: { id: string; reader: string; onRe
   const t = useT().groups.view;
   const [leaving, setLeaving] = useState(false);
   return (
-    <div className="border-t border-line pt-4">
+    <div>
       <Button variant="text" onClick={() => setLeaving(true)}>
         {t.leave}
       </Button>
@@ -119,22 +121,28 @@ function LeaveGroup({ id, reader, onResult }: { id: string; reader: string; onRe
 function MemberList({ group }: { group: WritingGroup }) {
   const t = useT().groups.view;
   return (
-    <section className="grid gap-3 border-t border-line pt-5" aria-labelledby="group-members">
-      <h2 id="group-members" className="heading-md">
-        {t.membersTitle}
-      </h2>
+    <Section id="group-members" title={t.membersTitle} icon={UsersThree} className="gap-3">
       <ul aria-label={t.membersLabel} className="divide-y divide-line">
         {group.members.map((member) => {
           const author = personById(member.authorId);
           return (
-            <li key={member.authorId} className="py-2 text-sm wrap-anywhere">
-              {author ? `${author.name} · @${author.handle}` : t.writer}
-              {member.admin && ` · ${t.adminTag}`}
+            <li
+              key={member.authorId}
+              className="flex flex-wrap items-center gap-x-3 gap-y-1 py-2.5 text-sm wrap-anywhere"
+            >
+              <span className="min-w-0">
+                {author ? `${author.name} · @${author.handle}` : t.writer}
+              </span>
+              {member.admin && (
+                <span className="inline-flex h-6 items-center rounded-full bg-accent-subtle px-2.5 text-xs font-medium text-accent-ink">
+                  {t.adminTag}
+                </span>
+              )}
             </li>
           );
         })}
       </ul>
-    </section>
+    </Section>
   );
 }
 

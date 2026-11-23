@@ -24,14 +24,14 @@ export function DateLeaf({
     <span
       aria-hidden
       className={cn(
-        "rm-leaf grid shrink-0 justify-items-center border border-line-strong bg-canvas text-ink",
+        "rm-leaf grid shrink-0 justify-items-center overflow-hidden rounded-xl border border-line bg-surface text-ink shadow-card",
         large ? "w-28 md:w-32" : "w-14",
         className,
       )}
     >
       <span
         className={cn(
-          "w-full bg-ink text-center font-medium tracking-wide text-on-ink uppercase",
+          "w-full bg-accent text-center font-medium tracking-wide text-on-accent uppercase",
           large ? "py-1.5 text-xs" : "py-0.5 text-[10px]",
         )}
       >
@@ -39,7 +39,7 @@ export function DateLeaf({
       </span>
       <span
         className={cn(
-          "font-serif leading-none tabular-nums",
+          "leading-none font-bold tabular-nums",
           large ? "pt-3 pb-1 text-[56px] md:text-[64px]" : "pt-1.5 pb-0.5 text-2xl",
         )}
       >

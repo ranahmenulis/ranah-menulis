@@ -3,7 +3,7 @@
 import { useT } from "@/lib/i18n/provider";
 import { useFormat } from "@/lib/i18n/use-format";
 import { TextLink } from "@/components/ui/text-link";
-import { Section } from "../../components/category-blocks";
+import { Section } from "@/components/ui/section-card";
 import type { TimeZoneName } from "../../types";
 import { assignmentHref, type AssignmentRow } from "../class-model";
 import { dueText, moduleLabel, stateHintOf } from "../class-text";

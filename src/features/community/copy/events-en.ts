@@ -9,7 +9,13 @@ export const events: typeof source = {
   },
   list: {
     title: "Events",
-    back: "Home",
+    hero: {
+      body: "Writing challenges together. Pick one Studio document, chase the target, and see how many writers take part.",
+      figure: "events in progress",
+      joined: "You joined",
+      upcoming: "Upcoming",
+      finished: "Finished",
+    },
     loadError: "The event data on this device could not be opened.",
     empty: "There are no events yet.",
     toHome: "Back to Home",

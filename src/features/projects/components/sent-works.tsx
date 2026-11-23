@@ -6,7 +6,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { submissionHref } from "../submission-href";
 import { sentAtText, versionSizeText } from "../submission-text";
 import type { Submission } from "../submission-types";
-import { Section } from "./category-blocks";
+import { Section } from "@/components/ui/section-card";
 
 /**
  * Works this reader already sent to the project. Each title opens its page (status, history of

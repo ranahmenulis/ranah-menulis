@@ -5,7 +5,7 @@ import { fill } from "@/features/studio/copy/fill";
 import { useLocale, useT } from "@/lib/i18n/provider";
 import { sentAtText, versionSizeText } from "../submission-text";
 import type { Submission, SubmissionVersion } from "../submission-types";
-import { Section } from "./category-blocks";
+import { Section } from "@/components/ui/section-card";
 
 /** Every change of status, newest first: who, when and why (BR-PRJ-05). */
 export function StatusHistory({ work }: { work: Submission }) {

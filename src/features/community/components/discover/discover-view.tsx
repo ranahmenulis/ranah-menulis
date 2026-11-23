@@ -1,14 +1,15 @@
 "use client";
 
-import { PencilSimpleLine } from "@phosphor-icons/react/dist/ssr";
 import { useMemo, useState } from "react";
-import { Button, ButtonLink } from "@/components/ui/button";
+import { LitWindows } from "@/components/illustrations/community-art";
+import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
 import { ErrorBanner, RetryButton } from "@/components/ui/states";
 import { StickyChipBar } from "@/components/ui/sticky-chip-bar";
 import { useT } from "@/lib/i18n/provider";
 import { useViewer } from "@/lib/viewer";
-import { NEW_POST_HREF } from "@/features/app-shell/nav";
+import { SAVED_HREF } from "@/features/app-shell/nav";
+import { OWN_PROFILE_HREF } from "@/features/profile/profile-href";
 import { editorPicks } from "../../curation/picks-store";
 import {
   CATEGORY_CHIPS_VISIBLE,
@@ -16,25 +17,49 @@ import {
   postsForCategory,
   visibleCategories,
 } from "../../categories";
+import { ME_ID } from "../../fixtures/authors";
+import { GroupInvitations } from "../../groups/components/group-invitations";
+import { writingGroups } from "../../groups/group-store";
+import { useGroupReader } from "../../groups/group-viewer";
 import { usePostActions } from "../../hooks/use-post-actions";
-import { useCommunity } from "../../hooks/use-community";
+import { useCommunity, type CommunityData } from "../../hooks/use-community";
 import { mark } from "../../storage/post-store";
 import { postStore } from "../../storage/store";
 import type { CategoryId } from "../../types";
-import { CommunityLinks } from "./community-links";
+import { CommunityFrame } from "../community-frame";
+import { CommunityHero, type HeroStat } from "../community-hero";
 import { DiscoverTile } from "./discover-tile";
 import { DiscoverSkeleton } from "./discover-skeleton";
+
+const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+
+/** The Tulisan hero's figures: new public writing this week and, when signed in, your own. */
+export function discoverCounts(data: Pick<CommunityData, "posts" | "marks" | "now">) {
+  const marked = (prefix: string) =>
+    Object.entries(data.marks).filter(([key, on]) => on && key.startsWith(prefix)).length;
+  return {
+    recent: data.posts.filter(
+      (p) => p.visibility === "publik" && p.publishedAt >= data.now - WEEK_MS,
+    ).length,
+    following: marked(mark.following("")),
+    saved: marked(mark.saved("")),
+    mine: data.posts.filter((p) => p.authorId === ME_ID && p.visibility === "publik").length,
+  };
+}
 
 /**
  * Jelajahi (COM-09, DESIGN.md 6.8): sticky category chips, a masonry grid of tiles (two to four lanes,
  * wide photo tiles across two; `useRowSpan`), and a "Muat
  * lebih banyak" button instead of endless scrolling. Categories with nothing in them are not
- * listed. Dummy fixtures plus whatever was published on this device.
+ * listed. Dummy fixtures plus whatever was published on this device. It is the Tulisan tab of
+ * Community; group invitations sit above the grid only when there are any.
  */
 export function DiscoverView() {
   const t = useT().discover;
   const data = useCommunity(postStore);
   const guest = useViewer() === "tamu";
+  const groups = writingGroups.use();
+  const reader = useGroupReader();
   const actions = usePostActions(data, guest);
   const [picked, setPicked] = useState<CategoryId>("semua");
   const [shown, setShown] = useState({ id: "semua" as CategoryId, count: PAGE_SIZE });
@@ -60,28 +85,33 @@ export function DiscoverView() {
   const visible = list.slice(0, count);
   const hasMore = list.length > count;
 
-  return (
-    <div className="@container mx-auto max-w-320">
-      <div className="flex items-center gap-4">
-        <h1 className="text-[22px] leading-[30px] font-semibold md:text-[28px] md:leading-9">
-          {t.title}
-        </h1>
-        {!guest && (
-          <ButtonLink href={NEW_POST_HREF} variant="text" className="ml-auto">
-            <PencilSimpleLine size={20} aria-hidden />
-            {t.write}
-          </ButtonLink>
-        )}
-      </div>
+  const ready = data.status === "ready";
+  const counts = discoverCounts(data);
+  const stats: HeroStat[] = guest
+    ? []
+    : [
+        { label: t.hero.following, value: counts.following },
+        { label: t.hero.saved, value: counts.saved, href: SAVED_HREF },
+        { label: t.hero.mine, value: counts.mine, href: OWN_PROFILE_HREF },
+      ];
 
-      <CommunityLinks />
+  return (
+    <CommunityFrame>
+      <CommunityHero
+        titleId="community-title"
+        title={t.title}
+        body={t.hero.body}
+        art={LitWindows}
+        figure={{ value: ready ? counts.recent : null, label: t.hero.recent }}
+        stats={ready ? stats : []}
+      />
+
+      <GroupInvitations groups={groups} reader={reader} />
 
       {data.status === "loading" && <DiscoverSkeleton />}
 
       {data.status === "error" && (
-        <ErrorBanner className="mt-6" action={<RetryButton onClick={data.reload} />}>
-          {t.loadError}
-        </ErrorBanner>
+        <ErrorBanner action={<RetryButton onClick={data.reload} />}>{t.loadError}</ErrorBanner>
       )}
 
       {data.status === "ready" && current && (
@@ -105,11 +135,9 @@ export function DiscoverView() {
                 {t.categories[current.id].description}
               </p>
             </>
-          ) : (
-            <div className="mb-4 md:mb-6" />
-          )}
+          ) : null}
 
-          <div className="grid @xl:grid-flow-row-dense @xl:auto-rows-[4px] @xl:grid-cols-2 @xl:gap-x-6 @4xl:grid-cols-3 @[77.5rem]:grid-cols-4">
+          <div className="grid @max-xl:rounded-2xl @max-xl:border @max-xl:border-line @max-xl:bg-surface @max-xl:px-4 @max-xl:shadow-card @xl:grid-flow-row-dense @xl:auto-rows-[4px] @xl:grid-cols-2 @xl:gap-x-6 @4xl:grid-cols-3 @[77.5rem]:grid-cols-4">
             {visible.map((post, index) => (
               <DiscoverTile
                 key={post.id}
@@ -122,7 +150,7 @@ export function DiscoverView() {
             ))}
           </div>
 
-          <div className="grid justify-items-center py-4 @max-xl:px-0 @max-xl:py-6">
+          <div className="grid justify-items-center pb-4">
             {hasMore ? (
               <Button
                 variant="secondary"
@@ -140,6 +168,6 @@ export function DiscoverView() {
       )}
 
       {actions.guestDialog}
-    </div>
+    </CommunityFrame>
   );
 }

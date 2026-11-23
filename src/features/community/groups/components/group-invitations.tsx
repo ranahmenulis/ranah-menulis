@@ -1,7 +1,10 @@
 "use client";
 
+import { EnvelopeSimple } from "@phosphor-icons/react/dist/ssr";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { cardClass } from "@/components/ui/card";
+import { SectionIcon } from "@/components/ui/section-card";
 import { TextLink } from "@/components/ui/text-link";
 import { cn } from "@/lib/cn";
 import { format, useLocale, useT } from "@/lib/i18n/provider";
@@ -11,15 +14,17 @@ import { declineInvite, joinGroup } from "../group-actions";
 import { groupMessage } from "../group-messages";
 import { groupHref, memberOf, type WritingGroup } from "../group-model";
 
+/**
+ * Invitations to a writing group, as one card with a row per group and small pill buttons. Shown on
+ * the Tulisan and Grup Penulis tabs of Community, and only while there is something to answer (or
+ * the result of the last answer to read).
+ */
 export function GroupInvitations({
   groups,
   reader,
-  variant = "page",
 }: {
   groups: readonly WritingGroup[];
   reader: string | null;
-  /** "rail" matches the sections of the Beranda side column. */
-  variant?: "page" | "rail";
 }) {
   const dict = useT().groups;
   const t = dict.invitations;
@@ -34,34 +39,28 @@ export function GroupInvitations({
   if (!invitations.length && !message) return null;
 
   return (
-    <section
-      className={cn(
-        "grid gap-2 border-t",
-        variant === "rail"
-          ? "border-line-strong py-5 first:border-t-0 first:pt-0"
-          : "border-line py-4",
-      )}
-      aria-label={t.label}
-    >
+    <section className={cn(cardClass, "grid gap-3")} aria-label={t.label}>
       {invitations.length > 0 && (
-        <h2 className={variant === "rail" ? "text-sm font-semibold" : "heading-md"}>{t.label}</h2>
+        <h2 className="flex items-center gap-2.5 heading-md">
+          <SectionIcon icon={EnvelopeSimple} />
+          {t.label}
+        </h2>
       )}
       <p ref={statusRef} role="status" tabIndex={-1} className="text-sm outline-none empty:sr-only">
         {message}
       </p>
       {invitations.length > 0 && (
-        <ul className="grid gap-3">
+        <ul className="grid divide-y divide-line">
           {invitations.map(({ group, by }) => (
             <li
               key={group.id}
-              className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2"
+              className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 py-3 first:pt-0 last:pb-0"
             >
               <p className="min-w-0 text-sm wrap-anywhere">
                 {format(t.text, { by, group: group.name })}
               </p>
               <div className="flex gap-1">
                 <Button
-                  variant="secondary"
                   size="sm"
                   onClick={() => {
                     const result = joinGroup(group.id, { type: "invite" });

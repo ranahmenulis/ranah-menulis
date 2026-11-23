@@ -17,7 +17,7 @@ import type { Submission } from "../submission-types";
 import type { Project, ProjectFixture } from "../types";
 import { useProjects } from "../use-projects";
 import { useSubmissions } from "../use-submissions";
-import { Section } from "./category-blocks";
+import { Section } from "@/components/ui/section-card";
 import { MyError, MyGuest, MyShell, MySkeleton } from "./my-states";
 import { DecisionNote, RevisionRequest } from "./revision-request";
 import { StatusHistory, VersionHistory } from "./submission-history";

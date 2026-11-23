@@ -1,5 +1,6 @@
 "use client";
 
+import { UserCircle } from "@phosphor-icons/react/dist/ssr";
 import { useMemo, useState } from "react";
 import { useToast } from "@/components/ui/toast";
 import { useViewer } from "@/lib/viewer";
@@ -129,6 +130,7 @@ export function PostView({ postId }: { postId: string }) {
         <RelatedPosts
           posts={moreFromAuthor}
           title={format(t.related.moreFrom, { name: author.name })}
+          icon={UserCircle}
         />
         <RelatedPosts posts={related.filter((p) => !moreFromAuthor.some((m) => m.id === p.id))} />
       </div>

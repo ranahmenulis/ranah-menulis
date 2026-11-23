@@ -1,51 +1,13 @@
 "use client";
 
-import {
-  ChalkboardTeacher,
-  Check,
-  Info,
-  Package,
-  Stack,
-  Trophy,
-} from "@phosphor-icons/react/dist/ssr";
+import { ChalkboardTeacher, Check, Package, Stack, Trophy } from "@phosphor-icons/react/dist/ssr";
 import { useRef, type CSSProperties, type ReactNode } from "react";
-import { cardClass } from "@/components/ui/card";
+import { Section } from "@/components/ui/section-card";
 import { cn } from "@/lib/cn";
 import { format, useLocale, useT } from "@/lib/i18n/provider";
 import { useRevealOnce } from "@/lib/use-reveal-once";
 import { moneyLabel } from "../project-model";
 import type { CategoryBlock } from "../types";
-
-/**
- * A titled block of the detail page (DESIGN.md 6.7): a card whose heading carries one accent
- * icon, like "Target Kebiasaan" in the client's Streak reference.
- */
-export function Section({
-  title,
-  icon: Icon,
-  children,
-}: {
-  title: string;
-  icon?: typeof Info;
-  children: ReactNode;
-}) {
-  return (
-    <section className={cn(cardClass, "grid gap-4")}>
-      <h2 className="flex items-center gap-2.5 heading-md">
-        {Icon && (
-          <span
-            aria-hidden
-            className="grid size-8 shrink-0 place-items-center rounded-full bg-accent-subtle text-accent-ink"
-          >
-            <Icon size={18} weight="bold" />
-          </span>
-        )}
-        {title}
-      </h2>
-      {children}
-    </section>
-  );
-}
 
 const two = (n: number) => String(n).padStart(2, "0");
 

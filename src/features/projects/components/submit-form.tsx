@@ -18,7 +18,7 @@ import { wordRuleText, worksText } from "../submission-text";
 import type { Submission } from "../submission-types";
 import type { SendResult } from "../submit-flow";
 import type { Project } from "../types";
-import { Section } from "./category-blocks";
+import { Section } from "@/components/ui/section-card";
 import { SubmitDocumentPicker } from "./submit-document-picker";
 import { ManuscriptUpload } from "./manuscript-upload";
 import { SubmitInfoFields } from "./submit-info-fields";

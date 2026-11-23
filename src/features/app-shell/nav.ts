@@ -83,7 +83,16 @@ export const bottomNav = [home, studio, discover, projects];
 export function activeId(pathname: string): string | null {
   if (pathname.startsWith(STUDIO_HREF)) return "studio";
   if (pathname.startsWith("/beranda")) return "beranda";
-  if (pathname.startsWith(DISCOVER_HREF)) return "jelajahi";
+  // Community is one module: Tulisan, posts, Event and Grup Penulis all light it up.
+  if (
+    pathname.startsWith(DISCOVER_HREF) ||
+    pathname.startsWith("/postingan/") ||
+    pathname === "/event" ||
+    pathname.startsWith("/event/") ||
+    pathname === "/grup" ||
+    pathname.startsWith("/grup/")
+  )
+    return "jelajahi";
   if (pathname.startsWith(PROJECTS_HREF)) return "projects";
   if (pathname.startsWith(KELOLA_NAV_HREF)) return "kelola";
   if (pathname.startsWith(SAVED_HREF)) return "tersimpan";

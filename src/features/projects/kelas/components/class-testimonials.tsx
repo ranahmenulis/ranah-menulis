@@ -1,7 +1,7 @@
 "use client";
 
 import { useT } from "@/lib/i18n/provider";
-import { Section } from "../../components/category-blocks";
+import { Section } from "@/components/ui/section-card";
 import { publicName, visibleTestimonials } from "../testimonial-model";
 import { useAllTestimonials } from "../testimonial-store";
 

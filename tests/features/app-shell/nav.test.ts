@@ -41,6 +41,11 @@ describe("navigation", () => {
     expect(mainNav.map((n) => n.id).slice(0, 3)).toEqual(["beranda", "studio", "jelajahi"]);
     expect(bottomNav.some((n) => n.id === "jelajahi")).toBe(true);
     expect(activeId("/jelajahi")).toBe("jelajahi");
+    expect(activeId("/postingan/toples-kerupuk")).toBe("jelajahi");
+    expect(activeId("/event")).toBe("jelajahi");
+    expect(activeId("/event/cerita-selama-sepekan")).toBe("jelajahi");
+    expect(activeId("/grup/penulis-pesisir")).toBe("jelajahi");
+    expect(activeId("/eventual")).toBeNull();
   });
 
   it("gives Tersimpan and Notifikasi their own destinations", () => {

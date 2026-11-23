@@ -8,7 +8,7 @@ import { useT } from "@/lib/i18n/provider";
 import { useFormat } from "@/lib/i18n/use-format";
 import { ExerciseBlock } from "./exercise-block";
 import { ExternalLink } from "./external-link";
-import { Section } from "../../components/category-blocks";
+import { Section } from "@/components/ui/section-card";
 import { formatProjectDate } from "../../project-model";
 import type { TimeZoneName } from "../../types";
 import { materialAnchor } from "../continue-model";

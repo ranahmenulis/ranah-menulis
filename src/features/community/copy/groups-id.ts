@@ -10,6 +10,7 @@ export const groups = {
     none: "Kamu belum bergabung dengan grup.",
     joinWithCode: "Gabung dengan kode",
     publicTitle: "Grup publik",
+    toCommunity: "Lihat tulisan Community",
     noPublic: "Belum ada grup publik lain.",
     toHome: "Kembali ke Beranda",
     needAccount: "Akun aktif diperlukan untuk membuat atau bergabung dengan grup.",
@@ -21,7 +22,13 @@ export const groups = {
     members: "{count} anggota",
     noAdmin: "Belum ada Admin Grup",
     backAdmin: "Admin",
-    backHome: "Beranda",
+    hero: {
+      body: "Ruang kecil untuk saling membaca cuplikan dan berbagi progres dengan penulis yang kamu percaya.",
+      mine: "grup yang kamu ikuti",
+      public: "grup publik",
+      invitations: "Undangan",
+      publicStat: "Grup publik",
+    },
   },
   invitations: {
     label: "Undangan grup",
