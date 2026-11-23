@@ -1,6 +1,9 @@
 "use client";
 
 import { useRef } from "react";
+import { Podium } from "@/components/illustrations/podium-art";
+import { heroArtClass, heroCardClass } from "@/components/ui/card";
+import { cn } from "@/lib/cn";
 import { Notice } from "@/components/ui/states";
 import { format, useLocale, useT } from "@/lib/i18n/provider";
 import { ME_ID } from "@/features/community/fixtures/authors";
@@ -46,13 +49,27 @@ export function ResultsView({ slug, source, results, store }: Props) {
 
   return (
     <MyShell back={{ href: projectHref(slug), label: c.back }}>
-      <header className="grid gap-2">
-        <p className="text-xs text-ink-muted">{c.kicker}</p>
-        <h1 ref={titleRef} tabIndex={-1} className="heading-lg wrap-anywhere outline-none">
+      <header className={cn(heroCardClass, "grid justify-items-start gap-3 md:min-h-56")}>
+        <Podium
+          className={cn(heroArtClass, "max-md:h-[42%] max-md:max-w-[40%] max-md:opacity-50")}
+        />
+        <p className="rounded-full bg-accent-subtle px-2.5 py-1 text-xs font-semibold text-accent-ink">
+          {c.kicker}
+        </p>
+        <h1
+          ref={titleRef}
+          tabIndex={-1}
+          className="font-serif text-[26px] leading-8 font-semibold text-balance wrap-anywhere outline-none md:max-w-[62%] md:text-[32px] md:leading-10"
+        >
           {project.title}
         </h1>
-        <p className="text-sm font-medium">{c.stageLabel[stage]}</p>
-        <p className="text-sm text-ink-muted">{stageSentence(project, stage, locale)}</p>
+        <p className="inline-flex items-center gap-2 text-sm font-semibold text-accent-ink">
+          <span aria-hidden className="size-2 rounded-full bg-accent" />
+          {c.stageLabel[stage]}
+        </p>
+        <p className="text-sm text-ink-soft md:max-w-[62%]">
+          {stageSentence(project, stage, locale)}
+        </p>
       </header>
       {own && <Notice>{format(c.ownFinalist, { title: own.title })}</Notice>}
       <ResultsLists project={project} stage={stage} results={data.results} mine={own} />

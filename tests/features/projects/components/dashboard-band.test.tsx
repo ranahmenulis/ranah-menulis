@@ -7,13 +7,14 @@ const project = { slug: "solo-x", category: "solo" as const, title: "Terbitkan B
 afterEach(cleanup);
 
 describe("DashboardBand", () => {
-  it("titles the screen with the project, under what the page is, on a dark band", () => {
+  it("titles the screen with the project, under what the page is, on a hero card", () => {
     const { container } = render(<DashboardBand project={project} eyebrow="Dasbor penerbitan" />);
     const title = screen.getByRole("heading", { level: 1 });
     expect(title.textContent).toBe("Terbitkan Bukumu");
     expect(title.hasAttribute("tabindex")).toBe(false);
     expect(screen.getByText("Dasbor penerbitan")).toBeTruthy();
-    expect(container.querySelector("section")?.className).toContain("app-band");
+    expect(container.querySelector("section")?.className).toContain("rounded-2xl");
+    expect(container.querySelector("section")?.className).not.toContain("app-band");
     expect(container.querySelector("[data-cover]")?.getAttribute("aria-hidden")).toBe("true");
   });
 

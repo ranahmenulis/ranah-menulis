@@ -12,7 +12,10 @@ export function StageTimeline({ rows, zone }: { rows: StageRow[]; zone: TimeZone
   const c = useT().projectsSolo.stage;
   const locale = useLocale();
   return (
-    <section aria-labelledby="solo-tahap" className="grid gap-3">
+    <section
+      aria-labelledby="solo-tahap"
+      className="grid gap-3 rounded-2xl border border-line bg-surface p-5 shadow-card md:p-6"
+    >
       <h2 id="solo-tahap" className="heading-sm">
         {c.title}
       </h2>
@@ -21,17 +24,17 @@ export function StageTimeline({ rows, zone }: { rows: StageRow[]; zone: TimeZone
           <li
             key={row.stage}
             aria-current={row.state === "berjalan" ? "step" : undefined}
-            className="grid grid-cols-[1.25rem_1fr] gap-x-3 border-b border-line py-3"
+            className="grid grid-cols-[1.25rem_1fr] gap-x-3 border-b border-line py-3 last:border-b-0"
           >
             <span
               aria-hidden
               className={cn(
                 // The dot fills as the team moves the book on; the running stage pops in once.
-                "mt-1 size-3 rounded-full border border-ink transition-[background-color,box-shadow] duration-300 ease-(--ease-out)",
-                row.state === "selesai" && "bg-ink",
+                "mt-1 size-3 rounded-full border-2 border-accent transition-[background-color,box-shadow] duration-300 ease-(--ease-out)",
+                row.state === "selesai" && "bg-accent",
                 row.state === "berjalan" &&
-                  "rm-pop bg-canvas ring-2 ring-ink ring-offset-2 ring-offset-canvas",
-                row.state === "menunggu" && "border-ink-muted",
+                  "rm-pop bg-surface ring-2 ring-accent ring-offset-2 ring-offset-surface",
+                row.state === "menunggu" && "border-line-strong",
               )}
             />
             <div className="grid min-w-0 gap-0.5">

@@ -59,6 +59,12 @@ export const projectsCatalog = {
   },
   filters: { category: "Kategori", status: "Status", fee: "Biaya" },
   view: {
+    hero: {
+      open: "program sedang dibuka",
+      closing: "segera tutup",
+      free: "gratis dan dibuka",
+      mine: "kamu ikuti",
+    },
     title: "Projects",
     mine: "Proyek saya",
     none: "Tidak ada proyek",
@@ -74,6 +80,7 @@ export const projectsCatalog = {
     allProjects: "Semua Projects",
     about: "Tentang proyek",
     requirements: "Syarat naskah",
+    next: "Berikutnya",
     scheduleTitle: "Jadwal",
     registration: "Pendaftaran",
     scheduleNote:

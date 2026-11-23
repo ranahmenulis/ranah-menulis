@@ -100,6 +100,7 @@ export const flowC = {
     viewProjects: "Lihat Projects",
     empty: "Kamu belum mengikuti proyek.",
     guest: "Masuk untuk melihat proyek dan kirimanmu.",
+    hero: { joined: "proyek kamu ikuti", sent: "karya terkirim", action: "menunggu tindakanmu" },
     runningHeading: "Kelas yang sedang berjalan",
     runningError: "Kelas yang sedang berjalan gagal dimuat.",
     back: { saya: "Proyek saya", katalog: "Semua Projects" },

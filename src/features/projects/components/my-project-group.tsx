@@ -94,7 +94,7 @@ export function MyProjectGroup({ row }: { row: MyProject }) {
   return (
     <section
       aria-labelledby={`saya-${project.slug}`}
-      className="rm-cover-host grid grid-cols-[3.5rem_minmax(0,1fr)] gap-x-4 gap-y-3 border-b border-line py-6 sm:grid-cols-[4.5rem_minmax(0,1fr)]"
+      className="rm-cover-host grid grid-cols-[3.5rem_minmax(0,1fr)] gap-x-4 gap-y-3 rounded-2xl border border-line bg-surface p-4 shadow-card sm:grid-cols-[4.5rem_minmax(0,1fr)] md:p-5"
     >
       <ProjectCover project={project} className="row-span-2 self-start" />
       <div className="grid min-w-0 gap-1">

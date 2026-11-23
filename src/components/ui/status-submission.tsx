@@ -56,9 +56,9 @@ export function StatusSubmission({ status, outlineRevisi, filled, className }: P
     peninjauan: "border-line text-ink",
     "perlu-revisi": outlineRevisi
       ? "border-line-strong text-ink font-medium"
-      : "border-ink bg-ink text-on-ink font-medium",
+      : "border-accent bg-accent text-on-accent font-medium",
     "revisi-terkirim": "border-line text-ink",
-    diterima: "border-line-strong text-ink font-medium",
+    diterima: "border-accent/30 bg-accent-subtle text-accent-ink font-medium",
     ditolak: "border-line text-ink-muted",
   };
 
@@ -67,7 +67,7 @@ export function StatusSubmission({ status, outlineRevisi, filled, className }: P
       className={cn(
         pill,
         tone[status],
-        filled && "border-ink bg-ink font-medium text-on-ink",
+        filled && "border-accent bg-accent font-medium text-on-accent",
         className,
       )}
     >

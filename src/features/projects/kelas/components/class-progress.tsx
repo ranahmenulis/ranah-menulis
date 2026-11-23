@@ -42,10 +42,10 @@ export function ClassProgress({ progress, mentor }: { progress: Progress; mentor
         aria-valuemin={0}
         aria-valuemax={100}
         aria-valuenow={progress.percent}
-        className="h-1 max-w-80 bg-line"
+        className="h-2 max-w-80 overflow-hidden rounded-full bg-accent-subtle"
       >
         <i
-          className="block h-full bg-ink transition-[width] duration-500 ease-out motion-reduce:transition-none"
+          className="block h-full rounded-full bg-accent transition-[width] duration-500 ease-out motion-reduce:transition-none"
           style={{ width: `${progress.percent}%` }}
         />
       </div>

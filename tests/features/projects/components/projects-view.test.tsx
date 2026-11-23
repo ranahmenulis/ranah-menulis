@@ -199,7 +199,8 @@ describe("ProjectsView", () => {
 describe("ProjectsView, the way to Proyek saya", () => {
   it("links to it from the head of the catalog", async () => {
     render(<ProjectsView source={source} />);
-    const link = await screen.findByRole("link", { name: "Proyek saya" });
+    // The shortcut in the hero names the count too ("Proyek saya, 0 kamu ikuti").
+    const link = await screen.findByRole("link", { name: /^Proyek saya/ });
     expect(link.getAttribute("href")).toBe("/projects/saya");
   });
 });

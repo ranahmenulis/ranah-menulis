@@ -14,12 +14,12 @@ const tone: Record<Exclude<AssignmentState, "terkunci">, string> = {
   terlambat: "border-line-strong text-ink font-medium",
   dikumpulkan: "border-line text-ink",
   // The one filled pill, like Perlu Revisi: the participant has something to do (DESIGN.md 7.4).
-  "perlu-perbaikan": "border-ink bg-ink text-on-ink font-medium",
-  selesai: "border-line-strong text-ink font-medium",
+  "perlu-perbaikan": "border-accent bg-accent text-on-accent font-medium",
+  selesai: "border-accent/30 bg-accent-subtle text-accent-ink font-medium",
 };
 
 /**
- * Where an assignment stands, in the monochrome language of submission statuses (DESIGN.md 7.4):
+ * Where an assignment stands, in the language of submission statuses (DESIGN.md 7.4):
  * the more there is for you to do, the heavier it looks. A text label is always there.
  */
 export function StatusTugas({ state, className }: { state: AssignmentState; className?: string }) {

@@ -1,6 +1,7 @@
 "use client";
 
-import { ArrowRight } from "@phosphor-icons/react/dist/ssr";
+import { ArrowRight, Star } from "@phosphor-icons/react/dist/ssr";
+import { heroCardClass } from "@/components/ui/card";
 import Link from "next/link";
 import { useRef } from "react";
 import { cn } from "@/lib/cn";
@@ -24,13 +25,17 @@ function FeaturedBand({ project, now, wide }: { project: Project; now: number; w
       data-cover-reveal
       data-seen={seen ? "" : undefined}
       className={cn(
-        "rm-cover-host theme-dark app-band relative grid items-center gap-6 overflow-hidden p-6 text-ink sm:grid-cols-[minmax(0,1fr)_auto] md:p-8",
-        wide && "lg:gap-12 lg:p-12",
+        heroCardClass,
+        "rm-cover-host hover:shadow-lg grid items-center gap-6 transition-[translate,box-shadow] duration-200 ease-(--ease-out) hover:-translate-y-0.5 sm:grid-cols-[minmax(0,1fr)_auto]",
+        wide && "lg:gap-12 lg:p-10",
       )}
     >
       <div className="grid min-w-0 gap-3">
-        <p className="text-xs text-ink-muted">
-          <span className="font-medium text-ink">{t.label}</span> ·{" "}
+        <p className="flex flex-wrap items-center gap-2 text-xs text-ink-muted">
+          <span className="inline-flex items-center gap-1 rounded-full bg-accent px-2.5 py-1 font-semibold text-on-accent">
+            <Star size={12} weight="fill" aria-hidden />
+            {t.label}
+          </span>
           {categoryLabel(project.category, locale)} · {stateLabelOf(state, locale)}
         </p>
         <h3
@@ -41,7 +46,7 @@ function FeaturedBand({ project, now, wide }: { project: Project; now: number; w
         >
           <Link
             href={projectHref(project.slug)}
-            className="text-ink no-underline after:absolute after:inset-0"
+            className="text-ink no-underline after:absolute after:inset-0 after:rounded-2xl"
           >
             {project.title}
           </Link>
@@ -50,7 +55,7 @@ function FeaturedBand({ project, now, wide }: { project: Project; now: number; w
         <p className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-ink-muted">
           <span className="font-medium text-ink tabular-nums">{feeLabel(project, locale)}</span>
           <span>{deadlineText(project, state, locale)}</span>
-          <span className="inline-flex items-center gap-1 font-medium text-ink">
+          <span className="inline-flex items-center gap-1 font-semibold text-accent-ink">
             {t.view}
             <ArrowRight
               size={14}
@@ -63,13 +68,13 @@ function FeaturedBand({ project, now, wide }: { project: Project; now: number; w
       <ProjectCover
         project={project}
         showTitle
-        className={cn("w-36 max-sm:-order-1", wide && "md:w-48 lg:w-56")}
+        className={cn("w-36 -rotate-2 shadow-card max-sm:-order-1", wide && "md:w-48 lg:w-52")}
       />
     </article>
   );
 }
 
-/** "Unggulan" (PRD 17.5): the projects an Administrator marked, as dark bands above the rest. */
+/** "Unggulan" (PRD 17.5): the projects an Administrator marked, as hero cards above the rest. */
 export function FeaturedBlock({
   featured,
   showsRest,

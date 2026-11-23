@@ -2,7 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
-import { Button, ButtonLink } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { format, useLocale, useT } from "@/lib/i18n/provider";
 import { EmptyState } from "@/components/ui/states";
 import {
@@ -12,9 +12,9 @@ import {
   parseFilters,
   toQuery,
 } from "../project-model";
-import { MY_PROJECTS_HREF } from "../submission-href";
 import { useProjects } from "../use-projects";
 import type { Filters, ProjectFixture } from "../types";
+import { CatalogHero } from "./catalog-hero";
 import { CategoryBar } from "./project-filters";
 import { narrowedBy, useFeaturedSplit } from "../hooks/use-featured-split";
 import { FeaturedBlock } from "./featured-block";
@@ -71,16 +71,13 @@ export function ProjectsView({ source }: Props) {
 
   return (
     <div className="mx-auto max-w-260">
-      <div className="flex items-center justify-between gap-4">
-        <h1 className="text-[28px] leading-9 font-bold tracking-[-0.02em] md:text-[40px] md:leading-[48px]">
-          {t.view.title}
-        </h1>
-        <ButtonLink href={MY_PROJECTS_HREF} variant="text" size="sm" className="text-ink">
-          {t.view.mine}
-        </ButtonLink>
-      </div>
-
-      <p className="mt-2 text-sm text-ink-muted">{description}</p>
+      <CatalogHero
+        projects={data.projects}
+        now={data.now}
+        filters={filters}
+        description={description}
+        onChange={change}
+      />
       <CategoryBar filters={filters} onChange={change} />
 
       {/* The empty state below already says it on screen; this line is for screen readers then. */}
@@ -114,7 +111,7 @@ export function ProjectsView({ source }: Props) {
       ) : (
         <>
           <FeaturedBlock featured={featured} showsRest={rest.length > 0} now={data.now} />
-          <div className="mt-6 grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-5 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+          <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
             {rest.map((project, i) => (
               <ProjectTile key={project.slug} project={project} now={data.now} index={i} />
             ))}

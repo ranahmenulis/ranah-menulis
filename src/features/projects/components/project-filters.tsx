@@ -88,7 +88,7 @@ function FilterMenu<T extends string>({
           onClick={props.onClick}
           className={cn(
             "inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-full px-3.5 text-sm whitespace-nowrap",
-            narrowed ? "bg-ink text-on-ink" : "bg-subtle text-ink hover:bg-line",
+            narrowed ? "bg-accent text-on-accent" : "bg-subtle text-ink hover:bg-line",
           )}
         >
           {menuLabel(title, options, value)}

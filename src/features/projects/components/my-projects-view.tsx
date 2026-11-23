@@ -12,6 +12,9 @@ import type { SubmissionStore } from "../storage/submission-store";
 import type { ProjectFixture } from "../types";
 import { MyProjectGroup } from "./my-project-group";
 import { MyError, MyGuest, MyShell, MySkeleton } from "./my-states";
+import { cardClass } from "@/components/ui/card";
+import { cn } from "@/lib/cn";
+import { MyHero } from "./my-hero";
 
 type Props = {
   /** Replace the dummy catalog and the device store in tests. */
@@ -27,7 +30,7 @@ function RunningClassesSection({ store }: { store?: AssignmentStore }) {
   const running = useRunningClasses({ store });
   if (running.status === "error") {
     return (
-      <section aria-labelledby="kelas-berjalan" className="grid gap-3 border-b border-line py-5">
+      <section aria-labelledby="kelas-berjalan" className={cn(cardClass, "grid gap-3")}>
         <h2 id="kelas-berjalan" className="text-sm font-semibold">
           {t.runningHeading}
         </h2>
@@ -39,7 +42,7 @@ function RunningClassesSection({ store }: { store?: AssignmentStore }) {
   }
   if (running.status !== "ready" || running.rows.length === 0) return null;
   return (
-    <section aria-labelledby="kelas-berjalan" className="grid gap-3 border-b border-line py-5">
+    <section aria-labelledby="kelas-berjalan" className={cn(cardClass, "grid gap-3")}>
       <h2 id="kelas-berjalan" className="text-sm font-semibold">
         {t.runningHeading}
       </h2>
@@ -70,10 +73,9 @@ export function MyProjectsView({ source, store, assignments }: Props) {
 
   return (
     <MyShell back="katalog">
-      <h1 className="heading-lg">{t.title}</h1>
+      <MyHero rows={data.rows} />
       {data.rows.length === 0 ? (
         <EmptyState
-          art="engravingRoom"
           action={
             <ButtonLink href={PROJECTS_HREF} variant="secondary">
               {t.viewProjects}
@@ -83,7 +85,7 @@ export function MyProjectsView({ source, store, assignments }: Props) {
           {t.empty}
         </EmptyState>
       ) : (
-        <div>
+        <div className="grid gap-4">
           <RunningClassesSection store={assignments} />
           {data.rows.map((row) => (
             <MyProjectGroup key={row.project.slug} row={row} />

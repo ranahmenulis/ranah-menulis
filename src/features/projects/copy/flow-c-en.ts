@@ -104,6 +104,7 @@ export const flowC: typeof source = {
     viewProjects: "View Projects",
     empty: "You have not joined any project yet.",
     guest: "Sign in to see your projects and submissions.",
+    hero: { joined: "projects you joined", sent: "works submitted", action: "waiting for you" },
     runningHeading: "Classes in progress",
     runningError: "Classes in progress could not be loaded.",
     back: { saya: "My projects", katalog: "All Projects" },

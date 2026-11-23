@@ -1,3 +1,5 @@
+import { Trophy } from "@phosphor-icons/react/dist/ssr";
+import { cn } from "@/lib/cn";
 import type { CSSProperties } from "react";
 import { Notice } from "@/components/ui/states";
 import { format, useLocale, useT } from "@/lib/i18n/provider";
@@ -58,7 +60,7 @@ export function ResultsLists({ project, stage, results, mine }: Props) {
         ) : (
           <ol className="grid">
             {rows.map(({ entry, mine: own }, i) => (
-              <li key={entry.id} className="grid gap-0.5 border-b border-line py-3">
+              <li key={entry.id} className="grid gap-0.5 border-b border-line py-3 last:border-b-0">
                 <p className="text-base font-medium wrap-anywhere">{entry.title}</p>
                 <p className="text-sm wrap-anywhere text-ink-muted">
                   {reveal ? <Person authorId={entry.authorId} /> : finalistLabel(i, locale)}
@@ -99,20 +101,26 @@ function Winners({ project, results }: { project: Project; results: ContestResul
             return (
               <li
                 key={w.entry.id}
-                className="rm-row-in grid gap-1 border-b border-line py-4"
+                className={cn(
+                  "rm-row-in grid grid-cols-[2.5rem_minmax(0,1fr)] gap-x-3 rounded-xl px-3 py-4",
+                  w.rank === 1 && "bg-accent-subtle",
+                )}
                 style={{ "--i": row } as CSSProperties}
               >
-                <p className="text-xs text-ink-muted">
-                  {w.rank === 1 ? (
-                    <span
-                      className="rm-pop inline-block font-medium text-ink"
-                      style={{ "--i": pop } as CSSProperties}
-                    >
-                      {format(c.place, { rank: "1" })}
-                    </span>
-                  ) : (
-                    format(c.place, { rank: String(w.rank) })
+                <span
+                  aria-hidden
+                  className={cn(
+                    "row-span-4 grid size-10 place-items-center rounded-full text-sm font-bold",
+                    w.rank === 1 ? "rm-pop bg-(--art-flame) text-white" : "bg-subtle text-ink-soft",
                   )}
+                  style={w.rank === 1 ? ({ "--i": pop } as CSSProperties) : undefined}
+                >
+                  {w.rank === 1 ? <Trophy size={20} weight="fill" /> : w.rank}
+                </span>
+                <p className="text-xs text-ink-muted">
+                  <span className={cn(w.rank === 1 && "font-semibold text-accent-ink")}>
+                    {format(c.place, { rank: String(w.rank) })}
+                  </span>
                   {w.tie ? c.tie : ""}
                   {prize ? ` · ${prize}` : ""}
                 </p>

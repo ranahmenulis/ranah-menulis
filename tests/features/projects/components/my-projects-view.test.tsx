@@ -97,7 +97,10 @@ describe("Proyek saya", () => {
       }),
     );
     await view(store);
-    const regions = await screen.findAllByRole("region");
+    // The hero with the counts is a region too; the projects follow it.
+    const regions = (await screen.findAllByRole("region")).filter(
+      (region) => region.getAttribute("aria-labelledby") !== "saya-title",
+    );
     expect(regions[0].textContent).toContain("Lomba Cerpen Hujan 2026");
     expect(regions[0].textContent).toContain("Perlu Revisi");
     expect(regions[0].textContent).toMatch(/tenggat revisi \d+ \w+ 2026/);

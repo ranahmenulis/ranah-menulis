@@ -61,6 +61,12 @@ export const projectsCatalog: typeof source = {
   },
   filters: { category: "Category", status: "Status", fee: "Fee" },
   view: {
+    hero: {
+      open: "programmes open now",
+      closing: "closing soon",
+      free: "free and open",
+      mine: "you joined",
+    },
     title: "Projects",
     mine: "My projects",
     none: "No projects",
@@ -76,6 +82,7 @@ export const projectsCatalog: typeof source = {
     allProjects: "All Projects",
     about: "About the project",
     requirements: "Manuscript requirements",
+    next: "Next",
     scheduleTitle: "Schedule",
     registration: "Registration",
     scheduleNote:

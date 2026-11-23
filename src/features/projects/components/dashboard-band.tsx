@@ -1,4 +1,8 @@
 import type { CSSProperties, ReactNode } from "react";
+import { ClassPath } from "@/components/illustrations/class-art";
+import { BookAssembly } from "@/components/illustrations/projects-art";
+import { heroArtClass, heroCardClass, heroSceneClass } from "@/components/ui/card";
+import { cn } from "@/lib/cn";
 import type { ProjectCategory } from "../types";
 import { ProjectCover } from "./project-cover";
 
@@ -14,38 +18,50 @@ type Props = {
 
 const step = (i: number) => ({ "--i": i }) as CSSProperties;
 
+/** The dashboard's own picture: the path of modules for a class, the book being made for Solo. */
+function BandArt({ category }: { category: ProjectCategory }) {
+  if (category === "kelas") {
+    return <ClassPath className={cn(heroSceneClass, "max-md:opacity-40")} />;
+  }
+  return <BookAssembly className={cn(heroArtClass, "max-md:max-w-[48%] max-md:opacity-40")} />;
+}
+
 /**
- * The head of a project dashboard (DESIGN.md 7.7): the project's cover on a dark band, the title in
- * serif, and one large figure that says where you stand. The buttons stay under the band, on the
- * page surface. Everything is shown at once under reduced motion.
+ * The head of a project dashboard (DESIGN.md 7.7, client Streak reference 23 November 2026): a hero
+ * card with the dashboard's picture at the right, the project's small cover beside its name, and
+ * one large figure that says where you stand. The buttons stay under the card.
  */
 export function DashboardBand({ project, eyebrow, titleId, children }: Props) {
   return (
     <section
       data-cover-reveal
       data-seen=""
-      className="rm-cover-host theme-dark app-band relative isolate overflow-hidden px-6 py-8 text-ink md:px-10 md:py-10"
+      className={cn(heroCardClass, "rm-cover-host grid gap-5 md:min-h-64")}
     >
-      <div className="grid items-center gap-6 sm:grid-cols-[auto_minmax(0,1fr)] sm:gap-8">
-        <ProjectCover project={project} showTitle className="rm-cover-enter w-24 md:w-32" />
-        <div className="grid min-w-0 gap-4">
-          <div className="rm-rise-in grid gap-1.5" style={step(0)}>
-            <p className="text-xs text-ink-soft">{eyebrow}</p>
-            <h1
-              id={titleId}
-              tabIndex={titleId ? -1 : undefined}
-              className="font-serif text-[26px] leading-8 font-semibold text-balance wrap-anywhere outline-none md:text-[32px] md:leading-10"
-            >
-              {project.title}
-            </h1>
-          </div>
-          {children && (
-            <div className="rm-rise-in grid min-w-0 gap-2" style={step(1)}>
-              {children}
-            </div>
-          )}
+      <BandArt category={project.category} />
+      <div className="rm-rise-in flex items-center gap-4 md:max-w-[62%]" style={step(0)}>
+        <ProjectCover
+          project={project}
+          className="rm-cover-enter w-14 shrink-0 -rotate-3 shadow-card md:w-16"
+        />
+        <div className="grid min-w-0 justify-items-start gap-1.5">
+          <p className="rounded-full bg-accent-subtle px-2.5 py-1 text-xs font-semibold text-accent-ink">
+            {eyebrow}
+          </p>
+          <h1
+            id={titleId}
+            tabIndex={titleId ? -1 : undefined}
+            className="font-serif text-[24px] leading-8 font-semibold text-balance wrap-anywhere outline-none md:text-[30px] md:leading-10"
+          >
+            {project.title}
+          </h1>
         </div>
       </div>
+      {children && (
+        <div className="rm-rise-in grid min-w-0 gap-2 md:max-w-[62%]" style={step(1)}>
+          {children}
+        </div>
+      )}
     </section>
   );
 }
@@ -67,7 +83,7 @@ export function BandFigure({
         className={
           words
             ? "font-serif text-[26px] leading-8 font-semibold text-balance md:text-[30px] md:leading-9"
-            : "font-serif text-[44px] leading-none font-semibold tabular-nums md:text-[56px]"
+            : "text-[56px] leading-[0.95] font-bold tracking-tight tabular-nums md:text-[72px]"
         }
       >
         {figure}

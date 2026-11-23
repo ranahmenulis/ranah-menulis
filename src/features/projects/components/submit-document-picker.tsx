@@ -59,7 +59,7 @@ export function SubmitDocumentPicker({
     <fieldset
       aria-describedby={describedBy}
       aria-invalid={invalid || undefined}
-      className="grid max-h-72 gap-3 overflow-auto border border-line p-3"
+      className="grid max-h-72 gap-3 overflow-auto rounded-xl border border-line p-3"
     >
       <legend className="sr-only">{t.legend}</legend>
       {docs.map((doc) => {

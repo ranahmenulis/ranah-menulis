@@ -36,8 +36,12 @@ export function ProjectStrip({ project, titleAs = "p", linked = false, className
       style={{ animationDelay: "0ms" }}
     >
       <ProjectCover project={project} className="w-12" />
-      <div className="grid min-w-0 gap-0.5">
-        <p className="text-xs text-ink-muted">{categoryLabel(project.category, locale)}</p>
+      <div className="grid min-w-0 justify-items-start gap-1">
+        <p>
+          <span className="rounded-full bg-accent-subtle px-2 py-0.5 text-[11px] font-semibold text-accent-ink">
+            {categoryLabel(project.category, locale)}
+          </span>
+        </p>
         <Title
           className={cn(
             "wrap-anywhere",

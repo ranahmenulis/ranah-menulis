@@ -1,6 +1,8 @@
 "use client";
 
 import { ButtonLink } from "@/components/ui/button";
+import { cardClass } from "@/components/ui/card";
+import { cn } from "@/lib/cn";
 import { fill } from "@/features/studio/copy/fill";
 import { useLocale, useT } from "@/lib/i18n/provider";
 import { formatProjectDateTime, moneyLabel, projectHref } from "../project-model";
@@ -17,11 +19,11 @@ function QrisSample({ amount }: { amount: number }) {
   const t = useT().projectsFlow.payment.waiting;
   const locale = useLocale();
   return (
-    <figure className="grid justify-items-center gap-3 border border-line p-6">
+    <figure className={cn(cardClass, "grid justify-items-center gap-3")}>
       <div
         role="img"
         aria-label={t.qrisAlt}
-        className="grid size-48 place-items-center border border-dashed border-line-strong p-4 text-center text-sm text-ink-muted"
+        className="grid size-48 place-items-center rounded-xl border-2 border-dashed border-accent/40 bg-accent-subtle/50 p-4 text-center text-sm text-ink-muted"
       >
         {t.qrisSample}
       </div>

@@ -1,6 +1,14 @@
 "use client";
 
-import { ArrowLeft } from "@phosphor-icons/react/dist/ssr";
+import {
+  ArrowLeft,
+  BookOpenText,
+  CalendarBlank,
+  CheckCircle,
+  ListChecks,
+  ShieldCheck,
+} from "@phosphor-icons/react/dist/ssr";
+import { heroCardClass } from "@/components/ui/card";
 import { TextLink } from "@/components/ui/text-link";
 import { PROJECTS_HREF } from "@/features/app-shell/nav";
 import { format, useLocale, useT } from "@/lib/i18n/provider";
@@ -36,19 +44,34 @@ function Schedule({ project, state, now }: { project: Project; state: ProjectSta
       done: m.at < now,
     })),
   ];
+  const next = rows.findIndex((row) => !row.done);
   return (
-    <Section title={t.scheduleTitle}>
-      <dl className="relative grid gap-5 pl-7 before:absolute before:top-2 before:bottom-2 before:left-[5px] before:w-px before:bg-line">
+    <Section title={t.scheduleTitle} icon={CalendarBlank}>
+      <dl className="relative grid gap-2 pl-7 before:absolute before:top-4 before:bottom-4 before:left-[5px] before:w-0.5 before:rounded-full before:bg-accent-subtle">
         {rows.map((row, i) => (
-          <div key={i} className="relative grid gap-0.5">
+          <div
+            key={i}
+            className={cn(
+              "relative -ml-2 grid gap-0.5 rounded-xl px-2 py-2",
+              i === next && "bg-accent-subtle/60",
+            )}
+          >
             <span
               aria-hidden
               className={cn(
-                "absolute top-1.5 -left-7 size-[11px] rounded-full border-2 border-ink",
-                row.done ? "bg-ink" : "bg-canvas",
+                "absolute top-3.5 -left-5 size-3 rounded-full border-2 border-accent",
+                row.done ? "bg-accent" : "bg-surface",
+                i === next && "ring-4 ring-accent/20",
               )}
             />
-            <dt className="text-base font-medium wrap-anywhere">{row.label}</dt>
+            <dt className="flex flex-wrap items-center gap-2 text-base font-medium wrap-anywhere">
+              {row.label}
+              {i === next && (
+                <span className="rounded-full bg-accent px-2 py-0.5 text-[11px] font-semibold text-on-accent">
+                  {t.next}
+                </span>
+              )}
+            </dt>
             <dd className="text-sm text-ink-muted">{row.value}</dd>
           </div>
         ))}
@@ -58,18 +81,26 @@ function Schedule({ project, state, now }: { project: Project; state: ProjectSta
   );
 }
 
-/** The project's header: a dark band with its cover, so every project page opens on its face. */
+/**
+ * The project's header: a hero card (client reference, 23 November 2026) with its cover leaning
+ * at the right, so every project page opens on its face.
+ */
 function DetailHeader({ project, state }: { project: Project; state: ProjectState }) {
   const locale = useLocale();
   return (
     <header
       data-cover-reveal
       data-seen=""
-      className="rm-cover-host theme-dark app-band mt-4 grid items-end gap-6 p-6 text-ink sm:grid-cols-[minmax(0,1fr)_auto] md:p-10"
+      className={cn(
+        heroCardClass,
+        "rm-cover-host mt-4 grid items-center gap-6 sm:grid-cols-[minmax(0,1fr)_auto] md:p-10",
+      )}
     >
       <div className="grid min-w-0 gap-3">
-        <p className="text-xs text-ink-muted">
-          <span className="font-medium text-ink">{categoryLabel(project.category, locale)}</span> ·{" "}
+        <p className="flex flex-wrap items-center gap-2 text-xs text-ink-muted">
+          <span className="rounded-full bg-accent-subtle px-2.5 py-1 font-semibold text-accent-ink">
+            {categoryLabel(project.category, locale)}
+          </span>
           {stateLabelOf(state, locale)}
         </p>
         <h1 className="read-title text-balance wrap-anywhere">{project.title}</h1>
@@ -79,7 +110,7 @@ function DetailHeader({ project, state }: { project: Project; state: ProjectStat
         project={project}
         showTitle
         describe
-        className="rm-cover-enter w-32 max-sm:-order-1 md:w-44"
+        className="rm-cover-enter w-32 rotate-2 shadow-card max-sm:-order-1 md:w-44"
       />
     </header>
   );
@@ -129,7 +160,7 @@ export function ProjectDetail({ slug, source, store }: Props) {
 
       <DetailHeader project={project} state={state} />
 
-      <div className="mt-10 grid gap-x-12 gap-y-10 lg:grid-cols-[minmax(0,1fr)_20rem]">
+      <div className="mt-6 grid gap-x-6 gap-y-4 lg:grid-cols-[minmax(0,1fr)_20rem]">
         <div className="max-lg:order-1 lg:col-start-2 lg:row-start-1">
           <div className="lg:sticky lg:top-[calc(3.5rem+var(--safe-top)+1.5rem)]">
             <ProjectAside
@@ -144,8 +175,8 @@ export function ProjectDetail({ slug, source, store }: Props) {
           </div>
         </div>
 
-        <div className="grid min-w-0 content-start gap-12 max-lg:order-2 lg:col-start-1 lg:row-start-1">
-          <Section title={t.about}>
+        <div className="grid min-w-0 content-start gap-4 max-lg:order-2 lg:col-start-1 lg:row-start-1">
+          <Section title={t.about} icon={BookOpenText}>
             {project.about.map((paragraph, i) => (
               <p key={i} className="read-body wrap-anywhere">
                 {paragraph}
@@ -153,11 +184,17 @@ export function ProjectDetail({ slug, source, store }: Props) {
             ))}
           </Section>
 
-          <Section title={t.requirements}>
-            <ul className="grid list-disc gap-1.5 pl-5 text-base marker:text-ink-muted">
+          <Section title={t.requirements} icon={ListChecks}>
+            <ul className="grid gap-2 text-base">
               {project.requirements.map((rule, i) => (
-                <li key={i} className="wrap-anywhere">
-                  {rule}
+                <li key={i} className="flex gap-2.5 wrap-anywhere">
+                  <CheckCircle
+                    size={20}
+                    weight="fill"
+                    aria-hidden
+                    className="mt-0.5 shrink-0 text-accent"
+                  />
+                  <span className="min-w-0">{rule}</span>
                 </li>
               ))}
             </ul>
@@ -167,7 +204,7 @@ export function ProjectDetail({ slug, source, store }: Props) {
           <Schedule project={project} state={state} now={data.now} />
           {project.block.kind === "kelas" && <ClassTestimonials slug={project.slug} />}
 
-          <Section title={t.rightsTitle}>
+          <Section title={t.rightsTitle} icon={ShieldCheck}>
             <p className="text-base">{t.rights}</p>
             <p className="text-sm text-ink-muted">
               {format(t.managedBy, { organizer: project.organizer })}

@@ -78,7 +78,10 @@ export function FinalApproval({ target, progress, store, zone, onDecided }: Prop
   }
 
   return (
-    <section aria-labelledby="solo-final" className="grid gap-4 border border-line p-5">
+    <section
+      aria-labelledby="solo-final"
+      className="grid gap-4 rounded-2xl border border-accent/40 bg-surface p-5 shadow-card ring-1 ring-accent/20 md:p-6"
+    >
       <div className="grid gap-1">
         <h2 id="solo-final" className="heading-sm">
           {c.title}

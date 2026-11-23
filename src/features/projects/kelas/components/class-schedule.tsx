@@ -33,7 +33,7 @@ export function ClassSchedule({
   return (
     <Section title={t.title}>
       {next ? (
-        <div className="grid gap-1 border border-line p-4">
+        <div className="grid gap-1 rounded-xl border border-accent/30 bg-accent-subtle/60 p-4">
           <p className="text-xs text-ink-muted">{t.next}</p>
           <p className="text-base font-medium wrap-anywhere">{next.title}</p>
           <p className="text-sm">{sessionTime(next.at, zone, locale)}</p>

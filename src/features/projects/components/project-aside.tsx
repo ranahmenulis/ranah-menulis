@@ -1,6 +1,9 @@
 "use client";
 
+import { CalendarCheck, Coins, PaperPlaneTilt, UsersThree } from "@phosphor-icons/react/dist/ssr";
 import type { ComponentProps, ReactNode } from "react";
+import { cardClass } from "@/components/ui/card";
+import { cn } from "@/lib/cn";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { TextLink } from "@/components/ui/text-link";
 import type { Locale } from "@/lib/i18n/config";
@@ -14,11 +17,26 @@ import { CancelRegistration } from "./cancel-registration";
 import { registerHref } from "../registration-model";
 import type { Project, ProjectState, Registration } from "../types";
 
-function Fact({ label, children }: { label: string; children: ReactNode }) {
+/** One fact as in the reference's habit card: accent icon, label, then the value. */
+function Fact({
+  label,
+  icon: Icon,
+  children,
+}: {
+  label: string;
+  icon: typeof Coins;
+  children: ReactNode;
+}) {
   return (
-    <div className="grid gap-0.5">
+    <div className="grid grid-cols-[2rem_minmax(0,1fr)] gap-x-3 border-t border-line pt-4 first:border-t-0 first:pt-0">
+      <span
+        aria-hidden
+        className="row-span-2 grid size-8 place-items-center rounded-full bg-accent-subtle text-accent-ink"
+      >
+        <Icon size={16} weight="bold" />
+      </span>
       <dt className="text-xs text-ink-muted">{label}</dt>
-      <dd className="text-sm wrap-anywhere">{children}</dd>
+      <dd className="text-sm font-medium wrap-anywhere">{children}</dd>
     </div>
   );
 }
@@ -119,9 +137,9 @@ export function ProjectAside({
   const open = state === "buka" || state === "segera-tutup";
 
   return (
-    <aside aria-label={t.aside.label} className="grid content-start gap-5 border border-line p-5">
+    <aside aria-label={t.aside.label} className={cn(cardClass, "grid content-start gap-5")}>
       <dl className="grid gap-4">
-        <Fact label={project.block.kind === "solo" ? t.aside.feePackage : t.aside.fee}>
+        <Fact label={project.block.kind === "solo" ? t.aside.feePackage : t.aside.fee} icon={Coins}>
           {lines.length === 0 ? (
             t.fee.free
           ) : (
@@ -135,13 +153,16 @@ export function ProjectAside({
             </span>
           )}
         </Fact>
-        <Fact label={t.quota.label}>
+        <Fact label={t.quota.label} icon={UsersThree}>
           {quota ? (
             <span className="grid gap-2">
               <span>{quotaText(project, locale)}</span>
-              <span aria-hidden className="block h-1 bg-line">
+              <span
+                aria-hidden
+                className="block h-1.5 overflow-hidden rounded-full bg-accent-subtle"
+              >
                 <span
-                  className="block h-1 bg-ink"
+                  className="block h-full rounded-full bg-accent"
                   style={{
                     width: `${quota.total > 0 ? Math.min(100, (quota.taken / quota.total) * 100) : 100}%`,
                   }}
@@ -152,17 +173,21 @@ export function ProjectAside({
             t.quota.none
           )}
         </Fact>
-        <Fact label={t.aside.label}>
+        <Fact label={t.aside.label} icon={CalendarCheck}>
           <span className="grid">
             <span>{deadlineText(project, state, locale)}</span>
             {open && project.closesAt !== null && (
-              <span className="text-ink-muted">
+              <span className="font-normal text-accent-ink">
                 {daysLeftLabel(project.closesAt, now, project.timeZone, locale)}
               </span>
             )}
           </span>
         </Fact>
-        {action.sentLine && <Fact label={t.aside.sent}>{action.sentLine}</Fact>}
+        {action.sentLine && (
+          <Fact label={t.aside.sent} icon={PaperPlaneTilt}>
+            {action.sentLine}
+          </Fact>
+        )}
       </dl>
       <div className="grid gap-2">
         <ActionButton action={action} signIn={guest && open} />

@@ -1,17 +1,47 @@
 "use client";
 
+import {
+  ChalkboardTeacher,
+  Check,
+  Info,
+  Package,
+  Stack,
+  Trophy,
+} from "@phosphor-icons/react/dist/ssr";
 import { useRef, type CSSProperties, type ReactNode } from "react";
+import { cardClass } from "@/components/ui/card";
 import { cn } from "@/lib/cn";
 import { format, useLocale, useT } from "@/lib/i18n/provider";
 import { useRevealOnce } from "@/lib/use-reveal-once";
 import { moneyLabel } from "../project-model";
 import type { CategoryBlock } from "../types";
 
-/** A titled block of the detail page, in the document layout (DESIGN.md 6.7). */
-export function Section({ title, children }: { title: string; children: ReactNode }) {
+/**
+ * A titled block of the detail page (DESIGN.md 6.7): a card whose heading carries one accent
+ * icon, like "Target Kebiasaan" in the client's Streak reference.
+ */
+export function Section({
+  title,
+  icon: Icon,
+  children,
+}: {
+  title: string;
+  icon?: typeof Info;
+  children: ReactNode;
+}) {
   return (
-    <section className="grid gap-4">
-      <h2 className="heading-md">{title}</h2>
+    <section className={cn(cardClass, "grid gap-4")}>
+      <h2 className="flex items-center gap-2.5 heading-md">
+        {Icon && (
+          <span
+            aria-hidden
+            className="grid size-8 shrink-0 place-items-center rounded-full bg-accent-subtle text-accent-ink"
+          >
+            <Icon size={18} weight="bold" />
+          </span>
+        )}
+        {title}
+      </h2>
       {children}
     </section>
   );
@@ -26,9 +56,9 @@ function Steps({ items }: { items: { title: ReactNode; meta?: ReactNode }[] }) {
       {items.map((item, i) => (
         <li
           key={i}
-          className="grid grid-cols-[3rem_minmax(0,1fr)] items-baseline gap-x-3 border-t border-line py-4 last:border-b"
+          className="grid grid-cols-[3rem_minmax(0,1fr)] items-baseline gap-x-3 border-t border-line py-4 first:border-t-0 first:pt-1"
         >
-          <span aria-hidden className="font-serif text-[28px] leading-none text-ink-faint">
+          <span aria-hidden className="font-serif text-[28px] leading-none text-accent-ink/50">
             {two(i + 1)}
           </span>
           <div className="grid gap-0.5">
@@ -53,9 +83,9 @@ function Weights({ criteria }: { criteria: { name: string; weight: number }[] })
             <span className="wrap-anywhere">{c.name}</span>
             <span className="text-sm font-medium tabular-nums">{c.weight}%</span>
           </p>
-          <span aria-hidden className="block h-1 bg-line">
+          <span aria-hidden className="block h-1.5 overflow-hidden rounded-full bg-accent-subtle">
             <span
-              className="block h-full origin-left bg-ink transition-[scale] duration-1000 ease-(--ease-out)"
+              className="block h-full origin-left rounded-full bg-accent transition-[scale] duration-1000 ease-(--ease-out)"
               style={
                 {
                   width: `${Math.min(100, c.weight)}%`,
@@ -79,10 +109,21 @@ function Prizes({ prizes }: { prizes: string[] }) {
         <li
           key={i}
           className={cn(
-            "font-serif wrap-anywhere",
-            i === 0 ? "text-[22px] leading-8 font-semibold" : "text-lg leading-7 text-ink-soft",
+            "flex items-center gap-3 rounded-xl px-3 py-2 font-serif wrap-anywhere",
+            i === 0
+              ? "bg-accent-subtle text-[22px] leading-8 font-semibold"
+              : "text-lg leading-7 text-ink-soft",
           )}
         >
+          <span
+            aria-hidden
+            className={cn(
+              "grid size-8 shrink-0 place-items-center rounded-full font-sans text-sm font-semibold",
+              i === 0 ? "bg-(--art-flame) text-white" : "bg-subtle text-ink-muted",
+            )}
+          >
+            {i === 0 ? <Trophy size={16} weight="fill" /> : i + 1}
+          </span>
           {prize}
         </li>
       ))}
@@ -100,7 +141,7 @@ export function CategoryBlockView({ block }: { block: CategoryBlock }) {
   const locale = useLocale();
   if (block.kind === "antologi") {
     return (
-      <Section title={t.antologiTitle}>
+      <Section title={t.antologiTitle} icon={Stack}>
         <p className="font-serif text-xl leading-8 wrap-anywhere">
           <span className="font-sans text-sm text-ink-muted">{t.theme}</span>
           <span className="font-semibold">{block.theme}</span>
@@ -112,14 +153,16 @@ export function CategoryBlockView({ block }: { block: CategoryBlock }) {
 
   if (block.kind === "solo") {
     return (
-      <Section title={t.soloTitle}>
+      <Section title={t.soloTitle} icon={Package}>
         <ul className="grid gap-3 sm:grid-cols-2">
           {block.packages.map((pack, i) => (
             <li
               key={i}
               className={cn(
-                "grid content-start gap-3 p-5",
-                i === block.packages.length - 1 ? "theme-dark app-band text-ink" : "bg-subtle",
+                "grid content-start gap-3 rounded-xl p-5",
+                i === block.packages.length - 1
+                  ? "bg-accent-subtle ring-1 ring-accent/40"
+                  : "border border-line bg-subtle/60",
               )}
             >
               <p className="font-serif text-lg leading-7 font-semibold wrap-anywhere">
@@ -131,7 +174,12 @@ export function CategoryBlockView({ block }: { block: CategoryBlock }) {
               <ul className="grid gap-1 text-sm text-ink-soft">
                 {pack.includes.map((item, j) => (
                   <li key={j} className="flex gap-2">
-                    <span aria-hidden>—</span>
+                    <Check
+                      size={16}
+                      weight="bold"
+                      aria-hidden
+                      className="mt-0.5 shrink-0 text-accent-ink"
+                    />
                     <span className="wrap-anywhere">{item}</span>
                   </li>
                 ))}
@@ -145,11 +193,11 @@ export function CategoryBlockView({ block }: { block: CategoryBlock }) {
 
   if (block.kind === "kelas") {
     return (
-      <Section title={t.kelasTitle}>
-        <div className="flex items-center gap-4 bg-subtle p-4">
+      <Section title={t.kelasTitle} icon={ChalkboardTeacher}>
+        <div className="flex items-center gap-4 rounded-xl bg-subtle p-4">
           <span
             aria-hidden
-            className="grid size-12 shrink-0 place-items-center rounded-full bg-ink font-serif text-xl text-on-ink"
+            className="grid size-12 shrink-0 place-items-center rounded-full bg-accent font-serif text-xl text-on-accent"
           >
             {block.teacher.name.charAt(0)}
           </span>
@@ -174,7 +222,7 @@ export function CategoryBlockView({ block }: { block: CategoryBlock }) {
   }
 
   return (
-    <Section title={t.lombaTitle}>
+    <Section title={t.lombaTitle} icon={Trophy}>
       <Weights criteria={block.criteria} />
       <div className="mt-2 grid gap-3 border-t border-line pt-5">
         <h3 className="text-sm font-medium text-ink-muted">{t.prizes}</h3>

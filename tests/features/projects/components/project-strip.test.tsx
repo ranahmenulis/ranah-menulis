@@ -9,7 +9,8 @@ afterEach(cleanup);
 describe("ProjectStrip", () => {
   it("names the category and the project, with the cover hidden from assistive tech", () => {
     const { container } = render(<ProjectStrip project={project} />);
-    expect(screen.getByText("Kelas Menulis", { selector: "p" })).toBeTruthy();
+    // The category is a pill in the strip; the painted cover prints it too, hidden from assistive tech.
+    expect(container.querySelector("p > span")?.textContent).toBe("Kelas Menulis");
     expect(screen.getByText("Kelas Cerpen").tagName).toBe("P");
     expect(screen.queryByRole("heading")).toBeNull();
     expect(container.querySelector("[data-cover]")?.getAttribute("aria-hidden")).toBe("true");

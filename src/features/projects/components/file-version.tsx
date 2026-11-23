@@ -15,7 +15,7 @@ export function FileVersion({ file, store }: { file: VersionFile; store?: FileSt
   const t = useT().projectsFlow.submit.fileVersion;
   const locale = useLocale();
   return (
-    <div className="grid gap-3 border border-line p-4">
+    <div className="grid gap-3 rounded-xl border border-line bg-subtle/50 p-4">
       <p className="flex min-w-0 items-start gap-2 text-sm">
         <FileText size={20} aria-hidden className="mt-0.5 shrink-0" />
         <span className="min-w-0 wrap-anywhere">

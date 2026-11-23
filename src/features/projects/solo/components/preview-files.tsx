@@ -80,7 +80,10 @@ export function PreviewFiles({
 }) {
   const c = useT().projectsSolo.previews;
   return (
-    <section aria-labelledby="solo-berkas" className="grid gap-3">
+    <section
+      aria-labelledby="solo-berkas"
+      className="grid gap-3 rounded-2xl border border-line bg-surface p-5 shadow-card md:p-6"
+    >
       <h2 id="solo-berkas" className="heading-sm">
         {c.title}
       </h2>
