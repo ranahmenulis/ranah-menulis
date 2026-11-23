@@ -6,6 +6,7 @@ import { useT } from "@/lib/i18n/provider";
 import { SendToProjectDialog } from "../send-to-project-dialog";
 import type { DocumentList } from "../../hooks/use-document-list";
 import type { StudioDocument } from "../../storage/document-store";
+import { BookDialog, bookPatch } from "../book/book-dialog";
 import { DocumentClassificationDialog } from "./document-classification-dialog";
 import { DeleteDialog, MoveDialog, NameDialog } from "./document-dialogs";
 import type { Pending } from "./pending";
@@ -58,6 +59,28 @@ export function PendingDialogs({
           submitLabel={t.newFolder.submit}
           onClose={onClose}
           onSubmit={(name) => run(() => list.createFolder(name))()}
+        />
+      );
+    case "newBook":
+      return (
+        <BookDialog
+          folder={null}
+          onClose={onClose}
+          onSubmit={async ({ name, cover }) => {
+            await list.createFolder(name, { kind: "book", ...(cover ? { cover } : {}) });
+            onClose();
+          }}
+        />
+      );
+    case "bookSettings":
+      return (
+        <BookDialog
+          folder={pending.folder}
+          onClose={onClose}
+          onSubmit={async (values) => {
+            await list.updateFolder(pending.folder.id, bookPatch(values));
+            onClose();
+          }}
         />
       );
     case "renameFolder":

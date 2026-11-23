@@ -1,0 +1,50 @@
+import type { studioBook as source } from "./book-id";
+
+export const studioBook: typeof source = {
+  newBook: "New book",
+  makeBook: "Make this a book manuscript",
+  settings: "Book settings",
+  meta: {
+    chapters: "{chapters} chapters · {words} words · changed {time}",
+    chaptersOne: "1 chapter · {words} words · changed {time}",
+  },
+  header: {
+    summary: "{chapters} chapters · {words} words",
+    summaryOne: "1 chapter · {words} words",
+    coverNote: "Book manuscript. The documents in this folder are its chapters.",
+  },
+  chapters: {
+    label: "Book chapters",
+    number: "Chapter {n}",
+    moveUp: "Move {title} up",
+    moveDown: "Move {title} down",
+    moved: "Chapter order saved.",
+    moveFailed: "The chapter order was not saved. Try again.",
+    empty: "No chapters yet. Write the first one with the New document button.",
+  },
+  dialog: {
+    titleNew: "New book",
+    titleEdit: "Book settings",
+    titleLabel: "Book title",
+    coverLabel: "Cover (optional)",
+    coverHint: "A JPG, PNG or WebP image. Without one, Studio makes a cover from your title.",
+    coverAdd: "Choose a cover image",
+    coverReplace: "Replace cover",
+    coverRemove: "Remove cover",
+    coverBusy: "Saving the image…",
+    coverMissing: "The cover image was not found. Choose an image again.",
+    altLabel: "Cover description",
+    altHint: "One short sentence for screen readers. Required when there is a cover.",
+    submitNew: "Create book",
+    submitEdit: "Save",
+    cancel: "Cancel",
+    saveFailed: "The book was not saved. Try again.",
+    errors: {
+      titleRequired: "Write the book title.",
+      titleTooLong: "The book title can be at most 120 characters.",
+      altRequired: "Write a cover description, or remove the cover.",
+      altTooLong: "The cover description can be at most 200 characters.",
+    },
+  },
+  saved: "Book settings saved.",
+};

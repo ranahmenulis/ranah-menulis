@@ -17,6 +17,9 @@ import {
   type SaveResult,
   type StudioDocument,
   type StudioFolder,
+  type FolderInit,
+  type FolderPatch,
+  applyFolderPatch,
 } from "./document-store";
 
 const DB_NAME = "ranah-studio";
@@ -290,8 +293,13 @@ export function createIndexedDbStore(): DocumentStore {
       await done(tx);
     },
 
-    async createFolder(name: string) {
-      const folder: StudioFolder = { id: crypto.randomUUID(), name, createdAt: Date.now() };
+    async createFolder(name: string, init?: FolderInit) {
+      const folder: StudioFolder = {
+        ...init,
+        id: crypto.randomUUID(),
+        name,
+        createdAt: Date.now(),
+      };
       const tx = (await db()).transaction(FOLDERS, "readwrite");
       tx.objectStore(FOLDERS).put(folder);
       await done(tx);
@@ -306,6 +314,17 @@ export function createIndexedDbStore(): DocumentStore {
       if (folder) store.put({ ...folder, name });
       await done(tx);
       if (folder) notifyDocumentListChanged();
+    },
+
+    async updateFolder(id: string, patch: FolderPatch) {
+      const tx = (await db()).transaction(FOLDERS, "readwrite");
+      const store = tx.objectStore(FOLDERS);
+      const folder = (await request(store.get(id))) as StudioFolder | undefined;
+      const next = folder ? applyFolderPatch(folder, patch) : null;
+      if (next) store.put(next);
+      await done(tx);
+      if (next) notifyDocumentListChanged();
+      return next;
     },
   };
 }

@@ -8,7 +8,7 @@ import { problemText } from "@/lib/files/problem-text";
 import { fileStore } from "@/lib/files/store";
 import { useLocale, useT } from "@/lib/i18n/provider";
 import { PosterCover } from "@/features/projects/components/poster-cover";
-import { discardPoster, storePoster } from "../poster-files";
+import { discardImage, storeImage } from "@/lib/files/store-image";
 import { TextField, type FormApi } from "./form-fields";
 
 type Props = {
@@ -33,10 +33,10 @@ export function PosterField({ api, savedId }: Props) {
   async function pick(file: File) {
     setBusy(true);
     setError(null);
-    const result = await storePoster(file, fileStore());
+    const result = await storeImage(file, fileStore());
     setBusy(false);
     if (!result.ok) return setError(problemText(result.problem, "image", locale));
-    if (posterId !== savedId) await discardPoster(posterId, fileStore());
+    if (posterId !== savedId) await discardImage(posterId, fileStore());
     api.set("posterId", result.id);
     // The old description no longer fits a new image.
     api.set("posterAlt", "");
@@ -44,7 +44,7 @@ export function PosterField({ api, savedId }: Props) {
 
   async function remove() {
     setError(null);
-    if (posterId !== savedId) await discardPoster(posterId, fileStore());
+    if (posterId !== savedId) await discardImage(posterId, fileStore());
     api.set("posterId", "");
     api.set("posterAlt", "");
   }

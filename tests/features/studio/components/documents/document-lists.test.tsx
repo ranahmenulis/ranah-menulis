@@ -71,6 +71,7 @@ function listOf(docs: StudioDocument[]): DocumentList {
     deleteForever: vi.fn(),
     createFolder: vi.fn(),
     renameFolder: vi.fn(),
+    updateFolder: vi.fn(),
   };
 }
 

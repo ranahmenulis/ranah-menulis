@@ -1,9 +1,7 @@
 "use client";
 
-import { FolderSimplePlus } from "@phosphor-icons/react/dist/ssr";
 import { Suspense, useEffect, useRef, useState } from "react";
-import { Button, ButtonLink } from "@/components/ui/button";
-import { newDocumentHref } from "@/features/app-shell/nav";
+import { ButtonLink } from "@/components/ui/button";
 import { ErrorBanner, RetryButton } from "@/components/ui/states";
 import { Tabs } from "@/components/ui/tabs";
 import { useT } from "@/lib/i18n/provider";
@@ -17,11 +15,14 @@ import { useDocumentSummaryList } from "../../hooks/use-document-list";
 import { useDocumentListSearch } from "../../hooks/use-document-search";
 import type { StudioDocument } from "../../storage/document-store";
 import { studioStore } from "../../storage/store";
+import { useChapterReorder } from "../../hooks/use-chapter-reorder";
 import { StudioTabs } from "../studio-tabs";
 import { ArchiveList } from "./archive-list";
 import { DocumentFilterFields, useDocumentFilters } from "./document-filters";
 import { DocumentSearchField } from "./document-search-field";
 import { LiveList, TrashList } from "./document-lists";
+import { FolderHead } from "./folder-head";
+import { ListActions } from "./list-actions";
 import { ListFeedback, ListSkeleton } from "./list-feedback";
 import type { Pending } from "./pending";
 import { PendingDialogs } from "./pending-dialogs";
@@ -128,6 +129,10 @@ function DocumentListContent() {
     }
   }
 
+  const reorderChapters = useChapterReorder(list, folderId, (text, failed) =>
+    setNotice({ text, failed }),
+  );
+
   function renderList() {
     if (list.status !== "ready") return <ListFeedback status={list.status} onRetry={list.reload} />;
     if (tab === "sampah") return <TrashList list={list} onPending={setPending} />;
@@ -171,6 +176,7 @@ function DocumentListContent() {
         filters={filters}
         searchMatches={search.matches}
         onClearSearch={search.clear}
+        onReorder={(ids, moved) => void reorderChapters(ids, moved)}
         onClearFilters={() => {
           changeFilters({ jenis: "", tag: "" });
           const target = hasActiveDocuments
@@ -199,38 +205,18 @@ function DocumentListContent() {
             { id: "sampah", label: t.list.trash },
           ]}
         />
-        {activeReady && (
-          <div className="flex items-center gap-2 max-md:hidden">
-            <Button
-              variant="text"
-              size="sm"
-              className="text-ink"
-              onClick={() => setPending({ kind: "newFolder" })}
-            >
-              <FolderSimplePlus size={16} aria-hidden />
-              {t.list.newFolder}
-            </Button>
-            <ButtonLink href={newDocumentHref(folderId)} size="sm">
-              {t.list.newDocument}
-            </ButtonLink>
-          </div>
-        )}
+        {activeReady && <ListActions folderId={folderId} onPending={setPending} />}
       </div>
 
       {folder && (
-        <p className="mt-4 text-sm [overflow-wrap:anywhere]">
-          <button
-            type="button"
-            className="cursor-pointer text-ink-muted hover:text-ink"
-            onClick={() => openFolder(null)}
-          >
-            {t.list.allDocuments}
-          </button>
-          <span className="text-ink-muted"> / </span>
-          <span ref={folderHeadingRef} tabIndex={-1} className="font-medium">
-            {folder.name}
-          </span>
-        </p>
+        <FolderHead
+          folder={folder}
+          docs={list.docs}
+          showBook={activeReady}
+          headingRef={folderHeadingRef}
+          onBack={() => openFolder(null)}
+          onSettings={() => setPending({ kind: "bookSettings", folder })}
+        />
       )}
 
       {showsSearch(search.enabled, hasActiveDocuments, search.query) && (

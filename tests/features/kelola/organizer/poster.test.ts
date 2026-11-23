@@ -10,7 +10,7 @@ vi.mock("@/lib/files/compress-image", () => ({
 }));
 
 import { OWNER_ID } from "@/features/kelola/organizer/organizer-access";
-import { discardPoster, storePoster } from "@/features/kelola/organizer/poster-files";
+import { discardImage, storeImage } from "@/lib/files/store-image";
 import { buildProject } from "@/features/kelola/organizer/project-build";
 import { emptyInput, inputOf, type ProjectInput } from "@/features/kelola/organizer/project-input";
 import { isStoredProject } from "@/features/projects/stored-projects";
@@ -83,10 +83,10 @@ describe("poster in the project form", () => {
   });
 });
 
-describe("storePoster and discardPoster", () => {
+describe("storeImage and discardImage", () => {
   it("keeps a real image as WebP and returns its id", async () => {
     const files = createMemoryFileStore();
-    const saved = await storePoster(PNG(), files, 100);
+    const saved = await storeImage(PNG(), files, 100);
     expect(saved.ok).toBe(true);
     if (!saved.ok) return;
     const stored = await files.get(saved.id);
@@ -96,7 +96,7 @@ describe("storePoster and discardPoster", () => {
   it("refuses something that is not an image and stores nothing", async () => {
     const files = createMemoryFileStore();
     const put = vi.spyOn(files, "put");
-    const saved = await storePoster(new File(["%PDF-1.7 x"], "naskah.png"), files);
+    const saved = await storeImage(new File(["%PDF-1.7 x"], "naskah.png"), files);
     expect(saved).toEqual({
       ok: false,
       message: expect.stringMatching(/JPG, PNG, atau WebP/),
@@ -107,13 +107,13 @@ describe("storePoster and discardPoster", () => {
 
   it("frees a file, and a failing store only leaves it behind", async () => {
     const files = createMemoryFileStore();
-    const saved = await storePoster(PNG(), files);
+    const saved = await storeImage(PNG(), files);
     if (!saved.ok) throw new Error("setup");
-    await discardPoster(saved.id, files);
+    await discardImage(saved.id, files);
     expect(await files.get(saved.id)).toBeNull();
 
     const broken = { ...files, delete: vi.fn().mockRejectedValue(new Error("x")) };
-    await expect(discardPoster("f1", broken)).resolves.toBeUndefined();
-    await expect(discardPoster("", broken)).resolves.toBeUndefined();
+    await expect(discardImage("f1", broken)).resolves.toBeUndefined();
+    await expect(discardImage("", broken)).resolves.toBeUndefined();
   });
 });

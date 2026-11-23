@@ -18,6 +18,8 @@ export type StudioDocument = DocumentClassification & {
   /** Increases by one on every accepted save. Used to detect two writers (BR-STD-04). */
   version: number;
   updatedAt: number;
+  /** When the document was first stored. Absent on documents saved before chapters were ordered. */
+  createdAt?: number;
   /** Folder the document is filed in; absent or null means the top level. */
   folderId?: string | null;
   /** Set when moved to Sampah. The document keeps its content and can be restored. */
@@ -30,7 +32,37 @@ export type StudioDocument = DocumentClassification & {
   layout?: DocumentLayout;
 };
 
-export type StudioFolder = { id: string; name: string; createdAt: number };
+/** A book cover picked by the writer: a file in the file store and its description. */
+export type FolderCover = { fileId: string; alt: string };
+
+/**
+ * A folder. A folder with `kind: "book"` is a manuscript: its documents are chapters, in the order
+ * of `chapterOrder`, and it may have a cover. Every extra field is optional, so folders stored
+ * before books existed need no migration.
+ */
+export type StudioFolder = {
+  id: string;
+  name: string;
+  createdAt: number;
+  kind?: "book";
+  cover?: FolderCover;
+  chapterOrder?: string[];
+};
+
+export type FolderInit = Partial<Pick<StudioFolder, "kind" | "cover" | "chapterOrder">>;
+/** `cover: null` removes the cover. */
+export type FolderPatch = Partial<Pick<StudioFolder, "name" | "kind" | "chapterOrder">> & {
+  cover?: FolderCover | null;
+};
+
+/** Pure folder rule shared by every store. */
+export function applyFolderPatch(folder: StudioFolder, patch: FolderPatch): StudioFolder {
+  const { cover, ...rest } = patch;
+  const next = { ...folder, ...rest };
+  if (cover === null) delete next.cover;
+  else if (cover) next.cover = cover;
+  return next;
+}
 export type DocumentSummary = Omit<StudioDocument, "content">;
 
 export function summarizeDocument(doc: StudioDocument): DocumentSummary {
@@ -40,6 +72,7 @@ export function summarizeDocument(doc: StudioDocument): DocumentSummary {
     wordCount,
     version,
     updatedAt,
+    createdAt,
     folderId,
     deletedAt,
     archivedAt,
@@ -53,6 +86,7 @@ export function summarizeDocument(doc: StudioDocument): DocumentSummary {
     wordCount,
     version,
     updatedAt,
+    createdAt,
     folderId,
     deletedAt,
     archivedAt,
@@ -122,8 +156,10 @@ export interface DocumentStore {
   deletePermanently(id: string): Promise<void>;
   /** Bulk-load daily logs (sample data in development, later the offline queue). */
   importHistory(logs: DailyLog[]): Promise<void>;
-  createFolder(name: string): Promise<StudioFolder>;
+  createFolder(name: string, init?: FolderInit): Promise<StudioFolder>;
   renameFolder(id: string, name: string): Promise<void>;
+  /** Change a folder's book settings; null when the folder is gone. */
+  updateFolder(id: string, patch: FolderPatch): Promise<StudioFolder | null>;
   /** Kept versions of one document, newest first. Versions older than 3 days are not returned. */
   listVersions(docId: string): Promise<DocumentVersion[]>;
   /** Keeps one more version (a restore keeps the current text first). Idempotent per id. */
@@ -164,6 +200,7 @@ export function commitSave(
     ...existing, // preserves folder, classification, and archive/trash state across saves
     ...fields,
     ...(!existing && folderId ? { folderId } : {}),
+    ...(!existing ? { createdAt: now } : {}),
     version: (existing?.version ?? 0) + 1,
     updatedAt: now,
   };

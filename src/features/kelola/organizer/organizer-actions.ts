@@ -7,7 +7,7 @@ import type { ProjectFixture, Publication } from "@/features/projects/types";
 import { staffAssignments } from "../staff-assignments";
 import { OWNER_ID } from "./organizer-access";
 import { buildProject, type BuildResult } from "./project-build";
-import { discardPoster } from "./poster-files";
+import { discardImage } from "@/lib/files/store-image";
 import type { ProjectInput } from "./project-input";
 import { renderProblem } from "./project-problem";
 import type { StatusAction } from "./project-status";
@@ -66,7 +66,7 @@ export function applyAction(
     // A new project may reuse this slug; it must not inherit who worked on this one.
     staffAssignments.write(staffAssignments.read().filter((a) => a.slug !== slug));
     // The poster belonged to this draft alone; free its file (a failure only leaves it behind).
-    if (project.poster) void discardPoster(project.poster.fileId, fileStore());
+    if (project.poster) void discardImage(project.poster.fileId, fileStore());
     return "ok";
   }
   if (project.publication === "arsip") return "sudah-berubah";

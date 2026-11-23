@@ -1,4 +1,5 @@
 import type { DocumentSummary, StudioFolder } from "./storage/document-store";
+import { isBook, orderChapters } from "./book";
 import { isActiveDocument, isArchivedDocument } from "./document-archive";
 import {
   hasDocumentFilters,
@@ -8,7 +9,7 @@ import {
 } from "./document-classification";
 
 export type ListEntry<T extends DocumentSummary> =
-  | { kind: "folder"; folder: StudioFolder; count: number; changedAt: number }
+  | { kind: "folder"; folder: StudioFolder; count: number; words: number; changedAt: number }
   | { kind: "document"; doc: T };
 
 const byName = (a: StudioFolder, b: StudioFolder) => a.name.localeCompare(b.name, "id");
@@ -26,10 +27,16 @@ export function listEntries<T extends DocumentSummary>(
   searchMatches: ReadonlySet<string> | null = null,
 ): ListEntry<T>[] {
   const filtering = hasDocumentFilters(filters) || searchMatches !== null;
-  const items: ListEntry<T>[] = documentsInScope(docs, folderId, filters, filtering)
+  const scoped = documentsInScope(docs, folderId, filters, filtering)
     .filter(({ id }) => searchMatches === null || searchMatches.has(id))
-    .sort((a, b) => b.updatedAt - a.updatedAt)
-    .map((doc) => ({ kind: "document", doc }));
+    .sort((a, b) => b.updatedAt - a.updatedAt);
+  const openFolder = folders.find((f) => f.id === folderId);
+  // A book lists its chapters in reading order; a search or filter keeps the usual order.
+  const chapters =
+    openFolder && isBook(openFolder) && !filtering
+      ? orderChapters(scoped, openFolder.chapterOrder)
+      : scoped;
+  const items: ListEntry<T>[] = chapters.map((doc) => ({ kind: "document", doc }));
   if (folderId !== null || filtering) return items;
 
   const live = docs.filter(isActiveDocument);
@@ -39,6 +46,7 @@ export function listEntries<T extends DocumentSummary>(
       kind: "folder",
       folder,
       count: inside.length,
+      words: inside.reduce((sum, doc) => sum + doc.wordCount, 0),
       changedAt: Math.max(folder.createdAt, ...inside.map((d) => d.updatedAt)),
     };
   });

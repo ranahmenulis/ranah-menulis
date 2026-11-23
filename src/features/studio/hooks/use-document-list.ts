@@ -7,6 +7,8 @@ import {
   type DocumentSummary,
   type StudioDocument,
   type StudioFolder,
+  type FolderInit,
+  type FolderPatch,
 } from "../storage/document-store";
 import { onDocumentListChanged } from "../storage/document-events";
 
@@ -25,7 +27,8 @@ export type DocumentList<T extends DocumentSummary = DocumentSummary> = {
   trash: (id: string) => Promise<boolean>;
   restore: (id: string) => Promise<void>;
   deleteForever: (id: string) => Promise<void>;
-  createFolder: (name: string) => Promise<void>;
+  createFolder: (name: string, init?: FolderInit) => Promise<void>;
+  updateFolder: (id: string, patch: FolderPatch) => Promise<void>;
   renameFolder: (id: string, name: string) => Promise<void>;
 };
 
@@ -128,7 +131,8 @@ function useList<T extends DocumentSummary>(
     },
     restore: act((id: string) => store.updateMeta(id, { deletedAt: null })),
     deleteForever: act((id: string) => store.deletePermanently(id)),
-    createFolder: act((name: string) => store.createFolder(name)),
+    createFolder: act((name: string, init?: FolderInit) => store.createFolder(name, init)),
+    updateFolder: act((id: string, patch: FolderPatch) => store.updateFolder(id, patch)),
     renameFolder: act((id: string, name: string) => store.renameFolder(id, name)),
   };
 }

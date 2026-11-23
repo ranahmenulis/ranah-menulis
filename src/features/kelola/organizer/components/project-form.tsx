@@ -20,7 +20,7 @@ import {
   type ProjectInput,
 } from "../project-input";
 import { fileStore } from "@/lib/files/store";
-import { discardPoster } from "../poster-files";
+import { discardImage } from "@/lib/files/store-image";
 import { CategoryFields, TextField, ZoneSelect, type FormApi } from "./form-fields";
 import { PosterField } from "./poster-field";
 
@@ -101,7 +101,7 @@ export function ProjectForm({
     }
     setProblems({});
     const posterNow = result.project.poster?.fileId ?? "";
-    if (savedPoster && savedPoster !== posterNow) void discardPoster(savedPoster, fileStore());
+    if (savedPoster && savedPoster !== posterNow) void discardImage(savedPoster, fileStore());
     setSavedPoster(posterNow);
     if (!fixture) return router.push(manageHref(result.project.slug));
     setSaid(result.project.terms.version !== fixture.terms.version ? t.savedTerms : t.saved);

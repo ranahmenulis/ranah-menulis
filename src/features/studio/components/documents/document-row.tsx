@@ -15,6 +15,7 @@ const STAGGER_ROWS = 12;
  */
 export function Row({
   kind,
+  mark,
   page,
   faded = false,
   index = 0,
@@ -29,6 +30,8 @@ export function Row({
   details,
 }: {
   kind: "folder" | "document";
+  /** Replaces the folder or page mark, e.g. a book's cover. */
+  mark?: ReactNode;
   /** The document the page mark is drawn from; a blank page without it. */
   page?: { id: string; kind?: DocumentKind; wordCount: number };
   /** Archived and trashed rows: the page sits back. */
@@ -68,7 +71,9 @@ export function Row({
       className="rm-row-in rm-page-host grid grid-cols-[28px_minmax(0,1fr)_auto] items-start gap-x-3 border-b border-line py-4 md:grid-cols-[34px_minmax(0,1fr)_auto] md:gap-x-4 md:py-5"
       style={{ "--i": Math.min(index, STAGGER_ROWS) } as CSSProperties}
     >
-      {kind === "folder" ? (
+      {mark ? (
+        mark
+      ) : kind === "folder" ? (
         <FolderMark className="mt-0.5" />
       ) : (
         <DocumentMark page={page ?? { id: title, wordCount: 0 }} faded={faded} className="mt-0.5" />
