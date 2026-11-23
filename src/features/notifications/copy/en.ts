@@ -50,6 +50,11 @@ export const notifications: typeof source = {
     soloPreview: "The {kind} preview, version {version}, is ready to view in {project}.",
     contestOwnFinalist: "Your work “{title}” is a finalist in {project}.",
     contestFinalists: "The finalists of {project} were announced.",
+    staffRevisionSent: "The revision of “{title}” for {project} was sent.",
+    staffEditorAssigned: "The submission “{title}” in {project} was assigned to you.",
+    staffMentorHandIn: "The task “{title}” in {project} was handed in.",
+    staffJuryReady: "“{title}” in {project} is ready to be scored.",
+    staffJuryAnonymous: "Work {n} in {project} is ready to be scored.",
     contestWinners: "The winners of {project} were announced.",
   },
 };

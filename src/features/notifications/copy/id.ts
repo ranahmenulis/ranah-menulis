@@ -45,6 +45,11 @@ export const notifications = {
     soloPreview: "Pratinjau {kind} versi {version} siap dilihat di {project}.",
     contestOwnFinalist: "Karyamu “{title}” masuk finalis di {project}.",
     contestFinalists: "Finalis {project} sudah diumumkan.",
+    staffRevisionSent: "Revisi “{title}” untuk {project} sudah dikirim.",
+    staffEditorAssigned: "Kiriman “{title}” di {project} ditugaskan kepadamu.",
+    staffMentorHandIn: "Tugas “{title}” di {project} sudah dikumpulkan.",
+    staffJuryReady: "“{title}” di {project} siap dinilai.",
+    staffJuryAnonymous: "Karya {n} di {project} siap dinilai.",
     contestWinners: "Pemenang {project} sudah diumumkan.",
   },
 };

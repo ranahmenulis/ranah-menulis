@@ -8,6 +8,7 @@ import {
   mentorNotifications,
   type JurySources,
 } from "@/features/notifications/staff-notifications";
+import { textOf } from "@/features/notifications/notification-text";
 import { projectFixtures } from "@/features/projects/fixtures/all-projects";
 import { classesFor } from "@/features/projects/kelas/class-source";
 import type { AssignmentSubmission } from "@/features/projects/kelas/types";
@@ -61,8 +62,8 @@ describe("staff notifications", () => {
     };
     const [sent] = editorNotifications([revision], sources);
     const [assigned] = editorNotifications([revision], { ...sources, audit: [assign] });
-    expect(sent.text).toMatch(/^Revisi/);
-    expect(assigned.text).toContain("ditugaskan kepadamu");
+    expect(textOf(sent)).toMatch(/^Revisi/);
+    expect(textOf(assigned)).toContain("ditugaskan kepadamu");
     expect(assigned.at).toBe(assign.at);
     expect(assigned.id).not.toBe(sent.id);
     expect(editorNotifications([revision], { ...sources, audit: [assign] })[0].id).toBe(
@@ -89,8 +90,8 @@ describe("staff notifications", () => {
     const sources = { ...audience, classes, tasks: [], roles: ["mentor"] as const };
     const [first] = mentorNotifications([handIn], sources);
     expect(first.href).toBe(`/kelola/mentor/${CLASS}/pengumpulan/hand-in`);
-    expect(first.text).toContain(task.title);
-    expect(first.text).not.toContain(handIn.docTitle);
+    expect(textOf(first)).toContain(task.title);
+    expect(textOf(first)).not.toContain(handIn.docTitle);
     expect(mentorNotifications([handIn], { ...sources, assigned: [] })).toEqual([]);
     expect(mentorNotifications([{ ...handIn, status: "selesai" }], sources)).toEqual([]);
     const [retry] = mentorNotifications(
@@ -122,8 +123,8 @@ describe("staff notifications", () => {
       overrides: { [CONTEST]: { stage: "dinilai", times: {} } },
     };
     const [item] = juryNotifications([entry], open);
+    expect(textOf(item)).toBe("Karya 1 di Lomba Cerpen Hujan 2026 siap dinilai.");
     expect(item).toMatchObject({
-      text: "Karya 1 di Lomba Cerpen Hujan 2026 siap dinilai.",
       actorId: null,
       href: `/kelola/juri/${CONTEST}/karya/s1`,
     });

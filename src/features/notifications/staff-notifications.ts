@@ -16,7 +16,7 @@ import type { ContestOverrides } from "@/features/projects/lomba/types";
 import type { Submission } from "@/features/projects/submission-types";
 import type { Project, ProjectFixture } from "@/features/projects/types";
 import type { ManagerRole } from "@/lib/roles";
-import type { Notification } from "./types";
+import type { Notification, NotificationMessage } from "./types";
 
 export type StaffAudience = {
   roles: readonly ManagerRole[];
@@ -54,7 +54,7 @@ function staffNotice(
   slug: string,
   id: string,
   href: string,
-  text: string,
+  message: NotificationMessage,
   at: number,
 ): Notification {
   return {
@@ -62,7 +62,7 @@ function staffNotice(
     kind: "project",
     actorId: null,
     others: 0,
-    text,
+    message,
     href,
     agoMs: 0,
     at,
@@ -80,15 +80,16 @@ function editorNotice(work: Submission, projectTitle: string, assigned: AuditEnt
   const id = sentDuringAssignment
     ? `staff-revision:${work.id}:${revision.at}:${work.versions.at(-1)?.version ?? 0}`
     : `staff-editor:${work.id}:${assigned?.id ?? "initial"}`;
-  const text = sentDuringAssignment
-    ? `Revisi “${work.title}” untuk ${projectTitle} sudah dikirim.`
-    : `Kiriman “${work.title}” di ${projectTitle} ditugaskan kepadamu.`;
+  const message: NotificationMessage = {
+    key: sentDuringAssignment ? "staffRevisionSent" : "staffEditorAssigned",
+    params: { title: work.title, project: projectTitle },
+  };
   return staffNotice(
     "editor",
     work.slug,
     id,
     reviewHref(work.id),
-    text,
+    message,
     Math.max(assignedAt, revision?.at ?? work.submittedAt),
   );
 }
@@ -134,7 +135,7 @@ export function mentorNotifications(
         slug,
         id,
         handInHref(slug, work.id),
-        `Tugas “${title}” di ${project.title} sudah dikumpulkan.`,
+        { key: "staffMentorHandIn", params: { title, project: project.title } },
         at,
       ),
     ];
@@ -165,14 +166,16 @@ export function juryNotifications(works: readonly Submission[], sources: JurySou
     );
     return judgeableWorks(works, slug).flatMap((work, index) => {
       if (scored.has(work.id)) return [];
-      const label = block.anonymous ? `Karya ${index + 1}` : `“${work.title}”`;
+      const message: NotificationMessage = block.anonymous
+        ? { key: "staffJuryAnonymous", params: { n: String(index + 1), project: title } }
+        : { key: "staffJuryReady", params: { title: work.title, project: title } };
       return [
         staffNotice(
           "juri",
           slug,
           `staff-jury:${work.id}:${assigned?.id ?? "initial"}`,
           workHref(slug, work.id),
-          `${label} di ${title} siap dinilai.`,
+          message,
           Math.max(assigned?.at ?? 0, opening, work.submittedAt),
         ),
       ];
