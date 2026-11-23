@@ -1,4 +1,5 @@
 import { isPlatformAdmin, type ManagerRole } from "@/lib/roles";
+import { sharedId } from "./copy/shared-copy";
 
 /**
  * Management areas under /kelola (PRD 17.6). [usulan] Administrator and Super Admin reach every
@@ -13,6 +14,7 @@ export type AreaInfo = {
   id: Area;
   label: string;
   href: string;
+  /** Indonesian text; screens show `kelolaShared.areas[id]` in the interface language. */
   summary: string;
   /** Roles that hold this area by assignment; platform admins reach it regardless. */
   roles: readonly ManagerRole[];
@@ -23,37 +25,37 @@ export const KELOLA_HREF = "/kelola";
 export const AREAS: readonly AreaInfo[] = [
   {
     id: "organizer",
-    label: "Proyek",
+    label: sharedId.areas.organizer.label,
     href: `${KELOLA_HREF}/organizer`,
-    summary: "Buat dan ubah proyek, tugaskan tim, dan lihat peserta serta kiriman.",
+    summary: sharedId.areas.organizer.summary,
     roles: ["organizer"],
   },
   {
     id: "editor",
-    label: "Antrean submission",
+    label: sharedId.areas.editor.label,
     href: `${KELOLA_HREF}/editor`,
-    summary: "Tinjau karya yang ditugaskan kepadamu, beri catatan, dan putuskan.",
+    summary: sharedId.areas.editor.summary,
     roles: ["editor"],
   },
   {
     id: "juri",
-    label: "Penilaian",
+    label: sharedId.areas.juri.label,
     href: `${KELOLA_HREF}/juri`,
-    summary: "Nilai karya lomba yang ditugaskan kepadamu.",
+    summary: sharedId.areas.juri.summary,
     roles: ["juri"],
   },
   {
     id: "mentor",
-    label: "Kelas",
+    label: sharedId.areas.mentor.label,
     href: `${KELOLA_HREF}/mentor`,
-    summary: "Kelola peserta, tugas, pengumpulan, dan feedback kelasmu.",
+    summary: sharedId.areas.mentor.summary,
     roles: ["mentor"],
   },
   {
     id: "admin",
-    label: "Admin",
+    label: sharedId.areas.admin.label,
     href: `${KELOLA_HREF}/admin`,
-    summary: "Pengguna dan role, moderasi, kurasi, grup, dan audit log.",
+    summary: sharedId.areas.admin.summary,
     roles: ["administrator", "super-admin"],
   },
 ];

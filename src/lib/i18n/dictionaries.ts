@@ -51,6 +51,26 @@ import { studioSearch as studioSearchId } from "@/features/studio/copy/documents
 import { studioSearch as studioSearchEn } from "@/features/studio/copy/documents-search-en";
 import { profile as profileId } from "@/features/profile/copy/id";
 import { profile as profileEn } from "@/features/profile/copy/en";
+import { kelolaShared as kelolaSharedId } from "@/features/kelola/copy/shared-id";
+import { kelolaShared as kelolaSharedEn } from "@/features/kelola/copy/shared-en";
+import { kelolaEditor as kelolaEditorId } from "@/features/kelola/editor/copy/id";
+import { kelolaEditor as kelolaEditorEn } from "@/features/kelola/editor/copy/en";
+import { kelolaMentor as kelolaMentorId } from "@/features/kelola/mentor/copy/id";
+import { kelolaMentor as kelolaMentorEn } from "@/features/kelola/mentor/copy/en";
+import { kelolaOrganizer as kelolaOrganizerId } from "@/features/kelola/organizer/copy/id";
+import { kelolaOrganizer as kelolaOrganizerEn } from "@/features/kelola/organizer/copy/en";
+import { kelolaOrganizerTabs as kelolaOrganizerTabsId } from "@/features/kelola/organizer/copy/tabs-id";
+import { kelolaOrganizerTabs as kelolaOrganizerTabsEn } from "@/features/kelola/organizer/copy/tabs-en";
+import { kelolaOrganizerEvents as kelolaOrganizerEventsId } from "@/features/kelola/organizer/events/copy-id";
+import { kelolaOrganizerEvents as kelolaOrganizerEventsEn } from "@/features/kelola/organizer/events/copy-en";
+import { kelolaJuri as kelolaJuriId } from "@/features/kelola/juri/copy/id";
+import { kelolaJuri as kelolaJuriEn } from "@/features/kelola/juri/copy/en";
+import { kelolaAudit as kelolaAuditId } from "@/features/kelola/audit/copy/id";
+import { kelolaAudit as kelolaAuditEn } from "@/features/kelola/audit/copy/en";
+import { kelolaAdmin as kelolaAdminId } from "@/features/kelola/admin/copy/id";
+import { kelolaAdmin as kelolaAdminEn } from "@/features/kelola/admin/copy/en";
+import { kelolaModeration as kelolaModerationId } from "@/features/kelola/admin/copy/moderation-id";
+import { kelolaModeration as kelolaModerationEn } from "@/features/kelola/admin/copy/moderation-en";
 
 /** Indonesian is the source of truth for the shape; English must provide the same keys. */
 export const id = {
@@ -80,6 +100,16 @@ export const id = {
   projectsClass: projectsClassId,
   projectsContest: projectsContestId,
   projectsSolo: projectsSoloId,
+  kelolaShared: kelolaSharedId,
+  kelolaEditor: kelolaEditorId,
+  kelolaMentor: kelolaMentorId,
+  kelolaOrganizer: kelolaOrganizerId,
+  kelolaOrganizerTabs: kelolaOrganizerTabsId,
+  kelolaOrganizerEvents: kelolaOrganizerEventsId,
+  kelolaJuri: kelolaJuriId,
+  kelolaAudit: kelolaAuditId,
+  kelolaAdmin: kelolaAdminId,
+  kelolaModeration: kelolaModerationId,
 };
 export type Dictionary = typeof id;
 
@@ -110,6 +140,16 @@ const en: Dictionary = {
   projectsClass: projectsClassEn,
   projectsContest: projectsContestEn,
   projectsSolo: projectsSoloEn,
+  kelolaShared: kelolaSharedEn,
+  kelolaEditor: kelolaEditorEn,
+  kelolaMentor: kelolaMentorEn,
+  kelolaOrganizer: kelolaOrganizerEn,
+  kelolaOrganizerTabs: kelolaOrganizerTabsEn,
+  kelolaOrganizerEvents: kelolaOrganizerEventsEn,
+  kelolaJuri: kelolaJuriEn,
+  kelolaAudit: kelolaAuditEn,
+  kelolaAdmin: kelolaAdminEn,
+  kelolaModeration: kelolaModerationEn,
 };
 
 export const dictionaries: Record<Locale, Dictionary> = { id, en };
