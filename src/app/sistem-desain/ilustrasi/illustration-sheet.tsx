@@ -11,12 +11,8 @@ import {
   SoloCover,
 } from "@/components/illustrations/cover-art";
 import { SkyByHour, type DayPart } from "@/components/illustrations/home-art";
-import {
-  LetterQuill,
-  NoticeLantern,
-  ProfileShelf,
-  SavedBook,
-} from "@/components/illustrations/personal-art";
+import { LetterQuill, NoticeLantern } from "@/components/illustrations/letter-art";
+import { ProfileShelf, SavedBook } from "@/components/illustrations/personal-art";
 import { BookAssembly, Bookshelf } from "@/components/illustrations/projects-art";
 import {
   AdminArt,

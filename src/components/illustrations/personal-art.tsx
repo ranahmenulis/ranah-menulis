@@ -1,130 +1,137 @@
-import { C, Scene, type ArtProps } from "./scene";
-import { BookRow } from "./book-spines";
+"use client";
 
-const SPINES = [C.ink, C.accent, C.moon, C.ink, C.accent, C.flame, C.ink, C.accent];
+import { useId } from "react";
+import { BookRow } from "./book-spines";
+import { Canvas, Linear, Radial, Shadow, glow, url, volume } from "./paint";
+
+/*
+ * Profil and Tersimpan (DESIGN.md 7.10): the writer's own shelf, one painted spine per work under
+ * a small candle, and an open book with a ribbon. Objects, so no sky: volume from lit faces,
+ * page shading toward the gutter and soft shadows.
+ */
+
+const SPINES = [
+  "var(--art-book-3)",
+  "var(--art-book-1)",
+  "var(--art-moon)",
+  "var(--art-book-2)",
+  "var(--art-book-1)",
+  "var(--art-flame)",
+  "var(--art-book-3)",
+  "var(--art-book-2)",
+];
 
 /** Profil: the writer's own shelf, one spine per published work (at most 12 drawn). */
-export function ProfileShelf({ works, className }: ArtProps & { works: number }) {
+export function ProfileShelf({ works, className }: { works: number; className?: string }) {
+  const id = useId();
   const count = Math.max(0, Math.min(12, works));
   const books = Array.from({ length: count }, (_, i) => ({
     w: 11 + ((i * 7) % 6),
     h: 48 + ((i * 13) % 26),
     fill: SPINES[i % SPINES.length],
-    o: SPINES[i % SPINES.length] === C.accent ? 0.7 : 1,
   }));
   return (
-    <Scene className={className}>
-      <rect x={124} y={150} width={190} height={8} rx={2} fill={C.accent} opacity={0.55} />
-      <path d="M144 158 v16 M294 158 v16" stroke={C.accent} strokeOpacity={0.55} strokeWidth={5} />
-      {count === 0 ? (
-        <path
-          d="M194 150 h50"
-          stroke={C.ink}
-          strokeWidth={2}
-          strokeDasharray="3 6"
-          strokeLinecap="round"
+    <Canvas object className={className}>
+      <defs>
+        <Radial id={`${id}-glow`} list={glow("var(--art-moon)", 0.55)} />
+        <Linear
+          id={`${id}-board`}
+          list={volume("var(--art-wood-hi)", "var(--art-wood)", "var(--art-wood-lo)")}
         />
-      ) : (
-        <BookRow x={134} y={150} books={books} />
-      )}
-      <path d="M296 150 v-22 a8 8 0 0 1 16 0 v22" fill={C.moon} opacity={0.9} />
-    </Scene>
+      </defs>
+      <circle cx={300} cy={124} r={70} fill={url(`${id}-glow`)} />
+      <Shadow cx={220} cy={174} rx={96} ry={3} />
+      <g>
+        {count === 0 ? (
+          <path
+            d="M194 150 h50"
+            stroke="var(--art-wood)"
+            strokeWidth={2}
+            strokeDasharray="3 6"
+            strokeLinecap="round"
+          />
+        ) : (
+          <BookRow x={134} y={150} books={books} />
+        )}
+      </g>
+      <g>
+        <path d="M124 150 H314 L320 145 H130 Z" fill="var(--art-wood-hi)" />
+        <rect x={124} y={150} width={190} height={8} fill={url(`${id}-board`)} />
+        <path d="M144 158 v14 h6 M294 158 v14 h6" stroke="var(--art-wood-lo)" strokeWidth={4} />
+      </g>
+      <g>
+        <rect
+          x={292}
+          y={128}
+          width={16}
+          height={20}
+          rx={3}
+          fill="var(--art-paper)"
+          opacity={0.85}
+        />
+        <rect x={296} y={124} width={8} height={12} rx={1} fill="var(--art-moon)" />
+        <path
+          d="M300 112 C304 117 305 120 303 123 C301 126 297 125 297 121 C297 118 299 116 300 112 Z"
+          fill="var(--art-flame)"
+        />
+      </g>
+    </Canvas>
   );
 }
+
+const LEFT_PAGE = "M226 76 C200 64 168 66 146 74 V146 C168 138 200 138 226 150 Z";
+const RIGHT_PAGE = "M226 76 C252 64 284 66 306 74 V146 C284 138 252 138 226 150 Z";
 
 /** Tersimpan: an open book with a ribbon marker. */
-export function SavedBook({ className }: ArtProps) {
+export function SavedBook({ className }: { className?: string }) {
+  const id = useId();
   return (
-    <Scene className={className}>
-      <ellipse cx={226} cy={154} rx={90} ry={8} fill={C.accent} opacity={0.15} />
-      <path
-        d="M226 72 C200 60 168 62 146 70 V146 C168 138 200 138 226 150 Z"
-        fill={C.surface}
-        stroke={C.ink}
-        strokeWidth={2.5}
-      />
-      <path
-        d="M226 72 C252 60 284 62 306 70 V146 C284 138 252 138 226 150 Z"
-        fill={C.surface}
-        stroke={C.ink}
-        strokeWidth={2.5}
-      />
-      <path
-        d="M160 86 c20 -6 40 -6 56 0 M160 98 c20 -6 40 -6 56 0 M160 110 c20 -6 40 -6 48 0"
-        stroke={C.muted}
-        strokeOpacity={0.45}
-        strokeWidth={2}
-      />
-      <path
-        d="M236 86 c20 -6 40 -6 56 0 M236 98 c20 -6 40 -6 40 0"
-        stroke={C.muted}
-        strokeOpacity={0.45}
-        strokeWidth={2}
-      />
-      <path d="M262 64 V122 L254 114 L246 122 V64" fill={C.flame} />
-    </Scene>
-  );
-}
-
-/** Notifikasi: an envelope under a small lantern — news arriving. */
-export function NoticeLantern({ className }: ArtProps) {
-  return (
-    <Scene className={className}>
-      <path d="M268 0 V34" stroke={C.ink} strokeWidth={2} />
-      <circle cx={268} cy={66} r={30} fill={C.moon} opacity={0.2} />
-      <path d="M256 38 h24 l4 10 h-32 Z" fill={C.ink} />
-      <rect x={256} y={48} width={24} height={30} rx={3} fill={C.moon} />
-      <path d="M262 48 v30 M274 48 v30" stroke={C.ink} strokeOpacity={0.5} strokeWidth={2} />
-      <path d="M254 78 h28 l-4 8 h-20 Z" fill={C.ink} />
-      <g transform="rotate(-8 190 128)">
-        <rect
-          x={150}
-          y={104}
-          width={84}
-          height={54}
-          rx={4}
-          fill={C.surface}
-          stroke={C.ink}
-          strokeWidth={2.5}
+    <Canvas object className={className}>
+      <defs>
+        <Linear
+          id={`${id}-left`}
+          x2={1}
+          y2={0}
+          list={[
+            [0, "var(--art-paper)"],
+            [0.75, "var(--art-paper)"],
+            [1, "var(--art-wood-hi)"],
+          ]}
         />
-        <path d="M150 108 L192 136 L234 108" stroke={C.ink} strokeWidth={2.5} />
-        <circle cx={192} cy={136} r={7} fill={C.flame} />
-      </g>
-    </Scene>
-  );
-}
-
-/** Pengaturan dan akun: a letter with a quill — who you are. */
-export function LetterQuill({ className }: ArtProps) {
-  return (
-    <Scene className={className}>
-      <rect
-        x={160}
-        y={46}
-        width={96}
-        height={118}
-        rx={3}
-        fill={C.surface}
-        stroke={C.line}
-        strokeWidth={2}
-        transform="rotate(4 208 105)"
-      />
-      <g
-        transform="rotate(4 208 105)"
-        stroke={C.muted}
-        strokeOpacity={0.45}
-        strokeWidth={2}
-        strokeLinecap="round"
-      >
-        <path d="M174 70 h56 M174 82 h68 M174 94 h60 M174 106 h66 M174 118 h40" />
-      </g>
-      <circle cx={232} cy={146} r={9} fill={C.flame} opacity={0.9} />
+        <Linear
+          id={`${id}-right`}
+          x2={1}
+          y2={0}
+          list={[
+            [0, "var(--art-wood-hi)"],
+            [0.25, "var(--art-paper)"],
+            [1, "var(--art-paper)"],
+          ]}
+        />
+      </defs>
+      <Shadow cx={226} cy={160} rx={96} ry={5} />
       <path
-        d="M300 28 C276 44 258 74 250 112 C266 90 290 66 300 28Z"
-        fill={C.accent}
-        opacity={0.7}
+        d="M140 82 L146 78 V146 C168 138 200 138 226 150 C252 138 284 138 306 146 V78 L312 82 V154 C284 146 252 146 226 160 C200 146 168 146 140 154 Z"
+        fill="var(--art-book-1)"
       />
-      <path d="M300 28 L248 120" stroke={C.ink} strokeWidth={2} strokeLinecap="round" />
-    </Scene>
+      <g stroke="var(--art-wood-lo)" strokeOpacity={0.3} strokeWidth={0.6}>
+        {[4, 2].map((dy) => (
+          <g key={dy} transform={`translate(0 ${dy})`}>
+            <path d={LEFT_PAGE} fill="var(--art-paper)" />
+            <path d={RIGHT_PAGE} fill="var(--art-paper)" />
+          </g>
+        ))}
+        <path d={LEFT_PAGE} fill={url(`${id}-left`)} />
+        <path d={RIGHT_PAGE} fill={url(`${id}-right`)} />
+      </g>
+      <g stroke="var(--art-wood)" strokeOpacity={0.55} strokeWidth={1.6} strokeLinecap="round">
+        <path d="M160 90 c20 -6 40 -6 56 0 M160 102 c20 -6 40 -6 56 0 M160 114 c20 -6 40 -6 48 0 M160 126 c20 -6 40 -6 52 0" />
+        <path d="M236 90 c20 -6 40 -6 56 0 M236 102 c20 -6 40 -6 40 0" />
+      </g>
+      <g>
+        <path d="M268 70 V160 L262 154 L256 160 V72 Z" fill="var(--art-flame)" />
+        <path d="M268 70 V160 L265 157 V71 Z" fill="var(--scene-shadow)" opacity={0.25} />
+      </g>
+    </Canvas>
   );
 }
