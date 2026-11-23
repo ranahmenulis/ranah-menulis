@@ -1,5 +1,9 @@
 import type { ReactNode } from "react";
-import { Bunting, Campfire, LitWindows } from "@/components/illustrations/community-art";
+import { Campfire, LitWindows } from "@/components/illustrations/community-art";
+import { ClassPath } from "@/components/illustrations/class-art";
+import { SentEnvelopes } from "@/components/illustrations/envelope-art";
+import { Bunting } from "@/components/illustrations/event-art";
+import { Podium } from "@/components/illustrations/podium-art";
 import {
   AnthologyCover,
   ClassCover,
@@ -13,13 +17,7 @@ import {
   ProfileShelf,
   SavedBook,
 } from "@/components/illustrations/personal-art";
-import {
-  BookAssembly,
-  Bookshelf,
-  ClassPath,
-  Podium,
-  SentEnvelopes,
-} from "@/components/illustrations/projects-art";
+import { BookAssembly, Bookshelf } from "@/components/illustrations/projects-art";
 import {
   AdminArt,
   EditorArt,
@@ -76,18 +74,21 @@ const ITEMS: Item[] = [
     title: "Jendela yang menyala",
     meaning: "Banyak penulis menulis bersama",
     art: (c) => <LitWindows className={c} />,
+    scene: true,
   },
   {
     page: "Grup Penulis",
     title: "Api unggun",
     meaning: "Kelompok kecil yang akrab",
     art: (c) => <Campfire className={c} />,
+    scene: true,
   },
   {
     page: "Event",
     title: "Tenda dan umbul-umbul",
     meaning: "Acara bersama",
     art: (c) => <Bunting className={c} />,
+    scene: true,
   },
   {
     page: "Projects · katalog",
@@ -100,6 +101,7 @@ const ITEMS: Item[] = [
     title: "Jalan bertanda modul",
     meaning: "Belajar bertahap",
     art: (c) => <ClassPath className={c} />,
+    scene: true,
   },
   {
     page: "Dasbor Solo",

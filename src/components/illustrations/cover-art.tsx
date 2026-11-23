@@ -1,5 +1,5 @@
 import { C, Scene, type ArtProps } from "./scene";
-import { BookRow } from "./projects-art";
+import { BookRow } from "./book-spines";
 
 /*
  * Category covers, 4:5 (80 × 100). They replace the typographic cover patterns; an uploaded poster

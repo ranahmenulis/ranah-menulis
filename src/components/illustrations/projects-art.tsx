@@ -1,244 +1,185 @@
-import { C, Hills, Scene, type ArtProps } from "./scene";
+"use client";
 
-type Book = { w: number; h: number; fill: string; o?: number; tilt?: number };
+import { useId } from "react";
+import { BookRow } from "./book-spines";
+import { Canvas, Linear, Radial, Shadow, glow, pine, url, volume } from "./paint";
 
-/** A row of book spines standing on a shelf at y, starting at x. */
-export function BookRow({ x, y, books }: { x: number; y: number; books: Book[] }) {
-  const lefts = books.map((_, i) => x + books.slice(0, i).reduce((sum, b) => sum + b.w + 2, 0));
+/*
+ * Projects catalog and Solo dashboard (DESIGN.md 7.10): a slate bookcase lit from the left, and
+ * a manuscript becoming a cover becoming a finished book. Objects, so no sky: volume comes from
+ * lit and shaded faces and soft contact shadows.
+ */
+
+const WOOD = volume("var(--art-wood-hi)", "var(--art-wood)", "var(--art-wood-lo)");
+
+/** One shelf board: lit top face, front edge. */
+function Board({ id, y }: { id: string; y: number }) {
   return (
     <g>
-      {books.map((b, i) => {
-        const bx = lefts[i];
-        return (
-          <g key={i} transform={b.tilt ? `rotate(${b.tilt} ${bx + b.w} ${y})` : undefined}>
-            <rect
-              x={bx}
-              y={y - b.h}
-              width={b.w}
-              height={b.h}
-              rx={1.5}
-              fill={b.fill}
-              opacity={b.o ?? 1}
-            />
-            <rect
-              x={bx + 2}
-              y={y - b.h + 6}
-              width={b.w - 4}
-              height={2}
-              fill={C.surface}
-              opacity={0.5}
-            />
-          </g>
-        );
-      })}
+      <path d={`M132 ${y} H292 L300 ${y - 6} H140 Z`} fill="var(--art-wood-hi)" />
+      <rect x={132} y={y} width={160} height={6} fill={url(`${id}-front`)} />
     </g>
   );
 }
 
 /** Projects: a bookshelf — the door to publishing. */
-export function Bookshelf({ className }: ArtProps) {
+export function Bookshelf({ className }: { className?: string }) {
+  const id = useId();
   return (
-    <Scene className={className}>
-      <rect x={120} y={28} width={190} height={146} rx={4} fill={C.accent} opacity={0.14} />
-      {[90, 160].map((y) => (
-        <rect key={y} x={120} y={y} width={190} height={6} fill={C.accent} opacity={0.55} />
-      ))}
+    <Canvas object className={className}>
+      <defs>
+        <Linear id={`${id}-front`} list={WOOD} />
+        <Linear
+          id={`${id}-back`}
+          list={[
+            [0, "var(--art-wood-lo)"],
+            [1, "var(--scene-shadow)"],
+          ]}
+        />
+        <Radial id={`${id}-light`} list={glow("var(--art-moon)", 0.4)} />
+      </defs>
+      <Shadow cx={214} cy={176} rx={100} ry={4} />
+      <g>
+        <path d="M140 22 H300 V164 H140 Z" fill={url(`${id}-back`)} />
+        <path d="M292 30 L300 22 V170 L292 176 Z" fill="var(--art-wood-lo)" />
+        <path d="M124 30 H132 V176 H124 Z" fill={url(`${id}-front`)} />
+        <path d="M124 30 L132 22 H300 L292 30 Z" fill="var(--art-wood-hi)" />
+        <rect x={132} y={30} width={160} height={6} fill={url(`${id}-front`)} />
+      </g>
+      <circle cx={170} cy={70} r={70} fill={url(`${id}-light`)} />
       <BookRow
-        x={130}
-        y={90}
+        x={140}
+        y={94}
         books={[
-          { w: 12, h: 48, fill: C.ink },
-          { w: 16, h: 54, fill: C.accent, o: 0.7 },
-          { w: 10, h: 42, fill: C.moon },
-          { w: 14, h: 50, fill: C.ink, o: 0.6 },
-          { w: 18, h: 56, fill: C.accent },
-          { w: 12, h: 44, fill: C.ink, o: 0.8, tilt: 14 },
+          { w: 11, h: 48, fill: "var(--art-book-3)" },
+          { w: 15, h: 54, fill: "var(--art-book-1)" },
+          { w: 10, h: 42, fill: "var(--art-moon)" },
+          { w: 13, h: 50, fill: "var(--art-book-2)" },
+          { w: 17, h: 56, fill: "var(--art-book-1)" },
+          { w: 11, h: 44, fill: "var(--art-book-3)", tilt: 14 },
         ]}
       />
+      <Board id={id} y={94} />
       <BookRow
-        x={136}
-        y={160}
+        x={144}
+        y={164}
         books={[
-          { w: 16, h: 52, fill: C.accent, o: 0.8 },
-          { w: 12, h: 46, fill: C.ink },
-          { w: 20, h: 58, fill: C.accent, o: 0.55 },
-          { w: 12, h: 50, fill: C.flame },
-          { w: 14, h: 44, fill: C.ink, o: 0.7 },
+          { w: 15, h: 52, fill: "var(--art-book-2)" },
+          { w: 11, h: 46, fill: "var(--art-book-3)" },
+          { w: 19, h: 58, fill: "var(--art-book-1)" },
+          { w: 11, h: 50, fill: "var(--art-flame)" },
+          { w: 13, h: 44, fill: "var(--art-book-3)" },
         ]}
       />
-      <rect x={262} y={146} width={36} height={14} rx={2} fill={C.ink} opacity={0.8} />
-      <rect x={258} y={134} width={40} height={12} rx={2} fill={C.accent} opacity={0.6} />
-    </Scene>
+      <g>
+        <path d="M244 164 H284 L288 160 H248 Z" fill="var(--art-book-2)" />
+        <rect x={244} y={150} width={40} height={14} fill="var(--art-book-3)" />
+        <path d="M248 150 H282 L285 146 H251 Z" fill="var(--art-book-1)" />
+        <rect x={248} y={140} width={34} height={10} fill="var(--art-book-1)" />
+        <path d="M282 140 L285 136 V146 L282 150 Z" fill="var(--art-paper)" />
+      </g>
+      <Board id={id} y={164} />
+      <rect x={132} y={170} width={160} height={6} fill="var(--art-wood-lo)" />
+      <g>
+        <path d="M270 30 h16 l-2 -10 h-12 Z" fill="var(--art-flame)" />
+        <path
+          d="M278 20 c-10 -4 -10 -14 -4 -18 c2 6 4 10 4 18 c0 -8 6 -14 10 -16 c2 8 -2 14 -10 16"
+          fill="var(--scene-pine)"
+        />
+      </g>
+    </Canvas>
   );
 }
 
-/** Dasbor Kelas: a path up a hill with one marker per module and a flag at the top. */
-export function ClassPath({ className }: ArtProps) {
-  const marks: [number, number][] = [
-    [140, 158],
-    [210, 138],
-    [176, 112],
-    [236, 88],
-  ];
+/** A sheet of manuscript lying flat with lines of writing. */
+function Sheet({ x, y }: { x: number; y: number }) {
   return (
-    <Scene className={className}>
-      <path d="M80 180 L230 54 L320 130 L320 180 Z" fill={C.accent} opacity={0.24} />
-      <Hills far={0.14} near={0.34} />
+    <g>
       <path
-        d="M110 172 L140 158 L210 138 L176 112 L236 88 L232 60"
-        stroke={C.ink}
-        strokeWidth={3}
-        strokeDasharray="2 7"
-        strokeLinecap="round"
-        strokeLinejoin="round"
+        d={`M${x} ${y} H${x + 40} L${x + 52} ${y - 14} H${x + 12} Z`}
+        fill="var(--art-paper)"
+        stroke="var(--art-wood-lo)"
+        strokeOpacity={0.25}
+        strokeWidth={0.6}
       />
-      {marks.map(([x, y], i) => (
-        <circle
-          key={i}
-          cx={x}
-          cy={y}
-          r={5.5}
-          fill={i < 2 ? C.accent : C.surface}
-          stroke={C.ink}
-          strokeWidth={2.5}
-        />
-      ))}
-      <path d="M232 60 V30" stroke={C.ink} strokeWidth={3} strokeLinecap="round" />
-      <path d="M233 30 L256 37 L233 45 Z" fill={C.flame} />
-    </Scene>
+      <path
+        d={`M${x + 12} ${y - 4} h22 M${x + 15} ${y - 8} h20 M${x + 18} ${y - 11} h12`}
+        stroke="var(--art-wood)"
+        strokeOpacity={0.6}
+        strokeLinecap="round"
+      />
+    </g>
   );
 }
 
 /** Dasbor Solo: pages become a cover become a finished book. */
-export function BookAssembly({ className }: ArtProps) {
+export function BookAssembly({ className }: { className?: string }) {
+  const id = useId();
   return (
-    <Scene className={className}>
-      <ellipse cx={210} cy={164} rx={110} ry={8} fill={C.accent} opacity={0.15} />
-      {/* Pages */}
-      {[0, 1, 2].map((i) => (
-        <rect
-          key={i}
-          x={96 + i * 4}
-          y={104 - i * 6}
-          width={38}
-          height={52}
-          rx={2}
-          fill={C.surface}
-          stroke={C.line}
+    <Canvas object className={className}>
+      <defs>
+        <Linear
+          id={`${id}-cover`}
+          x2={1}
+          y2={1}
+          list={[
+            [0, "var(--art-book-2)"],
+            [1, "var(--art-book-3)"],
+          ]}
         />
-      ))}
-      <path
-        d="M112 106 h20 M112 112 h16 M112 118 h20"
-        stroke={C.muted}
-        strokeOpacity={0.5}
-        strokeWidth={1.5}
-      />
-      <path
-        d="M150 128 h18"
-        stroke={C.ink}
-        strokeWidth={2}
-        strokeDasharray="2 5"
-        strokeLinecap="round"
-      />
-      {/* Cover */}
-      <rect x={176} y={96} width={42} height={58} rx={3} fill={C.accent} opacity={0.75} />
-      <circle cx={197} cy={118} r={9} fill={C.moon} />
-      <path d="M186 140 h22" stroke={C.surface} strokeWidth={2} strokeOpacity={0.8} />
-      <path
-        d="M226 128 h18"
-        stroke={C.ink}
-        strokeWidth={2}
-        strokeDasharray="2 5"
-        strokeLinecap="round"
-      />
-      {/* Book */}
-      <path d="M252 90 h44 a4 4 0 0 1 4 4 v62 h-48 Z" fill={C.ink} />
-      <rect x={252} y={90} width={8} height={66} fill={C.accent} />
-      <rect x={260} y={150} width={40} height={6} fill={C.surface} opacity={0.7} />
-      <path d="M286 90 v22 l-5 -4 l-5 4 v-22" fill={C.flame} />
-    </Scene>
-  );
-}
-
-/** Laurel branch, mirrored for the right side. */
-function Laurel({ x, flip = false }: { x: number; flip?: boolean }) {
-  return (
-    <g transform={`translate(${x} 0) scale(${flip ? -1 : 1} 1)`} fill={C.accent} opacity={0.7}>
-      {[0, 1, 2, 3].map((i) => (
-        <ellipse
-          key={i}
-          cx={-10 + i * 2}
-          cy={40 + i * 12}
-          rx={4}
-          ry={8}
-          transform={`rotate(-30 ${-10 + i * 2} ${40 + i * 12})`}
+        <Linear
+          id={`${id}-spine`}
+          x2={1}
+          y2={0}
+          list={[
+            [0, "var(--art-book-3)"],
+            [1, "var(--art-book-1)"],
+          ]}
         />
-      ))}
-    </g>
-  );
-}
-
-/** Hasil Lomba: a podium with a trophy between laurels. */
-export function Podium({ className }: ArtProps) {
-  return (
-    <Scene className={className}>
-      <rect x={150} y={128} width={50} height={44} fill={C.accent} opacity={0.5} />
-      <rect x={200} y={106} width={52} height={66} fill={C.accent} opacity={0.8} />
-      <rect x={252} y={140} width={50} height={32} fill={C.accent} opacity={0.4} />
-      <g transform="translate(226 27)">
-        <Laurel x={-26} />
-        <Laurel x={26} flip />
-        <path d="M-14 40 h28 v10 a14 14 0 0 1 -28 0 Z" fill={C.moon} />
-        <path
-          d="M-14 44 h-6 a6 6 0 0 0 6 10 M14 44 h6 a6 6 0 0 1 -6 10"
-          stroke={C.moon}
-          strokeWidth={3}
-          fill="none"
-        />
-        <rect x={-3} y={63} width={6} height={10} fill={C.moon} />
-        <rect x={-11} y={73} width={22} height={6} rx={1} fill={C.ink} />
+        <Radial id={`${id}-glow`} list={glow("var(--art-moon)", 0.5)} />
+      </defs>
+      <g>
+        <Shadow cx={130} cy={160} rx={36} ry={3} />
+        {[0, 1, 2].map((i) => (
+          <Sheet key={i} x={96 + i * 2} y={158 - i * 4} />
+        ))}
       </g>
-      <rect x={130} y={172} width={190} height={8} fill={C.accent} opacity={0.3} />
-    </Scene>
-  );
-}
-
-/** Proyek saya: envelopes on their way — works sent and waiting for an answer. */
-export function SentEnvelopes({ className }: ArtProps) {
-  const envelope = (x: number, y: number, r: number, o: number) => (
-    <g transform={`rotate(${r} ${x + 24} ${y + 16})`} opacity={o}>
-      <rect
-        x={x}
-        y={y}
-        width={48}
-        height={32}
-        rx={3}
-        fill={C.surface}
-        stroke={C.ink}
-        strokeWidth={2}
-      />
       <path
-        d={`M${x} ${y + 2} L${x + 24} ${y + 19} L${x + 48} ${y + 2}`}
-        stroke={C.ink}
+        d="M156 140 h16 M226 132 h16"
+        stroke="var(--art-wood)"
         strokeWidth={2}
-      />
-    </g>
-  );
-  return (
-    <Scene className={className}>
-      <path
-        d="M120 150 C170 130 200 100 236 92 S290 70 306 40"
-        stroke={C.ink}
-        strokeOpacity={0.5}
-        strokeWidth={2}
-        strokeDasharray="2 7"
+        strokeDasharray="2 5"
         strokeLinecap="round"
       />
-      {envelope(132, 124, -6, 1)}
-      {envelope(214, 74, -14, 0.85)}
-      {envelope(272, 24, -22, 0.6)}
-      <circle cx={162} cy={146} r={6} fill={C.flame} />
-      <rect x={100} y={164} width={220} height={8} rx={3} fill={C.accent} opacity={0.45} />
-    </Scene>
+      <g>
+        <Shadow cx={200} cy={160} rx={24} ry={3} />
+        <rect x={180} y={98} width={40} height={60} rx={2} fill={url(`${id}-cover`)} />
+        <circle cx={200} cy={120} r={14} fill={url(`${id}-glow`)} />
+        <circle cx={200} cy={120} r={7} fill="var(--art-moon)" />
+        <path
+          d="M188 144 h24 M192 149 h16"
+          stroke="var(--art-paper)"
+          strokeOpacity={0.8}
+          strokeLinecap="round"
+        />
+        <path d={pine(212, 158, 14, 8)} fill="var(--art-book-3)" opacity={0.8} />
+      </g>
+      <g>
+        <Shadow cx={280} cy={161} rx={34} ry={3.5} />
+        <path d="M258 84 L266 78 H304 L296 84 Z" fill="var(--art-paper)" />
+        <path d="M296 84 L304 78 V154 L296 160 Z" fill="var(--art-paper)" />
+        <path
+          d="M298 86 V156 M300 84 V154"
+          stroke="var(--art-wood-lo)"
+          strokeOpacity={0.25}
+          strokeWidth={0.6}
+        />
+        <rect x={250} y={84} width={46} height={76} rx={2} fill={url(`${id}-cover`)} />
+        <rect x={250} y={84} width={8} height={76} fill={url(`${id}-spine`)} />
+        <circle cx={277} cy={112} r={8} fill="var(--art-moon)" />
+        <path d="M266 136 h22 M269 142 h16" stroke="var(--art-paper)" strokeLinecap="round" />
+        <path d="M286 84 v22 l-4 -4 l-4 4 v-22 Z" fill="var(--art-flame)" />
+      </g>
+    </Canvas>
   );
 }

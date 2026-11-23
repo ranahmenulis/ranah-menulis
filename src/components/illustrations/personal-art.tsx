@@ -1,5 +1,5 @@
 import { C, Scene, type ArtProps } from "./scene";
-import { BookRow } from "./projects-art";
+import { BookRow } from "./book-spines";
 
 const SPINES = [C.ink, C.accent, C.moon, C.ink, C.accent, C.flame, C.ink, C.accent];
 
