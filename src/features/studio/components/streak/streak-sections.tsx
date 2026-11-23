@@ -105,7 +105,7 @@ function RhythmCard() {
     <div
       className={`${studioCard} flex items-center gap-4 bg-linear-to-r from-accent-subtle to-surface`}
     >
-      <BookStack className="h-16 w-24 shrink-0 md:h-20 md:w-30" />
+      <BookStack className="h-20 w-32 shrink-0 md:h-24 md:w-40" />
       <div className="min-w-0">
         <p className="heading-sm">{t.title}</p>
         <p className="mt-1 text-sm text-ink-soft">{t.body}</p>

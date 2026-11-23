@@ -62,7 +62,7 @@ export function StreakHero({ data, reachedToday }: { data: StreakData; reachedTo
   const streak = useCountUp(summary.current, 1100);
   return (
     <div className="relative isolate mt-6 overflow-hidden rounded-2xl border border-line bg-linear-to-br from-surface from-40% to-accent-subtle p-5 text-ink shadow-card md:p-8">
-      <MountainScene className="absolute top-6 right-0 -z-10 h-28 w-auto max-w-[60%] md:top-auto md:right-60 md:bottom-0 md:h-[70%] md:max-w-[50%]" />
+      <MountainScene className="absolute top-0 right-0 -z-10 h-[78%] w-[72%] [mask-image:linear-gradient(to_right,transparent,#000_45%),linear-gradient(to_bottom,#000_65%,transparent)] [mask-composite:intersect] md:right-56 md:h-full md:w-[52%] md:[mask-image:linear-gradient(to_right,transparent,#000_35%,#000_78%,transparent)] md:[mask-composite:add]" />
       <div className="grid items-center gap-6 md:grid-cols-[minmax(0,1fr)_auto]">
         <div className="grid min-w-0 content-start gap-4">
           <p className="heading-sm text-ink">{t.current}</p>

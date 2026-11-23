@@ -51,7 +51,7 @@ export const studioStreak: typeof source = {
     value: "{words} words",
   },
   rhythm: {
-    title: "Keep your rhythm",
+    title: "Keep your rhythm!",
     body: "A little every day beats a lot once in a while.",
   },
   stats: {

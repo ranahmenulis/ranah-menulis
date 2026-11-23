@@ -236,6 +236,31 @@
   color-scheme: dark;
 }
 
+/* Painted scenes (DESIGN.md 7.10): the Streak landscape and the book stack. Illustration-only
+   colours, never for text or controls. light-dark() follows each theme block's color-scheme, so
+   one definition serves the light page, the dark page and forced-dark sections. The block is
+   repeated on themed sections so each one resolves light-dark() with its own color-scheme. */
+:root,
+[data-theme],
+.theme-dark,
+.theme-invert {
+  --scene-sky-1: light-dark(#eef3f9, #141a23);
+  --scene-sky-2: light-dark(#d3e0ed, #2b3848);
+  --scene-far: light-dark(#c2d2e2, #364456);
+  --scene-far-hi: light-dark(#dce6f0, #4a5b70);
+  --scene-mid: light-dark(#9db4ca, #263241);
+  --scene-mid-hi: light-dark(#bccddd, #3a495c);
+  --scene-near: light-dark(#7f99b3, #1b232e);
+  --scene-pine: light-dark(#6d88a5, #121820);
+  --scene-mist: light-dark(#ffffff, #9fb2c6);
+  --scene-mist-o: light-dark(0.75, 0.16);
+  --scene-stars: light-dark(0, 0.8);
+  --art-paper: light-dark(#fbf6ea, #ece4d2);
+  --art-book-1: light-dark(#3f6d9f, #4a74a3);
+  --art-book-2: light-dark(#79a0c9, #7c9fc6);
+  --art-book-3: light-dark(#2b527f, #33557c);
+}
+
 /* App band (DESIGN.md 4.5): the dark slate surface that anchors a screen (featured project,
    project header, milestone screens). Put it together with .theme-dark so every token inside
    reads as dark. On a dark page the band is lifted a step so it never disappears. */
@@ -1386,6 +1411,9 @@ html.lp-motion .lp-roll-out {
     opacity: 0;
     translate: 0 10px;
   }
+}
+.rm-art > :is(defs, .rm-art-static) {
+  animation: none;
 }
 .rm-art > * {
   transform-box: fill-box;

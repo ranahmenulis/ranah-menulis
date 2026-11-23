@@ -48,7 +48,7 @@ export const studioStreak = {
     value: "{words} kata",
   },
   rhythm: {
-    title: "Jaga ritme menulismu",
+    title: "Jaga ritme menulismu!",
     body: "Tulis sedikit setiap hari, lebih baik daripada banyak tapi jarang.",
   },
   stats: {
