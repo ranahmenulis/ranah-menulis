@@ -18,6 +18,15 @@ describe("AccountMenu", () => {
     expect(items).toEqual(["Profil saya", "Tersimpan", "Pengaturan akun"]);
   });
 
+  it("adds Kelola for role holders only", () => {
+    sessionStorage.setItem("rm-roles", "editor");
+    render(<AccountMenu />);
+    fireEvent.click(screen.getByRole("button", { name: "Menu akun" }));
+    fireEvent.click(screen.getByRole("menuitem", { name: "Kelola" }));
+    expect(push).toHaveBeenCalledWith("/kelola");
+    sessionStorage.removeItem("rm-roles");
+  });
+
   it("opens the chosen destination", () => {
     render(<AccountMenu />);
     fireEvent.click(screen.getByRole("button", { name: "Menu akun" }));
