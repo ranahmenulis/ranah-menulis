@@ -1,5 +1,6 @@
 "use client";
 
+import { EnvelopeSimple } from "@phosphor-icons/react/dist/ssr";
 import type { ReactNode } from "react";
 import { describedBy, Field, Input } from "@/components/ui/field";
 import { useT } from "@/lib/i18n/provider";
@@ -15,19 +16,27 @@ export function EmailField({ value, onChange, error, id = "email" }: Props) {
   const { fields } = useT().account;
   return (
     <Field id={id} label={fields.email} error={error}>
-      <Input
-        id={id}
-        name="email"
-        type="email"
-        inputMode="email"
-        autoComplete="email"
-        autoCapitalize="none"
-        spellCheck={false}
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        aria-invalid={error ? true : undefined}
-        aria-describedby={describedBy(id, { error })}
-      />
+      <div className="relative">
+        <EnvelopeSimple
+          size={20}
+          aria-hidden
+          className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-ink-muted"
+        />
+        <Input
+          id={id}
+          name="email"
+          type="email"
+          inputMode="email"
+          autoComplete="email"
+          autoCapitalize="none"
+          spellCheck={false}
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={describedBy(id, { error })}
+          className="pl-10"
+        />
+      </div>
     </Field>
   );
 }

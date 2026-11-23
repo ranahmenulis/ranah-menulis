@@ -121,4 +121,10 @@ describe("SignInForm", () => {
       vi.useRealTimers();
     }
   });
+  it("signs in with Google through the same bypass, back to the destination", () => {
+    nav.search = "lanjut=%2Fstudio";
+    render(<SignInForm />);
+    fireEvent.click(screen.getByRole("button", { name: "Masuk dengan Google" }));
+    expect(nav.push).toHaveBeenCalledWith("/studio");
+  });
 });

@@ -11,6 +11,7 @@ import { useProfileForm } from "../hooks/use-profile-form";
 import { cleanProfile } from "../profile-validation";
 import { NEXT_PARAM, safeNext } from "../redirect";
 import { normalizeUsername } from "../validation";
+import { ProfilePreviewAside } from "./auth-aside";
 import { AuthPage } from "./auth-frame";
 import { ProfileFields } from "./profile-fields";
 
@@ -33,6 +34,7 @@ function OnboardingForm({ initial }: { initial: AccountProfile }) {
         router.push(safeNext(next));
       }}
     >
+      <ProfilePreviewAside profile={form.values} />
       <ProfileFields form={form} />
       <Button type="submit">{t.onboarding.submit}</Button>
     </form>

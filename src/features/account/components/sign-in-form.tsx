@@ -19,8 +19,10 @@ import {
   withNext,
 } from "../redirect";
 import { emailIssue, passwordPresent } from "../validation";
+import { StudioSampleAside } from "./auth-aside";
 import { AuthPage } from "./auth-frame";
 import { EmailField, focusFirst } from "./email-field";
+import { GoogleButton, OrDivider } from "./google-button";
 import { PasswordField } from "./password-field";
 
 /** Wrong attempts allowed before the form waits (SEC-01: repeated attempts are limited) [usulan]. */
@@ -64,13 +66,24 @@ export function SignInForm() {
     }
   }
 
+  /** Google sign-in stand-in: the same bypass as a successful email sign-in. */
+  function google() {
+    setViewer("masuk");
+    router.push(safeNext(next));
+  }
+
   function resend() {
     saveAccount({ email: email.trim() });
     router.push(withNext(VERIFY_HREF, next));
   }
 
   return (
-    <AuthPage title={t.signIn.title} subtitle={t.signIn.subtitle}>
+    <AuthPage title={t.signIn.title} accent={t.signIn.accent} subtitle={t.signIn.subtitle}>
+      <StudioSampleAside />
+      <div className="grid gap-5">
+        <GoogleButton mode="signIn" onPress={google} />
+        <OrDivider />
+      </div>
       <form
         noValidate
         className="grid gap-6"

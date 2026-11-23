@@ -27,6 +27,11 @@ export const account = {
     newPassword: "Kata sandi baru",
     confirmPassword: "Ulangi kata sandi baru",
     passwordHint: "Minimal 8 karakter, dengan huruf dan angka.",
+    passwordRules: {
+      length: "8 karakter",
+      letter: "Ada huruf",
+      number: "Ada angka",
+    },
     showPassword: "Tampilkan kata sandi",
     hidePassword: "Sembunyikan kata sandi",
     name: "Nama",
@@ -59,15 +64,36 @@ export const account = {
   /** The line under the art beside the account screens (auth-art.ts). */
   plate: {
     welcome: {
-      line: "Satu kalimat hari ini sudah cukup.",
+      line: "Setiap cerita besar dimulai dari satu kalimat.",
     },
     recover: {
       line: "Halaman yang hilang bisa ditulis lagi.",
     },
   },
+  google: {
+    signIn: "Masuk dengan Google",
+    signUp: "Daftar dengan Google",
+    or: "atau",
+  },
+  /** Cards over the painting beside the account screens (auth-aside.tsx). Decorative. */
+  scene: {
+    sample: "Contoh",
+    doc: "Hujan di Pelabuhan",
+    text: "Kapal terakhir merapat saat lampu jalan mulai menyala. Ia membuka buku catatannya dan menulis satu kalimat, lalu satu lagi.",
+    today: "kata hari ini",
+    streak: "{n} hari berturut-turut",
+    promisesLabel: "Satu akun untuk",
+    studio: "Ruang menulis yang fokus, dengan target harian dan streak.",
+    community: "Bagikan tulisan dan tumbuh bersama penulis lain.",
+    projects: "Ikut antologi, lomba, dan kelas, lalu terbitkan bukumu.",
+    profileLabel: "Pratinjau profilmu",
+    nameEmpty: "Namamu",
+    bioEmpty: "Bio singkat tentang tulisanmu.",
+  },
   signIn: {
-    title: "Masuk",
-    subtitle: "Lanjutkan menulis di RanahMenulis.",
+    title: "Selamat datang",
+    accent: "kembali.",
+    subtitle: "Halamanmu menunggu tepat di tempat kamu berhenti.",
     submit: "Masuk",
     forgot: "Lupa kata sandi?",
     noAccount: "Belum punya akun?",
@@ -79,8 +105,13 @@ export const account = {
     locked: "Terlalu banyak percobaan. Coba lagi dalam {seconds} detik.",
   },
   signUp: {
-    title: "Daftar",
+    title: "Mulai menulis",
+    accent: "bersama kami.",
     subtitle: "Satu akun untuk Studio, Community, dan Projects.",
+    step: "Langkah {n} dari 2",
+    next: "Lanjutkan",
+    passwordSubtitle: "Buat kata sandi untuk {email}.",
+    changeEmail: "Ubah email",
     submit: "Daftar",
     haveAccount: "Sudah punya akun?",
     signIn: "Masuk",

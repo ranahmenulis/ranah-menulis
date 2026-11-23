@@ -1,6 +1,6 @@
 "use client";
 
-import { Eye, EyeSlash } from "@phosphor-icons/react/dist/ssr";
+import { Eye, EyeSlash, LockSimple } from "@phosphor-icons/react/dist/ssr";
 import { useState, type ReactNode } from "react";
 import { describedBy, Field, Input } from "@/components/ui/field";
 import { IconButton } from "@/components/ui/icon-button";
@@ -23,6 +23,11 @@ export function PasswordField({ id, label, value, onChange, hint, error, autoCom
   return (
     <Field id={id} label={label} hint={hint} error={error}>
       <div className="relative">
+        <LockSimple
+          size={20}
+          aria-hidden
+          className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-ink-muted"
+        />
         <Input
           id={id}
           name={id}
@@ -34,7 +39,7 @@ export function PasswordField({ id, label, value, onChange, hint, error, autoCom
           spellCheck={false}
           aria-invalid={error ? true : undefined}
           aria-describedby={describedBy(id, { hint, error })}
-          className="pr-12"
+          className="pr-12 pl-10"
         />
         <IconButton
           label={shown ? fields.hidePassword : fields.showPassword}

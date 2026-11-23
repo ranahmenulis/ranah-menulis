@@ -1543,3 +1543,26 @@ html.lp-motion .lp-roll-out {
     color: var(--accent-ink);
   }
 }
+
+/* Account screens (account/components/auth-scene.tsx, DESIGN.md 6, layar akun, tahap J). The
+   painting settles in once; the engraving cut-out is painted with tokens through its masks. */
+.rm-auth-paint {
+  animation: rm-auth-paint 1400ms var(--ease-out) both;
+}
+@keyframes rm-auth-paint {
+  from {
+    opacity: 0;
+    scale: 1.06;
+  }
+}
+.rm-auth-mask {
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+}
+@media (prefers-reduced-motion: reduce) {
+  .rm-auth-paint {
+    animation: none;
+  }
+}
