@@ -35,7 +35,7 @@ export const kelolaShared: typeof source = {
       editor: "Review what needs action",
       juri: "Continue scoring",
       mentor: "Grade hand-ins",
-      organizer: "Manage Events",
+      organizer: "Manage events",
       admin: "Open moderation",
     },
   },

@@ -7,7 +7,7 @@ import { Button, ButtonLink } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
 import { EmptyState, ErrorBanner, RetryButton, Skeleton } from "@/components/ui/states";
 import { useFormat } from "@/lib/i18n/use-format";
-import { format, useT } from "@/lib/i18n/provider";
+import { format, useLocale, useT } from "@/lib/i18n/provider";
 import { categoryLabel } from "@/features/projects/project-model";
 import type { SubmissionStore } from "@/features/projects/storage/submission-store";
 import {
@@ -67,6 +67,7 @@ function ProjectRow({ row }: { row: OrganizerRow }) {
  */
 export function OrganizerView({ store }: { store?: SubmissionStore }) {
   const t = useT().kelolaOrganizer;
+  const locale = useLocale();
   const f = useFormat();
   const data = useOrganizerList({ store });
   const search = useSearchParams()?.get("status") ?? null;
@@ -85,7 +86,7 @@ export function OrganizerView({ store }: { store?: SubmissionStore }) {
   const counts = useMemo(() => countByList(rows), [rows]);
   const shown = useMemo(() => rows.filter((r) => matchesList(r, filter)), [rows, filter]);
   const work: BandWork =
-    data.status === "ready" ? organizerWork(counts.aktif) : { status: data.status };
+    data.status === "ready" ? organizerWork(counts.aktif, locale) : { status: data.status };
 
   return (
     <section aria-labelledby="proyek-title" className="grid max-w-170 gap-5">

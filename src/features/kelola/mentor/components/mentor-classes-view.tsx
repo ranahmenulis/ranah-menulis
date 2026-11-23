@@ -18,7 +18,7 @@ export function MentorClassesView({ store }: { store?: AssignmentStore }) {
   const t = useT().kelolaMentor.list;
   const locale = useLocale();
   const data = useMentorClasses({ store });
-  const work = bandFrom(data, (d) => mentorWork(d.items));
+  const work = bandFrom(data, (d) => mentorWork(d.items, locale));
   return (
     <section aria-labelledby="kelas-title" className="grid max-w-170 gap-5">
       <RoleBand

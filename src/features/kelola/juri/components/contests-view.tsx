@@ -19,7 +19,7 @@ export function ContestsView({ store }: { store?: SubmissionStore }) {
   const t = useT().kelolaJuri.contests;
   const locale = useLocale();
   const data = useJudgeContests({ store });
-  const work = bandFrom(data, (d) => judgeWork(d.items));
+  const work = bandFrom(data, (d) => judgeWork(d.items, locale));
   return (
     <section aria-labelledby="penilaian-title" className="grid max-w-170 gap-5">
       <RoleBand

@@ -10,6 +10,7 @@ export const shell: typeof source = {
     projects: "Projects",
     tersimpan: "Saved",
     profil: "Profile",
+    kelola: "Manage",
     soon: "Coming soon",
   },
   topBar: {

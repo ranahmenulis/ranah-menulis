@@ -8,6 +8,7 @@ export const shell = {
     projects: "Projects",
     tersimpan: "Tersimpan",
     profil: "Profil",
+    kelola: "Kelola",
     soon: "Segera",
   },
   topBar: {
