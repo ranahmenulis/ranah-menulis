@@ -38,7 +38,7 @@ type ListNotice = { text: string; copyId?: string; failed?: boolean };
 export function DocumentsView() {
   const t = useT().studioDocuments;
   return (
-    <div className="max-w-182">
+    <div className="max-w-260">
       <h1 className="mb-3 heading-lg max-md:hidden">{t.tabs.studio}</h1>
       <StudioTabs />
       <TodayLine />
@@ -190,15 +190,13 @@ function DocumentListContent() {
 
   return (
     <>
-      <div
-        ref={tabBarRef}
-        className="mt-6 flex items-center gap-4 shadow-[inset_0_-1px_0_var(--line)]"
-      >
+      <div ref={tabBarRef} className="mt-5 flex items-center gap-4">
         <Tabs
           label={t.list.tabsLabel}
           value={tab}
           onValueChange={selectTab}
-          className="min-w-0 flex-1 shadow-none"
+          variant="pill"
+          className="min-w-0 flex-1"
           items={[
             { id: "semua", label: t.list.all },
             { id: "arsip", label: t.list.archive },
@@ -219,24 +217,26 @@ function DocumentListContent() {
         />
       )}
 
-      {showsSearch(search.enabled, hasActiveDocuments, search.query) && (
-        <DocumentSearchField
-          value={search.query}
-          inputRef={search.inputRef}
-          onChange={search.setQuery}
-          onClear={search.clear}
-        />
-      )}
+      <div className="lg:flex lg:items-end lg:gap-3 lg:[&>*]:mt-4">
+        {showsSearch(search.enabled, hasActiveDocuments, search.query) && (
+          <DocumentSearchField
+            value={search.query}
+            inputRef={search.inputRef}
+            onChange={search.setQuery}
+            onClear={search.clear}
+          />
+        )}
 
-      {activeReady && hasFilterOptions && (
-        <DocumentFilterFields
-          filters={filters}
-          rawTag={rawTag}
-          tags={documentTagOptions(list.docs, folderId)}
-          kindRef={kindFilterRef}
-          onChange={changeFilters}
-        />
-      )}
+        {activeReady && hasFilterOptions && (
+          <DocumentFilterFields
+            filters={filters}
+            rawTag={rawTag}
+            tags={documentTagOptions(list.docs, folderId)}
+            kindRef={kindFilterRef}
+            onChange={changeFilters}
+          />
+        )}
+      </div>
       <p
         role="status"
         tabIndex={-1}
@@ -253,7 +253,9 @@ function DocumentListContent() {
         </ButtonLink>
       )}
 
-      {renderList()}
+      <div className="mt-4 rounded-2xl border border-line bg-surface px-4 py-1 shadow-card md:px-5">
+        {renderList()}
+      </div>
 
       <PendingDialogs
         pending={pending}

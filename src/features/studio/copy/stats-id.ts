@@ -30,6 +30,7 @@ export const studioStats = {
     daysMet: "{met} dari {total} hari memenuhi target",
   },
   chart: {
+    heading: "Aktivitas menulis",
     roleDescription: "grafik batang",
     label: "Kata per {unit}, {range}",
     targetLegend: "Target harian",

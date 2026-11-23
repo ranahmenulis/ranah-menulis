@@ -145,6 +145,7 @@ export const studioDocuments: typeof source = {
   },
   searchField: {
     label: "Search title or text",
+    placeholder: "Search titles or text…",
     clear: "Clear search term",
   },
   today: {
@@ -154,6 +155,9 @@ export const studioDocuments: typeof source = {
     streak: "Streak {streak}",
     days: "{count} days",
     dayOne: "{count} day",
+    title: "Today",
+    noTarget: "No daily target yet. Set one in the Streak tab.",
+    open: "Open Streak",
   },
   target: {
     dueToday: "due today",

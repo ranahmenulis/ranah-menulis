@@ -31,7 +31,7 @@ export function TodayRing({
       aria-valuemax={target}
       aria-valuenow={words}
       className={cn(
-        "relative grid shrink-0 place-items-center",
+        "relative grid shrink-0 place-items-center rounded-full bg-surface/85",
         compact ? "size-32 md:size-36" : "size-44 md:size-52",
       )}
     >
@@ -41,7 +41,7 @@ export function TodayRing({
           cx={50}
           cy={50}
           r={45}
-          stroke="var(--ink)"
+          stroke="var(--accent-ink)"
           strokeWidth={3}
           strokeLinecap="round"
           pathLength={1}

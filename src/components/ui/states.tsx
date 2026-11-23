@@ -133,7 +133,7 @@ export function ErrorBanner({
     <div
       role="alert"
       className={cn(
-        "flex items-start gap-3 bg-danger-subtle px-4 py-3.5 text-sm text-ink",
+        "flex items-start gap-3 rounded-xl bg-danger-subtle px-4 py-3.5 text-sm text-ink",
         className,
       )}
     >
@@ -166,7 +166,12 @@ export function Notice({
   className?: string;
 }) {
   return (
-    <div className={cn("flex items-start gap-3 bg-subtle px-4 py-3.5 text-sm text-ink", className)}>
+    <div
+      className={cn(
+        "flex items-start gap-3 rounded-xl bg-subtle px-4 py-3.5 text-sm text-ink",
+        className,
+      )}
+    >
       <Info size={20} aria-hidden className="shrink-0" />
       <p className="min-w-0 flex-1">{children}</p>
       {action}

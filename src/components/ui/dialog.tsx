@@ -97,7 +97,7 @@ export function Dialog({
         if (dismissible && e.target === e.currentTarget) onClose();
       }}
       className={cn(
-        "m-auto max-h-[calc(100dvh-3rem)] w-full overflow-auto border border-line bg-surface p-0 text-ink shadow-float",
+        "m-auto max-h-[calc(100dvh-3rem)] w-full overflow-auto rounded-2xl border border-line bg-surface p-0 text-ink shadow-float",
         "opacity-0 transition-[opacity,translate,scale,display,overlay] transition-discrete",
         "duration-150 ease-out open:opacity-100 open:duration-200 starting:open:opacity-0",
         "backdrop:bg-black/40 backdrop:opacity-0 backdrop:transition-[opacity,display,overlay]",
@@ -107,9 +107,9 @@ export function Dialog({
         "md:scale-[0.97] md:open:scale-100 starting:md:open:scale-[0.97]",
         size === "wide" ? "md:w-[min(960px,calc(100vw-3rem))]" : "md:max-w-120",
         // Small screens: bottom sheet, or a full page.
-        "max-md:mb-0 max-md:max-w-none max-md:translate-y-full max-md:border-x-0 max-md:border-b-0",
+        "max-md:mb-0 max-md:max-w-none max-md:translate-y-full max-md:rounded-b-none max-md:border-x-0 max-md:border-b-0",
         "max-md:open:translate-y-0 starting:max-md:open:translate-y-full",
-        fullPageOnMobile && "max-md:h-dvh max-md:max-h-none max-md:border-0",
+        fullPageOnMobile && "max-md:h-dvh max-md:max-h-none max-md:rounded-none max-md:border-0",
       )}
     >
       <div

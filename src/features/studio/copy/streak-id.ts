@@ -40,6 +40,17 @@ export const studioStreak = {
     start: "Mulai menulis",
     lastDocument: "Membuka dokumen terakhir, “{title}”. Angka hari ini berlanjut di bilah editor.",
   },
+  target: {
+    title: "Target kebiasaan",
+    edit: "Ubah",
+    editLabel: "Ubah target harian",
+    daily: "Target harian",
+    value: "{words} kata",
+  },
+  rhythm: {
+    title: "Jaga ritme menulismu",
+    body: "Tulis sedikit setiap hari, lebih baik daripada banyak tapi jarang.",
+  },
   stats: {
     label: "Statistik ringkas",
     weekWords: "kata minggu ini",

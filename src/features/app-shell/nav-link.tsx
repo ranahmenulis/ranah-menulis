@@ -33,7 +33,7 @@ export function NavLink({
   const cls = cn(
     layout[variant],
     "font-medium no-underline",
-    active ? "text-ink" : "text-ink-muted",
+    active ? "text-accent-ink" : "text-ink-muted",
     href ? "hover:text-ink" : "cursor-default opacity-(--opacity-disabled)",
   );
   const content = (

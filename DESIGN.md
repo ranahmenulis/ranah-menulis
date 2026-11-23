@@ -1,6 +1,6 @@
 # RanahMenulis — Sistem Desain
 
-> Hitam putih, netral, terasa seperti membaca, bukan seperti dasbor.
+> Slate yang tenang, terasa seperti membaca, bukan seperti dasbor.
 
 **Status:** draf v0.2 (14 November 2026), sudah memuat referensi Medium dan Substack dari client. Bagian berlabel **Usulan** belum disetujui client dan boleh direvisi setelah ditinjau.
 **Pembaca:** desainer, Claude Design, dan developer yang membangun UI di Next.js + Tailwind v4.
@@ -12,7 +12,8 @@
 
 | Keputusan | Asal | Tafsiran untuk desain |
 | --- | --- | --- |
-| "Hitam putih juga go, biar netral" | Client | Palet monokrom netral. Tidak ada warna merek. Latar **putih**, bukan krem: "netral" berarti tanpa nuansa hangat atau dingin. Abu-abu memakai abu murni (tanpa semburat biru seperti `zinc`/`slate`). |
+| "Hitam putih juga go, biar netral" | Client | **Digantikan 23 November 2026** (baris berikut). Dulu: palet monokrom netral. Tidak ada warna merek. Latar **putih**, bukan krem: "netral" berarti tanpa nuansa hangat atau dingin. Abu-abu memakai abu murni (tanpa semburat biru seperti `zinc`/`slate`). |
+| Palet slate dan redesign Studio (gambar "Brand Color Palette" dan "Redesign Halaman Studio") | Client Wafiy, 23 November 2026 | Monokrom diganti palet slate: latar `#0D0F13`, surface `#171B22`, dark slate `#242C36`, slate blue `#53657A`, muted slate `#AAB4C1`, teks `#F3F6F9` (nilai gelap langsung dari client; nilai terang diturunkan, bagian 4.1). Satu warna aksen biru slate untuk yang aktif dan yang utama. Kartu membulat (bagian 4.4). Studio (Dokumen, Streak, Statistik) disesuaikan lebih dulu; layar lain menyusul per tahap. **Landing tetap monokrom** (token lama dikunci di bawah `.lp-root`). Dari mockup **tidak** diambil: target mingguan dan bulanan (target tetap harian saja, keputusan 17 November), tempo per menit dan rentang waktu menulis (datanya tidak ada; dipakai metrik yang sudah ada), Profil di bilah bawah (keputusan 22 November). |
 | "Mungkin deket-deket Medium" | Client | Yang dijadikan acuan adalah **aplikasi Medium setelah masuk** (halaman artikel, feed, editor, profil, Library, notifikasi, statistik), bukan halaman depan pemasarannya yang berwarna krem. "Deket-deket" berarti mengikuti pola dan rasanya, bukan menyalin. |
 | "Gapapa bang pake tombol merah" | Client, 14 Nov 2026 | Merah **final** untuk galat dan tindakan berbahaya. Semua status lain tetap monokrom (bagian 4.1). |
 | Foto referensi Wafi: aplikasi Substack di ponsel, mode gelap | Client | Yang diambil adalah **pola ponselnya**: deretan penulis yang diikuti di atas feed, campuran karya panjang dan catatan pendek, bilah aksi di bawah tiap butir, tombol Tulis bulat, bilah bawah lima tab. Warna oranye, judul di atas gambar bergradien, dan bilah bawah berefek kaca **tidak** diambil, karena bertentangan dengan keputusan hitam putih (bagian 2.1). |
@@ -55,7 +56,7 @@ Hal yang **tidak** ada di Medium dan harus kita rancang sendiri: dasbor Streak, 
 ## 3. Prinsip
 
 1. **Tulisan adalah antarmukanya.** Setiap layar menonjolkan teks karya. Kotak, ikon, dan hiasan harus membuktikan diri dulu sebelum dipakai.
-2. **Hitam memberi tahu yang penting.** Karena tidak ada warna, ketebalan dan isian hitam adalah satu-satunya alat penekanan. Pakai seperlunya: satu tombol terisi per layar.
+2. **Aksen biru slate memberi tahu yang penting** (23 November 2026). Satu warna aksen (`accent`) untuk tombol utama, chip dan tab aktif, navigasi aktif, batang grafik, dan titik streak. Pakai seperlunya: satu tombol terisi per layar. Tidak ada warna kedua kecuali merah untuk error dan dua token ilustrasi.
 3. **Garis untuk daftar, permukaan untuk wajah.** Daftar dan tabel tetap dipisah garis tipis dan ruang kosong, tanpa kartu bertumpuk dan bayangan. Permukaan (`subtle`, pita gelap `app-band`) dipakai untuk menandai jenis isi dan jangkar layar, bukan untuk membungkus setiap butir.
 4. **Dua kepadatan, satu keluarga.** Dunia penulis lapang dan tenang; dunia pengelola padat dan cepat dipindai. Token sama, jaraknya berbeda.
 5. **Penulis selalu tahu siapa yang bisa melihat karyanya.** Penanda visibilitas tidak pernah tersembunyi.
@@ -66,22 +67,30 @@ Hal yang **tidak** ada di Medium dan harus kita rancang sendiri: dasbor Streak, 
 
 ### 4.1 Warna
 
-Semua nilai sudah dicek kontrasnya (WCAG 2.1). Rasio di kolom terakhir adalah terhadap `canvas`.
+Palet slate dari client (23 November 2026). Nilai gelap diambil langsung dari gambar "Brand Color Palette"; nilai terang diturunkan darinya. Semua nilai teks sudah dicek kontrasnya (WCAG 2.1, minimal 4.5:1). Rasio di kolom terakhir adalah terhadap `canvas`. Landing memakai set monokrom lama yang dikunci di `globals.css` di bawah `.lp-root`.
 
 | Token | Terang | Gelap | Peran | Kontras (terang / gelap) |
 | --- | --- | --- | --- | --- |
-| `canvas` | `#ffffff` | `#121212` | Latar halaman | — |
-| `surface` | `#ffffff` | `#1a1a1a` | Lapisan mengambang: dialog, menu, laci, toast. Di mode terang dipisah dengan garis + bayangan | — |
-| `subtle` | `#f3f3f3` | `#232323` | Hover baris, chip, skeleton, kolom pencarian, blok kode | — |
-| `ink` | `#191919` | `#ededed` | Teks utama, tombol terisi, garis tegas | 17.6 / 16.0 |
-| `ink-soft` | `#3d3d3d` | `#c4c4c4` | Isi kedua: ringkasan, cuplikan, keterangan di dalam pita (21 November 2026) | 10.9 / 10.8 |
-| `ink-muted` | `#5e5e5e` | `#a3a3a3` | Hanya meta: waktu, hitungan, label kecil, ikon tidak aktif | 6.5 / 7.4 |
-| `ink-faint` | `#767676` | `#8c8c8c` | Placeholder, teks nonaktif | 4.5 / 5.6 |
-| `line` | `#e6e6e6` | `#2e2e2e` | Garis pemisah, border input diam | dekoratif |
-| `line-strong` | `#191919` | `#ededed` | Border input fokus, tab aktif, garis kutipan | — |
-| `on-ink` | `#ffffff` | `#121212` | Teks di atas tombol terisi | 17.6 / 16.0 |
-| `danger` | `#b3261e` | `#ff8f87` | Pesan galat, border field galat, tombol hapus permanen | 6.5 / 8.5 |
-| `danger-subtle` | `#fbeeed` | `#2a1716` | Latar banner galat | — |
+| `canvas` | `#F5F7FA` | `#0D0F13` | Latar halaman | — |
+| `surface` | `#FFFFFF` | `#171B22` | Kartu, bilah bawah, dialog, menu, laci, toast | — |
+| `subtle` | `#EBEFF4` | `#242C36` | Hover baris, chip diam, skeleton | — |
+| `ink` | `#171B22` | `#F3F6F9` | Teks utama, judul | 16.1 / 17.7 |
+| `ink-soft` | `#3A4552` | `#C5CDD7` | Isi kedua: keterangan, label di kartu | 9.1 / 12.0 |
+| `ink-muted` | `#53657A` | `#AAB4C1` | Meta: waktu, hitungan, label kecil, ikon tidak aktif | 5.6 / 9.1 |
+| `ink-faint` | `#5F6F82` | `#8792A0` | Placeholder, teks nonaktif | 4.8 / 6.1 |
+| `line` | `#DDE3EA` | `#2A323D` | Garis pemisah, border input dan kartu | dekoratif |
+| `line-strong` | `#171B22` | `#F3F6F9` | Border tombol sekunder, garis kutipan | — |
+| `accent` | `#3D5F82` | `#53657A` | Isian tombol utama, chip dan tab pil aktif, titik streak, tombol Tulis | 6.2 / — (isian) |
+| `accent-ink` | `#3D5F82` | `#9DB2C8` | Aksen sebagai teks atau garis: tab aktif, navigasi aktif, batang grafik, ikon kartu, fokus input | 6.2 / 8.8 |
+| `accent-subtle` | `#E3EAF2` | `#1E2733` | Sorot baris, ujung gradien kartu jangkar, seleksi teks | — |
+| `on-accent` | `#FFFFFF` | `#F3F6F9` | Teks di atas `accent` | 6.7 / 5.5 |
+| `on-ink` | `#FFFFFF` | `#0D0F13` | Teks di atas isian `ink` (toast) | — |
+| `danger` | `#B3261E` | `#FF8F87` | Pesan error, border field error, tombol hapus permanen | 6.1 / 8.7 |
+| `danger-subtle` | `#FBEEED` | `#2A1716` | Latar banner error | — |
+| `art-moon` | `#F2DC9B` | `#EFE3BD` | **Hanya ilustrasi** (bulan, inti api) | dekoratif |
+| `art-flame` | `#E07A2F` | `#F08A3C` | **Hanya ilustrasi** (api streak) | dekoratif |
+
+**Aturan aksen:** satu hue saja. Status submission, notifikasi, dan angka tidak diberi warna lain. Dua token `art-*` tidak boleh dipakai untuk teks, tombol, atau status.
 
 **Aturan merah (disetujui client):**
 - Boleh: pesan galat form, banner gagal memuat, tombol dan konfirmasi tindakan yang tidak bisa dibatalkan (hapus permanen, tarik karya, cabut role), pembayaran ditolak (karena pengguna harus bertindak).
@@ -151,18 +160,21 @@ Satuan dasar **4px**. Skala: 4, 8, 12, 16, 24, 32, 48, 64, 96.
 
 ### 4.4 Bentuk
 
-Hanya **dua nilai radius**, warisan Medium:
-- `radius-full` (9999px): tombol, chip, avatar, kolom pencarian, toolbar format.
-- `0`: semua yang lain — input, dialog, laci, menu, gambar, tabel, toast, sampul.
-
-Ini yang membuat Ranah langsung berbeda dari tampilan shadcn bawaan yang membulatkan semuanya `rounded-md`.
+**Membulat** (23 November 2026, menggantikan aturan dua radius warisan Medium):
+- `radius-full` (9999px): tombol, chip, tab pil, avatar.
+- `radius-lg` (12px): input, select, baris yang disorot, toast, banner, menu dan popover.
+- `radius-xl` (16px): tombol Tulis mengambang.
+- `radius-2xl` (20px): kartu, dialog, lembar bawah di ponsel (hanya sudut atas).
+- `radius-md` (8px): sorot batang grafik, ujung atas batang.
+- `0`: gambar dalam teks karya, tabel, pita penuh lebar, laci di md ke atas (menempel tepi).
 
 ### 4.5 Garis dan kedalaman
 
 - Pemisah: 1px `line`. Tidak ada garis ganda dan tidak ada kotak di dalam kotak lebih dari dua tingkat.
 - **Pita gelap `app-band`** (21 November 2026): dipasang bersama `theme-dark`, sehingga semua token di dalamnya gelap. Di halaman gelap pita naik satu tingkat (`#1d1d1d`, `subtle` `#2a2a2a`, garis `#363636`) agar tidak tenggelam. Dipakai untuk jangkar layar: Unggulan di katalog, kepala detail proyek, layar pencapaian, paket Solo termahal. Paling banyak satu pita besar per layar; tombol terisi tetap di luar pita.
-- Permukaan diam (feed, halaman, tabel) **tidak** berbayangan.
-- Hanya lapisan mengambang yang berbayangan, satu token: `0 2px 12px rgb(0 0 0 / 0.08)` + border 1px `line`. Di mode gelap bayangan dihapus; cukup `surface` + border.
+- **Kartu** (23 November 2026, mulai di Studio): `surface` di atas `canvas`, border 1px `line`, radius 20, bayangan `shadow-card` yang sangat tipis (`0 1px 2px` di terang, tidak ada di gelap). Kartu jangkar boleh bergradien halus `surface` → `accent-subtle`. Di dalam kartu, baris tetap dipisah garis.
+- Permukaan diam lain (feed, halaman, tabel) **tidak** berbayangan.
+- Hanya lapisan mengambang yang berbayangan, satu token: `0 4px 20px rgb(23 27 34 / 0.08)` + border 1px `line`. Di mode gelap bayangan dihapus; cukup `surface` + border.
 - Overlay di belakang dialog: `rgb(0 0 0 / 0.4)` tanpa blur.
 
 ### 4.6 Gerak
@@ -334,6 +346,8 @@ Urutan dari atas, satu kolom 680px:
 
 ### 6.4 Daftar dokumen Studio
 
+**Tampilan slate (23 November 2026, mockup client):** Semua · Arsip · Sampah berupa tab pil (`Tabs variant="pill"`, aktif terisi `accent`), kotak cari berikon kaca pembesar dengan placeholder (label tetap ada untuk pembaca layar), dua pemilih Jenis dan Tag berdampingan dengan label tersembunyi, baris membulat yang tersorot `accent-subtle` saat hover. Tombol pena mengambang di ponsel adalah tombol Tulis kerangka aplikasi (radius 16, `accent`). Tahap B (23 November 2026): lebar sama dengan Streak dan Statistik (`max-w-260`); kepala berupa kartu hero meja tulis (kata hari ini / target, bilah aksen, streak, seluruh kartu menuju Streak; tanpa target: kalimat ajakan); di lg kotak cari dan dua pemilih sebaris; daftar di dalam satu kartu. Pemilih (`Select`) memakai *customizable select* (`appearance: base-select`, kelas `rm-select`) sehingga daftar terbukanya berupa kartu membulat bersorot aksen di Chrome/Edge 135+, dan tetap daftar bawaan di peramban lain.
+
 Tab Semua · Arsip · Sampah. Folder tampil di tab Semua. Butir: **penanda halaman** (21 November 2026, `document-mark.ts`, `DocumentMark`) menggantikan ikon: lembar kertas 4:5 selebar 28/34px yang garisnya mengikuti jenis (Cerpen paragraf berindentasi, Puisi baris pendek di tengah per bait, Esai bilah judul lalu rata kanan-kiri, Novel judul bab dan garis punggung, Naskah nama tokoh tebal lalu dialog, tanpa jenis garis polos) dan terisi ke bawah menurut jumlah kata (log, kosong untuk 0 kata, penuh mulai ±5.000 kata); folder berupa tiga lembar bertumpuk. Arsip dan Sampah memudar. Gerak: baris naik sekali saat dipasang (jeda 45ms, maks. 12 baris), garis lembar tergores dari kiri, hover baris mengangkat lembar dan mengipaskan lembar folder; diam saat reduced motion. Lalu judul `heading-sm`, meta "Diubah 2 jam lalu · 1.240 kata", penanda teks kecil bergaris "Dibagikan" / "Dikirim ke proyek", ⋯ di kanan. Kosong: satu kalimat serif + tombol "Mulai menulis".
 
 Jenis dokumen opsional tampil sebagai teks kecil. Tag tampil sebagai pil monokrom yang berbaris ulang saat ruang sempit. Menu ⋯ membuka dialog **Jenis dan tag**, dengan pemilih jenis, satu isian untuk menambah tag, dan tombol lepas per tag. Tombol Simpan menjadi satu-satunya aksi terisi di dialog. Daftar aktif memiliki pemilih Jenis dokumen dan Tag yang tersimpan di alamat. Saat disaring dari tingkat teratas, hasil lintas folder menyebut nama folder pada barisnya. Di dalam folder, penyaring hanya berlaku pada folder itu. Hasil kosong memberi aksi **Hapus penyaring**. Bila baris keluar dari hasil setelah simpan, fokus berpindah ke pesan hasil. **[usulan]**
@@ -350,7 +364,8 @@ Desktop: kolom kiri (nama `heading-lg`, tab Karya · Tentang · Proyek, lalu daf
 
 - **Tersimpan:** daftar pola feed.
 - **Notifikasi:** tab Semua · Komentar · Proyek. **Dikelompokkan per hari kalender** (21 November 2026, fase 4b, `notification-days.ts`): Hari ini, Kemarin, Minggu ini (2–6 hari), Lebih lama; judul kelompok serif 20px dengan jumlah kecil dan garis `line-strong`, satu daftar dengan judul hari sebagai pemisah, supaya baris tidak dipasang ulang saat pindah kelompok; urutan di dalam kelompok mengikuti urutan lama; baris naik bertahap. Butir: avatar/ikon 32, kalimat (`text-sm`, nama pelaku 500), waktu. Belum dibaca: titik ink 6px di kiri + teks `ink`; sudah dibaca: `ink-muted`. Tugas Editor, Mentor, dan Juri masuk Proyek. Moderasi dan Editor’s Picks masuk Semua. Baris pengelola mengikuti pekerjaan aktif **[usulan]**. Juri lomba anonim hanya melihat label “Karya N” dan nama lomba. Pesan konten yang disembunyikan bisa ditandai dibaca melalui tombol berteks generik. Kerangka memuat bergaris dan galat sebagian mengikuti bagian 8. Jika baris yang sedang difokuskan hilang karena akses atau status berubah, fokus berpindah ke baris status inbox.
-- **Statistik:** (21 November 2026) total dalam pita gelap (`app-band`) sebagai angka serif 64/104px tipis yang bergulung naik (`CountUp`), tiga angka kecil di bawah garis; grafik batang monokrom (batang `ink`, sumbu `line`), tanpa gradien, tinggi 240/288px, batang tumbuh dari sumbu berurutan (`rm-bar`) setiap kali grafik dipasang atau satuan waktu berganti.
+- **Statistik:** (23 November 2026, mockup client) chip periode beraksen; kartu angka (gradien `surface` → `accent-subtle`) dengan total sans tebal 56/80px yang bergulung naik (`CountUp`) dan tiga angka kecil berpembatas vertikal; kartu "Aktivitas menulis" berisi grafik batang `accent-ink` berujung atas membulat, sumbu `line`, tinggi 240/288px, batang tumbuh berurutan (`rm-bar`); kartu "Metrik menulis" berupa daftar berikon (label kiri, nilai kanan).
+- **Streak:** (23 November 2026, mockup client) kartu hero bergradien dengan ilustrasi SVG punggung gunung, bulan, dan pinus (`streak-art.tsx`), ikon api, angka streak sans tebal 56/72px, tujuh hari berupa lingkaran bercentang (`accent` = target tercapai, cincin `accent-ink` = ada tulisan, cincin `line` = kosong), cincin hari ini di kanan; kartu "Target kebiasaan" (hanya target harian, tombol Ubah); kartu "Jaga ritme menulismu" dengan ilustrasi tumpukan buku; kalender, statistik ringkas, milestone, dan streak sebelumnya masing-masing dalam kartu.
 - **Metrik menulis (N14):** bagian bergaris tipis setelah grafik dan sebelum tabel, dengan Tempo, Hari favorit, Jam favorit, dan Kata berkurang. Keempatnya mengikuti rentang Statistik. Tempo diberi satuan kata per hari menulis. Keterangan menjelaskan bahwa Kata berkurang menjumlahkan selisih ketika jumlah kata turun antarsimpanan, dan penggantian dengan jumlah kata yang sama bernilai nol. Nilai tanpa data menampilkan “Belum cukup data”. Jam memakai zona akun saat penyimpanan. Teks Statistik sengaja hanya Bahasa Indonesia.
 
 ### 6.7 Halaman di luar pola Medium
@@ -515,6 +530,10 @@ Penanda adalah SVG tipografis sekeluarga dengan sampul proyek (7.6), `aria-hidde
 ### 7.9 Gerak tambahan (fase 6, 21 November 2026)
 
 Hasil `find-animation-opportunities`; sengaja sedikit, hanya momen langka dan satu perbaikan. (1) Titik `GroupSeal` membesar dari pusatnya sendiri (`.rm-seal-ring .rm-pop` dengan `transform-box: fill-box`). (2) "Postinganmu sudah terbit." naik bertahap seperti layar pencapaian (`rm-rise-in`) dan garis ringkasannya tergores dari kiri (`rm-page-line`), tetap tanpa confetti. (3) Pemenang lomba masuk dari juara terakhir ke juara 1 (`rm-row-in`, jeda tak seragam, `winnerStep`), lalu label "Juara 1" muncul sekali (`rm-pop`). (4) Titik tahap Solo berganti warna 300ms dan tahap yang berjalan muncul sekali. (5) `<details>` materi kelas dan Bantuan Studio memakai `.rm-details` (`::details-content` 0 ke `auto`, 250ms, `interpolate-size`); peramban tanpa dukungan langsung terbuka. **Ditolak:** pop pada Apresiasi dan Simpan, skala tekan pada `Button`, animasi ulang grafik saat ganti periode, pencarian Ctrl+K, tab, chip filter, dan indikator simpan Editor (terlalu sering dipakai atau data yang sedang dibaca).
+
+### 7.10 Ilustrasi (23 November 2026, tahap A redesign gaya Streak)
+
+Satu gaya untuk semua halaman: bidang datar berlapis dari token slate (`accent` dengan beberapa tingkat opasitas, `accent-ink`, `accent-subtle`, `surface`, `line`), aksen hangat `art-moon` dan `art-flame` hanya untuk cahaya, api, hadiah, atau penanda penting. SVG buatan sendiri di `src/components/illustrations/` (`scene.tsx` memegang bingkai 320 × 180, `Hills`, `Stars`, dan palet `C`), semuanya `aria-hidden`, ikut tema lewat token, tanpa foto. Isi gambar berada di separuh kanan agar tidak menabrak judul kartu hero. Satu ilustrasi bermakna per halaman: meja tulis (Dokumen), gunung (Streak), jalan menanjak (Statistik), langit menurut jam penulis (Beranda: pagi, siang, senja, malam), jendela menyala (Community), api unggun (Grup), tenda dan umbul-umbul (Event), rak buku (katalog Projects), jalan bertanda modul (dasbor Kelas), buku yang dirakit (dasbor Solo), podium (hasil Lomba), amplop terkirim (Proyek saya), rak pribadi satu buku per karya (Profil), buku berpita (Tersimpan), amplop dan lentera (Notifikasi), surat dan pena bulu (Pengaturan dan akun), dan satu benda per peran Kelola. Sampul kategori 4:5 (Antologi, Solo, Kelas, Lomba) menggantikan pola huruf; poster unggahan tetap menang. Keadaan kosong memakai ilustrasi halaman yang sama dalam ukuran kecil (menggantikan foto moodboard). **Gerak masuk:** saat halaman dibuka, lapisan gambar datang sekali dari belakang ke depan (kelas `rm-art` pada `Scene`, CSS `rm-art-in` di akhir `globals.css`): naik 10px sambil memudar, 560ms, jeda 70ms per lapisan, maksimal sekitar 1,5 detik; keyframe hanya mengatur awal sehingga tiap lapisan kembali ke opasitasnya sendiri; mati saat reduced motion. Pratinjau: `/sistem-desain/ilustrasi` (hanya development).
 
 ### 7.x Tombol tema dan bahasa
 

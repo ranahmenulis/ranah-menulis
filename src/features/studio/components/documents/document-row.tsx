@@ -68,7 +68,7 @@ export function Row({
     );
   return (
     <li
-      className="rm-row-in rm-page-host grid grid-cols-[28px_minmax(0,1fr)_auto] items-start gap-x-3 border-b border-line py-4 md:grid-cols-[34px_minmax(0,1fr)_auto] md:gap-x-4 md:py-5"
+      className="rm-row-in rm-page-host relative -mx-3 grid grid-cols-[28px_minmax(0,1fr)_auto] items-start gap-x-3 rounded-xl px-3 py-4 transition-colors duration-150 after:absolute after:inset-x-3 after:bottom-0 after:h-px after:bg-line last:after:hidden hover:bg-accent-subtle hover:after:opacity-0 md:grid-cols-[34px_minmax(0,1fr)_auto] md:gap-x-4 md:py-5"
       style={{ "--i": Math.min(index, STAGGER_ROWS) } as CSSProperties}
     >
       {mark ? (

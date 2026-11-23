@@ -6,21 +6,30 @@
 
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
+/* Slate palette (client, 23 November 2026; DESIGN.md 4.1). Dark values come straight from the
+   client's brand palette; light values are derived from it and checked for contrast. */
 :root {
-  --canvas: #ffffff;
+  --canvas: #f5f7fa;
   --surface: #ffffff;
-  --subtle: #f3f3f3;
-  --ink: #191919;
-  --ink-read: #191919;
-  --ink-muted: #5e5e5e;
-  --ink-soft: #3d3d3d;
-  --ink-faint: #767676;
-  --line: #e6e6e6;
-  --line-strong: #191919;
+  --subtle: #ebeff4;
+  --ink: #171b22;
+  --ink-read: #171b22;
+  --ink-muted: #53657a;
+  --ink-soft: #3a4552;
+  --ink-faint: #5f6f82;
+  --line: #dde3ea;
+  --line-strong: #171b22;
   --on-ink: #ffffff;
+  --accent: #3d5f82;
+  --accent-ink: #3d5f82;
+  --accent-subtle: #e3eaf2;
+  --on-accent: #ffffff;
+  --art-moon: #f2dc9b;
+  --art-flame: #e07a2f;
   --danger: #b3261e;
   --danger-subtle: #fbeeed;
-  --float-shadow: 0 2px 12px rgb(0 0 0 / 0.08);
+  --float-shadow: 0 4px 20px rgb(23 27 34 / 0.08);
+  --card-shadow: 0 1px 2px rgb(23 27 34 / 0.04);
   --logo-light: inline-block;
   --logo-dark: none;
   --cover-edge: transparent;
@@ -29,109 +38,143 @@
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --canvas: #121212;
-    --surface: #1a1a1a;
-    --subtle: #232323;
-    --ink: #ededed;
-    --ink-read: #d2d2d2;
-    --ink-muted: #a3a3a3;
-    --ink-soft: #c4c4c4;
-    --ink-faint: #8c8c8c;
-    --line: #2e2e2e;
-    --line-strong: #ededed;
-    --on-ink: #121212;
+    --canvas: #0d0f13;
+    --surface: #171b22;
+    --subtle: #242c36;
+    --ink: #f3f6f9;
+    --ink-read: #dce2e9;
+    --ink-muted: #aab4c1;
+    --ink-soft: #c5cdd7;
+    --ink-faint: #8792a0;
+    --line: #2a323d;
+    --line-strong: #f3f6f9;
+    --on-ink: #0d0f13;
+    --accent: #53657a;
+    --accent-ink: #9db2c8;
+    --accent-subtle: #1e2733;
+    --on-accent: #f3f6f9;
+    --art-moon: #efe3bd;
+    --art-flame: #f08a3c;
     --danger: #ff8f87;
     --danger-subtle: #2a1716;
     --float-shadow: none;
+    --card-shadow: none;
     --logo-light: none;
     --logo-dark: inline-block;
-    --cover-edge: #2e2e2e;
+    --cover-edge: #2a323d;
     color-scheme: dark;
   }
 }
 
 [data-theme="dark"] {
-  --canvas: #121212;
-  --surface: #1a1a1a;
-  --subtle: #232323;
-  --ink: #ededed;
-  --ink-read: #d2d2d2;
-  --ink-muted: #a3a3a3;
-  --ink-soft: #c4c4c4;
-  --ink-faint: #8c8c8c;
-  --line: #2e2e2e;
-  --line-strong: #ededed;
-  --on-ink: #121212;
+  --canvas: #0d0f13;
+  --surface: #171b22;
+  --subtle: #242c36;
+  --ink: #f3f6f9;
+  --ink-read: #dce2e9;
+  --ink-muted: #aab4c1;
+  --ink-soft: #c5cdd7;
+  --ink-faint: #8792a0;
+  --line: #2a323d;
+  --line-strong: #f3f6f9;
+  --on-ink: #0d0f13;
+  --accent: #53657a;
+  --accent-ink: #9db2c8;
+  --accent-subtle: #1e2733;
+  --on-accent: #f3f6f9;
+  --art-moon: #efe3bd;
+  --art-flame: #f08a3c;
   --danger: #ff8f87;
   --danger-subtle: #2a1716;
   --float-shadow: none;
+  --card-shadow: none;
   --logo-light: none;
   --logo-dark: inline-block;
-  --cover-edge: #2e2e2e;
+  --cover-edge: #2a323d;
   color-scheme: dark;
 }
 
 [data-theme="light"] {
-  --canvas: #ffffff;
+  --canvas: #f5f7fa;
   --surface: #ffffff;
-  --subtle: #f3f3f3;
-  --ink: #191919;
-  --ink-read: #191919;
-  --ink-muted: #5e5e5e;
-  --ink-soft: #3d3d3d;
-  --ink-faint: #767676;
-  --line: #e6e6e6;
-  --line-strong: #191919;
+  --subtle: #ebeff4;
+  --ink: #171b22;
+  --ink-read: #171b22;
+  --ink-muted: #53657a;
+  --ink-soft: #3a4552;
+  --ink-faint: #5f6f82;
+  --line: #dde3ea;
+  --line-strong: #171b22;
   --on-ink: #ffffff;
+  --accent: #3d5f82;
+  --accent-ink: #3d5f82;
+  --accent-subtle: #e3eaf2;
+  --on-accent: #ffffff;
+  --art-moon: #f2dc9b;
+  --art-flame: #e07a2f;
   --danger: #b3261e;
   --danger-subtle: #fbeeed;
-  --float-shadow: 0 2px 12px rgb(0 0 0 / 0.08);
+  --float-shadow: 0 4px 20px rgb(23 27 34 / 0.08);
+  --card-shadow: 0 1px 2px rgb(23 27 34 / 0.04);
   --logo-light: inline-block;
   --logo-dark: none;
   --cover-edge: transparent;
   color-scheme: light;
 }
 
-/* Bagian yang dibalik (daftar tunggu di landing): memakai set token tema lawan, sehingga
-   input, chip, fokus, galat, dan logo tetap terbaca. Ikut tema yang sedang berlaku.
-   .theme-dark selalu memakai set gelap di kedua tema (pita penutup landing, 20 November 2026). */
+/* Inverted sections use the other theme's set, so inputs, chips, focus, errors and the logo stay
+   legible. .theme-dark always uses the dark set in both themes (app bands, landing closing band). */
 .theme-invert,
 .theme-dark {
-  --canvas: #121212;
-  --surface: #1a1a1a;
-  --subtle: #232323;
-  --ink: #ededed;
-  --ink-read: #d2d2d2;
-  --ink-muted: #a3a3a3;
-  --ink-soft: #c4c4c4;
-  --ink-faint: #8c8c8c;
-  --line: #2e2e2e;
-  --line-strong: #ededed;
-  --on-ink: #121212;
+  --canvas: #0d0f13;
+  --surface: #171b22;
+  --subtle: #242c36;
+  --ink: #f3f6f9;
+  --ink-read: #dce2e9;
+  --ink-muted: #aab4c1;
+  --ink-soft: #c5cdd7;
+  --ink-faint: #8792a0;
+  --line: #2a323d;
+  --line-strong: #f3f6f9;
+  --on-ink: #0d0f13;
+  --accent: #53657a;
+  --accent-ink: #9db2c8;
+  --accent-subtle: #1e2733;
+  --on-accent: #f3f6f9;
+  --art-moon: #efe3bd;
+  --art-flame: #f08a3c;
   --danger: #ff8f87;
   --danger-subtle: #2a1716;
   --float-shadow: none;
+  --card-shadow: none;
   --logo-light: none;
   --logo-dark: inline-block;
-  --cover-edge: #2e2e2e;
+  --cover-edge: #2a323d;
   color-scheme: dark;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) .theme-invert {
-    --canvas: #ffffff;
+    --canvas: #f5f7fa;
     --surface: #ffffff;
-    --subtle: #f3f3f3;
-    --ink: #191919;
-    --ink-read: #191919;
-    --ink-muted: #5e5e5e;
-    --ink-soft: #3d3d3d;
-    --ink-faint: #767676;
-    --line: #e6e6e6;
-    --line-strong: #191919;
+    --subtle: #ebeff4;
+    --ink: #171b22;
+    --ink-read: #171b22;
+    --ink-muted: #53657a;
+    --ink-soft: #3a4552;
+    --ink-faint: #5f6f82;
+    --line: #dde3ea;
+    --line-strong: #171b22;
     --on-ink: #ffffff;
+    --accent: #3d5f82;
+    --accent-ink: #3d5f82;
+    --accent-subtle: #e3eaf2;
+    --on-accent: #ffffff;
+    --art-moon: #f2dc9b;
+    --art-flame: #e07a2f;
     --danger: #b3261e;
     --danger-subtle: #fbeeed;
-    --float-shadow: 0 2px 12px rgb(0 0 0 / 0.08);
+    --float-shadow: 0 4px 20px rgb(23 27 34 / 0.08);
+    --card-shadow: 0 1px 2px rgb(23 27 34 / 0.04);
     --logo-light: inline-block;
     --logo-dark: none;
     --cover-edge: transparent;
@@ -139,63 +182,77 @@
   }
 }
 [data-theme="dark"] .theme-invert {
-  --canvas: #ffffff;
+  --canvas: #f5f7fa;
   --surface: #ffffff;
-  --subtle: #f3f3f3;
-  --ink: #191919;
-  --ink-read: #191919;
-  --ink-muted: #5e5e5e;
-  --ink-soft: #3d3d3d;
-  --ink-faint: #767676;
-  --line: #e6e6e6;
-  --line-strong: #191919;
+  --subtle: #ebeff4;
+  --ink: #171b22;
+  --ink-read: #171b22;
+  --ink-muted: #53657a;
+  --ink-soft: #3a4552;
+  --ink-faint: #5f6f82;
+  --line: #dde3ea;
+  --line-strong: #171b22;
   --on-ink: #ffffff;
+  --accent: #3d5f82;
+  --accent-ink: #3d5f82;
+  --accent-subtle: #e3eaf2;
+  --on-accent: #ffffff;
+  --art-moon: #f2dc9b;
+  --art-flame: #e07a2f;
   --danger: #b3261e;
   --danger-subtle: #fbeeed;
-  --float-shadow: 0 2px 12px rgb(0 0 0 / 0.08);
+  --float-shadow: 0 4px 20px rgb(23 27 34 / 0.08);
+  --card-shadow: 0 1px 2px rgb(23 27 34 / 0.04);
   --logo-light: inline-block;
   --logo-dark: none;
   --cover-edge: transparent;
   color-scheme: light;
 }
 [data-theme="light"] .theme-invert {
-  --canvas: #121212;
-  --surface: #1a1a1a;
-  --subtle: #232323;
-  --ink: #ededed;
-  --ink-read: #d2d2d2;
-  --ink-muted: #a3a3a3;
-  --ink-soft: #c4c4c4;
-  --ink-faint: #8c8c8c;
-  --line: #2e2e2e;
-  --line-strong: #ededed;
-  --on-ink: #121212;
+  --canvas: #0d0f13;
+  --surface: #171b22;
+  --subtle: #242c36;
+  --ink: #f3f6f9;
+  --ink-read: #dce2e9;
+  --ink-muted: #aab4c1;
+  --ink-soft: #c5cdd7;
+  --ink-faint: #8792a0;
+  --line: #2a323d;
+  --line-strong: #f3f6f9;
+  --on-ink: #0d0f13;
+  --accent: #53657a;
+  --accent-ink: #9db2c8;
+  --accent-subtle: #1e2733;
+  --on-accent: #f3f6f9;
+  --art-moon: #efe3bd;
+  --art-flame: #f08a3c;
   --danger: #ff8f87;
   --danger-subtle: #2a1716;
   --float-shadow: none;
+  --card-shadow: none;
   --logo-light: none;
   --logo-dark: inline-block;
-  --cover-edge: #2e2e2e;
+  --cover-edge: #2a323d;
   color-scheme: dark;
 }
 
-/* App band (DESIGN.md 4.5, 21 November 2026): the one dark surface the app uses to anchor a screen
-   (featured project, project header, milestone screens). Put it together with .theme-dark so every
-   token inside reads as dark. On a dark page the band is lifted a step so it never disappears. */
+/* App band (DESIGN.md 4.5): the dark slate surface that anchors a screen (featured project,
+   project header, milestone screens). Put it together with .theme-dark so every token inside
+   reads as dark. On a dark page the band is lifted a step so it never disappears. */
 .app-band {
   background: var(--canvas);
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) .app-band {
-    --canvas: #1d1d1d;
-    --subtle: #2a2a2a;
-    --line: #363636;
+    --canvas: #1b212a;
+    --subtle: #28313c;
+    --line: #333d49;
   }
 }
 [data-theme="dark"] .app-band {
-  --canvas: #1d1d1d;
-  --subtle: #2a2a2a;
-  --line: #363636;
+  --canvas: #1b212a;
+  --subtle: #28313c;
+  --line: #333d49;
 }
 
 @theme inline {
@@ -212,6 +269,10 @@
   --color-on-ink: var(--on-ink);
   --color-danger: var(--danger);
   --color-danger-subtle: var(--danger-subtle);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-subtle: var(--accent-subtle);
+  --color-on-accent: var(--on-accent);
 
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-serif: var(--font-merriweather), Georgia, serif;
@@ -225,12 +286,18 @@
   --text-base: 1rem;
   --text-base--line-height: 1.5rem;
 
-  /* Hanya dua radius: rounded-full dan tanpa radius. */
+  /* Radius scale (DESIGN.md 4.4, 23 November 2026): fields 8, small cards 12, cards 16,
+     sheets and dialogs 20, plus pills. */
   --radius-*: initial;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
   --radius-full: 9999px;
 
   --shadow-*: initial;
   --shadow-float: var(--float-shadow);
+  --shadow-card: var(--card-shadow);
 
   --ease-out: cubic-bezier(0.2, 0, 0, 1);
 
@@ -311,7 +378,7 @@
   }
 
   ::selection {
-    background: var(--line);
+    background: var(--accent-subtle);
   }
 
   h1,
@@ -675,25 +742,69 @@ html.lp-motion .lp-marker {
   }
 }
 
-/* Dark landing: the artifact's deeper black (#0c0c0c, hairlines #262626) instead of the app's
-   #121212, so the plates and the closing band read with more contrast. Scoped to the landing
-   (.lp-root is the wrapper in app/page.tsx); the app's dark tokens are untouched. */
-:root[data-theme="dark"]:has(.lp-root) {
+/* Landing keeps its approved monochrome (23 November 2026: the slate palette is for the app only).
+   Scoped to the landing (.lp-root is the wrapper in app/page.tsx). Dark uses the artifact's deeper
+   black (#0c0c0c, hairlines #262626) so the plates and the closing band read with more contrast. */
+:root:has(.lp-root) {
+  --canvas: #ffffff;
+  --surface: #ffffff;
+  --subtle: #f3f3f3;
+  --ink: #191919;
+  --ink-read: #191919;
+  --ink-muted: #5e5e5e;
+  --ink-soft: #3d3d3d;
+  --ink-faint: #767676;
+  --line: #e6e6e6;
+  --line-strong: #191919;
+  --on-ink: #ffffff;
+  --accent: #191919;
+  --accent-ink: #191919;
+  --accent-subtle: #f3f3f3;
+  --on-accent: #ffffff;
+  --art-moon: #f2dc9b;
+  --art-flame: #e07a2f;
+  --float-shadow: 0 2px 12px rgb(0 0 0 / 0.08);
+}
+:root[data-theme="dark"]:has(.lp-root),
+.lp-root .theme-dark {
   --canvas: #0c0c0c;
+  --surface: #1a1a1a;
   --subtle: #1a1a1a;
+  --ink: #ededed;
+  --ink-read: #d2d2d2;
+  --ink-muted: #a3a3a3;
+  --ink-soft: #c4c4c4;
+  --ink-faint: #8c8c8c;
   --line: #262626;
+  --line-strong: #ededed;
+  --on-ink: #121212;
+  --accent: #ededed;
+  --accent-ink: #ededed;
+  --accent-subtle: #232323;
+  --on-accent: #121212;
+  --float-shadow: none;
+  --cover-edge: #2e2e2e;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]):has(.lp-root) {
     --canvas: #0c0c0c;
+    --surface: #1a1a1a;
     --subtle: #1a1a1a;
+    --ink: #ededed;
+    --ink-read: #d2d2d2;
+    --ink-muted: #a3a3a3;
+    --ink-soft: #c4c4c4;
+    --ink-faint: #8c8c8c;
     --line: #262626;
+    --line-strong: #ededed;
+    --on-ink: #121212;
+    --accent: #ededed;
+    --accent-ink: #ededed;
+    --accent-subtle: #232323;
+    --on-accent: #121212;
+    --float-shadow: none;
+    --cover-edge: #2e2e2e;
   }
-}
-.lp-root .theme-dark {
-  --canvas: #0c0c0c;
-  --subtle: #1a1a1a;
-  --line: #262626;
 }
 
 /* Hero band: the engraving fades in from the top (the mask is on the band's picture box, so it
@@ -1264,5 +1375,126 @@ html.lp-motion .lp-roll-out {
   }
   100% {
     scale: 1;
+  }
+}
+
+/* Illustrations (DESIGN.md 7.10): when a page opens, the layers of the drawing arrive once from
+   back to front, each rising 10px as it fades in. CSS translate composes with the SVG transform
+   attribute, and the keyframes only set the start, so each layer keeps its own opacity. */
+@keyframes rm-art-in {
+  from {
+    opacity: 0;
+    translate: 0 10px;
+  }
+}
+.rm-art > * {
+  transform-box: fill-box;
+  animation: rm-art-in 560ms cubic-bezier(0.2, 0, 0, 1) both;
+}
+.rm-art > :nth-child(1) {
+  animation-delay: 0ms;
+}
+.rm-art > :nth-child(2) {
+  animation-delay: 70ms;
+}
+.rm-art > :nth-child(3) {
+  animation-delay: 140ms;
+}
+.rm-art > :nth-child(4) {
+  animation-delay: 210ms;
+}
+.rm-art > :nth-child(5) {
+  animation-delay: 280ms;
+}
+.rm-art > :nth-child(6) {
+  animation-delay: 350ms;
+}
+.rm-art > :nth-child(7) {
+  animation-delay: 420ms;
+}
+.rm-art > :nth-child(8) {
+  animation-delay: 490ms;
+}
+.rm-art > :nth-child(9) {
+  animation-delay: 560ms;
+}
+.rm-art > :nth-child(10) {
+  animation-delay: 630ms;
+}
+.rm-art > :nth-child(11) {
+  animation-delay: 700ms;
+}
+.rm-art > :nth-child(12) {
+  animation-delay: 770ms;
+}
+.rm-art > :nth-child(13) {
+  animation-delay: 840ms;
+}
+.rm-art > :nth-child(14) {
+  animation-delay: 910ms;
+}
+.rm-art > :nth-child(n + 15) {
+  animation-delay: 980ms;
+}
+@media (prefers-reduced-motion: reduce) {
+  .rm-art > * {
+    animation: none;
+  }
+}
+
+/* Select (DESIGN.md 7.1): where the browser supports a customizable select, the open list follows
+   the theme — a rounded floating card, accent highlight, the chosen option in the accent. It stays
+   a native <select>, so keyboard and screen readers are unchanged; other browsers keep the system
+   list. Our own caret stays, so the built-in picker icon is hidden. */
+@supports (appearance: base-select) {
+  .rm-select,
+  .rm-select::picker(select) {
+    appearance: base-select;
+  }
+  .rm-select {
+    display: flex;
+    align-items: center;
+  }
+  .rm-select::picker-icon {
+    display: none;
+  }
+  .rm-select::picker(select) {
+    margin-block: 6px;
+    padding: 6px;
+    border: 1px solid var(--line);
+    border-radius: 0.75rem;
+    background: var(--surface);
+    color: var(--ink);
+    box-shadow: var(--float-shadow);
+    opacity: 1;
+    translate: 0 0;
+    transition:
+      opacity 150ms ease-out,
+      translate 150ms ease-out,
+      display 150ms allow-discrete,
+      overlay 150ms allow-discrete;
+  }
+  @starting-style {
+    .rm-select:open::picker(select) {
+      opacity: 0;
+      translate: 0 -4px;
+    }
+  }
+  .rm-select option {
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    font-size: 0.9375rem;
+  }
+  .rm-select option:hover,
+  .rm-select option:focus-visible {
+    background: var(--accent-subtle);
+    outline: none;
+  }
+  .rm-select option:checked {
+    color: var(--accent-ink);
+    font-weight: 600;
+  }
+  .rm-select option::checkmark {
+    color: var(--accent-ink);
   }
 }

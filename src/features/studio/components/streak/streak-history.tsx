@@ -19,7 +19,10 @@ export function StreakHistory({ items }: { items: PastStreak[] }) {
   const [all, setAll] = useState(false);
   const shown = all ? items : items.slice(0, INITIAL_ROWS);
   return (
-    <section aria-labelledby="sh-heading" className="grid content-start gap-2">
+    <section
+      aria-labelledby="sh-heading"
+      className="grid content-start gap-2 rounded-2xl border border-line bg-surface p-5 shadow-card md:p-6"
+    >
       <h2 id="sh-heading" className="heading-md">
         {t.heading}
       </h2>

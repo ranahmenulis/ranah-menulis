@@ -13,7 +13,10 @@ export function MilestoneList({ items, today }: { items: Milestone[]; today: str
   const t = useT().studioStreak.milestones;
   const { locale } = useFormat();
   return (
-    <section aria-labelledby="ms-heading" className="grid content-start gap-2">
+    <section
+      aria-labelledby="ms-heading"
+      className="grid content-start gap-2 rounded-2xl border border-line bg-surface p-5 shadow-card md:p-6"
+    >
       <h2 id="ms-heading" className="heading-md">
         {t.heading}
       </h2>
@@ -21,7 +24,10 @@ export function MilestoneList({ items, today }: { items: Milestone[]; today: str
         {items.map((m) => {
           const reached = m.achievedOn !== null;
           return (
-            <li key={m.id} className="flex items-center gap-3 border-b border-line py-3">
+            <li
+              key={m.id}
+              className="flex items-center gap-3 border-b border-line py-3 last:border-b-0"
+            >
               <Dot kind={reached ? "full" : "lock"} size={28} />
               <div className="min-w-0 flex-1">
                 <p className={cn("text-base", reached ? "font-medium" : "text-ink-muted")}>

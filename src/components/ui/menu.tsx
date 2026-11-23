@@ -114,7 +114,7 @@ export function Menu({ items, label, icon, className }: MenuProps) {
         aria-label={label}
         onKeyDown={onKeyDown}
         className={cn(
-          "z-50 border border-line bg-surface py-1.5 shadow-float",
+          "z-50 rounded-t-2xl border border-line bg-surface py-1.5 shadow-float md:rounded-xl",
           "transition-[opacity,translate,scale,visibility] duration-100 ease-out",
           // Small screens: bottom sheet.
           "fixed inset-x-0 bottom-0 border-x-0 border-b-0 px-4 pt-3 pb-[calc(1rem+env(safe-area-inset-bottom))]",

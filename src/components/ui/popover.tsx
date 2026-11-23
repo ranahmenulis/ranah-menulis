@@ -65,7 +65,7 @@ export function Popover({
           role="dialog"
           aria-label={label}
           className={cn(
-            "absolute top-[calc(100%+12px)] right-0 z-50 border border-line bg-surface whitespace-normal shadow-float",
+            "absolute top-[calc(100%+12px)] right-0 z-50 rounded-xl border border-line bg-surface whitespace-normal shadow-float",
             "origin-top-right transition-[opacity,scale] duration-150 ease-out",
             "starting:scale-[0.97] starting:opacity-0",
             panelClassName,

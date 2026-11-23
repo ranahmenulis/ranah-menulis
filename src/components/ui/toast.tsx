@@ -96,7 +96,7 @@ function ToastItem({ entry, onClose }: { entry: ToastEntry; onClose: (id: number
       onFocus={() => setPaused(true)}
       onBlur={() => setPaused(false)}
       className={cn(
-        "pointer-events-auto flex max-w-105 items-center gap-4 bg-ink px-4 py-3 text-sm text-on-ink",
+        "pointer-events-auto flex max-w-105 items-center gap-4 rounded-xl bg-ink px-4 py-3 text-sm text-on-ink",
         "transition-[opacity,translate] duration-200 ease-out starting:translate-y-2 starting:opacity-0",
         leaving && "translate-y-2 opacity-0 duration-150",
       )}

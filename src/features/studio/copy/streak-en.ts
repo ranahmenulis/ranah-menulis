@@ -43,6 +43,17 @@ export const studioStreak: typeof source = {
     lastDocument:
       "Opening your last document, “{title}”. Today's count continues in the editor bar.",
   },
+  target: {
+    title: "Writing habit",
+    edit: "Edit",
+    editLabel: "Edit daily target",
+    daily: "Daily target",
+    value: "{words} words",
+  },
+  rhythm: {
+    title: "Keep your rhythm",
+    body: "A little every day beats a lot once in a while.",
+  },
   stats: {
     label: "Quick statistics",
     weekWords: "words this week",

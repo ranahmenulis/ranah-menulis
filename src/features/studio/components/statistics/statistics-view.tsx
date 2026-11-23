@@ -81,7 +81,7 @@ export function StatisticsView() {
       )}
 
       {stats && hasWriting && (
-        <div className="mt-6 grid gap-8">
+        <div className="mt-6 grid gap-5">
           <div role="group" aria-label={t.periodGroup} className="flex flex-wrap gap-2">
             {PERIODS.map((id) => (
               <Chip key={id} pressed={id === period} onClick={() => setPeriod(id)}>
@@ -98,7 +98,15 @@ export function StatisticsView() {
             </p>
           )}
 
-          <BarChart key={period} buckets={stats.buckets} period={period} />
+          <section
+            aria-labelledby="chart-heading"
+            className="rounded-2xl border border-line bg-surface p-5 shadow-card md:p-6"
+          >
+            <h2 id="chart-heading" className="mb-3 heading-md">
+              {t.chart.heading}
+            </h2>
+            <BarChart key={period} buckets={stats.buckets} period={period} />
+          </section>
           {metrics && <WritingMetricsSection metrics={metrics} />}
           <ChartTable buckets={stats.buckets} period={period} />
         </div>

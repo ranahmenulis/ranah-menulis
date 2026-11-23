@@ -115,7 +115,7 @@ describe("SubmissionDetail", () => {
     expect(screen.getByText(/Tenggat revisi .* WIB\. Revisi ke-1 dari 2\./)).toBeTruthy();
     const link = screen.getByRole("link", { name: "Kirim revisi" });
     expect(link.getAttribute("href")).toBe(`/projects/${CERPEN}/kiriman/a/revisi`);
-    const filled = screen.getAllByRole("link").filter((a) => a.className.includes("bg-ink"));
+    const filled = screen.getAllByRole("link").filter((a) => a.className.includes("bg-accent"));
     expect(filled).toHaveLength(1);
   });
 

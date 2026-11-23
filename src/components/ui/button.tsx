@@ -23,9 +23,9 @@ const base =
 const variants: Record<ButtonVariant, string> = {
   // Filled and outlined buttons sink a little when pressed (DESIGN.md 4.6); text buttons do not.
   primary:
-    "border-transparent bg-ink text-on-ink hover:opacity-(--opacity-hover) active:opacity-press active:scale-97",
+    "border-transparent bg-accent text-on-accent hover:opacity-(--opacity-hover) active:opacity-press active:scale-97",
   secondary:
-    "border-ink text-ink transition-[scale] hover:bg-subtle active:scale-97 active:bg-line",
+    "border-line-strong text-ink transition-[scale] hover:bg-subtle active:scale-97 active:bg-line",
   text: "border-transparent text-ink-muted transition-none hover:text-ink active:text-ink active:underline active:underline-offset-3",
   // Hanya di dialog konfirmasi. Label on-ink agar tetap terbaca di mode gelap (usulan).
   danger:

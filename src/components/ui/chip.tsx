@@ -11,7 +11,7 @@ export function Chip({ pressed = false, className, ...props }: ChipProps) {
       aria-pressed={pressed}
       className={cn(
         "inline-flex h-8 cursor-pointer items-center rounded-full px-3.5 text-sm",
-        pressed ? "bg-ink text-on-ink" : "bg-subtle text-ink hover:bg-line",
+        pressed ? "bg-accent text-on-accent" : "bg-subtle text-ink hover:bg-line",
         className,
       )}
       {...props}

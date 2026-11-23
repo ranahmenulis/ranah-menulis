@@ -49,7 +49,7 @@ export function DocumentFilterFields({
   const missingTag = tags.some(([key]) => key === filters.tag) ? null : filters.tag;
 
   return (
-    <div className="mt-4 grid grid-cols-2 gap-3 sm:max-w-sm">
+    <div className="mt-3 grid grid-cols-2 gap-3 sm:max-w-md lg:w-md lg:shrink-0 [&_label]:sr-only">
       <Field id={`${id}-kind`} label={t.filters.kind}>
         <Select
           id={`${id}-kind`}

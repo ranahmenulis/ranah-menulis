@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { ErrorBanner, RetryButton, Skeleton } from "@/components/ui/states";
 import { useToast } from "@/components/ui/toast";
 import { useT } from "@/lib/i18n/provider";
@@ -87,11 +86,6 @@ export function StreakView() {
               {capitalizeFirst(date(parseDay(today), HEAD_DATE), locale)}
               <span className="normal-case">{t.dayChanges}</span>
             </span>
-            {target !== null && (
-              <Button variant="text" className="ml-auto text-ink" onClick={() => setDialog(true)}>
-                {t.setTarget}
-              </Button>
-            )}
           </div>
 
           <TodaySection
@@ -101,8 +95,8 @@ export function StreakView() {
             onSetTarget={() => setDialog(true)}
           />
 
-          <div className="mt-14 grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,20rem)]">
-            <div className="grid content-start gap-8">
+          <div className="mt-8 grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,20rem)]">
+            <div className="grid content-start gap-5">
               <StreakCalendar
                 today={today}
                 words={words}
@@ -112,7 +106,7 @@ export function StreakView() {
               />
               <StatsSection words={words} today={today} hasWriting={hasWriting} />
             </div>
-            <div className="grid content-start gap-8">
+            <div className="grid content-start gap-5">
               <MilestoneList items={milestones(words, changes, today, locale)} today={today} />
               {target !== null && <StreakHistory items={pastStreaks(words, changes, today)} />}
             </div>

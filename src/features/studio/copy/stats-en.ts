@@ -31,6 +31,7 @@ export const studioStats: typeof source = {
     daysMet: "{met} of {total} days met the target",
   },
   chart: {
+    heading: "Writing activity",
     roleDescription: "bar chart",
     label: "Words per {unit}, {range}",
     targetLegend: "Daily target",

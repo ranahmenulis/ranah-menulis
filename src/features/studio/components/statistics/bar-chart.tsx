@@ -28,7 +28,7 @@ function labelMode(index: number, last: number, period: Period): LabelMode {
 const pct = (value: number, top: number) => `${(value / top) * 100}%`;
 
 /**
- * One series of monochrome bars (DESIGN.md 6.6): ink bars at most 24px thick, hairline grid, a
+ * One series of accent bars (DESIGN.md 6.6): bars at most 24px thick with rounded tops, hairline grid, a
  * 2px gap, and a target line behind the bars on the daily view. The readout line above names the
  * active bar and works for hover, touch dragging and the arrow keys; the table view next to the
  * chart carries every value, so nothing depends on pointing.
@@ -126,7 +126,7 @@ export function BarChart({ buckets, period }: { buckets: Bucket[]; period: Perio
                 key={bucket.start}
                 className={cn(
                   "relative flex min-w-0 flex-1 items-end justify-center",
-                  index === active && "bg-subtle",
+                  index === active && "rounded-md bg-subtle",
                 )}
               >
                 {bucket.target !== null && (
@@ -138,7 +138,7 @@ export function BarChart({ buckets, period }: { buckets: Bucket[]; period: Perio
                 {bucket.words > 0 && (
                   <span
                     style={{ height: pct(bucket.words, top), "--i": index } as CSSProperties}
-                    className="rm-bar relative block min-h-0.5 w-full max-w-6 bg-ink"
+                    className="rm-bar relative block min-h-0.5 w-full max-w-6 rounded-t-md bg-accent-ink"
                   />
                 )}
               </div>

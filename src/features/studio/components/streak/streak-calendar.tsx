@@ -78,7 +78,10 @@ export function StreakCalendar({ today, words, history, changes, celebrate }: Ca
     : [];
 
   return (
-    <section aria-labelledby="cal-heading" className="grid content-start gap-4">
+    <section
+      aria-labelledby="cal-heading"
+      className="grid content-start gap-4 rounded-2xl border border-line bg-surface p-5 shadow-card md:p-6"
+    >
       <div className="flex items-center gap-1">
         <h2 id="cal-heading" className="mr-auto heading-md capitalize">
           {monthName}

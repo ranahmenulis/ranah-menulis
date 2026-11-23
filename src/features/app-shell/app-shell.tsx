@@ -116,7 +116,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           aria-label={topBar.writeNew}
           className={cn(
             "fixed right-4 bottom-[calc(4.5rem+env(safe-area-inset-bottom))] z-30 md:hidden",
-            "grid size-14 place-items-center rounded-full bg-ink text-on-ink",
+            "grid size-14 place-items-center rounded-2xl bg-accent text-on-accent shadow-float",
             "transition-opacity duration-120 hover:opacity-(--opacity-hover) active:opacity-press",
           )}
         >
@@ -127,7 +127,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       {!onPost && (
         <nav
           aria-label={nav.label}
-          className="fixed inset-x-0 bottom-0 z-30 grid h-[calc(3.5rem+env(safe-area-inset-bottom))] grid-cols-4 border-t border-line bg-canvas pb-[env(safe-area-inset-bottom)] md:hidden"
+          className="fixed inset-x-0 bottom-0 z-30 grid h-[calc(3.5rem+env(safe-area-inset-bottom))] grid-cols-4 border-t border-line bg-surface pb-[env(safe-area-inset-bottom)] md:hidden"
         >
           {bottomNav.map((entry) => (
             <NavLink key={entry.id} entry={entry} variant="tab" active={active === entry.id} />

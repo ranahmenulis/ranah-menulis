@@ -142,6 +142,7 @@ export const studioDocuments = {
   },
   searchField: {
     label: "Cari judul atau isi",
+    placeholder: "Cari judul atau isi tulisan…",
     clear: "Hapus kata kunci",
   },
   today: {
@@ -151,6 +152,9 @@ export const studioDocuments = {
     streak: "Streak {streak}",
     days: "{count} hari",
     dayOne: "{count} hari",
+    title: "Hari ini",
+    noTarget: "Belum ada target harian. Atur di tab Streak.",
+    open: "Buka Streak",
   },
   target: {
     dueToday: "tenggat hari ini",

@@ -73,7 +73,7 @@ export function Drawer({
       }}
       style={{ "--drawer-w": `${width}px` } as React.CSSProperties}
       className={cn(
-        "m-0 flex-col overflow-hidden border border-line bg-surface p-0 text-ink shadow-float",
+        "m-0 flex-col overflow-hidden rounded-t-2xl border border-line bg-surface p-0 text-ink shadow-float md:rounded-none",
         "transition-[translate,display,overlay] transition-discrete open:flex",
         "duration-150 ease-out open:duration-200",
         "backdrop:bg-black/40 backdrop:opacity-0 backdrop:transition-[opacity,display,overlay]",

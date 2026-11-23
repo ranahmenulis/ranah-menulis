@@ -5,8 +5,8 @@ type DotKind = "full" | "ring" | "fill" | "empty" | "lock";
 const base = "inline-block shrink-0 rounded-full";
 
 /**
- * Ink dots used by the Streak calendar and milestones (DESIGN.md 7.3). Meaning is carried by fill,
- * never by color: full = target met, ring = something written, empty = nothing, lock = not yet.
+ * Dots used by the Streak calendar and milestones (DESIGN.md 7.3). Meaning is carried by fill,
+ * never by color alone (the accent is the only hue): full = target met, ring = something written, empty = nothing, lock = not yet.
  * "fill" is the ring that fills once (300ms) when today's target is reached.
  */
 export function Dot({
@@ -28,7 +28,7 @@ export function Dot({
     );
   }
   if (kind === "full")
-    return <i aria-hidden style={style} className={cn(base, "bg-ink", className)} />;
+    return <i aria-hidden style={style} className={cn(base, "bg-accent", className)} />;
   if (kind === "lock") {
     return (
       <i
@@ -44,9 +44,9 @@ export function Dot({
       style={style}
       className={cn(
         base,
-        "relative shadow-[inset_0_0_0_1.5px_var(--ink)]",
+        "relative shadow-[inset_0_0_0_1.5px_var(--accent-ink)]",
         kind === "fill" &&
-          "after:absolute after:inset-0 after:scale-0 after:rounded-full after:bg-ink after:content-[''] motion-safe:after:animate-[rm-fill_300ms_cubic-bezier(0.2,0,0,1)_200ms_forwards] motion-reduce:after:scale-100",
+          "after:absolute after:inset-0 after:scale-0 after:rounded-full after:bg-accent after:content-[''] motion-safe:after:animate-[rm-fill_300ms_cubic-bezier(0.2,0,0,1)_200ms_forwards] motion-reduce:after:scale-100",
         className,
       )}
     />

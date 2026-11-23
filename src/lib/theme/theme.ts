@@ -20,7 +20,7 @@ export function readTheme(cookie: string): Theme | null {
 }
 
 /** Browser chrome colour per theme: the same value as --canvas in globals.css. */
-export const THEME_COLORS: Record<Theme, string> = { light: "#ffffff", dark: "#121212" };
+export const THEME_COLORS: Record<Theme, string> = { light: "#f5f7fa", dark: "#0d0f13" };
 
 const COLOR_META = "data-theme-color";
 

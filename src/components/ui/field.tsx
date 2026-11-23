@@ -68,8 +68,8 @@ export function describedBy(id: string, { hint, error }: { hint?: unknown; error
 }
 
 const control =
-  "w-full border border-line bg-canvas px-3 text-base text-ink rounded-none appearance-none " +
-  "focus:border-line-strong aria-invalid:border-danger disabled:opacity-(--opacity-disabled)";
+  "w-full border border-line bg-surface px-3 text-base text-ink rounded-lg appearance-none " +
+  "focus:border-accent-ink aria-invalid:border-danger disabled:opacity-(--opacity-disabled)";
 
 export function Input({ className, ...props }: ComponentProps<"input">) {
   return <input className={cn(control, "h-11", className)} {...props} />;
@@ -82,7 +82,7 @@ export function Textarea({ className, ...props }: ComponentProps<"textarea">) {
 export function Select({ className, children, ...props }: ComponentProps<"select">) {
   return (
     <div className="relative">
-      <select className={cn(control, "h-11 pr-10", className)} {...props}>
+      <select className={cn(control, "rm-select h-11 pr-10", className)} {...props}>
         {children}
       </select>
       <CaretDown

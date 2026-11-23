@@ -44,7 +44,7 @@ describe("TodayCard", () => {
 
   it("has exactly one filled button", () => {
     render(<TodayCard data={data()} showSteps={false} />);
-    const filled = screen.getAllByRole("link").filter((a) => a.className.includes("bg-ink"));
+    const filled = screen.getAllByRole("link").filter((a) => a.className.includes("bg-accent"));
     expect(filled).toHaveLength(1);
   });
 
