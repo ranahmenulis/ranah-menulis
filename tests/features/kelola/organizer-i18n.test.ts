@@ -15,7 +15,7 @@ function paths(value: unknown, prefix = ""): string[] {
 
 const placeholders = (text: string) => (text.match(/\{\w+\}/g) ?? []).sort();
 
-function leaves(value: unknown, prefix = ""): Record<string, string> {
+function leaves(value: unknown): Record<string, string> {
   return Object.fromEntries(paths(value).map((p) => [p, p]));
 }
 
