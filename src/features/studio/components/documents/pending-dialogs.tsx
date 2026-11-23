@@ -1,6 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import type { ProjectCategory } from "@/features/projects/types";
+import { bookDocId } from "../../book-source";
 import { kirimHref } from "@/features/projects/submission-model";
 import { useT } from "@/lib/i18n/provider";
 import { SendToProjectDialog } from "../send-to-project-dialog";
@@ -12,12 +14,21 @@ import { DeleteDialog, MoveDialog, NameDialog } from "./document-dialogs";
 import type { Pending } from "./pending";
 
 /** "Kirim ke proyek" from the list: the dialog closes itself first, then the send page opens. */
-function SendFromList({ docId, onClose }: { docId: string; onClose: () => void }) {
+function SendFromList({
+  docId,
+  onClose,
+  only,
+}: {
+  docId: string;
+  onClose: () => void;
+  only?: ProjectCategory[];
+}) {
   const router = useRouter();
   return (
     <SendToProjectDialog
       open
       docId={docId}
+      only={only}
       onClose={onClose}
       onPick={async (slug) => {
         onClose();
@@ -60,6 +71,10 @@ export function PendingDialogs({
           onClose={onClose}
           onSubmit={(name) => run(() => list.createFolder(name))()}
         />
+      );
+    case "sendBook":
+      return (
+        <SendFromList docId={bookDocId(pending.folder.id)} only={["solo"]} onClose={onClose} />
       );
     case "newBook":
       return (

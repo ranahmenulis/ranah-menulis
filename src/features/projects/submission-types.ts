@@ -29,6 +29,8 @@ export type SubmissionVersion = {
   frozenAt: number;
   /** Set when this version is an uploaded manuscript (Solo, Q-13) instead of a Studio document. */
   file?: VersionFile;
+  /** Set when the version is a whole book: its chapters in order, each under its title. */
+  chapters?: { title: string; words: number }[];
 };
 
 /** An uploaded manuscript kept in the file store; `fileId` is its key there. */

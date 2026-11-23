@@ -1,10 +1,10 @@
 import type { FileStore } from "@/lib/files/file-store";
 import { readStoredBytes } from "@/lib/files/save-upload";
 import { fileStore } from "@/lib/files/store";
-import type { DocumentStore } from "@/features/studio/storage/document-store";
 import { notifySubmissionsChanged } from "./storage/submission-events";
 import type { SubmissionStore } from "./storage/submission-store";
-import { freezeFile, freezeVersion } from "./submission-freeze";
+import { freezeFile, freezeStudioSource } from "./submission-freeze";
+import { readSubmitSource, type SourceReader, type SubmitSource } from "./submit-source";
 import { revisionProblems } from "./revision-model";
 import { activeSubmissions } from "./submission-model";
 import { makeProblem, type Problem, type ProblemCode } from "./submission-problem";
@@ -29,7 +29,7 @@ type Input = {
   /** An uploaded file as the revision (Solo), instead of a document. */
   upload?: VersionFile | null;
   note: string;
-  documents: Pick<DocumentStore, "get">;
+  documents: SourceReader;
   store: SubmissionStore;
   files?: FileStore;
 };
@@ -43,7 +43,7 @@ type Frozen =
  * it cannot be sent: the file is gone, or it is the same as the latest version.
  */
 async function freezeSource(
-  doc: Awaited<ReturnType<Pick<DocumentStore, "get">["get"]>>,
+  read: SubmitSource,
   upload: VersionFile | null,
   files: FileStore,
   now: number,
@@ -58,9 +58,9 @@ async function freezeSource(
     }
     source = { id: uploadDocId(upload.fileId), title: upload.name };
     frozen = freezeFile(upload, bytes, now);
-  } else if (doc) {
-    source = { id: doc.id, title: doc.title };
-    frozen = freezeVersion(doc.content, now);
+  } else if (read.doc) {
+    source = { id: read.doc.id, title: read.doc.title };
+    frozen = freezeStudioSource(read.doc, read.chapters, now);
   } else {
     return { ok: false, code: "docGone" };
   }
@@ -102,7 +102,8 @@ export async function sendRevision(input: Input): Promise<ReviseResult> {
     const block = reviseBlock(current, now);
     if (block) return invalid("closed", BLOCK_CODE[block]);
 
-    const doc = docId && !upload ? await documents.get(docId) : null;
+    const read = await readSubmitSource(documents, upload ? null : docId);
+    const doc = read.doc;
     const problems = revisionProblems({
       project,
       work: current,
@@ -115,7 +116,7 @@ export async function sendRevision(input: Input): Promise<ReviseResult> {
     });
     if (problems.length > 0) return { kind: "invalid", problems };
 
-    const result = await freezeSource(doc, upload, files, now, current.versions.at(-1)?.hash);
+    const result = await freezeSource(read, upload, files, now, current.versions.at(-1)?.hash);
     if (!result.ok) return invalid("doc", result.code);
     const { source, frozen } = result;
     // Why the change was refused, since `update` itself only says "rejected".
@@ -141,6 +142,7 @@ export async function sendRevision(input: Input): Promise<ReviseResult> {
         docId: source.id,
         docTitle: source.title.trim() || "Tanpa judul",
         file: upload ?? undefined,
+        chapters: frozen.chapters,
         note: note.trim(),
         now,
       });

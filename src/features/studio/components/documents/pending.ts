@@ -7,6 +7,7 @@ export type Pending =
   | { kind: "renameFolder"; id: string; name: string }
   | { kind: "newFolder" }
   | { kind: "newBook" }
+  | { kind: "sendBook"; folder: StudioFolder }
   | { kind: "bookSettings"; folder: StudioFolder }
   | { kind: "move"; doc: DocumentSummary }
   | { kind: "sendToProject"; doc: DocumentSummary }

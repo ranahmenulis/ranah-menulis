@@ -65,6 +65,17 @@ export function FolderRow({
           label: asBook ? book.settings : book.makeBook,
           onSelect: () => onPending({ kind: "bookSettings", folder }),
         },
+        ...(asBook
+          ? [
+              {
+                id: "send",
+                label: book.send,
+                // Nothing to send until a chapter has text, like Kirim ke proyek on a document.
+                disabled: words === 0,
+                onSelect: () => onPending({ kind: "sendBook" as const, folder }),
+              },
+            ]
+          : []),
       ]}
     />
   );

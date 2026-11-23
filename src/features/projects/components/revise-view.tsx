@@ -6,12 +6,12 @@ import { Notice } from "@/components/ui/states";
 import { StatusSubmission } from "@/components/ui/status-submission";
 import { TextLink } from "@/components/ui/text-link";
 import { useDocumentList } from "@/features/studio/hooks/use-document-list";
-import { isActiveDocument } from "@/features/studio/document-archive";
 import type { DocumentStore } from "@/features/studio/storage/document-store";
 import { studioStore } from "@/features/studio/storage/store";
 import { fill } from "@/features/studio/copy/fill";
 import { useLocale, useT } from "@/lib/i18n/provider";
 import { useViewer } from "@/lib/viewer";
+import { submitDocs } from "../submit-source";
 import { sendRevision } from "../revise-flow";
 import { submissionStore } from "../storage/store";
 import type { SubmissionStore } from "../storage/submission-store";
@@ -148,7 +148,7 @@ export function ReviseView({
         project={project}
         work={work}
         all={submissions.submissions}
-        docs={list.docs.filter(isActiveDocument).sort((a, b) => b.updatedAt - a.updatedAt)}
+        docs={submitDocs(project, list.docs, list.folders)}
         now={catalog.now}
         onSend={async (docId, note, upload) => {
           const result = await sendRevision({

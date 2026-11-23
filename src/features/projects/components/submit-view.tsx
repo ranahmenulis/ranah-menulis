@@ -4,7 +4,6 @@ import { useState } from "react";
 import { Notice } from "@/components/ui/states";
 import {
   ARCHIVE_HREF,
-  isActiveDocument,
   isArchivedDocument,
   restoreArchivedMessage,
 } from "@/features/studio/document-archive";
@@ -15,6 +14,7 @@ import { studioStore } from "@/features/studio/storage/store";
 import type { FileStore } from "@/lib/files/file-store";
 import { useLocale, useT } from "@/lib/i18n/provider";
 import { useViewer } from "@/lib/viewer";
+import { submitDocs } from "../submit-source";
 import { liveRegistration } from "../payment-model";
 import { useRegistrations } from "../registration-store";
 import { submissionStore } from "../storage/store";
@@ -148,7 +148,7 @@ export function SubmitView({
         key={round}
         project={project}
         now={data.now}
-        docs={list.docs.filter(isActiveDocument).sort((a, b) => b.updatedAt - a.updatedAt)}
+        docs={submitDocs(project, list.docs, list.folders)}
         sent={mine}
         documentId={requestedDocumentId}
         files={files}

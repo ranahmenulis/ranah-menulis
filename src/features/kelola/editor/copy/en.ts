@@ -59,6 +59,9 @@ export const kelolaEditor: typeof source = {
       version: "Version {n}",
       latest: " (latest)",
       line: "Version {n} · {size} · frozen {date}",
+      chapters: "Book manuscript: {n} chapters",
+      chapterWords: "{n} words",
+      untitledChapter: "Untitled chapter",
     },
     hints: {
       draf: "This work has not been sent.",

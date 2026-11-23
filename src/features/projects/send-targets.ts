@@ -3,7 +3,7 @@ import { flowCopy } from "./copy/flow";
 import { activeSubmissions, submitBlock, type SubmitBlock } from "./submission-model";
 import { blockMessage } from "./submission-text";
 import type { Submission } from "./submission-types";
-import type { Project, RegistrationMap } from "./types";
+import type { Project, ProjectCategory, RegistrationMap } from "./types";
 
 /** A project the reader may be able to send a document to, and why not when they cannot. */
 export type SendTarget = { project: Project; reason: string | null };
@@ -36,11 +36,14 @@ export function sendTargets(input: {
   now: number;
   guest: boolean;
   locale?: Locale;
+  /** Only these categories are offered (a whole book goes to Solo only). */
+  only?: ProjectCategory[];
 }): SendTarget[] {
-  const { projects, registrations, submissions, docId, now, guest, locale = "id" } = input;
+  const { projects, registrations, submissions, docId, now, guest, locale = "id", only } = input;
   if (guest) return [];
   return projects
     .filter((p) => p.publication === "terbit" && p.submission && registrations[p.slug])
+    .filter((p) => !only || only.includes(p.category))
     .map((project) => {
       const mine = activeSubmissions(submissions, project.slug);
       const block = submitBlock({

@@ -1,3 +1,4 @@
+import { bookChapterCount, isBookDocId } from "@/features/studio/book-source";
 import { fill } from "@/features/studio/copy/fill";
 import { formatNumber } from "@/lib/i18n/format";
 import { useLocale, useT } from "@/lib/i18n/provider";
@@ -21,7 +22,9 @@ type Text = ReturnType<typeof useT>["projectsFlow"]["submit"]["picker"];
 function hintOf(doc: StudioDocument, sent: boolean, t: Text, locale: "id" | "en"): string {
   if (sent) return t.alreadySent;
   if (doc.wordCount === 0) return t.noText;
-  return fill(t.words, { n: formatNumber(doc.wordCount, locale) });
+  const n = formatNumber(doc.wordCount, locale);
+  if (!isBookDocId(doc.id)) return fill(t.words, { n });
+  return fill(t.bookWords, { n, chapters: formatNumber(bookChapterCount(doc), locale) });
 }
 
 /**

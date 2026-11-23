@@ -1,5 +1,6 @@
 import type { JSONContent } from "@tiptap/react";
 import { GENRES } from "@/features/community/types";
+import { isBookDocId } from "@/features/studio/book-source";
 import { docStats } from "@/features/studio/editor-stats";
 import type { Locale } from "@/lib/i18n/config";
 import { isActiveDocument } from "@/features/studio/document-archive";
@@ -117,7 +118,9 @@ export type SubmitDoc = {
 
 export type { Problem, ProblemField };
 
-export const wordsOf = (doc: SubmitDoc) => docStats(doc.content).words;
+/** A whole book counts its chapters' words (carried in `wordCount`); a document is counted. */
+export const wordsOf = (doc: SubmitDoc & { wordCount?: number }) =>
+  isBookDocId(doc.id) && doc.wordCount !== undefined ? doc.wordCount : docStats(doc.content).words;
 
 /**
  * The form when the screen opens: the saved draft, then the document named in the address on top

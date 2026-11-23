@@ -1,6 +1,7 @@
 export const studioBook = {
   newBook: "Buku baru",
   makeBook: "Jadikan naskah buku",
+  send: "Kirim ke proyek",
   settings: "Pengaturan buku",
   meta: {
     chapters: "{chapters} bab · {words} kata · diubah {time}",

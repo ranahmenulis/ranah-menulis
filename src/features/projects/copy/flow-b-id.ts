@@ -92,6 +92,7 @@ export const flowB = {
       alreadySent: "Sudah dikirim ke proyek ini",
       noText: "Belum ada teks",
       words: "{n} kata",
+      bookWords: "Naskah buku · {chapters} bab · {n} kata",
       empty: "Belum ada dokumen di Studio.",
       start: "Mulai menulis",
       legend: "Pilih dokumen",

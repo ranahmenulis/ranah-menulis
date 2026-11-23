@@ -23,6 +23,7 @@ import type { Submission } from "@/features/projects/submission-types";
 import { useSubmissions } from "@/features/projects/use-submissions";
 import { useEffectiveRoles } from "@/features/kelola/use-effective-roles";
 import { FileVersion } from "@/features/projects/components/file-version";
+import { BookChapters } from "./book-chapters";
 import { FrozenText } from "../../components/frozen-text";
 import { EDITOR_HREF } from "../area-hrefs";
 import { resolveReview } from "../review-model";
@@ -98,6 +99,9 @@ function Text({ work }: { work: Submission }) {
           date: sentAtText(version.frozenAt, locale),
         })}
       </p>
+      {version.chapters && version.chapters.length > 0 && (
+        <BookChapters chapters={version.chapters} />
+      )}
       {version.file ? (
         <FileVersion file={version.file} />
       ) : (

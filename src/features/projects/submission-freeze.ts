@@ -1,4 +1,5 @@
 import type { JSONContent } from "@tiptap/react";
+import { isBookDocId, type BookChapter } from "@/features/studio/book-source";
 import { docStats } from "@/features/studio/editor-stats";
 import { sha256Bytes, sha256Hex } from "@/lib/sha256";
 import type { SubmissionVersion, VersionFile } from "./submission-types";
@@ -22,15 +23,34 @@ export function canonicalJson(value: unknown): string {
  * nothing done to the document afterwards can reach it. Words come from `docStats`, the one place
  * the editor, the daily target and this screen all count from.
  */
-export function freezeVersion(content: JSONContent, now: number, version = 1): SubmissionVersion {
+export function freezeVersion(
+  content: JSONContent,
+  now: number,
+  version = 1,
+  words?: number,
+): SubmissionVersion {
   const copy = JSON.parse(JSON.stringify(content)) as JSONContent;
   return {
     version,
     content: copy,
-    wordCount: docStats(copy).words,
+    wordCount: words ?? docStats(copy).words,
     hash: sha256Hex(canonicalJson(copy)),
     frozenAt: now,
   };
+}
+
+/**
+ * The frozen copy of what was read from the Studio: a document, or a whole book whose words are
+ * its chapters' (titles do not count) and whose chapter list is kept beside the text.
+ */
+export function freezeStudioSource(
+  doc: { id: string; content: JSONContent; wordCount: number },
+  chapters: BookChapter[] | undefined,
+  now: number,
+  version = 1,
+): SubmissionVersion {
+  if (!isBookDocId(doc.id)) return freezeVersion(doc.content, now, version);
+  return { ...freezeVersion(doc.content, now, version, doc.wordCount), chapters: chapters ?? [] };
 }
 
 /**

@@ -3,6 +3,7 @@ import type { studioBook as source } from "./book-id";
 export const studioBook: typeof source = {
   newBook: "New book",
   makeBook: "Make this a book manuscript",
+  send: "Send to a project",
   settings: "Book settings",
   meta: {
     chapters: "{chapters} chapters · {words} words · changed {time}",

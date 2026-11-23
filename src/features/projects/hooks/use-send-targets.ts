@@ -6,6 +6,7 @@ import { sendTargets, type SendTarget } from "../send-targets";
 import { liveRegistrations } from "../payment-model";
 import { useRegistrations } from "../registration-store";
 import type { SubmissionStore } from "../storage/submission-store";
+import type { ProjectCategory } from "../types";
 import { useProjects } from "../use-projects";
 import { useSubmissions } from "../use-submissions";
 
@@ -16,7 +17,11 @@ export type SendTargets = {
 };
 
 /** What "Kirim ke proyek" offers for one document (PRD 17.2). Read when the dialog opens. */
-export function useSendTargets(docId: string | null, store?: SubmissionStore): SendTargets {
+export function useSendTargets(
+  docId: string | null,
+  store?: SubmissionStore,
+  only?: ProjectCategory[],
+): SendTargets {
   const locale = useLocale();
   const data = useProjects();
   const guest = useViewer() === "tamu";
@@ -36,6 +41,7 @@ export function useSendTargets(docId: string | null, store?: SubmissionStore): S
     now: data.now,
     guest,
     locale,
+    only,
   });
   return { status: "ready", targets, reload };
 }

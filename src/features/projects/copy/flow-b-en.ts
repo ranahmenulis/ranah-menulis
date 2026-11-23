@@ -93,6 +93,7 @@ export const flowB: typeof source = {
       alreadySent: "Already submitted to this project",
       noText: "No text yet",
       words: "{n} words",
+      bookWords: "Book manuscript · {chapters} chapters · {n} words",
       empty: "There are no documents in Studio yet.",
       start: "Start writing",
       legend: "Choose a document",

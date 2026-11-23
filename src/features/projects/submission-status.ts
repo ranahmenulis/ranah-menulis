@@ -103,6 +103,8 @@ export function withRevision(
     docTitle: string;
     /** Set when the new version is an uploaded file. */
     file?: SubmissionVersion["file"];
+    /** Set when the new version is a whole book. */
+    chapters?: SubmissionVersion["chapters"];
     note: string;
     now: number;
   },
@@ -116,6 +118,7 @@ export function withRevision(
     hash: input.hash,
     frozenAt: now,
     ...(input.file ? { file: input.file } : {}),
+    ...(input.chapters ? { chapters: input.chapters } : {}),
   };
   return {
     ...logged(s, "revisi-terkirim", { at: now, by: "peserta", ...(note ? { reason: note } : {}) }),

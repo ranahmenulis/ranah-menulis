@@ -57,6 +57,9 @@ export const kelolaEditor = {
       version: "Versi {n}",
       latest: " (terbaru)",
       line: "Versi {n} · {size} · dibekukan {date}",
+      chapters: "Naskah buku: {n} bab",
+      chapterWords: "{n} kata",
+      untitledChapter: "Bab tanpa judul",
     },
     hints: {
       draf: "Karya ini belum dikirim.",

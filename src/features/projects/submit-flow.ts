@@ -1,8 +1,8 @@
-import type { DocumentStore } from "@/features/studio/storage/document-store";
 import type { FileStore } from "@/lib/files/file-store";
 import { fileStore } from "@/lib/files/store";
 import { readStoredBytes } from "@/lib/files/save-upload";
-import { freezeFile, freezeVersion } from "./submission-freeze";
+import { freezeFile, freezeStudioSource } from "./submission-freeze";
+import { readSubmitSource, type SourceReader } from "./submit-source";
 import {
   activeSubmissions,
   newSubmission,
@@ -25,7 +25,7 @@ type SendInput = {
   project: Project;
   registration: Registration;
   form: SubmitForm;
-  documents: Pick<DocumentStore, "get">;
+  documents: SourceReader;
   store: SubmissionStore;
   /** Where an uploaded manuscript is kept (Solo). */
   files?: FileStore;
@@ -49,7 +49,8 @@ export async function sendSubmission(input: SendInput): Promise<SendResult> {
       };
     }
     const sent = activeSubmissions(await store.list(), project.slug);
-    const doc = form.docId && !form.upload ? await documents.get(form.docId) : null;
+    const read = await readSubmitSource(documents, form.upload ? null : form.docId);
+    const doc = read.doc;
     const problems = validateSubmission({ project, form, doc, sent, now });
     if (problems.length > 0 || !project.submission) return { kind: "invalid", problems };
 
@@ -65,7 +66,7 @@ export async function sendSubmission(input: SendInput): Promise<SendResult> {
       version = freezeFile(form.upload, bytes, now);
     } else if (doc) {
       source = doc;
-      version = freezeVersion(doc.content, now);
+      version = freezeStudioSource(doc, read.chapters, now);
     } else {
       return { kind: "invalid", problems };
     }

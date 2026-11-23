@@ -10,6 +10,7 @@ import { PROJECTS_HREF } from "@/features/app-shell/nav";
 import { useT } from "@/lib/i18n/provider";
 import { useSendTargets, type SendTargets } from "@/features/projects/hooks/use-send-targets";
 import { categoryLabel } from "@/features/projects/project-model";
+import type { ProjectCategory } from "@/features/projects/types";
 import type { SubmissionStore } from "@/features/projects/storage/submission-store";
 
 type Props = {
@@ -24,6 +25,8 @@ type Props = {
   onPick: (slug: string) => Promise<boolean>;
   /** Replaces the device's submission store in tests. */
   store?: SubmissionStore;
+  /** Offer only these categories, e.g. Solo for a whole book. */
+  only?: ProjectCategory[];
 };
 
 function Targets({
@@ -82,9 +85,9 @@ function Targets({
  * hands over to the send page, where the information is filled in, the rules are checked, and the
  * frozen copy is made. Closing it before leaving matters: a modal left open would freeze the page.
  */
-export function SendToProjectDialog({ open, onClose, docId, onPick, store }: Props) {
+export function SendToProjectDialog({ open, onClose, docId, onPick, store, only }: Props) {
   const t = useT().studioEditor;
-  const found = useSendTargets(docId, store);
+  const found = useSendTargets(docId, store, only);
   const [slug, setSlug] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [failed, setFailed] = useState(false);
