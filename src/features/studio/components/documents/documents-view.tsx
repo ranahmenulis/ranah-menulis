@@ -3,6 +3,7 @@
 import { FolderSimplePlus } from "@phosphor-icons/react/dist/ssr";
 import { Suspense, useEffect, useRef, useState } from "react";
 import { Button, ButtonLink } from "@/components/ui/button";
+import { newDocumentHref } from "@/features/app-shell/nav";
 import { ErrorBanner, RetryButton } from "@/components/ui/states";
 import { Tabs } from "@/components/ui/tabs";
 import { useT } from "@/lib/i18n/provider";
@@ -209,7 +210,7 @@ function DocumentListContent() {
               <FolderSimplePlus size={16} aria-hidden />
               {t.list.newFolder}
             </Button>
-            <ButtonLink href="/studio/baru" size="sm">
+            <ButtonLink href={newDocumentHref(folderId)} size="sm">
               {t.list.newDocument}
             </ButtonLink>
           </div>

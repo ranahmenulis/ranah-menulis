@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/states";
 import { useToast } from "@/components/ui/toast";
 import { ButtonLink } from "@/components/ui/button";
+import { newDocumentHref } from "@/features/app-shell/nav";
 import { format, useLocale, useT } from "@/lib/i18n/provider";
 import { listEntries, NO_DOCUMENT_FILTERS, trashed } from "../../documents";
 import { hasDocumentFilters, type DocumentFilters } from "../../document-classification";
@@ -123,7 +124,11 @@ export function LiveList({
         art={folderName ? undefined : "womanWriting"}
         layout="side"
         action={
-          <ButtonLink href="/studio/baru" variant="secondary" className="max-md:hidden">
+          <ButtonLink
+            href={newDocumentHref(folderId)}
+            variant="secondary"
+            className="max-md:hidden"
+          >
             {t.empty.start}
           </ButtonLink>
         }

@@ -65,10 +65,19 @@ const storedId = (id: string) => (id === "baru" ? null : id);
  * Studio editor screen. Documents live on this device for now (step 3a/3b); the same
  * `useStudioDocument` contract will be backed by Supabase in 3c.
  */
-export function StudioEditor({ documentId, eventId }: { documentId: string; eventId?: string }) {
+export function StudioEditor({
+  documentId,
+  eventId,
+  folderId,
+}: {
+  documentId: string;
+  eventId?: string;
+  /** For a new document: the folder it is filed in once stored. */
+  folderId?: string;
+}) {
   const t = useT().studioEditor;
   const { onSaved, flush: saveEventProgress } = useEventSave(eventId);
-  const doc = useStudioDocument(documentId, store, onSaved);
+  const doc = useStudioDocument(documentId, store, onSaved, folderId);
   const online = useOnlineStatus();
   const target = useDailyTarget();
   const side = useSidePanel();

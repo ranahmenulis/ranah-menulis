@@ -33,6 +33,17 @@ describe("commitSave: document targets", () => {
   });
 });
 
+describe("commitSave: folder", () => {
+  it("files a new document in the folder but never moves an existing one", () => {
+    const first = commitSave(null, { ...input, folderId: "f1" }, 0, emptyLog(), 100);
+    expect(first.ok && first.doc.folderId).toBe("f1");
+    if (!first.ok) return;
+
+    const later = commitSave(first.doc, { ...input, folderId: "other" }, 1, emptyLog(), 200);
+    expect(later.ok && later.doc.folderId).toBe("f1");
+  });
+});
+
 describe("applyClassification", () => {
   const classification = { kind: "cerpen", tags: ["Hujan"] } as const;
 

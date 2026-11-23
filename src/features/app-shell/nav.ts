@@ -27,6 +27,9 @@ export const SAVED_HREF = "/tersimpan";
 export const NOTIFICATIONS_HREF = "/notifikasi";
 export const STREAK_HREF = "/studio/streak";
 export const NEW_DOCUMENT_HREF = "/studio/baru";
+/** A new document that is filed in the given folder once it is first stored. */
+export const newDocumentHref = (folderId: string | null) =>
+  folderId ? `${NEW_DOCUMENT_HREF}?folder=${encodeURIComponent(folderId)}` : NEW_DOCUMENT_HREF;
 export const DISCOVER_HREF = "/jelajahi";
 export const PROJECTS_HREF = "/projects";
 export const KELOLA_NAV_HREF = "/kelola";

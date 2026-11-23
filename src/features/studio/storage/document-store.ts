@@ -74,6 +74,8 @@ export type SaveInput = {
   targets?: DocumentTarget[];
   /** The layout travels the same way; left out while the writer has not changed it. */
   layout?: DocumentLayout;
+  /** Only used when the document is created (filed in this folder); ignored on later saves. */
+  folderId?: string | null;
 };
 
 export type SaveResult =
@@ -157,9 +159,11 @@ export function commitSave(
 ): SaveResult {
   if (existing && existing.version !== baseVersion) return { ok: false, conflict: existing };
 
+  const { folderId, ...fields } = input;
   const doc: StudioDocument = {
     ...existing, // preserves folder, classification, and archive/trash state across saves
-    ...input,
+    ...fields,
+    ...(!existing && folderId ? { folderId } : {}),
     version: (existing?.version ?? 0) + 1,
     updatedAt: now,
   };

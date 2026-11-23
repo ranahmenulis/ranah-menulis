@@ -9,12 +9,13 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 async function EditorRoute({ params, searchParams }: PageProps<"/studio/[id]">) {
-  const [{ id }, { event }] = await Promise.all([params, searchParams]);
+  const [{ id }, { event, folder }] = await Promise.all([params, searchParams]);
   return (
     <StudioEditor
       key={id}
       documentId={id}
       eventId={typeof event === "string" ? event : undefined}
+      folderId={typeof folder === "string" ? folder : undefined}
     />
   );
 }
