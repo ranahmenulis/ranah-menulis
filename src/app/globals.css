@@ -259,6 +259,23 @@
   --art-book-1: light-dark(#3f6d9f, #4a74a3);
   --art-book-2: light-dark(#79a0c9, #7c9fc6);
   --art-book-3: light-dark(#2b527f, #33557c);
+  --scene-shadow: light-dark(#3d5674, #04070b);
+  --scene-shadow-o: light-dark(0.2, 0.5);
+  /* Slate "wood" for desks, shelves and podiums: the client palette, warmed only by light. */
+  --art-wood-hi: light-dark(#b4c6d8, #4c5d71);
+  --art-wood: light-dark(#869fb8, #354457);
+  --art-wood-lo: light-dark(#5f7a96, #222c39);
+  /* Beranda skies by the writer's hour; the theme decides how bright each one is. */
+  --sky-pagi-1: light-dark(#d5e3f1, #1b2533);
+  --sky-pagi-2: light-dark(#f7e6cf, #4a4553);
+  --sky-siang-1: light-dark(#bcd3ea, #1d2a39);
+  --sky-siang-2: light-dark(#edf3f9, #3a4d62);
+  --sky-senja-1: light-dark(#c9d3e5, #191d2a);
+  --sky-senja-2: light-dark(#f3cfb0, #52393a);
+  --sky-malam-1: light-dark(#6f84a2, #0f141c);
+  --sky-malam-2: light-dark(#b4c2d4, #263243);
+  --sky-stars-malam: light-dark(0.75, 0.9);
+  --sky-veil-malam: light-dark(0.3, 0);
 }
 
 /* App band (DESIGN.md 4.5): the dark slate surface that anchors a screen (featured project,

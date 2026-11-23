@@ -10,3 +10,10 @@ export const heroCardClass =
 
 /** Where the hero illustration sits: bottom right, behind the text. */
 export const heroArtClass = "absolute right-0 bottom-0 -z-10 h-[78%] w-auto max-w-[62%]";
+
+/**
+ * Where a hero landscape sits (sky illustrations, like the Streak hero): the full right side,
+ * fading out toward the text on the left.
+ */
+export const heroSceneClass =
+  "absolute inset-y-0 right-0 -z-10 h-full w-[72%] [mask-image:linear-gradient(to_right,transparent,#000_45%)] md:w-[58%]";

@@ -27,10 +27,19 @@ import {
   MentorArt,
   OrganizerArt,
 } from "@/components/illustrations/role-art";
-import { RisingPath, WritingDesk } from "@/components/illustrations/studio-art";
+import { RisingPath } from "@/components/illustrations/path-art";
+import { WritingDesk } from "@/components/illustrations/studio-art";
+import { heroArtClass, heroCardClass, heroSceneClass } from "@/components/ui/card";
 import { MountainScene } from "@/features/studio/components/streak/streak-art";
 
-type Item = { page: string; title: string; meaning: string; art: (cls: string) => ReactNode };
+type Item = {
+  page: string;
+  title: string;
+  meaning: string;
+  art: (cls: string) => ReactNode;
+  /** A sky landscape filling the right side (Streak hero), not an object at bottom right. */
+  scene?: boolean;
+};
 
 const DAY_PARTS: DayPart[] = ["pagi", "siang", "senja", "malam"];
 
@@ -40,6 +49,7 @@ const ITEMS: Item[] = [
     title: "Gunung, bulan, pinus",
     meaning: "Mendaki sedikit demi sedikit (sudah terpasang)",
     art: (c) => <MountainScene className={c} />,
+    scene: true,
   },
   {
     page: "Studio · Dokumen",
@@ -52,12 +62,14 @@ const ITEMS: Item[] = [
     title: "Jalan menanjak",
     meaning: "Perkembangan dari waktu ke waktu",
     art: (c) => <RisingPath className={c} />,
+    scene: true,
   },
   ...DAY_PARTS.map((part) => ({
     page: `Beranda · ${part}`,
     title: "Langit menurut jam",
     meaning: "Menyapa sesuai waktu penulis",
     art: (c: string) => <SkyByHour part={part} className={c} />,
+    scene: true,
   })),
   {
     page: "Community",
@@ -173,8 +185,8 @@ const COVERS = [
 /** The Streak hero card, so each drawing is judged where it will live. */
 function HeroCard({ item }: { item: Item }) {
   return (
-    <div className="relative isolate h-44 overflow-hidden rounded-2xl border border-line bg-linear-to-br from-surface from-40% to-accent-subtle p-5 text-ink shadow-card">
-      {item.art("absolute right-0 bottom-0 -z-10 h-[85%] w-auto max-w-[80%]")}
+    <div className={`${heroCardClass} h-44 md:p-5`}>
+      {item.art(item.scene ? heroSceneClass : heroArtClass)}
       <p className="text-xs text-ink-muted">{item.page}</p>
       <p className="mt-1 heading-sm">{item.title}</p>
       <p className="mt-1 max-w-40 text-xs text-ink-soft">{item.meaning}</p>

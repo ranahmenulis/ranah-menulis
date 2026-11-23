@@ -2,6 +2,7 @@
 
 import { useId } from "react";
 import { cn } from "@/lib/cn";
+import { pine } from "@/components/illustrations/paint";
 
 /*
  * Illustrations for the Streak tab, painted after the client's reference (23 November 2026):
@@ -11,30 +12,6 @@ import { cn } from "@/lib/cn";
  */
 
 type Point = [number, number];
-
-/** A pine as stacked tiers, standing on `base` at `x`. */
-function pine(x: number, base: number, h: number, w: number): string {
-  const half = w / 2;
-  const tiers: Point[] = [
-    [0, -h],
-    [half * 0.44, -h * 0.68],
-    [half * 0.24, -h * 0.68],
-    [half * 0.7, -h * 0.36],
-    [half * 0.42, -h * 0.36],
-    [half, -h * 0.05],
-    [half * 0.12, -h * 0.05],
-    [half * 0.12, 0],
-    [-half * 0.12, 0],
-    [-half * 0.12, -h * 0.05],
-    [-half, -h * 0.05],
-    [-half * 0.42, -h * 0.36],
-    [-half * 0.7, -h * 0.36],
-    [-half * 0.24, -h * 0.68],
-    [-half * 0.44, -h * 0.68],
-  ];
-  const points = tiers.map(([dx, dy]) => `${(x + dx).toFixed(1)} ${(base + dy).toFixed(1)}`);
-  return `M${points.join(" L")} Z`;
-}
 
 const FAR_PINES: Point[] = [
   [214, 16],
