@@ -1,3 +1,4 @@
+import { format, useT } from "@/lib/i18n/provider";
 import { Notice } from "@/components/ui/states";
 import type { AssignmentSubmission, ClassContent } from "@/features/projects/kelas/types";
 import type { Project, Registration } from "@/features/projects/types";
@@ -20,34 +21,35 @@ export function RosterTab({
   registration: Registration | undefined;
   now: number;
 }) {
+  const t = useT().kelolaMentor.roster;
   const rows = rosterRows(content, submissions, registration, now);
   const taken = project.quota?.taken;
   return (
     <div className="grid gap-4">
       {rows.length === 0 ? (
-        <p className="text-sm text-ink-muted">Belum ada peserta terdaftar di perangkat ini.</p>
+        <p className="text-sm text-ink-muted">{t.empty}</p>
       ) : (
         <div className="overflow-x-auto">
-          <table aria-label="Peserta" className="w-full min-w-136 border-collapse text-sm">
+          <table aria-label={t.tableLabel} className="w-full min-w-136 border-collapse text-sm">
             <thead>
               <tr className="border-b border-line">
                 <th scope="col" className={th}>
-                  Peserta
+                  {t.participant}
                 </th>
                 <th scope="col" className={`${th} text-right`}>
-                  Selesai
+                  {t.done}
                 </th>
                 <th scope="col" className={`${th} text-right`}>
-                  Perlu perbaikan
+                  {t.repair}
                 </th>
                 <th scope="col" className={`${th} text-right`}>
-                  Menunggu dinilai
+                  {t.waiting}
                 </th>
                 <th scope="col" className={`${th} text-right`}>
-                  Lewat tenggat
+                  {t.overdue}
                 </th>
                 <th scope="col" className={`${th} text-right`}>
-                  Belum
+                  {t.notYet}
                 </th>
               </tr>
             </thead>
@@ -56,7 +58,7 @@ export function RosterTab({
                 <tr key={row.name} className="min-h-11 border-b border-line">
                   <td className={`${td} font-medium wrap-anywhere`}>{row.name}</td>
                   <td className={`${td} text-right`}>
-                    {row.selesai} dari {row.total}
+                    {format(t.doneOf, { done: String(row.selesai), total: String(row.total) })}
                   </td>
                   <td className={`${td} text-right`}>{row.perbaikan}</td>
                   <td className={`${td} text-right`}>{row.menunggu}</td>
@@ -69,9 +71,9 @@ export function RosterTab({
         </div>
       )}
       <Notice>
-        Hanya peserta yang mendaftar di perangkat ini yang terlihat
-        {taken !== undefined ? `; proyek mencatat ${taken} peserta` : ""}. Syarat kelulusan belum
-        ditetapkan, jadi belum ada keputusan lulus.
+        {format(t.notice, {
+          taken: taken !== undefined ? format(t.taken, { n: String(taken) }) : "",
+        })}
       </Notice>
     </div>
   );

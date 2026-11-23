@@ -1,4 +1,6 @@
+import type { Locale } from "@/lib/i18n/config";
 import type { Area } from "./access";
+import { sharedCopy, sharedId } from "./copy/shared-copy";
 import { ADMIN_HREF } from "./admin/area-hrefs";
 import type { CaseRow } from "./admin/moderation/moderation-model";
 import { EDITOR_HREF } from "./editor/area-hrefs";
@@ -27,13 +29,8 @@ export type BandCopy = {
   unit: string;
 };
 
-export const BAND_COPY: Record<Area, BandCopy> = {
-  editor: { role: "Editor", unit: "karya perlu tindakan" },
-  juri: { role: "Juri", unit: "karya belum kamu nilai" },
-  mentor: { role: "Mentor", unit: "pengumpulan menunggu penilaianmu" },
-  organizer: { role: "Organizer", unit: "proyek aktif" },
-  admin: { role: "Administrator", unit: "laporan baru menunggu keputusan" },
-};
+/** Indonesian copy; screens read `kelolaShared.band.roles` in the interface language. */
+export const BAND_COPY: Record<Area, BandCopy> = sharedId.band.roles;
 
 /** Turns a screen's data into band work: loading and error pass through, ready is counted. */
 export function bandFrom<D extends { status: string }>(
@@ -44,15 +41,17 @@ export function bandFrom<D extends { status: string }>(
   return { status: data.status === "loading" ? "loading" : "error" };
 }
 
+const entries = (locale: Locale) => sharedCopy(locale).band.entries;
+
 const ready = (count: number, entry: BandEntry | null): BandWork => ({
   status: "ready",
   count,
   entry: count > 0 ? entry : null,
 });
 
-export function editorWork(counts: Record<QueueFilter, number>): BandWork {
+export function editorWork(counts: Record<QueueFilter, number>, locale: Locale = "id"): BandWork {
   return ready(counts["perlu-tindakan"], {
-    label: "Tinjau yang perlu tindakan",
+    label: entries(locale).editor,
     href: `${EDITOR_HREF}${queueQuery("perlu-tindakan")}`,
   });
 }
@@ -65,39 +64,42 @@ type ContestWork = {
 };
 
 /** Only works in a contest whose judging is open can be scored now, so only those are counted. */
-export function judgeWork(items: readonly ContestWork[]): BandWork {
+export function judgeWork(items: readonly ContestWork[], locale: Locale = "id"): BandWork {
   const open = items.filter((i) => i.judging === "dibuka" && i.total > i.scored);
   const count = open.reduce((sum, i) => sum + (i.total - i.scored), 0);
   const first = open[0];
   return ready(
     count,
-    first ? { label: "Lanjut menilai", href: contestHref(first.project.slug) } : null,
+    first ? { label: entries(locale).juri, href: contestHref(first.project.slug) } : null,
   );
 }
 
 type ClassWork = { project: { slug: string }; toGrade: number };
 
-export function mentorWork(items: readonly ClassWork[]): BandWork {
+export function mentorWork(items: readonly ClassWork[], locale: Locale = "id"): BandWork {
   const count = items.reduce((sum, i) => sum + i.toGrade, 0);
   const first = items.find((i) => i.toGrade > 0);
   return ready(
     count,
-    first ? { label: "Nilai pengumpulan", href: classHref(first.project.slug) } : null,
+    first ? { label: entries(locale).mentor, href: classHref(first.project.slug) } : null,
   );
 }
 
 /** The Organizer's list sits right under the band, so the way in is the other half of the work. */
-export function organizerWork(active: number): BandWork {
+export function organizerWork(active: number, locale: Locale = "id"): BandWork {
   return {
     status: "ready",
     count: active,
-    entry: { label: "Kelola Event", href: MANAGE_EVENTS_HREF },
+    entry: { label: entries(locale).organizer, href: MANAGE_EVENTS_HREF },
   };
 }
 
-export function adminWork(cases: readonly Pick<CaseRow, "status">[]): BandWork {
+export function adminWork(
+  cases: readonly Pick<CaseRow, "status">[],
+  locale: Locale = "id",
+): BandWork {
   const count = cases.filter((c) => c.status === "baru").length;
-  return ready(count, { label: "Buka moderasi", href: `${ADMIN_HREF}/moderasi` });
+  return ready(count, { label: entries(locale).admin, href: `${ADMIN_HREF}/moderasi` });
 }
 
 /** People drawn in the Admin mark: one dot each, the suspended ones as rings. */

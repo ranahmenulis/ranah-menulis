@@ -1,4 +1,6 @@
+import { mentorCopy } from "./copy/mentor-copy";
 import { canMove, type MentorDecision } from "@/features/projects/kelas/assignment-status";
+import type { Locale } from "@/lib/i18n/config";
 import type { AssignmentStatus, AssignmentSubmission } from "@/features/projects/kelas/types";
 
 export type MentorStep = {
@@ -14,28 +16,22 @@ const STEPS: readonly MentorStep[] = [
 ];
 
 /** The steps the transition table allows from the current status, nothing else. */
-export const mentorStepsFor = (work: AssignmentSubmission): MentorStep[] =>
-  STEPS.filter((s) => canMove(work.status, s.decision));
+export const mentorStepsFor = (work: AssignmentSubmission, locale: Locale = "id"): MentorStep[] =>
+  STEPS.filter((s) => canMove(work.status, s.decision)).map((s) => ({
+    ...s,
+    label: mentorCopy(locale).decision.steps[s.decision].label,
+  }));
 
 export const mentorStepCopy: Record<
   MentorDecision,
   { title: string; hint: string; fieldLabel: string }
-> = {
-  "perlu-perbaikan": {
-    title: "Minta perbaikan",
-    hint: "Peserta membaca catatanmu lalu mengumpulkan lagi. Tulis apa yang perlu diperbaiki.",
-    fieldLabel: "Catatan perbaikan",
-  },
-  selesai: {
-    title: "Tandai selesai",
-    hint: "Keputusan ini final dan peserta akan diberi tahu. Catatan boleh dikosongkan.",
-    fieldLabel: "Catatan",
-  },
-};
+> = mentorCopy("id").decision.steps;
+
+export const mentorStepCopyOf = (decision: MentorDecision, locale: Locale = "id") =>
+  mentorCopy(locale).decision.steps[decision];
 
 /** What the status means for the mentor, in one sentence. */
-export const mentorHint: Record<AssignmentStatus, string> = {
-  dikumpulkan: "Tugas ini menunggu penilaianmu.",
-  "perlu-perbaikan": "Menunggu perbaikan dari peserta.",
-  selesai: "Kamu sudah menandai tugas ini selesai.",
-};
+export const mentorHint: Record<AssignmentStatus, string> = mentorCopy("id").hint;
+
+export const mentorHintOf = (status: AssignmentStatus, locale: Locale = "id"): string =>
+  mentorCopy(locale).hint[status];

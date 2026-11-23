@@ -6,6 +6,7 @@ import { useState } from "react";
 import { Drawer } from "@/components/ui/drawer";
 import { IconButton } from "@/components/ui/icon-button";
 import { cn } from "@/lib/cn";
+import { useT } from "@/lib/i18n/provider";
 import { useEffectiveRoles } from "@/features/kelola/use-effective-roles";
 import { KELOLA_HREF, areasFor } from "../access";
 
@@ -14,22 +15,26 @@ import { KELOLA_HREF, areasFor } from "../access";
  * The bottom bar stays at five tabs for everyone else.
  */
 export function ManagerMenu({ className }: { className?: string }) {
+  const t = useT().kelolaShared;
   const areas = areasFor(useEffectiveRoles());
   const [open, setOpen] = useState(false);
   if (areas.length === 0) return null;
   const close = () => setOpen(false);
-  const items = [{ id: "ringkasan", label: "Ringkasan", href: KELOLA_HREF }, ...areas];
+  const items = [
+    { id: "ringkasan", label: t.frame.summary, href: KELOLA_HREF },
+    ...areas.map((a) => ({ id: a.id, label: t.areas[a.id].label, href: a.href })),
+  ];
   return (
     <>
       <IconButton
-        label="Buka menu kelola"
+        label={t.menu.open}
         onClick={() => setOpen(true)}
         className={cn("-ml-2", className)}
       >
         <List size={24} aria-hidden />
       </IconButton>
-      <Drawer open={open} onClose={close} title="Kelola" closeLabel="Tutup menu kelola">
-        <nav aria-label="Bagian kelola" className="overflow-y-auto">
+      <Drawer open={open} onClose={close} title={t.menu.title} closeLabel={t.menu.close}>
+        <nav aria-label={t.frame.navLabel} className="overflow-y-auto">
           <ul>
             {items.map((item) => (
               <li key={item.id} className="border-b border-line">

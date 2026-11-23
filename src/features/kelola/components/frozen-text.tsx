@@ -1,3 +1,6 @@
+"use client";
+
+import { useT } from "@/lib/i18n/provider";
 import { exportBlocks } from "@/features/studio/export/export-blocks";
 import type { SubmissionVersion } from "@/features/projects/submission-types";
 
@@ -7,9 +10,9 @@ import type { SubmissionVersion } from "@/features/projects/submission-types";
  * skipped instead of breaking the screen. Bold and italic are not shown [usulan].
  */
 export function FrozenText({ content }: { content: SubmissionVersion["content"] }) {
+  const t = useT().kelolaShared;
   const blocks = exportBlocks(content);
-  if (blocks.length === 0)
-    return <p className="text-sm text-ink-muted">Versi ini tidak berisi teks.</p>;
+  if (blocks.length === 0) return <p className="text-sm text-ink-muted">{t.frozen.empty}</p>;
   return (
     <div className="grid gap-4 read-body wrap-anywhere">
       {blocks.map((block, i) => {

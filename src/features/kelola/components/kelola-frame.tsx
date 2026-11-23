@@ -6,6 +6,7 @@ import type { ReactNode } from "react";
 import { Skeleton } from "@/components/ui/states";
 import { useHydrated } from "@/features/account/hooks/use-hydrated";
 import { cn } from "@/lib/cn";
+import { useT } from "@/lib/i18n/provider";
 import { useViewer } from "@/lib/viewer";
 import { useEffectiveRoles } from "@/features/kelola/use-effective-roles";
 import { KELOLA_HREF, areaOf, areasFor, canAccess } from "../access";
@@ -26,10 +27,11 @@ export function KelolaFrame({ children }: { children: ReactNode }) {
   const hydrated = useHydrated();
   const viewer = useViewer();
   const roles = useEffectiveRoles();
+  const t = useT().kelolaShared;
 
   if (!hydrated) {
     return (
-      <div role="status" aria-label="Memuat" className="grid max-w-170 gap-4">
+      <div role="status" aria-label={t.frame.loading} className="grid max-w-170 gap-4">
         <Skeleton className="h-9 w-40" />
         <Skeleton className="h-12 w-full" />
       </div>
@@ -43,11 +45,14 @@ export function KelolaFrame({ children }: { children: ReactNode }) {
     return <AccessDenied reason="peran" />;
   }
 
-  const items = [{ id: "ringkasan", label: "Ringkasan", href: KELOLA_HREF }, ...areas];
+  const items = [
+    { id: "ringkasan", label: t.frame.summary, href: KELOLA_HREF },
+    ...areas.map((a) => ({ id: a.id, label: t.areas[a.id].label, href: a.href })),
+  ];
   return (
     <div className="mx-auto grid w-full max-w-260 grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[14rem_minmax(0,1fr)] lg:gap-10">
       <nav
-        aria-label="Bagian kelola"
+        aria-label={t.frame.navLabel}
         className={cn(
           "sticky top-[calc(3.25rem+var(--safe-top))] z-20 -mx-4 border-b border-line bg-canvas md:top-[calc(3.5rem+var(--safe-top))] md:mx-0",
           "lg:top-[calc(5.5rem+var(--safe-top))] lg:self-start lg:border-b-0",

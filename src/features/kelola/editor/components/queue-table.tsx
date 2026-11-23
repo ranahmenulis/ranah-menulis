@@ -1,4 +1,9 @@
+"use client";
+
 import Link from "next/link";
+import { fill } from "@/features/studio/copy/fill";
+import { useT } from "@/lib/i18n/provider";
+import { useFormat } from "@/lib/i18n/use-format";
 import { StatusSubmission } from "@/components/ui/status-submission";
 import { MAX_REVISIONS } from "@/features/projects/submission-status";
 import { sentAtText } from "@/features/projects/submission-text";
@@ -13,24 +18,26 @@ const td = "px-3 py-2 align-middle first:pl-0 max-sm:block max-sm:px-0 max-sm:py
  * turns into stacked rows; it stays a table for assistive technology.
  */
 export function QueueTable({ rows, label }: { rows: QueueRow[]; label: string }) {
+  const t = useT().kelolaEditor.table;
+  const { locale, number } = useFormat();
   return (
     <table aria-label={label} className="w-full border-collapse text-sm max-sm:block">
       <thead className="max-sm:sr-only">
         <tr className="border-b border-line">
           <th scope="col" className={th}>
-            Karya
+            {t.work}
           </th>
           <th scope="col" className={th}>
-            Status
+            {t.status}
           </th>
           <th scope="col" className={`${th} text-right`}>
-            Kata
+            {t.words}
           </th>
           <th scope="col" className={th}>
-            Menunggu sejak
+            {t.waitingSince}
           </th>
           <th scope="col" className={th}>
-            Revisi
+            {t.revisions}
           </th>
         </tr>
       </thead>
@@ -54,14 +61,16 @@ export function QueueTable({ rows, label }: { rows: QueueRow[]; label: string })
             </td>
             <td className={`${td} tabular-nums sm:text-right`}>{row.size}</td>
             <td className={`${td} text-ink-muted`}>
-              <span className="sm:hidden">Menunggu sejak </span>
-              {sentAtText(row.since)}
+              <span className="sm:hidden">{t.waitingSincePrefix}</span>
+              {sentAtText(row.since, locale)}
             </td>
             <td
               className={`${td} text-ink-muted tabular-nums ${row.revisions === 0 ? "max-sm:hidden" : ""}`}
             >
-              <span className="sm:hidden">Revisi </span>
-              {row.revisions > 0 ? `${row.revisions} dari ${MAX_REVISIONS}` : "—"}
+              <span className="sm:hidden">{t.revisionsPrefix}</span>
+              {row.revisions > 0
+                ? fill(t.revisionsOf, { n: number(row.revisions), max: number(MAX_REVISIONS) })
+                : "—"}
             </td>
           </tr>
         ))}

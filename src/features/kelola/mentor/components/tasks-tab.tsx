@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { format, useLocale, useT } from "@/lib/i18n/provider";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { TextLink } from "@/components/ui/text-link";
@@ -12,6 +13,7 @@ import type { AssignmentStore } from "@/features/projects/kelas/storage/assignme
 import { assignmentStore } from "@/features/projects/kelas/storage/store";
 import type { AssignmentSubmission, ClassContent } from "@/features/projects/kelas/types";
 import type { TimeZoneName } from "@/features/projects/types";
+import { pluralOf } from "../copy/mentor-copy";
 import { TaskDialog } from "./task-dialog";
 
 type Props = {
@@ -39,6 +41,8 @@ export function TasksTab({
   submissions,
   store = assignmentStore,
 }: Props) {
+  const t = useT().kelolaMentor.tasks;
+  const locale = useLocale();
   const [open, setOpen] = useState<Open | null>(null);
   const [said, setSaid] = useState("");
   const newButton = useRef<HTMLButtonElement>(null);
@@ -52,17 +56,11 @@ export function TasksTab({
       if (!keep) removeTask(task.id);
     } catch {
       close();
-      setSaid(
-        `Tugas “${task.title}” belum bisa dihapus karena data di perangkat ini tidak terbaca.`,
-      );
+      setSaid(format(t.deleteUnreadable, { title: task.title }));
       return;
     }
     close();
-    setSaid(
-      keep
-        ? `Tugas “${task.title}” sudah punya pengumpulan, jadi tidak dihapus.`
-        : `Tugas “${task.title}” dihapus.`,
-    );
+    setSaid(format(keep ? t.keptHasHandIns : t.deleted, { title: task.title }));
     newButton.current?.focus();
   }
   const countOf = (id: string) => submissions.filter((s) => s.assignmentId === id).length;
@@ -70,9 +68,11 @@ export function TasksTab({
   return (
     <div className="grid gap-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-sm text-ink-muted">{content.modules.length} tugas di kelas ini.</p>
+        <p className="text-sm text-ink-muted">
+          {format(t.count, { n: String(content.modules.length) })}
+        </p>
         <Button ref={newButton} onClick={() => setOpen({ kind: "new" })}>
-          Buat tugas
+          {t.create}
         </Button>
       </div>
       <p role="status" className="min-h-5 text-sm">
@@ -95,8 +95,13 @@ export function TasksTab({
                   {assignment.title}
                 </TextLink>
                 <p className="text-xs wrap-anywhere text-ink-muted">
-                  {task ? "Tugasmu" : "Dari kurikulum"} · {dueText(assignment.dueAt, zone)} ·{" "}
-                  {handed} pengumpulan
+                  {format(t.meta, {
+                    owner: task ? t.own : t.curriculum,
+                    due: dueText(assignment.dueAt, zone, locale),
+                    handed: format(pluralOf(t.handedOne, t.handedOther, handed, locale), {
+                      n: String(handed),
+                    }),
+                  })}
                 </p>
               </div>
               {task && (
@@ -104,22 +109,22 @@ export function TasksTab({
                   <Button
                     variant="text"
                     size="sm"
-                    aria-label={`Ubah tugas ${task.title}`}
+                    aria-label={format(t.editAria, { title: task.title })}
                     onClick={() => setOpen({ kind: "edit", task })}
                   >
-                    Ubah
+                    {t.edit}
                   </Button>
                   {canDeleteTask(task, submissions) ? (
                     <Button
                       variant="danger-text"
                       size="sm"
-                      aria-label={`Hapus tugas ${task.title}`}
+                      aria-label={format(t.removeAria, { title: task.title })}
                       onClick={() => setOpen({ kind: "delete", task })}
                     >
-                      Hapus
+                      {t.remove}
                     </Button>
                   ) : (
-                    <span className="text-xs text-ink-muted">Sudah ada pengumpulan</span>
+                    <span className="text-xs text-ink-muted">{t.hasHandIns}</span>
                   )}
                 </div>
               )}
@@ -137,9 +142,7 @@ export function TasksTab({
           onClose={close}
           onSaved={(saved, created) => {
             close();
-            setSaid(
-              created ? `Tugas “${saved.title}” dibuat.` : `Tugas “${saved.title}” disimpan.`,
-            );
+            setSaid(format(created ? t.created : t.saved, { title: saved.title }));
           }}
         />
       )}
@@ -148,15 +151,15 @@ export function TasksTab({
           open
           onClose={close}
           role="alertdialog"
-          title="Hapus tugas ini?"
-          description={`“${open.task.title}” hilang dari dasbor peserta dan tidak bisa dikembalikan. Belum ada pengumpulan, jadi tidak ada pekerjaan peserta yang ikut hilang.`}
+          title={t.deleteTitle}
+          description={format(t.deleteDescription, { title: open.task.title })}
           actions={
             <>
               <Button variant="secondary" onClick={close}>
-                Batal
+                {t.cancel}
               </Button>
               <Button variant="danger" onClick={() => void confirmDelete(open.task)}>
-                Hapus tugas
+                {t.deleteConfirm}
               </Button>
             </>
           }

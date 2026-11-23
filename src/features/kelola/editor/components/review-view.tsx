@@ -1,6 +1,9 @@
 "use client";
 
 import { versionSizeText } from "@/features/projects/submission-text";
+import { fill } from "@/features/studio/copy/fill";
+import { useT } from "@/lib/i18n/provider";
+import { useFormat } from "@/lib/i18n/use-format";
 import { useRef, useState } from "react";
 import { ButtonLink } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
@@ -22,10 +25,11 @@ import { useEffectiveRoles } from "@/features/kelola/use-effective-roles";
 import { FileVersion } from "@/features/projects/components/file-version";
 import { FrozenText } from "../../components/frozen-text";
 import { EDITOR_HREF } from "../area-hrefs";
-import { blockedMessage, resolveReview, reviewerHint } from "../review-model";
+import { resolveReview } from "../review-model";
 import { DecisionPanel } from "./decision-panel";
 
 function Shell({ children }: { children: React.ReactNode }) {
+  const t = useT().kelolaEditor.review;
   return (
     <div className="mx-auto grid max-w-170 gap-6">
       <TextLink
@@ -33,7 +37,7 @@ function Shell({ children }: { children: React.ReactNode }) {
         className="inline-flex items-center gap-1.5 text-sm text-ink-muted hover:text-ink"
       >
         <span aria-hidden>←</span>
-        Antrean submission
+        {t.back}
       </TextLink>
       {children}
     </div>
@@ -41,10 +45,11 @@ function Shell({ children }: { children: React.ReactNode }) {
 }
 
 function Information({ work }: { work: Submission }) {
+  const t = useT().kelolaEditor.review.info;
   const rows = [
-    ["Paket", work.packageName],
-    ["Sinopsis", work.synopsis],
-    ["Catatan peserta untuk editor", work.note],
+    [t.package, work.packageName],
+    [t.synopsis, work.synopsis],
+    [t.note, work.note],
   ].filter((row): row is [string, string] => Boolean(row[1]));
   if (rows.length === 0) return null;
   return (
@@ -60,33 +65,38 @@ function Information({ work }: { work: Submission }) {
 }
 
 function Text({ work }: { work: Submission }) {
+  const t = useT().kelolaEditor.review.text;
+  const { locale, number } = useFormat();
   const [picked, setPicked] = useState<number | null>(null);
   const latest = work.versions.length;
-  const number = picked ?? latest;
-  const version = work.versions.find((v) => v.version === number) ?? work.versions.at(-1);
-  if (!version) return <Notice>Karya ini tidak punya salinan beku.</Notice>;
+  const current = picked ?? latest;
+  const version = work.versions.find((v) => v.version === current) ?? work.versions.at(-1);
+  if (!version) return <Notice>{t.noFrozen}</Notice>;
   return (
     <section aria-labelledby="naskah-title" className="grid gap-4 border-t border-line pt-6">
       <h2 id="naskah-title" className="heading-md">
-        Naskah
+        {t.title}
       </h2>
       {latest > 1 && (
-        <div role="group" aria-label="Versi naskah" className="flex flex-wrap gap-2">
+        <div role="group" aria-label={t.versionGroup} className="flex flex-wrap gap-2">
           {work.versions.map((v) => (
             <Chip
               key={v.version}
               pressed={v.version === version.version}
               onClick={() => setPicked(v.version)}
             >
-              Versi {v.version}
-              {v.version === latest ? " (terbaru)" : ""}
+              {fill(t.version, { n: number(v.version) })}
+              {v.version === latest ? t.latest : ""}
             </Chip>
           ))}
         </div>
       )}
       <p className="text-xs text-ink-muted">
-        Versi {version.version} · {versionSizeText(version)} · dibekukan{" "}
-        {sentAtText(version.frozenAt)}
+        {fill(t.line, {
+          n: number(version.version),
+          size: versionSizeText(version, locale),
+          date: sentAtText(version.frozenAt, locale),
+        })}
       </p>
       {version.file ? (
         <FileVersion file={version.file} />
@@ -98,15 +108,17 @@ function Text({ work }: { work: Submission }) {
 }
 
 function Body({ work, store }: { work: Submission; store: SubmissionStore }) {
+  const t = useT().kelolaEditor.review;
+  const { locale } = useFormat();
   const project = useCatalog().find((p) => p.slug === work.slug);
   const title = useRef<HTMLHeadingElement>(null);
-  const size = versionSizeText(work.versions.at(-1));
+  const size = versionSizeText(work.versions.at(-1), locale);
   return (
     <Shell>
       <header className="grid gap-2">
         {project && (
           <p className="text-xs text-ink-muted">
-            {categoryLabel(project.category)} ·{" "}
+            {categoryLabel(project.category, locale)} ·{" "}
             <TextLink href={projectHref(project.slug)} className="text-ink-muted underline">
               {project.title}
             </TextLink>
@@ -116,11 +128,16 @@ function Body({ work, store }: { work: Submission; store: SubmissionStore }) {
           {work.title}
         </h1>
         <p className="text-sm wrap-anywhere text-ink-muted">
-          oleh {DUMMY_USER.name} · {work.genre} · {size} · dikirim {sentAtText(work.submittedAt)}
+          {fill(t.byLine, {
+            name: DUMMY_USER.name,
+            genre: work.genre,
+            size,
+            date: sentAtText(work.submittedAt, locale),
+          })}
         </p>
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 pt-1">
           <StatusSubmission status={work.status} />
-          <p className="text-sm">{reviewerHint[work.status]}</p>
+          <p className="text-sm">{t.hints[work.status]}</p>
         </div>
       </header>
       <DecisionPanel
@@ -152,19 +169,20 @@ export function ReviewView({
   const roles = useEffectiveRoles();
   const catalog = useCatalog();
   const assigned = useStaffAssignments();
+  const t = useT().kelolaEditor.review;
 
   if (submissions.status === "error") {
     return (
       <Shell>
         <ErrorBanner action={<RetryButton onClick={submissions.reload} />}>
-          Karya belum bisa dibuka karena data di perangkat ini tidak terbaca.
+          {t.loadError}
         </ErrorBanner>
       </Shell>
     );
   }
   if (submissions.status === "loading") {
     return (
-      <div role="status" aria-label="Memuat karya" className="mx-auto grid max-w-170 gap-4">
+      <div role="status" aria-label={t.loading} className="mx-auto grid max-w-170 gap-4">
         <Skeleton className="h-4 w-28" />
         <Skeleton className="h-9 w-2/3" />
         <Skeleton className="h-24 w-full" />
@@ -175,10 +193,10 @@ export function ReviewView({
   if (target.status === "gone") {
     return (
       <Shell>
-        <h1 className="heading-lg">Karya ini tidak ditemukan.</h1>
-        <Notice>Kiriman ini tidak ada di perangkat ini. Alamatnya mungkin salah.</Notice>
+        <h1 className="heading-lg">{t.goneTitle}</h1>
+        <Notice>{t.goneNotice}</Notice>
         <ButtonLink href={EDITOR_HREF} variant="secondary" className="justify-self-start">
-          Kembali ke antrean
+          {t.backToQueue}
         </ButtonLink>
       </Shell>
     );
@@ -186,10 +204,10 @@ export function ReviewView({
   if (target.status === "blocked") {
     return (
       <Shell>
-        <h1 className="heading-lg">Tidak bisa dibuka.</h1>
-        <Notice>{blockedMessage[target.reason]}</Notice>
+        <h1 className="heading-lg">{t.blockedTitle}</h1>
+        <Notice>{t.blocked[target.reason]}</Notice>
         <ButtonLink href={EDITOR_HREF} variant="secondary" className="justify-self-start">
-          Kembali ke antrean
+          {t.backToQueue}
         </ButtonLink>
       </Shell>
     );

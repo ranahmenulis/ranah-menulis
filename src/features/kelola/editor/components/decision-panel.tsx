@@ -7,14 +7,9 @@ import { reviewSubmission, type ActionResult } from "@/features/projects/submiss
 import type { SubmissionStore } from "@/features/projects/storage/submission-store";
 import type { Decision } from "@/features/projects/submission-status";
 import type { Submission } from "@/features/projects/submission-types";
-import { stepCopy, stepsFor } from "../review-model";
+import { useLocale, useT } from "@/lib/i18n/provider";
+import { stepsFor } from "../review-model";
 import { ReasonDialog } from "../../components/reason-dialog";
-
-const MESSAGE: Partial<Record<ActionResult, string>> = {
-  rejected:
-    "Status karya ini sudah berubah, jadi langkah itu tidak bisa dijalankan. Tampilan sudah diperbarui.",
-  missing: "Karya ini tidak ditemukan lagi.",
-};
 
 /**
  * The steps the status allows, nothing else (PRD 10.5). A lone step ("Mulai tinjau") is the filled
@@ -33,7 +28,9 @@ export function DecisionPanel({
   onDone: () => void;
   onRejected: () => void;
 }) {
-  const steps = stepsFor(work);
+  const t = useT().kelolaEditor;
+  const locale = useLocale();
+  const steps = stepsFor(work, locale);
   const [asking, setAsking] = useState<Decision | null>(null);
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<ActionResult | null>(null);
@@ -57,15 +54,11 @@ export function DecisionPanel({
   return (
     <section aria-labelledby="langkah-title" className="grid gap-3 border-t border-line pt-6">
       <h2 id="langkah-title" className="heading-md">
-        Langkah berikutnya
+        {t.decision.title}
       </h2>
-      {result === "failed" && (
-        <ErrorBanner>
-          Keputusan belum tersimpan karena data di perangkat ini tidak bisa ditulis. Coba lagi
-          sebentar lagi.
-        </ErrorBanner>
-      )}
-      {result && MESSAGE[result] && <Notice>{MESSAGE[result]}</Notice>}
+      {result === "failed" && <ErrorBanner>{t.decision.saveFailed}</ErrorBanner>}
+      {result === "rejected" && <Notice>{t.decision.rejected}</Notice>}
+      {result === "missing" && <Notice>{t.decision.missing}</Notice>}
       <div className="flex flex-wrap gap-2">
         {steps.map((s) => (
           <Button
@@ -89,8 +82,8 @@ export function DecisionPanel({
       )}
       {step && step.decision !== "peninjauan" && (
         <ReasonDialog
-          title={stepCopy[step.decision].title}
-          hint={stepCopy[step.decision].hint}
+          title={t.steps.dialogs[step.decision].title}
+          hint={t.steps.dialogs[step.decision].hint}
           confirmLabel={step.label}
           busy={busy}
           onConfirm={(reason) => void act(step.decision, reason)}

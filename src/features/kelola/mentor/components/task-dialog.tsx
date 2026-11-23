@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useLocale, useT } from "@/lib/i18n/provider";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Field, Input, Textarea, describedBy } from "@/components/ui/field";
@@ -39,6 +40,8 @@ export function TaskDialog({
   onClose: () => void;
   onSaved: (task: MentorTask, created: boolean) => void;
 }) {
+  const t = useT().kelolaMentor.taskDialog;
+  const locale = useLocale();
   const [input, setInput] = useState<TaskInput>({
     title: task?.title ?? "",
     instructions: task?.instructions ?? "",
@@ -50,7 +53,7 @@ export function TaskDialog({
 
   function submit() {
     const now = Date.now();
-    const found = validateTask(input, { zone, now, current: task?.dueDate });
+    const found = validateTask(input, { zone, now, current: task?.dueDate, locale });
     setErrors(found);
     const first = ORDER.find((key) => found[key]);
     if (first) return document.getElementById(`tugas-${first}`)?.focus();
@@ -83,15 +86,15 @@ export function TaskDialog({
     <Dialog
       open
       onClose={onClose}
-      title={task ? "Ubah tugas" : "Buat tugas"}
-      description="Peserta kelas melihat tugas ini di dasbor dan mendapat pemberitahuan."
+      title={task ? t.editTitle : t.newTitle}
+      description={t.description}
       actions={
         <>
           <Button variant="secondary" onClick={onClose}>
-            Batal
+            {t.cancel}
           </Button>
           <Button type="submit" form={FORM}>
-            {task ? "Simpan tugas" : "Buat tugas"}
+            {task ? t.save : t.create}
           </Button>
         </>
       }
@@ -105,7 +108,7 @@ export function TaskDialog({
           submit();
         }}
       >
-        <Field id="tugas-title" label="Judul" error={errors.title}>
+        <Field id="tugas-title" label={t.titleLabel} error={errors.title}>
           <Input
             {...field("title")}
             value={input.title}
@@ -114,8 +117,8 @@ export function TaskDialog({
         </Field>
         <Field
           id="tugas-instructions"
-          label="Petunjuk"
-          hint="Pisahkan paragraf dengan baris kosong."
+          label={t.instructionsLabel}
+          hint={t.instructionsHint}
           error={errors.instructions}
         >
           <Textarea
@@ -126,8 +129,8 @@ export function TaskDialog({
         </Field>
         <Field
           id="tugas-dueDate"
-          label="Tenggat"
-          hint={dueLocked ? "Tidak bisa diubah karena sudah ada pengumpulan." : undefined}
+          label={t.dueLabel}
+          hint={dueLocked ? t.dueLockedHint : undefined}
           error={errors.dueDate}
         >
           <Input

@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
 import { EmptyState, ErrorBanner, RetryButton, Skeleton } from "@/components/ui/states";
+import { useLocale, useT } from "@/lib/i18n/provider";
 import type { SubmissionStore } from "@/features/projects/storage/submission-store";
 import { RoleBand } from "../../components/role-band";
 import { editorWork, type BandWork } from "../../role-band";
@@ -12,7 +13,6 @@ import { EDITOR_HREF } from "../area-hrefs";
 import {
   QUEUE_FILTERS,
   applyFilter,
-  emptyText,
   parseQueueFilter,
   queueQuery,
   type QueueFilter,
@@ -20,9 +20,9 @@ import {
 import { useEditorQueue } from "../use-editor-queue";
 import { QueueTable } from "./queue-table";
 
-function QueueSkeleton() {
+function QueueSkeleton({ label }: { label: string }) {
   return (
-    <div role="status" aria-label="Memuat antrean" className="grid gap-3">
+    <div role="status" aria-label={label} className="grid gap-3">
       <Skeleton className="h-8 w-2/3" />
       {[0, 1, 2].map((i) => (
         <Skeleton key={i} className="h-11 w-full" />
@@ -37,6 +37,8 @@ function QueueSkeleton() {
  * submissions kept on this device (sliced with dummy data), so it also lists the dummy user's own.
  */
 export function QueueView({ store }: { store?: SubmissionStore }) {
+  const t = useT().kelolaEditor.queue;
+  const locale = useLocale();
   const { submissions, all, counts } = useEditorQueue(store);
 
   // The address is the source of truth (see ProjectsView): Next keeps the previous page mounted.
@@ -53,32 +55,32 @@ export function QueueView({ store }: { store?: SubmissionStore }) {
   }
 
   const shown = useMemo(() => applyFilter(all, filter), [all, filter]);
-  const label = QUEUE_FILTERS.find((f) => f.id === filter)?.label ?? "";
+  const label = t.filters[filter];
   const work: BandWork =
-    submissions.status === "ready" ? editorWork(counts) : { status: submissions.status };
+    submissions.status === "ready" ? editorWork(counts, locale) : { status: submissions.status };
 
   return (
     <section aria-labelledby="antrean-title" className="grid gap-5">
       <RoleBand
         area="editor"
-        title="Antrean submission"
+        title={t.title}
         titleId="antrean-title"
-        description="Karya yang ditugaskan kepadamu untuk ditinjau."
+        description={t.description}
         work={work}
       />
 
       {submissions.status === "error" ? (
         <ErrorBanner action={<RetryButton onClick={submissions.reload} />}>
-          Antrean belum bisa dibuka karena data di perangkat ini tidak terbaca.
+          {t.loadError}
         </ErrorBanner>
       ) : submissions.status === "loading" ? (
-        <QueueSkeleton />
+        <QueueSkeleton label={t.loading} />
       ) : (
         <>
-          <div role="group" aria-label="Saring antrean" className="flex flex-wrap gap-2">
+          <div role="group" aria-label={t.filterGroup} className="flex flex-wrap gap-2">
             {QUEUE_FILTERS.map((f) => (
               <Chip key={f.id} pressed={f.id === filter} onClick={() => change(f.id)}>
-                {f.label} <span className="ml-1.5 tabular-nums">{counts[f.id]}</span>
+                {t.filters[f.id]} <span className="ml-1.5 tabular-nums">{counts[f.id]}</span>
               </Chip>
             ))}
           </div>
@@ -87,12 +89,12 @@ export function QueueView({ store }: { store?: SubmissionStore }) {
               action={
                 filter !== "semua" && all.length > 0 ? (
                   <Button variant="text" onClick={() => change("semua")}>
-                    Lihat semua karya
+                    {t.seeAll}
                   </Button>
                 ) : undefined
               }
             >
-              {emptyText[filter]}
+              {t.empty[filter]}
             </EmptyState>
           ) : (
             <QueueTable rows={shown} label={label} />

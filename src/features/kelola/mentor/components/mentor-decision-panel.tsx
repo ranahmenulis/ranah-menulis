@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useLocale, useT } from "@/lib/i18n/provider";
 import { Button } from "@/components/ui/button";
 import { ErrorBanner, Notice } from "@/components/ui/states";
 import { reviewAssignment, type ActionResult } from "@/features/projects/kelas/assignment-actions";
@@ -8,13 +9,7 @@ import type { MentorDecision } from "@/features/projects/kelas/assignment-status
 import type { AssignmentStore } from "@/features/projects/kelas/storage/assignment-store";
 import type { AssignmentSubmission } from "@/features/projects/kelas/types";
 import { ReasonDialog } from "../../components/reason-dialog";
-import { mentorStepCopy, mentorStepsFor } from "../mentor-review";
-
-const MESSAGE: Partial<Record<ActionResult, string>> = {
-  rejected:
-    "Status tugas ini sudah berubah, jadi langkah itu tidak bisa dijalankan. Tampilan sudah diperbarui.",
-  missing: "Tugas ini tidak ditemukan lagi.",
-};
+import { mentorStepCopyOf, mentorStepsFor } from "../mentor-review";
 
 /**
  * The steps the status allows (KLS-03): ask for a repair (a note is required) or mark it done (a
@@ -33,7 +28,13 @@ export function MentorDecisionPanel({
   onDone: () => void;
   onRejected: () => void;
 }) {
-  const steps = mentorStepsFor(work);
+  const t = useT().kelolaMentor.decision;
+  const locale = useLocale();
+  const MESSAGE: Partial<Record<ActionResult, string>> = {
+    rejected: t.rejected,
+    missing: t.missing,
+  };
+  const steps = mentorStepsFor(work, locale);
   const [asking, setAsking] = useState<MentorDecision | null>(null);
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<ActionResult | null>(null);
@@ -56,14 +57,9 @@ export function MentorDecisionPanel({
   return (
     <section aria-labelledby="langkah-title" className="grid gap-3 border-t border-line pt-6">
       <h2 id="langkah-title" className="heading-md">
-        Langkah berikutnya
+        {t.title}
       </h2>
-      {result === "failed" && (
-        <ErrorBanner>
-          Keputusan belum tersimpan karena data di perangkat ini tidak bisa ditulis. Coba lagi
-          sebentar lagi.
-        </ErrorBanner>
-      )}
+      {result === "failed" && <ErrorBanner>{t.failed}</ErrorBanner>}
       {result && MESSAGE[result] && <Notice>{MESSAGE[result]}</Notice>}
       <div className="flex flex-wrap gap-2">
         {steps.map((s) => (
@@ -79,9 +75,9 @@ export function MentorDecisionPanel({
       </div>
       {step && (
         <ReasonDialog
-          title={mentorStepCopy[step.decision].title}
-          hint={mentorStepCopy[step.decision].hint}
-          fieldLabel={mentorStepCopy[step.decision].fieldLabel}
+          title={mentorStepCopyOf(step.decision, locale).title}
+          hint={mentorStepCopyOf(step.decision, locale).hint}
+          fieldLabel={mentorStepCopyOf(step.decision, locale).fieldLabel}
           required={step.required}
           confirmLabel={step.label}
           busy={busy}

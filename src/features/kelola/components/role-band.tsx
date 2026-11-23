@@ -4,8 +4,10 @@ import Link from "next/link";
 import type { CSSProperties } from "react";
 import { CountUp } from "@/components/ui/count-up";
 import { cn } from "@/lib/cn";
+import { useT } from "@/lib/i18n/provider";
+import { fill } from "@/features/studio/copy/fill";
 import type { Area } from "../access";
-import { BAND_COPY, type BandWork } from "../role-band";
+import type { BandWork } from "../role-band";
 import { RoleMark } from "./role-mark";
 
 const step = (i: number) => ({ "--i": i }) as CSSProperties;
@@ -13,6 +15,7 @@ const step = (i: number) => ({ "--i": i }) as CSSProperties;
 /** The number of work, or a dash while it loads. Hidden when the data cannot be read: the screen
  * under the band already says so. */
 function WorkNumber({ work, unit, compact }: { work: BandWork; unit: string; compact?: boolean }) {
+  const t = useT().kelolaShared.band;
   if (work.status === "error") return null;
   // Inside the overview link only phrasing content is allowed.
   const Wrap = compact ? "span" : "p";
@@ -31,7 +34,7 @@ function WorkNumber({ work, unit, compact }: { work: BandWork; unit: string; com
       </span>
       <span className="text-sm text-ink-soft">
         {unit}
-        {work.status === "loading" && <span className="sr-only"> (memuat)</span>}
+        {work.status === "loading" && <span className="sr-only">{t.loading}</span>}
       </span>
     </Wrap>
   );
@@ -55,11 +58,12 @@ type Props = {
  * is a text link: the one filled button of the screen stays on the page surface.
  */
 export function RoleBand({ area, title, titleId, description, work, people, className }: Props) {
-  const copy = BAND_COPY[area];
+  const t = useT().kelolaShared.band;
+  const copy = t.roles[area];
   const Title = titleId ? "h1" : "p";
   return (
     <section
-      aria-label={titleId ? undefined : `Ruang kerja ${copy.role}`}
+      aria-label={titleId ? undefined : fill(t.sectionLabel, { role: copy.role })}
       aria-labelledby={titleId}
       data-band={area}
       className={cn(
@@ -69,7 +73,7 @@ export function RoleBand({ area, title, titleId, description, work, people, clas
     >
       <div className="grid min-w-0 content-start gap-3">
         <p className="rm-rise-in text-sm font-medium text-ink-muted" style={step(-3)}>
-          Ruang kerja · {copy.role}
+          {fill(t.eyebrow, { role: copy.role })}
         </p>
         <Title
           id={titleId}
@@ -124,7 +128,7 @@ export function RoleBandLink({
   people?: readonly ("full" | "ring")[];
   index?: number;
 }) {
-  const copy = BAND_COPY[area];
+  const copy = useT().kelolaShared.band.roles[area];
   return (
     <Link
       href={href}

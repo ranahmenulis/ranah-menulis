@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import { useLocale } from "@/lib/i18n/provider";
 import { submissionStore } from "@/features/projects/storage/store";
 import type { SubmissionStore } from "@/features/projects/storage/submission-store";
 import { useCatalog } from "@/features/projects/use-catalog";
@@ -15,9 +16,10 @@ export function useEditorQueue(store: SubmissionStore = submissionStore) {
   const roles = useEffectiveRoles();
   const catalog = useCatalog();
   const assigned = useStaffAssignments();
+  const locale = useLocale();
   const all = useMemo(
-    () => queueRows(submissions.submissions, roles, catalog, assigned),
-    [submissions.submissions, roles, catalog, assigned],
+    () => queueRows(submissions.submissions, roles, catalog, assigned, locale),
+    [submissions.submissions, roles, catalog, assigned, locale],
   );
   const counts = useMemo(() => countByFilter(all), [all]);
   return { submissions, all, counts };

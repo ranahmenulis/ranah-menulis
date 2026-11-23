@@ -1,3 +1,4 @@
+import type { Locale } from "@/lib/i18n/config";
 import type { SubmissionStatus } from "@/components/ui/status-submission";
 import type { Submission } from "@/features/projects/submission-types";
 import {
@@ -10,6 +11,7 @@ import type { ManagerRole } from "@/lib/roles";
 import type { ProjectFixture } from "@/features/projects/types";
 import type { StaffAssignment } from "../staff-assignments";
 import { reviewAccess, type ReviewAccess } from "./assignments";
+import { editorCopy, editorId } from "./copy/editor-copy";
 
 export type Step = {
   decision: Decision;
@@ -20,41 +22,34 @@ export type Step = {
   blocked?: string;
 };
 
-const STEPS: Record<Decision, Omit<Step, "decision">> = {
-  peninjauan: { label: "Mulai tinjau", needsReason: false },
-  "perlu-revisi": { label: "Minta revisi", needsReason: true },
-  diterima: { label: "Terima", needsReason: true },
-  ditolak: { label: "Tolak", needsReason: true },
+/** Mulai tinjau is a single click; every other step needs the reason PRD 10.5 asks for. */
+const NEEDS_REASON: Record<Decision, boolean> = {
+  peninjauan: false,
+  "perlu-revisi": true,
+  diterima: true,
+  ditolak: true,
 };
 
 const ORDER: readonly Decision[] = ["peninjauan", "perlu-revisi", "diterima", "ditolak"];
 
 /** The steps the transition table allows from the current status (PRD 10.5), in a fixed order. */
-export function stepsFor(work: Submission): Step[] {
+export function stepsFor(work: Submission, locale: Locale = "id"): Step[] {
+  const copy = editorCopy(locale).steps;
   return ORDER.filter((decision) => canMove(work.status, decision)).map((decision) => ({
     decision,
-    ...STEPS[decision],
+    label: copy.labels[decision],
+    needsReason: NEEDS_REASON[decision],
     ...(decision === "perlu-revisi" && revisionsSent(work) >= MAX_REVISIONS
-      ? { blocked: "Batas putaran revisi sudah tercapai. Putuskan Terima atau Tolak." }
+      ? { blocked: copy.revisionLimit }
       : {}),
   }));
 }
 
 /** What the dialog says before a step that the participant will be told about. */
-export const stepCopy: Record<Exclude<Decision, "peninjauan">, { title: string; hint: string }> = {
-  "perlu-revisi": {
-    title: "Minta revisi",
-    hint: "Peserta mendapat tenggat tujuh hari untuk mengirim revisi. Tulis apa yang perlu diperbaiki.",
-  },
-  diterima: {
-    title: "Terima karya ini",
-    hint: "Keputusan ini final dan peserta akan diberi tahu. Tulis alasannya.",
-  },
-  ditolak: {
-    title: "Tolak karya ini",
-    hint: "Keputusan ini final dan peserta akan diberi tahu. Tulis alasan yang bisa mereka baca.",
-  },
-};
+export const stepCopy: Record<
+  Exclude<Decision, "peninjauan">,
+  { title: string; hint: string }
+> = editorId.steps.dialogs;
 
 export type ReviewTarget =
   | { status: "gone" }
@@ -75,20 +70,8 @@ export function resolveReview(
   return access === "ok" ? { status: "ready", work } : { status: "blocked", reason: access };
 }
 
-export const blockedMessage: Record<Exclude<ReviewAccess, "ok">, string> = {
-  "tidak-ditugaskan": "Karya ini tidak ditugaskan kepadamu.",
-  "bukan-karya-editor":
-    "Karya ini tidak ditinjau lewat antrean Editor. Lomba dinilai Juri, dan tugas kelas diperiksa Mentor.",
-};
+/** Indonesian sentences; screens read `kelolaEditor.review.blocked`. */
+export const blockedMessage: Record<Exclude<ReviewAccess, "ok">, string> = editorId.review.blocked;
 
 /** What the status means for the reviewer, in one sentence (the participant reads another one). */
-export const reviewerHint: Record<SubmissionStatus, string> = {
-  draf: "Karya ini belum dikirim.",
-  terkirim: "Karya ini menunggu kamu mulai meninjau.",
-  peninjauan: "Karya ini sedang ditinjau. Putuskan untuk menerima, menolak, atau meminta revisi.",
-  "perlu-revisi": "Menunggu revisi dari peserta.",
-  "revisi-terkirim": "Peserta sudah mengirim revisi dan menunggu kamu meninjau lagi.",
-  diterima: "Karya ini sudah diterima.",
-  ditolak: "Karya ini sudah ditolak.",
-  ditarik: "Peserta menarik karya ini, jadi tidak perlu ditinjau lagi.",
-};
+export const reviewerHint: Record<SubmissionStatus, string> = editorId.review.hints;

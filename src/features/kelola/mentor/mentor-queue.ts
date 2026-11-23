@@ -6,18 +6,21 @@ import type {
   ClassContent,
 } from "@/features/projects/kelas/types";
 import type { Registration } from "@/features/projects/types";
+import type { Locale } from "@/lib/i18n/config";
 import type { MentorTab } from "./area-hrefs";
+import { mentorCopy } from "./copy/mentor-copy";
 
 export type MentorFilter = "perlu-dinilai" | "menunggu-perbaikan" | "selesai" | "semua";
 
 export const DEFAULT_MENTOR_FILTER: MentorFilter = "perlu-dinilai";
 
-export const MENTOR_FILTERS: { id: MentorFilter; label: string }[] = [
-  { id: "perlu-dinilai", label: "Perlu dinilai" },
-  { id: "menunggu-perbaikan", label: "Menunggu perbaikan" },
-  { id: "selesai", label: "Selesai" },
-  { id: "semua", label: "Semua" },
-];
+const FILTER_IDS: MentorFilter[] = ["perlu-dinilai", "menunggu-perbaikan", "selesai", "semua"];
+
+/** Indonesian labels; screens use `mentorFiltersOf` with the interface language. */
+export const mentorFiltersOf = (locale: Locale = "id") =>
+  FILTER_IDS.map((id) => ({ id, label: mentorCopy(locale).filters[id] }));
+
+export const MENTOR_FILTERS: { id: MentorFilter; label: string }[] = mentorFiltersOf("id");
 
 const GROUPS: Record<Exclude<MentorFilter, "semua">, readonly AssignmentStatus[]> = {
   "perlu-dinilai": ["dikumpulkan"],
@@ -25,11 +28,12 @@ const GROUPS: Record<Exclude<MentorFilter, "semua">, readonly AssignmentStatus[]
   selesai: ["selesai"],
 };
 
-export const TABS: { id: MentorTab; label: string }[] = [
-  { id: "pengumpulan", label: "Pengumpulan" },
-  { id: "tugas", label: "Tugas" },
-  { id: "peserta", label: "Peserta" },
-];
+const TAB_IDS: MentorTab[] = ["pengumpulan", "tugas", "peserta"];
+
+export const tabsOf = (locale: Locale = "id") =>
+  TAB_IDS.map((id) => ({ id, label: mentorCopy(locale).tabs[id] }));
+
+export const TABS: { id: MentorTab; label: string }[] = tabsOf("id");
 
 export const parseTab = (value: string | null | undefined): MentorTab =>
   TABS.find((t) => t.id === value)?.id ?? "pengumpulan";
@@ -88,12 +92,10 @@ export function countMentorFilters(rows: readonly MentorRow[]): Record<MentorFil
   ) as Record<MentorFilter, number>;
 }
 
-export const mentorEmptyText: Record<MentorFilter, string> = {
-  "perlu-dinilai": "Tidak ada tugas yang menunggu penilaianmu.",
-  "menunggu-perbaikan": "Tidak ada tugas yang menunggu perbaikan peserta.",
-  selesai: "Belum ada tugas yang kamu tandai selesai.",
-  semua: "Belum ada tugas yang dikumpulkan.",
-};
+export const mentorEmptyText: Record<MentorFilter, string> = mentorCopy("id").empty;
+
+export const mentorEmptyTextOf = (filter: MentorFilter, locale: Locale = "id"): string =>
+  mentorCopy(locale).empty[filter];
 
 export type RosterRow = {
   name: string;

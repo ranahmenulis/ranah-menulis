@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { useLocale, useT } from "@/lib/i18n/provider";
 import { Chip } from "@/components/ui/chip";
 import { EmptyState } from "@/components/ui/states";
 import { DUMMY_USER } from "@/features/app-shell/nav";
@@ -11,11 +12,11 @@ import type { ClassContent, AssignmentSubmission } from "@/features/projects/kel
 import { sentAtText } from "@/features/projects/submission-text";
 import { handInHref } from "../area-hrefs";
 import {
-  MENTOR_FILTERS,
   applyMentorFilter,
   countMentorFilters,
-  mentorEmptyText,
+  mentorEmptyTextOf,
   mentorFilterQuery,
+  mentorFiltersOf,
   mentorRows,
   parseMentorFilter,
   type MentorFilter,
@@ -39,6 +40,9 @@ export function SubmissionsTab({
   statusParam: string | null;
   tab: string;
 }) {
+  const t = useT().kelolaMentor.submissions;
+  const locale = useLocale();
+  const filters = mentorFiltersOf(locale);
   // The address is the source of truth (see ProjectsView): Next keeps the previous page mounted.
   const [filter, setFilter] = useState(() => parseMentorFilter(statusParam));
   const [seen, setSeen] = useState(statusParam);
@@ -54,12 +58,12 @@ export function SubmissionsTab({
   const all = useMemo(() => mentorRows(content, submissions), [content, submissions]);
   const counts = useMemo(() => countMentorFilters(all), [all]);
   const shown = useMemo(() => applyMentorFilter(all, filter), [all, filter]);
-  const label = MENTOR_FILTERS.find((f) => f.id === filter)?.label ?? tab;
+  const label = filters.find((f) => f.id === filter)?.label ?? tab;
 
   return (
     <div className="grid gap-5">
-      <div role="group" aria-label="Saring pengumpulan" className="flex flex-wrap gap-2">
-        {MENTOR_FILTERS.map((f) => (
+      <div role="group" aria-label={t.filterLabel} className="flex flex-wrap gap-2">
+        {filters.map((f) => (
           <Chip key={f.id} pressed={f.id === filter} onClick={() => change(f.id)}>
             {f.label} <span className="ml-1.5 tabular-nums">{counts[f.id]}</span>
           </Chip>
@@ -70,31 +74,31 @@ export function SubmissionsTab({
           action={
             filter !== "semua" && all.length > 0 ? (
               <Button variant="text" onClick={() => change("semua")}>
-                Lihat semua pengumpulan
+                {t.seeAll}
               </Button>
             ) : undefined
           }
         >
-          {mentorEmptyText[filter]}
+          {mentorEmptyTextOf(filter, locale)}
         </EmptyState>
       ) : (
         <table aria-label={label} className="w-full border-collapse text-sm max-sm:block">
           <thead className="max-sm:sr-only">
             <tr className="border-b border-line">
               <th scope="col" className={th}>
-                Tugas
+                {t.task}
               </th>
               <th scope="col" className={th}>
-                Peserta
+                {t.participant}
               </th>
               <th scope="col" className={th}>
-                Status
+                {t.status}
               </th>
               <th scope="col" className={th}>
-                Menunggu sejak
+                {t.waitingSince}
               </th>
               <th scope="col" className={th}>
-                Versi
+                {t.version}
               </th>
             </tr>
           </thead>
@@ -116,15 +120,15 @@ export function SubmissionsTab({
                 <td className={td}>
                   <span className="inline-flex flex-wrap items-center gap-2">
                     <StatusTugas state={row.status} />
-                    {row.late && <span className="text-xs text-ink-muted">Terlambat</span>}
+                    {row.late && <span className="text-xs text-ink-muted">{t.late}</span>}
                   </span>
                 </td>
                 <td className={`${td} text-ink-muted`}>
-                  <span className="sm:hidden">Menunggu sejak </span>
-                  {sentAtText(row.since)}
+                  <span className="sm:hidden">{t.waitingSince} </span>
+                  {sentAtText(row.since, locale)}
                 </td>
                 <td className={`${td} text-ink-muted tabular-nums`}>
-                  <span className="sm:hidden">Versi </span>
+                  <span className="sm:hidden">{t.version} </span>
                   {row.versions}
                 </td>
               </tr>

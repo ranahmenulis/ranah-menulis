@@ -1,3 +1,4 @@
+import type { Locale } from "@/lib/i18n/config";
 import type { SubmissionStatus } from "@/components/ui/status-submission";
 import { versionSizeText } from "@/features/projects/submission-text";
 import { projectFixtures } from "@/features/projects/fixtures/all-projects";
@@ -8,18 +9,21 @@ import type { ProjectFixture } from "@/features/projects/types";
 import type { ManagerRole } from "@/lib/roles";
 import type { StaffAssignment } from "../staff-assignments";
 import { reviewAccess } from "./assignments";
+import { editorCopy, editorId } from "./copy/editor-copy";
 
 export type QueueFilter = "perlu-tindakan" | "ditinjau" | "menunggu-revisi" | "selesai" | "semua";
 
 export const DEFAULT_QUEUE_FILTER: QueueFilter = "perlu-tindakan";
 
-export const QUEUE_FILTERS: { id: QueueFilter; label: string }[] = [
-  { id: "perlu-tindakan", label: "Perlu tindakan" },
-  { id: "ditinjau", label: "Sedang ditinjau" },
-  { id: "menunggu-revisi", label: "Menunggu revisi" },
-  { id: "selesai", label: "Selesai" },
-  { id: "semua", label: "Semua" },
-];
+const FILTER_LABELS = editorId.queue.filters;
+
+/** Indonesian labels; screens use `queueFilterLabel` for the interface language. */
+export const QUEUE_FILTERS: { id: QueueFilter; label: string }[] = (
+  ["perlu-tindakan", "ditinjau", "menunggu-revisi", "selesai", "semua"] as const
+).map((id) => ({ id, label: FILTER_LABELS[id] }));
+
+export const queueFilterLabel = (filter: QueueFilter, locale: Locale = "id") =>
+  editorCopy(locale).queue.filters[filter];
 
 /** Which statuses each filter holds. "Semua" is open-ended so no work can drop out of sight. */
 const GROUPS: Record<Exclude<QueueFilter, "semua">, readonly SubmissionStatus[]> = {
@@ -60,6 +64,7 @@ export function queueRows(
   roles: readonly ManagerRole[],
   catalog: readonly ProjectFixture[] = projectFixtures,
   assigned?: readonly StaffAssignment[],
+  locale: Locale = "id",
 ): QueueRow[] {
   return submissions.flatMap((work) => {
     if (work.status === "draf" || reviewAccess(roles, work.slug, catalog, assigned) !== "ok")
@@ -71,9 +76,9 @@ export function queueRows(
         id: work.id,
         title: work.title,
         projectTitle: project.title,
-        category: categoryLabel(project.category),
+        category: categoryLabel(project.category, locale),
         genre: work.genre,
-        size: versionSizeText(work.versions.at(-1)),
+        size: versionSizeText(work.versions.at(-1), locale),
         status: work.status,
         since: work.statusLog.at(-1)?.at ?? work.submittedAt,
         revisions: revisionsSent(work),
@@ -97,10 +102,5 @@ export function countByFilter(rows: readonly QueueRow[]): Record<QueueFilter, nu
   ) as Record<QueueFilter, number>;
 }
 
-export const emptyText: Record<QueueFilter, string> = {
-  "perlu-tindakan": "Tidak ada karya yang menunggu tindakanmu.",
-  ditinjau: "Tidak ada karya yang sedang kamu tinjau.",
-  "menunggu-revisi": "Tidak ada karya yang menunggu revisi peserta.",
-  selesai: "Belum ada karya yang selesai kamu putuskan.",
-  semua: "Belum ada karya yang masuk untuk kamu tinjau.",
-};
+/** Indonesian empty-state sentences; screens read `kelolaEditor.queue.empty`. */
+export const emptyText: Record<QueueFilter, string> = editorId.queue.empty;
