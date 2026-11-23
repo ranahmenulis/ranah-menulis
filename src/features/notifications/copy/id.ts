@@ -1,5 +1,6 @@
 export const notifications = {
   title: "Notifikasi",
+  intro: "Kabar tentang tulisan, komentar, dan proyekmu.",
   markAll: "Tandai semua dibaca",
   unread: "{count} belum dibaca.",
   loading: "Memuat notifikasi…",

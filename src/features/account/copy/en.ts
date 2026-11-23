@@ -140,6 +140,7 @@ export const account: typeof source = {
   },
   settings: {
     title: "Account settings",
+    nav: "Settings sections",
     personal: {
       title: "Personal information",
       subtitle: "Manage your profile and contact details.",
@@ -189,6 +190,10 @@ export const account: typeof source = {
         "Choose which notifications you want, in the app and by email. Email is sent once the email service is on; your choices are already saved.",
       app: "In the app",
       email: "By email",
+      colEvent: "Notification",
+      colApp: "App",
+      colEmail: "Email",
+      unavailable: "Not available",
       alwaysTitle: "Always sent",
       always:
         "Email verification and password reset, project registration and payment, submission decisions, book production stages, Editor and Judge assignments, contest announcements, and reports and moderation cannot be turned off.",

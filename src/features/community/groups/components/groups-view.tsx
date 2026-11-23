@@ -19,7 +19,7 @@ import { isPlatformAdmin } from "@/lib/roles";
 import { useViewer } from "@/lib/viewer";
 import { CommunityEmpty } from "../../components/community-empty";
 import { CommunityFrame } from "../../components/community-frame";
-import { CommunityHero } from "../../components/community-hero";
+import { PageHero } from "@/components/ui/page-hero";
 import { adminGroupHref, groupHref, groupsFor, type WritingGroup } from "../group-model";
 import { writingGroups } from "../group-store";
 import { useGroupReader } from "../group-viewer";
@@ -195,7 +195,7 @@ export function GroupsView({ admin = false }: { admin?: boolean }) {
   const publicCount = groups.filter((group) => group.visibility === "publik").length;
   return (
     <CommunityFrame>
-      <CommunityHero
+      <PageHero
         titleId="groups-title"
         title={t.title}
         body={t.hero.body}

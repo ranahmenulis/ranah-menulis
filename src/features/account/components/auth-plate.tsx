@@ -1,36 +1,30 @@
 "use client";
 
 import type { CSSProperties } from "react";
+import { LetterQuill } from "@/components/illustrations/letter-art";
+import { heroCardClass } from "@/components/ui/card";
+import { cn } from "@/lib/cn";
 import { useT } from "@/lib/i18n/provider";
-import { AUTH_ART, type AuthArtName } from "../auth-art";
+import type { AuthArtName } from "../auth-art";
 
 const step = (i: number) => ({ "--i": i }) as CSSProperties;
 
 /**
- * From lg: a dark panel beside the form holding the endpaper, which develops in like the empty-state
- * plates, and one serif line under it. The line sits under the paper, never on it, so it reads in
- * both themes. Decorative, like EmptyPlate: the form says what the screen is for.
+ * From lg: a hero card beside the form holding the letter and quill, and one serif line under it.
+ * Decorative: the form says what the screen is for.
  */
 export function AuthPlatePanel({ art }: { art: AuthArtName }) {
   const { plate } = useT().account;
-  const image = AUTH_ART[art];
   return (
     <aside
       aria-hidden
       data-auth-art={art}
-      className="theme-dark app-band sticky top-[calc(3.5rem+var(--safe-top))] hidden h-[calc(100dvh-3.5rem-var(--safe-top))] content-center justify-items-center gap-8 self-start overflow-hidden px-12 py-12 text-ink lg:grid"
+      className={cn(
+        heroCardClass,
+        "sticky top-[calc(5rem+var(--safe-top))] hidden h-[calc(100dvh-7rem-var(--safe-top))] content-center justify-items-center gap-8 self-start px-12 lg:grid",
+      )}
     >
-      <span className="rm-plate block w-full max-w-[30rem] overflow-hidden">
-        {/* eslint-disable-next-line @next/next/no-img-element -- a static plate, like EmptyPlate */}
-        <img
-          src={image.src}
-          width={image.width}
-          height={image.height}
-          alt=""
-          decoding="async"
-          className="rm-plate-img block aspect-square h-auto max-h-[62dvh] w-full object-cover"
-        />
-      </span>
+      <LetterQuill className="h-auto w-full max-w-[30rem]" />
       <p
         className="rm-rise-in max-w-[24rem] text-center font-serif text-[22px] leading-8 text-balance text-ink-soft italic"
         style={step(1)}
@@ -41,24 +35,15 @@ export function AuthPlatePanel({ art }: { art: AuthArtName }) {
   );
 }
 
-/** Below lg: a short strip of the same paper above the form, without the line. */
+/** Below lg: a band of the same art across the top of the form card, without the line. */
 export function AuthPlateStrip({ art }: { art: AuthArtName }) {
-  const image = AUTH_ART[art];
   return (
-    <span
+    <div
       aria-hidden
       data-auth-art={art}
-      className="rm-plate block h-[140px] overflow-hidden lg:hidden"
+      className="-mx-5 -mt-5 mb-6 h-32 overflow-hidden rounded-t-2xl bg-linear-to-br from-surface from-40% to-accent-subtle md:-mx-6 md:-mt-6 lg:hidden"
     >
-      {/* eslint-disable-next-line @next/next/no-img-element -- a static plate, like EmptyPlate */}
-      <img
-        src={image.src}
-        width={image.width}
-        height={image.height}
-        alt=""
-        decoding="async"
-        className="rm-plate-img block h-full w-full object-cover"
-      />
-    </span>
+      <LetterQuill className="mx-auto h-full w-auto" />
+    </div>
   );
 }

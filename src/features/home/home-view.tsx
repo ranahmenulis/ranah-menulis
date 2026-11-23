@@ -17,9 +17,11 @@ import { postStore } from "@/features/community/storage/store";
 import { profileHref } from "@/features/profile/profile-href";
 import { useStreakData } from "@/features/studio/hooks/use-streak-data";
 import { studioStore } from "@/features/studio/storage/store";
+import { cn } from "@/lib/cn";
 import { EmptyFeed } from "./empty-feed";
 import { useFirstStepsDismissed } from "./first-steps-store";
 import { followed } from "./fixtures";
+import { FeedList, feedCardClass } from "./feed-card";
 import { FeedItem } from "./feed-item";
 import { FollowRow } from "./follow-row";
 import { HomeRail } from "./home-rail";
@@ -84,7 +86,7 @@ export function HomeView() {
       </div>
 
       <div className="min-w-0 xl:w-full xl:max-w-194 xl:justify-self-center xl:px-12 xl:pb-10">
-        <div className="mt-6 overflow-hidden rounded-2xl border border-line bg-surface shadow-card xl:mt-8">
+        <div className={cn(feedCardClass, "mt-6 xl:mt-8")}>
           <Tabs
             label={t.feed.label}
             value="mengikuti"
@@ -99,7 +101,7 @@ export function HomeView() {
           {isNew ? (
             <EmptyFeed nowMs={data.nowMs} />
           ) : (
-            <div className="px-5 md:px-6 [&>article:last-child]:border-b-0">
+            <FeedList>
               {ready &&
                 community.status === "ready" &&
                 entries.map((post) => (
@@ -114,7 +116,7 @@ export function HomeView() {
                     onSave={() => actions.save(post.id)}
                   />
                 ))}
-            </div>
+            </FeedList>
           )}
         </div>
       </div>

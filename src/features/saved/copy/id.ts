@@ -1,8 +1,8 @@
 export const saved = {
   title: "Tersimpan",
   signInPrompt: "Masuk untuk melihat tulisan yang kamu simpan.",
-  count: "{count} tulisan · ",
-  countOne: "{count} tulisan · ",
+  unit: "tulisan",
+  unitOne: "tulisan",
   privacy: "Hanya kamu yang bisa melihat daftar ini.",
   loading: "Memuat Tersimpan",
   loadError: "Tulisan tersimpan gagal dimuat. Dokumen di Studio tidak terpengaruh.",

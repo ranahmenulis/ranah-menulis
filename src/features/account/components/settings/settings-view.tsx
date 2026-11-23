@@ -14,6 +14,7 @@ import { DangerSection } from "./danger-section";
 import { PersonalSection } from "./personal-section";
 import { LanguageSection, PreferenceSections } from "./preference-sections";
 import { SecuritySection } from "./security-section";
+import { SettingsNav } from "./settings-nav";
 import { WritingSection } from "./writing-section";
 
 /**
@@ -34,30 +35,34 @@ export function SettingsView() {
     router.push(SIGN_IN_HREF);
   }
 
+  const signOutButton = (
+    <Button variant="text" onClick={signOut} className="-ml-1">
+      <SignOut size={20} aria-hidden />
+      {t.settings.signOut}
+    </Button>
+  );
+
   return (
-    <div className="mx-auto grid w-full max-w-[42.5rem] min-w-0 gap-8">
+    <div className="mx-auto grid w-full max-w-320 min-w-0 gap-6">
       <h1 className="heading-lg">{t.settings.title}</h1>
       {hydrated ? (
-        <>
-          <PersonalSection account={account} />
-          <LanguageSection />
-          <WritingSection prefs={account.prefs.writing} />
-          <PreferenceSections prefs={account.prefs} />
-          <SecuritySection account={account} />
-          <DangerSection />
-          <div className="border-t border-line pt-6">
-            <Button variant="text" onClick={signOut} className="-ml-1">
-              <SignOut size={20} aria-hidden />
-              {t.settings.signOut}
-            </Button>
+        <div className="grid min-w-0 gap-6 lg:grid-cols-[13rem_minmax(0,1fr)] lg:gap-8">
+          <SettingsNav footer={signOutButton} />
+          <div className="grid min-w-0 gap-6">
+            <PersonalSection account={account} />
+            <LanguageSection />
+            <WritingSection prefs={account.prefs.writing} />
+            <PreferenceSections prefs={account.prefs} />
+            <SecuritySection account={account} />
+            <DangerSection />
+            {/* Phones and tablets have no section menu, so Keluar sits at the end. */}
+            <div className="lg:hidden">{signOutButton}</div>
           </div>
-        </>
+        </div>
       ) : (
         <div className="grid gap-6" aria-hidden>
-          <Skeleton className="size-22 rounded-full" />
-          <Skeleton className="h-11" />
-          <Skeleton className="h-11" />
-          <Skeleton className="h-28" />
+          <Skeleton className="h-40 rounded-2xl" />
+          <Skeleton className="h-96 rounded-2xl" />
         </div>
       )}
     </div>

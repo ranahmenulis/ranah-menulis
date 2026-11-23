@@ -56,7 +56,7 @@ export const account = {
     label: "Foto profil",
     hint: "JPG, PNG, atau WebP, maksimal 2 MB.",
   },
-  /** The endpaper beside the account screens (auth-art.ts). */
+  /** The line under the art beside the account screens (auth-art.ts). */
   plate: {
     welcome: {
       line: "Satu kalimat hari ini sudah cukup.",
@@ -140,6 +140,7 @@ export const account = {
   },
   settings: {
     title: "Pengaturan akun",
+    nav: "Bagian pengaturan",
     personal: {
       title: "Informasi pribadi",
       subtitle: "Kelola profil dan detail kontakmu.",
@@ -189,6 +190,10 @@ export const account = {
         "Pilih notifikasi yang ingin kamu terima, di aplikasi dan lewat email. Email dikirim setelah layanan email aktif; pilihanmu sudah tersimpan.",
       app: "Di aplikasi",
       email: "Lewat email",
+      colEvent: "Notifikasi",
+      colApp: "Aplikasi",
+      colEmail: "Email",
+      unavailable: "Tidak tersedia",
       alwaysTitle: "Selalu dikirim",
       always:
         "Verifikasi email dan reset sandi, pendaftaran dan pembayaran proyek, keputusan submission, tahap produksi buku, penugasan Editor dan Juri, pengumuman lomba, serta laporan dan moderasi tidak bisa dimatikan.",

@@ -97,16 +97,19 @@ describe("ProfileView, your own", () => {
     expect(screen.getByRole("link", { name: "Ubah profil" }).getAttribute("href")).toBe(
       "/pengaturan",
     );
-    const identity = screen.getByRole("complementary", { name: "Profil Rinjani Putri" });
-    expect(within(identity).getByRole("link", { name: "Tersimpan" }).getAttribute("href")).toBe(
+    const hero = screen.getByRole("heading", { level: 1 }).closest("header") as HTMLElement;
+    expect(within(hero).getByRole("link", { name: "Tersimpan" }).getAttribute("href")).toBe(
       "/tersimpan",
     );
   });
 
   it("counts who you follow from your own choices", async () => {
     renderProfile("rinjaniputri");
-    const identity = await screen.findByRole("complementary", { name: "Profil Rinjani Putri" });
-    expect(within(identity).getByText("4")).toBeTruthy();
+    const hero = (await screen.findByRole("heading", { level: 1 })).closest(
+      "header",
+    ) as HTMLElement;
+    const following = within(hero).getByText("mengikuti").parentElement as HTMLElement;
+    expect(within(following).getByText("4")).toBeTruthy();
   });
 
   it("lists your own Publik post on Karya", async () => {

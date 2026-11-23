@@ -13,7 +13,7 @@ import { AuthFrame, AuthPage } from "@/features/account/components/auth-frame";
 afterEach(cleanup);
 
 describe("AuthFrame", () => {
-  it("puts the welcome paper beside sign in, decorative and out of the reading order", () => {
+  it("puts the letter art and the welcome line beside sign in, decorative and out of the reading order", () => {
     pathname.value = "/masuk";
     const { container } = render(
       <AuthFrame>
@@ -23,13 +23,10 @@ describe("AuthFrame", () => {
     const plates = container.querySelectorAll("[data-auth-art]");
     expect([...plates].map((p) => p.getAttribute("data-auth-art"))).toEqual(["welcome", "welcome"]);
     plates.forEach((p) => expect(p.getAttribute("aria-hidden")).toBe("true"));
-    container.querySelectorAll("[data-auth-art] img").forEach((img) => {
-      expect(img.getAttribute("alt")).toBe("");
-    });
     expect(screen.getByText("formulir")).toBeTruthy();
   });
 
-  it("uses the other paper while recovering an account", () => {
+  it("uses the other line while recovering an account", () => {
     pathname.value = "/lupa-sandi";
     const { container } = render(
       <AuthFrame>

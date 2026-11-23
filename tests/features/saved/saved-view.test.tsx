@@ -55,7 +55,9 @@ describe("SavedView", () => {
     await holder.store.setMark(mark.saved("sepeda-bapak"), true);
     renderView();
     expect(await screen.findAllByRole("article")).toHaveLength(2);
-    expect(screen.getByText(/2 tulisan/)).toBeTruthy();
+    const hero = screen.getByRole("region", { name: "Tersimpan" });
+    expect(within(hero).getByText("2")).toBeTruthy();
+    expect(within(hero).getByText("tulisan")).toBeTruthy();
     expect(screen.queryByText("Belum ada tulisan yang kamu simpan.")).toBeNull();
   });
 
@@ -74,7 +76,9 @@ describe("SavedView", () => {
         .getByRole("button", { name: "Simpan" })
         .getAttribute("aria-pressed"),
     ).toBe("false");
-    expect(screen.queryByText(/tulisan ·/)).toBeNull();
+    expect(
+      within(screen.getByRole("region", { name: "Tersimpan" })).queryByText("tulisan"),
+    ).toBeNull();
 
     fireEvent.click(within(screen.getByRole("article")).getByRole("button", { name: "Simpan" }));
     expect(

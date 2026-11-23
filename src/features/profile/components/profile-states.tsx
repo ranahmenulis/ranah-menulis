@@ -11,25 +11,20 @@ export function ProfileSkeleton() {
     <div
       role="status"
       aria-label={t.loading}
-      className="mx-auto grid max-w-274 animate-[rm-appear_0s_300ms_forwards] gap-4 opacity-0 lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-x-12"
+      className="mx-auto grid max-w-320 animate-[rm-appear_0s_300ms_forwards] gap-6 opacity-0 lg:grid-cols-[minmax(0,1fr)_20rem]"
     >
-      <div className="grid content-start gap-3">
-        <Skeleton className="h-9 w-56" />
-        <Skeleton className="h-4 w-32" />
-        <Skeleton className="mt-6 h-5 w-64" />
+      <Skeleton className="h-56 rounded-2xl" />
+      <div className="grid content-start gap-3 rounded-2xl border border-line bg-surface p-5 lg:col-start-1">
+        <Skeleton className="h-5 w-64" />
         {[0, 1, 2].map((i) => (
-          <div key={i} className="grid gap-3 border-b border-line py-6">
+          <div key={i} className="grid gap-3 border-b border-line py-6 last:border-b-0">
             <Skeleton className="h-3.5 w-40" />
             <Skeleton className="h-6 w-3/4" />
             <Skeleton className="h-4 w-full" />
           </div>
         ))}
       </div>
-      <div className="grid content-start justify-items-start gap-3 max-lg:order-first">
-        <Skeleton className="size-22 rounded-full" />
-        <Skeleton className="h-4 w-48" />
-        <Skeleton className="h-4 w-full" />
-      </div>
+      <Skeleton className="h-40 rounded-2xl max-lg:hidden lg:col-start-2 lg:row-start-2" />
     </div>
   );
 }

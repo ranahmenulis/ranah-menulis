@@ -2,6 +2,7 @@ import type { notifications as source } from "./id";
 
 export const notifications: typeof source = {
   title: "Notifications",
+  intro: "News about your writing, comments and projects.",
   markAll: "Mark all as read",
   unread: "{count} unread.",
   loading: "Loading notifications…",

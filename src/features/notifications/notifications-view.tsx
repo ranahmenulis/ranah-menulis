@@ -3,7 +3,11 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { EmptyState, ErrorBanner, RetryButton, Skeleton } from "@/components/ui/states";
+import { NoticeLantern } from "@/components/illustrations/letter-art";
+import { PageHero } from "@/components/ui/page-hero";
 import { Tabs } from "@/components/ui/tabs";
+import { feedCardClass } from "@/features/home/feed-card";
+import { cn } from "@/lib/cn";
 import type { PostStore } from "@/features/community/storage/post-store";
 import { useEffectiveRoles } from "@/features/kelola/use-effective-roles";
 import type { AssignmentStore } from "@/features/projects/kelas/storage/assignment-store";
@@ -29,7 +33,9 @@ export function NotificationsView({
   solo?: SoloStore;
   posts?: PostStore;
 }) {
-  const copy = useT().notifications;
+  const t = useT();
+  const copy = t.notifications;
+  const shell = t.shell;
   const locale = useLocale();
   const guest = useViewer() === "tamu";
   const roles = useEffectiveRoles();
@@ -67,85 +73,85 @@ export function NotificationsView({
   }, [visible]);
 
   return (
-    <div className="max-w-182">
-      <div className="flex min-h-8 items-center justify-between gap-4">
-        <h1 ref={heading} tabIndex={-1} className="heading-lg">
-          {copy.title}
-        </h1>
-        {!guest && (
-          <Button
-            variant="text"
-            size="sm"
-            className="-my-2 text-ink"
-            disabled={unread === 0}
-            onClick={markAllRead}
-          >
-            {copy.markAll}
-          </Button>
-        )}
-      </div>
-      {!guest && (
-        <p ref={status} role="status" tabIndex={-1} className="mt-1 text-sm text-ink-muted">
-          {unavailable ? copy.unavailable : null}
-          {unreadText}
-        </p>
-      )}
+    <div className="mx-auto grid w-full max-w-320 min-w-0 gap-6">
+      <PageHero
+        titleId="notifications-title"
+        titleRef={heading}
+        title={copy.title}
+        body={copy.intro}
+        art={NoticeLantern}
+        actions={
+          guest ? undefined : (
+            <Button variant="secondary" size="sm" disabled={unread === 0} onClick={markAllRead}>
+              {copy.markAll}
+            </Button>
+          )
+        }
+      />
 
       {guest ? (
-        <EmptyState className="mt-4" action={<SignInButton>Masuk</SignInButton>}>
+        <EmptyState action={<SignInButton>{shell.guest.signIn}</SignInButton>}>
           {copy.signInPrompt}
         </EmptyState>
       ) : (
-        <>
-          {roles.some((role) => role !== "organizer") && (
-            <p className="mt-1 text-sm text-ink-muted">{copy.staffNote}</p>
-          )}
+        <div className={cn(feedCardClass, "grid")}>
+          <div className="grid gap-1 px-5 pt-4 md:px-6">
+            <p ref={status} role="status" tabIndex={-1} className="text-sm text-ink-muted">
+              {unavailable ? copy.unavailable : null}
+              {unreadText}
+            </p>
+            {roles.some((role) => role !== "organizer") && (
+              <p className="text-sm text-ink-muted">{copy.staffNote}</p>
+            )}
+          </div>
           <Tabs
             label={copy.tabsLabel}
             value={tab}
-            className="mt-4"
+            className="mt-2 px-5 md:px-6"
             onValueChange={(id) => setTab(id as NotificationTab)}
             items={NOTIFICATION_TABS.map((t) => ({ id: t.id, label: copy.tabs[t.id] }))}
           />
-          {failed && (
-            <ErrorBanner className="mt-3" action={<RetryButton onClick={retry} />}>
-              {copy.partialFailed}
-            </ErrorBanner>
-          )}
-          {(visible.length > 0 || (!loading && !failed)) && (
-            <NotificationList
-              items={visible}
-              now={now}
-              confirmOpen={confirmOpen}
-              onFocusCapture={(event) => {
-                focusedRow.current =
-                  (event.target as HTMLElement).closest<HTMLElement>("[data-notification-id]")
-                    ?.dataset.notificationId ?? null;
-              }}
-              onOpen={(id) => {
-                setUnavailable(false);
-                markRead(id);
-              }}
-              onUnavailable={(item) => {
-                setUnavailable(true);
-                status.current?.focus();
-                refreshTarget(item);
-              }}
-            />
-          )}
-          {loading && (
-            <div
-              aria-hidden
-              className="flex gap-3 border-b border-line py-4 opacity-0 motion-safe:animate-[rm-appear_0s_300ms_forwards] motion-reduce:opacity-100"
-            >
-              <Skeleton className="size-8 shrink-0 rounded-full" />
-              <div className="grid flex-1 gap-2">
-                <Skeleton className="h-4 w-3/4" />
-                <Skeleton className="h-3 w-20" />
+          <div className="pb-1">
+            {failed && (
+              <ErrorBanner className="mx-5 mt-4 md:mx-6" action={<RetryButton onClick={retry} />}>
+                {copy.partialFailed}
+              </ErrorBanner>
+            )}
+            {(visible.length > 0 || (!loading && !failed)) && (
+              <NotificationList
+                items={visible}
+                now={now}
+                confirmOpen={confirmOpen}
+                onFocusCapture={(event) => {
+                  focusedRow.current =
+                    (event.target as HTMLElement).closest<HTMLElement>("[data-notification-id]")
+                      ?.dataset.notificationId ?? null;
+                }}
+                onOpen={(id) => {
+                  setUnavailable(false);
+                  markRead(id);
+                }}
+                onUnavailable={(item) => {
+                  setUnavailable(true);
+                  status.current?.focus();
+                  refreshTarget(item);
+                }}
+              />
+            )}
+            {loading && (
+              <div
+                aria-hidden
+                className="flex gap-3 border-b border-line px-5 py-4 opacity-0 motion-safe:animate-[rm-appear_0s_300ms_forwards] motion-reduce:opacity-100 md:px-6"
+              >
+                <Skeleton className="size-8 shrink-0 rounded-full" />
+                <div className="grid flex-1 gap-2">
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-3 w-20" />
+                </div>
               </div>
-            </div>
-          )}
-        </>
+            )}
+          </div>
+        </div>
       )}
     </div>
   );

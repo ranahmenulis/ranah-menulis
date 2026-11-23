@@ -116,23 +116,29 @@ function NotificationRow({
   const locale = useLocale();
   const lead = leadOf(item, copy);
   const unread = !item.read;
+  // Rows run edge to edge of the card, so the unread tint and the dividers line up; the dot sits
+  // in the left padding, so read and unread avatars share one column.
   const row = cn(
-    "-mx-2 flex w-[calc(100%+1rem)] items-start gap-3 px-2 py-4 text-left no-underline",
+    "relative flex w-full items-start gap-3 px-5 py-4 text-left no-underline md:px-6",
     "cursor-pointer hover:bg-subtle active:bg-line",
+    unread && "bg-accent-subtle/50",
   );
 
   const content = (
     <>
       <span
         aria-hidden
-        className={cn("mt-4 size-1.5 shrink-0 rounded-full", unread ? "bg-ink" : "bg-transparent")}
+        className={cn(
+          "absolute top-[1.85rem] left-2 size-1.5 rounded-full md:left-2.5",
+          unread ? "bg-accent" : "bg-transparent",
+        )}
       />
       {item.actorId ? (
         <Avatar name={authorOf(item.actorId).name} size={32} />
       ) : (
         <span
           aria-hidden
-          className="grid size-8 shrink-0 place-items-center rounded-full bg-subtle text-ink"
+          className="grid size-8 shrink-0 place-items-center rounded-full bg-accent-subtle text-accent-ink"
         >
           {item.kind === "project" ? <Books size={18} /> : <Bell size={18} />}
         </span>
@@ -214,6 +220,7 @@ export function NotificationList({
   if (items.length === 0) {
     return (
       <EmptyState
+        className="px-5 md:px-6"
         art="lighthouse"
         action={
           <ButtonLink href="/beranda" variant="secondary">
@@ -229,6 +236,7 @@ export function NotificationList({
   // the other sources load keeps its element (a clicked link must stay connected).
   return (
     <ul
+      className="[&>li:last-child]:border-b-0"
       onFocusCapture={onFocusCapture}
       onClickCapture={() => {
         intent.current += 1;
@@ -238,9 +246,13 @@ export function NotificationList({
       }}
     >
       {dayGroups(items, now, copy.days).flatMap((group, g) => [
-        <li key={`day-${group.key}`} role="presentation" className="pt-6 first:pt-2">
+        <li
+          key={`day-${group.key}`}
+          role="presentation"
+          className="border-b border-line px-5 pt-6 pb-2 first:pt-4 md:px-6"
+        >
           <h2
-            className="rm-rise-in border-b border-line-strong pb-2 font-serif text-xl leading-7"
+            className="rm-rise-in font-serif text-lg leading-7"
             style={{ "--i": g - 3 } as CSSProperties}
           >
             {group.label}

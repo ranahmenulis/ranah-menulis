@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useT } from "@/lib/i18n/provider";
 import { DeleteAccountDialog } from "./delete-account-dialog";
+import { SettingRow, SettingRows } from "./setting-row";
 import { SettingsSection } from "./settings-section";
 
 /**
@@ -16,17 +17,14 @@ export function DangerSection() {
   const { settings } = useT().account;
   const [open, setOpen] = useState(false);
   return (
-    <SettingsSection id="danger" title={settings.danger.title} danger>
-      <div className="grid justify-items-start gap-3 border border-danger p-5">
-        <p className="flex items-center gap-2 text-base font-semibold text-danger">
-          <Warning size={20} aria-hidden />
-          {settings.danger.heading}
-        </p>
-        <p className="text-sm text-ink-read">{settings.danger.body}</p>
-        <Button variant="danger-text" onClick={() => setOpen(true)} className="-ml-1">
-          {settings.danger.action}
-        </Button>
-      </div>
+    <SettingsSection id="danger" title={settings.danger.title} icon={Warning} danger>
+      <SettingRows>
+        <SettingRow label={settings.danger.heading} hint={settings.danger.body}>
+          <Button variant="danger-text" onClick={() => setOpen(true)}>
+            {settings.danger.action}
+          </Button>
+        </SettingRow>
+      </SettingRows>
       {open && <DeleteAccountDialog onClose={() => setOpen(false)} />}
     </SettingsSection>
   );

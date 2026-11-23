@@ -1,10 +1,7 @@
-import Link from "next/link";
-import { AuthorAvatar } from "@/features/community/components/author-avatar";
-import { Button, ButtonLink } from "@/components/ui/button";
+import { IdentificationCard } from "@phosphor-icons/react/dist/ssr";
+import { Section } from "@/components/ui/section-card";
+import { cn } from "@/lib/cn";
 import { format, useT } from "@/lib/i18n/provider";
-import { CountUp } from "@/components/ui/count-up";
-import { SETTINGS_HREF } from "@/features/account/redirect";
-import { SAVED_HREF } from "@/features/app-shell/nav";
 import type { Author, Genre } from "@/features/community/types";
 import type { ProfileFixture } from "../fixtures";
 import { whereOf } from "../profile-model";
@@ -12,80 +9,43 @@ import { whereOf } from "../profile-model";
 type Props = {
   author: Author;
   profile: ProfileFixture;
-  /** Public works, the same list as the Karya tab. */
-  works: number;
-  followers: number;
-  following: number;
   genres: Genre[];
-  own: boolean;
-  isFollowing: boolean;
-  onFollow: () => void;
+  className?: string;
 };
 
 /**
- * The right column of a profile (DESIGN.md 6.5), above the tabs on phones: avatar, three rolling counts, bio,
- * where from, genres, streak when the author shares it, and one button. Your own profile has no
- * Ikuti (COM-08); it offers editing in Settings instead.
+ * The right column of a profile (DESIGN.md 6.5) from lg: a card with the bio, where from and the
+ * genres. Phones skip it: the Tentang tab says the same, and the hero carries the rest.
  */
 export function ProfileIdentity(p: Props) {
   const t = useT().profile;
   return (
     <aside
       aria-label={format(t.aside, { name: p.author.name })}
-      className="grid justify-items-start gap-3 py-5 lg:sticky lg:top-[calc(6rem+var(--safe-top))] lg:col-start-2 lg:row-span-3 lg:row-start-1 lg:self-start lg:py-0"
+      className={cn("lg:sticky lg:top-[calc(6rem+var(--safe-top))] lg:self-start", p.className)}
     >
-      <AuthorAvatar author={p.author} size={88} />
-      <dl className="grid w-full grid-cols-3 border-y border-line py-3">
-        {(
-          [
-            [t.counts.works, p.works],
-            [t.counts.followers, p.followers],
-            [t.counts.following, p.following],
-          ] as const
-        ).map(([label, value]) => (
-          <div key={label} className="grid gap-0.5">
-            <dt className="order-2 text-xs text-ink-muted">{label}</dt>
-            <dd className="order-1 font-serif text-[28px] leading-none font-light tabular-nums">
-              <CountUp value={value} />
-            </dd>
-          </div>
-        ))}
-      </dl>
-      {p.profile.bio && (
-        <p className="text-sm leading-6 [overflow-wrap:anywhere] text-ink-read">{p.profile.bio}</p>
-      )}
-      <p className="text-sm [overflow-wrap:anywhere] text-ink-muted">{whereOf(p.author)}</p>
-      {p.genres.length > 0 && <p className="text-sm text-ink-muted">{p.genres.join(" · ")}</p>}
-      {p.profile.streak !== undefined && (
-        <p className="text-sm tabular-nums">
-          {format(t.streak, { days: String(p.profile.streak) })}
-        </p>
-      )}
-
-      {p.own ? (
-        <>
-          <ButtonLink href={SETTINGS_HREF} variant="secondary" size="sm">
-            {t.editProfile}
-          </ButtonLink>
-          {/* Phones have no sidebar, so this is how Tersimpan is reached there. */}
-          <Link
-            href={SAVED_HREF}
-            className="inline-flex min-h-11 items-center text-sm text-ink underline lg:hidden"
-          >
-            {t.saved}
-          </Link>
-        </>
-      ) : (
-        <Button
-          variant="secondary"
-          size="sm"
-          aria-pressed={p.isFollowing}
-          onClick={p.onFollow}
-          className="min-w-28 aria-pressed:bg-subtle"
-        >
-          {p.isFollowing ? t.following : t.follow}
-        </Button>
-      )}
+      <Section title={t.tabs.tentang} icon={IdentificationCard} id="profile-about-title">
+        <div className="grid gap-2">
+          {p.profile.bio && (
+            <p className="text-sm leading-6 [overflow-wrap:anywhere] text-ink-read">
+              {p.profile.bio}
+            </p>
+          )}
+          <p className="text-sm [overflow-wrap:anywhere] text-ink-muted">{whereOf(p.author)}</p>
+          {p.genres.length > 0 && (
+            <ul className="flex flex-wrap gap-1.5" aria-label={t.about.genre}>
+              {p.genres.map((genre) => (
+                <li
+                  key={genre}
+                  className="rounded-full bg-accent-subtle px-2.5 py-0.5 text-xs text-accent-ink"
+                >
+                  {genre}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </Section>
     </aside>
   );
 }

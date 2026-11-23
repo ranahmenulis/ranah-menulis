@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { Tabs } from "@/components/ui/tabs";
+import { cn } from "@/lib/cn";
 import { format, useT } from "@/lib/i18n/provider";
 import { useViewer } from "@/lib/viewer";
 import { ME_ID } from "@/features/community/fixtures/authors";
@@ -10,8 +11,10 @@ import { usePostActions } from "@/features/community/hooks/use-post-actions";
 import { authorByHandle, commentCounts } from "@/features/community/post-model";
 import { mark } from "@/features/community/storage/post-store";
 import { postStore } from "@/features/community/storage/store";
+import { FeedList, feedCardClass } from "@/features/home/feed-card";
 import { FeedItem } from "@/features/home/feed-item";
 import { followerCount, followingCount, genresOf, profileOf, publicWorks } from "../profile-model";
+import { ProfileHero } from "./profile-hero";
 import { ProfileIdentity } from "./profile-identity";
 import { ProfileError, ProfileGone, ProfileSkeleton } from "./profile-states";
 import { AboutTab, ProjectsTab, WorksEmpty } from "./profile-tabs-content";
@@ -44,61 +47,61 @@ export function ProfileView({ handle }: { handle: string }) {
   const profile = profileOf(author.id);
 
   return (
-    <div className="mx-auto grid max-w-274 lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-x-12">
-      <header className="lg:col-start-1 lg:row-start-1">
-        <h1 className="rm-rise-in font-serif text-[34px] leading-[1.15] [overflow-wrap:anywhere] [--i:-3] md:text-[48px]">
-          {author.name}
-        </h1>
-        <p className="text-sm [overflow-wrap:anywhere] text-ink-muted">@{author.handle}</p>
-      </header>
-
-      <ProfileIdentity
+    <div className="mx-auto grid w-full max-w-320 gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
+      <ProfileHero
         author={author}
-        profile={profile}
         works={works.length}
         followers={followerCount(author.id, data.marks)}
         following={followingCount(author.id, data.marks)}
-        genres={genres}
+        streak={profile.streak}
         own={own}
         isFollowing={data.following(author.id)}
         onFollow={() => actions.follow(author.id, author.name)}
       />
 
-      <Tabs
-        label={format(t.tabsLabel, { name: author.name })}
-        value={tab}
-        onValueChange={setTab}
-        items={[
-          { id: "karya", label: t.tabs.karya },
-          { id: "tentang", label: t.tabs.tentang },
-          { id: "proyek", label: t.tabs.proyek },
-        ]}
-        className="lg:col-start-1 lg:row-start-2"
-      />
-
-      <div className="min-w-0 lg:col-start-1 lg:row-start-3">
-        {tab === "karya" &&
-          (works.length === 0 ? (
-            <WorksEmpty own={own} />
-          ) : (
-            works.map((post) => (
-              <FeedItem
-                key={post.id}
-                post={post}
-                now={data.now}
-                comments={counts.get(post.id) ?? 0}
-                appreciated={data.marks[mark.appreciated(post.id)] ?? false}
-                saved={data.marks[mark.saved(post.id)] ?? false}
-                onAppreciate={() => actions.appreciate(post.id)}
-                onSave={() => actions.save(post.id)}
-              />
-            ))
-          ))}
-        {tab === "tentang" && (
-          <AboutTab author={author} profile={profile} genres={genres} own={own} />
-        )}
-        {tab === "proyek" && <ProjectsTab own={own} />}
+      <div className={cn(feedCardClass, "min-w-0 lg:col-start-1")}>
+        <Tabs
+          label={format(t.tabsLabel, { name: author.name })}
+          value={tab}
+          onValueChange={setTab}
+          items={[
+            { id: "karya", label: t.tabs.karya },
+            { id: "tentang", label: t.tabs.tentang },
+            { id: "proyek", label: t.tabs.proyek },
+          ]}
+          className="px-5 pt-1 md:px-6"
+        />
+        <FeedList className="pb-1">
+          {tab === "karya" &&
+            (works.length === 0 ? (
+              <WorksEmpty own={own} />
+            ) : (
+              works.map((post) => (
+                <FeedItem
+                  key={post.id}
+                  post={post}
+                  now={data.now}
+                  comments={counts.get(post.id) ?? 0}
+                  appreciated={data.marks[mark.appreciated(post.id)] ?? false}
+                  saved={data.marks[mark.saved(post.id)] ?? false}
+                  onAppreciate={() => actions.appreciate(post.id)}
+                  onSave={() => actions.save(post.id)}
+                />
+              ))
+            ))}
+          {tab === "tentang" && (
+            <AboutTab author={author} profile={profile} genres={genres} own={own} />
+          )}
+          {tab === "proyek" && <ProjectsTab own={own} />}
+        </FeedList>
       </div>
+
+      <ProfileIdentity
+        author={author}
+        profile={profile}
+        genres={genres}
+        className="max-lg:hidden lg:col-start-2 lg:row-start-2"
+      />
       {actions.guestDialog}
     </div>
   );

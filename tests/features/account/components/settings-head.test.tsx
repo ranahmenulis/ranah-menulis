@@ -18,7 +18,14 @@ const saved: AccountProfile = {
 
 function Harness({ profile = saved }: { profile?: AccountProfile }) {
   const form = useProfileForm(profile, profile.username);
-  return <SettingsHead profile={profile} form={form} />;
+  return (
+    <SettingsHead
+      profile={profile}
+      form={form}
+      email="rinjani@contoh.id"
+      memberSince="Anggota sejak November 2026"
+    />
+  );
 }
 
 describe("SettingsHead", () => {

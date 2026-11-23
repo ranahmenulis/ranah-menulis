@@ -7,7 +7,7 @@ import { cn } from "@/lib/cn";
 import { format, useLocale, useT } from "@/lib/i18n/provider";
 import { countdownLabel } from "../event-face";
 import { formatEventTime, type EventStateName, type WritingEvent } from "../event-model";
-import { HeroBanner } from "../../components/community-hero";
+import { HeroBanner } from "@/components/ui/page-hero";
 import { DateLeaf } from "./date-leaf";
 import { EventStatePill, EventTimeline } from "./event-pill";
 

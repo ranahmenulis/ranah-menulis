@@ -1,12 +1,14 @@
 "use client";
 
-import { CheckChoice } from "@/components/ui/choice";
-import { Field, Select } from "@/components/ui/field";
+import { Eye, Translate } from "@phosphor-icons/react/dist/ssr";
+import { Select } from "@/components/ui/field";
 import { LOCALES, type Locale } from "@/lib/i18n/config";
 import { useChangeLocale, useLocale, useT } from "@/lib/i18n/provider";
 import { saveAccount, type Account, type AccountPrefs } from "../../account-store";
 import { NotificationPreferences } from "./notification-preferences";
+import { SettingRow, SettingRows } from "./setting-row";
 import { SettingsSection } from "./settings-section";
+import { Switch } from "./switch";
 
 export function LanguageSection() {
   const { settings } = useT().account;
@@ -15,23 +17,27 @@ export function LanguageSection() {
   return (
     <SettingsSection
       id="language"
+      icon={Translate}
       title={settings.language.title}
       subtitle={settings.language.subtitle}
     >
-      <Field id="language-select" label={settings.language.label} className="max-w-72">
-        <Select
-          id="language-select"
-          value={locale}
-          disabled={pending}
-          onChange={(event) => change(event.target.value as Locale)}
-        >
-          {LOCALES.map((code) => (
-            <option key={code} value={code}>
-              {settings.language[code]}
-            </option>
-          ))}
-        </Select>
-      </Field>
+      <SettingRows>
+        <SettingRow label={settings.language.label} labelFor="language-select">
+          <Select
+            className="sm:w-64"
+            id="language-select"
+            value={locale}
+            disabled={pending}
+            onChange={(event) => change(event.target.value as Locale)}
+          >
+            {LOCALES.map((code) => (
+              <option key={code} value={code}>
+                {settings.language[code]}
+              </option>
+            ))}
+          </Select>
+        </SettingRow>
+      </SettingRows>
     </SettingsSection>
   );
 }
@@ -42,13 +48,16 @@ export function PreferenceSections({ prefs }: { prefs: Account["prefs"] }) {
   const set = (patch: Partial<AccountPrefs>) => saveAccount({ prefs: patch });
   return (
     <>
-      <SettingsSection id="privacy" title={settings.privacy.title}>
-        <CheckChoice
-          label={settings.privacy.streakLabel}
-          hint={settings.privacy.streakHint}
-          checked={prefs.showStreak}
-          onChange={(event) => set({ showStreak: event.target.checked })}
-        />
+      <SettingsSection id="privacy" icon={Eye} title={settings.privacy.title}>
+        <SettingRows>
+          <SettingRow label={settings.privacy.streakLabel} hint={settings.privacy.streakHint}>
+            <Switch
+              label={settings.privacy.streakLabel}
+              checked={prefs.showStreak}
+              onChange={(checked) => set({ showStreak: checked })}
+            />
+          </SettingRow>
+        </SettingRows>
       </SettingsSection>
       <NotificationPreferences prefs={prefs.notifications} />
     </>

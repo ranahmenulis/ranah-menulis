@@ -2,7 +2,7 @@
 
 import { ArrowRight } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
-import type { ReactNode } from "react";
+import type { ReactNode, Ref } from "react";
 import { heroCardClass, heroSceneClass } from "@/components/ui/card";
 import { CountUp } from "@/components/ui/count-up";
 import { cn } from "@/lib/cn";
@@ -61,13 +61,13 @@ function Stat({ stat }: { stat: HeroStat }) {
 }
 
 /**
- * The top of a Community list tab: a slim hero strip (DESIGN.md 6.8) so the content starts on the
- * first screen. A title, one sentence, the one figure and up to three small figures on a single
+ * A slim hero strip (DESIGN.md 6.8) for list screens (Community tabs, Tersimpan, Notifikasi), so
+ * the content starts on the first screen. A title, one sentence, the one figure and up to three small figures on a single
  * row (links when they lead somewhere), and the section's illustration at the right, placed like
  * the Streak landscape (`heroSceneClass`). On a phone the illustration is a thin band on top so it
  * never covers the figures.
  */
-export function CommunityHero({
+export function PageHero({
   titleId,
   title,
   body,
@@ -75,6 +75,7 @@ export function CommunityHero({
   figure,
   stats = [],
   actions,
+  titleRef,
 }: {
   titleId: string;
   title: string;
@@ -83,6 +84,8 @@ export function CommunityHero({
   figure?: { value: number | null; label: string };
   stats?: HeroStat[];
   actions?: ReactNode;
+  /** For screens that move focus back to their title; makes it focusable from script. */
+  titleRef?: Ref<HTMLHeadingElement>;
 }) {
   return (
     <section
@@ -94,6 +97,8 @@ export function CommunityHero({
       <div className="grid max-w-xl gap-1">
         <h1
           id={titleId}
+          ref={titleRef}
+          tabIndex={titleRef ? -1 : undefined}
           className="text-[26px] leading-8 font-bold tracking-[-0.02em] md:text-[32px] md:leading-10"
         >
           {title}

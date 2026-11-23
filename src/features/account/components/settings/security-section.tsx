@@ -1,10 +1,12 @@
 "use client";
 
+import { LockKey } from "@phosphor-icons/react/dist/ssr";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { format, useLocale, useT } from "@/lib/i18n/provider";
 import type { Account } from "../../account-store";
 import { ChangePasswordDialog } from "./change-password-dialog";
+import { SettingRow, SettingRows } from "./setting-row";
 import { SettingsSection } from "./settings-section";
 
 export function SecuritySection({ account }: { account: Account }) {
@@ -19,22 +21,24 @@ export function SecuritySection({ account }: { account: Account }) {
   return (
     <SettingsSection
       id="security"
+      icon={LockKey}
       title={settings.security.title}
       subtitle={settings.security.subtitle}
     >
-      <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
-        <div className="grid gap-0.5 text-sm">
-          <p className="font-medium">{settings.security.password}</p>
-          <p className="text-ink-muted">
-            {changed
+      <SettingRows>
+        <SettingRow
+          label={settings.security.password}
+          hint={
+            changed
               ? format(settings.security.lastChanged, { date: changed })
-              : settings.security.neverChanged}
-          </p>
-        </div>
-        <Button variant="secondary" onClick={() => setOpen(true)}>
-          {settings.security.change}
-        </Button>
-      </div>
+              : settings.security.neverChanged
+          }
+        >
+          <Button variant="secondary" onClick={() => setOpen(true)}>
+            {settings.security.change}
+          </Button>
+        </SettingRow>
+      </SettingRows>
       {open && <ChangePasswordDialog onClose={() => setOpen(false)} />}
     </SettingsSection>
   );

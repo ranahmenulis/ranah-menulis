@@ -7,7 +7,7 @@ import { CountUp } from "@/components/ui/count-up";
 import { slugHash, titleInitial } from "@/features/projects/cover-model";
 import { cn } from "@/lib/cn";
 import { useT } from "@/lib/i18n/provider";
-import { HeroBanner } from "../../components/community-hero";
+import { HeroBanner } from "@/components/ui/page-hero";
 import type { WritingGroup } from "../group-model";
 
 /** Dots drawn around a seal: one per member up to this many. */

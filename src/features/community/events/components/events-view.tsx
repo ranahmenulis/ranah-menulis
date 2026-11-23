@@ -12,7 +12,7 @@ import { format, useLocale, useT } from "@/lib/i18n/provider";
 import { useGroupReader } from "../../groups/group-viewer";
 import { CommunityEmpty } from "../../components/community-empty";
 import { CommunityFrame } from "../../components/community-frame";
-import { CommunityHero, type HeroStat } from "../../components/community-hero";
+import { PageHero, type HeroStat } from "@/components/ui/page-hero";
 import { entryOf, eventHref, eventState, formatEventTime, type WritingEvent } from "../event-model";
 import { countdownLabel } from "../event-face";
 import { refreshEvents, useEvents } from "../event-store";
@@ -102,7 +102,7 @@ export function EventsView() {
     : [];
   return (
     <CommunityFrame>
-      <CommunityHero
+      <PageHero
         titleId="events-title"
         title={t.title}
         body={t.hero.body}

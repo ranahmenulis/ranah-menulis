@@ -27,7 +27,7 @@ import { mark } from "../../storage/post-store";
 import { postStore } from "../../storage/store";
 import type { CategoryId } from "../../types";
 import { CommunityFrame } from "../community-frame";
-import { CommunityHero, type HeroStat } from "../community-hero";
+import { PageHero, type HeroStat } from "@/components/ui/page-hero";
 import { DiscoverTile } from "./discover-tile";
 import { DiscoverSkeleton } from "./discover-skeleton";
 
@@ -97,7 +97,7 @@ export function DiscoverView() {
 
   return (
     <CommunityFrame>
-      <CommunityHero
+      <PageHero
         titleId="community-title"
         title={t.title}
         body={t.hero.body}

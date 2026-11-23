@@ -1,10 +1,12 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { SavedBook } from "@/components/illustrations/personal-art";
+import { PageHero } from "@/components/ui/page-hero";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { EmptyState, ErrorBanner, FeedItemSkeleton, RetryButton } from "@/components/ui/states";
-import { format, useLocale, useT } from "@/lib/i18n/provider";
-import { formatNumber } from "@/lib/i18n/format";
+import { cn } from "@/lib/cn";
+import { useT } from "@/lib/i18n/provider";
 import { useViewer } from "@/lib/viewer";
 import { SignInButton } from "@/features/account/components/auth-buttons";
 import { DISCOVER_HREF } from "@/features/app-shell/nav";
@@ -15,6 +17,7 @@ import { usePostActions } from "@/features/community/hooks/use-post-actions";
 import { mark } from "@/features/community/storage/post-store";
 import { commentCounts } from "@/features/community/post-model";
 import { postStore } from "@/features/community/storage/store";
+import { FeedList, feedCardClass } from "@/features/home/feed-card";
 import { FeedItem } from "@/features/home/feed-item";
 import { savedPostIds, splitSaved } from "./saved-list";
 
@@ -26,7 +29,6 @@ import { savedPostIds, splitSaved } from "./saved-list";
 export function SavedView() {
   const t = useT();
   const c = t.saved;
-  const locale = useLocale();
   const guest = useViewer() === "tamu";
   const data = useCommunity(postStore);
   const groups = writingGroups.use();
@@ -45,45 +47,46 @@ export function SavedView() {
 
   const empty = data.status === "ready" && kept.size === 0;
 
+  const count = data.status === "ready" && saved.length > 0 ? saved.length : null;
+  const gone = unavailable.filter((id) => data.marks[mark.saved(id)]);
+
   return (
-    <div className="max-w-182">
-      <h1 className="heading-lg">{c.title}</h1>
+    <div className="mx-auto grid w-full max-w-320 min-w-0 gap-6">
+      <PageHero
+        titleId="saved-title"
+        title={c.title}
+        body={c.privacy}
+        art={SavedBook}
+        figure={
+          count === null ? undefined : { value: count, label: count === 1 ? c.unitOne : c.unit }
+        }
+      />
       {guest ? (
-        <EmptyState className="mt-4" action={<SignInButton>{t.shell.guest.signIn}</SignInButton>}>
+        <EmptyState action={<SignInButton>{t.shell.guest.signIn}</SignInButton>}>
           {c.signInPrompt}
         </EmptyState>
       ) : (
         <>
-          <p className="mt-1 text-sm text-ink-muted">
-            {data.status === "ready" &&
-              saved.length > 0 &&
-              format(saved.length === 1 ? c.countOne : c.count, {
-                count: formatNumber(saved.length, locale),
-              })}
-            {c.privacy}
-          </p>
-
           {data.status === "loading" && (
             <div
               role="status"
               aria-label={c.loading}
-              className="mt-4 animate-[rm-appear_0s_300ms_forwards] opacity-0"
+              className={cn(feedCardClass, "animate-[rm-appear_0s_300ms_forwards] opacity-0")}
             >
-              {[0, 1, 2].map((i) => (
-                <FeedItemSkeleton key={i} />
-              ))}
+              <FeedList>
+                {[0, 1, 2].map((i) => (
+                  <FeedItemSkeleton key={i} />
+                ))}
+              </FeedList>
             </div>
           )}
 
           {data.status === "error" && (
-            <ErrorBanner className="mt-6" action={<RetryButton onClick={data.reload} />}>
-              {c.loadError}
-            </ErrorBanner>
+            <ErrorBanner action={<RetryButton onClick={data.reload} />}>{c.loadError}</ErrorBanner>
           )}
 
           {empty && (
             <EmptyState
-              className="mt-4"
               art="library"
               action={
                 <ButtonLink href={DISCOVER_HREF} variant="secondary">
@@ -95,8 +98,8 @@ export function SavedView() {
             </EmptyState>
           )}
 
-          {data.status === "ready" && (
-            <div className="mt-2">
+          {data.status === "ready" && available.length + gone.length > 0 && (
+            <FeedList className={feedCardClass}>
               {available.map((post) => (
                 <FeedItem
                   key={post.id}
@@ -109,25 +112,23 @@ export function SavedView() {
                   onSave={() => actions.save(post.id)}
                 />
               ))}
-              {unavailable
-                .filter((id) => data.marks[mark.saved(id)])
-                .map((id) => (
-                  <div
-                    key={id}
-                    className="flex items-center justify-between gap-4 border-b border-line py-6"
+              {gone.map((id) => (
+                <div
+                  key={id}
+                  className="flex items-center justify-between gap-4 border-b border-line py-6"
+                >
+                  <p className="text-sm text-ink-muted">{c.gone}</p>
+                  <Button
+                    variant="text"
+                    size="sm"
+                    className="shrink-0 text-ink"
+                    onClick={() => actions.save(id)}
                   >
-                    <p className="text-sm text-ink-muted">{c.gone}</p>
-                    <Button
-                      variant="text"
-                      size="sm"
-                      className="shrink-0 text-ink"
-                      onClick={() => actions.save(id)}
-                    >
-                      {c.remove}
-                    </Button>
-                  </div>
-                ))}
-            </div>
+                    {c.remove}
+                  </Button>
+                </div>
+              ))}
+            </FeedList>
           )}
         </>
       )}

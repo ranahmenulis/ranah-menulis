@@ -1,6 +1,6 @@
 "use client";
 
-import { ShieldCheck } from "@phosphor-icons/react/dist/ssr";
+import { User } from "@phosphor-icons/react/dist/ssr";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { Notice } from "@/components/ui/states";
 import { useToast } from "@/components/ui/toast";
@@ -36,9 +36,17 @@ export function PersonalSection({ account }: { account: Account }) {
 
   return (
     <>
-      <SettingsHead profile={account.profile} form={form} />
+      <SettingsHead
+        profile={account.profile}
+        form={form}
+        email={account.email}
+        memberSince={format(t.settings.personal.memberSince, {
+          date: memberSince(account.memberSince, locale),
+        })}
+      />
       <SettingsSection
         id="personal"
+        icon={User}
         title={t.settings.personal.title}
         subtitle={t.settings.personal.subtitle}
       >
@@ -56,30 +64,16 @@ export function PersonalSection({ account }: { account: Account }) {
             );
           }}
         >
-          <ProfileFields form={form} ownUsername={account.profile.username} photo={false} />
+          <ProfileFields form={form} ownUsername={account.profile.username} photo={false} columns />
 
           {zoneChanged && <Notice>{t.settings.zone.warning}</Notice>}
 
-          <div className="grid gap-1 border-t border-line pt-5 text-sm">
-            <p className="text-ink-muted">{t.settings.personal.email}</p>
-            <p className="[overflow-wrap:anywhere]">{account.email}</p>
-            <p className="flex items-center gap-1.5 font-medium">
-              <ShieldCheck size={18} aria-hidden />
-              {t.settings.personal.verified}
-            </p>
-            <p className="mt-2 text-ink-muted">
-              {format(t.settings.personal.memberSince, {
-                date: memberSince(account.memberSince, locale),
-              })}
-            </p>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-3">
-            <Button type="submit">{t.settings.personal.save}</Button>
+          <div className="flex flex-wrap items-center justify-end gap-3 border-t border-line pt-5">
             {/* The public profile page still reads the dummy author, whatever username was saved. */}
             <ButtonLink href={OWN_PROFILE_HREF} variant="text">
               {t.settings.personal.viewProfile}
             </ButtonLink>
+            <Button type="submit">{t.settings.personal.save}</Button>
           </div>
         </form>
       </SettingsSection>

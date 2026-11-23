@@ -1,4 +1,3 @@
-import { Check } from "@phosphor-icons/react/dist/ssr";
 import type { ComponentProps, ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
@@ -32,18 +31,42 @@ export function RadioChoice({ label, hint, className, ...props }: RadioChoicePro
   );
 }
 
-/** Square selection mark for lists where a row is chosen as a whole (the block picker). */
+/**
+ * The check box drawn beside a hidden checkbox (CheckChoice, the block picker, the notification
+ * table). Checked fills with the accent and the tick draws itself in (stroke offset, 180ms, after a
+ * short delay so the fill leads); unchecking wipes it out faster. The box gives a little under the
+ * pointer while its label is pressed. Transitions, not keyframes, so a quick double click reverses
+ * mid-way; reduced motion switches straight.
+ */
 export function CheckMark({ checked, className }: { checked: boolean; className?: string }) {
   return (
     <span
       aria-hidden
       className={cn(
-        "mt-0.5 grid size-5 shrink-0 place-items-center border",
-        checked ? "border-ink bg-ink text-on-ink" : "border-line-strong bg-canvas text-transparent",
+        "mt-0.5 grid size-5 shrink-0 place-items-center rounded-md border",
+        "transition-[background-color,border-color,transform] duration-150 ease-out in-active:scale-90 motion-reduce:transition-none",
+        checked
+          ? "border-accent bg-accent text-on-accent"
+          : "border-line-strong bg-surface text-transparent in-hover:border-accent",
         className,
       )}
     >
-      <Check size={14} weight="bold" />
+      <svg viewBox="0 0 16 16" className="size-3.5" fill="none">
+        <path
+          d="M3.5 8.5 6.5 11.5 12.5 4.5"
+          pathLength={1}
+          stroke={checked ? "currentColor" : "var(--color-on-accent)"}
+          strokeWidth={2.2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeDasharray={1}
+          strokeDashoffset={checked ? 0 : 1}
+          className={cn(
+            "motion-safe:transition-[stroke-dashoffset] motion-reduce:transition-none",
+            checked ? "duration-200 ease-out motion-safe:delay-75" : "duration-100 ease-in",
+          )}
+        />
+      </svg>
     </span>
   );
 }

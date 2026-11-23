@@ -4,6 +4,7 @@ import { Chip } from "@/components/ui/chip";
 import { RadioChoice } from "@/components/ui/choice";
 import { describedBy, Field, Input, Select, Textarea } from "@/components/ui/field";
 import { GENRES, type Genre } from "@/features/community/types";
+import { cn } from "@/lib/cn";
 import { format, useT } from "@/lib/i18n/provider";
 import { usernameTaken } from "../dummy-auth";
 import { profileFieldId, type ProfileForm } from "../hooks/use-profile-form";
@@ -12,22 +13,36 @@ import { COUNTRIES, zoneOptions } from "../timezones";
 import { BIO_MAX, NAME_MAX, normalizeUsername, USERNAME_MAX } from "../validation";
 import { PhotoPicker } from "./photo-picker";
 
+/** Class names for the one-column (onboarding) and two-column (Settings) layouts. */
+const LAYOUT = {
+  one: { root: "grid gap-6", wide: undefined, country: "grid gap-3", legend: "mb-1" },
+  two: {
+    root: "grid items-start gap-6 md:grid-cols-2 md:gap-x-5",
+    wide: "md:col-span-2",
+    country: "grid content-start gap-3 sm:flex sm:gap-6",
+    legend: "mb-1 sm:mb-3",
+  },
+};
+
 type Props = {
   form: ProfileForm;
   /** The username the reader already has: it is not "taken" for them, and it is not "new". */
   ownUsername?: string;
   /** Settings shows the photo in its head instead, so it passes false. */
   photo?: boolean;
+  /** Settings lays the fields out in two columns from md; onboarding keeps one narrow column. */
+  columns?: boolean;
 };
 
 /**
  * The profile fields (PLT-02): photo, name, username, bio, country, time zone, genres. Used by
  * onboarding and by Settings; the screen supplies the heading, the form tag, and the button.
  */
-export function ProfileFields({ form, ownUsername, photo = true }: Props) {
+export function ProfileFields({ form, ownUsername, photo = true, columns = false }: Props) {
   const t = useT().account;
   const device = useDeviceTimeZone();
   const { values, set, touch, issueOf } = form;
+  const layout = columns ? LAYOUT.two : LAYOUT.one;
 
   const nameError = issueOf("name");
   const usernameError = issueOf("username");
@@ -49,7 +64,7 @@ export function ProfileFields({ form, ownUsername, photo = true }: Props) {
       : format(t.zones.other, { zone });
 
   return (
-    <div className="grid gap-6">
+    <div className={layout.root}>
       {photo && <PhotoPicker form={form} />}
 
       <Field
@@ -98,6 +113,7 @@ export function ProfileFields({ form, ownUsername, photo = true }: Props) {
       <Field
         id={profileFieldId("bio")}
         label={t.fields.bio}
+        className={layout.wide}
         optional
         hint={format(t.fields.bioHint, { count: String(Array.from(values.bio.trim()).length) })}
         error={bioError && t.errors[bioError]}
@@ -118,8 +134,8 @@ export function ProfileFields({ form, ownUsername, photo = true }: Props) {
         />
       </Field>
 
-      <fieldset className="grid gap-3">
-        <legend className="mb-1 text-sm font-medium">{t.fields.country}</legend>
+      <fieldset className={layout.country}>
+        <legend className={cn("text-sm font-medium", layout.legend)}>{t.fields.country}</legend>
         {COUNTRIES.map((country) => (
           <RadioChoice
             key={country}
@@ -147,7 +163,7 @@ export function ProfileFields({ form, ownUsername, photo = true }: Props) {
         </Select>
       </Field>
 
-      <fieldset className="grid gap-3">
+      <fieldset className={cn("grid gap-3", layout.wide)}>
         <legend className="mb-1 text-sm font-medium">
           {t.fields.genres} <span className="font-normal text-ink-muted">{t.fields.optional}</span>
         </legend>

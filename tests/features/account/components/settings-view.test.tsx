@@ -234,7 +234,8 @@ describe("SettingsView, danger zone", () => {
 
   it("signs out to the sign-in screen", () => {
     wrap(<SettingsView />);
-    fireEvent.click(screen.getByRole("button", { name: "Keluar" }));
+    // Keluar appears in the section menu (lg) and at the end of the page (smaller screens).
+    fireEvent.click(screen.getAllByRole("button", { name: "Keluar" })[0]);
     expect(nav.push).toHaveBeenCalledWith("/masuk");
   });
 });

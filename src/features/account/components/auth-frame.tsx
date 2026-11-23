@@ -2,8 +2,10 @@
 
 import { usePathname } from "next/navigation";
 import type { CSSProperties, ReactNode } from "react";
+import { cardClass } from "@/components/ui/card";
 import { DisplayControls } from "@/components/ui/display-controls";
 import { Wordmark } from "@/components/ui/logo";
+import { cn } from "@/lib/cn";
 import { useT } from "@/lib/i18n/provider";
 import { artFor } from "../auth-art";
 import { AuthPlatePanel, AuthPlateStrip } from "./auth-plate";
@@ -12,8 +14,9 @@ const step = (i: number) => ({ "--i": i }) as CSSProperties;
 
 /**
  * Frame of the screens that come before the app: sign in, sign up, reset, verify, onboarding. Only a
- * bar with the logo (back to the landing page) and the display controls, then one narrow column and
- * the endpaper (DESIGN.md 6, layar akun): a panel beside the form from lg, a strip above it below.
+ * bar with the logo (back to the landing page) and the display controls, then the form in one card
+ * and the letter art (DESIGN.md 6, layar akun): a hero card beside it from lg, a band on top of the
+ * form card below.
  * There is no navigation because there is no account yet.
  */
 export function AuthFrame({ children }: { children: ReactNode }) {
@@ -26,11 +29,11 @@ export function AuthFrame({ children }: { children: ReactNode }) {
         <span className="flex-1" />
         <DisplayControls />
       </header>
-      <div className="grid flex-1 grid-cols-[minmax(0,1fr)] lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+      <div className="grid flex-1 grid-cols-[minmax(0,1fr)] gap-6 px-4 py-6 md:px-6 md:py-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
         {/* Clip, not hide: the celebration rings may spread past the column without a scrollbar. */}
         <div className="min-w-0 overflow-x-clip">
-          <AuthPlateStrip art={art} />
-          <main className="mx-auto w-full max-w-[26rem] min-w-0 px-4 py-10 md:py-16 lg:py-20">
+          <main className={cn(cardClass, "mx-auto w-full max-w-[28rem] min-w-0 lg:mt-10")}>
+            <AuthPlateStrip art={art} />
             {children}
           </main>
         </div>

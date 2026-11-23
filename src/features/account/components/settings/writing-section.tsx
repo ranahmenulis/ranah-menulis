@@ -1,9 +1,9 @@
 "use client";
 
+import { PenNib } from "@phosphor-icons/react/dist/ssr";
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { CheckChoice } from "@/components/ui/choice";
-import { Field, Select } from "@/components/ui/field";
+import { Select } from "@/components/ui/field";
 import { ErrorBanner } from "@/components/ui/states";
 import { useT } from "@/lib/i18n/provider";
 import { saveAccount } from "../../account-store";
@@ -12,7 +12,9 @@ import {
   WRITING_MODES,
   type WritingPreferences,
 } from "../../writing-preferences";
+import { SettingRow, SettingRows } from "./setting-row";
 import { SettingsSection } from "./settings-section";
+import { Switch } from "./switch";
 
 export function WritingSection({ prefs }: { prefs: WritingPreferences }) {
   const { writing } = useT().account.settings;
@@ -30,12 +32,18 @@ export function WritingSection({ prefs }: { prefs: WritingPreferences }) {
   }
 
   return (
-    <SettingsSection id="writing" title={writing.title} subtitle={writing.description}>
-      <div className="grid gap-4">
-        <Field id="writing-mode" label={writing.mode} className="max-w-72">
+    <SettingsSection
+      id="writing"
+      icon={PenNib}
+      title={writing.title}
+      subtitle={writing.description}
+    >
+      <SettingRows>
+        <SettingRow label={writing.mode} labelFor="writing-mode">
           <Select
             id="writing-mode"
             ref={modeField}
+            className="sm:w-56"
             value={prefs.mode}
             onChange={(event) => save({ mode: event.target.value as WritingPreferences["mode"] })}
           >
@@ -45,11 +53,12 @@ export function WritingSection({ prefs }: { prefs: WritingPreferences }) {
               </option>
             ))}
           </Select>
-        </Field>
+        </SettingRow>
         {prefs.mode === "typewriter" && (
-          <Field id="typewriter-position" label={writing.typewriterPosition} className="max-w-72">
+          <SettingRow label={writing.typewriterPosition} labelFor="typewriter-position">
             <Select
               id="typewriter-position"
+              className="sm:w-56"
               value={prefs.typewriterPosition}
               onChange={(event) =>
                 save({
@@ -64,21 +73,23 @@ export function WritingSection({ prefs }: { prefs: WritingPreferences }) {
                 </option>
               ))}
             </Select>
-          </Field>
+          </SettingRow>
         )}
-        <CheckChoice
-          label={writing.curlyQuotes}
-          hint={writing.curlyQuotesHint}
-          checked={prefs.curlyQuotes}
-          onChange={(event) => save({ curlyQuotes: event.target.checked })}
-        />
-        <CheckChoice
-          label={writing.substitutions}
-          hint={writing.substitutionsHint}
-          checked={prefs.substitutions}
-          onChange={(event) => save({ substitutions: event.target.checked })}
-        />
-      </div>
+        <SettingRow label={writing.curlyQuotes} hint={writing.curlyQuotesHint}>
+          <Switch
+            label={writing.curlyQuotes}
+            checked={prefs.curlyQuotes}
+            onChange={(checked) => save({ curlyQuotes: checked })}
+          />
+        </SettingRow>
+        <SettingRow label={writing.substitutions} hint={writing.substitutionsHint}>
+          <Switch
+            label={writing.substitutions}
+            checked={prefs.substitutions}
+            onChange={(checked) => save({ substitutions: checked })}
+          />
+        </SettingRow>
+      </SettingRows>
       {failed && (
         <ErrorBanner
           action={
