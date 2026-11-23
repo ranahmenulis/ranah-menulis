@@ -3,27 +3,20 @@
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
+import { format, useLocale, useT } from "@/lib/i18n/provider";
 import { FilePickButton } from "@/components/ui/file-pick-button";
 import { EmptyState, ErrorBanner, RetryButton, Skeleton } from "@/components/ui/states";
 import { useSoloRows } from "@/features/projects/solo/hooks/use-solo-rows";
-import {
-  addPreviewFile,
-  advanceStage,
-  type ActionResult,
-} from "@/features/projects/solo/solo-actions";
+import { addPreviewFile, advanceStage } from "@/features/projects/solo/solo-actions";
 import { stagesFor } from "@/features/projects/solo/solo-model";
-import {
-  STAGE_LABEL,
-  currentStage,
-  neededPreviews,
-  withAdvance,
-} from "@/features/projects/solo/stage-model";
+import { currentStage, neededPreviews, withAdvance } from "@/features/projects/solo/stage-model";
 import type { SoloStore } from "@/features/projects/solo/storage/solo-store";
 import { soloStore } from "@/features/projects/solo/storage/store";
 import type { PreviewFile, SoloProgress, SoloStage } from "@/features/projects/solo/types";
 import type { Submission } from "@/features/projects/submission-types";
 import type { Project, Registration } from "@/features/projects/types";
 import { fileKindLabel, formatFileSize } from "@/lib/files/format-size";
+import { problemText } from "@/lib/files/problem-text";
 import { saveUpload, type SaveUploadResult } from "@/lib/files/save-upload";
 import { fileStore } from "@/lib/files/store";
 
@@ -40,13 +33,10 @@ type Ask =
   | { kind: "lanjut"; book: Book; label: string }
   | { kind: "pratinjau"; book: Book; file: PreviewFile["kind"] };
 
-const fileName = (kind: PreviewFile["kind"]) => (kind === "cover" ? "sampul" : "isi buku");
+type SoloCopy = ReturnType<typeof useT>["kelolaOrganizerTabs"]["solo"];
 
-const failed: Record<Exclude<ActionResult, "ok">, string> = {
-  rejected: "Tahap buku ini sudah berubah, jadi tidak ada yang dilakukan.",
-  missing: "Buku ini tidak ditemukan lagi.",
-  failed: "Data di perangkat ini tidak terbaca, jadi belum tersimpan.",
-};
+const fileNameOf = (t: SoloCopy, kind: PreviewFile["kind"]) =>
+  kind === "cover" ? t.fileCover : t.fileBook;
 
 /**
  * The accepted Solo books of the project and where each one stands (SOL-02). The publishing team
@@ -65,6 +55,10 @@ export function SoloStageList({
   registration: Registration | undefined;
   store?: SoloStore;
 }) {
+  const tabs = useT().kelolaOrganizerTabs;
+  const t = tabs.solo;
+  const locale = useLocale();
+  const fileName = (kind: PreviewFile["kind"]) => fileNameOf(t, kind);
   const rows = useSoloRows(store);
   const [asking, setAsking] = useState<Ask | null>(null);
   const [busy, setBusy] = useState(false);
@@ -103,7 +97,7 @@ export function SoloStageList({
     const saved = await saveUpload(file, "preview", fileStore());
     setSaving(false);
     if (saved.ok) setPicked(saved.file);
-    else setPickError(saved.message);
+    else setPickError(problemText(saved.problem, "preview", locale));
   }
 
   async function confirm(ask: Ask) {
@@ -119,22 +113,18 @@ export function SoloStageList({
     setSaid(
       result === "ok"
         ? ask.kind === "lanjut"
-          ? `“${book.title}” sekarang di tahap ${ask.label.toLowerCase()}.`
-          : `Pratinjau ${fileName(ask.file)} ditambahkan ke “${book.title}”.`
-        : failed[result],
+          ? format(t.advanced, { title: book.title, stage: ask.label.toLowerCase() })
+          : format(t.previewAdded, { file: fileName(ask.file), title: book.title })
+        : t.failed[result],
     );
     requestAnimationFrame(() => line.current?.focus());
   }
 
   if (rows.status === "error") {
-    return (
-      <ErrorBanner action={<RetryButton onClick={rows.reload} />}>
-        Tahap buku belum bisa dibuka karena data di perangkat ini tidak terbaca.
-      </ErrorBanner>
-    );
+    return <ErrorBanner action={<RetryButton onClick={rows.reload} />}>{t.loadError}</ErrorBanner>;
   }
   if (rows.status === "loading") {
-    return <Skeleton role="status" aria-label="Memuat tahap buku" className="h-16 w-full" />;
+    return <Skeleton role="status" aria-label={t.loading} className="h-16 w-full" />;
   }
 
   return (
@@ -143,12 +133,9 @@ export function SoloStageList({
         {said}
       </p>
       {books.length === 0 ? (
-        <EmptyState>
-          Belum ada naskah yang diterima di perangkat ini. Tahap berjalan setelah editor menerima
-          naskah (tab Kiriman).
-        </EmptyState>
+        <EmptyState>{t.empty}</EmptyState>
       ) : (
-        <ul aria-label="Buku dalam penerbitan" className="border-t border-line">
+        <ul aria-label={t.list} className="border-t border-line">
           {books.map((book) => (
             <BookRow key={book.id} book={book} onAsk={setAsking} />
           ))}
@@ -160,25 +147,21 @@ export function SoloStageList({
           onClose={close}
           title={
             asking.kind === "lanjut"
-              ? `Lanjut ke ${asking.label.toLowerCase()}?`
-              : `Tambah pratinjau ${fileName(asking.file)}?`
+              ? format(t.advanceTitle, { stage: asking.label.toLowerCase() })
+              : format(t.previewTitle, { file: fileName(asking.file) })
           }
-          description={
-            asking.kind === "lanjut"
-              ? "Penulis melihat tahap barunya di dasbor."
-              : "Penulis bisa melihat pratinjau ini sebelum memberi persetujuan final."
-          }
+          description={asking.kind === "lanjut" ? t.advanceBody : t.previewBody}
           actions={
             <>
               <Button variant="secondary" onClick={close}>
-                Batal
+                {tabs.common.cancel}
               </Button>
               <Button
                 loading={busy}
                 disabled={asking.kind === "pratinjau" && picked === null}
                 onClick={() => void confirm(asking)}
               >
-                {asking.kind === "lanjut" ? "Lanjutkan" : "Tambahkan"}
+                {asking.kind === "lanjut" ? t.advanceConfirm : t.previewConfirm}
               </Button>
             </>
           }
@@ -188,16 +171,16 @@ export function SoloStageList({
               <div className="flex flex-wrap items-center gap-3">
                 <FilePickButton
                   kind="preview"
-                  label={`Pilih berkas pratinjau ${fileName(asking.file)}`}
+                  label={format(t.pickLabel, { file: fileName(asking.file) })}
                   onPick={(file) => void pickPreview(file)}
                   disabled={saving}
                 >
-                  {saving ? "Menyimpan…" : picked ? "Ganti berkas" : "Pilih berkas"}
+                  {saving ? t.saving : picked ? t.replace : t.pick}
                 </FilePickButton>
                 <span className="min-w-0 text-sm wrap-anywhere text-ink-muted">
                   {picked
-                    ? `${picked.name} · ${fileKindLabel(picked.type)} · ${formatFileSize(picked.size)}`
-                    : "Gambar JPG, PNG, WebP, atau PDF."}
+                    ? `${picked.name} · ${fileKindLabel(picked.type, locale)} · ${formatFileSize(picked.size, locale)}`
+                    : t.pickHint}
                 </span>
               </div>
               {pickError && (
@@ -214,9 +197,12 @@ export function SoloStageList({
 }
 
 function BookRow({ book, onAsk }: { book: Book; onAsk: (ask: Ask) => void }) {
+  const t = useT().kelolaOrganizerTabs.solo;
+  const stageLabel = useT().projectsSolo.stage.label;
+  const fileName = (kind: PreviewFile["kind"]) => fileNameOf(t, kind);
   const current = currentStage(book.stages, book.progress);
   const hasNext = withAdvance(book.stages, book.progress, book, 0) !== null;
-  const nextLabel = STAGE_LABEL[book.stages[book.stages.indexOf(current) + 1] ?? "selesai"];
+  const nextLabel = stageLabel[book.stages[book.stages.indexOf(current) + 1] ?? "selesai"];
   const have = new Set(book.progress?.files.map((f) => f.kind));
   const missing = neededPreviews(book.stages).filter((kind) => !have.has(kind));
   return (
@@ -224,9 +210,11 @@ function BookRow({ book, onAsk }: { book: Book; onAsk: (ask: Ask) => void }) {
       <div className="grid gap-0.5">
         <span className="font-medium wrap-anywhere">{book.title}</span>
         <span className="text-sm text-ink-muted">
-          {book.packageName ? `Paket ${book.packageName} · ` : ""}tahap{" "}
-          {STAGE_LABEL[current].toLowerCase()}
-          {` · ${book.progress?.files.length ?? 0} pratinjau`}
+          {book.packageName ? format(t.packagePrefix, { name: book.packageName }) : ""}
+          {format(t.meta, {
+            stage: stageLabel[current].toLowerCase(),
+            count: String(book.progress?.files.length ?? 0),
+          })}
         </span>
       </div>
       <div className="flex flex-wrap gap-2">
@@ -236,7 +224,7 @@ function BookRow({ book, onAsk }: { book: Book; onAsk: (ask: Ask) => void }) {
             size="sm"
             onClick={() => onAsk({ kind: "lanjut", book, label: nextLabel })}
           >
-            Lanjut ke {nextLabel.toLowerCase()}
+            {format(t.advanceButton, { stage: nextLabel.toLowerCase() })}
           </Button>
         )}
         {missing.map((file) => (
@@ -246,7 +234,7 @@ function BookRow({ book, onAsk }: { book: Book; onAsk: (ask: Ask) => void }) {
             size="sm"
             onClick={() => onAsk({ kind: "pratinjau", book, file })}
           >
-            Tambah pratinjau {fileName(file)}
+            {format(t.previewButton, { file: fileName(file) })}
           </Button>
         ))}
       </div>

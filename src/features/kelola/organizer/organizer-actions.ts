@@ -9,6 +9,7 @@ import { OWNER_ID } from "./organizer-access";
 import { buildProject, type BuildResult } from "./project-build";
 import { discardPoster } from "./poster-files";
 import type { ProjectInput } from "./project-input";
+import { renderProblem } from "./project-problem";
 import type { StatusAction } from "./project-status";
 
 /** Seats this device knows about for a project: a registration that still holds one. */
@@ -20,8 +21,14 @@ export function registrantsOf(slug: string, now: number): number {
 export function saveProject(input: ProjectInput, slug: string | null, now: number): BuildResult {
   const stored = storedProjects.read();
   const existing = slug ? stored.find((p) => p.slug === slug) : undefined;
-  if (slug && !existing)
-    return { ok: false, errors: { title: "Proyek ini tidak ditemukan lagi." } };
+  if (slug && !existing) {
+    const problem = { code: "notFound" } as const;
+    return {
+      ok: false,
+      errors: { title: renderProblem(problem, "id") },
+      problems: { title: problem },
+    };
+  }
   const result = buildProject(input, {
     now,
     taken: slug ? registrantsOf(slug, now) : 0,

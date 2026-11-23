@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { describedBy, Field, Input, Select, Textarea } from "@/components/ui/field";
 import { ErrorBanner, Notice } from "@/components/ui/states";
+import { useLocale, useT } from "@/lib/i18n/provider";
 import type { WritingEvent } from "@/features/community/events/event-model";
 import { useActionStatus } from "@/features/kelola/admin/use-action-status";
 import { manageEventHref } from "./event-access";
@@ -13,21 +14,20 @@ import { saveWritingEvent } from "./manage-event-actions";
 
 type Key = keyof EventInput;
 type FieldInfo = {
-  label: string;
   type?: "datetime-local" | "number" | "textarea";
   optional?: boolean;
 };
 const fields: Record<Key, FieldInfo> = {
-  title: { label: "Judul event" },
-  description: { label: "Deskripsi", type: "textarea" },
-  rules: { label: "Aturan tantangan", type: "textarea" },
-  zone: { label: "Zona waktu" },
-  start: { label: "Mulai event", type: "datetime-local" },
-  end: { label: "Selesai event", type: "datetime-local" },
-  target: { label: "Target kata", type: "number" },
-  capacity: { label: "Kuota peserta", type: "number", optional: true },
-  sprintStart: { label: "Mulai sprint", type: "datetime-local", optional: true },
-  sprintMinutes: { label: "Durasi sprint (menit)", type: "number", optional: true },
+  title: {},
+  description: { type: "textarea" },
+  rules: { type: "textarea" },
+  zone: {},
+  start: { type: "datetime-local" },
+  end: { type: "datetime-local" },
+  target: { type: "number" },
+  capacity: { type: "number", optional: true },
+  sprintStart: { type: "datetime-local", optional: true },
+  sprintMinutes: { type: "number", optional: true },
 };
 const basics = ["title", "description", "rules"] as const;
 const schedule = ["zone", "start", "end", "target", "capacity"] as const;
@@ -43,7 +43,9 @@ type EventFieldProps = {
 };
 
 function EventField({ id, name, value, disabled, error, change }: EventFieldProps) {
-  const { label, type, optional } = fields[name];
+  const t = useT().kelolaOrganizerEvents.form;
+  const { type, optional } = fields[name];
+  const label = t.fields[name];
   const props = {
     id,
     value,
@@ -55,8 +57,8 @@ function EventField({ id, name, value, disabled, error, change }: EventFieldProp
     <Field id={id} label={label} optional={optional} error={error}>
       {name === "zone" ? (
         <Select {...props} onChange={(e) => change(name, e.target.value)}>
-          <option value="WIB">WIB · Jakarta</option>
-          <option value="MYT">MYT · Kuala Lumpur</option>
+          <option value="WIB">{t.zones.WIB}</option>
+          <option value="MYT">{t.zones.MYT}</option>
         </Select>
       ) : type === "textarea" ? (
         <Textarea {...props} onChange={(e) => change(name, e.target.value)} />
@@ -85,6 +87,8 @@ function formValues(
 }
 
 export function EventForm({ event, now }: { event?: WritingEvent; now: number }) {
+  const t = useT().kelolaOrganizerEvents.form;
+  const locale = useLocale();
   const id = useId();
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
@@ -120,6 +124,8 @@ export function EventForm({ event, now }: { event?: WritingEvent; now: number })
     const result = await saveWritingEvent(
       values,
       event && revision !== undefined ? { id: event.id, revision } : undefined,
+      Date.now,
+      locale,
     );
     setPending(false);
     if (!result.ok) {
@@ -133,7 +139,7 @@ export function EventForm({ event, now }: { event?: WritingEvent; now: number })
     }
     if (event) {
       setRevision(result.revision);
-      show("Perubahan event disimpan.", true);
+      show(t.saved, true);
     } else router.push(manageEventHref(result.id));
   }
 
@@ -170,35 +176,31 @@ export function EventForm({ event, now }: { event?: WritingEvent; now: number })
                 setError("");
               }}
             >
-              Muat pengaturan terbaru
+              {t.reload}
             </Button>
           }
         >
-          Event diubah dari halaman lain. Memuat pengaturan terbaru akan mengganti isian ini.
+          {t.stale}
         </Notice>
       )}
       <div className="grid gap-4">{basics.map((name) => field(name))}</div>
       <fieldset className="grid min-w-0 gap-4 border-t border-line pt-4">
-        <legend className="pr-3 heading-md">Jadwal dan peserta</legend>
-        {locked && (
-          <Notice>Jadwal, zona waktu, dan target kata terkunci setelah ada peserta.</Notice>
-        )}
-        <p className="text-sm text-ink-muted">Kosongkan kuota jika jumlah peserta bebas.</p>
+        <legend className="pr-3 heading-md">{t.schedule}</legend>
+        {locked && <Notice>{t.scheduleLocked}</Notice>}
+        <p className="text-sm text-ink-muted">{t.capacityHint}</p>
         {schedule.map(field)}
       </fieldset>
       <fieldset className="grid min-w-0 gap-4 border-t border-line pt-4">
-        <legend className="pr-3 heading-md">Sprint bersama</legend>
+        <legend className="pr-3 heading-md">{t.sprint}</legend>
         {sprintLocked ? (
-          <Notice>Jadwal sprint terkunci setelah sesi mulai.</Notice>
+          <Notice>{t.sprintLocked}</Notice>
         ) : (
-          <p className="text-sm text-ink-muted">
-            Isi waktu mulai dan durasi jika event memiliki sesi sprint.
-          </p>
+          <p className="text-sm text-ink-muted">{t.sprintHint}</p>
         )}
         {sprint.map(field)}
       </fieldset>
       <Button className="justify-self-start" type="submit" disabled={pending || Boolean(stale)}>
-        {event ? "Simpan perubahan" : "Buat event"}
+        {event ? t.save : t.create}
       </Button>
     </form>
   );

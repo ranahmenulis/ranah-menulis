@@ -1,6 +1,7 @@
 "use client";
 
 import { Notice } from "@/components/ui/states";
+import { useT } from "@/lib/i18n/provider";
 import type { SoloStore } from "@/features/projects/solo/storage/solo-store";
 import type { Submission } from "@/features/projects/submission-types";
 import type { Project, Registration } from "@/features/projects/types";
@@ -25,15 +26,16 @@ export function StageTab({
   now: number;
   soloStore?: SoloStore;
 }) {
+  const t = useT().kelolaOrganizer;
   if (project.category === "lomba")
     return <ContestStagePanel project={project} now={now} works={works} />;
   if (project.category !== "solo") {
-    return <Notice>Proyek ini tidak punya tahap yang dijalankan di sini.</Notice>;
+    return <Notice>{t.stage.none}</Notice>;
   }
   return (
     <section aria-labelledby="tahap-title" className="grid max-w-170 gap-4">
       <h2 id="tahap-title" className="heading-md">
-        Tahap penerbitan
+        {t.stage.title}
       </h2>
       <SoloStageList
         project={project}

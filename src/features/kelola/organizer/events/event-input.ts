@@ -1,3 +1,5 @@
+import type { Locale } from "@/lib/i18n/config";
+import { fill } from "@/features/studio/copy/fill";
 import type {
   EventSettings,
   EventSprint,
@@ -5,6 +7,7 @@ import type {
 } from "@/features/community/events/event-model";
 import type { TimeZoneName } from "@/features/projects/types";
 import { MAX_SPRINT_MINUTES, parseMinutes } from "@/features/studio/sprint";
+import { eventsCopy } from "./copy";
 
 export type EventInput = {
   title: string;
@@ -70,12 +73,13 @@ function positiveInteger(input: string) {
   return /^\d+$/.test(input) && Number.isSafeInteger(value) && value > 0 ? value : null;
 }
 
-function textIssues(fields: Pick<EventInput, "title" | "description" | "rules">) {
+function textIssues(fields: Pick<EventInput, "title" | "description" | "rules">, locale: Locale) {
+  const t = eventsCopy(locale).issues;
   const errors: FormIssues = {};
   for (const [key, max] of Object.entries(EVENT_TEXT_LIMITS)) {
     const field = key as keyof typeof fields;
-    if (!fields[field]) errors[field] = "Isi bidang ini.";
-    else if (fields[field].length > max) errors[field] = `Maksimal ${max} karakter.`;
+    if (!fields[field]) errors[field] = t.required;
+    else if (fields[field].length > max) errors[field] = fill(t.max, { max: String(max) });
   }
   return errors;
 }
@@ -85,41 +89,43 @@ function parseSprint(
   start: number | null,
   end: number | null,
   errors: FormIssues,
+  locale: Locale,
 ) {
+  const t = eventsCopy(locale).issues;
   if (!input.sprintStart && !input.sprintMinutes) return null;
   const sprintStart = timestamp(input.sprintStart, input.zone);
   const minutes = parseMinutes(input.sprintMinutes);
-  if (sprintStart === null) errors.sprintStart = "Isi tanggal dan jam mulai sprint yang valid.";
-  if (minutes === null) errors.sprintMinutes = `Isi durasi 1–${MAX_SPRINT_MINUTES} menit.`;
+  if (sprintStart === null) errors.sprintStart = t.sprintStart;
+  if (minutes === null)
+    errors.sprintMinutes = fill(t.sprintMinutes, { max: String(MAX_SPRINT_MINUTES) });
   if (sprintStart === null || minutes === null) return null;
   const sprint = { startsAt: sprintStart, endsAt: sprintStart + minutes * 60_000 };
   if ((start !== null && sprint.startsAt < start) || (end !== null && sprint.endsAt > end)) {
-    errors.sprintStart = "Seluruh sesi sprint harus berada di dalam jadwal event.";
+    errors.sprintStart = t.sprintWithin;
   }
   return sprint;
 }
 
-export function buildEvent(input: EventInput): EventBuild {
+export function buildEvent(input: EventInput, locale: Locale = "id"): EventBuild {
+  const t = eventsCopy(locale).issues;
   const fields = {
     title: input.title.trim(),
     description: input.description.trim(),
     rules: input.rules.trim(),
   };
-  const errors = textIssues(fields);
+  const errors = textIssues(fields, locale);
   if (input.zone !== "WIB" && input.zone !== "MYT") {
-    return { ok: false, errors: { ...errors, zone: "Pilih zona waktu." } };
+    return { ok: false, errors: { ...errors, zone: t.zone } };
   }
   const start = timestamp(input.start, input.zone);
   const end = timestamp(input.end, input.zone);
   const target = positiveInteger(input.target.trim());
   const capacity = positiveInteger(input.capacity.trim());
-  if (start === null) errors.start = "Isi tanggal dan jam mulai yang valid.";
-  if (end === null || (start !== null && end <= start))
-    errors.end = "Pilih waktu setelah event dimulai.";
-  if (target === null) errors.target = "Isi target dengan bilangan bulat positif.";
-  if (input.capacity.trim() && capacity === null)
-    errors.capacity = "Isi kuota dengan bilangan bulat positif.";
-  const sprint = parseSprint(input, start, end, errors);
+  if (start === null) errors.start = t.start;
+  if (end === null || (start !== null && end <= start)) errors.end = t.end;
+  if (target === null) errors.target = t.target;
+  if (input.capacity.trim() && capacity === null) errors.capacity = t.capacity;
+  const sprint = parseSprint(input, start, end, errors, locale);
   if (start === null || end === null || target === null || Object.keys(errors).length) {
     return { ok: false, errors };
   }
@@ -145,11 +151,13 @@ export function settingsBlock(
   settings: EventSettings,
   event: WritingEvent | undefined,
   now: number,
+  locale: Locale = "id",
 ) {
-  if (!event) return settings.endsAt <= now ? "Pilih waktu selesai yang belum lewat." : null;
+  const t = eventsCopy(locale).blocks;
+  if (!event) return settings.endsAt <= now ? t.endPast : null;
   const taken = event.participants.length;
   if (settings.capacity !== null && settings.capacity < taken)
-    return `Kuota paling sedikit ${taken} peserta.`;
+    return fill(t.capacity, { taken: String(taken) });
   // [usulan] Participants keep their original event window and word target.
   if (
     event.scheduleLocked &&
@@ -158,14 +166,14 @@ export function settingsBlock(
       event.zone !== settings.zone ||
       event.target !== settings.target)
   ) {
-    return "Jadwal, zona waktu, dan target kata terkunci setelah ada peserta.";
+    return t.scheduleLocked;
   }
   if (
     event.sprint &&
     now >= event.sprint.startsAt &&
     (event.zone !== settings.zone || !sameSprint(event.sprint, settings.sprint))
   ) {
-    return "Jadwal sprint dan zona waktu terkunci setelah sesi mulai.";
+    return t.sprintLocked;
   }
   return null;
 }

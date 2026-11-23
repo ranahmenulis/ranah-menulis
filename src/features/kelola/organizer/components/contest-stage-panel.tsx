@@ -4,10 +4,10 @@ import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Notice } from "@/components/ui/states";
+import { format, useLocale, useT } from "@/lib/i18n/provider";
 import {
   announcementDates,
   contestStage,
-  stageLabel,
   stageRank,
 } from "@/features/projects/lomba/contest-model";
 import { advanceContest, useContestOverrides } from "@/features/projects/lomba/stage-store";
@@ -18,22 +18,10 @@ import { ResultsEditor } from "./results-editor";
 import type { Submission } from "@/features/projects/submission-types";
 import type { Project } from "@/features/projects/types";
 
-const STEPS: { stage: ContestStage; label: string; body: string }[] = [
-  {
-    stage: "dinilai",
-    label: "Tutup penerimaan, mulai dinilai",
-    body: "Karya tidak diterima lagi dan penilaian dimulai.",
-  },
-  {
-    stage: "finalis",
-    label: "Umumkan finalis",
-    body: "Daftar finalis tampil di halaman hasil, terbuka untuk siapa saja.",
-  },
-  {
-    stage: "pemenang",
-    label: "Umumkan pemenang",
-    body: "Pemenang tampil di halaman hasil, dan lomba anonim membuka nama penulisnya.",
-  },
+const STEPS: { stage: Exclude<ContestStage, "terbuka"> }[] = [
+  { stage: "dinilai" },
+  { stage: "finalis" },
+  { stage: "pemenang" },
 ];
 
 /**
@@ -51,6 +39,9 @@ export function ContestStagePanel({
   /** The non-draft works of the project, for the results below. */
   works?: Submission[];
 }) {
+  const t = useT().kelolaOrganizerTabs;
+  const stageLabel = useT().projectsContest.stageLabel;
+  const locale = useLocale();
   const overrides = useContestOverrides();
   const stage = contestStage(project, now, overrides[project.slug]?.stage);
   const next = STEPS.filter((s) => stageRank(s.stage) > stageRank(stage));
@@ -62,34 +53,35 @@ export function ContestStagePanel({
   function confirm(step: (typeof STEPS)[number]) {
     advanceContest(project.slug, step.stage);
     setAsking(null);
-    setSaid(`${step.label}: selesai.`);
+    setSaid(format(t.contest.done, { label: t.contest.steps[step.stage].label }));
     requestAnimationFrame(() => line.current?.focus());
   }
 
   return (
     <section aria-labelledby="tahap-title" className="grid max-w-170 gap-4">
       <h2 id="tahap-title" className="heading-md">
-        Tahap lomba
+        {t.contest.title}
       </h2>
       <p className="text-sm">
-        Sekarang: <b className="font-medium">{stageLabel[stage]}</b>
+        {t.contest.now} <b className="font-medium">{stageLabel[stage]}</b>
       </p>
       <p className="text-xs text-ink-muted">
-        Jadwal: finalis{" "}
-        {dates.finalists === null
-          ? "tanpa tanggal"
-          : formatProjectDate(dates.finalists, project.timeZone)}
-        , pemenang{" "}
-        {dates.winners === null
-          ? "tanpa tanggal"
-          : formatProjectDate(dates.winners, project.timeZone)}
-        . Tahap berjalan sesuai tanggal; tombol di bawah mendahuluinya.
+        {format(t.contest.schedule, {
+          finalists:
+            dates.finalists === null
+              ? t.contest.noDate
+              : formatProjectDate(dates.finalists, project.timeZone, locale),
+          winners:
+            dates.winners === null
+              ? t.contest.noDate
+              : formatProjectDate(dates.winners, project.timeZone, locale),
+        })}
       </p>
       <p ref={line} tabIndex={-1} role="status" className="min-h-5 text-sm outline-none">
         {said}
       </p>
       {next.length === 0 ? (
-        <Notice>Pemenang sudah diumumkan. Pengumuman tidak bisa ditarik.</Notice>
+        <Notice>{t.contest.ended}</Notice>
       ) : (
         <div className="flex flex-wrap gap-2">
           {next.map((step, i) => (
@@ -98,7 +90,7 @@ export function ContestStagePanel({
               variant={i === 0 ? "secondary" : "text"}
               onClick={() => setAsking(step)}
             >
-              {step.label}
+              {t.contest.steps[step.stage].label}
             </Button>
           ))}
         </div>
@@ -110,14 +102,14 @@ export function ContestStagePanel({
           open
           onClose={() => setAsking(null)}
           role="alertdialog"
-          title={`${asking.label}?`}
-          description={`${asking.body} Pengumuman tidak bisa ditarik kembali.`}
+          title={`${t.contest.steps[asking.stage].label}?`}
+          description={`${t.contest.steps[asking.stage].body} ${t.contest.irreversible}`}
           actions={
             <>
               <Button variant="secondary" onClick={() => setAsking(null)}>
-                Batal
+                {t.common.cancel}
               </Button>
-              <Button onClick={() => confirm(asking)}>{asking.label}</Button>
+              <Button onClick={() => confirm(asking)}>{t.contest.steps[asking.stage].label}</Button>
             </>
           }
         />

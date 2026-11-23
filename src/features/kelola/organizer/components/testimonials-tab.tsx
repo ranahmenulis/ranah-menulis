@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/states";
+import { format, useLocale, useT } from "@/lib/i18n/provider";
 import { formatProjectDate } from "@/features/projects/project-model";
 import {
   isHidden,
@@ -13,7 +14,7 @@ import {
 import { useAllTestimonials } from "@/features/projects/kelas/testimonial-store";
 import type { Project } from "@/features/projects/types";
 import { ReasonDialog } from "../../components/reason-dialog";
-import { decideTestimonial } from "../testimonial-actions";
+import { decideTestimonial, decisionText } from "../testimonial-actions";
 
 type Asking = { testimonial: Testimonial; hide: boolean };
 
@@ -23,9 +24,12 @@ type Asking = { testimonial: Testimonial; hide: boolean };
  * back. The result is said beside the list, because the button changes once it is done.
  */
 export function TestimonialsTab({ project }: { project: Project }) {
+  const t = useT().kelolaOrganizerTabs.testimonials;
+  const anonymous = useT().projectsClass.testimonial.anonymous;
+  const locale = useLocale();
   const { items, decisions } = useAllTestimonials();
   const list = items
-    .filter((t) => t.slug === project.slug)
+    .filter((item) => item.slug === project.slug)
     .sort((a, b) => b.updatedAt - a.updatedAt);
   const [asking, setAsking] = useState<Asking | null>(null);
   const [said, setSaid] = useState("");
@@ -40,54 +44,54 @@ export function TestimonialsTab({ project }: { project: Project }) {
       reason,
     );
     setAsking(null);
-    setSaid(result.message);
+    setSaid(decisionText(result.code, locale));
     requestAnimationFrame(() => line.current?.focus());
   }
 
   return (
     <section aria-labelledby="testimoni-title" className="grid max-w-170 gap-4">
       <h2 id="testimoni-title" className="heading-md">
-        Testimoni
+        {t.title}
       </h2>
-      <p className="text-sm text-ink-muted">
-        Testimoni langsung tampil di halaman kelas. Sembunyikan yang tidak pantas; penulisnya tetap
-        melihatnya, tanpa alasan yang kamu tulis.
-      </p>
+      <p className="text-sm text-ink-muted">{t.intro}</p>
       <p ref={line} tabIndex={-1} role="status" className="min-h-5 text-sm outline-none">
         {said}
       </p>
       {list.length === 0 ? (
-        <EmptyState>Belum ada testimoni untuk kelas ini.</EmptyState>
+        <EmptyState>{t.empty}</EmptyState>
       ) : (
         <ul className="border-t border-line">
-          {list.map((t) => {
-            const hidden = isHidden(t.id, decisions);
-            const last = latestDecision(t.id, decisions);
+          {list.map((item) => {
+            const hidden = isHidden(item.id, decisions);
+            const last = latestDecision(item.id, decisions);
             return (
               <li
-                key={t.id}
+                key={item.id}
                 className="flex flex-wrap items-start justify-between gap-x-4 gap-y-2 border-b border-line py-3"
               >
                 <div className="grid min-w-0 gap-1">
-                  <p className="text-base wrap-anywhere whitespace-pre-line">{t.text}</p>
+                  <p className="text-base wrap-anywhere whitespace-pre-line">{item.text}</p>
                   <p className="text-xs text-ink-muted">
-                    {t.name} · tampil sebagai {publicName(t)} ·{" "}
-                    {formatProjectDate(t.updatedAt, project.timeZone)}
-                    {t.sample ? " · contoh" : ""}
+                    {format(t.meta, {
+                      name: item.name,
+                      shown: publicName(item, anonymous),
+                      date: formatProjectDate(item.updatedAt, project.timeZone, locale),
+                    })}
+                    {item.sample ? t.sample : ""}
                   </p>
-                  <p className="text-xs font-medium">
-                    {hidden ? "Disembunyikan" : "Tampil di halaman kelas"}
-                  </p>
+                  <p className="text-xs font-medium">{hidden ? t.hidden : t.shown}</p>
                   {hidden && last?.reason && (
-                    <p className="text-xs wrap-anywhere text-ink-muted">Alasan: {last.reason}</p>
+                    <p className="text-xs wrap-anywhere text-ink-muted">
+                      {format(t.reason, { reason: last.reason })}
+                    </p>
                   )}
                 </div>
                 <Button
                   variant="secondary"
                   size="sm"
-                  onClick={() => setAsking({ testimonial: t, hide: !hidden })}
+                  onClick={() => setAsking({ testimonial: item, hide: !hidden })}
                 >
-                  {hidden ? "Pulihkan" : "Sembunyikan"}
+                  {hidden ? t.restore : t.hide}
                 </Button>
               </li>
             );
@@ -96,15 +100,11 @@ export function TestimonialsTab({ project }: { project: Project }) {
       )}
       {asking && (
         <ReasonDialog
-          title={asking.hide ? "Sembunyikan testimoni ini?" : "Tampilkan testimoni ini lagi?"}
-          hint={
-            asking.hide
-              ? "Testimoni hilang dari halaman kelas. Alasannya tercatat di log audit."
-              : "Testimoni tampil lagi di halaman kelas."
-          }
+          title={asking.hide ? t.hideTitle : t.restoreTitle}
+          hint={asking.hide ? t.hideHint : t.restoreHint}
           required={asking.hide}
-          emptyMessage="Tulis alasan menyembunyikannya."
-          confirmLabel={asking.hide ? "Sembunyikan" : "Pulihkan"}
+          emptyMessage={t.emptyReason}
+          confirmLabel={asking.hide ? t.hide : t.restore}
           busy={false}
           onConfirm={confirm}
           onClose={() => setAsking(null)}

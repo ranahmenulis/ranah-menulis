@@ -3,12 +3,13 @@
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
+import { format, useLocale, useT } from "@/lib/i18n/provider";
 import { EmptyState, Notice } from "@/components/ui/states";
 import { idrLabel, remainingLabel } from "@/features/projects/payment-model";
 import { formatProjectDateTime } from "@/features/projects/project-model";
 import type { Project, Registration } from "@/features/projects/types";
 import { confirmPaymentFor } from "../organizer-actions";
-import { paymentRow, paymentStateLabel, takesPayment } from "../payment-rows";
+import { paymentRow, takesPayment } from "../payment-rows";
 
 /**
  * Payments of the project (PLT-07): confirm that money arrived, until the QRIS webhook does it.
@@ -25,6 +26,9 @@ export function PaymentsTab({
   registration: Registration | undefined;
   now: number;
 }) {
+  const tabs = useT().kelolaOrganizerTabs;
+  const t = tabs.payments;
+  const locale = useLocale();
   const [asking, setAsking] = useState(false);
   const [said, setSaid] = useState("");
   const line = useRef<HTMLParagraphElement>(null);
@@ -33,55 +37,53 @@ export function PaymentsTab({
   function confirm() {
     const changed = confirmPaymentFor(project.slug, Date.now());
     setAsking(false);
-    setSaid(
-      changed
-        ? "Pembayaran dikonfirmasi. Pendaftaran peserta sekarang aktif."
-        : "Pembayaran ini sudah lunas atau waktu tahanannya habis, jadi tidak ada yang diubah.",
-    );
+    setSaid(changed ? t.confirmed : t.unchanged);
     requestAnimationFrame(() => line.current?.focus());
   }
 
   return (
     <section aria-labelledby="pembayaran-title" className="grid max-w-170 gap-4">
       <h2 id="pembayaran-title" className="heading-md">
-        Pembayaran
+        {t.title}
       </h2>
       {!takesPayment(project) ? (
-        <Notice>Proyek ini gratis, jadi tidak ada pembayaran.</Notice>
+        <Notice>{t.free}</Notice>
       ) : (
-        <p className="text-sm text-ink-muted">
-          Hanya pendaftaran di perangkat ini yang terbaca. Konfirmasi otomatis lewat QRIS menyusul.
-        </p>
+        <p className="text-sm text-ink-muted">{t.note}</p>
       )}
       <p ref={line} tabIndex={-1} role="status" className="min-h-5 text-sm outline-none">
         {said}
       </p>
       {takesPayment(project) &&
         (!row ? (
-          <EmptyState>Belum ada pendaftar di perangkat ini.</EmptyState>
+          <EmptyState>{t.none}</EmptyState>
         ) : (
           <ul className="border-t border-line">
             <li className="flex flex-wrap items-start justify-between gap-x-4 gap-y-2 border-b border-line py-3">
               <div className="grid min-w-0 gap-0.5">
-                <span className="font-medium">{paymentStateLabel[row.state]}</span>
+                <span className="font-medium">{t.state[row.state]}</span>
                 <span className="text-sm text-ink-muted">
-                  {row.amount === null
-                    ? "Harga ringgit, belum bisa lewat QRIS"
-                    : idrLabel(row.amount)}
-                  {row.packageName ? ` · Paket ${row.packageName}` : ""} · mendaftar{" "}
-                  {formatProjectDateTime(row.registeredAt, project.timeZone)}
+                  {row.amount === null ? t.ringgit : idrLabel(row.amount, locale)}
+                  {row.packageName ? format(t.packageSuffix, { name: row.packageName }) : ""}
+                  {format(t.registeredAt, {
+                    date: formatProjectDateTime(row.registeredAt, project.timeZone, locale),
+                  })}
                 </span>
                 <span className="text-xs text-ink-muted">
-                  {row.state === "menunggu" && `Kursi ditahan, ${remainingLabel(row.dueAt, now)}.`}
-                  {row.state === "kedaluwarsa" && "Kursinya sudah dibuka lagi."}
+                  {row.state === "menunggu" &&
+                    format(t.holding, { remaining: remainingLabel(row.dueAt, now, locale) })}
+                  {row.state === "kedaluwarsa" && t.expired}
                   {row.state === "lunas" &&
                     row.paidAt !== undefined &&
-                    `Dikonfirmasi ${formatProjectDateTime(row.paidAt, project.timeZone)}${row.paidBy === "organizer" ? " oleh pengelola" : ""}.`}
+                    format(t.paidAt, {
+                      date: formatProjectDateTime(row.paidAt, project.timeZone, locale),
+                      by: row.paidBy === "organizer" ? t.byOrganizer : "",
+                    })}
                 </span>
               </div>
               {row.state === "menunggu" && (
                 <Button variant="secondary" onClick={() => setAsking(true)}>
-                  Konfirmasi pembayaran
+                  {t.confirm}
                 </Button>
               )}
             </li>
@@ -91,14 +93,14 @@ export function PaymentsTab({
         <Dialog
           open
           onClose={() => setAsking(false)}
-          title="Konfirmasi pembayaran ini?"
-          description="Pastikan uangnya sudah masuk. Pendaftaran peserta menjadi aktif dan peserta diberi tahu."
+          title={t.dialogTitle}
+          description={t.dialogBody}
           actions={
             <>
               <Button variant="secondary" onClick={() => setAsking(false)}>
-                Batal
+                {tabs.common.cancel}
               </Button>
-              <Button onClick={confirm}>Konfirmasi pembayaran</Button>
+              <Button onClick={confirm}>{t.confirm}</Button>
             </>
           }
         />

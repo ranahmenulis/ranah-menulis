@@ -6,6 +6,8 @@ import { useMemo, useState } from "react";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
 import { EmptyState, ErrorBanner, RetryButton, Skeleton } from "@/components/ui/states";
+import { useFormat } from "@/lib/i18n/use-format";
+import { format, useT } from "@/lib/i18n/provider";
 import { categoryLabel } from "@/features/projects/project-model";
 import type { SubmissionStore } from "@/features/projects/storage/submission-store";
 import {
@@ -17,15 +19,15 @@ import {
   parseListFilter,
   type ListFilter,
 } from "../area-hrefs";
-import { countByList, listEmptyText, matchesList } from "../list-model";
-import { statusLabel } from "../project-status";
+import { countByList, matchesList } from "../list-model";
 import { RoleBand } from "../../components/role-band";
 import { organizerWork, type BandWork } from "../../role-band";
 import { useOrganizerList, type OrganizerRow } from "../use-organizer-data";
 
 function ListSkeleton() {
+  const t = useT().kelolaOrganizer;
   return (
-    <div role="status" aria-label="Memuat proyek" className="grid gap-3">
+    <div role="status" aria-label={t.list.loading} className="grid gap-3">
       <Skeleton className="h-8 w-2/3" />
       {[0, 1, 2].map((i) => (
         <Skeleton key={i} className="h-16 w-full" />
@@ -35,6 +37,8 @@ function ListSkeleton() {
 }
 
 function ProjectRow({ row }: { row: OrganizerRow }) {
+  const t = useT().kelolaOrganizer;
+  const f = useFormat();
   const { project } = row;
   return (
     <li className="border-b border-line">
@@ -44,9 +48,13 @@ function ProjectRow({ row }: { row: OrganizerRow }) {
       >
         <span className="heading-sm wrap-anywhere">{project.title}</span>
         <span className="text-sm text-ink-muted">
-          {categoryLabel(project.category)} · {statusLabel[row.status]} · {row.registrants} peserta
-          di perangkat ini · {row.submissions} kiriman
-          {!row.editable && " · Proyek contoh"}
+          {format(t.list.row, {
+            category: categoryLabel(project.category, f.locale),
+            status: t.status[row.status],
+            registrants: f.number(row.registrants),
+            submissions: f.number(row.submissions),
+          })}
+          {!row.editable && t.list.sampleSuffix}
         </span>
       </Link>
     </li>
@@ -58,6 +66,8 @@ function ProjectRow({ row }: { row: OrganizerRow }) {
  * "Aktif"; the one filled button is "Buat proyek".
  */
 export function OrganizerView({ store }: { store?: SubmissionStore }) {
+  const t = useT().kelolaOrganizer;
+  const f = useFormat();
   const data = useOrganizerList({ store });
   const search = useSearchParams()?.get("status") ?? null;
   const [filter, setFilter] = useState(() => parseListFilter(search));
@@ -81,27 +91,26 @@ export function OrganizerView({ store }: { store?: SubmissionStore }) {
     <section aria-labelledby="proyek-title" className="grid max-w-170 gap-5">
       <RoleBand
         area="organizer"
-        title="Proyek"
+        title={t.list.title}
         titleId="proyek-title"
-        description="Proyek yang kamu kelola."
+        description={t.list.description}
         work={work}
       />
       <div>
-        <ButtonLink href={NEW_PROJECT_HREF}>Buat proyek</ButtonLink>
+        <ButtonLink href={NEW_PROJECT_HREF}>{t.list.create}</ButtonLink>
       </div>
 
       {data.status === "error" ? (
-        <ErrorBanner action={<RetryButton onClick={data.reload} />}>
-          Proyek belum bisa dibuka karena data di perangkat ini tidak terbaca.
-        </ErrorBanner>
+        <ErrorBanner action={<RetryButton onClick={data.reload} />}>{t.list.loadError}</ErrorBanner>
       ) : data.status === "loading" ? (
         <ListSkeleton />
       ) : (
         <>
-          <div role="group" aria-label="Saring proyek" className="flex flex-wrap gap-2">
-            {LIST_FILTERS.map((f) => (
-              <Chip key={f.id} pressed={f.id === filter} onClick={() => change(f.id)}>
-                {f.label} <span className="ml-1.5 tabular-nums">{counts[f.id]}</span>
+          <div role="group" aria-label={t.list.filterLabel} className="flex flex-wrap gap-2">
+            {LIST_FILTERS.map((flt) => (
+              <Chip key={flt.id} pressed={flt.id === filter} onClick={() => change(flt.id)}>
+                {t.list.filters[flt.id]}{" "}
+                <span className="ml-1.5 tabular-nums">{f.number(counts[flt.id])}</span>
               </Chip>
             ))}
           </div>
@@ -110,15 +119,15 @@ export function OrganizerView({ store }: { store?: SubmissionStore }) {
               action={
                 filter !== "aktif" && counts.aktif > 0 ? (
                   <Button variant="text" onClick={() => change("aktif")}>
-                    Lihat proyek aktif
+                    {t.list.showActive}
                   </Button>
                 ) : undefined
               }
             >
-              {listEmptyText[filter]}
+              {t.list.empty[filter]}
             </EmptyState>
           ) : (
-            <ul aria-label="Daftar proyek" className="border-t border-line">
+            <ul aria-label={t.list.listLabel} className="border-t border-line">
               {shown.map((row) => (
                 <ProjectRow key={row.project.slug} row={row} />
               ))}

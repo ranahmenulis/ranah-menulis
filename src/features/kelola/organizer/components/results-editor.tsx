@@ -2,6 +2,9 @@
 
 import { useRef, useState } from "react";
 import { isPlatformAdmin } from "@/lib/roles";
+import { format, useLocale, useT } from "@/lib/i18n/provider";
+import { formatNumber } from "@/lib/i18n/format";
+import type { Locale } from "@/lib/i18n/config";
 import { Button } from "@/components/ui/button";
 import { CheckChoice } from "@/components/ui/choice";
 import { Field, Input, Textarea, describedBy } from "@/components/ui/field";
@@ -11,14 +14,13 @@ import type { ContestStage } from "@/features/projects/lomba/types";
 import type { Submission } from "@/features/projects/submission-types";
 import type { Project } from "@/features/projects/types";
 import { ReasonDialog } from "../../components/reason-dialog";
-import { judgingStatus, scoreText } from "../../juri/judge-model";
+import { judgingStatus } from "../../juri/judge-model";
 import { useEffectiveRoles } from "../../use-effective-roles";
 import { useJudgingLog, useJuryScores } from "../../juri/score-store";
 import { saveContestResults } from "../results-actions";
 import {
   FINALISTS_KEY,
   inputOf,
-  lockText,
   rankRows,
   resultsLock,
   type RankRow,
@@ -41,12 +43,14 @@ export function ResultsEditor({
   stage: ContestStage;
   works: Submission[];
 }) {
+  const t = useT().kelolaOrganizerTabs.results;
+  const locale = useLocale();
   const scores = useJuryScores();
   const log = useJudgingLog();
   const stored = storedResults.use();
   const criteria = project.block.kind === "lomba" ? project.block.criteria : [];
   const prizes = project.block.kind === "lomba" ? project.block.prizes.length : 0;
-  const rows = rankRows(works, scores, criteria, project.slug);
+  const rows = rankRows(works, scores, criteria, project.slug, locale);
   const lock = resultsLock(stage, judgingStatus(stage, log, project.slug));
   const saved = stored.find((r) => r.slug === project.slug);
   // After the winners are announced an Administrator can still correct them, with a reason that is
@@ -57,17 +61,11 @@ export function ResultsEditor({
   return (
     <section aria-labelledby="hasil-title" className="grid gap-3 border-t border-line pt-5">
       <h3 id="hasil-title" className="heading-sm">
-        Finalis dan pemenang
+        {t.title}
       </h3>
-      {lock !== "terbuka" && (
-        <Notice>
-          {amend
-            ? "Pemenang sudah diumumkan. Sebagai Administrator kamu masih bisa mengubahnya dengan alasan yang tercatat di audit log."
-            : lockText[lock]}
-        </Notice>
-      )}
+      {lock !== "terbuka" && <Notice>{amend ? t.amendNotice : t.lock[lock]}</Notice>}
       {rows.length === 0 ? (
-        <EmptyState>Belum ada karya yang dikirim ke lomba ini di perangkat ini.</EmptyState>
+        <EmptyState>{t.empty}</EmptyState>
       ) : (
         <Form
           key={`${project.slug}-${lock}-${amend}-${rows.map((r) => r.id).join(",")}`}
@@ -84,13 +82,18 @@ export function ResultsEditor({
 }
 
 /** What to say when a save did not go through and no row carries the message. */
-function failureText(result: { reason: string; message?: string }): string {
+function failureText(
+  result: { reason: string; message?: string },
+  t: ReturnType<typeof useT>["kelolaOrganizerTabs"]["results"],
+  locale: Locale,
+): string {
   if (result.reason === "salah") return "";
-  if (result.reason === "bukan-admin")
-    return "Hanya Administrator yang bisa mengubah hasil yang sudah diumumkan.";
-  if (result.reason === "alasan") return result.message ?? "";
-  if (result.reason === "tidak-berubah") return "Tidak ada perubahan pada pemenang.";
-  return lockText[result.reason === "terkunci" ? "terkunci" : "belum-ditutup"];
+  if (result.reason === "bukan-admin") return t.failure.admin;
+  if (result.reason === "alasan") {
+    return locale === "id" ? (result.message ?? "") : t.failure.reason;
+  }
+  if (result.reason === "tidak-berubah") return t.failure.noChange;
+  return t.lock[result.reason === "terkunci" ? "terkunci" : "belum-ditutup"];
 }
 
 function Form({
@@ -108,6 +111,8 @@ function Form({
   prizes: number;
   initial: ResultsInput;
 }) {
+  const t = useT().kelolaOrganizerTabs.results;
+  const locale = useLocale();
   const [input, setInput] = useState<ResultsInput>(initial);
   const [errors, setErrors] = useState<ResultsErrors>({});
   const [said, setSaid] = useState("");
@@ -123,15 +128,19 @@ function Form({
       input,
       Date.now(),
       reason === undefined ? undefined : { reason },
+      locale,
     );
     if (result.ok) {
       setErrors({});
       setSaid(
-        `Hasil disimpan: ${result.results.finalists.length} finalis, ${result.results.winners.length} pemenang. Belum tampil ke publik sebelum kamu mengumumkannya.`,
+        format(t.saved, {
+          finalists: String(result.results.finalists.length),
+          winners: String(result.results.winners.length),
+        }),
       );
     } else {
       setErrors(result.errors);
-      setSaid(failureText(result));
+      setSaid(failureText(result, t, locale));
       const first = Object.keys(result.errors)[0];
       if (first && first !== FINALISTS_KEY) document.getElementById(`hasil-${first}`)?.focus();
     }
@@ -143,7 +152,7 @@ function Form({
   return (
     <form
       noValidate
-      aria-label="Finalis dan pemenang"
+      aria-label={t.title}
       className="grid gap-4"
       onSubmit={(e) => {
         e.preventDefault();
@@ -156,7 +165,7 @@ function Form({
           {errors[FINALISTS_KEY]}
         </p>
       )}
-      <ol aria-label="Peringkat karya" className="border-t border-line">
+      <ol aria-label={t.ranking} className="border-t border-line">
         {rows.map((row) => (
           <Row
             key={row.id}
@@ -175,16 +184,16 @@ function Form({
       </p>
       {!readOnly && (
         <Button type="submit" className="justify-self-start">
-          {amend ? "Ubah pemenang" : "Simpan hasil"}
+          {amend ? t.amend : t.save}
         </Button>
       )}
       {asking && (
         <ReasonDialog
-          title="Ubah pemenang setelah diumumkan"
-          hint="Pengumuman berubah untuk semua pembaca. Perubahan dan alasannya tercatat di audit log."
-          fieldLabel="Alasan perubahan"
-          emptyMessage="Tulis alasan perubahannya. Alasan tercatat di audit log."
-          confirmLabel="Ubah pemenang"
+          title={t.dialog.title}
+          hint={t.dialog.hint}
+          fieldLabel={t.dialog.field}
+          emptyMessage={t.dialog.empty}
+          confirmLabel={t.dialog.confirm}
           busy={false}
           onConfirm={(reason) => {
             setAsking(false);
@@ -214,6 +223,8 @@ function Row({
   disabledWinner: boolean;
   set: (next: ResultsInput) => void;
 }) {
+  const t = useT().kelolaOrganizerTabs.results.row;
+  const locale = useLocale();
   const finalist = input.finalists[row.id] ?? false;
   const rankId = `hasil-rank-${row.id}`;
   const noteId = `hasil-note-${row.id}`;
@@ -226,12 +237,15 @@ function Row({
         <span className="text-sm text-ink-muted">
           {row.genre} ·{" "}
           {row.score === null
-            ? "Belum dinilai"
-            : `Skor ${scoreText(row.score)} dari ${row.judges} juri`}
+            ? t.unscored
+            : format(t.score, {
+                score: formatNumber(row.score, locale),
+                judges: String(row.judges),
+              })}
         </span>
       </div>
       <CheckChoice
-        label="Finalis"
+        label={t.finalist}
         checked={finalist}
         disabled={disabledFinalist}
         onChange={(e) =>
@@ -242,9 +256,9 @@ function Row({
         <div className="grid gap-3 sm:grid-cols-[8rem_1fr]">
           <Field
             id={rankId}
-            label="Peringkat"
+            label={t.rank}
             optional
-            hint={`1 sampai ${prizes}`}
+            hint={format(t.rankHint, { max: String(prizes) })}
             error={errors[`rank-${row.id}`]}
           >
             <Input
@@ -262,7 +276,7 @@ function Row({
               }
             />
           </Field>
-          <Field id={noteId} label="Catatan juri" optional error={errors[`note-${row.id}`]}>
+          <Field id={noteId} label={t.note} optional error={errors[`note-${row.id}`]}>
             <Textarea
               id={noteId}
               rows={2}

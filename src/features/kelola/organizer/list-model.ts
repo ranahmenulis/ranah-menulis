@@ -1,4 +1,5 @@
 import type { ListFilter } from "./area-hrefs";
+import { kelolaOrganizer } from "./copy/id";
 import type { OrganizerRow } from "./use-organizer-data";
 
 /** "Aktif" is everything except the archive: what an Organizer still works on. */
@@ -16,10 +17,5 @@ export function countByList(rows: readonly OrganizerRow[]): Record<ListFilter, n
   };
 }
 
-export const listEmptyText: Record<ListFilter, string> = {
-  aktif: "Belum ada proyek. Buat proyek pertamamu.",
-  draf: "Tidak ada draf.",
-  terbit: "Tidak ada proyek yang sedang terbuka.",
-  ditutup: "Tidak ada proyek yang pendaftarannya ditutup.",
-  arsip: "Belum ada proyek yang diarsipkan.",
-};
+/** Indonesian empty-list texts; the screen reads the dictionary of the current language. */
+export const listEmptyText: Record<ListFilter, string> = kelolaOrganizer.list.empty;

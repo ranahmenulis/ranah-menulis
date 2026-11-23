@@ -1,3 +1,4 @@
+import type { Locale } from "@/lib/i18n/config";
 import { storedProjects } from "@/features/projects/stored-projects";
 import { mergeCatalog } from "@/features/projects/use-catalog";
 import { allTestimonials, testimonialDecisions } from "@/features/projects/kelas/testimonial-store";
@@ -7,11 +8,34 @@ import { ME_ID } from "../identity";
 import { validateReason } from "../reason";
 import { readEffectiveRoles } from "../use-effective-roles";
 import { manageAccess } from "./organizer-access";
+import { tabsCopy } from "./copy/tabs-copy";
+
+/** Why a decision answered as it did; `message` on the result is the Indonesian default. */
+export type TestimonialDecisionCode =
+  | "forbidden"
+  | "gone"
+  | "alreadyHidden"
+  | "alreadyShown"
+  | "reasonRequired"
+  | "reasonTooLong"
+  | "hidden"
+  | "restored";
 
 export type TestimonialDecisionResult =
-  { ok: true; message: string } | { ok: false; message: string };
+  | { ok: true; code: TestimonialDecisionCode; message: string }
+  | { ok: false; code: TestimonialDecisionCode; message: string };
 
-const refuse = (message: string): TestimonialDecisionResult => ({ ok: false, message });
+const messages = tabsCopy("id").testimonials.codes;
+
+const refuse = (code: TestimonialDecisionCode): TestimonialDecisionResult => ({
+  ok: false,
+  code,
+  message: messages[code],
+});
+
+/** The sentence for a decision code in the interface language. */
+export const decisionText = (code: TestimonialDecisionCode, locale: Locale = "id"): string =>
+  tabsCopy(locale).testimonials.codes[code];
 
 /**
  * A curator hides a testimonial from the class page or brings it back (KLS-07). Only the Organizer
@@ -28,22 +52,18 @@ export function decideTestimonial(
 ): TestimonialDecisionResult {
   const project = mergeCatalog(storedProjects.read()).find((p) => p.slug === slug);
   if (manageAccess(readEffectiveRoles(), project) !== "ok" || project?.category !== "kelas") {
-    return refuse("Hanya Organizer kelas ini dan Administrator yang bisa mengatur testimoni.");
+    return refuse("forbidden");
   }
   const testimonial = allTestimonials().find((t) => t.id === id && t.slug === slug);
-  if (!testimonial) return refuse("Testimoni ini sudah dihapus penulisnya.");
+  if (!testimonial) return refuse("gone");
 
   const decisions = testimonialDecisions.read();
   const hide = decision === "sembunyikan";
   if (isHidden(id, decisions) === hide) {
-    return refuse(hide ? "Testimoni ini sudah disembunyikan." : "Testimoni ini sudah tampil.");
+    return refuse(hide ? "alreadyHidden" : "alreadyShown");
   }
   if (validateReason(reason, hide) !== null) {
-    return refuse(
-      hide
-        ? "Tulis alasan menyembunyikannya (paling banyak 1.000 karakter)."
-        : "Alasan terlalu panjang.",
-    );
+    return refuse(hide ? "reasonRequired" : "reasonTooLong");
   }
 
   const note = reason.trim() || undefined;
@@ -69,10 +89,6 @@ export function decideTestimonial(
       reason: note,
     },
   ]);
-  return {
-    ok: true,
-    message: hide
-      ? "Testimoni disembunyikan dari halaman kelas."
-      : "Testimoni tampil lagi di halaman kelas.",
-  };
+  const code = hide ? "hidden" : "restored";
+  return { ok: true, code, message: messages[code] };
 }

@@ -1,3 +1,4 @@
+import type { Locale } from "@/lib/i18n/config";
 import { contestStage } from "@/features/projects/lomba/contest-model";
 import { storedResults } from "@/features/projects/lomba/results-store";
 import { readOverrides } from "@/features/projects/lomba/stage-store";
@@ -101,6 +102,7 @@ export function saveContestResults(
   input: ResultsInput,
   now: number,
   amend?: { reason: string },
+  locale: Locale = "id",
 ): SaveResultsOutcome {
   const stage = contestStage(project, now, readOverrides()[project.slug]?.stage);
   const judging = judgingStatus(stage, judgingLog.read(), project.slug);
@@ -111,7 +113,7 @@ export function saveContestResults(
   if (blocked) return blocked;
   const effective = fixFinalists(input, rows, kept, lock === "finalis-tetap" || !!amendment);
   const prizes = project.block.kind === "lomba" ? project.block.prizes.length : 0;
-  const errors = validateResults(effective, rows, prizes);
+  const errors = validateResults(effective, rows, prizes, locale);
   if (Object.keys(errors).length > 0) return { ok: false, reason: "salah", errors };
 
   const results = buildResults(project.slug, rows, effective);

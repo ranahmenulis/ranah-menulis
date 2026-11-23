@@ -1,0 +1,121 @@
+import type { kelolaOrganizer as source } from "./id";
+import { organizerForm } from "./form-en";
+
+export const kelolaOrganizer: typeof source = {
+  back: "Projects",
+  roles: { editor: "Editor", mentor: "Mentor", juri: "Judge" },
+  status: { draf: "Draft", terbit: "Published", ditutup: "Closed", arsip: "Archived" },
+  list: {
+    title: "Projects",
+    description: "The projects you manage.",
+    create: "Create project",
+    loading: "Loading projects",
+    loadError: "Projects could not be opened because the data on this device could not be read.",
+    filterLabel: "Filter projects",
+    listLabel: "Project list",
+    showActive: "See active projects",
+    row: "{category} · {status} · {registrants} participants on this device · {submissions} submissions",
+    sampleSuffix: " · Sample project",
+    filters: {
+      aktif: "Active",
+      draf: "Draft",
+      terbit: "Published",
+      ditutup: "Closed",
+      arsip: "Archived",
+    },
+    empty: {
+      aktif: "No projects yet. Create your first project.",
+      draf: "No drafts.",
+      terbit: "No projects are open right now.",
+      ditutup: "No projects with closed registration.",
+      arsip: "No archived projects yet.",
+    },
+  },
+  newProject: {
+    title: "New project",
+    description: "Saved as a draft. Publish when it is ready.",
+  },
+  manage: {
+    loading: "Loading project",
+    loadError: "The project could not be opened because the data on this device could not be read.",
+    goneTitle: "This project was not found.",
+    blockedTitle: "This project is not yours.",
+    goneNotice: "The address may be wrong, or this draft was deleted.",
+    blockedNotice: "An Organizer only manages their own projects.",
+    backToList: "Back to the project list",
+    tabsLabel: "Project sections",
+    tabs: {
+      proyek: "Project",
+      penugasan: "Assignment",
+      peserta: "Participants",
+      pembayaran: "Payments",
+      kiriman: "Submissions",
+      tahap: "Stages",
+      testimoni: "Testimonials",
+    },
+    archivedNotice: "This project is archived and can no longer be changed.",
+    sampleNotice:
+      "This is a sample project and cannot be changed. Assignments, participants, and submissions can still be opened.",
+  },
+  actions: {
+    cancel: "Cancel",
+    done: "{label}: done.",
+    fallback: "This cannot be done.",
+    failed: {
+      "ada-peserta": "There are participants, so this draft was not deleted. Archive it instead.",
+      "sudah-berubah": "The project status has changed, so nothing was done.",
+      "tidak-ada": "This project can no longer be found.",
+    },
+    text: {
+      terbitkan: {
+        label: "Publish",
+        title: "Publish this project?",
+        body: "The project appears in the catalog and people can register. Terms you change after this are announced to participants.",
+      },
+      tutup: {
+        label: "Close registration",
+        title: "Close registration now?",
+        body: "People can no longer register. Participants who already registered can still send work on schedule.",
+      },
+      arsipkan: {
+        label: "Archive",
+        title: "Archive this project?",
+        body: "The project disappears from the catalog and the Editor, Mentor, and Judge assignments are removed. Participant data stays saved. An archive cannot be reopened.",
+      },
+      hapus: {
+        label: "Delete draft",
+        title: "Delete this draft?",
+        body: "The draft is gone and cannot be restored. There are no participants yet, so nobody loses anything.",
+      },
+    },
+  },
+  staff: {
+    title: "{role} for this project",
+    archived: "The project is archived, so its assignments have been removed.",
+    noHolders: "Nobody holds the {role} role yet. An Administrator grants it in Admin.",
+    assigned: "{name} was assigned.",
+    unassigned: "{name} is no longer assigned.",
+    none: "No {role} assigned yet.",
+    count: "{n} {role} assigned.",
+  },
+  people: {
+    participantsTitle: "Participants",
+    participantsNote:
+      "Only registrations on this device can be read. The full list comes with the server.",
+    participantsEmpty: "No registrants on this device yet.",
+    registrant: "Registrant on this device",
+    registered: "Registered",
+    waiting: "Awaiting payment",
+    package: "{name} package",
+    terms: "Agreed to terms {version}",
+    termsNow: ", now {version}",
+    worksTitle: "Submissions",
+    worksEmpty: "No work has been sent to this project yet.",
+    worksList: "Submission list",
+  },
+  stage: {
+    title: "Publishing stages",
+    none: "This project has no stages run here.",
+  },
+  form: organizerForm,
+};

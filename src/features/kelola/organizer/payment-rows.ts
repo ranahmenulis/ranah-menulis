@@ -1,3 +1,4 @@
+import type { Locale } from "@/lib/i18n/config";
 import {
   paymentDueAt,
   paymentState,
@@ -7,6 +8,7 @@ import {
 import { isFree } from "@/features/projects/project-model";
 import { registrationFee } from "@/features/projects/registration-model";
 import type { Project, Registration } from "@/features/projects/types";
+import { tabsCopy } from "./copy/tabs-copy";
 
 /** Whether registering for this project costs money, so it has payments to look at (PLT-07). */
 export const takesPayment = (project: Project): boolean => !isFree(project);
@@ -43,8 +45,8 @@ export function paymentRow(
   };
 }
 
-export const paymentStateLabel: Record<PaymentState, string> = {
-  menunggu: "Menunggu pembayaran",
-  lunas: "Lunas",
-  kedaluwarsa: "Waktu pembayaran habis",
-};
+export const paymentStateLabel: Record<PaymentState, string> = tabsCopy("id").payments.state;
+
+/** The label of a payment state in the interface language. */
+export const paymentStateText = (state: PaymentState, locale: Locale = "id"): string =>
+  tabsCopy(locale).payments.state[state];

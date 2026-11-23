@@ -6,6 +6,7 @@ import { ErrorBanner, Notice, RetryButton, Skeleton } from "@/components/ui/stat
 import { Tabs } from "@/components/ui/tabs";
 import type { SoloStore } from "@/features/projects/solo/storage/solo-store";
 import type { SubmissionStore } from "@/features/projects/storage/submission-store";
+import { useT } from "@/lib/i18n/provider";
 import { BackShell } from "../../components/back-shell";
 import type { Project } from "@/features/projects/types";
 import {
@@ -15,7 +16,7 @@ import {
   parseManageTab,
   type ManageTab,
 } from "../area-hrefs";
-import { allowedActions, statusLabel } from "../project-status";
+import { allowedActions } from "../project-status";
 import { useOrganizerProject } from "../use-organizer-data";
 import { takesPayment } from "../payment-rows";
 import { ParticipantsTab, WorksTab } from "./people-tabs";
@@ -34,8 +35,6 @@ function shown(tab: ManageTab, project: Project): boolean {
   return true;
 }
 
-const BACK = { href: ORGANIZER_HREF, label: "Proyek" };
-
 /** One project for its Organizer: the project itself, who is assigned, who joined, what was sent. */
 export function ManageView({
   slug,
@@ -46,21 +45,23 @@ export function ManageView({
   store?: SubmissionStore;
   soloStore?: SoloStore;
 }) {
+  const t = useT().kelolaOrganizer;
+  const back = { href: ORGANIZER_HREF, label: t.back };
   const data = useOrganizerProject(slug, { store });
   const tab = parseManageTab(useSearchParams()?.get("tab"));
 
   if (data.status === "error") {
     return (
-      <BackShell back={BACK}>
+      <BackShell back={back}>
         <ErrorBanner action={<RetryButton onClick={data.reload} />}>
-          Proyek belum bisa dibuka karena data di perangkat ini tidak terbaca.
+          {t.manage.loadError}
         </ErrorBanner>
       </BackShell>
     );
   }
   if (data.status === "loading") {
     return (
-      <div role="status" aria-label="Memuat proyek" className="mx-auto grid max-w-170 gap-4">
+      <div role="status" aria-label={t.manage.loading} className="mx-auto grid max-w-170 gap-4">
         <Skeleton className="h-4 w-20" />
         <Skeleton className="h-9 w-2/3" />
         <Skeleton className="h-11 w-full" />
@@ -69,17 +70,13 @@ export function ManageView({
   }
   if (data.status === "gone" || data.status === "blocked") {
     return (
-      <BackShell back={BACK}>
+      <BackShell back={back}>
         <h1 className="heading-lg">
-          {data.status === "gone" ? "Proyek ini tidak ditemukan." : "Proyek ini bukan milikmu."}
+          {data.status === "gone" ? t.manage.goneTitle : t.manage.blockedTitle}
         </h1>
-        <Notice>
-          {data.status === "gone"
-            ? "Alamatnya mungkin salah, atau draf ini sudah dihapus."
-            : "Organizer hanya mengelola proyeknya sendiri."}
-        </Notice>
+        <Notice>{data.status === "gone" ? t.manage.goneNotice : t.manage.blockedNotice}</Notice>
         <ButtonLink href={ORGANIZER_HREF} variant="secondary" className="justify-self-start">
-          Kembali ke daftar proyek
+          {t.manage.backToList}
         </ButtonLink>
       </BackShell>
     );
@@ -88,17 +85,18 @@ export function ManageView({
   const { project } = data.row;
   const { row } = data;
   return (
-    <BackShell back={BACK}>
+    <BackShell back={back}>
       <header className="grid gap-1">
         <h1 className="heading-lg wrap-anywhere">{project.title}</h1>
-        <p className="text-sm text-ink-muted">{statusLabel[row.status]}</p>
+        <p className="text-sm text-ink-muted">{t.status[row.status]}</p>
       </header>
       <Tabs
-        label="Bagian proyek"
+        label={t.manage.tabsLabel}
         value={tab}
-        items={MANAGE_TABS.filter((t) => shown(t.id, project)).map((t) => ({
-          ...t,
-          href: manageHref(slug, t.id),
+        items={MANAGE_TABS.filter((tabItem) => shown(tabItem.id, project)).map((tabItem) => ({
+          ...tabItem,
+          label: t.manage.tabs[tabItem.id],
+          href: manageHref(slug, tabItem.id),
         }))}
       />
       <TabBody tab={tab} slug={slug} data={data} soloStore={soloStore} />
@@ -121,6 +119,7 @@ function TabBody({
   soloStore?: SoloStore;
 }) {
   const router = useRouter();
+  const t = useT().kelolaOrganizer;
   const { row, works, registration, rawRegistration, fixture, now } = data;
   const { project } = row;
   return (
@@ -134,16 +133,13 @@ function TabBody({
               onDeleted={() => router.push(ORGANIZER_HREF)}
             />
             {row.status === "arsip" ? (
-              <Notice>Proyek ini diarsipkan dan tidak bisa diubah lagi.</Notice>
+              <Notice>{t.manage.archivedNotice}</Notice>
             ) : (
               <ProjectForm fixture={fixture} registrants={row.registrants} />
             )}
           </div>
         ) : (
-          <Notice>
-            Ini proyek contoh dan tidak bisa diubah. Penugasan, peserta, dan kiriman tetap bisa
-            dibuka.
-          </Notice>
+          <Notice>{t.manage.sampleNotice}</Notice>
         ))}
       {tab === "penugasan" && (
         <StaffTab slug={slug} category={project.category} archived={row.status === "arsip"} />

@@ -1,3 +1,6 @@
+import type { Locale } from "@/lib/i18n/config";
+import { formatNumber } from "@/lib/i18n/format";
+import { fill } from "@/features/studio/copy/fill";
 import { ME_ID } from "@/features/community/fixtures/authors";
 import { stageRank } from "@/features/projects/lomba/contest-model";
 import type { ContestResults, ContestStage } from "@/features/projects/lomba/types";
@@ -10,6 +13,7 @@ import {
   type JudgingStatus,
 } from "../juri/judge-model";
 import type { JuryScore } from "../juri/score-store";
+import { tabsCopy } from "./copy/tabs-copy";
 
 /** One work in the ranking the Organizer decides from (LMB-02). */
 export type RankRow = {
@@ -29,12 +33,13 @@ export function rankRows(
   scores: readonly JuryScore[],
   criteria: readonly Criterion[],
   slug: string,
+  locale: Locale = "id",
 ): RankRow[] {
   const rows = judgeableWorks(works, slug).map((work, i) => {
     const mine = scores.filter((s) => s.submissionId === work.id);
     return {
       id: work.id,
-      label: `Karya ${i + 1}`,
+      label: fill(tabsCopy(locale).results.work, { n: String(i + 1) }),
       title: work.title,
       genre: work.genre,
       score: aggregateScore(criteria, mine),
@@ -75,11 +80,8 @@ export function resultsLock(stage: ContestStage, judging: JudgingStatus): Result
   return stageRank(stage) >= stageRank("finalis") ? "finalis-tetap" : "terbuka";
 }
 
-export const lockText: Record<Exclude<ResultsLock, "terbuka">, string> = {
-  "belum-ditutup": "Hasil bisa ditetapkan setelah penilaian ditutup.",
-  "finalis-tetap": "Finalis sudah diumumkan dan tidak bisa diubah. Pemenang masih bisa ditetapkan.",
-  terkunci: "Pemenang sudah diumumkan. Pengumuman tidak bisa diubah.",
-};
+export const lockText: Record<Exclude<ResultsLock, "terbuka">, string> = tabsCopy("id").results
+  .lock;
 
 // ---- the form -------------------------------------------------------------------------------
 
@@ -113,22 +115,23 @@ export function validateResults(
   input: ResultsInput,
   rows: readonly RankRow[],
   prizeCount: number,
+  locale: Locale = "id",
 ): ResultsErrors {
+  const t = tabsCopy(locale).results.errors;
   const errors: ResultsErrors = {};
   if (!rows.some((r) => input.finalists[r.id])) {
-    errors[FINALISTS_KEY] = "Pilih minimal satu finalis.";
+    errors[FINALISTS_KEY] = t.noFinalist;
   }
   for (const { id } of rows) {
     const rank = (input.ranks[id] ?? "").trim();
     if (rank === "") continue;
     const value = /^\d{1,3}$/.test(rank) ? Number(rank) : NaN;
-    if (!input.finalists[id]) errors[`rank-${id}`] = "Hanya finalis yang bisa menjadi pemenang.";
+    if (!input.finalists[id]) errors[`rank-${id}`] = t.notFinalist;
     else if (!Number.isInteger(value) || value < 1 || value > prizeCount) {
-      errors[`rank-${id}`] = `Isi peringkat 1 sampai ${prizeCount} (jumlah hadiah).`;
+      errors[`rank-${id}`] = fill(t.rankRange, { max: String(prizeCount) });
     }
     if ((input.notes[id] ?? "").trim().length > NOTE_LIMIT) {
-      errors[`note-${id}`] =
-        `Catatan paling banyak ${NOTE_LIMIT.toLocaleString("id-ID")} karakter.`;
+      errors[`note-${id}`] = fill(t.noteLimit, { limit: formatNumber(NOTE_LIMIT, locale) });
     }
   }
   return errors;

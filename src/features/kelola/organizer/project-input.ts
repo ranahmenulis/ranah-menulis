@@ -41,7 +41,7 @@ export type ProjectInput = {
   posterAlt: string;
 };
 
-export type InputErrors = Partial<Record<keyof ProjectInput | "block", string>>;
+export type { InputErrors } from "./project-problem";
 
 /** Categories that take submissions (PRJ-04): Kelas collects assignments instead. */
 export const takesSubmissions = (category: ProjectCategory) => category !== "kelas";

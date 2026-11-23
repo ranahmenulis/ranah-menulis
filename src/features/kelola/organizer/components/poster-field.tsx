@@ -4,7 +4,9 @@ import { ImageSquare } from "@phosphor-icons/react/dist/ssr";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { FilePickButton } from "@/components/ui/file-pick-button";
+import { problemText } from "@/lib/files/problem-text";
 import { fileStore } from "@/lib/files/store";
+import { useLocale, useT } from "@/lib/i18n/provider";
 import { PosterCover } from "@/features/projects/components/poster-cover";
 import { discardPoster, storePoster } from "../poster-files";
 import { TextField, type FormApi } from "./form-fields";
@@ -22,6 +24,8 @@ type Props = {
  * the saved one stays until the form is saved.
  */
 export function PosterField({ api, savedId }: Props) {
+  const t = useT().kelolaOrganizerTabs.poster;
+  const locale = useLocale();
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const { posterId } = api.input;
@@ -31,7 +35,7 @@ export function PosterField({ api, savedId }: Props) {
     setError(null);
     const result = await storePoster(file, fileStore());
     setBusy(false);
-    if (!result.ok) return setError(result.message);
+    if (!result.ok) return setError(problemText(result.problem, "image", locale));
     if (posterId !== savedId) await discardPoster(posterId, fileStore());
     api.set("posterId", result.id);
     // The old description no longer fits a new image.
@@ -47,35 +51,27 @@ export function PosterField({ api, savedId }: Props) {
 
   return (
     <div className="grid gap-4">
-      <p className="text-sm text-ink-muted">
-        Tanpa poster, katalog memakai sampul otomatis dari judul. Poster dipotong ke bentuk 4:5,
-        jadi pilih gambar tegak.
-      </p>
+      <p className="text-sm text-ink-muted">{t.intro}</p>
       {posterId ? (
         <div className="grid gap-4">
           <PosterCover
             poster={{ fileId: posterId, alt: "" }}
             className="w-40"
-            fallback={<p className="text-sm text-danger">Poster ini tidak ditemukan lagi.</p>}
+            fallback={<p className="text-sm text-danger">{t.missing}</p>}
           />
-          <TextField
-            api={api}
-            name="posterAlt"
-            label="Teks alternatif poster"
-            hint="Jelaskan poster, termasuk tulisan di dalamnya, untuk pembaca yang tidak bisa melihatnya."
-          />
+          <TextField api={api} name="posterAlt" label={t.altLabel} hint={t.altHint} />
           <div className="flex flex-wrap gap-2">
             <FilePickButton
               kind="image"
-              label="Ganti poster"
+              label={t.replace}
               onPick={pick}
               disabled={busy}
               id="proyek-posterId"
             >
-              {busy ? "Memproses…" : "Ganti poster"}
+              {busy ? t.busy : t.replace}
             </FilePickButton>
             <Button variant="text" size="sm" onClick={remove}>
-              Hapus poster
+              {t.remove}
             </Button>
           </div>
         </div>
@@ -83,15 +79,15 @@ export function PosterField({ api, savedId }: Props) {
         <div className="flex flex-wrap items-center gap-3">
           <FilePickButton
             kind="image"
-            label="Tambah poster"
+            label={t.add}
             onPick={pick}
             disabled={busy}
             id="proyek-posterId"
           >
             <ImageSquare size={18} aria-hidden />
-            {busy ? "Memproses…" : "Tambah poster"}
+            {busy ? t.busy : t.add}
           </FilePickButton>
-          <p className="text-xs text-ink-muted">JPG, PNG, atau WebP, diperkecil di perangkatmu.</p>
+          <p className="text-xs text-ink-muted">{t.formats}</p>
         </div>
       )}
       {error && (

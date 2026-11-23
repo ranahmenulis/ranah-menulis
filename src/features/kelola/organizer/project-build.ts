@@ -1,11 +1,14 @@
 import { CLASS_START_LABEL } from "@/features/projects/kelas/class-model";
 import type { CategoryBlock, ProjectFixture, SubmissionRules } from "@/features/projects/types";
+import { isOpenService, takesSubmissions, type ProjectInput } from "./project-input";
 import {
-  isOpenService,
-  takesSubmissions,
+  newIssues,
+  report,
   type InputErrors,
-  type ProjectInput,
-} from "./project-input";
+  type InputProblems,
+  type Issues,
+  type Problem,
+} from "./project-problem";
 import {
   dateInputOf,
   dayEnd,
@@ -34,7 +37,8 @@ export type BuildContext = {
 };
 
 export type BuildResult =
-  { ok: true; project: ProjectFixture } | { ok: false; errors: InputErrors };
+  | { ok: true; project: ProjectFixture }
+  | { ok: false; errors: InputErrors; problems: InputProblems };
 
 const whole = (text: string, min: number, max: number): number | null => {
   const t = text.trim().replace(/\./g, "");
@@ -43,36 +47,34 @@ const whole = (text: string, min: number, max: number): number | null => {
   return n >= min && n <= max ? n : null;
 };
 
-function basics(input: ProjectInput): InputErrors {
-  const errors: InputErrors = {};
+function basics(input: ProjectInput, issues: Issues): void {
   const title = input.title.trim();
-  if (!title) errors.title = "Tulis judul proyek.";
-  else if (title.length > TITLE_LIMIT)
-    errors.title = `Judul paling banyak ${TITLE_LIMIT} karakter.`;
+  if (!title) report(issues, "title", "titleRequired");
+  else if (title.length > TITLE_LIMIT) report(issues, "title", "titleLong", { max: TITLE_LIMIT });
   const summary = input.summary.trim();
-  if (!summary) errors.summary = "Tulis satu kalimat ringkasan untuk katalog.";
+  if (!summary) report(issues, "summary", "summaryRequired");
   else if (summary.length > SUMMARY_LIMIT) {
-    errors.summary = `Ringkasan paling banyak ${SUMMARY_LIMIT} karakter.`;
+    report(issues, "summary", "summaryLong", { max: SUMMARY_LIMIT });
   }
   const about = input.about.trim();
-  if (!about) errors.about = "Tulis deskripsi proyek.";
-  else if (about.length > ABOUT_LIMIT)
-    errors.about = `Deskripsi paling banyak ${ABOUT_LIMIT} karakter.`;
-  if (linesOf(input.requirements).length === 0) errors.requirements = "Tulis minimal satu syarat.";
+  if (!about) report(issues, "about", "aboutRequired");
+  else if (about.length > ABOUT_LIMIT) report(issues, "about", "aboutLong", { max: ABOUT_LIMIT });
+  if (linesOf(input.requirements).length === 0) {
+    report(issues, "requirements", "requirementsRequired");
+  }
   const alt = input.posterAlt.trim();
   if (input.posterId && !alt) {
-    errors.posterAlt = "Isi teks alternatif poster untuk menyimpan.";
+    report(issues, "posterAlt", "posterAltRequired");
   } else if (alt.length > POSTER_ALT_LIMIT) {
-    errors.posterAlt = `Teks alternatif paling banyak ${POSTER_ALT_LIMIT} karakter.`;
+    report(issues, "posterAlt", "posterAltLong", { max: POSTER_ALT_LIMIT });
   }
-  return errors;
 }
 
 type Schedule = { closesAt: number | null; milestones: { label: string; at: number }[] };
 
 function schedule(
   input: ProjectInput,
-  errors: InputErrors,
+  issues: Issues,
   existing: ProjectFixture | undefined,
 ): Schedule {
   // A deadline the Organizer did not touch stays the exact moment it was: "Tutup pendaftaran"
@@ -81,56 +83,56 @@ function schedule(
   const untouched = closesAt !== null && input.closesDate === dateInputOf(closesAt, input.zone);
   if (!isOpenService(input.category) && !untouched) {
     closesAt = dayEnd(input.closesDate, input.zone);
-    if (closesAt === null) errors.closesDate = "Pilih tanggal tenggat pendaftaran.";
+    if (closesAt === null) report(issues, "closesDate", "closesRequired");
   }
   const parsed = parseMilestones(input.milestones, input.zone);
   if (parsed.bad) {
-    errors.milestones = `Baris “${parsed.bad}” belum benar. Tulis: nama tahap | yyyy-mm-dd.`;
+    report(issues, "milestones", "milestonesBad", { line: parsed.bad });
   } else if (
     input.category === "kelas" &&
     !parsed.items.some((m) => m.label === CLASS_START_LABEL)
   ) {
-    errors.milestones = `Kelas butuh satu baris “${CLASS_START_LABEL} | yyyy-mm-dd”.`;
+    report(issues, "milestones", "milestonesClassStart", { label: CLASS_START_LABEL });
   }
   return { closesAt, milestones: parsed.items };
 }
 
-function money(input: ProjectInput, errors: InputErrors, ctx: BuildContext) {
+function money(input: ProjectInput, issues: Issues, ctx: BuildContext) {
   if (isOpenService(input.category)) return { fee: {}, quota: null };
   const { fee, bad } = feeOf(input.feeIdr, input.feeMyr);
-  if (bad === "idr") errors.feeIdr = "Tulis rupiah dalam angka bulat, mis. 75000, atau kosongkan.";
-  if (bad === "myr") errors.feeMyr = "Tulis ringgit seperti 25 atau 25,50, atau kosongkan.";
+  if (bad === "idr") report(issues, "feeIdr", "feeIdrBad");
+  if (bad === "myr") report(issues, "feeMyr", "feeMyrBad");
   let quota: { total: number; taken: number } | null = null;
   if (input.quota.trim()) {
     const total = whole(input.quota, 1, 100_000);
-    if (total === null) errors.quota = "Kuota harus angka bulat 1 sampai 100.000, atau kosongkan.";
+    if (total === null) report(issues, "quota", "quotaBad");
     else if (total < ctx.taken) {
-      errors.quota = `Kuota tidak boleh di bawah ${ctx.taken} peserta yang sudah terdaftar.`;
+      report(issues, "quota", "quotaBelow", { taken: ctx.taken });
     } else quota = { total, taken: ctx.existing?.quota?.taken ?? 0 };
   }
   return { fee, quota };
 }
 
-function submission(input: ProjectInput, errors: InputErrors): SubmissionRules | null {
+function submission(input: ProjectInput, issues: Issues): SubmissionRules | null {
   if (!takesSubmissions(input.category)) return null;
   const minWords = whole(input.minWords, 1, 1_000_000);
   const maxWords = whole(input.maxWords, 1, 1_000_000);
   const maxWorks = whole(input.maxWorks, 1, 20);
   if (minWords === null || maxWords === null) {
-    errors.minWords = "Tulis batas kata minimum dan maksimum sebagai angka bulat.";
-  } else if (minWords > maxWords) errors.minWords = "Batas minimum tidak boleh di atas maksimum.";
-  if (maxWorks === null) errors.maxWorks = "Karya per peserta: angka bulat 1 sampai 20.";
+    report(issues, "minWords", "wordsBad");
+  } else if (minWords > maxWords) report(issues, "minWords", "wordsOrder");
+  if (maxWorks === null) report(issues, "maxWorks", "worksBad");
   if (minWords === null || maxWords === null || maxWorks === null || minWords > maxWords)
     return null;
   return { minWords, maxWords, maxWorks };
 }
 
-type BlockResult = CategoryBlock | string;
+type BlockResult = CategoryBlock | Problem;
 
 function antologiBlock(input: ProjectInput): BlockResult {
   const stages = linesOf(input.stages);
   if (!input.theme.trim() || stages.length === 0) {
-    return "Antologi butuh tema dan minimal satu tahap (satu per baris).";
+    return { code: "blockAntologi" };
   }
   return { kind: "antologi", theme: input.theme.trim(), stages };
 }
@@ -138,18 +140,17 @@ function antologiBlock(input: ProjectInput): BlockResult {
 function soloBlock(input: ProjectInput): BlockResult {
   const parsed = parsePackages(input.packages);
   if (parsed.bad) {
-    return `Baris “${parsed.bad}” belum benar. Tulis: nama paket | harga rupiah | butir; butir.`;
+    return { code: "blockSoloBad", values: { line: parsed.bad } };
   }
-  if (parsed.items.length === 0) return "Solo butuh minimal satu paket.";
+  if (parsed.items.length === 0) return { code: "blockSoloNone" };
   return { kind: "solo", packages: parsed.items };
 }
 
 function kelasBlock(input: ProjectInput): BlockResult {
   const modules = parseModules(input.modules);
-  if (modules.bad)
-    return `Baris “${modules.bad}” belum benar. Tulis: judul modul | jumlah pertemuan.`;
+  if (modules.bad) return { code: "blockKelasBad", values: { line: modules.bad } };
   if (!input.teacherName.trim() || !input.teacherBio.trim() || modules.items.length === 0) {
-    return "Kelas butuh nama dan profil pengajar serta minimal satu modul.";
+    return { code: "blockKelasMissing" };
   }
   return {
     kind: "kelas",
@@ -162,12 +163,12 @@ function lombaBlock(input: ProjectInput): BlockResult {
   const criteria = parseCriteria(input.criteria);
   const prizes = linesOf(input.prizes);
   const total = criteria.items.reduce((sum, c) => sum + c.weight, 0);
-  if (criteria.bad) return `Baris “${criteria.bad}” belum benar. Tulis: kriteria | bobot.`;
+  if (criteria.bad) return { code: "blockLombaBad", values: { line: criteria.bad } };
   if (criteria.items.length > 0 && total !== 100) {
-    return `Bobot kriteria harus berjumlah 100, sekarang ${total}.`;
+    return { code: "blockLombaWeight", values: { total } };
   }
   if (criteria.items.length === 0 || prizes.length === 0) {
-    return "Lomba butuh kriteria berbobot dan minimal satu hadiah.";
+    return { code: "blockLombaMissing" };
   }
   return { kind: "lomba", criteria: criteria.items, prizes, anonymous: input.anonymous };
 }
@@ -179,10 +180,10 @@ const BLOCKS: Record<ProjectInput["category"], (input: ProjectInput) => BlockRes
   lomba: lombaBlock,
 };
 
-function block(input: ProjectInput, errors: InputErrors): CategoryBlock | null {
+function block(input: ProjectInput, issues: Issues): CategoryBlock | null {
   const result = BLOCKS[input.category](input);
-  if (typeof result === "string") {
-    errors.block = result;
+  if ("code" in result) {
+    report(issues, "block", result.code, result.values);
     return null;
   }
   return result;
@@ -226,20 +227,13 @@ function termsFor(
  * can be told (PRJ-03).
  */
 /** What may not change once a project exists, is archived, or has participants (BR-PRJ-07). */
-function lockErrors(input: ProjectInput, ctx: BuildContext): InputErrors {
+function lockErrors(input: ProjectInput, ctx: BuildContext, issues: Issues): void {
   const { existing, taken } = ctx;
-  if (!existing) return {};
-  if (existing.publication === "arsip")
-    return { title: "Proyek ini diarsipkan dan tidak bisa diubah." };
-  const errors: InputErrors = {};
-  if (input.category !== existing.category) errors.category = "Kategori tidak bisa diganti.";
-  if (taken > 0 && input.zone !== existing.timeZone) {
-    errors.zone = "Zona waktu tidak bisa diubah setelah ada peserta.";
-  }
-  if (taken > 0 && !sameFee(input, existing)) {
-    errors.feeIdr = "Biaya tidak bisa diubah setelah ada peserta.";
-  }
-  return errors;
+  if (!existing) return;
+  if (existing.publication === "arsip") return report(issues, "title", "archived");
+  if (input.category !== existing.category) report(issues, "category", "categoryLocked");
+  if (taken > 0 && input.zone !== existing.timeZone) report(issues, "zone", "zoneLocked");
+  if (taken > 0 && !sameFee(input, existing)) report(issues, "feeIdr", "feeLocked");
 }
 
 function sameFee(input: ProjectInput, existing: ProjectFixture): boolean {
@@ -248,12 +242,16 @@ function sameFee(input: ProjectInput, existing: ProjectFixture): boolean {
 }
 
 export function buildProject(input: ProjectInput, ctx: BuildContext): BuildResult {
-  const errors: InputErrors = { ...basics(input), ...lockErrors(input, ctx) };
-  const when = schedule(input, errors, ctx.existing);
-  const { fee, quota } = money(input, errors, ctx);
-  const rules = submission(input, errors);
-  const categoryBlock = block(input, errors);
-  if (Object.keys(errors).length > 0 || !categoryBlock) return { ok: false, errors };
+  const issues = newIssues();
+  basics(input, issues);
+  lockErrors(input, ctx, issues);
+  const when = schedule(input, issues, ctx.existing);
+  const { fee, quota } = money(input, issues, ctx);
+  const rules = submission(input, issues);
+  const categoryBlock = block(input, issues);
+  if (Object.keys(issues.errors).length > 0 || !categoryBlock) {
+    return { ok: false, errors: issues.errors, problems: issues.problems };
+  }
 
   const { existing } = ctx;
   const { terms, changed } = termsFor(existing, linesOf(input.special));

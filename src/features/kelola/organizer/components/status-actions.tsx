@@ -3,14 +3,9 @@
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
+import { format, useT } from "@/lib/i18n/provider";
 import { applyAction } from "../organizer-actions";
-import { actionText, type StatusAction } from "../project-status";
-
-const failed: Record<string, string> = {
-  "ada-peserta": "Sudah ada peserta, jadi draf ini tidak dihapus. Arsipkan saja.",
-  "sudah-berubah": "Status proyek sudah berubah, jadi tidak ada yang dilakukan.",
-  "tidak-ada": "Proyek ini tidak ditemukan lagi.",
-};
+import type { StatusAction } from "../project-status";
 
 /**
  * Publish, close, archive or delete (PRJ-03, BR-PRJ-07). Each asks first. The registrations and the
@@ -26,6 +21,8 @@ export function StatusActions({
   actions: StatusAction[];
   onDeleted: () => void;
 }) {
+  const t = useT().kelolaOrganizer;
+  const actionText = t.actions.text;
   const [asking, setAsking] = useState<StatusAction | null>(null);
   const [said, setSaid] = useState("");
   const line = useRef<HTMLParagraphElement>(null);
@@ -36,8 +33,8 @@ export function StatusActions({
     if (result === "ok" && action === "hapus") return onDeleted();
     setSaid(
       result === "ok"
-        ? `${actionText[action].label}: selesai.`
-        : (failed[result] ?? "Tidak bisa dilakukan."),
+        ? format(t.actions.done, { label: actionText[action].label })
+        : (t.actions.failed[result as keyof typeof t.actions.failed] ?? t.actions.fallback),
     );
     requestAnimationFrame(() => line.current?.focus());
   }
@@ -68,7 +65,7 @@ export function StatusActions({
           actions={
             <>
               <Button variant="secondary" onClick={() => setAsking(null)}>
-                Batal
+                {t.actions.cancel}
               </Button>
               <Button
                 variant={asking === "hapus" ? "danger" : "primary"}
