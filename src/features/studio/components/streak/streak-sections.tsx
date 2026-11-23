@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { Target, PencilSimple } from "@phosphor-icons/react/dist/ssr";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { cardClass as studioCard } from "@/components/ui/card";
@@ -49,9 +50,8 @@ export function TodaySection({
   return (
     <section aria-label={t.today.label} className="grid gap-5">
       <StreakHero data={data} reachedToday={reachedToday} />
-      <TargetCard target={target} onEdit={onSetTarget} />
-      <div className="grid justify-items-start gap-3">
-        <p className="text-base">
+      <TargetCard target={target} onEdit={onSetTarget}>
+        <p className="text-sm text-ink">
           {todayLine(
             {
               target,
@@ -62,20 +62,32 @@ export function TodaySection({
             locale,
           )}
         </p>
-        <ButtonLink href={startHref}>{t.today.start}</ButtonLink>
-        {lastDocument && (
-          <p className="text-xs text-ink-muted">
-            {format(t.today.lastDocument, { title: lastDocument.title || t.untitled })}
-          </p>
-        )}
-      </div>
+        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
+          <ButtonLink href={startHref} size="sm">
+            {t.today.start}
+          </ButtonLink>
+          {lastDocument && (
+            <p className="min-w-0 flex-1 basis-56 text-xs text-ink-muted">
+              {format(t.today.lastDocument, { title: lastDocument.title || t.untitled })}
+            </p>
+          )}
+        </div>
+      </TargetCard>
       <RhythmCard />
     </section>
   );
 }
 
 /** The daily target with its edit button (only a daily target exists, client 17 November 2026). */
-function TargetCard({ target, onEdit }: { target: number; onEdit: () => void }) {
+function TargetCard({
+  target,
+  onEdit,
+  children,
+}: {
+  target: number;
+  onEdit: () => void;
+  children: ReactNode;
+}) {
   const t = useT().studioStreak.target;
   const f = useFormat();
   return (
@@ -94,6 +106,7 @@ function TargetCard({ target, onEdit }: { target: number; onEdit: () => void }) 
           {format(t.value, { words: f.number(target) })}
         </dd>
       </dl>
+      <div className="mt-4 border-t border-line pt-4">{children}</div>
     </div>
   );
 }
