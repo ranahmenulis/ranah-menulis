@@ -17,8 +17,6 @@ export const shell: typeof source = {
     back: "Back",
     toggleSidebar: "Hide or show the sidebar",
     home: "RanahMenulis, Home",
-    searchSoon: "Search is not available yet",
-    searchPlaceholder: "Search writers and works",
     write: "Write",
     searchAndDiscover: "Search and explore",
     notifications: "Notifications, {count} unread",

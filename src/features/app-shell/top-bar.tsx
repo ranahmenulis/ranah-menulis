@@ -41,7 +41,8 @@ export function BackButton({ className }: { className?: string }) {
 
 /**
  * Top bar. Phones (52px): monogram, page title, search, bell, avatar. md and up (56px): wordmark,
- * search pill, "Tulis", bell, avatar; the sidebar toggle appears from lg where the sidebar exists.
+ * the Studio search pill (Studio pages only; client, 23 November 2026: no search beside the logo
+ * elsewhere), "Tulis", bell, avatar; the sidebar toggle appears from lg where the sidebar exists.
  * On phones outside Studio the search icon opens Jelajahi. On a post page the phone
  * bar is just a back arrow and the bell and avatar.
  */
@@ -88,18 +89,7 @@ export function TopBar({
       />
       <Wordmark href="/beranda" label={topBar.home} height={28} className="max-md:hidden" />
       {title && <span className={cn("ml-2 heading-sm md:hidden", phoneOnly)}>{title}</span>}
-      {studioSearch ? (
-        <StudioTopBarSearch key={pathname} />
-      ) : (
-        <div
-          aria-disabled="true"
-          title={topBar.searchSoon}
-          className="ml-4 flex h-9 w-60 items-center gap-2 rounded-full bg-subtle px-3.5 text-sm text-ink-muted max-md:hidden"
-        >
-          <MagnifyingGlass size={20} aria-hidden />
-          {topBar.searchPlaceholder}
-        </div>
-      )}
+      {studioSearch && <StudioTopBarSearch key={pathname} />}
       <span className={cn("flex-1", studioSearch && "max-md:hidden")} />
       <ButtonLink href={NEW_DOCUMENT_HREF} variant="text" className="max-md:hidden">
         <PencilSimpleLine size={20} aria-hidden />

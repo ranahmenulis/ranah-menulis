@@ -15,8 +15,6 @@ export const shell = {
     back: "Kembali",
     toggleSidebar: "Sembunyikan atau tampilkan sidebar",
     home: "RanahMenulis, Beranda",
-    searchSoon: "Pencarian belum tersedia",
-    searchPlaceholder: "Cari penulis dan karya",
     write: "Tulis",
     searchAndDiscover: "Cari dan jelajahi",
     notifications: "Notifikasi, {count} belum dibaca",

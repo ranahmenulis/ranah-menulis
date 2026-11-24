@@ -2,6 +2,7 @@
 
 import {
   ArrowsOut,
+  Bug,
   ClockCounterClockwise,
   DownloadSimple,
   FileText,
@@ -34,6 +35,7 @@ type Actions = {
   onTargets: () => void;
   onPageLayout: () => void;
   onSprint: () => void;
+  onReport: () => void;
   onTrash: () => void;
 };
 
@@ -52,6 +54,7 @@ export function useEditorMenu({
   onTargets,
   onPageLayout,
   onSprint,
+  onReport,
   onTrash,
 }: Actions) {
   const copy = useT();
@@ -120,6 +123,12 @@ export function useEditorMenu({
       },
       { id: "sep", type: "separator" },
       {
+        id: "report",
+        label: copy.support.menu,
+        icon: <Bug />,
+        onSelect: onReport,
+      },
+      {
         // Reversible, so ink and not red (DESIGN.md 4.1).
         id: "trash",
         label: m.trash,
@@ -143,9 +152,11 @@ export function useEditorMenu({
       onTargets,
       onPageLayout,
       onSprint,
+      onReport,
       onTrash,
       t,
       m,
+      copy.support.menu,
     ],
   );
 }

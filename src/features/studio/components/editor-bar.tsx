@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowsOut, Lightbulb, MagnifyingGlass } from "@phosphor-icon
 import { IconButton } from "@/components/ui/icon-button";
 import { Menu, type MenuEntry } from "@/components/ui/menu";
 import { VisibilityTag } from "@/components/ui/visibility-tag";
+import { cn } from "@/lib/cn";
 import { useT } from "@/lib/i18n/provider";
 import type { DailyLog } from "../daily-progress";
 import type { EditorStats } from "../editor-stats";
@@ -41,6 +42,8 @@ type EditorBarProps = {
   onSprintOpenChange: (open: boolean) => void;
   /** Back to the document list; the screen saves first so nothing written is left behind. */
   onBack: () => void;
+  /** When given, the title in the bar is editable from md up (client, 23 November 2026). */
+  onTitleChange?: (title: string) => void;
   onSearch?: () => void;
   onToggleHelp: () => void;
   onFocusMode: () => void;
@@ -71,6 +74,7 @@ export function EditorBar({
   sprintOpen,
   onSprintOpenChange,
   onBack,
+  onTitleChange,
   onSearch,
   onToggleHelp,
   onFocusMode,
@@ -81,9 +85,27 @@ export function EditorBar({
       <IconButton label={t.bar.back} onClick={onBack} className="order-1 -ml-2 md:-ml-1">
         <ArrowLeft size={20} aria-hidden />
       </IconButton>
-      <span className="order-2 min-w-0 flex-1 truncate text-sm font-medium md:order-2 md:max-w-85 md:flex-none">
+      <span
+        className={cn(
+          "order-2 min-w-0 flex-1 truncate text-sm font-medium md:order-2 md:max-w-85 md:flex-none",
+          ready && onTitleChange && "md:hidden",
+        )}
+      >
         {ready ? title.trim() || t.bar.untitled : fallbackTitle}
       </span>
+      {ready && onTitleChange && (
+        <input
+          type="text"
+          value={title}
+          onChange={(e) => onTitleChange(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") e.currentTarget.blur();
+          }}
+          placeholder={t.bar.untitled}
+          aria-label={t.canvas.titleLabel}
+          className="order-2 hidden h-9 w-64 min-w-0 truncate rounded-lg border border-transparent bg-transparent px-2 text-sm font-medium text-ink outline-none placeholder:text-ink-muted hover:border-line focus:border-line focus:bg-canvas md:block lg:w-80"
+        />
+      )}
       {onSearch && (
         <IconButton
           label={t.bar.search}

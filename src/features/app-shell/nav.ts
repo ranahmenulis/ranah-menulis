@@ -1,11 +1,11 @@
 import {
   BookmarkSimple,
   Books,
-  Compass,
   House,
   Notebook,
   ShieldCheck,
   User,
+  UsersThree,
 } from "@phosphor-icons/react/dist/ssr";
 import type { Icon } from "@phosphor-icons/react";
 import { OWN_PROFILE_HREF } from "@/features/profile/profile-href";
@@ -39,7 +39,7 @@ const home: NavEntry = { id: "beranda", label: "Beranda", Icon: House, href: HOM
 const discover: NavEntry = {
   id: "jelajahi",
   label: "Community",
-  Icon: Compass,
+  Icon: UsersThree,
   href: DISCOVER_HREF,
 };
 const studio: NavEntry = { id: "studio", label: "Studio", Icon: Notebook, href: STUDIO_HREF };
@@ -80,7 +80,7 @@ export const bottomNav = [home, studio, discover, projects];
 export function activeId(pathname: string): string | null {
   if (pathname.startsWith(STUDIO_HREF)) return "studio";
   if (pathname.startsWith("/beranda")) return "beranda";
-  // Community is one module: Tulisan, posts, Event and Grup Penulis all light it up.
+  // Community is one module: Tulisan, posts, Event and Lingkar Menulis all light it up.
   if (
     pathname.startsWith(DISCOVER_HREF) ||
     pathname.startsWith("/postingan/") ||

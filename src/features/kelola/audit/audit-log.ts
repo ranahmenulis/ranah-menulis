@@ -41,6 +41,8 @@ const AUDIT_ACTIONS = [
   "event.update",
   "testimonial.hide",
   "testimonial.restore",
+  "bugreport.progress",
+  "bugreport.resolve",
   /** Not stored here: read from the judging log (BR-PRJ-09) when the log is shown. */
   "contest.reopen",
 ] as const;

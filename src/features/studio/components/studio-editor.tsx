@@ -37,6 +37,7 @@ import { HelpDrawer } from "./help-drawer";
 import { SendToProjectDialog } from "./send-to-project-dialog";
 import { SprintAnnouncer } from "./sprint-control";
 import { StudioSearchDialog } from "./studio-search-dialog";
+import { ReportProblemHost } from "@/features/support/components/report-problem-dialog";
 import { VersionHistoryDrawer } from "./version-history-drawer";
 
 /**
@@ -97,9 +98,9 @@ export function StudioEditor({
   const [focusMode, setFocusMode] = useState(false);
   const sprint = useSprint(doc.words);
   const sprintPanel = useSprintPanel(sprint);
-  const [dialog, setDialog] = useState<"send" | "export" | "targets" | "search" | "layout" | null>(
-    null,
-  );
+  const [dialog, setDialog] = useState<
+    "send" | "export" | "targets" | "search" | "layout" | "report" | null
+  >(null);
   const [stats, setStats] = useState<EditorStats | null>(null);
   const [selection, setSelection] = useState<EditorStats | null>(null);
   const [editor, setEditor] = useState<Editor | null>(null);
@@ -142,6 +143,7 @@ export function StudioEditor({
   const openExport = useCallback(() => setDialog("export"), []);
   const openTargets = useCallback(() => setDialog("targets"), []);
   const openPageLayout = useCallback(() => setDialog("layout"), []);
+  const openReport = useCallback(() => setDialog("report"), []);
   const view = useViewMode(editor, focusMode);
   const docTargets = useDocumentTargets(doc.targets, doc.words);
   const getContent = useCallback(() => editor?.getJSON() ?? null, [editor]);
@@ -168,6 +170,7 @@ export function StudioEditor({
     onPageLayout: openPageLayout,
     onHistory: side.openVersions,
     onSprint: sprintPanel.show,
+    onReport: openReport,
     onTrash: () => void moveToTrash(),
   });
 
@@ -175,6 +178,7 @@ export function StudioEditor({
     <EditorCanvas
       key={doc.editorKey}
       initialTitle={doc.initial.title}
+      title={doc.title}
       initialContent={doc.initial.content}
       onTitleChange={doc.setTitle}
       onContentChange={doc.onContentChange}
@@ -211,6 +215,7 @@ export function StudioEditor({
           sprintOpen={sprintPanel.open}
           onSprintOpenChange={sprintPanel.setOpen}
           onBack={() => void goBack(backHref)}
+          onTitleChange={doc.setTitle}
           onSearch={search.onOpen}
           onToggleHelp={side.toggleHelp}
           onFocusMode={enterFocus}
@@ -296,6 +301,7 @@ export function StudioEditor({
         onPick={sendTo}
       />
 
+      <ReportProblemHost open={dialog === "report"} onClose={closeDialog} />
       <EditorConflictDialog conflict={doc.conflict} resolveConflict={doc.resolveConflict} />
     </div>
   );

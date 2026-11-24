@@ -11,7 +11,7 @@ export const kelolaAdmin = {
   setup: "Penyiapan awal",
   band: {
     title: "Admin",
-    description: "Pengguna dan role, moderasi, kurasi, grup, dan audit log.",
+    description: "Pengguna dan role, moderasi, kurasi, lingkar, dan audit log.",
   },
   tabs: {
     label: "Bagian Admin",
@@ -19,8 +19,9 @@ export const kelolaAdmin = {
     moderation: "Moderasi",
     curation: "Kurasi",
     settings: "Pengaturan",
-    groups: "Grup",
+    groups: "Lingkar",
     audit: "Audit log",
+    reports: "Laporan masalah",
   },
   /** Texts of action results and rule blocks, found by the `code` the result carries. */
   results: {

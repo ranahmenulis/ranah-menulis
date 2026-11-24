@@ -11,6 +11,7 @@ const h = vi.hoisted(() => ({
   push: vi.fn(),
   updateMeta: vi.fn(),
   saveNow: vi.fn(),
+  setTitle: vi.fn(),
   doc: { title: "Yang Ditunggu Nenek", words: 120, load: "ready" as "ready" | "loading" },
 }));
 
@@ -37,7 +38,7 @@ vi.mock("@/features/studio/hooks/use-studio-document", () => ({
     initial: { title: h.doc.title, content: { type: "doc", content: [] } },
     editorKey: 1,
     title: h.doc.title,
-    setTitle: vi.fn(),
+    setTitle: h.setTitle,
     words: h.doc.words,
     targets: [],
     setTargets: vi.fn(),
@@ -119,6 +120,17 @@ describe("StudioEditor, quick search", () => {
     await waitFor(() => expect(h.push).toHaveBeenCalledWith("/studio/doc-2"));
     expect(h.saveNow.mock.invocationCallOrder[0]).toBeLessThan(h.push.mock.invocationCallOrder[0]);
     expect(screen.queryByRole("dialog", { name: "Cari di Studio" })).toBeNull();
+  });
+});
+
+describe("StudioEditor, title in the bar", () => {
+  it("edits the document title from the bar (client, 23 November 2026)", () => {
+    h.setTitle.mockReset();
+    renderEditor();
+    const input = screen.getByRole("textbox", { name: "Judul" }) as HTMLInputElement;
+    expect(input.value).toBe("Yang Ditunggu Nenek");
+    fireEvent.change(input, { target: { value: "Yang Ditunggu Kakek" } });
+    expect(h.setTitle).toHaveBeenCalledWith("Yang Ditunggu Kakek");
   });
 });
 

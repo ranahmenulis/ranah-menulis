@@ -13,7 +13,7 @@ export const kelolaAdmin: typeof source = {
   setup: "Initial setup",
   band: {
     title: "Admin",
-    description: "Users and roles, moderation, curation, groups, and the audit log.",
+    description: "Users and roles, moderation, curation, circles, and the audit log.",
   },
   tabs: {
     label: "Admin sections",
@@ -21,8 +21,9 @@ export const kelolaAdmin: typeof source = {
     moderation: "Moderation",
     curation: "Curation",
     settings: "Settings",
-    groups: "Groups",
+    groups: "Circles",
     audit: "Audit log",
+    reports: "Problem reports",
   },
   results: {
     "bukan-wewenang": "Only Administrators and Super Admins can change roles.",

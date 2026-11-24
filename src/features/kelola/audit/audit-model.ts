@@ -4,7 +4,7 @@ import { kelolaAudit as idCopy } from "./copy/id";
 
 /** Groups the audit log can be narrowed to (PLT-05). */
 export type AuditKind =
-  "semua" | "role" | "penugasan" | "moderasi" | "lomba" | "kurasi" | "grup" | "event";
+  "semua" | "role" | "penugasan" | "moderasi" | "laporan" | "lomba" | "kurasi" | "grup" | "event";
 
 /** Indonesian labels; the view reads the labels of the interface language from the dictionary. */
 export const AUDIT_KINDS: readonly { id: AuditKind; label: string }[] = (
@@ -45,6 +45,8 @@ const KIND_OF: Record<AuditAction, Exclude<AuditKind, "semua">> = {
   "event.update": "event",
   "testimonial.hide": "moderasi",
   "testimonial.restore": "moderasi",
+  "bugreport.progress": "laporan",
+  "bugreport.resolve": "laporan",
 };
 
 export const parseAuditKind = (raw: string | null): AuditKind =>

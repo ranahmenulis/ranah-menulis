@@ -4,11 +4,13 @@ import { usePathname } from "next/navigation";
 import { Tabs } from "@/components/ui/tabs";
 import { useT } from "@/lib/i18n/provider";
 import { ADMIN_GROUPS_HREF } from "@/features/community/groups/group-model";
+import { BUG_REPORTS_HREF } from "@/features/support/bug-report-model";
 import { ADMIN_HREF } from "../area-hrefs";
 
 function current(pathname: string): string {
   if (pathname.startsWith(ADMIN_GROUPS_HREF)) return "grup";
   if (pathname.startsWith(`${ADMIN_HREF}/moderasi`)) return "moderasi";
+  if (pathname.startsWith(BUG_REPORTS_HREF)) return "laporan";
   if (pathname.startsWith(`${ADMIN_HREF}/kurasi`)) return "kurasi";
   if (pathname.startsWith(`${ADMIN_HREF}/pengaturan`)) return "pengaturan";
   if (pathname.startsWith(`${ADMIN_HREF}/audit`)) return "audit";
@@ -28,6 +30,7 @@ export function AdminTabs() {
       items={[
         { id: "pengguna", label: t.users, href: ADMIN_HREF },
         { id: "moderasi", label: t.moderation, href: `${ADMIN_HREF}/moderasi` },
+        { id: "laporan", label: t.reports, href: BUG_REPORTS_HREF },
         { id: "kurasi", label: t.curation, href: `${ADMIN_HREF}/kurasi` },
         { id: "pengaturan", label: t.settings, href: `${ADMIN_HREF}/pengaturan` },
         { id: "grup", label: t.groups, href: ADMIN_GROUPS_HREF },

@@ -17,6 +17,8 @@ import "./editor.css";
 
 type EditorCanvasProps = {
   initialTitle: string;
+  /** The live title. When given the field follows it, so the title in the bar can edit it too. */
+  title?: string;
   initialContent: JSONContent;
   onTitleChange: (title: string) => void;
   onContentChange: (content: JSONContent, words: number) => void;
@@ -62,6 +64,7 @@ export function EditorCanvas(props: EditorCanvasProps) {
  */
 function HydratedEditorCanvas({
   initialTitle,
+  title,
   initialContent,
   onTitleChange,
   onContentChange,
@@ -149,7 +152,7 @@ function HydratedEditorCanvas({
         ref={titleRef}
         rows={1}
         autoFocus={autoFocusTitle}
-        defaultValue={initialTitle}
+        {...(title === undefined ? { defaultValue: initialTitle } : { value: title })}
         placeholder={t.titlePlaceholder}
         aria-label={t.titleLabel}
         onChange={(e) => onTitleChange(e.target.value)}

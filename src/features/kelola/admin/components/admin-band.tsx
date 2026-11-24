@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import { ADMIN_GROUPS_HREF } from "@/features/community/groups/group-model";
 import type { PostStore } from "@/features/community/storage/post-store";
+import { BUG_REPORTS_HREF } from "@/features/support/bug-report-model";
 import { useT } from "@/lib/i18n/provider";
 import { RoleBand } from "../../components/role-band";
 import { useAdminBand } from "../../use-band-work";
@@ -12,6 +13,7 @@ import { ADMIN_HREF } from "../area-hrefs";
 const TAB_ROOTS = new Set([
   ADMIN_HREF,
   `${ADMIN_HREF}/moderasi`,
+  BUG_REPORTS_HREF,
   `${ADMIN_HREF}/kurasi`,
   `${ADMIN_HREF}/pengaturan`,
   `${ADMIN_HREF}/audit`,

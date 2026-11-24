@@ -74,7 +74,9 @@ import { kelolaAudit as kelolaAuditEn } from "@/features/kelola/audit/copy/en";
 import { kelolaAdmin as kelolaAdminId } from "@/features/kelola/admin/copy/id";
 import { kelolaAdmin as kelolaAdminEn } from "@/features/kelola/admin/copy/en";
 import { kelolaModeration as kelolaModerationId } from "@/features/kelola/admin/copy/moderation-id";
+import { support as supportId } from "@/features/support/copy/support-id";
 import { kelolaModeration as kelolaModerationEn } from "@/features/kelola/admin/copy/moderation-en";
+import { support as supportEn } from "@/features/support/copy/support-en";
 
 /** Indonesian is the source of truth for the shape; English must provide the same keys. */
 export const id = {
@@ -116,6 +118,7 @@ export const id = {
   kelolaAudit: kelolaAuditId,
   kelolaAdmin: kelolaAdminId,
   kelolaModeration: kelolaModerationId,
+  support: supportId,
 };
 export type Dictionary = typeof id;
 
@@ -158,6 +161,7 @@ const en: Dictionary = {
   kelolaAudit: kelolaAuditEn,
   kelolaAdmin: kelolaAdminEn,
   kelolaModeration: kelolaModerationEn,
+  support: supportEn,
 };
 
 export const dictionaries: Record<Locale, Dictionary> = { id, en };
