@@ -24,10 +24,10 @@ const move = "transition-[transform,opacity] duration-300 ease-out";
 
 function TodayDot({ filled, instant }: { filled: boolean; instant: boolean }) {
   return (
-    <span className="relative grid size-3.5 place-items-center rounded-full shadow-[inset_0_0_0_1.5px_var(--ink)]">
+    <span className="relative grid size-3.5 place-items-center rounded-full shadow-[inset_0_0_0_1.5px_var(--accent)]">
       <i
         className={cn(
-          "absolute inset-0 rounded-full bg-ink",
+          "absolute inset-0 rounded-full bg-accent",
           !instant && move,
           filled ? "scale-100 opacity-100" : "scale-50 opacity-0",
         )}
@@ -50,13 +50,13 @@ function CalendarPreview({ filled, instant }: { filled: boolean; instant: boolea
           key={i}
           className={cn(
             "grid size-9 place-items-center",
-            i === TODAY && "shadow-[inset_0_0_0_1px_var(--ink)]",
+            i === TODAY && "rounded-lg shadow-[inset_0_0_0_1px_var(--accent)]",
           )}
         >
           {i === TODAY && <TodayDot filled={filled} instant={instant} />}
-          {i !== TODAY && kind === "full" && <i className="size-3.5 rounded-full bg-ink" />}
+          {i !== TODAY && kind === "full" && <i className="size-3.5 rounded-full bg-accent" />}
           {kind === "ring" && (
-            <i className="size-3.5 rounded-full shadow-[inset_0_0_0_1.5px_var(--ink)]" />
+            <i className="size-3.5 rounded-full shadow-[inset_0_0_0_1.5px_var(--accent)]" />
           )}
           {kind === "empty" && (
             <i className="size-1 rounded-full bg-line-strong opacity-(--opacity-dot-empty)" />
@@ -105,10 +105,10 @@ export function StreakPreview() {
               {previews.reached}
             </span>
           </div>
-          <div className="h-1 bg-line">
+          <div className="h-1.5 overflow-hidden rounded-full bg-subtle">
             <i
               className={cn(
-                "block h-full w-full origin-left bg-ink",
+                "block h-full w-full origin-left rounded-full bg-accent",
                 !instant && "transition-transform duration-300 ease-out",
                 done ? "scale-x-100" : "scale-x-96",
               )}

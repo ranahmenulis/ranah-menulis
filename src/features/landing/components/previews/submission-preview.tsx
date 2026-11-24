@@ -36,7 +36,9 @@ export function SubmissionPreview() {
           className={cn(
             badge,
             "col-start-2 md:col-start-auto",
-            accepted ? "border-line-strong" : "border-line text-ink-muted",
+            accepted
+              ? "border-transparent bg-accent-subtle text-accent-ink"
+              : "border-line text-ink-muted",
             time !== null && !instant && "animate-[lp-pop_200ms_var(--ease-out)]",
           )}
         >

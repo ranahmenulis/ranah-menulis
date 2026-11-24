@@ -18,7 +18,10 @@ export function PreviewFrame({
     <figure
       role="img"
       aria-label={label}
-      className={cn("m-0 min-w-0 overflow-hidden border border-line bg-canvas", className)}
+      className={cn(
+        "m-0 min-w-0 overflow-hidden rounded-xl border border-line bg-canvas",
+        className,
+      )}
     >
       {children}
     </figure>

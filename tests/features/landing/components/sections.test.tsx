@@ -27,16 +27,10 @@ describe("social proof", () => {
 });
 
 describe("ecosystem", () => {
-  it("names the five modules in the client's order, titles only", () => {
+  it("names four modules in the client's order, titles only: Studio is the hero", () => {
     render(<Ecosystem copy={landing.ecosystem} />);
     const names = screen.getAllByRole("heading", { level: 3 }).map((h) => h.textContent);
-    expect(names).toEqual([
-      "Ranah Streak",
-      "Ranah Project",
-      "Ranah Studio",
-      "Ranah Community",
-      "Marketplace",
-    ]);
+    expect(names).toEqual(["Ranah Streak", "Ranah Project", "Ranah Community", "Marketplace"]);
   });
 
   it("marks Streak as part of Studio and Marketplace as coming later", () => {
@@ -50,7 +44,8 @@ describe("ecosystem", () => {
     const { container } = render(<Ecosystem copy={landing.ecosystem} />);
     const frames = Array.from(container.querySelectorAll('figure[role="img"]'));
     const labels = frames.map((el) => el.getAttribute("aria-label"));
-    expect(labels).toEqual(Object.values(landing.ecosystem.modules).map((m) => m.preview));
+    const { streak, project, community, marketplace } = landing.ecosystem.modules;
+    expect(labels).toEqual([streak, project, community, marketplace].map((m) => m.preview));
   });
 });
 

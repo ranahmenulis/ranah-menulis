@@ -8,8 +8,8 @@ import { LoopTimeContext, useLoop } from "../../motion/use-loop";
 
 /**
  * Frame of one Ekosistem preview. The picture is one image for assistive tech (its label
- * describes the finished state); the loop inside only demonstrates it. The pause button sits in
- * the gap under the frame, so it never covers the picture and never shifts the layout.
+ * describes the finished state); the loop inside only demonstrates it. The pause button sits
+ * above the frame, level with the card title, so it never covers the picture.
  */
 export function LoopFrame({
   id,
@@ -36,7 +36,10 @@ export function LoopFrame({
       <figure
         role="img"
         aria-label={label}
-        className={cn("m-0 min-w-0 overflow-hidden border border-line bg-canvas", className)}
+        className={cn(
+          "m-0 min-w-0 overflow-hidden rounded-xl border border-line bg-canvas",
+          className,
+        )}
       >
         <LoopTimeContext value={time}>{children}</LoopTimeContext>
       </figure>
@@ -47,7 +50,7 @@ export function LoopFrame({
           aria-label={paused ? previews.play : previews.pause}
           data-show={active || paused || undefined}
           className={cn(
-            "absolute top-full right-0 mt-1 grid size-11 cursor-pointer place-items-center text-ink-muted",
+            "absolute -top-12 right-0 grid size-11 cursor-pointer place-items-center text-ink-muted md:-top-14",
             "opacity-0 transition-opacity duration-150 ease-out hover:text-ink",
             "focus-visible:opacity-100 data-show:opacity-100",
           )}

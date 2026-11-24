@@ -11,9 +11,9 @@ export function MarketplacePreview() {
   const { ecosystem, doc } = useT().landing;
   const [first, ...rest] = ecosystem.marketplace.categories;
   return (
-    <div className="grid gap-5 px-4 py-5 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:items-center md:gap-8 md:px-6">
+    <div className="grid gap-5 px-4 py-5 md:px-6">
       <div className="flex flex-wrap gap-2">
-        <span className="inline-flex h-8 items-center rounded-full bg-ink px-3 text-xs font-medium text-on-ink">
+        <span className="inline-flex h-8 items-center rounded-full bg-accent px-3 text-xs font-medium text-on-accent">
           {first}
         </span>
         {rest.map((c) => (
@@ -25,7 +25,7 @@ export function MarketplacePreview() {
           </span>
         ))}
       </div>
-      <div className="grid grid-cols-[48px_minmax(0,1fr)] items-center gap-4 border-t border-line pt-5 md:border-t-0 md:border-l md:pt-0 md:pl-8">
+      <div className="grid grid-cols-[48px_minmax(0,1fr)] items-center gap-4 border-t border-line pt-5">
         <BookCover title={doc.title} width={48} />
         <div className="min-w-0">
           <p className="truncate text-sm font-semibold">{doc.title}</p>
