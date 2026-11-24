@@ -28,9 +28,6 @@ export const landing: typeof source = {
     saved: "Saved 2:02 PM",
     words: "words",
   },
-  images: {
-    keladi: "Engraving of a potted caladium plant, from The American Florist magazine, 1886.",
-  },
   doc: {
     title: "What Grandma Waited For Beneath the Water Apple Tree",
     page: [
@@ -140,7 +137,6 @@ export const landing: typeof source = {
     eyebrow: "Start Your Writing Journey",
     title: "It's Time to Write, Grow, and Publish.",
     intro: "Join RanahMenulis and become part of a writing ecosystem in Indonesia and Malaysia.",
-    note: "RanahMenulis isn't open yet. Save your name and we'll email you when it opens.",
     pillarsLabel: "What RanahMenulis offers",
     pillars: [
       "A Focused Place to Write",

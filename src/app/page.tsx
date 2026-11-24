@@ -15,7 +15,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 // Runs before the hero so the class exists before first paint, and only without reduced motion.
-// `lp-motion` turns on the landing's motion (hero entrance and video, preview loops). Safety: if
+// `lp-motion` turns on the landing's motion (hero entrance, reveals, preview loops). Safety: if
 // the landing has not hydrated (`data-lp-ready`) within 3.5 s the class is removed and every part
 // shows its final state (the hero shows its poster).
 const heroScript = `(function(){var d=document.documentElement;if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return;d.classList.add("lp-motion");setTimeout(function(){if(!d.hasAttribute("data-lp-ready"))d.classList.remove("lp-motion")},3500)})();`;
@@ -35,8 +35,8 @@ export default async function Home() {
         <SocialProof copy={landing.socialProof} />
         <Ecosystem copy={landing.ecosystem} />
         <Publishing copy={landing.publishing} />
-        <Faq title={landing.faqTitle} items={landing.faq} images={landing.images} />
         <Waitlist waitlist={landing.waitlist} />
+        <Faq title={landing.faqTitle} items={landing.faq} />
       </main>
       <Footer copy={landing} />
     </div>

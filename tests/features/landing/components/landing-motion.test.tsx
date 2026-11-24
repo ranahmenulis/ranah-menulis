@@ -74,9 +74,7 @@ describe("landing without motion (no script, reduced motion)", () => {
   });
 
   it("shows every FAQ answer open, without an accordion", () => {
-    const { container } = render(
-      <Faq title={landing.faqTitle} items={landing.faq} images={landing.images} />,
-    );
+    const { container } = render(<Faq title={landing.faqTitle} items={landing.faq} />);
     expect(container.querySelector("details")).toBeNull();
     for (const item of landing.faq) expect(screen.getByText(item.answer)).toBeTruthy();
   });

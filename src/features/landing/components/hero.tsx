@@ -13,14 +13,15 @@ const LINE_CLASSES = ["", "lp-hero-serif text-accent-ink", ""];
  * Hero (tahap H, 24 Nov 2026): centred and quiet, after the Novlr reference the user sent. One
  * pill (the eyebrow and the two countries), the client's three-line title, one sentence, one
  * filled button and one text link. Then the stage (`HeroBand`): the Studio editor on a tinted
- * engraving, the only place the landing shows Studio. A soft accent sky sits behind the top.
+ * engraving, the only place the landing shows Studio. A soft accent sky sits behind the top and
+ * reaches up under the top bar, which stays clear until the page scrolls.
  */
 export function Hero({ copy, studio }: { copy: Dictionary["landing"]["hero"]; studio: Studio }) {
   return (
     <section aria-labelledby="hero-h" data-enter className="relative isolate">
       <div
         aria-hidden
-        className="absolute inset-x-0 top-0 -z-10 h-[min(780px,90vh)] bg-linear-to-b from-accent-subtle to-transparent"
+        className="absolute inset-x-0 -top-24 -z-10 h-[min(880px,100vh)] bg-linear-to-b from-accent-subtle to-transparent"
       />
       <Wrap className="grid justify-items-center pt-14 text-center md:pt-24">
         <p className="inline-flex h-8 items-center gap-2 rounded-full border border-line bg-surface/80 px-3.5 text-xs font-medium text-ink-muted shadow-card backdrop-blur">

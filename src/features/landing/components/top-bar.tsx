@@ -17,7 +17,8 @@ type Mode = "top" | "scrolled-hero" | "scrolled" | "wait";
  *  - tombol hero terlihat: tombol bilah sekunder, tanpa garis bawah
  *  - tombol hero sudah lewat: tombol bilah primer, garis rambut muncul
  *  - bagian daftar tunggu terlihat: tombolnya sendiri terisi, tombol bilah kembali sekunder
- * Berganti kelas seketika, tanpa gerak.
+ * Berganti kelas seketika, tanpa gerak. Di puncak halaman bilah ini bening, jadi langit hero
+ * terlihat di belakangnya.
  */
 export function TopBar() {
   const [mode, setMode] = useState<Mode>("top");
@@ -56,8 +57,10 @@ export function TopBar() {
   return (
     <header
       className={cn(
-        "sticky top-0 z-10 border-b bg-canvas pt-(--safe-top)",
-        mode === "top" ? "border-transparent" : "border-line",
+        "sticky top-0 z-10 border-b pt-(--safe-top)",
+        mode === "top"
+          ? "border-transparent bg-transparent"
+          : "border-line bg-canvas/85 backdrop-blur-md",
       )}
     >
       <Wrap className="flex h-[52px] items-center gap-8 md:h-16">

@@ -37,7 +37,7 @@ export function Footer({ copy }: { copy: Copy }) {
   const f = copy.footer;
   const m = copy.ecosystem.modules;
   return (
-    <footer className="pt-16 md:pt-24">
+    <footer className="pt-28 md:pt-44">
       <Wrap>
         <div className="grid gap-10 md:grid-cols-12 md:gap-6">
           <div className="grid content-start gap-4 md:col-span-4">

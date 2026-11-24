@@ -35,10 +35,6 @@ export const landing = {
     saved: "Tersimpan 14.02",
     words: "kata",
   },
-  // Alt text of the public-domain plates that carry meaning; the other three are decorative.
-  images: {
-    keladi: "Gravir tanaman keladi dalam pot, dari majalah The American Florist tahun 1886.",
-  },
   // Sample manuscript shown in the hero and the previews.
   doc: {
     title: "Yang Ditunggu Nenek di Bawah Jambu Air",
@@ -154,7 +150,6 @@ export const landing = {
     title: "Saatnya Menulis, Berkembang, dan Menerbitkan Karya.",
     intro:
       "Bergabunglah dengan RanahMenulis dan menjadi bagian dari ekosistem penulis di Indonesia dan Malaysia.",
-    note: "RanahMenulis belum dibuka. Simpan namamu, kami kabari lewat email saat dibuka.",
     // The four pillars from image 1.
     pillarsLabel: "Yang ada di RanahMenulis",
     pillars: ["Ruang Menulis Fokus", "Komunitas Positif", "Peluang Terbit", "Pengembangan Diri"],

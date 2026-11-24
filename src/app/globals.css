@@ -734,20 +734,6 @@ html.lp-motion .lp-link:is(:hover, :focus-visible) {
   filter: grayscale(1) contrast(1.18) brightness(0.98);
   display: block;
 }
-/* A plate on white paper: multiplied in light mode so the paper melts into the page. In dark mode
-   no plate is inverted or blended (user decision, 20 Nov 2026): it stays as it is. */
-.lp-plate {
-  mix-blend-mode: multiply;
-}
-:root[data-theme="dark"] .lp-plate {
-  mix-blend-mode: normal;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .lp-plate {
-    mix-blend-mode: normal;
-  }
-}
-
 /* Hero stage: the engraving fades out toward the feature pills at the bottom (the mask is on the
    stage's picture box, so it stays put while the image drifts inside it). `lp-tint` takes only
    the engraving's light and dark from it and the hue from the accent-subtle ground, so the plate
@@ -891,15 +877,6 @@ html.lp-motion .lp-chips[data-seen] .lp-chip {
 }
 html.lp-motion .lp-caret {
   animation: lp-blink 1.1s steps(1) infinite;
-}
-
-/* Plates are pulled down like a fresh print. The clip sits on the image, not the wrapper, so the
-   keladi's multiply still reaches the page. */
-html.lp-motion [data-reveal="plate"] > img {
-  transition: clip-path 900ms var(--ease-out);
-}
-html.lp-motion [data-reveal="plate"]:not([data-seen]) > img {
-  clip-path: inset(0 0 100% 0);
 }
 
 /* Buttons with an arrow: the arrow leans 3px toward where the button goes. */
