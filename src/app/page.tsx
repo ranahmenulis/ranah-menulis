@@ -26,9 +26,9 @@ const heroScript = `(function(){var d=document.documentElement;if(window.matchMe
 export default async function Home() {
   const { landing } = await getDictionary();
   return (
-    // `lp-root` marks the landing for its dark-mode canvas (globals.css, "Dark landing");
+    // The landing uses the app's slate tokens in both themes (tahap H, 24 November 2026).
     // `contents` keeps the wrapper out of the body's flex layout.
-    <div className="lp-root contents">
+    <div className="contents">
       <script dangerouslySetInnerHTML={{ __html: heroScript }} />
       <TopBar />
       <main>

@@ -123,7 +123,7 @@
 }
 
 /* Inverted sections use the other theme's set, so inputs, chips, focus, errors and the logo stay
-   legible. .theme-dark always uses the dark set in both themes (app bands, landing closing band). */
+   legible. .theme-dark always uses the dark set in both themes (app bands, landing closing card). */
 .theme-invert,
 .theme-dark {
   --canvas: #0d0f13;
@@ -781,71 +781,6 @@ html.lp-motion .lp-marker {
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) .lp-plate {
     mix-blend-mode: normal;
-  }
-}
-
-/* Landing keeps its approved monochrome (23 November 2026: the slate palette is for the app only).
-   Scoped to the landing (.lp-root is the wrapper in app/page.tsx). Dark uses the artifact's deeper
-   black (#0c0c0c, hairlines #262626) so the plates and the closing band read with more contrast. */
-:root:has(.lp-root) {
-  --canvas: #ffffff;
-  --surface: #ffffff;
-  --subtle: #f3f3f3;
-  --ink: #191919;
-  --ink-read: #191919;
-  --ink-muted: #5e5e5e;
-  --ink-soft: #3d3d3d;
-  --ink-faint: #767676;
-  --line: #e6e6e6;
-  --line-strong: #191919;
-  --on-ink: #ffffff;
-  --accent: #191919;
-  --accent-ink: #191919;
-  --accent-subtle: #f3f3f3;
-  --on-accent: #ffffff;
-  --art-moon: #f2dc9b;
-  --art-flame: #e07a2f;
-  --float-shadow: 0 2px 12px rgb(0 0 0 / 0.08);
-}
-:root[data-theme="dark"]:has(.lp-root),
-.lp-root .theme-dark {
-  --canvas: #0c0c0c;
-  --surface: #1a1a1a;
-  --subtle: #1a1a1a;
-  --ink: #ededed;
-  --ink-read: #d2d2d2;
-  --ink-muted: #a3a3a3;
-  --ink-soft: #c4c4c4;
-  --ink-faint: #8c8c8c;
-  --line: #262626;
-  --line-strong: #ededed;
-  --on-ink: #121212;
-  --accent: #ededed;
-  --accent-ink: #ededed;
-  --accent-subtle: #232323;
-  --on-accent: #121212;
-  --float-shadow: none;
-  --cover-edge: #2e2e2e;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]):has(.lp-root) {
-    --canvas: #0c0c0c;
-    --surface: #1a1a1a;
-    --subtle: #1a1a1a;
-    --ink: #ededed;
-    --ink-read: #d2d2d2;
-    --ink-muted: #a3a3a3;
-    --ink-soft: #c4c4c4;
-    --ink-faint: #8c8c8c;
-    --line: #262626;
-    --line-strong: #ededed;
-    --on-ink: #121212;
-    --accent: #ededed;
-    --accent-ink: #ededed;
-    --accent-subtle: #232323;
-    --on-accent: #121212;
-    --float-shadow: none;
-    --cover-edge: #2e2e2e;
   }
 }
 
