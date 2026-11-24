@@ -39,11 +39,8 @@ export function HeroBand({ studio }: { studio: Dictionary["landing"]["studio"] }
         role="region"
         className="lp-band relative isolate overflow-hidden rounded-2xl border border-line bg-accent-subtle px-3 pt-8 pb-8 shadow-card md:px-10 md:pt-16 md:pb-12"
       >
-        <div aria-hidden className="lp-relief absolute inset-0 -z-10 overflow-hidden">
-          <Plate
-            image={image}
-            className="lp-photo lp-tint h-[118%] w-full object-cover object-[50%_62%]"
-          />
+        <div aria-hidden className="lp-relief lp-tint absolute inset-0 -z-10 overflow-hidden">
+          <Plate image={image} className="lp-photo h-[118%] w-full object-cover object-[50%_62%]" />
         </div>
         <figure
           role="img"

@@ -82,10 +82,10 @@ export function Footer({ copy }: { copy: Copy }) {
               ))}
             </Column>
             <Column title={f.program}>
-              {copy.publishing.paths.map((p) => (
-                <li key={p.name}>
+              {copy.publishing.paths.map((name) => (
+                <li key={name}>
                   <a href="#penerbitan" className={link}>
-                    {p.name}
+                    {name}
                   </a>
                 </li>
               ))}

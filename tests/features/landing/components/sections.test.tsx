@@ -50,13 +50,11 @@ describe("ecosystem", () => {
 });
 
 describe("publishing", () => {
-  it("lists the four Projects paths under the client's heading", () => {
+  it("lists the four Projects paths by name, in the client's order", () => {
     render(<Publishing copy={landing.publishing} />);
-    expect(screen.getByRole("heading", { level: 3 }).textContent).toBe(
-      "Berbagai Jalur Penerbitan Sesuai Tahap Perjalananmu",
-    );
-    const names = screen.getAllByRole("heading", { level: 4 }).map((h) => h.textContent);
-    expect(names).toEqual(["Antologi", "Solo Book", "Kelas Menulis", "Lomba Menulis"]);
+    const items = screen.getAllByRole("listitem").map((li) => li.textContent);
+    expect(items).toEqual(["Antologi", "Solo Book", "Kelas Menulis", "Lomba Menulis"]);
+    expect(screen.getByRole("img", { name: landing.publishing.covers })).toBeTruthy();
   });
 
   it("leads to the waitlist while the app is closed", () => {

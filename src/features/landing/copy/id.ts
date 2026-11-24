@@ -125,23 +125,16 @@ export const landing = {
     ],
   },
   publishing: {
-    eyebrow: "Publishing Opportunities",
     title: "Dari Naskah Digital Menjadi Karya Nyata.",
     lead: "Wujudkan impian menerbitkan buku pertamamu bersama ekosistem penerbitan RanahMenulis.",
-    covers: "Tiga sampul buku hitam putih dari program penerbitan RanahMenulis.",
+    covers: "Tiga sampul buku dari program penerbitan RanahMenulis, di depan ruang percetakan.",
     coverTitles: [
       "Surat yang Tidak Pernah Terkirim",
       "Yang Ditunggu Nenek di Bawah Jambu Air",
       "Dua Puluh Menit Sebelum Subuh",
     ],
-    pathsTitle: "Berbagai Jalur Penerbitan Sesuai Tahap Perjalananmu",
-    // Names and sentences from image 2.
-    paths: [
-      { name: "Antologi", text: "Berkarya bersama penulis lain dalam satu buku tema pilihan." },
-      { name: "Solo Book", text: "Terbitkan karya solomu dengan pendampingan tim." },
-      { name: "Kelas Menulis", text: "Tingkatkan keterampilan menulis dan siapkan naskah terbit." },
-      { name: "Lomba Menulis", text: "Ikuti kompetisi menulis dengan peluang penerbitan." },
-    ],
+    // Names from image 2; their sentences were cut in tahap H.
+    paths: ["Antologi", "Solo Book", "Kelas Menulis", "Lomba Menulis"],
     cta: "Terbitkan Karyamu Sekarang",
   },
   previews: {

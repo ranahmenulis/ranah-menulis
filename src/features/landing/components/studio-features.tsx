@@ -24,7 +24,7 @@ export function StudioFeatures({ copy }: { copy: Dictionary["landing"]["studio"]
       ref={ref}
       data-reveal="chips"
       aria-label={copy.featuresLabel}
-      className="lp-chips m-0 mt-8 flex list-none flex-wrap justify-center gap-2 p-0 md:mt-12 lg:gap-2.5"
+      className="lp-chips m-0 mt-8 flex list-none flex-wrap justify-center gap-2 p-0 md:mx-auto md:mt-12 md:grid md:w-max md:grid-cols-3 md:gap-2.5"
     >
       {copy.features.map((name, i) => {
         const Glyph = ICONS[i];

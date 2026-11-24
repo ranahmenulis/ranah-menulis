@@ -112,28 +112,15 @@ export const landing: typeof source = {
     ],
   },
   publishing: {
-    eyebrow: "Publishing Opportunities",
     title: "From Digital Manuscript to Real Book.",
     lead: "Make your dream of publishing your first book real with the RanahMenulis publishing ecosystem.",
-    covers: "Three black and white book covers from RanahMenulis publishing programs.",
+    covers: "Three book covers from RanahMenulis publishing programs, in front of a printing room.",
     coverTitles: [
       "The Letter That Was Never Sent",
       "What Grandma Waited For Beneath the Water Apple Tree",
       "Twenty Minutes Before Dawn",
     ],
-    pathsTitle: "Publishing Paths for Every Stage of Your Journey",
-    paths: [
-      { name: "Anthology", text: "Write alongside other writers in one book with a chosen theme." },
-      { name: "Solo Book", text: "Publish your own book with support from the team." },
-      {
-        name: "Writing Class",
-        text: "Sharpen your skills and get your manuscript ready to publish.",
-      },
-      {
-        name: "Writing Contest",
-        text: "Enter writing competitions with a chance to be published.",
-      },
-    ],
+    paths: ["Anthology", "Solo Book", "Writing Class", "Writing Contest"],
     cta: "Publish Your Work Now",
   },
   previews: {
