@@ -34,15 +34,13 @@ export const landing = {
     cta: "Mulai Perjalanan Menulis",
     secondary: "Jelajahi RanahMenulis",
   },
-  // Sample manuscript shown in the hero and the previews.
+  // Sample manuscript shown on the hero stage.
   doc: {
     title: "Yang Ditunggu Nenek di Bawah Jambu Air",
     page: [
       "Hujan pertama bulan November selalu datang sore hari, tepat ketika Nenek selesai menyapu halaman. Ia tidak pernah berlari masuk. Ia berdiri dulu di bawah jambu air, membiarkan beberapa tetes jatuh ke kerudungnya, seolah menunggu seseorang yang berjanji pulang bersama musim.",
       "Aku baru mengerti kebiasaan itu bertahun-tahun kemudian, setelah rumah itu dijual dan pohon jambunya ditebang orang yang tidak suka daun berserakan.",
     ],
-    anthologyTitle: "Surat yang Tidak Pernah Terkirim",
-    anthologyLabel: "Antologi: Surat yang Tidak Pernah Terkirim",
   },
   // One compact line, Reedsy style (client note): the numbers live in social-proof.ts.
   socialProof: {
@@ -53,7 +51,9 @@ export const landing = {
     programs: "program",
     and: "dan",
   },
-  // Module names only, no body text (client note): each mockup shows what the module holds.
+  // Five cards in one shape (client, 24 Nov 2026): name, one benefit, the app's own screen, and
+  // a way in where the landing has one. The Studio benefit is the client's; the others were
+  // written by the team and approved by the user.
   ecosystem: {
     eyebrow: "The Ecosystem",
     title: "Satu Ekosistem. Banyak Kemungkinan.",
@@ -61,42 +61,37 @@ export const landing = {
     inStudio: "Bagian dari Studio",
     soon: "Menyusul",
     modules: {
+      studio: {
+        name: "Ranah Studio",
+        benefit: "Tempat menulis, mengedit, dan menyimpan karya dalam ruang kerja yang nyaman.",
+        link: "Jelajahi Studio",
+        preview:
+          "Daftar Naskah di Studio: tiga naskah dengan jumlah kata, jenis, tag, dan waktu terakhir diubah.",
+      },
       streak: {
         name: "Ranah Streak",
+        benefit: "Bangun kebiasaan menulis setiap hari dengan target dan streak yang terlihat.",
         preview:
-          "Streak di Studio: target 500 kata hari ini tercapai, titik hari ini terisi, streak menjadi 12 hari.",
+          "Streak di Studio: 12 hari berturut-turut, tujuh hari terakhir, dan progres hari ini 320 dari 500 kata.",
       },
       project: {
         name: "Ranah Project",
+        benefit: "Ikuti antologi, kelas, lomba, dan penerbitan buku, lalu pantau status karyamu.",
+        link: "Lihat jalur penerbitan",
         preview:
-          "Kiriman antologi diterima. Draf di Studio boleh berubah; versi yang dikirim tetap versi 2.",
-      },
-      studio: {
-        name: "Ranah Studio",
+          "Proyek saya: antologi Surat yang Tidak Pernah Terkirim, dengan karya Toples Kerupuk versi 2 berstatus Diterima.",
       },
       community: {
         name: "Ranah Community",
+        benefit: "Bagikan tulisan, baca karya penulis lain, dan saling memberi apresiasi.",
         preview:
-          "Community: cuplikan tulisan dari penulis yang diikuti, dengan Apresiasi dan komentar. Program Writer Battle, Roast My Writing, dan The Writers Confess menyusul.",
+          "Feed Community: dua tulisan dari penulis lain, dengan jumlah Apresiasi dan komentar.",
       },
       marketplace: {
         name: "Marketplace",
-        preview:
-          "Marketplace, menyusul: buku dan ebook, jasa kepenulisan, info pekerjaan, dan event literasi.",
+        benefit: "Buku, jasa kepenulisan, info pekerjaan, dan event literasi di satu tempat.",
+        categories: ["Buku & ebook", "Jasa kepenulisan", "Info pekerjaan", "Event literasi"],
       },
-    },
-    community: {
-      programs: ["Writer Battle", "Roast My Writing", "The Writers Confess"],
-      author: "Nur Aisyah",
-      initials: "NA",
-      time: "2 jam lalu",
-      excerpt:
-        "Menulis dua puluh menit sebelum subuh ternyata mengubah cara aku membaca hari. Kalimat-kalimat yang biasanya kabur jadi punya tepi.",
-      meta: "Cuplikan · Esai",
-    },
-    marketplace: {
-      categories: ["Buku & ebook", "Jasa kepenulisan", "Info pekerjaan", "Event literasi"],
-      listingMeta: "Buku fisik · Rinjani Putri",
     },
   },
   // Studio lives in the hero only (tahap H): the editor mockup and the six feature names from
@@ -111,27 +106,16 @@ export const landing = {
   publishing: {
     title: "Dari Naskah Digital Menjadi Karya Nyata.",
     lead: "Wujudkan impian menerbitkan buku pertamamu bersama ekosistem penerbitan RanahMenulis.",
-    covers: "Tiga sampul buku dari program penerbitan RanahMenulis, di depan ruang percetakan.",
-    coverTitles: [
-      "Surat yang Tidak Pernah Terkirim",
-      "Yang Ditunggu Nenek di Bawah Jambu Air",
-      "Dua Puluh Menit Sebelum Subuh",
+    covers:
+      "Sampul empat proyek dari katalog Projects: Antologi, Solo, Kelas Menulis, dan Lomba, di depan rak buku.",
+    // Names from image 2; one line each, written by the team and approved by the user (24 Nov 2026).
+    paths: [
+      { name: "Antologi", benefit: "Tulis bersama penulis lain dalam satu buku bertema." },
+      { name: "Solo Book", benefit: "Terbitkan bukumu sendiri, dari naskah sampai cetak." },
+      { name: "Kelas Menulis", benefit: "Belajar dari mentor lewat tugas dan umpan balik." },
+      { name: "Lomba Menulis", benefit: "Kirim karya terbaikmu untuk dinilai juri." },
     ],
-    // Names from image 2; their sentences were cut in tahap H.
-    paths: ["Antologi", "Solo Book", "Kelas Menulis", "Lomba Menulis"],
     cta: "Lihat Peluang Menerbitkan Karya",
-  },
-  previews: {
-    pause: "Jeda animasi",
-    play: "Putar animasi",
-    streakUnit: "hari berturut-turut",
-    todayWords: "Hari ini {count} / 500 kata",
-    reached: "Tercapai",
-    weekdays: ["S", "S", "R", "K", "J", "S", "M"],
-    submissionMeta: "“Toples Kerupuk” · versi 2 · dikirim 3 Nov",
-    sent: "Dikirim",
-    accepted: "Diterima",
-    submissionNote: "Draf di Studio diubah 2 jam lalu. Versi yang dikirim tetap versi 2.",
   },
   waitlist: {
     eyebrow: "Mulai Perjalanan Menulismu",

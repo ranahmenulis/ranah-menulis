@@ -32,8 +32,6 @@ export const landing: typeof source = {
       "The first rain of November always came in the late afternoon, just as Grandma finished sweeping the yard. She never ran inside. She stood a while under the water apple tree, letting a few drops fall onto her headscarf, as if waiting for someone who had promised to come home with the season.",
       "I only understood the habit years later, after the house was sold and the tree was cut down by someone who disliked fallen leaves.",
     ],
-    anthologyTitle: "The Letter That Was Never Sent",
-    anthologyLabel: "Anthology: The Letter That Was Never Sent",
   },
   socialProof: {
     title: "A Place for Writers to Grow.",
@@ -50,42 +48,38 @@ export const landing: typeof source = {
     inStudio: "Part of Studio",
     soon: "Coming later",
     modules: {
+      studio: {
+        name: "Ranah Studio",
+        benefit: "A comfortable workspace to write, edit, and keep your work.",
+        link: "Explore Studio",
+        preview:
+          "The Works list in Studio: three manuscripts with their word counts, kinds, tags, and when they last changed.",
+      },
       streak: {
         name: "Ranah Streak",
+        benefit: "Build a daily writing habit with a goal and a streak you can see.",
         preview:
-          "Streak in Studio: today's 500-word goal is reached, today's dot fills in, the streak becomes 12 days.",
+          "Streak in Studio: 12 days in a row, the last seven days, and today's progress at 320 of 500 words.",
       },
       project: {
         name: "Ranah Project",
+        benefit:
+          "Join anthologies, classes, contests, and book publishing, and follow your work's status.",
+        link: "See the publishing paths",
         preview:
-          "Anthology submission accepted. The draft in Studio may change; the submitted version stays version 2.",
-      },
-      studio: {
-        name: "Ranah Studio",
+          "My projects: the anthology The Letter That Was Never Sent, with the work Toples Kerupuk, version 2, accepted.",
       },
       community: {
         name: "Ranah Community",
+        benefit: "Share your writing, read other writers, and appreciate each other's work.",
         preview:
-          "Community: an excerpt from a writer you follow, with Appreciation and comments. The Writer Battle, Roast My Writing, and The Writers Confess programs come later.",
+          "The Community feed: two posts by other writers, with their appreciations and comments.",
       },
       marketplace: {
         name: "Marketplace",
-        preview:
-          "Marketplace, coming later: books and ebooks, writing services, job listings, and literary events.",
+        benefit: "Books, writing services, job listings, and literary events in one place.",
+        categories: ["Books & ebooks", "Writing services", "Jobs", "Literary events"],
       },
-    },
-    community: {
-      programs: ["Writer Battle", "Roast My Writing", "The Writers Confess"],
-      author: "Nur Aisyah",
-      initials: "NA",
-      time: "2 hours ago",
-      excerpt:
-        "Writing for twenty minutes before dawn changed the way I read the day. Sentences that used to blur now have edges.",
-      meta: "Excerpt · Essay",
-    },
-    marketplace: {
-      categories: ["Books & ebooks", "Writing services", "Jobs", "Literary events"],
-      listingMeta: "Paperback · Rinjani Putri",
     },
   },
   studio: {
@@ -98,27 +92,15 @@ export const landing: typeof source = {
   publishing: {
     title: "From Digital Manuscript to Real Book.",
     lead: "Make your dream of publishing your first book real with the RanahMenulis publishing ecosystem.",
-    covers: "Three book covers from RanahMenulis publishing programs, in front of a printing room.",
-    coverTitles: [
-      "The Letter That Was Never Sent",
-      "What Grandma Waited For Beneath the Water Apple Tree",
-      "Twenty Minutes Before Dawn",
+    covers:
+      "Covers of four projects from the Projects catalog: Anthology, Solo, Writing Class, and Contest, in front of a bookshelf.",
+    paths: [
+      { name: "Anthology", benefit: "Write with other writers in one themed book." },
+      { name: "Solo Book", benefit: "Publish your own book, from manuscript to print." },
+      { name: "Writing Class", benefit: "Learn from a mentor through assignments and feedback." },
+      { name: "Writing Contest", benefit: "Send your best work to be judged." },
     ],
-    paths: ["Anthology", "Solo Book", "Writing Class", "Writing Contest"],
     cta: "See Publishing Opportunities",
-  },
-  previews: {
-    pause: "Pause animation",
-    play: "Play animation",
-    streakUnit: "days in a row",
-    todayWords: "Today {count} / 500 words",
-    reached: "Reached",
-    weekdays: ["M", "T", "W", "T", "F", "S", "S"],
-    submissionMeta: "“The Cracker Jar” · version 2 · sent Nov 3",
-    sent: "Sent",
-    accepted: "Accepted",
-    submissionNote:
-      "The draft in Studio changed 2 hours ago. The submitted version stays version 2.",
   },
   waitlist: {
     eyebrow: "Start Your Writing Journey",

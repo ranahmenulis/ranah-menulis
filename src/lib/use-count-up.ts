@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 
 /** Ease-out cubic between two whole numbers; `t` is clamped to [0, 1]. */
 export function countFrame(from: number, to: number, t: number): number {
@@ -17,12 +17,26 @@ function motionAllowed(): boolean {
   );
 }
 
+const noSubscribe = () => () => {};
+
+/** False on the server and while hydrating, true afterwards (and on client-side renders). */
+function useHydrated(): boolean {
+  return useSyncExternalStore(
+    noSubscribe,
+    () => true,
+    () => false,
+  );
+}
+
 /**
  * A number that rolls to its value (DESIGN.md 4.6): from 0 on first show, then from the old value
  * whenever it changes. Without motion (reduced motion, no matchMedia as in tests, the server) it is
- * the value itself, so text is never wrong for anyone who cannot see it move.
+ * the value itself, so text is never wrong for anyone who cannot see it move. While a server-rendered
+ * page hydrates it also shows the value, so the first client render matches the server's text
+ * (the landing renders app numbers on the server); the roll starts once hydration is done.
  */
 export function useCountUp(value: number, duration = 900): number {
+  const hydrated = useHydrated();
   const [shown, setShown] = useState(() => (motionAllowed() ? 0 : value));
   // The last number drawn; written only inside animation frames.
   const drawn = useRef(shown);
@@ -44,5 +58,5 @@ export function useCountUp(value: number, duration = 900): number {
     return () => cancelAnimationFrame(frame);
   }, [value, duration]);
 
-  return motionAllowed() ? shown : value;
+  return hydrated && motionAllowed() ? shown : value;
 }

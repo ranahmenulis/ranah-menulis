@@ -10,12 +10,8 @@ import { SocialProof } from "@/features/landing/components/social-proof";
 import { Waitlist } from "@/features/landing/components/waitlist";
 import { landing } from "@/features/landing/copy/id";
 import { SOCIAL_PROOF } from "@/features/landing/social-proof";
-import { resetLoops } from "@/features/landing/motion/loop-registry";
 
-afterEach(() => {
-  cleanup();
-  resetLoops();
-});
+afterEach(cleanup);
 
 describe("social proof", () => {
   it("states every number in one line, without a second call to action", () => {
@@ -27,33 +23,80 @@ describe("social proof", () => {
 });
 
 describe("ecosystem", () => {
-  it("names four modules in the client's order, titles only: Studio is the hero", () => {
+  // The module's own text column; the app screens beside it carry headings and links of their own.
+  const moduleHeadings = () =>
+    screen.getAllByRole("heading", { level: 3 }).filter((h) => !h.closest('figure[role="img"]'));
+  const item = (name: string) =>
+    moduleHeadings()
+      .find((h) => h.textContent === name)!
+      .closest("li")!.firstElementChild as HTMLElement;
+
+  it("names five modules in the order a writer meets them, Studio first", () => {
     render(<Ecosystem copy={landing.ecosystem} />);
-    const names = screen.getAllByRole("heading", { level: 3 }).map((h) => h.textContent);
-    expect(names).toEqual(["Ranah Streak", "Ranah Project", "Ranah Community", "Marketplace"]);
+    const names = moduleHeadings().map((h) => h.textContent);
+    expect(names).toEqual([
+      "Ranah Studio",
+      "Ranah Streak",
+      "Ranah Project",
+      "Ranah Community",
+      "Marketplace",
+    ]);
   });
 
-  it("marks Streak as part of Studio and Marketplace as coming later", () => {
+  it("gives every module one benefit, and a way in only where the landing has one", () => {
     render(<Ecosystem copy={landing.ecosystem} />);
-    const item = (name: string) => screen.getByRole("heading", { name }).closest("li")!;
-    expect(within(item("Ranah Streak")).getByText("Bagian dari Studio")).toBeTruthy();
-    expect(within(item("Marketplace")).getAllByText("Menyusul").length).toBeGreaterThan(0);
+    const m = landing.ecosystem.modules;
+    for (const mod of Object.values(m)) {
+      expect(within(item(mod.name)).getByText(mod.benefit)).toBeTruthy();
+    }
+    const link = (name: string) => within(item(name)).queryByRole("link");
+    expect(
+      within(item("Ranah Studio"))
+        .getByRole("link", { name: /Jelajahi Studio/ })
+        .getAttribute("href"),
+    ).toBe("#studio");
+    expect(
+      within(item("Ranah Project"))
+        .getByRole("link", { name: /Lihat jalur penerbitan/ })
+        .getAttribute("href"),
+    ).toBe("#penerbitan");
+    expect(link("Ranah Streak")).toBeNull();
+    expect(link("Ranah Community")).toBeNull();
+    expect(link("Marketplace")).toBeNull();
   });
 
-  it("gives every module a described picture", () => {
+  it("shows the app's own screens, inert, each with a description", () => {
     const { container } = render(<Ecosystem copy={landing.ecosystem} />);
+    const { studio, streak, project, community } = landing.ecosystem.modules;
     const frames = Array.from(container.querySelectorAll('figure[role="img"]'));
-    const labels = frames.map((el) => el.getAttribute("aria-label"));
-    const { streak, project, community, marketplace } = landing.ecosystem.modules;
-    expect(labels).toEqual([streak, project, community, marketplace].map((m) => m.preview));
+    expect(frames.map((el) => el.getAttribute("aria-label"))).toEqual(
+      [studio, streak, project, community].map((m) => m.preview),
+    );
+    for (const frame of frames) expect(frame.querySelector("[inert]")).toBeTruthy();
+    // The real components: the Naskah table, the Streak hero, Proyek saya, and feed posts.
+    expect(frames[0].querySelector("table")).toBeTruthy();
+    expect(frames[1].textContent).toContain("hari berturut-turut");
+    expect(frames[2].textContent).toContain("Toples Kerupuk");
+    expect(frames[2].textContent).toContain("Diterima");
+    expect(frames[3].querySelectorAll("article")).toHaveLength(2);
+  });
+
+  it("marks Streak as part of Studio and shows Marketplace only as planned categories", () => {
+    render(<Ecosystem copy={landing.ecosystem} />);
+    expect(within(item("Ranah Streak")).getByText("Bagian dari Studio")).toBeTruthy();
+    const market = item("Marketplace").parentElement!;
+    expect(within(market).getByText("Menyusul")).toBeTruthy();
+    expect(market.querySelector('figure[role="img"]')).toBeNull();
+    expect(within(market).getAllByRole("listitem")).toHaveLength(4);
   });
 });
 
 describe("publishing", () => {
-  it("lists the four Projects paths by name, in the client's order", () => {
+  it("lists the four Projects paths with one line each, in the client's order", () => {
     render(<Publishing copy={landing.publishing} />);
     const items = screen.getAllByRole("listitem").map((li) => li.textContent);
-    expect(items).toEqual(["Antologi", "Solo Book", "Kelas Menulis", "Lomba Menulis"]);
+    expect(items).toEqual(landing.publishing.paths.map(({ name, benefit }) => `${name}${benefit}`));
+    expect(items[0]).toBe("AntologiTulis bersama penulis lain dalam satu buku bertema.");
     expect(screen.getByRole("img", { name: landing.publishing.covers })).toBeTruthy();
   });
 

@@ -9,36 +9,33 @@ import {
 import { ButtonLink } from "@/components/ui/button";
 import { SectionIcon } from "@/components/ui/section-card";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
-import { LANDING_IMAGES } from "../assets";
+import { Bookshelf } from "@/components/illustrations/projects-art";
 import { CoverStack } from "./cover-stack";
 import { Section, SectionHead, Wrap } from "./layout";
-import { Plate } from "./plate";
-import { ScrollDrift } from "./scroll-drift";
 
 // Anthology, solo book, class, contest: the four Projects paths in the client's order.
 const ICONS: Icon[] = [Books, BookOpenText, ChalkboardTeacher, Trophy];
 
 /**
- * Publishing (client image 2, tahap H): two columns. On the left the title, one sentence, the four
- * Projects paths as names only, and one way in; on the right a still life of three covers in front
- * of a 1914 printing room that drifts slowly as it passes, set in a card. The room is a slate
- * duotone (`lp-duo`: its light and dark over the accent ground), like the hero's engraving.
+ * Publishing (client image 2; client, 24 Nov 2026): two columns. On the left the title, one
+ * sentence, the four Projects paths each with one line of what it gives, and one way in; on the
+ * right the four paths as the app draws them, project covers from the Projects catalog in front of
+ * the catalog's bookshelf, on the app's hero-card ground.
  */
 export function Publishing({ copy }: { copy: Dictionary["landing"]["publishing"] }) {
-  const room = LANDING_IMAGES.printRoom;
   return (
     <Section id="penerbitan" aria-labelledby="pub-h">
       <Wrap className="grid items-center gap-12 md:grid-cols-12 md:gap-6">
         <div className="grid content-start gap-10 md:col-span-5 md:gap-12">
           <SectionHead id="pub-h" title={copy.title} lead={copy.lead} align="start" />
-          <ul className="m-0 grid list-none gap-4 p-0 md:gap-5">
-            {copy.paths.map((name, i) => (
-              <li
-                key={name}
-                className="flex items-center gap-4 text-lg leading-7 font-semibold md:text-xl"
-              >
+          <ul className="m-0 grid list-none gap-5 p-0 md:gap-6">
+            {copy.paths.map(({ name, benefit }, i) => (
+              <li key={name} className="grid grid-cols-[auto_minmax(0,1fr)] items-start gap-x-4">
                 <SectionIcon icon={ICONS[i]} />
-                {name}
+                <div className="grid gap-0.5">
+                  <span className="text-lg leading-7 font-semibold md:text-xl">{name}</span>
+                  <span className="text-base leading-6 text-pretty text-ink-muted">{benefit}</span>
+                </div>
               </li>
             ))}
           </ul>
@@ -54,13 +51,10 @@ export function Publishing({ copy }: { copy: Dictionary["landing"]["publishing"]
         <figure
           role="img"
           aria-label={copy.covers}
-          className="relative isolate m-0 flex min-h-[420px] items-end justify-center overflow-hidden rounded-2xl border border-line bg-accent px-4 pt-14 pb-12 shadow-card md:col-span-7 md:min-h-[560px] md:pb-20"
+          className="relative isolate m-0 flex min-h-[420px] items-end justify-center overflow-hidden rounded-2xl border border-line bg-surface bg-linear-to-br from-surface from-30% to-accent-subtle px-5 pt-16 pb-10 shadow-card md:col-span-7 md:min-h-[560px] md:px-10 md:pb-16"
         >
-          <ScrollDrift range={40} zoom={[1.14, 1.06]} className="lp-duo inset-0">
-            <Plate image={room} className="lp-photo" />
-          </ScrollDrift>
-          <span aria-hidden className="lp-press-shade" />
-          <CoverStack titles={copy.coverTitles} />
+          <Bookshelf className="absolute inset-x-0 top-0 -z-10 h-[62%] w-full opacity-70" />
+          <CoverStack />
         </figure>
       </Wrap>
     </Section>

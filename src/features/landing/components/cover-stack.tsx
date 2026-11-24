@@ -2,21 +2,22 @@
 
 import type { CSSProperties } from "react";
 import { useEffect, useRef } from "react";
-import { BookCover } from "@/components/ui/book-cover";
+import { cn } from "@/lib/cn";
+import { ProjectCover } from "@/features/projects/components/project-cover";
 import { coverDrift, passage, registerDrift, setVars } from "../motion/scroll-drift";
 import { useReveal } from "../motion/use-reveal";
+import { samplePathProjects } from "../sample-data";
 
 /**
- * The three covers in front of the printing room. They rise in once when the stack comes into view
- * (side covers first, the middle one last), then sit at two depths while the page scrolls: the
- * side covers drift half as far as the middle one, so room, covers and page read as three layers.
- * Only `--cp` is written here; the transforms are `.lp-cover` in globals.css ("Landing reveals").
+ * The four publishing paths as the app draws them (client, 24 Nov 2026): one project cover from
+ * the Projects catalog per path, in the order of the list beside it (anthology, solo, class,
+ * contest). Two by two and large enough to read (client: bigger books), the right column set a
+ * little lower. They rise in once when the stack comes into view, then drift at two depths while
+ * the page scrolls (`--cp`; the transforms are `.lp-cover` in globals.css).
  */
-export function CoverStack({ titles }: { titles: readonly string[] }) {
+export function CoverStack() {
   const ref = useRef<HTMLDivElement>(null);
   useReveal(ref);
-  const [left, middle, right] = titles;
-
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -27,26 +28,26 @@ export function CoverStack({ titles }: { titles: readonly string[] }) {
       setVars(el, coverDrift(passage(top, height, viewport)));
     });
   }, []);
-
-  const order = (i: number) => ({ "--i": i }) as CSSProperties;
   return (
     <div
       ref={ref}
       data-reveal="covers"
-      className="lp-covers flex items-end justify-center gap-2.5 md:gap-5"
+      className="lp-covers grid w-full max-w-110 grid-cols-2 items-end gap-4 md:gap-5"
     >
-      <div className="lp-cover" style={order(0)}>
-        <BookCover title={left} width={80} className="md:hidden" />
-        <BookCover title={left} width={128} className="max-md:hidden" />
-      </div>
-      <div className="lp-cover" data-depth="2" style={order(2)}>
-        <BookCover title={middle} width={116} className="-translate-y-4 md:hidden" />
-        <BookCover title={middle} width={184} className="-translate-y-6 max-md:hidden" />
-      </div>
-      <div className="lp-cover" style={order(1)}>
-        <BookCover title={right} width={80} className="md:hidden" />
-        <BookCover title={right} width={128} className="max-md:hidden" />
-      </div>
+      {samplePathProjects().map((project, i) => (
+        <div
+          key={project.slug}
+          className="lp-cover"
+          data-depth={i % 2 === 1 ? "2" : undefined}
+          style={{ "--i": i } as CSSProperties}
+        >
+          <ProjectCover
+            project={project}
+            showTitle
+            className={cn("shadow-float", i % 2 === 1 && "translate-y-6")}
+          />
+        </div>
+      ))}
     </div>
   );
 }

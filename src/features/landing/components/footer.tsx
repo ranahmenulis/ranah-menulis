@@ -73,7 +73,7 @@ export function Footer({ copy }: { copy: Copy }) {
             className="grid grid-cols-2 gap-8 sm:grid-cols-3 md:col-span-7 md:col-start-6"
           >
             <Column title={f.product}>
-              {[m.streak, m.project, m.studio, m.community, m.marketplace].map((x) => (
+              {[m.studio, m.streak, m.project, m.community, m.marketplace].map((x) => (
                 <li key={x.name}>
                   <a href="#ekosistem" className={link}>
                     {x.name}
@@ -82,7 +82,7 @@ export function Footer({ copy }: { copy: Copy }) {
               ))}
             </Column>
             <Column title={f.program}>
-              {copy.publishing.paths.map((name) => (
+              {copy.publishing.paths.map(({ name }) => (
                 <li key={name}>
                   <a href="#penerbitan" className={link}>
                     {name}
