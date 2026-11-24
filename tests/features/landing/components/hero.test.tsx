@@ -10,13 +10,7 @@ afterEach(() => {
 });
 
 function renderHero() {
-  return render(
-    <Hero
-      copy={landing.hero}
-      pillars={landing.waitlist.pillars}
-      pillarsLabel={landing.waitlist.pillarsLabel}
-    />,
-  );
+  return render(<Hero copy={landing.hero} studio={landing.studio} />);
 }
 
 describe("hero", () => {
@@ -28,12 +22,10 @@ describe("hero", () => {
     expect(title.children[1].className).toContain("lp-hero-serif");
   });
 
-  it("has the colophon, the four pillars, one filled button and one text link", () => {
+  it("has one pill, one filled button and one text link", () => {
     renderHero();
-    expect(screen.getByText("Digital Writing Ecosystem")).toBeTruthy();
-    expect(screen.getByText("Indonesia · Malaysia")).toBeTruthy();
-    const pillars = within(screen.getByRole("list", { name: landing.waitlist.pillarsLabel }));
-    expect(pillars.getAllByRole("listitem")).toHaveLength(4);
+    const pill = screen.getByText(/Digital Writing Ecosystem/);
+    expect(pill.textContent).toContain("Indonesia · Malaysia");
     expect(screen.getByRole("link", { name: "Gabung daftar tunggu" }).getAttribute("href")).toBe(
       "#daftar",
     );
@@ -47,8 +39,20 @@ describe("hero", () => {
     const band = container.querySelector<HTMLElement>(".lp-band")!;
     expect(band.style.getPropertyValue("--par")).toBe("");
     expect(band.style.getPropertyValue("--lift")).toBe("");
-    // The engraving is decorative: the video figure carries the description.
+    // The engraving is decorative: the editor figure carries the description.
     expect(band.querySelector("img[alt='']")).toBeTruthy();
+    expect(screen.getByRole("img", { name: landing.studio.mockup })).toBeTruthy();
+  });
+
+  it("shows Studio once, with the six feature names and templates marked as coming later", () => {
+    renderHero();
+    const stage = screen.getByRole("region", { name: "Ranah Studio" });
+    expect(stage.id).toBe("studio");
+    const features = within(stage).getByRole("list", { name: landing.studio.featuresLabel });
+    const items = within(features).getAllByRole("listitem");
+    expect(items).toHaveLength(6);
+    expect(items[3].textContent).toBe("Template MenulisMenyusul");
+    expect(items[5].textContent).toBe("Reading Time");
   });
 
   it("drifts the picture when landing motion is on", () => {

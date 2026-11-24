@@ -17,7 +17,6 @@ describe("landing images", () => {
 
   it("have alt text in both languages for the plates that carry meaning", () => {
     for (const copy of [id, en]) {
-      expect(copy.images.holbein.length).toBeGreaterThan(10);
       expect(copy.images.keladi.length).toBeGreaterThan(10);
     }
   });

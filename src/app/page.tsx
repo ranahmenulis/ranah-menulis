@@ -8,7 +8,6 @@ import { Publishing } from "@/features/landing/components/publishing";
 import { SocialProof } from "@/features/landing/components/social-proof";
 import { TopBar } from "@/features/landing/components/top-bar";
 import { Waitlist } from "@/features/landing/components/waitlist";
-import { WritingExperience } from "@/features/landing/components/writing-experience";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { meta } = (await getDictionary()).landing;
@@ -32,14 +31,9 @@ export default async function Home() {
       <script dangerouslySetInnerHTML={{ __html: heroScript }} />
       <TopBar />
       <main>
-        <Hero
-          copy={landing.hero}
-          pillars={landing.waitlist.pillars}
-          pillarsLabel={landing.waitlist.pillarsLabel}
-        />
+        <Hero copy={landing.hero} studio={landing.studio} />
         <SocialProof copy={landing.socialProof} />
         <Ecosystem copy={landing.ecosystem} />
-        <WritingExperience copy={landing.studio} images={landing.images} />
         <Publishing copy={landing.publishing} />
         <Faq title={landing.faqTitle} items={landing.faq} images={landing.images} />
         <Waitlist waitlist={landing.waitlist} />

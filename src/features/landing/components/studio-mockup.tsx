@@ -1,45 +1,34 @@
 "use client";
 
-import { useRef, type CSSProperties } from "react";
+import { useRef } from "react";
 import {
+  ArrowLeft,
   ListBullets,
   ListNumbers,
   Quotes,
+  TextAlignLeft,
   TextB,
-  TextH,
   TextItalic,
 } from "@phosphor-icons/react/dist/ssr";
 import { Monogram } from "@/components/ui/logo";
-import { cn } from "@/lib/cn";
 import { VisibilityTag } from "@/components/ui/visibility-tag";
+import { cn } from "@/lib/cn";
 import { formatNumber } from "@/lib/i18n/format";
 import { format, useLocale, useT } from "@/lib/i18n/provider";
 import { textStats } from "@/lib/text-stats";
-import { MARKERS } from "./studio-markers";
 import { useReveal } from "../motion/use-reveal";
 
 const TODAY_WORDS = 320;
-// Reading order of the pins on the mockup: format bar, target, counter, reading time.
-const PIN_ORDER: number[] = Object.values(MARKERS).sort((a, b) => a - b);
 
-// Only the formats STD-01 allows: bold, italic, subheading, quote, bullet and numbered lists.
-const tools = [TextB, TextItalic, TextH, Quotes, ListBullets, ListNumbers];
+// The editor's format pill (tahap I), the first one shown as active.
+const tools = [TextB, TextItalic, TextAlignLeft, Quotes, ListBullets, ListNumbers];
 
-/** Numbered pin tying a part of the mockup to its line in the legend below. */
-function Marker({ n }: { n: number }) {
-  return (
-    <span
-      aria-hidden
-      data-marker={n}
-      style={{ "--i": PIN_ORDER.indexOf(n) } as CSSProperties}
-      className="lp-marker inline-grid size-5 shrink-0 place-items-center rounded-full bg-ink text-[11px] leading-none font-semibold text-on-ink tabular-nums"
-    >
-      {n}
-    </span>
-  );
-}
-
-/** A still, large Ranah Studio editor for the writing-experience section. */
+/**
+ * A still Ranah Studio editor for the hero stage, drawn like the real one after tahap I: the bar on
+ * the canvas, the format pill floating over it, and the text on a sheet of paper. A caret blinks
+ * after the last word (only with landing motion), and today's target bar fills once the editor
+ * comes into view (globals.css, "Landing reveals").
+ */
 export function StudioMockup() {
   const { doc, hero, studio } = useT().landing;
   const stats = textStats(doc.page);
@@ -49,54 +38,61 @@ export function StudioMockup() {
   useReveal(ref);
 
   return (
-    // The pins pop in one by one and the target bar fills once the mockup comes into view
-    // (globals.css, "Landing reveals"), so a phone without hover still sees what is annotated.
-    <div ref={ref} data-reveal="pins" className="lp-pins">
-      <div className="flex h-14 items-center gap-3 border-b border-line px-4 md:gap-4 md:px-6">
-        <Monogram height={20} />
-        <span className="hidden max-w-[320px] truncate text-sm font-medium md:inline">
+    <div ref={ref} data-reveal="studio" className="lp-studio">
+      <div className="flex h-12 items-center gap-3 border-b border-line bg-surface px-3 md:h-14 md:gap-4 md:px-5">
+        <ArrowLeft size={18} aria-hidden className="text-ink-muted" />
+        <Monogram height={18} />
+        <span className="hidden max-w-[300px] truncate text-sm font-medium md:inline">
           {doc.title}
         </span>
         <VisibilityTag visibility="pribadi" />
-        <span className="text-xs text-ink-muted">{hero.saved}</span>
+        <span className="ml-auto text-xs text-ink-muted">{hero.saved}</span>
       </div>
-      <div className="flex items-center justify-center gap-3 border-b border-line px-4 py-3">
-        <span className="inline-flex items-center gap-1 rounded-full border border-line px-2 py-1">
+      <div className="bg-canvas px-3 pt-4 md:px-8 md:pt-6">
+        <div className="mx-auto flex w-max max-w-full items-center gap-0.5 rounded-full border border-line bg-surface p-1 shadow-card">
           {tools.map((Icon, i) => (
-            <span key={i} className="grid size-8 place-items-center text-ink-muted">
-              <Icon size={18} aria-hidden />
+            <span
+              key={i}
+              className={cn(
+                "grid size-7 place-items-center rounded-full md:size-8",
+                i === 0 ? "bg-accent-subtle text-accent-ink" : "text-ink-muted",
+              )}
+            >
+              <Icon size={16} weight={i === 0 ? "bold" : "regular"} aria-hidden />
             </span>
           ))}
-        </span>
-        <Marker n={MARKERS.format} />
-      </div>
-      <div className="mx-auto max-w-170 px-5 py-8 md:px-6 md:py-14">
-        <p className="mb-4 read-title md:mb-6">{doc.title}</p>
-        {doc.page.map((p, i) => (
-          // One paragraph on a phone: the page is a sample, and the legend below does the telling.
-          <p key={p} className={cn("mb-[1.4em] read-body text-ink-read", i > 0 && "max-md:hidden")}>
-            {p}
+        </div>
+        <div className="mx-auto mt-4 max-w-[540px] rounded-t-md border border-b-0 border-line bg-surface px-6 pt-7 pb-5 shadow-card md:mt-6 md:px-11 md:pt-10 md:pb-8">
+          <p className="mb-3 font-serif text-[21px] leading-[1.25] font-bold tracking-[-0.01em] text-ink md:mb-5 md:text-[26px]">
+            {doc.title}
           </p>
-        ))}
+          {doc.page.map((p, i) => (
+            // One paragraph on a phone: the page is a sample.
+            <p
+              key={p}
+              className={cn(
+                "mb-[1em] font-serif text-[14px] leading-[1.75] text-ink-read md:text-[15px]",
+                i > 0 && "max-md:hidden",
+              )}
+            >
+              {p}
+              {i === doc.page.length - 1 && <span aria-hidden className="lp-caret" />}
+            </p>
+          ))}
+        </div>
       </div>
-      <div className="grid gap-4 border-t border-line px-4 py-4 text-xs text-ink-muted md:grid-cols-[minmax(0,1fr)_280px] md:items-center md:px-6">
-        <span className="flex flex-wrap items-center gap-x-2 gap-y-1 tabular-nums">
-          <span>
-            {n(stats.words)} {hero.words} · {n(stats.characters)} {studio.characters}
-          </span>
-          <Marker n={MARKERS.counter} />
-          <span aria-hidden>·</span>
-          <span>{format(studio.readingTime, { count: String(stats.minutes) })}</span>
-          <Marker n={MARKERS.reading} />
+      <div className="grid gap-3 border-t border-line bg-surface px-4 py-3.5 text-xs text-ink-muted md:grid-cols-[minmax(0,1fr)_260px] md:items-center md:px-6">
+        <span className="tabular-nums">
+          {n(stats.words)} {hero.words} · {n(stats.characters)} {studio.characters} ·{" "}
+          {format(studio.readingTime, { count: String(stats.minutes) })}
         </span>
-        <div className="grid gap-2">
-          <span className="flex items-center gap-2 text-ink tabular-nums">
+        <div className="grid gap-1.5">
+          <span className="text-ink tabular-nums">
             {format(studio.today, { count: String(TODAY_WORDS) })}
-            <Marker n={MARKERS.target} />
           </span>
-          <span className="block h-1 bg-line">
+          <span className="block h-1.5 overflow-hidden rounded-full bg-subtle">
             <i
-              className="lp-target block h-full origin-left bg-ink"
+              className="lp-target block h-full origin-left rounded-full bg-accent"
               style={{ transform: `scaleX(${TODAY_WORDS / 500})` }}
             />
           </span>

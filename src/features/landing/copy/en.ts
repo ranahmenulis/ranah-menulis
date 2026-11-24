@@ -25,14 +25,11 @@ export const landing: typeof source = {
     lead: "Find a place to write, grow your craft, connect with a community, and publish your work with RanahMenulis.",
     cta: "Join the waitlist",
     secondary: "Explore the Ecosystem",
-    ariaLabel:
-      "Silent video: a paragraph is typed in Studio and saved, today's 500-word target is reached and the streak rises to 7 days. The first paragraph is shared to Community as a public post while the document stays private. The post appears in Explore, then the cover of the book What Grandma Waited For Beneath the Water Apple Tree by Rinjani Putri is shown.",
     saving: "Saving…",
     saved: "Saved 2:02 PM",
     words: "words",
   },
   images: {
-    holbein: "Study of the hands of Erasmus writing, a drawing by the young Hans Holbein.",
     keladi: "Engraving of a potted caladium plant, from The American Florist magazine, 1886.",
   },
   doc: {
@@ -58,7 +55,6 @@ export const landing: typeof source = {
     books: "published books",
     programs: "programs",
     and: "and",
-    cta: "Join them",
   },
   ecosystem: {
     eyebrow: "The Ecosystem",
@@ -109,28 +105,21 @@ export const landing: typeof source = {
   },
   studio: {
     eyebrow: "Ranah Studio",
-    title: "Your Focused, Comfortable Place to Write.",
-    lead: "Write, develop, and finish your work in Ranah Studio. A professional workspace for writers.",
     featuresLabel: "Ranah Studio features",
-    swipe: "Swipe",
     mockup:
-      "Ranah Studio editor: a title and two paragraphs, a simple format bar, word and character counts, reading time, and today's goal at 320 of 500 words.",
+      "Ranah Studio editor: a title and two paragraphs on a sheet of paper, a simple format bar, word and character counts, reading time, and today's goal at 320 of 500 words.",
     characters: "characters",
     readingTime: "{count} min read",
     today: "Today {count} / 500 words",
     soon: "Coming later",
     features: [
-      { name: "Text Formatter", text: "Format your writing with ease." },
-      { name: "Writing Statistics", text: "Track your progress and consistency." },
-      { name: "Daily Goal", text: "Build a measurable writing habit." },
-      { name: "Writing Templates", text: "Start faster with a range of templates." },
-      {
-        name: "Word & Character Counter",
-        text: "Know your word and character count in real time.",
-      },
-      { name: "Reading Time", text: "See how long your work takes to read." },
+      "Text Formatter",
+      "Writing Statistics",
+      "Daily Goal",
+      "Writing Templates",
+      "Word & Character Counter",
+      "Reading Time",
     ],
-    cta: "Try Ranah Studio Now",
   },
   publishing: {
     eyebrow: "Publishing Opportunities",

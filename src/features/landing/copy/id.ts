@@ -32,15 +32,12 @@ export const landing = {
     lead: "Temukan ruang untuk menulis, mengembangkan kemampuan, terhubung dengan komunitas, dan menerbitkan karyamu bersama RanahMenulis.",
     cta: "Gabung daftar tunggu",
     secondary: "Jelajahi Ekosistem",
-    ariaLabel:
-      "Video tanpa suara: satu paragraf diketik di Studio dan tersimpan, target 500 kata hari ini tercapai dan streak naik menjadi 7 hari. Paragraf pertama dibagikan ke Community sebagai postingan publik, sementara dokumennya tetap pribadi. Postingan itu muncul di Jelajahi, lalu tampil sampul buku Yang Ditunggu Nenek di Bawah Jambu Air karya Rinjani Putri.",
     saving: "Menyimpan…",
     saved: "Tersimpan 14.02",
     words: "kata",
   },
   // Alt text of the public-domain plates that carry meaning; the other three are decorative.
   images: {
-    holbein: "Studi tangan Erasmus yang sedang menulis, gambar Hans Holbein muda.",
     keladi: "Gravir tanaman keladi dalam pot, dari majalah The American Florist tahun 1886.",
   },
   // Sample manuscript shown in the hero and the previews.
@@ -68,7 +65,6 @@ export const landing = {
     books: "buku terbit",
     programs: "program",
     and: "dan",
-    cta: "Gabung bersama mereka",
   },
   // Module names only, no body text (client note): each mockup shows what the module holds.
   ecosystem: {
@@ -117,31 +113,25 @@ export const landing = {
       listingMeta: "Buku fisik · Rinjani Putri",
     },
   },
+  // Studio lives in the hero only (tahap H): the editor mockup and the six feature names from
+  // image 3, without their sentences. Templates are Phase 2 (STD-05), so that one is marked.
   studio: {
     eyebrow: "Ranah Studio",
-    title: "Ruang Menulismu yang Fokus dan Nyaman.",
-    lead: "Tulis, kembangkan, dan selesaikan karyamu di Ranah Studio. Workspace profesional untuk penulis.",
     featuresLabel: "Fitur Ranah Studio",
-    swipe: "Geser",
     mockup:
-      "Editor Ranah Studio: judul dan dua paragraf, bilah format sederhana, jumlah kata dan karakter, waktu baca, dan target hari ini 320 dari 500 kata.",
+      "Editor Ranah Studio: judul dan dua paragraf di lembar kertas, bilah format sederhana, jumlah kata dan karakter, waktu baca, dan target hari ini 320 dari 500 kata.",
     characters: "karakter",
     readingTime: "{count} mnt baca",
     today: "Hari ini {count} / 500 kata",
     soon: "Menyusul",
-    // The six tiles from image 3. Templates are Phase 2 (STD-05), so that tile is marked.
     features: [
-      { name: "Text Formatter", text: "Atur format tulisanmu dengan mudah." },
-      { name: "Statistik Menulis", text: "Pantau progres dan konsistensi menulismu." },
-      { name: "Target Harian", text: "Bangun kebiasaan menulis yang terukur." },
-      { name: "Template Menulis", text: "Mulai menulis lebih cepat dengan berbagai template." },
-      {
-        name: "Word & Character Counter",
-        text: "Ketahui jumlah kata dan karakter secara real-time.",
-      },
-      { name: "Reading Time", text: "Lihat estimasi waktu baca karyamu." },
+      "Text Formatter",
+      "Statistik Menulis",
+      "Target Harian",
+      "Template Menulis",
+      "Word & Character Counter",
+      "Reading Time",
     ],
-    cta: "Coba Ranah Studio Sekarang",
   },
   publishing: {
     eyebrow: "Publishing Opportunities",

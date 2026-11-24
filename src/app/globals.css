@@ -702,43 +702,6 @@ html.lp-motion .lp-link:is(:hover, :focus-visible) {
   transition-duration: 150ms;
 }
 
-/* Studio legend (DESIGN.md 4.6, item 4): hovering a legend entry that has a pin on the mockup
-   lights that pin and dims the others; entry 03 (Target) also fills the target bar from the left.
-   The dimming is a state, so it also applies without lp-motion (instantly); the growth, the
-   transitions and the fill need lp-motion. Fine pointers only: on touch the legend is far below
-   the mockup, and there is no hover. */
-@media (hover: hover) and (pointer: fine) {
-  #studio:has([data-marker-for]:hover) .lp-marker {
-    opacity: 0.3;
-  }
-  #studio:has([data-marker-for="1"]:hover) [data-marker="1"],
-  #studio:has([data-marker-for="3"]:hover) [data-marker="3"],
-  #studio:has([data-marker-for="5"]:hover) [data-marker="5"],
-  #studio:has([data-marker-for="6"]:hover) [data-marker="6"] {
-    opacity: 1;
-  }
-  html.lp-motion #studio:has([data-marker-for="1"]:hover) [data-marker="1"],
-  html.lp-motion #studio:has([data-marker-for="3"]:hover) [data-marker="3"],
-  html.lp-motion #studio:has([data-marker-for="5"]:hover) [data-marker="5"],
-  html.lp-motion #studio:has([data-marker-for="6"]:hover) [data-marker="6"] {
-    transform: scale(1.15);
-  }
-  html.lp-motion #studio:has([data-marker-for="3"]:hover) .lp-target {
-    animation: lp-fill 300ms var(--ease-out);
-  }
-}
-html.lp-motion .lp-marker {
-  transition:
-    opacity 150ms var(--ease-out),
-    transform 150ms var(--ease-out);
-}
-/* Fills from empty to the bar's own inline scaleX. */
-@keyframes lp-fill {
-  from {
-    transform: scaleX(0);
-  }
-}
-
 /* ------------------------------------------------------------------------------------------
    Landing plates (DESIGN.md 4.6, landing exception of 20 Nov 2026): public-domain engravings and
    photographs, always monochrome. The hero title, the plates' dark-mode treatment, and the drift
@@ -746,16 +709,17 @@ html.lp-motion .lp-marker {
    motion/scroll-drift.ts only when lp-motion is on; unset, every plate stands at rest.
    ------------------------------------------------------------------------------------------ */
 
-/* Hero C2: Inter 700 in three lines, the middle one in the Merriweather italic. */
+/* Hero (tahap H): Inter 700 in three centred lines, the middle one in the Merriweather italic. */
 .lp-hero-title {
   font-family: var(--font-sans);
   font-weight: 700;
-  font-size: min(9.4vw, 2.75rem);
-  line-height: 1;
-  letter-spacing: -0.055em;
+  font-size: min(10vw, 3rem);
+  line-height: 1.02;
+  letter-spacing: -0.05em;
+  text-wrap: balance;
   @media (width >= 48rem) {
-    font-size: clamp(2.75rem, 8.1vw, 7.375rem);
-    line-height: 0.92;
+    font-size: clamp(3rem, 7vw, 6.25rem);
+    line-height: 0.95;
   }
 }
 .lp-hero-serif {
@@ -784,10 +748,25 @@ html.lp-motion .lp-marker {
   }
 }
 
-/* Hero band: the engraving fades in from the top (the mask is on the band's picture box, so it
-   stays put while the image drifts inside it) and the editor sits over it. */
+/* Hero stage: the engraving fades out toward the feature pills at the bottom (the mask is on the
+   stage's picture box, so it stays put while the image drifts inside it). `lp-tint` takes only
+   the engraving's light and dark from it and the hue from the accent-subtle ground, so the plate
+   reads slate in both themes; it is fainter on dark grounds. */
 .lp-relief {
-  mask-image: linear-gradient(to bottom, transparent 0, #000 34%);
+  mask-image: linear-gradient(to bottom, #000 30%, transparent 92%);
+}
+.lp-tint {
+  mix-blend-mode: luminosity;
+  opacity: 0.55;
+}
+:root[data-theme="dark"] .lp-tint,
+.theme-dark .lp-tint {
+  opacity: 0.2;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .lp-tint {
+    opacity: 0.2;
+  }
 }
 .lp-relief img {
   transform: translateY(var(--par, 0px)) scale(var(--sc, 1.1));
@@ -797,13 +776,6 @@ html.lp-motion .lp-marker {
   transform: translateY(var(--lift, 0px));
   will-change: transform;
 }
-/* Radius and shadow here are a deliberate exception to "only rounded-full or none" and "no new
-   shadows" (user decision, 20 Nov 2026): the editor is a device lifted off the engraving. */
-.lp-device-frame {
-  border-radius: 14px;
-  box-shadow: 0 40px 90px -30px rgb(0 0 0 / 0.5);
-}
-
 /* A plate behind content: absolute, behind it, drifting against the page. */
 .lp-drift {
   position: absolute;
@@ -877,22 +849,42 @@ html.lp-motion .lp-covers:not([data-seen]) .lp-cover {
   opacity: 0;
 }
 
-/* Studio pins pop in one by one, then the target bar fills: an animation with a backwards fill,
-   so the hover dimming and growth (transitions on the same pins) keep their own timing after. */
-html.lp-motion .lp-pins:not([data-seen]) :is(.lp-marker, .lp-target) {
+/* Studio stage: the target bar fills once the editor comes into view, and the feature pills pop
+   in one after another under it. Animations with a backwards fill, so nothing waits on hover. */
+html.lp-motion .lp-studio:not([data-seen]) .lp-target,
+html.lp-motion .lp-chips:not([data-seen]) .lp-chip {
   opacity: 0;
 }
-html.lp-motion .lp-pins[data-seen] .lp-marker {
-  animation: lp-pin-in 220ms var(--ease-out) calc(var(--i, 0) * 90ms) backwards;
+html.lp-motion .lp-studio[data-seen] .lp-target {
+  animation: lp-fill 700ms var(--ease-out) 300ms backwards;
 }
-html.lp-motion .lp-pins[data-seen] .lp-target {
-  animation: lp-fill 600ms var(--ease-out) 400ms backwards;
+html.lp-motion .lp-chips[data-seen] .lp-chip {
+  animation: lp-pin-in 320ms var(--ease-out) calc(200ms + var(--i, 0) * 70ms) backwards;
 }
 @keyframes lp-pin-in {
   from {
     opacity: 0;
-    scale: 0.6;
+    scale: 0.85;
+    translate: 0 6px;
   }
+}
+@keyframes lp-fill {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+/* The caret after the last word of the Studio sample: drawn always, blinking only with motion. */
+.lp-caret {
+  display: inline-block;
+  width: 2px;
+  height: 1.1em;
+  margin-left: 2px;
+  vertical-align: -0.15em;
+  background: var(--accent);
+}
+html.lp-motion .lp-caret {
+  animation: lp-blink 1.1s steps(1) infinite;
 }
 
 /* Plates are pulled down like a fresh print. The clip sits on the image, not the wrapper, so the
@@ -911,32 +903,6 @@ html.lp-motion [data-reveal="plate"]:not([data-seen]) > img {
   }
   html.lp-motion .lp-btn:hover > svg:last-child {
     transform: translateX(3px);
-  }
-}
-
-/* The phone legend's position rolls: the old number leaves upward, the new one comes from below. */
-html.lp-motion .lp-roll-in {
-  animation: lp-roll-in 180ms var(--ease-out);
-}
-html.lp-motion .lp-roll-out {
-  animation: lp-roll-out 180ms var(--ease-out) forwards;
-}
-.lp-roll-out {
-  visibility: hidden;
-}
-html.lp-motion .lp-roll-out {
-  visibility: visible;
-}
-@keyframes lp-roll-in {
-  from {
-    translate: 0 100%;
-    opacity: 0;
-  }
-}
-@keyframes lp-roll-out {
-  to {
-    translate: 0 -100%;
-    opacity: 0;
   }
 }
 
