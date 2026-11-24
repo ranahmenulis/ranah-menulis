@@ -124,7 +124,7 @@ describe("ComposeView, from a Studio document", () => {
     fireEvent.change(screen.getByLabelText("Genre"), { target: { value: "Cerpen" } });
     fireEvent.click(screen.getByRole("radio", { name: /Grup Penulis Pesisir/ }));
     const preview = screen.getByRole("region", { name: "Pratinjau untuk pembaca" });
-    expect(within(preview).getByText(/hanya bagian ini yang dibagikan ke grup/)).toBeTruthy();
+    expect(within(preview).getByText(/hanya bagian ini yang dibagikan ke lingkar/)).toBeTruthy();
 
     fireEvent.click(publish());
     await screen.findByText(/Anggota Grup Penulis Pesisir bisa membacanya/);

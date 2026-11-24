@@ -2,7 +2,7 @@ export const home = {
   greeting: "Siap menulis, {name}?",
   greetingAnon: "Siap menulis?",
   followRow: {
-    label: "Penulis dan grup yang kamu ikuti",
+    label: "Penulis dan lingkar yang kamu ikuti",
     fresh: "Ada karya baru",
     discover: "Temukan",
   },

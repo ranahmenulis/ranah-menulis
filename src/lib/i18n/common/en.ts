@@ -18,7 +18,7 @@ export const common: typeof source = {
     dark: "Dark",
     cycle: "Appearance: {current}. Switch to {next}",
   },
-  visibility: { private: "Private", public: "Public", group: "Group: {name}" },
+  visibility: { private: "Private", public: "Public", group: "Circle: {name}" },
   preferences: { label: "Appearance and language" },
   reasonDialog: {
     field: "Reason",

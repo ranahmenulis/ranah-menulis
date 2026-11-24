@@ -20,7 +20,7 @@ export function communityTab(pathname: string): CommunityTab {
 }
 
 /**
- * Tulisan, Event and Grup Penulis: three sections of one module, like Dokumen, Streak and Statistik
+ * Tulisan, Event and Lingkar Menulis: three sections of one module, like Dokumen, Streak and Statistik
  * in Studio (DESIGN.md 6.8). The pill tabs sit at the top of each list page with "Tulis postingan"
  * at their right; the hero and the content of the section follow.
  */

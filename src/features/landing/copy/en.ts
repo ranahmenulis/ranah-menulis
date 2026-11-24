@@ -148,9 +148,9 @@ export const landing: typeof source = {
   faqTitle: "FAQ",
   faq: [
     {
-      question: "What is a Writers' Group?",
+      question: "What is a Writing Circle?",
       answer:
-        "A small space where a group of writers read each other's work shared to the group. Documents you don't share stay private.",
+        "A small space where a circle of writers read each other's work shared to the circle. Documents you don't share stay private.",
     },
     {
       question: "Is it available in Indonesia and Malaysia?",

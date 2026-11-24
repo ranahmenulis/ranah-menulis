@@ -35,7 +35,7 @@ export const events: typeof source = {
     sprintScheduled: "Scheduled",
     sprintRunning: "In progress",
     sprintOver: "Session over",
-    peersTitle: "Participants from your groups",
+    peersTitle: "Participants from your circles",
     targetUnit: "words, the challenge target",
   },
   join: {

@@ -73,7 +73,7 @@ const ITEMS: Item[] = [
     scene: true,
   },
   {
-    page: "Grup Penulis",
+    page: "Lingkar Menulis",
     title: "Api unggun",
     meaning: "Kelompok kecil yang akrab",
     art: (c) => <Campfire className={c} />,

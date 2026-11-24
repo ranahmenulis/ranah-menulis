@@ -35,7 +35,7 @@ export const compose: typeof source = {
     publishFailed:
       "The post was not published because the connection dropped while sending. Your text and settings are still here.",
     publishAgain: "Publish again",
-    groupGone: "The chosen group is no longer available. Choose another audience to publish.",
+    groupGone: "The chosen circle is no longer available. Choose another audience to publish.",
     archived: "This document is in the Archive. Restore it first to use it.",
     paramGone:
       "The document you wanted to share could not be found or is in Trash. Choose another document below.",
@@ -67,10 +67,10 @@ export const compose: typeof source = {
     public: "Public",
     publicHint:
       "Everyone, including people without an account. Appears in followers' feeds and Community.",
-    groupHint: "Only members of this group.",
-    lostGroup: "The previous group is not available. Choose who can read.",
+    groupHint: "Only members of this circle.",
+    lostGroup: "The previous circle is not available. Choose who can read.",
     pickOne: "Choose one before publishing. A post is never public without your choice.",
-    noticeGroup: "Only members of the group you chose can read this excerpt.",
+    noticeGroup: "Only members of the circle you chose can read this excerpt.",
     noticeImage: "Only this text and image become public.",
     noticeText: "Only this text becomes public.",
     noticeTail:
@@ -140,6 +140,6 @@ export const compose: typeof source = {
     toCommunity: "Back to Community",
     linkCopied: "Link copied.",
     linkFailed: "The link could not be copied.",
-    visibility: { publik: "Public", grup: "Group" },
+    visibility: { publik: "Public", grup: "Circle" },
   },
 };

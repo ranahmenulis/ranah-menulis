@@ -35,7 +35,7 @@ export const events = {
     sprintScheduled: "Terjadwal",
     sprintRunning: "Sedang berlangsung",
     sprintOver: "Sesi selesai",
-    peersTitle: "Peserta dari grupmu",
+    peersTitle: "Peserta dari lingkarmu",
     targetUnit: "kata, target tantangan",
   },
   join: {

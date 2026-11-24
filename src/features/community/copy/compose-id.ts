@@ -33,7 +33,7 @@ export const compose = {
     publishFailed:
       "Postingan belum terbit karena koneksi terputus saat mengirim. Teks dan pengaturanmu tetap di sini.",
     publishAgain: "Terbitkan lagi",
-    groupGone: "Grup yang dipilih sudah tidak tersedia. Pilih audiens lain untuk menerbitkan.",
+    groupGone: "Lingkar yang dipilih sudah tidak tersedia. Pilih audiens lain untuk menerbitkan.",
     archived: "Dokumen ini ada di Arsip. Pulihkan dulu untuk memakainya.",
     paramGone:
       "Dokumen yang ingin kamu bagikan tidak ditemukan atau sudah ada di Sampah. Pilih dokumen lain di bawah.",
@@ -66,10 +66,10 @@ export const compose = {
     public: "Publik",
     publicHint:
       "Semua orang, termasuk yang belum punya akun. Muncul di feed pengikut dan Community.",
-    groupHint: "Hanya anggota grup ini.",
-    lostGroup: "Grup sebelumnya tidak tersedia. Pilih siapa yang bisa membaca.",
+    groupHint: "Hanya anggota lingkar ini.",
+    lostGroup: "Lingkar sebelumnya tidak tersedia. Pilih siapa yang bisa membaca.",
     pickOne: "Pilih salah satu sebelum menerbitkan. Postingan tidak pernah publik tanpa pilihanmu.",
-    noticeGroup: "Hanya anggota grup pilihanmu yang bisa membaca cuplikan ini.",
+    noticeGroup: "Hanya anggota lingkar pilihanmu yang bisa membaca cuplikan ini.",
     noticeImage: "Yang menjadi publik hanya teks dan gambar ini.",
     noticeText: "Yang menjadi publik hanya teks ini.",
     noticeTail:
@@ -139,6 +139,6 @@ export const compose = {
     toCommunity: "Kembali ke Community",
     linkCopied: "Tautan disalin.",
     linkFailed: "Tautan belum bisa disalin.",
-    visibility: { publik: "Publik", grup: "Grup" },
+    visibility: { publik: "Publik", grup: "Lingkar" },
   },
 };

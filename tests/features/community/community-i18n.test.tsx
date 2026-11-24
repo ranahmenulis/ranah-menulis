@@ -18,13 +18,13 @@ afterEach(cleanup);
 describe("group messages", () => {
   it("keeps the Indonesian text next to the code", () => {
     const result = refuseGroup("nameRequired");
-    expect(result).toMatchObject({ ok: false, code: "nameRequired", message: "Isi nama grup." });
+    expect(result).toMatchObject({ ok: false, code: "nameRequired", message: "Isi nama lingkar." });
   });
 
   it("fills the limit and translates by code", () => {
-    expect(groupMessage("nameTooLong")).toBe("Nama grup maksimal 40 karakter.");
+    expect(groupMessage("nameTooLong")).toBe("Nama lingkar maksimal 40 karakter.");
     expect(groupMessage("nameTooLong", groupsEn.messages, "en")).toBe(
-      "The group name can be up to 40 characters.",
+      "The circle name can be up to 40 characters.",
     );
     expect(groupMessage("reasonTooLong", groupsEn.messages, "en")).toContain("1,000");
   });

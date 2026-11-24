@@ -15,7 +15,7 @@ export const kelolaShared = {
     },
     admin: {
       label: "Admin",
-      summary: "Pengguna dan role, moderasi, kurasi, grup, dan audit log.",
+      summary: "Pengguna dan role, moderasi, kurasi, lingkar, dan audit log.",
     },
   },
   band: {

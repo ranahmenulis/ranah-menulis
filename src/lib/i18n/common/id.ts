@@ -17,7 +17,7 @@ export const common = {
     /** Accessible name of the cycling button: current mode, then the next one. */
     cycle: "Tampilan: {current}. Ganti ke {next}",
   },
-  visibility: { private: "Pribadi", public: "Publik", group: "Grup: {name}" },
+  visibility: { private: "Pribadi", public: "Publik", group: "Lingkar: {name}" },
   preferences: { label: "Tampilan dan bahasa" },
   reasonDialog: {
     field: "Alasan",

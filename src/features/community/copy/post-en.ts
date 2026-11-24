@@ -20,7 +20,7 @@ export const post: typeof source = {
     published: "Published",
     scopeFrom: "from:",
     onlyPart: "only this part is",
-    shared: "shared with the group",
+    shared: "shared with the circle",
     public: "public",
   },
   authorCard: { label: "About the writer", writtenBy: "Written by" },

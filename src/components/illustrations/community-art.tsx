@@ -4,7 +4,7 @@ import { useId } from "react";
 import { Canvas, Linear, MIST, Radial, Twinkles, glow, pine, url } from "./paint";
 
 /*
- * Community and Grup Penulis (DESIGN.md 7.10): a street of houses with lit windows, and a circle
+ * Community and Lingkar Menulis (DESIGN.md 7.10): a street of houses with lit windows, and a circle
  * of writers around a campfire. Both share the Streak sky and ridges; the warm light comes only
  * from windows and fire (--art-moon, --art-flame).
  */
@@ -187,7 +187,7 @@ function Sitter({
   );
 }
 
-/** Grup Penulis: a small circle of writers around a campfire. */
+/** Lingkar Menulis: a small circle of writers around a campfire. */
 export function Campfire({ className }: { className?: string }) {
   const id = useId();
   return (

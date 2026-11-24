@@ -16,7 +16,7 @@ import { groupHref, memberOf, type WritingGroup } from "../group-model";
 
 /**
  * Invitations to a writing group, as one card with a row per group and small pill buttons. Shown on
- * the Tulisan and Grup Penulis tabs of Community, and only while there is something to answer (or
+ * the Tulisan and Lingkar Menulis tabs of Community, and only while there is something to answer (or
  * the result of the last answer to read).
  */
 export function GroupInvitations({

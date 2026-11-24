@@ -29,7 +29,7 @@ const DIR = "/empty";
 export const EMPTY_ART = {
   /** Beranda, following nobody yet: a book of stories, open. */
   hikayat: { src: `${DIR}/hikayat-amir-hamzah.webp`, width: 560, height: 446 },
-  /** Grup Penulis: two people reading one book. */
+  /** Lingkar Menulis: two people reading one book. */
   readingTogether: { src: `${DIR}/reading-together.webp`, width: 560, height: 502 },
   /** Tersimpan. */
   library: { src: `${DIR}/library-1700.webp`, width: 560, height: 426 },

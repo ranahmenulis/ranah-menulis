@@ -13,7 +13,7 @@ export const discover: typeof source = {
     label: "Community sections",
     posts: "Writing",
     events: "Events",
-    groups: "Writing groups",
+    groups: "Writing Circles",
   },
   hero: {
     body: "Excerpts and prologues other writers are working on. Read, appreciate, and follow the writers.",

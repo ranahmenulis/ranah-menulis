@@ -65,7 +65,7 @@ describe("home components in English", () => {
 
   it("labels the follow row in English", () => {
     english(<FollowRow items={[{ name: "Hafiz Rahman", fresh: true, href: "/penulis/x" }]} />);
-    expect(screen.getByRole("list", { name: "Writers and groups you follow" })).toBeTruthy();
+    expect(screen.getByRole("list", { name: "Writers and circles you follow" })).toBeTruthy();
     expect(screen.getByRole("img", { name: "New work" })).toBeTruthy();
     expect(screen.getByText("Discover")).toBeTruthy();
   });

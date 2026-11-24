@@ -19,7 +19,7 @@ export const post = {
     published: "Diterbitkan",
     scopeFrom: "dari:",
     onlyPart: "hanya bagian ini yang",
-    shared: "dibagikan ke grup",
+    shared: "dibagikan ke lingkar",
     public: "publik",
   },
   authorCard: { label: "Tentang penulis", writtenBy: "Ditulis oleh" },

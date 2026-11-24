@@ -4,7 +4,7 @@ export const home: typeof source = {
   greeting: "Ready to write, {name}?",
   greetingAnon: "Ready to write?",
   followRow: {
-    label: "Writers and groups you follow",
+    label: "Writers and circles you follow",
     fresh: "New work",
     discover: "Discover",
   },

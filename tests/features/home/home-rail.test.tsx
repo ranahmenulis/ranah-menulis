@@ -29,9 +29,9 @@ describe("HomeRail", () => {
     render(<HomeRail data={data()} showProgress showProjects={false} />);
     const titles = screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent);
     expect(titles).toEqual(["Progres hari ini", "Bersama penulis lain"]);
-    // Event and Grup Penulis moved to Community (client, 22 November 2026).
+    // Event and Lingkar Menulis moved to Community (client, 22 November 2026).
     expect(screen.queryByRole("link", { name: "Event" })).toBeNull();
-    expect(screen.queryByRole("link", { name: "Grup Penulis" })).toBeNull();
+    expect(screen.queryByRole("link", { name: "Lingkar Menulis" })).toBeNull();
     expect(screen.getByRole("link", { name: "Tulis postingan" })).toBeTruthy();
   });
 

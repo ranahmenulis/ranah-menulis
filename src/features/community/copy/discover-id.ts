@@ -8,7 +8,7 @@ export const discover = {
   doneAll: "Itu semua tulisan.",
   doneCategory: "Itu semua tulisan di kategori ini.",
   loading: "Memuat Community",
-  tabs: { label: "Bagian Community", posts: "Tulisan", events: "Event", groups: "Grup Penulis" },
+  tabs: { label: "Bagian Community", posts: "Tulisan", events: "Event", groups: "Lingkar Menulis" },
   hero: {
     body: "Cuplikan dan prolog yang sedang ditulis penulis lain. Baca, beri Apresiasi, dan ikuti penulisnya.",
     recent: "tulisan baru dalam 7 hari",

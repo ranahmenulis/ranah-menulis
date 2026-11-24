@@ -3,7 +3,7 @@
 // subheadlines, tiles, and pillars follow the client's six images word for word, without the word
 // "Muslim". Items marked [konfirmasi] must not go live before the client agrees:
 //   1. Pricing (FAQ "Berapa biayanya?")
-//   2. Grup Penulis (FAQ, Q-38)
+//   2. Lingkar Menulis (FAQ, Q-38; renamed from Grup Penulis, client 23 November 2026)
 //   3. The source of the social proof numbers (social-proof.ts)
 //   4. Features shown as "Menyusul" (Community programs, Marketplace, templates; PRD Q-50 to Q-52)
 
@@ -158,10 +158,10 @@ export const landing = {
   faqTitle: "Tanya jawab",
   faq: [
     {
-      question: "Apa itu Grup Penulis?",
+      question: "Apa itu Lingkar Menulis?",
       // [konfirmasi] Q-38
       answer:
-        "Ruang kecil tempat sekelompok penulis saling membaca tulisan yang dibagikan ke grup. Dokumen yang tidak kamu bagikan tetap pribadi.",
+        "Ruang kecil tempat sekelompok penulis saling membaca tulisan yang dibagikan ke lingkar. Dokumen yang tidak kamu bagikan tetap pribadi.",
     },
     {
       question: "Apakah tersedia di Indonesia dan Malaysia?",

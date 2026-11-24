@@ -49,11 +49,11 @@ describe("group screens", () => {
       </>,
     );
 
-    const dialog = within(screen.getByRole("dialog", { name: "Buat Grup Penulis" }));
-    fireEvent.change(dialog.getByLabelText("Nama grup"), {
+    const dialog = within(screen.getByRole("dialog", { name: "Buat Lingkar Menulis" }));
+    fireEvent.change(dialog.getByLabelText("Nama lingkar"), {
       target: { value: "Ruang yang terlihat" },
     });
-    fireEvent.click(dialog.getByRole("button", { name: "Buat grup" }));
+    fireEvent.click(dialog.getByRole("button", { name: "Buat lingkar" }));
 
     expect(visibleSaved).toHaveBeenCalledOnce();
     expect(hiddenSaved).not.toHaveBeenCalled();
@@ -66,7 +66,7 @@ describe("group screens", () => {
 
     expect(screen.getByText(/Akun aktif diperlukan/)).toBeTruthy();
     expect(screen.queryByRole("link", { name: "Masuk" })).toBeNull();
-    expect(screen.queryByRole("button", { name: "Buat grup" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Buat lingkar" })).toBeNull();
   });
 
   it("validates the code, keeps its input, and closes the dialog before opening the group", async () => {
@@ -92,7 +92,7 @@ describe("group screens", () => {
     expect(screen.getByText(/mengundangmu ke Ruang Cerpen/)).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "Terima" }));
     expect(screen.queryByRole("button", { name: "Terima" })).toBeNull();
-    expect(screen.getByRole("status").textContent).toBe("Kamu bergabung dengan grup.");
+    expect(screen.getByRole("status").textContent).toBe("Kamu bergabung dengan lingkar.");
     expect(screen.getByRole("link", { name: "Ruang Cerpen" }).getAttribute("href")).toBe(
       "/grup/ruang-cerpen",
     );
@@ -106,7 +106,7 @@ describe("group screens", () => {
     act(() => {
       removeGroupMember(COASTAL_GROUP_ID, ME_ID);
     });
-    expect(screen.getByText("Grup ini tidak tersedia.")).toBeTruthy();
+    expect(screen.getByText("Lingkar ini tidak tersedia.")).toBeTruthy();
     expect(screen.queryByRole("heading", { name: "Grup Penulis Pesisir" })).toBeNull();
     expect(screen.queryByText(/Hafiz Rahman/)).toBeNull();
     expect(screen.queryByRole("link", { name: /Garam dan Pelabuhan/i })).toBeNull();
@@ -138,7 +138,7 @@ describe("group screens", () => {
 
     await waitFor(() => {
       const status = screen.getByRole("status");
-      expect(status.textContent).toBe("Tulisan ini sudah tidak tersedia di grup.");
+      expect(status.textContent).toBe("Tulisan ini sudah tidak tersedia di lingkar.");
       expect(document.activeElement).toBe(status);
     });
   });

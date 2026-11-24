@@ -17,7 +17,7 @@ export const kelolaShared: typeof source = {
     },
     admin: {
       label: "Admin",
-      summary: "Users and roles, moderation, curation, groups, and the audit log.",
+      summary: "Users and roles, moderation, curation, circles, and the audit log.",
     },
   },
   band: {
