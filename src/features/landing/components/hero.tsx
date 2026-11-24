@@ -27,8 +27,11 @@ export function Hero({ copy, studio }: { copy: Dictionary["landing"]["hero"]; st
         <p className="inline-flex h-8 items-center gap-2 rounded-full border border-line bg-surface/80 px-3.5 text-xs font-medium text-ink-muted shadow-card backdrop-blur">
           <span className="size-1.5 rounded-full bg-accent" aria-hidden />
           {copy.eyebrow}
-          <span aria-hidden>·</span>
-          {copy.colophon}
+          {/* Phones show the platform name alone: both together wrap into four cramped lines. */}
+          <span aria-hidden className="max-sm:hidden">
+            ·
+          </span>
+          <span className="max-sm:hidden">{copy.colophon}</span>
         </p>
         <EnterTitle
           id="hero-h"

@@ -1,11 +1,13 @@
 "use client";
 
 import { List } from "@phosphor-icons/react/dist/ssr";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ButtonLink } from "@/components/ui/button";
+import { LanguageMenu } from "@/components/ui/language-menu";
 import { Menu } from "@/components/ui/menu";
 import { Wordmark } from "@/components/ui/logo";
-import { DisplayControls } from "@/components/ui/display-controls";
+import { usePreferenceEntries } from "@/components/ui/preferences-menu";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { cn } from "@/lib/cn";
 import { useT } from "@/lib/i18n/provider";
 import { Wrap } from "./layout";
@@ -23,6 +25,8 @@ type Mode = "top" | "scrolled-hero" | "scrolled" | "wait";
 export function TopBar() {
   const [mode, setMode] = useState<Mode>("top");
   const copy = useT().landing.topBar;
+  const menuRef = useRef<HTMLDivElement>(null);
+  const preferences = usePreferenceEntries(menuRef);
   const sections = [
     ["ekosistem", copy.ecosystem],
     ["studio", copy.studio],
@@ -80,29 +84,38 @@ export function TopBar() {
               {label}
             </a>
           ))}
+          {/* 44px tall on touch widths (client: comfortable touch areas). */}
           <ButtonLink
             href="#daftar"
             size="sm"
-            className="lp-btn"
+            className="lp-btn max-md:h-11"
             variant={mode === "scrolled" ? "primary" : "secondary"}
           >
-            <span className="sm:hidden">{copy.ctaShort}</span>
-            <span className="max-sm:hidden">{copy.cta}</span>
+            {copy.cta}
           </ButtonLink>
-          <DisplayControls />
-          {/* Narrow screens: the section links move into a hamburger menu (client brief). */}
-          <Menu
-            className="md:hidden"
-            label={copy.menu}
-            icon={<List size={24} aria-hidden />}
-            items={sections.map(([id, label]) => ({
-              id,
-              label,
-              onSelect: () => {
-                window.location.hash = id;
-              },
-            }))}
-          />
+          <div className="flex items-center max-md:hidden">
+            <LanguageMenu />
+            <ThemeToggle />
+          </div>
+          {/* Narrow screens (client, 24 Nov 2026): the section links, theme, and language all
+              live in one hamburger, so the bar holds only the logo, one button, and the menu. */}
+          <div ref={menuRef} className="md:hidden">
+            <Menu
+              label={copy.menu}
+              icon={<List size={24} aria-hidden />}
+              items={[
+                ...sections.map(([id, label]) => ({
+                  id,
+                  label,
+                  onSelect: () => {
+                    window.location.hash = id;
+                  },
+                })),
+                { type: "separator" as const, id: "sections-sep" },
+                ...preferences,
+              ]}
+            />
+          </div>
         </nav>
       </Wrap>
     </header>

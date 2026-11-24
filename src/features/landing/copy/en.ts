@@ -3,9 +3,9 @@ import type { landing as source } from "./id";
 // English landing copy. A translation draft: it needs the client's review before launch.
 export const landing: typeof source = {
   meta: {
-    title: "RanahMenulis · A digital home for every story",
+    title: "RanahMenulis · From Beginning Writer to a Writer Who Creates",
     description:
-      "Find a place to write, grow your craft, connect with a community, and publish your work with RanahMenulis.",
+      "Grow your writing skills, build a habit of creating, find a community, and turn your writing into real work with RanahMenulis.",
   },
   topBar: {
     logoLabel: "RanahMenulis, back to top",
@@ -15,16 +15,16 @@ export const landing: typeof source = {
     studio: "Studio",
     publishing: "Publishing",
     faq: "FAQ",
-    cta: "Join the waitlist",
-    ctaShort: "Waitlist",
+    cta: "Start Writing",
   },
+  // Translation of the client's 24 Nov 2026 hero words; awaiting the user's review.
   hero: {
-    eyebrow: "Digital Writing Ecosystem",
-    titleLines: ["A Digital Home for", "Every Story.", "Start With Us."],
+    eyebrow: "Writer Development Platform",
+    titleLines: ["From Beginning Writer,", "to a Writer", "Who Creates."],
     colophon: "Indonesia · Malaysia",
-    lead: "Find a place to write, grow your craft, connect with a community, and publish your work with RanahMenulis.",
-    cta: "Join the waitlist",
-    secondary: "Explore the Ecosystem",
+    lead: "Grow your writing skills, build a habit of creating, find a community, and turn your writing into real work with RanahMenulis.",
+    cta: "Start Your Writing Journey",
+    secondary: "Explore RanahMenulis",
     saved: "Saved 2:02 PM",
     words: "words",
   },
@@ -118,7 +118,7 @@ export const landing: typeof source = {
       "Twenty Minutes Before Dawn",
     ],
     paths: ["Anthology", "Solo Book", "Writing Class", "Writing Contest"],
-    cta: "Publish Your Work Now",
+    cta: "See Publishing Opportunities",
   },
   previews: {
     pause: "Pause animation",
@@ -199,7 +199,8 @@ export const landing: typeof source = {
     },
   ],
   footer: {
-    description: "Digital Writing Ecosystem. A place for every writer to write, grow, and publish.",
+    description:
+      "Writer Development Platform. A place for every writer to write, grow, and publish.",
     navLabel: "Footer",
     product: "Product",
     program: "Programs",

@@ -59,7 +59,7 @@ describe("publishing", () => {
 
   it("leads to the waitlist while the app is closed", () => {
     render(<Publishing copy={landing.publishing} />);
-    const cta = screen.getByRole("link", { name: /Terbitkan Karyamu Sekarang/ });
+    const cta = screen.getByRole("link", { name: /Lihat Peluang Menerbitkan Karya/ });
     expect(cta.getAttribute("href")).toBe("#daftar");
   });
 });

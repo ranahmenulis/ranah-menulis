@@ -17,19 +17,19 @@ describe("hero", () => {
   it("reads as one sentence in three lines", () => {
     renderHero();
     const title = screen.getByRole("heading", { level: 1 });
-    expect(title.textContent).toBe("Ruang Digital Untuk Setiap Ceritamu. Mulai Bersama Kami.");
+    expect(title.textContent).toBe("Dari Penulis Pemula, Menjadi Penulis yang Berkarya.");
     expect(title.querySelectorAll(":scope > span")).toHaveLength(3);
     expect(title.children[1].className).toContain("lp-hero-serif");
   });
 
   it("has one pill, one filled button and one text link", () => {
     renderHero();
-    const pill = screen.getByText(/Digital Writing Ecosystem/);
+    const pill = screen.getByText(/Writer Development Platform/);
     expect(pill.textContent).toContain("Indonesia · Malaysia");
-    expect(screen.getByRole("link", { name: "Gabung daftar tunggu" }).getAttribute("href")).toBe(
-      "#daftar",
-    );
-    expect(screen.getByRole("link", { name: "Jelajahi Ekosistem" }).getAttribute("href")).toBe(
+    expect(
+      screen.getByRole("link", { name: "Mulai Perjalanan Menulis" }).getAttribute("href"),
+    ).toBe("#daftar");
+    expect(screen.getByRole("link", { name: "Jelajahi RanahMenulis" }).getAttribute("href")).toBe(
       "#ekosistem",
     );
   });

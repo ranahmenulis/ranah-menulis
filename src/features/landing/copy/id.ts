@@ -9,9 +9,9 @@
 
 export const landing = {
   meta: {
-    title: "RanahMenulis · Ruang digital untuk setiap ceritamu",
+    title: "RanahMenulis · Dari Penulis Pemula, Menjadi Penulis yang Berkarya",
     description:
-      "Temukan ruang untuk menulis, mengembangkan kemampuan, terhubung dengan komunitas, dan menerbitkan karyamu bersama RanahMenulis.",
+      "Kembangkan kemampuan menulismu, bangun kebiasaan berkarya, temukan komunitas, dan wujudkan tulisanmu menjadi karya nyata bersama RanahMenulis.",
   },
   topBar: {
     logoLabel: "RanahMenulis, ke atas",
@@ -21,17 +21,18 @@ export const landing = {
     studio: "Studio",
     publishing: "Penerbitan",
     faq: "Tanya jawab",
-    cta: "Gabung daftar tunggu",
-    ctaShort: "Daftar tunggu",
+    // Client (Wafiy, 24 Nov 2026): one primary call to action. It still leads to the waitlist.
+    cta: "Mulai Menulis",
   },
+  // Hero words from the client (Wafiy, 24 Nov 2026), replacing the brief v3 headline.
   hero: {
-    eyebrow: "Digital Writing Ecosystem",
+    eyebrow: "Writer Development Platform",
     // Three lines: the middle one is set in the serif italic (DESIGN.md 4.6, hero C2).
-    titleLines: ["Ruang Digital Untuk", "Setiap Ceritamu.", "Mulai Bersama Kami."],
+    titleLines: ["Dari Penulis Pemula,", "Menjadi Penulis", "yang Berkarya."],
     colophon: "Indonesia · Malaysia",
-    lead: "Temukan ruang untuk menulis, mengembangkan kemampuan, terhubung dengan komunitas, dan menerbitkan karyamu bersama RanahMenulis.",
-    cta: "Gabung daftar tunggu",
-    secondary: "Jelajahi Ekosistem",
+    lead: "Kembangkan kemampuan menulismu, bangun kebiasaan berkarya, temukan komunitas, dan wujudkan tulisanmu menjadi karya nyata bersama RanahMenulis.",
+    cta: "Mulai Perjalanan Menulis",
+    secondary: "Jelajahi RanahMenulis",
     saved: "Tersimpan 14.02",
     words: "kata",
   },
@@ -131,7 +132,7 @@ export const landing = {
     ],
     // Names from image 2; their sentences were cut in tahap H.
     paths: ["Antologi", "Solo Book", "Kelas Menulis", "Lomba Menulis"],
-    cta: "Terbitkan Karyamu Sekarang",
+    cta: "Lihat Peluang Menerbitkan Karya",
   },
   previews: {
     pause: "Jeda animasi",
@@ -210,7 +211,7 @@ export const landing = {
   ],
   footer: {
     description:
-      "Digital Writing Ecosystem. Ruang tumbuh bagi setiap penulis untuk menulis, berkembang, dan menerbitkan karya.",
+      "Writer Development Platform. Ruang tumbuh bagi setiap penulis untuk menulis, berkembang, dan menerbitkan karya.",
     navLabel: "Kaki halaman",
     product: "Produk",
     program: "Program",
