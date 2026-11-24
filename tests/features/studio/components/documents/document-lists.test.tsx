@@ -4,7 +4,7 @@ import { ToastProvider } from "@/components/ui/toast";
 import { resetAccount, saveAccount } from "@/features/account/account-store";
 import { dayKey } from "@/features/studio/daily-progress";
 import { addDays } from "@/features/studio/streak";
-import { LiveList } from "@/features/studio/components/documents/document-lists";
+import { WorksList } from "@/features/studio/components/works/works-list";
 import { PendingDialogs } from "@/features/studio/components/documents/pending-dialogs";
 import type { DocumentList } from "@/features/studio/hooks/use-document-list";
 import type { StudioDocument } from "@/features/studio/storage/document-store";
@@ -26,7 +26,7 @@ it("labels a target as due today on the account day", () => {
     list.loadedAt = Date.now();
     render(
       <ToastProvider>
-        <LiveList
+        <WorksList
           list={list}
           folderId={null}
           folderName={null}
@@ -83,7 +83,7 @@ function renderList(
   const list = listOf([doc("a", "Yang Ditunggu Nenek"), doc("b", "Catatan Pasar")]);
   render(
     <ToastProvider>
-      <LiveList
+      <WorksList
         list={list}
         folderId={null}
         folderName={null}
@@ -98,7 +98,7 @@ function renderList(
   return { onPending, list };
 }
 
-const rowOf = (title: string) => screen.getByText(title).closest("li")!;
+const rowOf = (title: string) => screen.getByText(title).closest("tr")!;
 
 describe("Dokumen list, Dibagikan tag", () => {
   it("marks only the documents that have a published post", () => {
@@ -118,7 +118,7 @@ describe("Dokumen list, Dibagikan tag", () => {
     const list = listOf([doc("a", long)]);
     render(
       <ToastProvider>
-        <LiveList
+        <WorksList
           list={list}
           folderId={null}
           folderName={null}
@@ -130,7 +130,9 @@ describe("Dokumen list, Dibagikan tag", () => {
       </ToastProvider>,
     );
     expect(screen.getByText("Dibagikan")).toBeTruthy();
-    expect(screen.getByRole("heading", { level: 2 }).className).toContain("overflow-wrap:anywhere");
+    expect(screen.getByText(/^Judul yang sangat panjang/).closest("p")!.className).toContain(
+      "overflow-wrap:anywhere",
+    );
   });
 });
 
@@ -157,7 +159,7 @@ describe("Dokumen list, Kirim ke proyek", () => {
     const empty = { ...doc("e", "Masih Kosong"), wordCount: 0 };
     render(
       <ToastProvider>
-        <LiveList
+        <WorksList
           list={listOf([empty])}
           folderId={null}
           folderName={null}
@@ -198,7 +200,7 @@ describe("Dokumen list, Kirim ke proyek", () => {
   });
 });
 
-describe("LiveList: document targets", () => {
+describe("WorksList: document targets", () => {
   it("adds the nearest open target to a document's meta line", () => {
     const due = addDays(dayKey(new Date(5000)), 5);
     const withTarget: StudioDocument = {
@@ -207,7 +209,7 @@ describe("LiveList: document targets", () => {
     };
     render(
       <ToastProvider>
-        <LiveList
+        <WorksList
           list={listOf([withTarget, doc("b", "Catatan Pasar")])}
           folderId={null}
           folderName={null}
@@ -218,17 +220,18 @@ describe("LiveList: document targets", () => {
       </ToastProvider>,
     );
 
-    expect(screen.getByText(/120 \/ 1\.000 kata · 5 hari lagi/)).toBeTruthy();
-    expect(screen.getAllByText(/Diubah/)).toHaveLength(2);
+    // The target shows in the narrow meta line and beside the title on a wide screen.
+    expect(screen.getAllByText(/120 \/ 1\.000 kata · 5 hari lagi/).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/^Diubah .* · 120 kata/)).toHaveLength(2);
   });
 });
 
-describe("LiveList: page marks", () => {
+describe("WorksList: page marks", () => {
   it("draws each document as a page that follows its kind and is hidden from readers", () => {
     const list = listOf([{ ...doc("a", "Sajak Pagi"), kind: "puisi" }, doc("b", "Catatan")]);
     render(
       <ToastProvider>
-        <LiveList
+        <WorksList
           list={list}
           folderId={null}
           folderName={null}
@@ -250,7 +253,7 @@ describe("Dokumen list, first empty state", () => {
   function renderEmpty(folderName: string | null) {
     const { container } = render(
       <ToastProvider>
-        <LiveList
+        <WorksList
           list={listOf([])}
           folderId={folderName ? "f" : null}
           folderName={folderName}

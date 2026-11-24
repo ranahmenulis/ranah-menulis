@@ -40,13 +40,13 @@ import { StudioSearchDialog } from "./studio-search-dialog";
 import { VersionHistoryDrawer } from "./version-history-drawer";
 
 /**
- * The writing area makes room for an open side panel, and sits lower in focus mode. From md up it
- * is the desk under the paper sheet; on a phone it is the paper itself, except in the Page Preview,
- * where the A5 sheets need the desk around them.
+ * The writing area makes room for an open side panel, and sits lower in focus mode. Text is
+ * written straight on the plain surface, with no box around it; only the Page Preview needs the
+ * desk around its A5 sheets.
  */
 function canvasClass(panelOpen: boolean, focusMode: boolean, preview: boolean) {
   return cn(
-    "min-h-0 flex-1 overflow-auto px-4 pt-8 pb-32 md:bg-canvas md:px-12 md:pt-10 md:pb-24",
+    "min-h-0 flex-1 overflow-auto px-4 pt-8 pb-32 md:px-12 md:pt-10 md:pb-24",
     preview ? "bg-canvas" : "bg-surface",
     "transition-[padding] duration-200 ease-out",
     panelOpen && !focusMode && "md:pr-100",
@@ -54,12 +54,19 @@ function canvasClass(panelOpen: boolean, focusMode: boolean, preview: boolean) {
   );
 }
 
+/** The whole screen: plain surface for writing, the desk colour behind the Page Preview sheets. */
+const screenClass = (preview: boolean) =>
+  cn("flex h-dvh flex-col", preview ? "bg-canvas" : "bg-surface");
+
 /** The name shown in the bar while the document is not open (nothing while it is loading). */
 function fallbackTitle(load: LoadState, t: ReturnType<typeof useT>["studioEditor"]) {
   return load === "error" || load === "missing" || load === "archived"
     ? t.states.fallbackTitle[load]
     : "";
 }
+
+/** The back arrow's target: the page the writer came from, or the document list. */
+const backTarget = (backHref?: string) => backHref ?? STUDIO_HREF;
 
 /** A new document has no id until it is first stored. */
 const storedId = (id: string) => (id === "baru" ? null : id);
@@ -72,11 +79,14 @@ export function StudioEditor({
   documentId,
   eventId,
   folderId,
+  backHref,
 }: {
   documentId: string;
   eventId?: string;
   /** For a new document: the folder it is filed in once stored. */
   folderId?: string;
+  /** Where the back arrow leads; the document list when absent. */
+  backHref?: string;
 }) {
   const t = useT().studioEditor;
   const { onSaved, flush: saveEventProgress } = useEventSave(eventId);
@@ -175,11 +185,11 @@ export function StudioEditor({
       autoFocusTitle={documentId === "baru"}
     />
   ) : (
-    <EditorUnavailable load={doc.load} onRetry={doc.reload} backHref={STUDIO_HREF} />
+    <EditorUnavailable load={doc.load} onRetry={doc.reload} backHref={backTarget(backHref)} />
   );
 
   return (
-    <div className="flex h-dvh flex-col bg-canvas">
+    <div className={screenClass(view.showPreview)}>
       {!focusMode && (
         <EditorBar
           title={doc.title}
@@ -200,7 +210,7 @@ export function StudioEditor({
           sprint={sprint}
           sprintOpen={sprintPanel.open}
           onSprintOpenChange={sprintPanel.setOpen}
-          onBack={() => void goBack()}
+          onBack={() => void goBack(backHref)}
           onSearch={search.onOpen}
           onToggleHelp={side.toggleHelp}
           onFocusMode={enterFocus}

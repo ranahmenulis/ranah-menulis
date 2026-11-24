@@ -38,7 +38,9 @@ import { projectsContest as projectsContestEn } from "@/features/projects/copy/c
 import { projectsSolo as projectsSoloId } from "@/features/projects/copy/solo-id";
 import { projectsSolo as projectsSoloEn } from "@/features/projects/copy/solo-en";
 import { studioBook as studioBookId } from "@/features/studio/copy/book-id";
+import { studioWork as studioWorkId } from "@/features/studio/copy/work-id";
 import { studioBook as studioBookEn } from "@/features/studio/copy/book-en";
+import { studioWork as studioWorkEn } from "@/features/studio/copy/work-en";
 import { studioLayout as studioLayoutId } from "@/features/studio/copy/layout-id";
 import { studioLayout as studioLayoutEn } from "@/features/studio/copy/layout-en";
 import { studioEditor as studioEditorId } from "@/features/studio/copy/editor-id";
@@ -93,6 +95,7 @@ export const id = {
   events: eventsId,
   studioLayout: studioLayoutId,
   studioBook: studioBookId,
+  studioWork: studioWorkId,
   studioEditor: studioEditorId,
   studioStreak: studioStreakId,
   studioStats: studioStatsId,
@@ -134,6 +137,7 @@ const en: Dictionary = {
   events: eventsEn,
   studioLayout: studioLayoutEn,
   studioBook: studioBookEn,
+  studioWork: studioWorkEn,
   studioEditor: studioEditorEn,
   studioStreak: studioStreakEn,
   studioStats: studioStatsEn,

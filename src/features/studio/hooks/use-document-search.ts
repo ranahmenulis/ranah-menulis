@@ -1,22 +1,23 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Locale } from "@/lib/i18n/config";
 import { useLocale } from "@/lib/i18n/provider";
 import { useViewer } from "@/lib/viewer";
 import { scanDocumentMatches, searchText } from "../document-search";
-import type { DocumentFilters } from "../document-classification";
-import { documentsInScope } from "../documents";
 import type { DocumentStore, DocumentSummary } from "../storage/document-store";
 import { studioStore } from "../storage/store";
 
 const SEARCH_DELAY_MS = 250;
 type Result = { status: "ready"; ids: ReadonlySet<string> } | { status: "error" };
 
+/**
+ * Search over the documents the open list reads (`candidates`, see `searchCandidates`). The
+ * typed text resets when the open folder changes.
+ */
 export function useDocumentListSearch(
-  docs: DocumentSummary[],
+  candidates: DocumentSummary[],
   folderId: string | null,
-  filters: DocumentFilters,
   activeReady: boolean,
 ) {
   const viewer = useViewer();
@@ -28,10 +29,6 @@ export function useDocumentListSearch(
   const inputRef = useRef<HTMLInputElement>(null);
   const query = keyword.folderId === folderId ? keyword.text : "";
   const enabled = activeReady && viewer === "masuk";
-  const candidates = useMemo(
-    () => documentsInScope(docs, folderId, filters, true),
-    [docs, folderId, filters],
-  );
   const state = useDocumentSearch(studioStore, candidates, enabled ? query : "", locale);
   const matches = state.status === "ready" ? state.ids : null;
 

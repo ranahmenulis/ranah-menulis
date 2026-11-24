@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+
 import type { ProjectCategory } from "@/features/projects/types";
 import { bookDocId } from "../../book-source";
 import { kirimHref } from "@/features/projects/submission-model";
@@ -10,7 +11,9 @@ import type { DocumentList } from "../../hooks/use-document-list";
 import type { StudioDocument } from "../../storage/document-store";
 import { BookDialog, bookPatch } from "../book/book-dialog";
 import { DocumentClassificationDialog } from "./document-classification-dialog";
+import { NewWorkDialog } from "./new-work-dialog";
 import { DeleteDialog, MoveDialog, NameDialog } from "./document-dialogs";
+import { collectionsOf } from "../../works";
 import type { Pending } from "./pending";
 
 /** "Kirim ke proyek" from the list: the dialog closes itself first, then the send page opens. */
@@ -72,6 +75,8 @@ export function PendingDialogs({
           onSubmit={(name) => run(() => list.createFolder(name))()}
         />
       );
+    case "newWork":
+      return <NewWorkDialog collectionId={pending.collectionId} onClose={onClose} />;
     case "sendBook":
       return (
         <SendFromList docId={bookDocId(pending.folder.id)} only={["solo"]} onClose={onClose} />
@@ -82,7 +87,11 @@ export function PendingDialogs({
           folder={null}
           onClose={onClose}
           onSubmit={async ({ name, cover }) => {
-            await list.createFolder(name, { kind: "book", ...(cover ? { cover } : {}) });
+            await list.createFolder(name, {
+              kind: "book",
+              ...(cover ? { cover } : {}),
+              ...(pending.collectionId ? { collectionId: pending.collectionId } : {}),
+            });
             onClose();
           }}
         />
@@ -98,6 +107,35 @@ export function PendingDialogs({
           }}
         />
       );
+    case "classifyBook": {
+      // A book keeps its type and tags on the folder; the dialog is the document one, fed a stand-in.
+      const { folder } = pending;
+      const standIn = (
+        kind: StudioDocument["kind"],
+        tags: string[] | undefined,
+      ): StudioDocument => ({
+        id: folder.id,
+        title: folder.name,
+        content: { type: "doc", content: [] },
+        wordCount: 0,
+        version: 1,
+        updatedAt: folder.createdAt,
+        kind,
+        tags,
+      });
+      return (
+        <DocumentClassificationDialog
+          key={folder.id}
+          doc={standIn(folder.genre, folder.tags)}
+          onSave={async (_expected, changes) => {
+            await list.updateFolder(folder.id, { genre: changes.kind, tags: changes.tags ?? [] });
+            return { status: "saved", doc: standIn(changes.kind, changes.tags) };
+          }}
+          onSaved={onClose}
+          onClose={onClose}
+        />
+      );
+    }
     case "renameFolder":
       return (
         <NameDialog
@@ -149,6 +187,25 @@ export function PendingDialogs({
           onSubmit={(target) => run(() => list.moveTo(pending.doc.id, target))()}
         />
       );
+    case "moveWork": {
+      // A work goes into a plain folder only: a book is a work, not a place to file one.
+      const { work } = pending;
+      return (
+        <MoveDialog
+          open
+          folders={collectionsOf(list.folders)}
+          current={work.collectionId}
+          onClose={onClose}
+          onSubmit={(target) =>
+            run(() =>
+              work.type === "book"
+                ? list.updateFolder(work.id, { collectionId: target })
+                : list.moveTo(work.id, target),
+            )()
+          }
+        />
+      );
+    }
     case "sendToProject":
       return <SendFromList docId={pending.doc.id} onClose={onClose} />;
     case "delete":

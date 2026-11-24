@@ -3,10 +3,10 @@
    document's layout; the text column is as wide as the text area of an A5 page, so lines break
    close to how they will print. Text uses ink-read so dark mode is easier on the eyes.
 
-   From md up the page is a sheet of paper on the desk (tahap I, 23 November 2026): a surface
-   card as wide as an A5 page, its padding the document margin, so the text column keeps its
-   width. On phones the whole writing area is the surface, with no sheet. The typewriter room
-   sits inside the sheet as padding, so the paper grows instead of floating away. */
+   The text is written straight on the plain surface, with no box or shadow around it (client
+   feedback, 24 November 2026; the sheet from tahap I looked odd). From md up the column is as
+   wide as an A5 page, its padding the document margin, so lines still break like the print.
+   The typewriter room is padding, so the text can reach the middle of the screen. */
 
 .studio-editor-page {
   max-width: var(--doc-text-width, 108mm);
@@ -20,19 +20,6 @@
     padding: calc(var(--doc-margin, 20mm) + var(--studio-typewriter-before, 0px))
       var(--doc-margin, 20mm)
       calc(var(--doc-margin, 20mm) * 1.5 + var(--studio-typewriter-after, 0px));
-    border: 1px solid var(--line);
-    border-radius: var(--radius-2xl);
-    background: var(--surface);
-    box-shadow: var(--shadow-card);
-    transition:
-      border-color 200ms var(--ease-out),
-      box-shadow 200ms var(--ease-out);
-  }
-
-  /* Focus mode keeps the paper but drops its edge, so only the text is left. */
-  .studio-focus .studio-editor-page {
-    border-color: transparent;
-    box-shadow: none;
   }
 }
 

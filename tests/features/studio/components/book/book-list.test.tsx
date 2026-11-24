@@ -1,7 +1,7 @@
-import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
+import { cleanup, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { ToastProvider } from "@/components/ui/toast";
-import { LiveList } from "@/features/studio/components/documents/document-lists";
+import { WorksList } from "@/features/studio/components/works/works-list";
 import type { DocumentList } from "@/features/studio/hooks/use-document-list";
 import type { StudioDocument, StudioFolder } from "@/features/studio/storage/document-store";
 import { installDialogShim } from "@/test/dialog-shim";
@@ -14,7 +14,7 @@ vi.mock("@/lib/files/use-stored-file-url", () => ({
 beforeAll(installDialogShim);
 afterEach(cleanup);
 
-const doc = (id: string, title: string, createdAt: number): StudioDocument => ({
+const doc = (id: string, title: string, createdAt: number, folderId = "b"): StudioDocument => ({
   id,
   title,
   content: { type: "doc", content: [] },
@@ -22,9 +22,9 @@ const doc = (id: string, title: string, createdAt: number): StudioDocument => ({
   version: 1,
   updatedAt: 1000,
   createdAt,
-  folderId: "b",
+  folderId,
 });
-const folder: StudioFolder = { id: "b", name: "Pulang", createdAt: 0, kind: "book" };
+const book: StudioFolder = { id: "b", name: "Pulang", createdAt: 0, kind: "book" };
 
 function listOf(folders: StudioFolder[], docs: StudioDocument[]): DocumentList {
   return {
@@ -47,60 +47,63 @@ function listOf(folders: StudioFolder[], docs: StudioDocument[]): DocumentList {
   };
 }
 
-function renderList(list: DocumentList, folderId: string | null, handlers = {}) {
+function renderList(list: DocumentList, folderId: string | null = null, onPending = vi.fn()) {
   render(
     <ToastProvider>
-      <LiveList
+      <WorksList
         list={list}
         folderId={folderId}
-        folderName={folderId ? "Pulang" : null}
+        folderName={folderId ? "Rak" : null}
         onOpenFolder={vi.fn()}
         onArchiveAction={vi.fn()}
-        onPending={vi.fn()}
-        {...handlers}
+        onPending={onPending}
       />
     </ToastProvider>,
   );
+  return onPending;
 }
 
-describe("a book in the Dokumen list", () => {
-  it("shows chapters and words on the folder row", () => {
-    renderList(listOf([folder], [doc("a", "Satu", 1), doc("c", "Dua", 2)]), null);
-    expect(screen.getByText(/2 bab · 200 kata/)).toBeTruthy();
+const rowOf = (title: string) => screen.getByRole("link", { name: title }).closest("tr")!;
+
+describe("a book in the Naskah table", () => {
+  it("is one row with its chapters and words, linking to its own page", () => {
+    renderList(listOf([book], [doc("a", "Satu", 1), doc("c", "Dua", 2)]));
+    const row = within(rowOf("Pulang"));
+    expect(row.getByText(/2 bab · 200 kata/)).toBeTruthy();
+    expect(row.getByRole("link", { name: "Pulang" }).getAttribute("href")).toBe("/studio/naskah/b");
   });
 
-  it("lists chapters numbered in their saved order, with the move buttons", () => {
-    const book = { ...folder, chapterOrder: ["c", "a"] };
-    renderList(listOf([book], [doc("a", "Satu", 1), doc("c", "Dua", 2)]), "b");
-    const rows = screen.getAllByRole("listitem");
-    expect(within(rows[0]).getByText("Dua")).toBeTruthy();
-    expect(rows[0].textContent).toContain("Bab 1");
-    expect(rows[1].textContent).toContain("Bab 2");
+  it("does not list its chapters as works", () => {
+    renderList(listOf([book], [doc("a", "Satu", 1), doc("c", "Dua", 2)]));
+    expect(screen.queryByText("Satu")).toBeNull();
+    expect(screen.queryByText("Dua")).toBeNull();
+  });
+
+  it("offers settings and sending to a project from its menu", () => {
+    const onPending = renderList(listOf([book], [doc("a", "Satu", 1)]));
+    expect(screen.getByRole("button", { name: "Menu folder Pulang" })).toBeTruthy();
+    expect(onPending).not.toHaveBeenCalled();
+  });
+});
+
+describe("a plain folder in the Naskah table", () => {
+  const shelf: StudioFolder = { id: "f", name: "Rak", createdAt: 0 };
+
+  it("counts the works inside, a book as one", () => {
+    const filed = { ...book, collectionId: "f" };
+    renderList(listOf([shelf, filed], [doc("a", "Satu", 1), doc("x", "Lepas", 3, "f")]));
     expect(
-      within(rows[0]).getByRole("button", { name: "Naikkan Dua" }).hasAttribute("disabled"),
-    ).toBe(true);
-    expect(
-      within(rows[1]).getByRole("button", { name: "Turunkan Satu" }).hasAttribute("disabled"),
-    ).toBe(true);
+      within(screen.getByRole("button", { name: "Rak" }).closest("tr")!).getByText(
+        /2 naskah · diubah/,
+      ),
+    ).toBeTruthy();
   });
 
-  it("reports the new order when a chapter moves", () => {
-    const onReorder = vi.fn();
-    const book = { ...folder, chapterOrder: ["a", "c"] };
-    renderList(listOf([book], [doc("a", "Satu", 1), doc("c", "Dua", 2)]), "b", { onReorder });
-    fireEvent.click(screen.getByRole("button", { name: "Turunkan Satu" }));
-    expect(onReorder).toHaveBeenCalledWith(["c", "a"], { id: "a", step: 1 });
-  });
-
-  it("has no chapter controls in a plain folder", () => {
-    const plain = { ...folder, kind: undefined };
-    renderList(listOf([plain], [doc("a", "Satu", 1), doc("c", "Dua", 2)]), "b");
-    expect(screen.queryByRole("button", { name: /Naikkan|Turunkan/ })).toBeNull();
-    expect(screen.queryByText(/Bab 1/)).toBeNull();
-  });
-
-  it("explains how to start an empty book", () => {
-    renderList(listOf([folder], []), "b");
-    expect(screen.getByText(/Belum ada bab/)).toBeTruthy();
+  it("lists the books and documents filed in it once it is open", () => {
+    const filed = { ...book, collectionId: "f" };
+    renderList(listOf([shelf, filed], [doc("a", "Satu", 1), doc("x", "Lepas", 3, "f")]), "f");
+    expect(screen.getByRole("link", { name: "Pulang" })).toBeTruthy();
+    expect(screen.getByText("Lepas")).toBeTruthy();
+    expect(screen.queryByText("Rak")).toBeNull();
   });
 });

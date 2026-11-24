@@ -1,26 +1,33 @@
 "use client";
 
-import { Suspense, useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { ButtonLink } from "@/components/ui/button";
+import { cn } from "@/lib/cn";
 import { ErrorBanner, RetryButton } from "@/components/ui/states";
 import { Tabs } from "@/components/ui/tabs";
 import { useT } from "@/lib/i18n/provider";
 import { useSharedDocumentIds } from "@/features/community/hooks/use-shared-documents";
 import { useSubmittedDocumentIds } from "@/features/projects/hooks/use-submitted-documents";
 import { postStore } from "@/features/community/storage/store";
-import { hasDocumentFilters } from "../../document-classification";
+import {
+  hasDocumentFilters,
+  matchesDocumentFilters,
+  type DocumentFilters,
+} from "../../document-classification";
 import { isActiveDocument } from "../../document-archive";
-import { documentTagOptions, listEntries } from "../../documents";
+import { isBook } from "../../book";
+import { documentTagOptions } from "../../documents";
 import { useDocumentSummaryList } from "../../hooks/use-document-list";
 import { useDocumentListSearch } from "../../hooks/use-document-search";
 import type { StudioDocument } from "../../storage/document-store";
 import { studioStore } from "../../storage/store";
-import { useChapterReorder } from "../../hooks/use-chapter-reorder";
+import { buildWorks, searchCandidates, workMatches } from "../../works";
 import { StudioTabs } from "../studio-tabs";
+import { WorksList } from "../works/works-list";
 import { ArchiveList } from "./archive-list";
 import { DocumentFilterFields, useDocumentFilters } from "./document-filters";
 import { DocumentSearchField } from "./document-search-field";
-import { LiveList, TrashList } from "./document-lists";
+import { TrashList } from "./document-lists";
 import { FolderHead } from "./folder-head";
 import { ListActions } from "./list-actions";
 import { ListFeedback, ListSkeleton } from "./list-feedback";
@@ -49,6 +56,20 @@ export function DocumentsView() {
   );
 }
 
+/** Whether a document whose type or tags just changed still shows under the filter and search. */
+const stillListed = (
+  doc: StudioDocument,
+  filters: DocumentFilters,
+  matches: ReadonlySet<string> | null,
+) => matchesDocumentFilters(doc, filters) && (matches === null || matches.has(doc.id));
+
+/** The card around the list: the table runs to its edges, the other lists keep its padding. */
+const listCardClass = (tab: string, status: string) =>
+  cn(
+    "mt-4 overflow-hidden rounded-2xl border border-line bg-surface shadow-card",
+    tab === "semua" && status === "ready" ? "px-0 pb-1" : "px-4 py-1 md:px-5",
+  );
+
 /** Nothing to search yet: the box would only sit above the empty state. A typed query stays. */
 export const showsSearch = (enabled: boolean, hasDocuments: boolean, query: string) =>
   enabled && (hasDocuments || query !== "");
@@ -69,9 +90,19 @@ function DocumentListContent() {
   const { filters, rawTag, changeFilters, tab, requestedFolder } = useDocumentFilters();
 
   const activeReady = list.status === "ready" && tab === "semua";
-  const folder = list.folders.find((f) => f.id === requestedFolder);
+  // Only plain folders open as a list; a book opens on its own page.
+  const folder = list.folders.find((f) => f.id === requestedFolder && !isBook(f));
   const folderId = folder?.id ?? null;
-  const search = useDocumentListSearch(list.docs, folderId, filters, activeReady);
+  const candidates = useMemo(
+    () => searchCandidates(list.docs, list.folders, folderId),
+    [list.docs, list.folders, folderId],
+  );
+  const search = useDocumentListSearch(candidates, folderId, activeReady);
+  const works = useMemo(() => buildWorks(list.docs, list.folders), [list.docs, list.folders]);
+  const searchMatches = useMemo(
+    () => workMatches(works, search.matches, search.query),
+    [works, search.matches, search.query],
+  );
   useEffect(() => {
     if (folderId) folderHeadingRef.current?.focus();
   }, [folderId]);
@@ -98,9 +129,7 @@ function DocumentListContent() {
 
   function classified(doc: StudioDocument) {
     setNotice({ text: t.list.classified });
-    if (listEntries([doc], [], folderId, filters, search.matches).length === 0) {
-      focusNotice();
-    }
+    if (!stillListed(doc, filters, search.matches)) focusNotice();
   }
 
   async function runArchiveAction(action: ArchiveAction, id: string) {
@@ -129,10 +158,6 @@ function DocumentListContent() {
     }
   }
 
-  const reorderChapters = useChapterReorder(list, folderId, (text, failed) =>
-    setNotice({ text, failed }),
-  );
-
   function renderList() {
     if (list.status !== "ready") return <ListFeedback status={list.status} onRetry={list.reload} />;
     if (tab === "sampah") return <TrashList list={list} onPending={setPending} />;
@@ -160,7 +185,7 @@ function DocumentListContent() {
       );
     }
     return (
-      <LiveList
+      <WorksList
         list={list}
         folderId={folderId}
         folderName={folder?.name ?? null}
@@ -174,9 +199,8 @@ function DocumentListContent() {
         sharedIds={sharedIds}
         submittedIds={submittedIds}
         filters={filters}
-        searchMatches={search.matches}
+        searchMatches={searchMatches}
         onClearSearch={search.clear}
-        onReorder={(ids, moved) => void reorderChapters(ids, moved)}
         onClearFilters={() => {
           changeFilters({ jenis: "", tag: "" });
           const target = hasActiveDocuments
@@ -207,14 +231,7 @@ function DocumentListContent() {
       </div>
 
       {folder && (
-        <FolderHead
-          folder={folder}
-          docs={list.docs}
-          showBook={activeReady}
-          headingRef={folderHeadingRef}
-          onBack={() => openFolder(null)}
-          onSettings={() => setPending({ kind: "bookSettings", folder })}
-        />
+        <FolderHead folder={folder} headingRef={folderHeadingRef} onBack={() => openFolder(null)} />
       )}
 
       <div className="lg:flex lg:items-end lg:gap-3 lg:[&>*]:mt-4">
@@ -253,9 +270,7 @@ function DocumentListContent() {
         </ButtonLink>
       )}
 
-      <div className="mt-4 rounded-2xl border border-line bg-surface px-4 py-1 shadow-card md:px-5">
-        {renderList()}
-      </div>
+      <div className={listCardClass(tab, list.status)}>{renderList()}</div>
 
       <PendingDialogs
         pending={pending}

@@ -7,7 +7,7 @@ import type { ReactNode } from "react";
  */
 export function ToolRow({ children }: { children: ReactNode }) {
   return (
-    <div className="flex flex-none items-center justify-center gap-2 border-b border-line bg-surface px-3 py-1.5 md:border-b-0 md:bg-canvas md:px-4 md:pt-3 md:pb-0">
+    <div className="flex flex-none items-center justify-center gap-2 border-b border-line bg-surface px-3 py-1.5 md:border-b-0 md:px-4 md:pt-3 md:pb-0">
       {children}
     </div>
   );

@@ -9,7 +9,6 @@ import { useT } from "@/lib/i18n/provider";
 export function ListEmpty({
   folderId,
   folderName,
-  inBook,
   searching,
   filtering,
   onClearSearch,
@@ -17,14 +16,12 @@ export function ListEmpty({
 }: {
   folderId: string | null;
   folderName: string | null;
-  inBook: boolean;
   searching: boolean;
   filtering: boolean;
   onClearSearch?: () => void;
   onClearFilters?: () => void;
 }) {
   const t = useT().studioDocuments;
-  const book = useT().studioBook;
   if (searching) {
     return (
       <EmptyState
@@ -64,7 +61,7 @@ export function ListEmpty({
         </ButtonLink>
       }
     >
-      {inBook ? book.chapters.empty : folderName ? t.empty.folderEmpty : t.empty.none}
+      {folderName ? t.empty.folderEmpty : t.empty.none}
     </EmptyState>
   );
 }

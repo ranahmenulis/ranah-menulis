@@ -8,6 +8,7 @@ import {
   sameClassification,
   validateClassification,
   type DocumentClassification,
+  type DocumentKind,
 } from "../document-classification";
 
 export type StudioDocument = DocumentClassification & {
@@ -30,6 +31,10 @@ export type StudioDocument = DocumentClassification & {
   targets?: DocumentTarget[];
   /** Page layout; absent until the writer changes it, then the defaults apply. */
   layout?: DocumentLayout;
+  /** Short description shown on the work's summary page; absent until the writer adds one. */
+  synopsis?: string;
+  /** Cover of a loose document shown as a work; a book keeps its cover on the folder. */
+  cover?: FolderCover;
 };
 
 /** A book cover picked by the writer: a file in the file store and its description. */
@@ -47,11 +52,30 @@ export type StudioFolder = {
   kind?: "book";
   cover?: FolderCover;
   chapterOrder?: string[];
+  /** Books only: the document type and tags of the whole book (a book has no document `kind`). */
+  genre?: DocumentKind;
+  tags?: string[];
+  /** Books only: a short description shown on the work's summary page. */
+  synopsis?: string;
+  /** Books only: the plain folder this book is filed in; absent or null means the top level. */
+  collectionId?: string | null;
+  /** Books only: word targets for the whole book, counted against the words of all chapters. */
+  targets?: DocumentTarget[];
 };
 
-export type FolderInit = Partial<Pick<StudioFolder, "kind" | "cover" | "chapterOrder">>;
+export type FolderInit = Partial<
+  Pick<
+    StudioFolder,
+    "kind" | "cover" | "chapterOrder" | "genre" | "tags" | "synopsis" | "collectionId"
+  >
+>;
 /** `cover: null` removes the cover. */
-export type FolderPatch = Partial<Pick<StudioFolder, "name" | "kind" | "chapterOrder">> & {
+export type FolderPatch = Partial<
+  Pick<
+    StudioFolder,
+    "name" | "kind" | "chapterOrder" | "genre" | "tags" | "synopsis" | "collectionId" | "targets"
+  >
+> & {
   cover?: FolderCover | null;
 };
 
@@ -79,6 +103,8 @@ export function summarizeDocument(doc: StudioDocument): DocumentSummary {
     targets,
     kind,
     tags,
+    synopsis,
+    cover,
   } = doc;
   return {
     id,
@@ -93,11 +119,18 @@ export function summarizeDocument(doc: StudioDocument): DocumentSummary {
     targets,
     kind,
     tags,
+    synopsis,
+    cover,
   };
 }
 
 /** Fields that change without touching the text: renaming, filing, trashing. */
-export type DocumentMeta = Partial<Pick<StudioDocument, "title" | "folderId" | "deletedAt">>;
+export type DocumentMeta = Partial<
+  Pick<StudioDocument, "title" | "folderId" | "deletedAt" | "synopsis" | "targets"> & {
+    /** `null` removes the cover. */
+    cover: FolderCover | null;
+  }
+>;
 
 export type SaveInput = {
   id: string;
@@ -168,7 +201,11 @@ export interface DocumentStore {
 
 /** Pure meta rule shared by every store. */
 export function applyMeta(doc: StudioDocument, patch: DocumentMeta, now: number): StudioDocument {
-  return { ...doc, ...patch, version: doc.version + 1, updatedAt: now };
+  const { cover, ...rest } = patch;
+  const next: StudioDocument = { ...doc, ...rest, version: doc.version + 1, updatedAt: now };
+  if (cover === null) delete next.cover;
+  else if (cover) next.cover = cover;
+  return next;
 }
 
 export function applyClassification(

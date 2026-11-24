@@ -6,7 +6,8 @@ import { StudioSearchDialog } from "@/features/studio/components/studio-search-d
 import { StudioTabs } from "@/features/studio/components/studio-tabs";
 import { ArchiveList } from "@/features/studio/components/documents/archive-list";
 import { DocumentClassificationDialog } from "@/features/studio/components/documents/document-classification-dialog";
-import { LiveList, TrashList } from "@/features/studio/components/documents/document-lists";
+import { TrashList } from "@/features/studio/components/documents/document-lists";
+import { WorksList } from "@/features/studio/components/works/works-list";
 import { PendingDialogs } from "@/features/studio/components/documents/pending-dialogs";
 import { addDocumentTag } from "@/features/studio/document-classification";
 import { studioSearchResults } from "@/features/studio/document-search";
@@ -93,7 +94,7 @@ describe("dictionaries", () => {
 describe("Dokumen tab in English", () => {
   it("translates the tabs", () => {
     english(<StudioTabs />);
-    expect(screen.getByRole("link", { name: "Documents" })).toBeTruthy();
+    expect(screen.getByRole("link", { name: "Works" })).toBeTruthy();
     expect(screen.getByRole("link", { name: "Statistics" })).toBeTruthy();
   });
 
@@ -103,7 +104,7 @@ describe("Dokumen tab in English", () => {
       doc("b", "One word", { wordCount: 1 }),
     ]);
     english(
-      <LiveList
+      <WorksList
         list={list}
         folderId={null}
         folderName={null}
@@ -125,7 +126,7 @@ describe("Dokumen tab in English", () => {
 
   it("translates the empty states", () => {
     english(
-      <LiveList
+      <WorksList
         list={listOf([])}
         folderId={null}
         folderName={null}

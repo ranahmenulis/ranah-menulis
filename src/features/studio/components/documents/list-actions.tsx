@@ -1,8 +1,7 @@
 "use client";
 
 import { BookOpen, FolderSimplePlus } from "@phosphor-icons/react/dist/ssr";
-import { Button, ButtonLink } from "@/components/ui/button";
-import { newDocumentHref } from "@/features/app-shell/nav";
+import { Button } from "@/components/ui/button";
 import { useT } from "@/lib/i18n/provider";
 import type { Pending } from "./pending";
 
@@ -31,14 +30,14 @@ export function ListActions({
         variant="text"
         size="sm"
         className="text-ink"
-        onClick={() => onPending({ kind: "newBook" })}
+        onClick={() => onPending({ kind: "newBook", collectionId: folderId })}
       >
         <BookOpen size={16} aria-hidden />
         {book.newBook}
       </Button>
-      <ButtonLink href={newDocumentHref(folderId)} size="sm">
+      <Button size="sm" onClick={() => onPending({ kind: "newWork", collectionId: folderId })}>
         {t.list.newDocument}
-      </ButtonLink>
+      </Button>
     </div>
   );
 }
