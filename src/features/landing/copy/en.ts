@@ -25,8 +25,6 @@ export const landing: typeof source = {
     lead: "Grow your writing skills, build a habit of creating, find a community, and turn your writing into real work with RanahMenulis.",
     cta: "Start Your Writing Journey",
     secondary: "Explore RanahMenulis",
-    saved: "Saved 2:02 PM",
-    words: "words",
   },
   doc: {
     title: "What Grandma Waited For Beneath the Water Apple Tree",
@@ -94,19 +92,8 @@ export const landing: typeof source = {
     eyebrow: "Ranah Studio",
     featuresLabel: "Ranah Studio features",
     mockup:
-      "Ranah Studio editor: a title and two paragraphs on a sheet of paper, a simple format bar, word and character counts, reading time, and today's goal at 320 of 500 words.",
-    characters: "characters",
-    readingTime: "{count} min read",
-    today: "Today {count} / 500 words",
-    soon: "Coming later",
-    features: [
-      "Text Formatter",
-      "Writing Statistics",
-      "Daily Goal",
-      "Writing Templates",
-      "Word & Character Counter",
-      "Reading Time",
-    ],
+      "The Ranah Studio editor from the app: the top bar with the save state, word count, and today's goal at 320 of 500 words, the format bar, then a title and two paragraphs of a manuscript.",
+    caption: "Write, polish, and track your daily goal in one workspace.",
   },
   publishing: {
     title: "From Digital Manuscript to Real Book.",

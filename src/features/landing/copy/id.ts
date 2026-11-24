@@ -33,8 +33,6 @@ export const landing = {
     lead: "Kembangkan kemampuan menulismu, bangun kebiasaan berkarya, temukan komunitas, dan wujudkan tulisanmu menjadi karya nyata bersama RanahMenulis.",
     cta: "Mulai Perjalanan Menulis",
     secondary: "Jelajahi RanahMenulis",
-    saved: "Tersimpan 14.02",
-    words: "kata",
   },
   // Sample manuscript shown in the hero and the previews.
   doc: {
@@ -107,19 +105,8 @@ export const landing = {
     eyebrow: "Ranah Studio",
     featuresLabel: "Fitur Ranah Studio",
     mockup:
-      "Editor Ranah Studio: judul dan dua paragraf di lembar kertas, bilah format sederhana, jumlah kata dan karakter, waktu baca, dan target hari ini 320 dari 500 kata.",
-    characters: "karakter",
-    readingTime: "{count} mnt baca",
-    today: "Hari ini {count} / 500 kata",
-    soon: "Menyusul",
-    features: [
-      "Text Formatter",
-      "Statistik Menulis",
-      "Target Harian",
-      "Template Menulis",
-      "Word & Character Counter",
-      "Reading Time",
-    ],
+      "Editor Ranah Studio dari aplikasi: bilah atas dengan status simpan, jumlah kata, dan target hari ini 320 dari 500 kata, bilah format, lalu judul dan dua paragraf naskah.",
+    caption: "Tulis, rapikan, dan pantau target harianmu dalam satu ruang kerja.",
   },
   publishing: {
     title: "Dari Naskah Digital Menjadi Karya Nyata.",

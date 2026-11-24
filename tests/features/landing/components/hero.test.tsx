@@ -39,20 +39,38 @@ describe("hero", () => {
     const band = container.querySelector<HTMLElement>(".lp-band")!;
     expect(band.style.getPropertyValue("--par")).toBe("");
     expect(band.style.getPropertyValue("--lift")).toBe("");
-    // The engraving is decorative: the editor figure carries the description.
-    expect(band.querySelector("img[alt='']")).toBeTruthy();
     expect(screen.getByRole("img", { name: landing.studio.mockup })).toBeTruthy();
   });
 
-  it("shows Studio once, with the six feature names and templates marked as coming later", () => {
+  it("shows Studio once, as the app's own editor that cannot be used", () => {
     renderHero();
     const stage = screen.getByRole("region", { name: "Ranah Studio" });
     expect(stage.id).toBe("studio");
-    const features = within(stage).getByRole("list", { name: landing.studio.featuresLabel });
-    const items = within(features).getAllByRole("listitem");
-    expect(items).toHaveLength(6);
-    expect(items[3].textContent).toBe("Template MenulisMenyusul");
-    expect(items[5].textContent).toBe("Reading Time");
+    const editor = screen.getByRole("img", { name: landing.studio.mockup });
+    // The real editor bar and format bar, with the sample manuscript, inert as a whole.
+    expect(editor.querySelector("[inert]")).toBeTruthy();
+    expect(editor.querySelector('[role="toolbar"]')?.getAttribute("aria-label")).toBe(
+      "Format teks",
+    );
+    expect(editor.textContent).toContain(landing.doc.title);
+    expect(editor.textContent).toContain("320 / 500");
+    expect(within(stage).getByText(landing.studio.caption)).toBeTruthy();
+  });
+
+  it("names the six Studio features with the app's own labels", () => {
+    renderHero();
+    const features = screen.getByRole("list", { name: landing.studio.featuresLabel });
+    const items = within(features)
+      .getAllByRole("listitem")
+      .map((li) => li.textContent);
+    expect(items).toEqual([
+      "Format teks",
+      "Penghitung tulisan",
+      "Waktu baca",
+      "Kata hari ini",
+      "Timer sprint",
+      "Statistik",
+    ]);
   });
 
   it("drifts the picture when landing motion is on", () => {
