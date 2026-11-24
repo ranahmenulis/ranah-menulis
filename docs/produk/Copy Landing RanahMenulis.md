@@ -70,7 +70,7 @@ Satu perubahan: tombol saat memuat "Mengirim" → **"Mengirim…"**.
 ### Tanya jawab
 | Pertanyaan | Sekarang | Usulan | Catatan |
 | --- | --- | --- | --- |
-| Apa itu Grup Penulis? | Ruang kecil tempat anggota saling membaca tulisan yang mereka bagikan ke grup, dikelola oleh admin grup. Anggota hanya melihat grupnya sendiri, dan dokumen yang tidak kamu bagikan tetap pribadi. Kamu boleh keluar kapan saja. | **Ruang kecil tempat sekelompok penulis saling membaca tulisan yang dibagikan ke grup. Grup dikelola oleh admin grup. Dokumen yang tidak kamu bagikan tetap pribadi.** | **[konfirmasi]** kalimat "boleh keluar kapan saja" dan "hanya melihat grupnya sendiri" dihapus: PRD Q-38 (isi grup) belum final. |
+| Apa itu Lingkar Menulis? | Ruang kecil tempat anggota saling membaca tulisan yang mereka bagikan ke grup, dikelola oleh admin grup. Anggota hanya melihat grupnya sendiri, dan dokumen yang tidak kamu bagikan tetap pribadi. Kamu boleh keluar kapan saja. | **Ruang kecil tempat sekelompok penulis saling membaca tulisan yang dibagikan ke grup. Grup dikelola oleh admin grup. Dokumen yang tidak kamu bagikan tetap pribadi.** | **[konfirmasi]** kalimat "boleh keluar kapan saja" dan "hanya melihat grupnya sendiri" dihapus: PRD Q-38 (isi grup) belum final. |
 | Apakah tersedia di Indonesia dan Malaysia? | Ya. RanahMenulis dibuat untuk penulis di kedua negara, dan negara di profilmu menentukan di mana tulisanmu ditampilkan, misalnya di daftar penulis Malaysia. Penulis dari negara lain boleh bergabung ke daftar tunggu. | **Ya. Saat dibuka, RanahMenulis melayani penulis di Indonesia dan Malaysia. Kamu memilih negara di profil, dan tulisanmu muncul di daftar penulis negara itu. Antarmukanya berbahasa Indonesia lebih dulu. Penulis dari negara lain boleh masuk daftar tunggu.** | Antarmuka Indonesia dulu adalah keputusan MVP; Melayu belum (Q-32). Lebih baik dikatakan di muka. |
 | Siapa yang bisa membaca drafku? | Hanya kamu. Dokumen di Studio selalu pribadi. Orang lain hanya membaca cuplikan yang kamu bagikan, dan karya yang kamu kirim ke proyek dibaca oleh pengelola proyek itu. | **Tidak ada orang lain. Dokumen di Studio selalu pribadi; pengecualiannya hanya alasan hukum atau moderasi, dan itu dicatat. Pembaca melihat cuplikan yang kamu bagikan, dan pengelola proyek membaca naskah yang kamu kirim ke proyek mereka.** | Selaras dengan janji kedua. |
 | Apakah hak cipta karyaku tetap milikku? | Ya, kecuali ketentuan proyek yang kamu setujui sebelum mendaftar menyatakan lain secara tertulis. Ketentuan itu selalu bisa dibaca sebelum kamu mendaftar. | **Ya. Pengecualiannya hanya bila ketentuan sebuah proyek menyatakan lain. Ketentuan itu bisa kamu baca sebelum mendaftar, dan kamu harus menyetujuinya lebih dulu.** | |
@@ -82,7 +82,7 @@ Satu perubahan: tombol saat memuat "Mengirim" → **"Mengirim…"**.
 ## 3. Yang perlu dikonfirmasi ke client sebelum tayang
 
 1. Biaya: apakah kalimat "tanpa biaya langganan di awal" boleh dipublikasikan?
-2. Grup Penulis: apa yang dilihat anggota dan apakah anggota bebas keluar (Q-38).
+2. Lingkar Menulis: apa yang dilihat anggota dan apakah anggota bebas keluar (Q-38).
 3. Janji privasi: apakah tim nyaman dengan kalimat pengecualian "alasan hukum atau moderasi, dan itu dicatat". Ini jujur sesuai PRD, tetapi client yang memutuskan nadanya.
 
 ---
@@ -154,7 +154,7 @@ Dua pertanyaan **dihapus** karena sudah dijawab oleh Tiga janji: "Siapa yang bis
 
 | Pertanyaan | v2 |
 | --- | --- |
-| Apa itu Grup Penulis? | **Ruang kecil tempat sekelompok penulis saling membaca tulisan yang dibagikan ke grup. Dokumen yang tidak kamu bagikan tetap pribadi.** **[konfirmasi]** Q-38 |
+| Apa itu Lingkar Menulis? | **Ruang kecil tempat sekelompok penulis saling membaca tulisan yang dibagikan ke grup. Dokumen yang tidak kamu bagikan tetap pribadi.** **[konfirmasi]** Q-38 |
 | Apakah tersedia di Indonesia dan Malaysia? | **Ya. Kamu memilih negara di profil, dan tulisanmu muncul di daftar penulis negara itu. Antarmukanya berbahasa Indonesia lebih dulu.** |
 | Berapa biayanya? | **Menulis dan membaca direncanakan tanpa biaya langganan di awal. Program di Projects punya biaya sendiri yang tampil sebelum mendaftar.** **[konfirmasi]** biaya |
 | Kapan RanahMenulis dibuka? | (tetap) Tanggalnya belum diumumkan. Orang di daftar tunggu yang pertama kami kabari. |

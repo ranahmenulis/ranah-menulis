@@ -49,6 +49,39 @@ function strings(row: Record<string, unknown>, keys: string[]) {
   return keys.every((key) => typeof row[key] === "string");
 }
 
+const isDay = (value: unknown) => typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value);
+const isCount = (value: unknown) =>
+  typeof value === "number" && Number.isSafeInteger(value) && value >= 0;
+const optional = (value: unknown, check: (v: unknown) => boolean) =>
+  value === undefined || check(value);
+const rows = (value: unknown, check: (row: Record<string, unknown>) => boolean) =>
+  Array.isArray(value) && value.every((row) => record(row) && check(row));
+
+/** The leaderboard fields: absent on older circles, and well-formed when present. */
+function hasValidBoard(value: Record<string, unknown>) {
+  return (
+    optional(value.kind, (v) => v === "permanent" || v === "challenge") &&
+    optional(value.startsOn, isDay) &&
+    optional(value.endsOn, isDay) &&
+    optional(value.requests, (v) =>
+      rows(v, (r) => typeof r.authorId === "string" && Number.isFinite(r.at)),
+    ) &&
+    optional(value.words, (v) =>
+      rows(v, (r) => strings(r, ["authorId", "membershipId"]) && isDay(r.day) && isCount(r.words)),
+    ) &&
+    optional(value.finalBoard, (v) =>
+      rows(
+        v,
+        (r) =>
+          (r.authorId === null || typeof r.authorId === "string") &&
+          typeof r.name === "string" &&
+          isCount(r.words) &&
+          isCount(r.rank),
+      ),
+    )
+  );
+}
+
 function isGroup(value: unknown): value is WritingGroup {
   if (!record(value) || !strings(value, ["id", "name", "description", "code"])) return false;
   return (
@@ -56,7 +89,11 @@ function isGroup(value: unknown): value is WritingGroup {
     Array.isArray(value.members) &&
     value.members.every(
       (row) =>
-        record(row) && strings(row, ["authorId", "membershipId"]) && typeof row.admin === "boolean",
+        record(row) &&
+        strings(row, ["authorId", "membershipId"]) &&
+        typeof row.admin === "boolean" &&
+        optional(row.board, (v) => typeof v === "boolean") &&
+        optional(row.boardSince, isDay),
     ) &&
     Array.isArray(value.invites) &&
     value.invites.every((row) => record(row) && strings(row, ["authorId", "by"])) &&
@@ -70,7 +107,8 @@ function isGroup(value: unknown): value is WritingGroup {
         row.words >= 0,
     ) &&
     Array.isArray(value.hiddenPosts) &&
-    value.hiddenPosts.every((id) => typeof id === "string")
+    value.hiddenPosts.every((id) => typeof id === "string") &&
+    hasValidBoard(value)
   );
 }
 

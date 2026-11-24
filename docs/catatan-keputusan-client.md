@@ -351,3 +351,13 @@ Konteks: Wafiy menulis daftar ini saat landing masih hitam putih (sebelum tahap 
 **Status pengerjaan (24 November 2026, commit lokal `318cf2a` sampai `732c209`, belum di-push):** poin 1 sampai 6, 8, dan 9 dikerjakan. Poin 5: tombol bilah atas 44 px dan butir menu 48 px, diukur di 375 dan 390 px. Poin 6: lima modul seragam dengan pratinjau komponen aplikasi asli. Poin 8: panggung kini Editor Studio asli dan satu caption. Poin 9: sampul katalog Projects 2×2 dan satu baris per jalur. Foto domain publik diganti komponen dan ilustrasi aplikasi. Nama enam fitur Studio kini label aplikasi (Template diganti Timer sprint), perlu dikabarkan ke Wafiy. Terjemahan Inggris menunggu tinjauan user. Belum: demo Studio (tautan "Jelajahi Studio" sementara menggulir ke panggung).
 
 **Foto landing (pesan Wafiy yang sama):** "kalo bisa" foto disesuaikan dengan isi aplikasi sendiri. Ini membalik aturan kita "landing tidak memakai ilustrasi aplikasi (gambar tidak dobel)". Belum dikerjakan; diputuskan nanti setelah isi selesai: gravir (hero), ruang percetakan (Penerbitan), dan lukisan Baade (penutup) kandidat diganti tangkapan atau ilustrasi aplikasi.
+
+**Masukan Wafiy 23 November 2026 setelah melihat tampilan (dicatat 24 November 2026)**
+
+1. Pencarian di samping logo (desktop) dihapus; yang dihapus hanya pil yang nonaktif, pencarian Studio tetap. **Selesai.**
+2. "Writing Group" menjadi **"Writing Circle" = "Lingkar Menulis"** (Admin Grup menjadi Admin Lingkar). Hanya teks yang terlihat; alamat `/grup` tetap (keputusan user). **Selesai.** Alasan Wafiy: nama diganti supaya tidak dianggap meniru Novlr.
+3. **Leaderboard di Writing Circle**, per circle dan per penulis di dalam circle. Dua jenis circle: *Permanent Circle* (tanpa batas waktu) dan *45-Day Challenge* (tanggal mulai dan selesai, hasil akhir diarsipkan). Akses Public (langsung gabung) dan Private (kode, atau link undangan dengan permintaan bergabung yang diterima atau ditolak pemilik). Halaman circle memuat info, jumlah anggota, total kata, dan leaderboard (peringkat, nama, jumlah kata). Jalan keluar yang diusulkan: leaderboard **opt-in** per anggota (sejalan dengan Q-38). **Belum dikerjakan; perlu rencana dan persetujuan.** Peringkat antar pengguna sungguhan menunggu backend.
+4. Mode fokus "belum berfungsi baik": gejala belum diketahui; ditunda atas arahan user.
+5. Ikon Community diganti ikon orang (bukan kompas). **Selesai.**
+6. Judul dokumen di bilah Editor (samping "Pribadi", desktop) harus bisa diganti. **Selesai.**
+7. **Bantuan/laporan masalah** untuk pengaduan bug. Rencana disetujui (form di menu avatar dan menu Editor, antrean "Laporan masalah" di Kelola Admin, lokal dulu, konteks otomatis bisa dimatikan, tanpa lampiran dan tanpa chat dukungan). **Dalam pengerjaan.**

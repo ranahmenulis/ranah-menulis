@@ -8,13 +8,14 @@ import { slugHash, titleInitial } from "@/features/projects/cover-model";
 import { cn } from "@/lib/cn";
 import { useT } from "@/lib/i18n/provider";
 import { HeroBanner } from "@/components/ui/page-hero";
+import { kindOf } from "../board-model";
 import type { WritingGroup } from "../group-model";
 
 /** Dots drawn around a seal: one per member up to this many. */
 export const SEAL_DOTS = 24;
 
 /**
- * A group as a round seal (DESIGN.md 6.7, Grup Penulis): the first letter of its name in serif, a ring of dots
+ * A group as a round seal (DESIGN.md 6.7, Lingkar Menulis): the first letter of its name in serif, a ring of dots
  * with one dot per member, and one of two accent tones and a tilt that come from the group id, so one
  * group always looks the same. Decorative: the name and member count are always also text.
  */
@@ -84,8 +85,13 @@ export function GroupHero({ group }: { group: WritingGroup }) {
       <HeroBanner art={Campfire} className="sm:col-span-2" />
       <GroupSeal group={group} size="lg" className="rm-cover-enter" />
       <div className="grid min-w-0 content-start gap-3">
-        <span className="inline-flex h-6 w-fit items-center rounded-full bg-accent-subtle px-2.5 text-xs font-medium text-accent-ink">
-          {group.visibility === "publik" ? t.publicGroup : t.privateGroup}
+        <span className="flex flex-wrap gap-2">
+          <span className="inline-flex h-6 w-fit items-center rounded-full bg-accent-subtle px-2.5 text-xs font-medium text-accent-ink">
+            {group.visibility === "publik" ? t.publicGroup : t.privateGroup}
+          </span>
+          <span className="inline-flex h-6 w-fit items-center rounded-full border border-line px-2.5 text-xs font-medium text-ink-soft">
+            {t.kinds[kindOf(group)]}
+          </span>
         </span>
         <h1 className="rm-rise-in text-[28px] leading-9 font-bold tracking-[-0.02em] wrap-anywhere md:text-[40px] md:leading-[48px]">
           {group.name}

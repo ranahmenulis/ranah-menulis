@@ -5,7 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Field, Input, Select, Textarea, describedBy } from "@/components/ui/field";
 import { Notice } from "@/components/ui/states";
+import { useToday } from "@/features/studio/hooks/use-today";
 import { format, useLocale, useT } from "@/lib/i18n/provider";
+import { KindFields } from "./kind-fields";
 import { joinByCode, saveGroup, type GroupResult } from "../group-actions";
 import { groupMessage } from "../group-messages";
 import {
@@ -15,6 +17,9 @@ import {
   type GroupInput,
   type WritingGroup,
 } from "../group-model";
+
+const isStartCode = (code: string) =>
+  code === "startRequired" || code === "startInvalid" || code === "startInPast";
 
 function Cancel({ onClose }: { onClose: () => void }) {
   const t = useT().groups.dialogs;
@@ -53,30 +58,45 @@ export function GroupSettingsDialog({
     name: original?.name ?? "",
     description: original?.description ?? "",
     visibility: original?.visibility ?? "privat",
+    kind: group?.kind ?? "permanent",
+    startsOn: group?.startsOn ?? "",
   }));
+  const today = useToday();
+
   const formId = useId();
+  const kindId = `${formId}-kind`;
+  const startId = `${formId}-start`;
+  const start = useRef<HTMLInputElement>(null);
   const nameId = `${formId}-name`;
   const descriptionId = `${formId}-description`;
   const visibilityId = `${formId}-visibility`;
   const [attempted, setAttempted] = useState(false);
   const [failure, setFailure] = useState("");
+  const [startCode, setStartCode] = useState<
+    "startRequired" | "startInvalid" | "startInPast" | null
+  >(null);
   const name = useRef<HTMLInputElement>(null);
   const description = useRef<HTMLTextAreaElement>(null);
   const errors = attempted ? groupErrors(input) : undefined;
   const submitLabel = group ? t.save : t.create;
   const issue = (code?: Parameters<typeof groupMessage>[0]) =>
     code ? groupMessage(code, dict.messages, locale) : undefined;
+  const startError = startCode ? issue(startCode) : undefined;
 
   function submit(event: FormEvent) {
     event.preventDefault();
     setAttempted(true);
-    const result = saveGroup(input, { original, fromAdmin: admin });
+    setStartCode(null);
+    const result = saveGroup(input, { original, fromAdmin: admin, today: today || undefined });
     if (result.ok && result.id) onSaved(result.id, result);
     else {
       const found = groupErrors(input);
       if (found.name) name.current?.focus();
       else if (found.description) description.current?.focus();
-      else setFailure(groupMessage(result.code, dict.messages, locale));
+      else if (isStartCode(result.code)) {
+        setStartCode(result.code as "startRequired" | "startInvalid" | "startInPast");
+        start.current?.focus();
+      } else setFailure(groupMessage(result.code, dict.messages, locale));
     }
   }
 
@@ -144,6 +164,14 @@ export function GroupSettingsDialog({
             <option value="publik">{t.publicOption}</option>
           </Select>
         </Field>
+        <KindFields
+          group={group}
+          input={input}
+          onChange={setInput}
+          ids={{ kind: kindId, start: startId }}
+          startRef={start}
+          error={startError}
+        />
         <Notice>{t.notice}</Notice>
         {failure && (
           <p role="alert" className="text-sm text-danger">

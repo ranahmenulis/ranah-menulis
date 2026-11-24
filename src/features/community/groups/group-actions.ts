@@ -4,6 +4,7 @@ import { suspensions } from "@/features/kelola/admin/role-store";
 import { validateReason } from "@/features/kelola/reason";
 import { readEffectiveRoles } from "@/features/kelola/use-effective-roles";
 import { isPlatformAdmin } from "@/lib/roles";
+import { challengeEnd, validateCircleStart } from "./board-model";
 import {
   canManageGroup,
   groupErrors,
@@ -70,14 +71,27 @@ export function changeGroup(
   return group ? action(group, groups, { authorId, platform }) : unavailable();
 }
 
+/** Kind and dates are fixed when a circle is made: a challenge needs a real start day. */
+function circleKindFields(input: GroupInput, today: string) {
+  const kind = input.kind ?? "permanent";
+  const problem = validateCircleStart(kind, input.startsOn ?? "", today);
+  const startsOn = input.startsOn;
+  const extra: Partial<WritingGroup> =
+    kind === "challenge" && startsOn ? { kind, startsOn, endsOn: challengeEnd(startsOn) } : {};
+  return { problem, extra };
+}
+
 export function saveGroup(
   input: GroupInput,
   {
     original,
     fromAdmin = false,
+    today = new Date().toISOString().slice(0, 10),
   }: {
     original?: GroupInput & { id: string };
     fromAdmin?: boolean;
+    /** The writer's day (yyyy-mm-dd), for the start day of a challenge. */
+    today?: string;
   } = {},
 ): GroupResult & { id?: string } {
   const errors = groupErrors(input);
@@ -106,6 +120,8 @@ export function saveGroup(
 
   const { authorId, platform } = groupActor();
   if (!authorId || (fromAdmin && !platform)) return blocked();
+  const circle = circleKindFields(input, today);
+  if (circle.problem) return refuseGroup(circle.problem);
   const group: WritingGroup = {
     ...fields,
     id: crypto.randomUUID(),
@@ -114,6 +130,7 @@ export function saveGroup(
     invites: [],
     progress: [],
     hiddenPosts: [],
+    ...circle.extra,
   };
   saveGroupChange(writingGroups.read(), group, authorId, { action: "group.create" });
   return { ...done("created"), id: group.id };

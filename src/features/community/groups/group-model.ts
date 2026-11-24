@@ -8,8 +8,32 @@ export const COASTAL_GROUP_NAME = "Grup Penulis Pesisir";
 export const initialMembership = (authorId: string) => `pesisir:${authorId}`;
 
 export type GroupVisibility = "publik" | "privat";
-export type GroupInput = { name: string; description: string; visibility: GroupVisibility };
-export type GroupMember = { authorId: string; membershipId: string; admin: boolean };
+export type GroupInput = {
+  name: string;
+  description: string;
+  visibility: GroupVisibility;
+  /** Chosen when a circle is created and never changed after. */
+  kind?: CircleKind;
+  /** A challenge only: the first day, as yyyy-mm-dd. */
+  startsOn?: string;
+};
+export type GroupMember = {
+  authorId: string;
+  membershipId: string;
+  admin: boolean;
+  /** Opt-in to the leaderboard (client, 23 November 2026). Off unless the member turned it on. */
+  board?: boolean;
+  /** The day (yyyy-mm-dd) words start to count for this member. */
+  boardSince?: string;
+};
+/** A circle is open-ended, or a 45-day challenge with a start and an end day. */
+export type CircleKind = "permanent" | "challenge";
+/** Words one member wrote on one day, for the leaderboard. Never the text. */
+export type CircleWords = { authorId: string; membershipId: string; day: string; words: number };
+/** A request to join a private circle through its link; the Circle Admin accepts or declines. */
+export type JoinRequest = { authorId: string; at: number };
+/** One line of the frozen result of a finished challenge. `authorId` is null once the person left. */
+export type FinalRow = { authorId: string | null; name: string; words: number; rank: number };
 export type GroupInvite = { authorId: string; by: string };
 export type GroupProgress = {
   id: string;
@@ -26,6 +50,13 @@ export type WritingGroup = GroupInput & {
   invites: GroupInvite[];
   progress: GroupProgress[];
   hiddenPosts: string[];
+  /** All of these are optional so circles stored before them keep working (they are permanent). */
+  kind?: CircleKind;
+  startsOn?: string;
+  endsOn?: string;
+  requests?: JoinRequest[];
+  words?: CircleWords[];
+  finalBoard?: FinalRow[];
 };
 
 // [usulan] Form limits for the slice. No membership or group-count quota (Q-57).
