@@ -93,7 +93,7 @@ export const landing: typeof source = {
     title: "From Digital Manuscript to Real Book.",
     lead: "Make your dream of publishing your first book real with the RanahMenulis publishing ecosystem.",
     covers:
-      "Covers of four projects from the Projects catalog: Anthology, Solo, Writing Class, and Contest, in front of a bookshelf.",
+      "Covers of four projects from the Projects catalog: Anthology, Solo, Writing Class, and Contest.",
     paths: [
       { name: "Anthology", benefit: "Write with other writers in one themed book." },
       { name: "Solo Book", benefit: "Publish your own book, from manuscript to print." },

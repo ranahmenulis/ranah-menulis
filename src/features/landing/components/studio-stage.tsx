@@ -41,8 +41,9 @@ const noop = () => {};
  * It is the real Studio editor bar, format bar, mode switch and writing surface (`editor.css`,
  * default document layout), fed a sample manuscript. The whole thing is `inert`: it looks live but
  * cannot be clicked or tabbed into, and the figure around it carries the description. A caret
- * blinks after the last word when landing motion is on. The Studio demo will replace the text
- * with a real editor.
+ * blinks after the last word when landing motion is on. On a phone it is the whole editor screen,
+ * as a writer sees it there (user, 24 Nov 2026). The Studio demo will replace the text with a
+ * real editor.
  */
 export function StudioStage() {
   const { doc } = useT().landing;
@@ -53,7 +54,7 @@ export function StudioStage() {
   };
 
   return (
-    <div inert className="flex flex-col bg-surface text-left">
+    <div inert className="flex min-h-full flex-col bg-surface text-left">
       <EditorBar
         title={doc.title}
         words={stats.words}

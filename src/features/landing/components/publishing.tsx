@@ -9,7 +9,6 @@ import {
 import { ButtonLink } from "@/components/ui/button";
 import { SectionIcon } from "@/components/ui/section-card";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
-import { Bookshelf } from "@/components/illustrations/projects-art";
 import { CoverStack } from "./cover-stack";
 import { Section, SectionHead, Wrap } from "./layout";
 
@@ -19,8 +18,8 @@ const ICONS: Icon[] = [Books, BookOpenText, ChalkboardTeacher, Trophy];
 /**
  * Publishing (client image 2; client, 24 Nov 2026): two columns. On the left the title, one
  * sentence, the four Projects paths each with one line of what it gives, and one way in; on the
- * right the four paths as the app draws them, project covers from the Projects catalog in front of
- * the catalog's bookshelf, on the app's hero-card ground.
+ * right the four paths as the app draws them, project covers from the Projects catalog on the
+ * app's hero-card ground (the bookshelf behind them was removed: it competed with the covers).
  */
 export function Publishing({ copy }: { copy: Dictionary["landing"]["publishing"] }) {
   return (
@@ -51,9 +50,8 @@ export function Publishing({ copy }: { copy: Dictionary["landing"]["publishing"]
         <figure
           role="img"
           aria-label={copy.covers}
-          className="relative isolate m-0 flex min-h-[420px] items-end justify-center overflow-hidden rounded-2xl border border-line bg-surface bg-linear-to-br from-surface from-30% to-accent-subtle px-5 pt-16 pb-10 shadow-card md:col-span-7 md:min-h-[560px] md:px-10 md:pb-16"
+          className="relative isolate m-0 flex min-h-[420px] items-center justify-center overflow-hidden rounded-2xl border border-line bg-surface bg-linear-to-br from-surface from-30% to-accent-subtle px-5 py-10 shadow-card md:col-span-7 md:min-h-[560px] md:px-10 md:py-14"
         >
-          <Bookshelf className="absolute inset-x-0 top-0 -z-10 h-[62%] w-full opacity-70" />
           <CoverStack />
         </figure>
       </Wrap>

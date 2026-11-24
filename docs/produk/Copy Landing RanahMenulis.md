@@ -224,3 +224,24 @@ Yang dihapus dari halaman:
 - Penerbitan: eyebrow "Publishing Opportunities", subjudul "Berbagai Jalur Penerbitan Sesuai Tahap Perjalananmu", kalimat di bawah tiap jalur. Empat nama jalur tetap.
 - Penutup: catatan "RanahMenulis belum dibuka. Simpan namamu, kami kabari lewat email saat dibuka." (Tanya jawab "Kapan RanahMenulis dibuka?" sudah menjawabnya.)
 - Alt teks pelat Holbein dan keladi (kedua gambar dicabut).
+
+## 7. Masukan Wafiy: isi landing (24 November 2026)
+
+Teks client baru **menggantikan** teks v3 di bawah ini (rincian dan status per poin di `docs/catatan-keputusan-client.md`, bagian "Masukan Wafiy untuk landing"). Terjemahan Inggris disusun tim dan menunggu tinjauan.
+
+- Eyebrow: "Writer Development Platform" (juga di footer).
+- Judul hero: "Dari Penulis Pemula, / Menjadi Penulis / yang Berkarya." (menggantikan "Ruang Digital Untuk Setiap Ceritamu. Mulai Bersama Kami."; judul tab dan deskripsi metadata ikut).
+- Subheadline: "Kembangkan kemampuan menulismu, bangun kebiasaan berkarya, temukan komunitas, dan wujudkan tulisanmu menjadi karya nyata bersama RanahMenulis."
+- Tombol hero: "Mulai Perjalanan Menulis" (tetap ke daftar tunggu, keputusan user) dan "Jelajahi RanahMenulis".
+- Bilah atas: satu tombol "Mulai Menulis".
+- Ekosistem, kalimat Studio dari Wafiy: "Tempat menulis, mengedit, dan menyimpan karya dalam ruang kerja yang nyaman." dengan tautan "Jelajahi Studio".
+- Penerbitan: tombol "Lihat Peluang Menerbitkan Karya".
+
+Teks yang **ditulis tim dan disetujui user** (bukan kalimat client):
+
+- Ekosistem: Streak "Bangun kebiasaan menulis setiap hari dengan target dan streak yang terlihat."; Project "Ikuti antologi, kelas, lomba, dan penerbitan buku, lalu pantau status karyamu." dengan tautan "Lihat jalur penerbitan"; Community "Bagikan tulisan, baca karya penulis lain, dan saling memberi apresiasi."; Marketplace "Buku, jasa kepenulisan, info pekerjaan, dan event literasi di satu tempat."
+- Jalur penerbitan: Antologi "Tulis bersama penulis lain dalam satu buku bertema."; Solo Book "Terbitkan bukumu sendiri, dari naskah sampai cetak."; Kelas Menulis "Belajar dari mentor lewat tugas dan umpan balik."; Lomba Menulis "Kirim karya terbaikmu untuk dinilai juri."
+- Caption panggung Studio: "Tulis, rapikan, dan pantau target harianmu dalam satu ruang kerja."
+
+Enam nama fitur Studio dari gambar 3 (Text Formatter, Statistik Menulis, Target Harian, Template Menulis, Word & Character Counter, Reading Time) **diganti label aplikasi** (keputusan user): Format teks, Penghitung tulisan, Waktu baca, Kata hari ini, Timer sprint, Statistik. Template belum ada di aplikasi. Perlu dikabarkan ke Wafiy.
+

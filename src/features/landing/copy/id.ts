@@ -106,8 +106,7 @@ export const landing = {
   publishing: {
     title: "Dari Naskah Digital Menjadi Karya Nyata.",
     lead: "Wujudkan impian menerbitkan buku pertamamu bersama ekosistem penerbitan RanahMenulis.",
-    covers:
-      "Sampul empat proyek dari katalog Projects: Antologi, Solo, Kelas Menulis, dan Lomba, di depan rak buku.",
+    covers: "Sampul empat proyek dari katalog Projects: Antologi, Solo, Kelas Menulis, dan Lomba.",
     // Names from image 2; one line each, written by the team and approved by the user (24 Nov 2026).
     paths: [
       { name: "Antologi", benefit: "Tulis bersama penulis lain dalam satu buku bertema." },

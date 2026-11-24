@@ -31,7 +31,7 @@ export function StudioFeatures({ copy }: { copy: Dictionary["landing"]["studio"]
       ref={ref}
       data-reveal="chips"
       aria-label={copy.featuresLabel}
-      className="lp-chips m-0 mt-8 flex list-none flex-wrap justify-center gap-2 p-0 md:mx-auto md:mt-10 md:grid md:w-max md:grid-cols-3 md:gap-2.5"
+      className="lp-chips m-0 mt-8 grid list-none grid-cols-2 gap-2 p-0 md:mx-auto md:mt-10 md:w-max md:grid-cols-3 md:gap-2.5"
     >
       {features.map(([name, Glyph], i) => (
         <li
