@@ -5,7 +5,6 @@ import {
   heroDrift,
   heroProgress,
   passage,
-  plateDrift,
   registerDrift,
 } from "@/features/landing/motion/scroll-drift";
 
@@ -31,21 +30,8 @@ describe("heroDrift", () => {
   it("rests at progress 0 and settles at 1", () => {
     expect(heroProgress(800, 800)).toBe(0);
     expect(heroProgress(0, 800)).toBe(1);
-    expect(heroDrift(0)).toEqual({ "--par": "0.0px", "--sc": "1.100", "--lift": "0.0px" });
-    expect(heroDrift(1)).toEqual({ "--par": "-60.0px", "--sc": "1.020", "--lift": "-36.0px" });
-  });
-});
-
-describe("plateDrift", () => {
-  it("moves against the page around the middle of the passage", () => {
-    expect(plateDrift(0, { range: 40, zoom: 1.06 })).toEqual({ "--dy": "20.0px", "--ds": "1.060" });
-    expect(plateDrift(1, { range: 40, zoom: 1.06 })["--dy"]).toBe("-20.0px");
-    expect(plateDrift(0.5, { range: 40, zoom: 1.06 })["--dy"]).toBe("0.0px");
-  });
-
-  it("interpolates a zoom range along the passage", () => {
-    expect(plateDrift(0, { range: 40, zoom: [1.14, 1.06] })["--ds"]).toBe("1.140");
-    expect(plateDrift(1, { range: 40, zoom: [1.14, 1.06] })["--ds"]).toBe("1.060");
+    expect(heroDrift(0)).toEqual({ "--lift": "0.0px" });
+    expect(heroDrift(1)).toEqual({ "--lift": "-36.0px" });
   });
 });
 

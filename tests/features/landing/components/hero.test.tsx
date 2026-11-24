@@ -34,10 +34,9 @@ describe("hero", () => {
     );
   });
 
-  it("stands the picture at rest without landing motion", () => {
+  it("stands the editor at rest without landing motion", () => {
     const { container } = renderHero();
     const band = container.querySelector<HTMLElement>(".lp-band")!;
-    expect(band.style.getPropertyValue("--par")).toBe("");
     expect(band.style.getPropertyValue("--lift")).toBe("");
     expect(screen.getByRole("img", { name: landing.studio.mockup })).toBeTruthy();
   });
@@ -73,12 +72,11 @@ describe("hero", () => {
     ]);
   });
 
-  it("drifts the picture when landing motion is on", () => {
+  it("lifts the editor when landing motion is on", () => {
     document.documentElement.classList.add(MOTION_CLASS);
     const { container } = renderHero();
     const band = container.querySelector<HTMLElement>(".lp-band")!;
     // jsdom has no layout: the band's top is 0 and the viewport 768, so it is fully risen.
-    expect(band.style.getPropertyValue("--par")).toBe("-60.0px");
     expect(band.style.getPropertyValue("--lift")).toBe("-36.0px");
   });
 });

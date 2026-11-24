@@ -703,10 +703,10 @@ html.lp-motion .lp-link:is(:hover, :focus-visible) {
 }
 
 /* ------------------------------------------------------------------------------------------
-   Landing plates (DESIGN.md 4.6, landing exception of 20 Nov 2026): public-domain engravings and
-   photographs, always monochrome. The hero title, the plates' dark-mode treatment, and the drift
-   transforms. The drift variables (--par, --sc, --lift, --dy, --ds) are written by
-   motion/scroll-drift.ts only when lp-motion is on; unset, every plate stands at rest.
+   Landing stage (DESIGN.md 4.6): the hero title and the scroll lift. Since 24 Nov 2026 the
+   landing shows the app's own components and illustrations instead of photographs (client).
+   `--lift` is written by motion/scroll-drift.ts only when lp-motion is on; unset, the editor
+   stands at rest.
    ------------------------------------------------------------------------------------------ */
 
 /* Hero (tahap H): Inter 700 in three centred lines, the middle one in the Merriweather italic. */
@@ -730,63 +730,12 @@ html.lp-motion .lp-link:is(:hover, :focus-visible) {
   letter-spacing: -0.035em;
 }
 
-.lp-photo {
-  filter: grayscale(1) contrast(1.18) brightness(0.98);
-  display: block;
-}
-/* Hero stage: the engraving fades out toward the feature pills at the bottom (the mask is on the
-   stage's picture box, so it stays put while the image drifts inside it). `lp-tint` takes only
-   the engraving's light and dark from it and the hue from the accent-subtle ground, so the plate
-   reads slate in both themes; it is fainter on dark grounds. A blend only reaches the backdrop of
-   its own stacking context, so it goes on the plate's positioned wrapper, never on the image. */
-.lp-relief {
-  mask-image: linear-gradient(to bottom, #000 30%, transparent 92%);
-}
-.lp-tint {
-  mix-blend-mode: luminosity;
-  opacity: 0.55;
-}
-:root[data-theme="dark"] .lp-tint,
-.theme-dark .lp-tint {
-  opacity: 0.2;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .lp-tint {
-    opacity: 0.2;
-  }
-}
-/* A slate duotone: the photo's light and dark over the accent ground (Publishing). */
-.lp-duo {
-  mix-blend-mode: luminosity;
-  opacity: 0.85;
-}
-.lp-relief img {
-  transform: translateY(var(--par, 0px)) scale(var(--sc, 1.1));
-  will-change: transform;
-}
+/* The hero's editor lifts as the stage scrolls into place (`--lift`, motion/scroll-drift.ts). */
 .lp-device {
   transform: translateY(var(--lift, 0px));
   will-change: transform;
 }
-/* A plate behind content: absolute, behind it, drifting against the page. */
-.lp-drift {
-  position: absolute;
-  z-index: -2;
-}
-.lp-drift > img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transform: translateY(var(--dy, 0px)) scale(var(--ds, 1.08));
-  will-change: transform;
-}
-.lp-press-shade {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: linear-gradient(to top, rgb(0 0 0 / 0.55), rgb(0 0 0 / 0.05) 60%);
-}
+/* The closing card's night sky fades out toward the text on its left. */
 .lp-moon {
   opacity: 0.7;
   mask-image: linear-gradient(to left, #000 35%, transparent 95%);
@@ -798,18 +747,9 @@ html.lp-motion .lp-link:is(:hover, :focus-visible) {
    (no script, reduced motion) every part stands final.
    ------------------------------------------------------------------------------------------ */
 
-/* Hero picture arrives with the title: the engraving rises from the bottom of the page, then the
-   editor lifts in over it. `translate`, not `transform`, so the scroll drift's transform (written
-   every frame, never transitioned) stacks on top. */
-html.lp-motion [data-enter] .lp-relief img {
-  transition:
-    translate 1100ms var(--ease-out) var(--follow, 350ms),
-    opacity 1100ms var(--ease-out) var(--follow, 350ms);
-}
-html.lp-motion [data-enter]:not([data-entered]) .lp-relief img {
-  translate: 0 8%;
-  opacity: 0;
-}
+/* The hero editor arrives with the title: it lifts in once the title has risen. `translate`,
+   not `transform`, so the scroll lift's transform (written every frame, never transitioned)
+   stacks on top. */
 html.lp-motion [data-enter] .lp-device {
   transition:
     translate 900ms var(--ease-out) calc(var(--follow, 350ms) + 120ms),
@@ -841,14 +781,10 @@ html.lp-motion .lp-covers:not([data-seen]) .lp-cover {
   opacity: 0;
 }
 
-/* Studio stage: the target bar fills once the editor comes into view, and the feature pills pop
-   in one after another under it. Animations with a backwards fill, so nothing waits on hover. */
-html.lp-motion .lp-studio:not([data-seen]) .lp-target,
+/* Studio stage: the feature pills pop in one after another under the editor. Animations with a
+   backwards fill, so nothing waits on hover. */
 html.lp-motion .lp-chips:not([data-seen]) .lp-chip {
   opacity: 0;
-}
-html.lp-motion .lp-studio[data-seen] .lp-target {
-  animation: lp-fill 700ms var(--ease-out) 300ms backwards;
 }
 html.lp-motion .lp-chips[data-seen] .lp-chip {
   animation: lp-pin-in 320ms var(--ease-out) calc(200ms + var(--i, 0) * 70ms) backwards;
@@ -858,11 +794,6 @@ html.lp-motion .lp-chips[data-seen] .lp-chip {
     opacity: 0;
     scale: 0.85;
     translate: 0 6px;
-  }
-}
-@keyframes lp-fill {
-  from {
-    transform: scaleX(0);
   }
 }
 
