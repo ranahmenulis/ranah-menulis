@@ -12,7 +12,7 @@ import { WaitlistForm } from "./waitlist-form";
  * dark tokens (`theme-dark`), and the card is the dark slate ground with Baade's moonlit clouds
  * drifting slowly behind its right side: the painting only works on a dark ground. The headline is
  * the page's closing statement and its arrival moment: it rises like the hero title once it comes
- * into view (DESIGN.md 4.6). Under it one sentence and the four pillars as pills on the left, the
+ * into view (DESIGN.md 4.6). Under it one sentence and the four pillars as a checked list on the left, the
  * waitlist form on its own panel on the right. The landing is pre-launch, so the form is the way in.
  */
 export function Waitlist({ waitlist }: { waitlist: Dictionary["landing"]["waitlist"] }) {
@@ -43,14 +43,16 @@ export function Waitlist({ waitlist }: { waitlist: Dictionary["landing"]["waitli
               </p>
               <ul
                 aria-label={waitlist.pillarsLabel}
-                className="m-0 grid list-none gap-2 p-0 sm:grid-cols-2"
+                className="m-0 grid list-none gap-4 border-t border-line p-0 pt-8"
               >
                 {waitlist.pillars.map((p) => (
-                  <li
-                    key={p}
-                    className="flex h-10 items-center gap-2 rounded-full border border-line bg-surface/60 px-4 text-sm font-semibold backdrop-blur"
-                  >
-                    <CheckCircle size={18} weight="fill" aria-hidden className="text-accent-ink" />
+                  <li key={p} className="flex items-start gap-3 text-base leading-6 font-semibold">
+                    <CheckCircle
+                      size={20}
+                      weight="fill"
+                      aria-hidden
+                      className="mt-0.5 shrink-0 text-accent-ink"
+                    />
                     <span>{p}</span>
                   </li>
                 ))}

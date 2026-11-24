@@ -208,3 +208,19 @@ Kalimat "penulis dari negara lain boleh masuk daftar tunggu" dihapus: form dafta
 2. Alamat akun media sosial dan halaman Kontak, Tentang kami, Kebijakan privasi.
 3. Q-50 sampai Q-52 di PRD (program Community, isi Marketplace, waktu baca).
 4. Terjemahan Inggris (`en.ts`) masih draf.
+
+## 6. Tahap H: teks yang dipangkas (24 November 2026)
+
+Keputusan user setelah membandingkan dengan landing Novlr: terlalu banyak teks, dan Studio tampil tiga kali. Kalimat client dari v3 **tidak ditulis ulang**; yang tidak cocok dengan susunan baru hanya dihapus dari kamus `id` dan `en`. Belum ditunjukkan ke client.
+
+Susunan baru: hero (dengan panggung Studio), satu baris angka, bento Ekosistem empat kartu, Penerbitan dua kolom, kartu penutup dengan form, Tanya jawab, footer.
+
+Yang dihapus dari halaman:
+
+- Hero: baris colophon terpisah (kini satu pil bersama eyebrow), empat pilar di hero (tetap di penutup), deskripsi video hero (video dicabut).
+- Social proof: tombol "Gabung bersama mereka" (tombol hero cukup).
+- Ekosistem: kartu Ranah Studio (Studio kini hanya di hero).
+- Ranah Studio: seluruh bagian terpisah: eyebrow, judul "Ruang Menulismu yang Fokus dan Nyaman.", kalimat pengantar, kalimat di bawah enam fitur, tombol "Coba Ranah Studio Sekarang". Enam nama fitur tetap, sebagai pil di bawah editor di hero.
+- Penerbitan: eyebrow "Publishing Opportunities", subjudul "Berbagai Jalur Penerbitan Sesuai Tahap Perjalananmu", kalimat di bawah tiap jalur. Empat nama jalur tetap.
+- Penutup: catatan "RanahMenulis belum dibuka. Simpan namamu, kami kabari lewat email saat dibuka." (Tanya jawab "Kapan RanahMenulis dibuka?" sudah menjawabnya.)
+- Alt teks pelat Holbein dan keladi (kedua gambar dicabut).

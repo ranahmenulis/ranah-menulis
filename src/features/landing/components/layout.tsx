@@ -61,18 +61,3 @@ export function Eyebrow({ className, ...props }: ComponentProps<"p">) {
     </p>
   );
 }
-
-/** A 12-column grid from 768 (two-column sections). */
-export function Grid({ className, ...props }: ComponentProps<"div">) {
-  return <div className={cn("md:grid md:grid-cols-12 md:gap-x-6", className)} {...props} />;
-}
-
-/** Hairline above a section title, full grid width (FAQ until tahap H-5). */
-export function SectionTop({ className, ...props }: ComponentProps<"div">) {
-  return (
-    <div
-      className={cn("border-t border-line pt-8 md:col-span-12 md:pt-12", className)}
-      {...props}
-    />
-  );
-}
