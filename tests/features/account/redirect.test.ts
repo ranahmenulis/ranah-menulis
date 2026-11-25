@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { safeNext, withNext } from "@/features/account/redirect";
+import { internalPath, safeNext, withNext } from "@/features/account/redirect";
 
 describe("safeNext", () => {
   it("keeps a path inside the app, with its query and hash", () => {
@@ -54,5 +54,18 @@ describe("withNext", () => {
     expect(withNext("/verifikasi", null, { status: "berhasil" })).toBe(
       "/verifikasi?status=berhasil",
     );
+  });
+});
+
+describe("internalPath", () => {
+  it("allows any path inside the app, account screens included", () => {
+    expect(internalPath("/verifikasi?status=berhasil", "/x")).toBe("/verifikasi?status=berhasil");
+    expect(internalPath("/atur-ulang-sandi", "/x")).toBe("/atur-ulang-sandi");
+  });
+
+  it("falls back for anything that could leave the app", () => {
+    for (const bad of [null, undefined, "", "jahat", "//jahat.example", "/\\jahat", "/a\nb"]) {
+      expect(internalPath(bad, "/x")).toBe("/x");
+    }
   });
 });

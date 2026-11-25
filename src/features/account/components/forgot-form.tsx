@@ -6,6 +6,7 @@ import { Button, ButtonLink } from "@/components/ui/button";
 import { TextLink } from "@/components/ui/text-link";
 import { useToast } from "@/components/ui/toast";
 import { format, useT } from "@/lib/i18n/provider";
+import { useAuthGateway } from "../auth-gateway-context";
 import { useCountdown } from "../hooks/use-countdown";
 import { NEXT_PARAM, RESET_HREF, SIGN_IN_HREF, withNext } from "../redirect";
 import { emailIssue } from "../validation";
@@ -24,13 +25,26 @@ export function ForgotForm() {
   const next = useSearchParams().get(NEXT_PARAM);
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const gateway = useAuthGateway();
   const [sent, setSent] = useState(false);
+  const [failure, setFailure] = useState<"limit" | "network" | null>(null);
+  const [busy, setBusy] = useState(false);
   const wait = useCountdown();
   const error = submitted ? emailIssue(email) : null;
 
-  function send() {
+  /** Sends the link. Null when it went out (the answer never says whether the address exists). */
+  async function send(): Promise<"limit" | "network" | null> {
+    setBusy(true);
+    setFailure(null);
+    const result = await gateway.requestPasswordReset(email.trim());
+    setBusy(false);
+    if (!result.ok) {
+      setFailure(result.reason);
+      return result.reason;
+    }
     setSent(true);
     wait.start(RESEND_SECONDS);
+    return null;
   }
 
   if (sent) {
@@ -43,26 +57,30 @@ export function ForgotForm() {
           <Button
             variant="secondary"
             disabled={wait.seconds > 0}
-            onClick={() => {
-              wait.start(RESEND_SECONDS);
-              toast({ message: t.forgot.resent, key: "forgot-resent" });
+            onClick={async () => {
+              const failed = await send();
+              toast({ message: failed ? t.errors[failed] : t.forgot.resent, key: "forgot-resent" });
             }}
           >
             {wait.seconds > 0
               ? format(t.forgot.resendIn, { seconds: String(wait.seconds) })
               : t.forgot.resend}
           </Button>
-          {/* Stand-ins for opening the link from the email; they leave with the bypass. */}
-          <ButtonLink href={withNext(RESET_HREF, next)} variant="text" size="sm">
-            {t.forgot.simulate}
-          </ButtonLink>
-          <ButtonLink
-            href={withNext(RESET_HREF, next, { status: "kedaluwarsa" })}
-            variant="text"
-            size="sm"
-          >
-            {t.forgot.simulateExpired}
-          </ButtonLink>
+          {/* Stand-ins for opening the link from the email; only while sign-in is simulated. */}
+          {gateway.simulated && (
+            <>
+              <ButtonLink href={withNext(RESET_HREF, next)} variant="text" size="sm">
+                {t.forgot.simulate}
+              </ButtonLink>
+              <ButtonLink
+                href={withNext(RESET_HREF, next, { status: "kedaluwarsa" })}
+                variant="text"
+                size="sm"
+              >
+                {t.forgot.simulateExpired}
+              </ButtonLink>
+            </>
+          )}
           <TextLink href={withNext(SIGN_IN_HREF, next)} className="text-sm text-ink-muted">
             {t.forgot.back}
           </TextLink>
@@ -80,11 +98,18 @@ export function ForgotForm() {
           event.preventDefault();
           setSubmitted(true);
           if (emailIssue(email)) return focusFirst(["email"]);
-          send();
+          if (!busy) void send();
         }}
       >
+        {failure && (
+          <p role="alert" className="text-sm text-danger">
+            {t.errors[failure]}
+          </p>
+        )}
         <EmailField value={email} onChange={setEmail} error={error && t.errors[error]} />
-        <Button type="submit">{t.forgot.submit}</Button>
+        <Button type="submit" disabled={busy}>
+          {t.forgot.submit}
+        </Button>
       </form>
       <TextLink href={withNext(SIGN_IN_HREF, next)} className="text-sm text-ink-muted">
         {t.forgot.back}

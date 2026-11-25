@@ -3,12 +3,15 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { SessionProvider } from "@/lib/auth/session-context";
 import type { AccountGateway } from "./account-gateway";
+import type { AuthGateway } from "./auth-gateway";
+import { AuthGatewayProvider } from "./auth-gateway-context";
 import { connectLiveAccount } from "./account-store";
 import { mergeAccount, type Account, type AccountPatch } from "./account-model";
 import { LiveAccountContext } from "./live-account-context";
 import { accountToUpdate } from "./profile-mapping";
 import type { SessionSnapshot } from "./session-types";
 import { supabaseAccountGateway } from "./supabase-account-gateway";
+import { supabaseAuthGateway } from "./supabase-auth-gateway";
 
 /**
  * Holds the signed-in account the server read, and is the one place that saves changes to it:
@@ -18,10 +21,13 @@ import { supabaseAccountGateway } from "./supabase-account-gateway";
 export function AuthProvider({
   snapshot,
   gateway = supabaseAccountGateway,
+  auth = supabaseAuthGateway,
   children,
 }: {
   snapshot: SessionSnapshot;
   gateway?: AccountGateway;
+  /** Sign in, sign up, sign out; the real one unless a test passes its own. */
+  auth?: AuthGateway;
   children: ReactNode;
 }) {
   const [account, setAccount] = useState(snapshot.account);
@@ -65,7 +71,9 @@ export function AuthProvider({
 
   return (
     <SessionProvider value={snapshot.session}>
-      <LiveAccountContext.Provider value={account}>{children}</LiveAccountContext.Provider>
+      <AuthGatewayProvider value={auth}>
+        <LiveAccountContext.Provider value={account}>{children}</LiveAccountContext.Provider>
+      </AuthGatewayProvider>
     </SessionProvider>
   );
 }

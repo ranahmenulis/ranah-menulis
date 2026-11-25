@@ -20,6 +20,8 @@ export const account: typeof source = {
     photoType: "Choose a JPG, PNG, or WebP photo.",
     photoSize: "The photo can be 2 MB at most.",
     agreeRequired: "Accept the terms to continue.",
+    network: "Not connected. Check your connection and try again.",
+    limit: "Too many attempts. Wait a moment and try again.",
   },
   fields: {
     email: "Email",
@@ -144,12 +146,16 @@ export const account: typeof source = {
     expiredTitle: "The link has expired",
     expiredBody: "This link no longer works. Ask for a new one and open it within 1 hour.",
     expiredAction: "Ask for a new link",
+    same: "Use a password different from the old one.",
   },
   verify: {
     title: "Check your email",
     body: "This is a trial version, so no email was sent to {email}. Use the example link below to continue.",
     bodyNoEmail:
       "This is a trial version, so no email was sent. Use the example link below to continue.",
+    sent: "We sent a link to {email}. Open it to verify your email.",
+    sentNoEmail: "We sent a link to your email. Open it to verify your email.",
+    resentReal: "Email sent again.",
     resend: "Resend email",
     resendIn: "Resend in {seconds} seconds",
     resent: "Resending is only an example. No email was sent.",

@@ -3,9 +3,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { parseAccount, resetAccount } from "@/features/account/account-store";
 import { SignUpForm } from "@/features/account/components/sign-up-form";
 
-const nav = vi.hoisted(() => ({ push: vi.fn(), search: "" }));
+const nav = vi.hoisted(() => ({ push: vi.fn(), refresh: vi.fn(), search: "" }));
 vi.mock("next/navigation", () => ({
-  useRouter: () => ({ push: nav.push }),
+  useRouter: () => ({ push: nav.push, refresh: nav.refresh }),
   useSearchParams: () => new URLSearchParams(nav.search),
 }));
 
@@ -30,11 +30,14 @@ function enterEmail(email: string) {
   fireEvent.click(screen.getByRole("button", { name: "Lanjutkan" }));
 }
 
-function finish(password: string, agree = true) {
+/** Fill the password step, send it, and let the (simulated) sign-up system answer. */
+async function finish(password: string, agree = true) {
   fireEvent.change(screen.getByLabelText("Kata sandi"), { target: { value: password } });
   const box = screen.getByRole("checkbox") as HTMLInputElement;
   if (box.checked !== agree) fireEvent.click(box);
-  fireEvent.click(screen.getByRole("button", { name: "Daftar" }));
+  await act(async () => {
+    fireEvent.click(screen.getByRole("button", { name: "Daftar" }));
+  });
 }
 
 describe("SignUpForm", () => {
@@ -89,19 +92,19 @@ describe("SignUpForm", () => {
     expect(rule("Ada angka")).toBeTruthy();
   });
 
-  it("rejects a weak password and a missing agreement, together", () => {
+  it("rejects a weak password and a missing agreement, together", async () => {
     render(<SignUpForm />);
     enterEmail("baru@contoh.id");
-    finish("pendek", false);
+    await finish("pendek", false);
     expect(screen.getByText("Kata sandi minimal 8 karakter.")).toBeTruthy();
     expect(screen.getByText("Setujui ketentuan untuk melanjutkan.")).toBeTruthy();
     expect(nav.push).not.toHaveBeenCalled();
   });
 
-  it("asks for a letter and a number", () => {
+  it("asks for a letter and a number", async () => {
     render(<SignUpForm />);
     enterEmail("baru@contoh.id");
-    finish("sembilanhuruf");
+    await finish("sembilanhuruf");
     expect(screen.getByText("Pakai minimal satu huruf dan satu angka.")).toBeTruthy();
   });
 
@@ -115,10 +118,10 @@ describe("SignUpForm", () => {
     expect(document.activeElement).toBe(email);
   });
 
-  it("starts an empty account and goes to email verification", () => {
+  it("starts an empty account and goes to email verification", async () => {
     render(<SignUpForm />);
     enterEmail("  baru@contoh.id ");
-    finish("rahasia123");
+    await finish("rahasia123");
     expect(nav.push).toHaveBeenCalledWith("/verifikasi");
     const account = parseAccount(localStorage.getItem("ranah.account"));
     expect(account.email).toBe("baru@contoh.id");
@@ -128,18 +131,20 @@ describe("SignUpForm", () => {
     expect(Number.isNaN(Date.parse(account.memberSince))).toBe(false);
   });
 
-  it("keeps the destination through verification", () => {
+  it("keeps the destination through verification", async () => {
     nav.search = "lanjut=%2Fprojects";
     render(<SignUpForm />);
     enterEmail("baru@contoh.id");
-    finish("rahasia123");
+    await finish("rahasia123");
     expect(nav.push).toHaveBeenCalledWith("/verifikasi?lanjut=%2Fprojects");
   });
 
-  it("signs up with Google straight to the profile, keeping the destination", () => {
+  it("signs up with Google straight to the profile, keeping the destination", async () => {
     nav.search = "lanjut=%2Fprojects";
     render(<SignUpForm />);
-    fireEvent.click(screen.getByRole("button", { name: "Daftar dengan Google" }));
+    await act(async () => {
+      fireEvent.click(screen.getByRole("button", { name: "Daftar dengan Google" }));
+    });
     expect(nav.push).toHaveBeenCalledWith("/mulai?lanjut=%2Fprojects");
     const account = parseAccount(localStorage.getItem("ranah.account"));
     expect(account.profile.name).toBe("");

@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ToastProvider } from "@/components/ui/toast";
@@ -7,7 +7,7 @@ import { SettingsView } from "@/features/account/components/settings/settings-vi
 import { installDialogShim } from "@/test/dialog-shim";
 
 const nav = vi.hoisted(() => ({ push: vi.fn() }));
-vi.mock("next/navigation", () => ({ useRouter: () => ({ push: nav.push }) }));
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push: nav.push, refresh: () => {} }) }));
 vi.mock("@/lib/i18n/actions", () => ({ setLocale: vi.fn() }));
 
 installDialogShim();
@@ -232,10 +232,12 @@ describe("SettingsView, danger zone", () => {
     expect(nav.push).not.toHaveBeenCalled();
   });
 
-  it("signs out to the sign-in screen", () => {
+  it("signs out to the sign-in screen", async () => {
     wrap(<SettingsView />);
     // Keluar appears in the section menu (lg) and at the end of the page (smaller screens).
-    fireEvent.click(screen.getAllByRole("button", { name: "Keluar" })[0]);
+    await act(async () => {
+      fireEvent.click(screen.getAllByRole("button", { name: "Keluar" })[0]);
+    });
     expect(nav.push).toHaveBeenCalledWith("/masuk");
   });
 });

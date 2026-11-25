@@ -19,6 +19,8 @@ export const account = {
     photoType: "Pilih foto JPG, PNG, atau WebP.",
     photoSize: "Foto maksimal 2 MB.",
     agreeRequired: "Setujui ketentuan untuk melanjutkan.",
+    network: "Belum tersambung. Periksa koneksimu, lalu coba lagi.",
+    limit: "Terlalu banyak percobaan. Tunggu sebentar, lalu coba lagi.",
   },
   fields: {
     email: "Email",
@@ -144,12 +146,16 @@ export const account = {
     expiredTitle: "Tautan sudah kedaluwarsa",
     expiredBody: "Tautan ini tidak berlaku lagi. Minta tautan baru, lalu buka dalam 1 jam.",
     expiredAction: "Minta tautan baru",
+    same: "Pakai kata sandi yang berbeda dari yang lama.",
   },
   verify: {
     title: "Cek emailmu",
     body: "Ini versi percobaan, jadi belum ada email yang dikirim ke {email}. Pakai tautan contoh di bawah untuk melanjutkan.",
     bodyNoEmail:
       "Ini versi percobaan, jadi belum ada email yang dikirim. Pakai tautan contoh di bawah untuk melanjutkan.",
+    sent: "Kami mengirim tautan ke {email}. Buka tautan itu untuk memverifikasi emailmu.",
+    sentNoEmail: "Kami mengirim tautan ke emailmu. Buka tautan itu untuk memverifikasi emailmu.",
+    resentReal: "Email dikirim lagi.",
     resend: "Kirim ulang email",
     resendIn: "Kirim ulang dalam {seconds} detik",
     resent: "Pengiriman ulang hanya contoh. Belum ada email yang dikirim.",

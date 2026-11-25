@@ -7,13 +7,25 @@ import { ForgotForm } from "@/features/account/components/forgot-form";
 import { ResetForm } from "@/features/account/components/reset-form";
 import { VerifyView } from "@/features/account/components/verify-view";
 
-const nav = vi.hoisted(() => ({ push: vi.fn(), replace: vi.fn(), search: "" }));
+const nav = vi.hoisted(() => ({
+  push: vi.fn(),
+  replace: vi.fn(),
+  refresh: vi.fn(),
+  search: "",
+}));
 vi.mock("next/navigation", () => ({
-  useRouter: () => ({ push: nav.push, replace: nav.replace }),
+  useRouter: () => ({ push: nav.push, replace: nav.replace, refresh: nav.refresh }),
   useSearchParams: () => new URLSearchParams(nav.search),
 }));
 
 const wrap = (ui: ReactNode) => render(<ToastProvider>{ui}</ToastProvider>);
+
+/** Press a button and let the (simulated) sign-in system answer. */
+async function press(name: string) {
+  await act(async () => {
+    fireEvent.click(screen.getByRole("button", { name }));
+  });
+}
 
 beforeEach(() => {
   nav.push.mockReset();
@@ -29,10 +41,10 @@ afterEach(() => {
 });
 
 describe("ForgotForm", () => {
-  it("answers the same way whether or not the address exists", () => {
+  it("answers the same way whether or not the address exists", async () => {
     wrap(<ForgotForm />);
     fireEvent.change(screen.getByLabelText("Email"), { target: { value: "tidakada@contoh.id" } });
-    fireEvent.click(screen.getByRole("button", { name: "Kirim tautan" }));
+    await press("Kirim tautan");
     expect(screen.getByText(/Jika tidakada@contoh.id terdaftar/)).toBeTruthy();
   });
 
@@ -43,11 +55,11 @@ describe("ForgotForm", () => {
     expect(screen.queryByText("Cek emailmu")).toBeNull();
   });
 
-  it("makes the reader wait before asking again, then allows it", () => {
+  it("makes the reader wait before asking again, then allows it", async () => {
     vi.useFakeTimers();
     wrap(<ForgotForm />);
     fireEvent.change(screen.getByLabelText("Email"), { target: { value: "a@contoh.id" } });
-    fireEvent.click(screen.getByRole("button", { name: "Kirim tautan" }));
+    await press("Kirim tautan");
     const resend = () => screen.getByRole("button", { name: /Kirim ulang/ }) as HTMLButtonElement;
     expect(resend().disabled).toBe(true);
     expect(resend().textContent).toBe("Kirim ulang dalam 30 detik");
@@ -58,11 +70,11 @@ describe("ForgotForm", () => {
     expect(resend().textContent).toBe("Kirim ulang");
   });
 
-  it("leads the example links to the reset screen, and to its expired state", () => {
+  it("leads the example links to the reset screen, and to its expired state", async () => {
     nav.search = "lanjut=%2Fstudio";
     wrap(<ForgotForm />);
     fireEvent.change(screen.getByLabelText("Email"), { target: { value: "a@contoh.id" } });
-    fireEvent.click(screen.getByRole("button", { name: "Kirim tautan" }));
+    await press("Kirim tautan");
     expect(screen.getByRole("link", { name: /buka tautan dari email/ }).getAttribute("href")).toBe(
       "/atur-ulang-sandi?lanjut=%2Fstudio",
     );
@@ -85,11 +97,11 @@ describe("ResetForm", () => {
     expect(screen.queryByText("Kata sandi diperbarui")).toBeNull();
   });
 
-  it("confirms the change and leads to sign-in", () => {
+  it("confirms the change and leads to sign-in", async () => {
     wrap(<ResetForm />);
     set("Kata sandi baru", "rahasia123");
     set("Ulangi kata sandi baru", "rahasia123");
-    fireEvent.click(screen.getByRole("button", { name: "Simpan kata sandi" }));
+    await press("Simpan kata sandi");
     expect(screen.getByText("Kata sandi diperbarui")).toBeTruthy();
     expect(screen.getByRole("link", { name: "Masuk" }).getAttribute("href")).toBe("/masuk");
   });

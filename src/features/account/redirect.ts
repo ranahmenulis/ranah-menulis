@@ -31,6 +31,16 @@ export function safeNext(raw: string | null | undefined, fallback = AFTER_AUTH_H
 }
 
 /**
+ * A path from an email link's `next` or `fail` value. Like `safeNext`, it stays inside the app, but
+ * account screens are allowed (a verification link ends on the Verifikasi screen).
+ */
+export function internalPath(raw: string | null | undefined, fallback: string): string {
+  if (!raw || !raw.startsWith("/") || raw.startsWith("//") || raw.includes("\\")) return fallback;
+  if (Array.from(raw).some((char) => char.charCodeAt(0) < 32)) return fallback;
+  return raw;
+}
+
+/**
  * `/masuk?lanjut=%2Fprojects%2Fx`: an account screen that remembers where the reader was going.
  * `extra` adds other query values (a `status`) after it.
  */

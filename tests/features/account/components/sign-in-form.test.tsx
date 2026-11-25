@@ -1,11 +1,12 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { parseAccount, resetAccount } from "@/features/account/account-store";
+import { resetAccount } from "@/features/account/account-store";
+import { readPendingEmail } from "@/features/account/pending-email";
 import { SignInForm } from "@/features/account/components/sign-in-form";
 
-const nav = vi.hoisted(() => ({ push: vi.fn(), search: "" }));
+const nav = vi.hoisted(() => ({ push: vi.fn(), refresh: vi.fn(), search: "" }));
 vi.mock("next/navigation", () => ({
-  useRouter: () => ({ push: nav.push }),
+  useRouter: () => ({ push: nav.push, refresh: nav.refresh }),
   useSearchParams: () => new URLSearchParams(nav.search),
 }));
 
@@ -20,10 +21,17 @@ afterEach(() => {
   resetAccount();
 });
 
-function signIn(email: string, password = "rahasia123") {
+/** Press a button and let the (simulated) sign-in system answer. */
+async function press(name: string) {
+  await act(async () => {
+    fireEvent.click(screen.getByRole("button", { name }));
+  });
+}
+
+async function signIn(email: string, password = "rahasia123") {
   fireEvent.change(screen.getByLabelText("Email"), { target: { value: email } });
   fireEvent.change(screen.getByLabelText("Kata sandi"), { target: { value: password } });
-  fireEvent.click(screen.getByRole("button", { name: "Masuk" }));
+  await press("Masuk");
 }
 
 describe("SignInForm", () => {
@@ -35,55 +43,55 @@ describe("SignInForm", () => {
     expect(nav.push).not.toHaveBeenCalled();
   });
 
-  it("explains a badly formed email in the field", () => {
+  it("explains a badly formed email in the field", async () => {
     render(<SignInForm />);
-    signIn("bukan-email");
+    await signIn("bukan-email");
     expect(screen.getByText(/Tulis email dengan benar/)).toBeTruthy();
     expect(screen.getByLabelText("Email").getAttribute("aria-invalid")).toBe("true");
   });
 
-  it("moves on to the home screen after a valid sign-in", () => {
+  it("moves on to the home screen after a valid sign-in", async () => {
     render(<SignInForm />);
-    signIn("rinjani@contoh.id");
+    await signIn("rinjani@contoh.id");
     expect(nav.push).toHaveBeenCalledWith("/beranda");
   });
 
-  it("returns to where the reader was going", () => {
+  it("returns to where the reader was going", async () => {
     nav.search = "lanjut=%2Fprojects%2Flomba-cerpen-hujan-2026";
     render(<SignInForm />);
-    signIn("rinjani@contoh.id");
+    await signIn("rinjani@contoh.id");
     expect(nav.push).toHaveBeenCalledWith("/projects/lomba-cerpen-hujan-2026");
   });
 
-  it("ignores a destination outside the app", () => {
+  it("ignores a destination outside the app", async () => {
     nav.search = "lanjut=https%3A%2F%2Fjahat.example";
     render(<SignInForm />);
-    signIn("rinjani@contoh.id");
+    await signIn("rinjani@contoh.id");
     expect(nav.push).toHaveBeenCalledWith("/beranda");
   });
 
-  it("says the email or password is wrong without saying which", () => {
+  it("says the email or password is wrong without saying which", async () => {
     render(<SignInForm />);
-    signIn("salah@contoh.id");
+    await signIn("salah@contoh.id");
     expect(screen.getByRole("alert").textContent).toMatch(/Email atau kata sandi salah/);
     expect(nav.push).not.toHaveBeenCalled();
   });
 
-  it("locks the form after five wrong attempts", () => {
+  it("locks the form after five wrong attempts", async () => {
     render(<SignInForm />);
-    for (let i = 0; i < 5; i++) signIn("salah@contoh.id");
+    for (let i = 0; i < 5; i++) await signIn("salah@contoh.id");
     expect(screen.getByRole("alert").textContent).toMatch(/Coba lagi dalam 30 detik/);
     expect((screen.getByRole("button", { name: "Masuk" }) as HTMLButtonElement).disabled).toBe(
       true,
     );
   });
 
-  it("offers a new verification email when the address is not verified", () => {
+  it("offers a new verification email when the address is not verified", async () => {
     render(<SignInForm />);
-    signIn("belum@contoh.id");
-    fireEvent.click(screen.getByRole("button", { name: "Kirim ulang email" }));
+    await signIn("belum@contoh.id");
+    await press("Kirim ulang email");
     expect(nav.push).toHaveBeenCalledWith("/verifikasi");
-    expect(parseAccount(localStorage.getItem("ranah.account")).email).toBe("belum@contoh.id");
+    expect(readPendingEmail()).toBe("belum@contoh.id");
   });
 
   it("shows the password only when asked", () => {
@@ -106,11 +114,11 @@ describe("SignInForm", () => {
     );
   });
 
-  it("clears the lock when the wait is over", () => {
+  it("clears the lock when the wait is over", async () => {
     vi.useFakeTimers();
     try {
       render(<SignInForm />);
-      for (let i = 0; i < 5; i++) signIn("salah@contoh.id");
+      for (let i = 0; i < 5; i++) await signIn("salah@contoh.id");
       act(() => {
         vi.advanceTimersByTime(31_000);
       });
@@ -121,10 +129,10 @@ describe("SignInForm", () => {
       vi.useRealTimers();
     }
   });
-  it("signs in with Google through the same bypass, back to the destination", () => {
+  it("signs in with Google through the same bypass, back to the destination", async () => {
     nav.search = "lanjut=%2Fstudio";
     render(<SignInForm />);
-    fireEvent.click(screen.getByRole("button", { name: "Masuk dengan Google" }));
+    await press("Masuk dengan Google");
     expect(nav.push).toHaveBeenCalledWith("/studio");
   });
 });

@@ -7,7 +7,7 @@ Terakhir diperbarui: **25 November 2026**.
 ## 1. Posisi sekarang
 
 - **Fase 0 (fondasi) selesai.** Supabase CLI 3.2.0 terpasang sebagai devDependency (jalankan lewat `npx supabase ...`). Project `hejuhznagqeayrmautqh` (akun ranahmenulis@gmail.com, region ap-southeast-2) tertaut lewat `supabase link`; berkas `supabase/config.toml` dari `supabase init`. Migrasi 0001 (`profiles`, `platform_roles`, `audit_log`, fungsi role, RLS) dan 0002 (`waitlist_signups`) sudah ada di database dan tercatat di riwayat migrasi. Tes RLS (20 tes, 3 berkas) lulus.
-- **Fase 1 (Auth dan profil): 1a (migrasi 0003) dan 1b (sesi, `AuthProvider`, akun dari profil) selesai.** Berikutnya 1c (Masuk, Daftar, Keluar, Verifikasi, Lupa sandi, `/auth/callback`). Checklist di bagian 3.
+- **Fase 1 (Auth dan profil): 1a, 1b, dan 1c selesai di kode.** 1c menunggu pengaturan Auth hosted dari user untuk menguji tautan email dari awal sampai akhir. Berikutnya 1d (Mulai dan Pengaturan: profil, username, foto, ganti sandi, hapus akun). Checklist di bagian 3.
 - **Branch:** semua pekerjaan backend di branch `be/supabase` (dibuat 25 November 2026 dari `main` `5d2d5c1`). `main` tetap versi front-end dengan data dummy sampai backend matang; perbaikan tampilan dari tester masuk ke `main`, lalu `main` digabung ke `be/supabase` secara berkala. Branch ini belum di-push dan belum di-commit apa pun.
 - Frontend masih memakai bypass login, `dummy-auth`, dan data lokal (localStorage, IndexedDB). Belum ada akun nyata.
 
@@ -47,12 +47,16 @@ Keputusan: foto profil ikut Fase 1 (bucket `avatars`); email verifikasi memakai 
   - [x] `useAccount`/`readAccount` bersumber dari akun sesi; `saveAccount` tetap sinkron (optimistis, tulis di belakang, kembali bila ditolak) dan ada `saveAccountAsync` yang menunggu hasil. Layar yang perlu menampilkan kegagalan pindah ke versi async di 1d
   - [x] Peran platform dari database digabung ke `useEffectiveRoles` (`administrator`, `super-admin`)
   - [x] Tes: pemetaan profil, `readSession` (dengan tiruan), `AuthProvider`, peran. Uji end-to-end terhadap `next start` dengan akun uji dan cookie sesi: nama, email, dan peran terbaca di server, tamu tidak melihatnya
-- [ ] **1c. Masuk, Daftar, Keluar, Verifikasi, Lupa dan Atur ulang sandi**
-  - [ ] Route handler `/auth/callback` (PKCE)
-  - [ ] Masuk, Daftar (dua langkah), Keluar ke gateway; galat dipetakan ke kode
-  - [ ] Verifikasi dan kirim ulang email; Lupa dan Atur ulang sandi
-  - [ ] Pengguna tanpa username diarahkan ke `/mulai`
-  - [ ] Daftar pengaturan Auth hosted untuk user (Site URL, Redirect URLs, sandi, konfirmasi email)
+- [x] **1c. Masuk, Daftar, Keluar, Verifikasi, Lupa dan Atur ulang sandi** (selesai di kode 25 November 2026; menunggu pengaturan Auth hosted dari user untuk tautan email)
+  - [x] Route handler `/auth/callback` (PKCE): tukar kode dengan sesi, lalu ke `next`; kode hilang, ditolak, atau galat ke `fail`; `next` dan `fail` hanya jalur dalam aplikasi (`internalPath`)
+  - [x] `AuthGateway` (`auth-gateway.ts`): `supabaseAuthGateway` di aplikasi, `dummyAuthGateway` bila tanpa provider (tes). Masuk, Daftar, Keluar, kirim ulang verifikasi, minta tautan sandi, ganti sandi. Galat dipetakan ke kode (`credentials`, `unverified`, `exists`, `password`, `same`, `expired`, `limit`, `network`)
+  - [x] Daftar: alamat terdaftar baru diketahui saat kirim (Supabase tidak membocorkannya; deteksi lewat `identities` kosong), lalu kembali ke langkah 1 dengan pesan; Verifikasi menyebut alamat dari `sessionStorage` tab (`pending-email.ts`)
+  - [x] Lupa sandi menjawab sama untuk alamat terdaftar atau tidak; Atur ulang sandi menampilkan "kedaluwarsa" bila tautan tidak menghasilkan sesi, dan keluar setelah berhasil
+  - [x] Tombol Google disembunyikan sampai Google sungguhan ada (Fase 5); tombol contoh di Verifikasi dan Lupa sandi hanya untuk gateway simulasi
+  - [x] Keluar di Pengaturan memakai gateway lalu `router.refresh()`
+  - [x] Tes: tes form lama diperbarui menjadi async, `real-auth.test.tsx` (gateway nyata di semua form), `supabase-auth-gateway.test.ts` (pemetaan galat), `tests/app/auth/callback.test.ts`, `internalPath`
+  - [x] Uji Chrome nyata terhadap Supabase (8 dari 8): sandi salah, masuk ke Mulai dengan tujuan terjaga, Pengaturan menampilkan email akun, Keluar, setelah Keluar akun tidak tampil, Daftar ke Verifikasi (email asli terkirim ke `AUTH_TEST_EMAIL`), tanpa tautan contoh, tanpa tombol Google
+  - [ ] Pengaturan Auth hosted oleh user (daftar di bagian "Pengaturan Auth hosted" di bawah); setelahnya uji tautan email dari awal sampai akhir (klik tautan di kotak masuk)
 - [ ] **1d. Mulai dan Pengaturan**
   - [ ] Profil dibaca dan ditulis ke database
   - [ ] Cek username ke database; galat 23505 ditangani; handle penulis fixture tetap dicadangkan
@@ -96,11 +100,30 @@ Keputusan: foto profil ikut Fase 1 (bucket `avatars`); email verifikasi memakai 
 - [ ] Email lewat Resend setelah domain dibeli
 - [ ] Gate penuh, audit keamanan, uji menyeluruh, merge `be/supabase` ke `main`
 
+### Pengaturan Auth hosted (dilakukan user di dasbor Supabase)
+
+Authentication, URL Configuration:
+- **Site URL:** `https://ranah-menulis.vercel.app` (alamat produksi).
+- **Redirect URLs** (tambahkan semuanya; `/**` mengizinkan jalur apa pun di bawahnya): `https://ranah-menulis.vercel.app/**`, `http://localhost:3000/**`, `http://localhost:3001/**`, dan untuk preview Vercel pola `https://*.vercel.app/**` (bila ingin menguji dari preview).
+- Tanpa daftar ini Supabase mengabaikan `redirectTo` dan tautan email berujung di Site URL.
+
+Authentication, sign-in/providers, Email:
+- **Confirm email:** tetap menyala.
+- **Minimum password length:** 8. **Password requirements:** huruf dan angka (aplikasi memeriksa hal yang sama sebelum mengirim; aturan server hanya cadangan).
+
+Opsional: Authentication, Email Templates, terjemahkan templat ke bahasa Indonesia (templat bawaan berbahasa Inggris dan polos). Jangan mengubah variabel `{{ .ConfirmationURL }}`.
+
 ## 4. Keputusan user
 
 - 25 November 2026: branch baru `be/supabase` untuk semua backend, `main` dibiarkan dummy FE sampai backend matang; pakai project Supabase cloud (bukan Docker lokal); login email dan sandi dulu, Google menyusul; akun dummy disiapkan untuk pengujian (bukan impor data lokal); feedback front-end berjalan paralel (user meminta tester menguji lagi dan akan memberi tahu hasilnya); gate setiap fase = tes RLS dan tes terarah, `npm run check` dan `build` sekali di akhir fase.
 
 ## 5. Log sesi
+
+### 25 November 2026 (1c)
+- Dikerjakan: `auth-gateway*`, `dummy-auth-gateway`, `supabase-auth-gateway`, `pending-email`, `app/auth/callback/route.ts`, form Masuk, Daftar, Verifikasi, Lupa sandi, Atur ulang sandi, Keluar di Pengaturan; teks baru `errors.network`, `errors.limit`, `reset.same`, `verify.sent*`, `verify.resentReal` (id dan en). `AuthProvider` menyediakan gateway nyata; tanpa provider forms memakai gateway simulasi sehingga 153 tes akun lama tetap berlaku setelah dijadikan async.
+- Gate: `tsc`, ESLint, Prettier, tes akun, app, lib (300 tes), `npm run build`, dan uji Chrome nyata (8 dari 8). Pengguna uji `AUTH_TEST_EMAIL` dibersihkan lagi dengan `--cleanup`; database kosong.
+- Batas yang diketahui: tautan email memakai PKCE, jadi harus dibuka di peramban yang sama dengan yang meminta (verifier di cookie); di peramban lain tautan berujung "kedaluwarsa" dan layar mengarahkan ke Masuk (yang menawarkan kirim ulang). Perbaikan menyeluruh (templat dengan `token_hash`) butuh ubah templat email di dasbor.
+- Pelajaran: heredoc Bash dengan kutip campur gagal diurai tanpa menjalankan apa pun (tulis berkas lewat Write); Chrome headless berbahasa Inggris, paksa cookie `locale=id` bila menguji teks Indonesia; regex pencari blok tes bisa mengenai blok lain, periksa `git diff` setelah menyunting tes lewat skrip.
 
 ### 25 November 2026 (1b)
 - Dikerjakan: `src/lib/auth/{session-info,session-context}`, `src/features/account/{account-model,account-session,account-gateway,supabase-account-gateway,profile-mapping,session,session-types,auth-root,live-account-context}`; `account-store` memakai akun sesi bila ada; `viewer.ts`, `use-effective-roles.ts`, `app/layout.tsx` disesuaikan. Gate: `tsc`, ESLint, Prettier, 24 tes baru, regresi 101 berkas (641 tes) dan 44 berkas (287 tes), `npm run build` (tetap Partial Prerender).

@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/states";
 import { useToast } from "@/components/ui/toast";
 import { useT } from "@/lib/i18n/provider";
-import { setViewer } from "@/lib/viewer";
 import { useAccount } from "../../account-store";
+import { useAuthGateway } from "../../auth-gateway-context";
 import { useHydrated } from "../../hooks/use-hydrated";
 import { SIGN_IN_HREF } from "../../redirect";
 import { DangerSection } from "./danger-section";
@@ -29,14 +29,18 @@ export function SettingsView() {
   const hydrated = useHydrated();
   const account = useAccount();
 
-  function signOut() {
-    setViewer("tamu");
+  const gateway = useAuthGateway();
+
+  async function signOut() {
+    await gateway.signOut();
+    // The server reads the (now empty) session again, so every screen shows the signed-out view.
+    router.refresh();
     toast({ message: t.settings.signedOut, key: "signed-out" });
     router.push(SIGN_IN_HREF);
   }
 
   const signOutButton = (
-    <Button variant="text" onClick={signOut} className="-ml-1">
+    <Button variant="text" onClick={() => void signOut()} className="-ml-1">
       <SignOut size={20} aria-hidden />
       {t.settings.signOut}
     </Button>
