@@ -11,6 +11,11 @@ describe("landing top bar", () => {
     expect(cta.getAttribute("href")).toBe("#daftar");
   });
 
+  it("offers a plain sign-in link that does not compete with the call to action", () => {
+    render(<TopBar />);
+    expect(screen.getByRole("link", { name: "Masuk" }).getAttribute("href")).toBe("/masuk");
+  });
+
   it("puts sections, theme, and language in the one narrow-screen menu", () => {
     render(<TopBar />);
     const menu = screen.getByRole("menu", { name: "Menu halaman", hidden: true });
@@ -18,6 +23,7 @@ describe("landing top bar", () => {
       .getAllByRole("menuitem", { hidden: true })
       .map((item) => item.textContent);
     expect(items).toEqual([
+      "Masuk",
       "Ekosistem",
       "Studio",
       "Penerbitan",

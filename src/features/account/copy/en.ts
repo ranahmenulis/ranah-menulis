@@ -147,11 +147,12 @@ export const account: typeof source = {
   },
   verify: {
     title: "Check your email",
-    body: "We sent a verification link to {email}. Open it to activate your account.",
-    bodyNoEmail: "We sent a verification link to your email. Open it to activate your account.",
+    body: "This is a trial version, so no email was sent to {email}. Use the example link below to continue.",
+    bodyNoEmail:
+      "This is a trial version, so no email was sent. Use the example link below to continue.",
     resend: "Resend email",
     resendIn: "Resend in {seconds} seconds",
-    resent: "The verification email was sent again.",
+    resent: "Resending is only an example. No email was sent.",
     simulate: "Example: treat the link as opened",
     simulateExpired: "Example: the link has expired",
     wrongEmail: "Wrong address? Sign up again with another email.",

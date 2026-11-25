@@ -41,6 +41,7 @@ export const studioEditor = {
     sprintResult: "Sprint: {result}",
     words: "{n} kata",
     today: "{done} / {target} hari ini",
+    todayNoTarget: "{done} kata hari ini",
   },
   toasts: {
     unsavedLeave: "Tulisanmu belum tersimpan di perangkat ini, jadi belum bisa ditutup. Coba lagi.",
@@ -214,6 +215,9 @@ export const studioEditor = {
     ariaPending:
       "Kata hari ini dari semua dokumen: {total} dari target {target}, sebagian tercatat saat tersambung. Buka rincian",
     today: "hari ini",
+    wordsToday: "kata hari ini",
+    ariaNoTarget: "Kata hari ini dari semua dokumen: {total}. Buka rincian",
+    noTargetNote: "Belum ada target harian. Atur di tab Streak.",
     pendingLong: "· tercatat saat tersambung",
     pendingShort: "· Luring",
     pendingNote:

@@ -15,6 +15,7 @@ export const landing: typeof source = {
     studio: "Studio",
     publishing: "Publishing",
     faq: "FAQ",
+    signIn: "Sign in",
     cta: "Start Writing",
   },
   // Translation of the client's 24 Nov 2026 hero words; awaiting the user's review.

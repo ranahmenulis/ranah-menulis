@@ -23,6 +23,20 @@ describe("TargetIndicator", () => {
     expect(button.textContent).toContain("hari ini");
   });
 
+  it("shows only the words written today when no target was set", () => {
+    render(<TargetIndicator target={null} progress={log({ Surat: 18 })} pending={false} />);
+
+    const button = screen.getByRole("button", {
+      name: "Kata hari ini dari semua dokumen: 18. Buka rincian",
+    });
+    expect(button.textContent).toContain("18");
+    expect(button.textContent).toContain("kata hari ini");
+    expect(button.textContent).not.toContain("/");
+
+    fireEvent.click(button);
+    expect(screen.getByRole("dialog").textContent).toContain("Belum ada target harian.");
+  });
+
   it("keeps counting past the target without a new message", () => {
     render(<TargetIndicator target={500} progress={log({ Surat: 612 })} pending={false} />);
     expect(screen.getByRole("button").textContent).toContain("612 / 500");

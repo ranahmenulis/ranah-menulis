@@ -109,7 +109,7 @@ describe("VerifyView", () => {
   it("names the address the email went to, from the saved account", () => {
     saveAccount({ email: "baru@contoh.id" });
     wrap(<VerifyView />);
-    expect(screen.getByText(/verifikasi ke baru@contoh.id/)).toBeTruthy();
+    expect(screen.getByText(/belum ada email yang dikirim ke baru@contoh.id/)).toBeTruthy();
     expect(location.search).not.toContain("baru@contoh.id");
   });
 

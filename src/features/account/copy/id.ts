@@ -147,12 +147,12 @@ export const account = {
   },
   verify: {
     title: "Cek emailmu",
-    body: "Kami mengirim tautan verifikasi ke {email}. Buka tautan itu untuk mengaktifkan akunmu.",
+    body: "Ini versi percobaan, jadi belum ada email yang dikirim ke {email}. Pakai tautan contoh di bawah untuk melanjutkan.",
     bodyNoEmail:
-      "Kami mengirim tautan verifikasi ke emailmu. Buka tautan itu untuk mengaktifkan akunmu.",
+      "Ini versi percobaan, jadi belum ada email yang dikirim. Pakai tautan contoh di bawah untuk melanjutkan.",
     resend: "Kirim ulang email",
     resendIn: "Kirim ulang dalam {seconds} detik",
-    resent: "Email verifikasi dikirim lagi.",
+    resent: "Pengiriman ulang hanya contoh. Belum ada email yang dikirim.",
     simulate: "Contoh: anggap tautan sudah dibuka",
     simulateExpired: "Contoh: tautan sudah kedaluwarsa",
     wrongEmail: "Salah alamat? Daftar lagi dengan email lain.",

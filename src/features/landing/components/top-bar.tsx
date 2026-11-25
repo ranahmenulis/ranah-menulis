@@ -2,6 +2,7 @@
 
 import { List } from "@phosphor-icons/react/dist/ssr";
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { ButtonLink } from "@/components/ui/button";
 import { LanguageMenu } from "@/components/ui/language-menu";
 import { Menu } from "@/components/ui/menu";
@@ -10,6 +11,7 @@ import { usePreferenceEntries } from "@/components/ui/preferences-menu";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { cn } from "@/lib/cn";
 import { useT } from "@/lib/i18n/provider";
+import { SIGN_IN_HREF } from "@/features/account/redirect";
 import { Wrap } from "./layout";
 
 type Mode = "top" | "scrolled-hero" | "scrolled" | "wait";
@@ -84,6 +86,13 @@ export function TopBar() {
               {label}
             </a>
           ))}
+          {/* Plain link: the call to action stays the waitlist, but a returning writer can sign in. */}
+          <Link
+            href={SIGN_IN_HREF}
+            className="lp-link hidden text-sm font-medium text-ink-muted hover:text-ink md:inline"
+          >
+            {copy.signIn}
+          </Link>
           {/* 44px tall on touch widths (client: comfortable touch areas). */}
           <ButtonLink
             href="#daftar"
@@ -104,6 +113,13 @@ export function TopBar() {
               label={copy.menu}
               icon={<List size={24} aria-hidden />}
               items={[
+                {
+                  id: "sign-in",
+                  label: copy.signIn,
+                  onSelect: () => {
+                    window.location.href = SIGN_IN_HREF;
+                  },
+                },
                 ...sections.map(([id, label]) => ({
                   id,
                   label,

@@ -21,6 +21,7 @@ export const landing = {
     studio: "Studio",
     publishing: "Penerbitan",
     faq: "Tanya jawab",
+    signIn: "Masuk",
     // Client (Wafiy, 24 Nov 2026): one primary call to action. It still leads to the waitlist.
     cta: "Mulai Menulis",
   },

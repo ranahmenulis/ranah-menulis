@@ -16,7 +16,7 @@ type FocusHudProps = {
   savedAt: Date | null;
   words: number;
   progress: DailyLog;
-  target: number;
+  target: number | null;
   sprint: SprintApi;
   onExit: () => void;
 };
@@ -71,10 +71,12 @@ export function FocusHud({
         <span>{saveText(status, savedAt, t, locale)}</span>
         <span>{format(t.focus.words, { n: fmt.number(words) })}</span>
         <span>
-          {format(t.focus.today, {
-            done: fmt.number(totalWords(progress)),
-            target: fmt.number(target),
-          })}
+          {target === null
+            ? format(t.focus.todayNoTarget, { done: fmt.number(totalWords(progress)) })
+            : format(t.focus.today, {
+                done: fmt.number(totalWords(progress)),
+                target: fmt.number(target),
+              })}
         </span>
       </p>
     </>

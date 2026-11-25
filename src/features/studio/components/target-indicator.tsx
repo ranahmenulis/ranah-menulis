@@ -9,8 +9,8 @@ import { topDocuments, totalWords, type DailyLog } from "../daily-progress";
 
 type TargetIndicatorProps = {
   progress: DailyLog;
-  /** Today's target in words. */
-  target: number;
+  /** Today's target in words; null when none was set, then only the words written are shown. */
+  target: number | null;
   /** Offline: the count keeps moving from local data and is marked as recorded later. */
   pending: boolean;
   className?: string;
@@ -26,7 +26,7 @@ export function TargetIndicator({ progress, target, pending, className }: Target
   const t = useT().studioEditor.target;
   const number = useFormat();
   const total = totalWords(progress);
-  const reached = total >= target;
+  const reached = target !== null && total >= target;
   const [open, setOpen] = useState(false);
 
   // Fill the ring only when this session crosses the target, not when a finished day is reopened.
@@ -38,12 +38,13 @@ export function TargetIndicator({ progress, target, pending, className }: Target
   }
 
   const docs = topDocuments(progress);
-  const remaining = target - total;
   const note = pending
     ? t.pendingNote
-    : reached
-      ? t.reachedNote
-      : format(t.remainingNote, { n: number.number(remaining) });
+    : target === null
+      ? t.noTargetNote
+      : reached
+        ? t.reachedNote
+        : format(t.remainingNote, { n: number.number(target - total) });
 
   return (
     <Popover
@@ -57,7 +58,7 @@ export function TargetIndicator({ progress, target, pending, className }: Target
           {...props}
           type="button"
           title={t.title}
-          aria-label={format(pending ? t.ariaPending : t.aria, {
+          aria-label={format(target === null ? t.ariaNoTarget : pending ? t.ariaPending : t.aria, {
             total: String(total),
             target: String(target),
           })}
@@ -65,10 +66,12 @@ export function TargetIndicator({ progress, target, pending, className }: Target
         >
           <Dot reached={reached} fresh={justReached} />
           <b className="font-medium whitespace-nowrap text-ink group-hover:underline group-hover:underline-offset-3 group-aria-expanded:underline">
-            {number.number(total)} / {number.number(target)}
+            {target === null
+              ? number.number(total)
+              : `${number.number(total)} / ${number.number(target)}`}
           </b>
           <span className="whitespace-nowrap max-md:col-start-2 max-md:justify-self-end">
-            {t.today}
+            {target === null ? t.wordsToday : t.today}
           </span>
           {pending && (
             <>

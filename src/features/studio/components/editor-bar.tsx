@@ -27,7 +27,7 @@ type EditorBarProps = {
   savedAt: Date | null;
   offline: boolean;
   progress: DailyLog;
-  target: number;
+  target: number | null;
   helpOpen: boolean;
   /** Nothing written yet: the save state reads "draft". */
   empty: boolean;

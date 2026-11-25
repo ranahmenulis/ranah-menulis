@@ -43,6 +43,7 @@ export const studioEditor: typeof source = {
     sprintResult: "Sprint: {result}",
     words: "{n} words",
     today: "{done} / {target} today",
+    todayNoTarget: "{done} words today",
   },
   toasts: {
     unsavedLeave:
@@ -216,6 +217,9 @@ export const studioEditor: typeof source = {
     ariaPending:
       "Words today across all documents: {total} of a target of {target}, partly recorded when online. Open details",
     today: "today",
+    wordsToday: "words today",
+    ariaNoTarget: "Words today across all documents: {total}. Open details",
+    noTargetNote: "No daily target yet. Set one in the Streak tab.",
     pendingLong: "· recorded when online",
     pendingShort: "· Offline",
     pendingNote:
