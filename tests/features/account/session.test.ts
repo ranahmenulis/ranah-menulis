@@ -6,6 +6,7 @@ const env = vi.hoisted(() => ({
     publishableKey: string;
   },
 }));
+vi.mock("next/server", () => ({ connection: async () => undefined }));
 vi.mock("@/lib/env", () => ({ readSupabasePublicEnv: () => env.value }));
 
 type Result = { data: unknown };

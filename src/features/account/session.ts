@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import { readSupabasePublicEnv } from "@/lib/env";
 import { GUEST_SESSION } from "@/lib/auth/session-info";
 import { createClient } from "@/lib/supabase/server";
@@ -22,6 +23,9 @@ export async function readSession(): Promise<SessionSnapshot> {
   const env = readSupabasePublicEnv();
   if (!env) return GUEST;
   try {
+    // Verifying the token reads the clock. Waiting for the request first keeps that read out of
+    // prerendering (Next 16 rejects `Date.now()` there); the session is per request anyway.
+    await connection();
     const supabase = await createClient();
     const { data } = await supabase.auth.getClaims();
     const claims = data?.claims;
