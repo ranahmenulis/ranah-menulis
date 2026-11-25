@@ -4,7 +4,7 @@ import { suspensions } from "@/features/kelola/admin/role-store";
 import { validateReason } from "@/features/kelola/reason";
 import { readEffectiveRoles } from "@/features/kelola/use-effective-roles";
 import { isPlatformAdmin } from "@/lib/roles";
-import { challengeEnd, validateCircleStart } from "./board-model";
+import { challengeEnd, forgetMember, validateCircleStart } from "./board-model";
 import {
   canManageGroup,
   groupErrors,
@@ -170,8 +170,23 @@ export function joinByCode(raw: string): GroupResult & { id?: string } {
   const value = raw.trim().toUpperCase();
   const group = value && writingGroups.read().find((item) => item.code === value);
   if (!group) return refuseGroup("invalidCode");
+  if (group.visibility === "privat" && !memberOf(group, readGroupReader())) {
+    return requestToJoin(group.id);
+  }
   const result = joinGroup(group.id, { type: "code", value });
   return result.ok ? { ...result, id: group.id } : result;
+}
+
+/** A valid code on a private circle only asks to join; the Circle Admin answers. */
+function requestToJoin(id: string): GroupResult {
+  return changeGroup(id, (group, groups, { authorId }) => {
+    const asked = group.requests ?? [];
+    if (!asked.some((request) => request.authorId === authorId)) {
+      const requests = [...asked, { authorId, at: Date.now() }];
+      saveGroupChange(groups, { ...group, requests }, authorId);
+    }
+    return done("requestSent");
+  });
 }
 
 export function declineInvite(id: string) {
@@ -229,6 +244,8 @@ export function removeGroupMember(id: string, targetId: string, reason?: string)
         ...group,
         members: group.members.filter((item) => item.authorId !== targetId),
         progress: group.progress.filter((item) => item.authorId !== targetId),
+        // The frozen result of a finished challenge keeps the line but forgets who it was.
+        ...(group.finalBoard && { finalBoard: forgetMember(group.finalBoard, targetId, "") }),
       },
       authorId,
       { action: leaving ? "group.leave" : "group.remove", targetId, reason: reason?.trim() },

@@ -60,7 +60,9 @@ describe("group membership and administration", () => {
     expect(joinGroup("ruang-cerpen", { type: "public" }).ok).toBe(true);
     expect(group("ruang-cerpen").members.filter((item) => item.authorId === ME_ID)).toHaveLength(1);
     expect(removeGroupMember(COASTAL_GROUP_ID, ME_ID).ok).toBe(true);
-    expect(joinByCode(" pesisir26 ")).toMatchObject({ ok: true, id: COASTAL_GROUP_ID });
+    // A private circle only takes a request through its code.
+    expect(joinByCode(" pesisir26 ")).toMatchObject({ ok: true, code: "requestSent" });
+    expect(memberOf(group(COASTAL_GROUP_ID), ME_ID)).toBeUndefined();
   });
 
   it("rotates codes and allows the last group admin to leave", () => {
@@ -71,7 +73,7 @@ describe("group membership and administration", () => {
     expect(removeGroupMember(id, ME_ID).ok).toBe(true);
     expect(group(id).members).toEqual([]);
     expect(joinByCode(code).ok).toBe(false);
-    expect(joinByCode(group(id).code).ok).toBe(true);
+    expect(joinGroup(id, { type: "code", value: group(id).code }).ok).toBe(true);
     expect(memberOf(group(id), ME_ID)?.admin).toBe(false);
   });
 
@@ -131,7 +133,7 @@ describe("group content privacy", () => {
     };
     expect(canRead(own, writingGroups.read(), "hafiz-rahman")).toBe(true);
     removeGroupMember(COASTAL_GROUP_ID, ME_ID);
-    joinByCode(group(COASTAL_GROUP_ID).code);
+    joinGroup(COASTAL_GROUP_ID, { type: "code", value: group(COASTAL_GROUP_ID).code });
     expect(canRead(own, writingGroups.read(), "hafiz-rahman")).toBe(false);
     expect(canRead({ ...fixture, groupName: "Unmapped" }, writingGroups.read(), ME_ID)).toBe(false);
   });
@@ -195,7 +197,9 @@ describe("group content privacy", () => {
     const store = {
       async get() {
         expect(removeGroupMember(COASTAL_GROUP_ID, ME_ID).ok).toBe(true);
-        expect(joinByCode(group(COASTAL_GROUP_ID).code).ok).toBe(true);
+        expect(
+          joinGroup(COASTAL_GROUP_ID, { type: "code", value: group(COASTAL_GROUP_ID).code }).ok,
+        ).toBe(true);
         return doc;
       },
     };

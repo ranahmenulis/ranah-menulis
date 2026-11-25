@@ -16,6 +16,15 @@ const coastalMember = (authorId: string, admin = false): GroupMember => ({
   admin,
 });
 
+// Sample leaderboard rows for the first member, so the ranking can be seen on one device. They only
+// count inside November 2026 and are labelled as examples on screen.
+const sampleDays = [3, 7, 12, 18, 24].map((day, i) => ({
+  authorId: "hafiz-rahman",
+  membershipId: initialMembership("hafiz-rahman"),
+  day: `2026-11-${String(day).padStart(2, "0")}`,
+  words: 400 + i * 150,
+}));
+
 export const groupSeeds: readonly WritingGroup[] = [
   {
     id: COASTAL_GROUP_ID,
@@ -23,10 +32,14 @@ export const groupSeeds: readonly WritingGroup[] = [
     description: "Tempat berbagi cuplikan cerita tentang kota dan kehidupan di pesisir.",
     visibility: "privat",
     code: "PESISIR26",
-    members: [coastalMember("hafiz-rahman", true), coastalMember(ME_ID)],
+    members: [
+      { ...coastalMember("hafiz-rahman", true), board: true, boardSince: "2026-11-01" },
+      coastalMember(ME_ID),
+    ],
     invites: [],
     progress: [],
     hiddenPosts: [],
+    words: sampleDays,
   },
   {
     id: "ruang-cerpen",

@@ -48,6 +48,12 @@ export const GROUP_MESSAGES = {
   accessDenied: "Akses ditolak.",
   postUnavailable: "Tulisan ini sudah tidak tersedia di lingkar.",
   postHidden: "Tulisan disembunyikan dari lingkar.",
+  requestSent: "Permintaan bergabung dikirim. Admin Lingkar akan menjawabnya.",
+  requestAccepted: "Permintaan diterima. Penulis ini kini anggota.",
+  requestDeclined: "Permintaan ditolak.",
+  requestGone: "Permintaan ini sudah tidak ada.",
+  boardOn: "Kamu ikut leaderboard lingkar ini.",
+  boardOff: "Kamu tidak lagi ikut leaderboard lingkar ini.",
 } as const;
 
 export type GroupCode = keyof typeof GROUP_MESSAGES;

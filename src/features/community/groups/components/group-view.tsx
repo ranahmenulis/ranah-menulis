@@ -29,6 +29,7 @@ import {
 } from "../group-model";
 import { writingGroups } from "../group-store";
 import { useGroupReader } from "../group-viewer";
+import { CircleBoard } from "./circle-board";
 import { CircleStats } from "./circle-stats";
 import { GroupPosts } from "./group-posts";
 import { GroupHero } from "./group-seal";
@@ -182,7 +183,8 @@ function GroupDetail({
       {!admin &&
         (member && reader ? (
           <>
-            <CircleStats group={group} />
+            <CircleStats group={group} reader={reader} onResult={onResult} />
+            <CircleBoard group={group} reader={reader} />
             <MemberList group={group} />
             <GroupPosts groupId={group.id} manager={manager} store={posts} onResult={onResult} />
             <GroupProgressSection

@@ -6,7 +6,10 @@ import { useToday } from "@/features/studio/hooks/use-today";
 import { format, useT } from "@/lib/i18n/provider";
 import { useFormat } from "@/lib/i18n/use-format";
 import { challengeState, circleTotal, daysLeft, kindOf, periodOf } from "../board-model";
-import type { WritingGroup } from "../group-model";
+import type { GroupResult } from "../group-actions";
+import { memberOf, type WritingGroup } from "../group-model";
+import { useCircleSync } from "../use-circle-sync";
+import { BoardToggle } from "./board-toggle";
 
 const asDate = (day: string) => {
   const [y, m, d] = day.split("-").map(Number);
@@ -27,11 +30,21 @@ function Row({ label, children }: { label: string; children: React.ReactNode }) 
  * challenge still runs, and the words written by members who joined the leaderboard. It is only
  * drawn for members: the totals are not public, even for a public circle.
  */
-export function CircleStats({ group }: { group: WritingGroup }) {
+export function CircleStats({
+  group,
+  reader,
+  onResult,
+}: {
+  group: WritingGroup;
+  reader: string;
+  onResult: (result: GroupResult) => void;
+}) {
   const dict = useT().groups;
   const t = dict.stats;
   const { number, date } = useFormat();
   const today = useToday();
+  const me = memberOf(group, reader);
+  useCircleSync(group.id, me?.board === true, me?.boardSince);
   // The day is the visitor's, so it is only known after the page has loaded.
   if (!today) return null;
 
@@ -62,6 +75,7 @@ export function CircleStats({ group }: { group: WritingGroup }) {
         </Row>
       </dl>
       <p className="text-xs text-ink-muted">{t.totalHint}</p>
+      <BoardToggle group={group} reader={reader} today={today} onResult={onResult} />
     </Section>
   );
 }

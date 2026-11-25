@@ -195,6 +195,7 @@ export function JoinCodeDialog({
   const locale = useLocale();
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
+  const [sent, setSent] = useState("");
   const formId = useId();
   const codeId = `${formId}-code`;
   const field = useRef<HTMLInputElement>(null);
@@ -203,6 +204,7 @@ export function JoinCodeDialog({
     event.preventDefault();
     const result = joinByCode(code);
     if (result.ok && result.id) onJoined(result.id);
+    else if (result.ok) setSent(groupMessage(result.code, dict.messages, locale));
     else {
       setError(groupMessage(result.code, dict.messages, locale));
       field.current?.focus();
@@ -218,13 +220,16 @@ export function JoinCodeDialog({
       actions={
         <>
           <Cancel onClose={onClose} />
-          <Button type="submit" form={formId}>
-            {t.join}
-          </Button>
+          {!sent && (
+            <Button type="submit" form={formId}>
+              {t.join}
+            </Button>
+          )}
         </>
       }
     >
-      <form id={formId} onSubmit={submit} noValidate>
+      {sent && <Notice>{sent}</Notice>}
+      <form id={formId} onSubmit={submit} noValidate hidden={Boolean(sent)}>
         <Field id={codeId} label={t.codeLabel} error={error || undefined}>
           <Input
             id={codeId}

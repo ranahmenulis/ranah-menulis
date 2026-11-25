@@ -42,6 +42,18 @@ export const groups: typeof source = {
     members: "members",
     kinds: { permanent: "Permanent Circle", challenge: "45-Day Challenge" },
   },
+  board: {
+    title: "Leaderboard",
+    archive: "Final result of the challenge",
+    empty: "No member has joined the leaderboard yet. Turn it on in the circle summary to start.",
+    upcoming: "The challenge starts {date}. The ranking appears once it begins.",
+    you: "You",
+    sample: "Example",
+    leftMember: "Member who left",
+    rank: "Rank",
+    words: "{count} words",
+    list: "Leaderboard ranking",
+  },
   stats: {
     title: "Circle summary",
     kind: "Type",
@@ -54,6 +66,9 @@ export const groups: typeof source = {
     daysLeftValue: "{count} days",
     total: "Total words",
     totalHint: "Only from members who joined the leaderboard.",
+    boardLabel: "Join the leaderboard",
+    boardHint:
+      "Only members of this circle can see the ranking. Only your daily word count is shared, never your text. Words count from the day you join.",
   },
   view: {
     joinBody: "Join to read the posts and progress that members share.",
@@ -134,6 +149,11 @@ export const groups: typeof source = {
     code: "Invitation code",
     rotate: "Change code",
     waiting: "Waiting for a reply from {names}.",
+    requestsTitle: "Join requests",
+    requestAccept: "Accept",
+    requestDecline: "Decline",
+    requestAcceptAria: "Accept the request of {name}",
+    requestDeclineAria: "Decline the request of {name}",
     noAdminNotice:
       "There is no Circle Admin yet. An Administrator can appoint one from the members.",
     membersLabel: "Manage members",
@@ -199,5 +219,11 @@ export const groups: typeof source = {
     accessDenied: "Access denied.",
     postUnavailable: "This post is no longer available in the circle.",
     postHidden: "Post hidden from the circle.",
+    requestSent: "Join request sent. The Circle Admin will answer it.",
+    requestAccepted: "Request accepted. This writer is now a member.",
+    requestDeclined: "Request declined.",
+    requestGone: "This request no longer exists.",
+    boardOn: "You joined this circle's leaderboard.",
+    boardOff: "You left this circle's leaderboard.",
   },
 };

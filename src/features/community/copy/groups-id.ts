@@ -42,6 +42,18 @@ export const groups = {
     members: "anggota",
     kinds: { permanent: "Lingkar tetap", challenge: "Tantangan 45 Hari" },
   },
+  board: {
+    title: "Leaderboard",
+    archive: "Hasil akhir tantangan",
+    empty: "Belum ada anggota yang ikut leaderboard. Nyalakan di ringkasan lingkar untuk mulai.",
+    upcoming: "Tantangan dimulai {date}. Peringkat muncul setelah mulai.",
+    you: "Kamu",
+    sample: "Contoh",
+    leftMember: "Anggota yang keluar",
+    rank: "Peringkat",
+    words: "{count} kata",
+    list: "Peringkat leaderboard",
+  },
   stats: {
     title: "Ringkasan lingkar",
     kind: "Jenis",
@@ -54,6 +66,9 @@ export const groups = {
     daysLeftValue: "{count} hari",
     total: "Total kata",
     totalHint: "Hanya dari anggota yang ikut leaderboard.",
+    boardLabel: "Ikut leaderboard",
+    boardHint:
+      "Hanya anggota lingkar ini yang bisa melihat peringkat. Yang dibagikan hanya jumlah kata harianmu, bukan teksnya. Kata dihitung sejak hari kamu ikut.",
   },
   view: {
     joinBody: "Gabung untuk membaca tulisan dan progres yang dibagikan anggota.",
@@ -135,6 +150,11 @@ export const groups = {
     code: "Kode undangan",
     rotate: "Ganti kode",
     waiting: "Menunggu jawaban dari {names}.",
+    requestsTitle: "Permintaan bergabung",
+    requestAccept: "Terima",
+    requestDecline: "Tolak",
+    requestAcceptAria: "Terima permintaan {name}",
+    requestDeclineAria: "Tolak permintaan {name}",
     noAdminNotice:
       "Belum ada Admin Lingkar. Administrator bisa menunjuk pengganti dari anggota lingkar.",
     membersLabel: "Kelola anggota",

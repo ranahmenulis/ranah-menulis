@@ -22,6 +22,7 @@ import {
   type GroupMember,
   type WritingGroup,
 } from "@/features/community/groups/group-model";
+import { JoinRequestList } from "./join-request-list";
 import { GroupSettingsDialog } from "@/features/community/groups/components/group-dialogs";
 
 type ManagementAction =
@@ -162,6 +163,7 @@ export function GroupManagement({
           })}
         </p>
       )}
+      <JoinRequestList group={group} onResult={onResult} />
       {!group.members.some((member) => member.admin) && <Notice>{t.noAdminNotice}</Notice>}
       {group.members.length ? (
         <ul aria-label={t.membersLabel} className="divide-y divide-line border-y border-line">

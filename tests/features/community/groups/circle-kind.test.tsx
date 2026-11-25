@@ -1,5 +1,6 @@
 import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { ME_ID } from "@/features/kelola/identity";
 import { auditLog } from "@/features/kelola/audit/audit-log";
 import { CircleStats } from "@/features/community/groups/components/circle-stats";
 import { GroupSettingsDialog } from "@/features/community/groups/components/group-dialogs";
@@ -140,7 +141,9 @@ describe("the circle page", () => {
   });
 
   it("summarises a permanent circle by the current month, with no challenge status", async () => {
-    render(<CircleStats group={{ ...challenge, kind: undefined }} />);
+    render(
+      <CircleStats group={{ ...challenge, kind: undefined }} reader={ME_ID} onResult={vi.fn()} />,
+    );
     await screen.findByText("Ringkasan lingkar");
     expect(screen.getByText(/bulan berjalan/)).toBeTruthy();
     expect(screen.queryByText("Status")).toBeNull();
@@ -148,7 +151,7 @@ describe("the circle page", () => {
   });
 
   it("says a challenge in the past is finished", async () => {
-    render(<CircleStats group={challenge} />);
+    render(<CircleStats group={challenge} reader={ME_ID} onResult={vi.fn()} />);
     await screen.findByText("Ringkasan lingkar");
     expect(screen.getByText("Selesai")).toBeTruthy();
     expect(screen.queryByText("Sisa hari")).toBeNull();
