@@ -1,0 +1,16 @@
+export const studioImport = {
+  title: "Ada naskah di perangkat ini",
+  body: "Perangkat ini menyimpan {count} naskah dan folder yang belum ada di akunmu. Salin ke akunmu supaya ikut terbuka di perangkat lain?",
+  note: "Naskah tetap ada di perangkat ini. Riwayat versi tidak ikut disalin.",
+  copy: "Salin ke akun",
+  later: "Nanti saja",
+  running: "Menyalin…",
+  link: "Salin naskah dari perangkat ini ({count})",
+  done: "{imported} naskah disalin ke akunmu.",
+  doneFolders: "{folders} folder disalin.",
+  skipped: "{skipped} naskah dilewati (terlalu besar atau tidak valid) dan tetap di perangkat ini.",
+  nothing: "Semua sudah ada di akunmu.",
+  close: "Tutup",
+  failed: "Naskah belum tersalin. Tidak ada yang hilang dari perangkat ini. Coba lagi.",
+  retry: "Coba lagi",
+};

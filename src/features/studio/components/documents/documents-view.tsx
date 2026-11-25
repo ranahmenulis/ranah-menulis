@@ -23,6 +23,7 @@ import type { StudioDocument } from "../../storage/document-store";
 import { studioStore } from "../../storage/store";
 import { buildWorks, searchCandidates, workMatches } from "../../works";
 import { StudioTabs } from "../studio-tabs";
+import { DeviceImport } from "../works/device-import";
 import { WorksList } from "../works/works-list";
 import { ArchiveList } from "./archive-list";
 import { DocumentFilterFields, useDocumentFilters } from "./document-filters";
@@ -269,6 +270,8 @@ function DocumentListContent() {
           {t.list.openCopy}
         </ButtonLink>
       )}
+
+      <DeviceImport enabled={tab === "semua"} />
 
       <div className={listCardClass(tab, list.status)}>{renderList()}</div>
 
