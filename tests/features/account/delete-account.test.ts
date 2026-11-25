@@ -10,6 +10,7 @@ const admin = vi.hoisted(() => ({
   remove: vi.fn(),
   insert: vi.fn(),
   deleteUser: vi.fn(),
+  buckets: [] as string[],
 }));
 
 vi.mock("@/lib/supabase/server", () => ({
@@ -20,7 +21,12 @@ vi.mock("@/lib/supabase/server", () => ({
 }));
 vi.mock("@/lib/supabase/admin", () => ({
   createAdminClient: () => ({
-    storage: { from: () => ({ list: admin.list, remove: admin.remove }) },
+    storage: {
+      from: (bucket: string) => {
+        admin.buckets.push(bucket);
+        return { list: admin.list, remove: admin.remove };
+      },
+    },
     from: () => ({ insert: admin.insert }),
     auth: { admin: { deleteUser: admin.deleteUser } },
   }),
@@ -36,6 +42,7 @@ beforeEach(() => {
   admin.remove.mockReset().mockResolvedValue({});
   admin.insert.mockReset().mockResolvedValue({});
   admin.deleteUser.mockReset().mockResolvedValue({ error: null });
+  admin.buckets.length = 0;
 });
 
 describe("deleteOwnAccount", () => {
@@ -61,6 +68,14 @@ describe("deleteOwnAccount", () => {
       target_id: "u1",
     });
     expect(server.signOut).toHaveBeenCalled();
+  });
+
+  it("also removes the person's Studio cover files", async () => {
+    await deleteOwnAccount();
+    expect(admin.buckets.filter((b, i, all) => all.indexOf(b) === i)).toEqual([
+      "avatars",
+      "studio-covers",
+    ]);
   });
 
   it("does not look for photo files to remove when there are none", async () => {

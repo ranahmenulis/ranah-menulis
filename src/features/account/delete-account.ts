@@ -11,7 +11,7 @@ export type DeleteOwnAccountResult =
  * session, never from an argument, so nobody can delete someone else's account through it. The
  * service role is needed because an account cannot delete itself under Row Level Security.
  * Deleting the auth user removes the profile and the platform roles with it (on delete cascade);
- * the photo files and one audit line (no personal data: only the id) are handled here first.
+ * the photo and cover files and one audit line (no personal data: only the id) are handled here first.
  * Data kept on the device (documents, Community) is not touched.
  */
 export async function deleteOwnAccount(): Promise<DeleteOwnAccountResult> {
@@ -22,9 +22,12 @@ export async function deleteOwnAccount(): Promise<DeleteOwnAccountResult> {
     if (!userId) return { ok: false, reason: "unauthenticated" };
 
     const admin = createAdminClient();
-    const files = await admin.storage.from("avatars").list(userId);
-    const paths = (files.data ?? []).map((file) => `${userId}/${file.name}`);
-    if (paths.length > 0) await admin.storage.from("avatars").remove(paths);
+    // Every bucket keeps a person's files in a folder named after them.
+    for (const bucket of ["avatars", "studio-covers"]) {
+      const files = await admin.storage.from(bucket).list(userId);
+      const paths = (files.data ?? []).map((file) => `${userId}/${file.name}`);
+      if (paths.length > 0) await admin.storage.from(bucket).remove(paths);
+    }
 
     // Written before the delete: `actor_id` turns to null afterwards, `target_id` stays.
     await admin.from("audit_log").insert({

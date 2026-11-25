@@ -107,6 +107,9 @@ Isi pekerjaannya (urutan belum diputuskan):
 
 ## 6. Log sesi
 
+### 26 November 2026 (banner impor dari perangkat, branch be/supabase)
+- Tab Naskah mendapat banner "Ada naskah di perangkat ini" untuk orang yang masuk dan punya naskah tamu di IndexedDB: Salin ke akun, Nanti saja (jadi tautan kecil yang membuka banner lagi), hasil dan galat berfokus. Dua bahasa (`studioImport`). Rincian dan hasil uji di `catatan-development-be.md`. Belum di-commit; `main` tidak terpengaruh.
+
 ### 25 November 2026 (uji ulang Vercel dan penutup)
 - Uji ulang setelah `568420c` menemukan #418 masih ada di landing produksi: pratinjau Proyek saya memakai `sentAtText` tanpa zona ("Versi 2 · 2.105 kata · dikirim 3 Nov 2026, 08.00" di klien, jam lain di server). Diperbaiki di `5d2d5c1` (`sentAtText` dan `MyProjectGroup` menerima `timeZone`, landing memakai `SAMPLE_ZONE`; tes `submission-text-zone`). **Uji ulang setelah deploy: nol error JS di landing, `/daftar`, `/mulai`, `/studio/baru`, tanpa overflow, placeholder judul "Judul".** Avatar "?" hanya terbukti di lokal (di produksi profil kosong tampil sebagai akun contoh).
 - Keputusan user: versi ini diserahkan; feedback berikutnya paralel dengan backend. Posisi git: `origin/main` = `5d2d5c1`. Prompt sesi berikutnya ada di `docs/desain/Prompt Lanjut Slicing.md`.

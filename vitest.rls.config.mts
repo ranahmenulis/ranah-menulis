@@ -1,8 +1,11 @@
+import { fileURLToPath } from "node:url";
 import { defineConfig } from "vitest/config";
 
 // RLS tests run against a real Supabase project, so they live in their own config and are not
 // part of `npm test` or CI. Run with `npm run test:rls`.
 export default defineConfig({
+  // The Studio adapter test imports app code through the `@` alias.
+  resolve: { alias: { "@": fileURLToPath(new URL("./src", import.meta.url)) } },
   test: {
     environment: "node",
     include: ["tests/rls/**/*.test.ts"],
