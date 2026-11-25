@@ -126,3 +126,15 @@ function isGroup(value: unknown): value is WritingGroup {
 }
 
 export const writingGroups = createLocalListStore("ranah.writingGroups", isGroup, groupSeeds);
+
+/**
+ * What an account made on the Daftar screen starts with: the sample circles without "me" as a
+ * member or an invitee (the sample world belongs to the untouched dummy reader).
+ */
+export function withoutSampleMe(groups: readonly WritingGroup[]): WritingGroup[] {
+  return groups.map((group) => ({
+    ...group,
+    members: group.members.filter((member) => member.authorId !== ME_ID),
+    invites: group.invites.filter((invite) => invite.authorId !== ME_ID),
+  }));
+}

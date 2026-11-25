@@ -4,6 +4,7 @@ import { PencilSimpleLine } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
+import { useOwnProfileHref } from "@/features/account/use-own-profile-href";
 import { useLastDocument } from "@/features/studio/hooks/use-last-document";
 import { studioStore } from "@/features/studio/storage/store";
 import { cn } from "@/lib/cn";
@@ -34,12 +35,16 @@ import { TopBar } from "./top-bar";
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const { nav, topBar } = useT().shell;
-  const active = activeId(pathname);
+  const ownProfile = useOwnProfileHref();
+  const active = activeId(pathname, ownProfile);
   const [sidebar, setSidebar] = useState(true);
   const viewer = useViewer();
   const roles = useEffectiveRoles();
   // Only a convenience: the screens refuse the wrong role themselves, and the database decides.
-  const entries = areasFor(roles).length > 0 ? [...mainNav, kelolaNav] : mainNav;
+  const navEntries = areasFor(roles).length > 0 ? [...mainNav, kelolaNav] : mainNav;
+  const entries = navEntries.map((entry) =>
+    entry.id === "profil" ? { ...entry, href: ownProfile } : entry,
+  );
   const onPost = isPostPage(pathname);
   // One read for both navigations (sidebar and rail are both in the DOM).
   const lastDocument = useLastDocument(studioStore, pathname);

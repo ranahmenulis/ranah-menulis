@@ -9,7 +9,7 @@ import { StickyChipBar } from "@/components/ui/sticky-chip-bar";
 import { useT } from "@/lib/i18n/provider";
 import { useViewer } from "@/lib/viewer";
 import { SAVED_HREF } from "@/features/app-shell/nav";
-import { OWN_PROFILE_HREF } from "@/features/profile/profile-href";
+import { useOwnProfileHref } from "@/features/account/use-own-profile-href";
 import { editorPicks } from "../../curation/picks-store";
 import {
   CATEGORY_CHIPS_VISIBLE,
@@ -64,6 +64,7 @@ export function DiscoverView() {
   const [picked, setPicked] = useState<CategoryId>("semua");
   const [shown, setShown] = useState({ id: "semua" as CategoryId, count: PAGE_SIZE });
 
+  const ownProfile = useOwnProfileHref();
   const picks = editorPicks.use();
   const editorIds = useMemo(() => picks.map((p) => p.postId), [picks]);
   const categories = useMemo(
@@ -92,7 +93,7 @@ export function DiscoverView() {
     : [
         { label: t.hero.following, value: counts.following },
         { label: t.hero.saved, value: counts.saved, href: SAVED_HREF },
-        { label: t.hero.mine, value: counts.mine, href: OWN_PROFILE_HREF },
+        { label: t.hero.mine, value: counts.mine, href: ownProfile },
       ];
 
   return (

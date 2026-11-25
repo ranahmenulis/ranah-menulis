@@ -11,7 +11,7 @@ import { useAccount } from "@/features/account/account-store";
 import { KELOLA_HREF, areasFor } from "@/features/kelola/access";
 import { useEffectiveRoles } from "@/features/kelola/use-effective-roles";
 import { SETTINGS_HREF } from "@/features/account/redirect";
-import { OWN_PROFILE_HREF } from "@/features/profile/profile-href";
+import { useOwnProfileHref } from "@/features/account/use-own-profile-href";
 import { ReportProblemDialog } from "@/features/support/components/report-problem-dialog";
 import { DUMMY_USER, SAVED_HREF } from "./nav";
 
@@ -25,6 +25,7 @@ export function AccountMenu({ className }: { className?: string }) {
   const [reporting, setReporting] = useState(false);
   const manages = areasFor(useEffectiveRoles()).length > 0;
   const account = useAccount();
+  const ownProfile = useOwnProfileHref();
   const router = useRouter();
   return (
     <>
@@ -43,7 +44,7 @@ export function AccountMenu({ className }: { className?: string }) {
             id: "profile",
             label: topBar.myProfile,
             icon: <User aria-hidden />,
-            onSelect: () => router.push(OWN_PROFILE_HREF),
+            onSelect: () => router.push(ownProfile),
           },
           {
             id: "saved",

@@ -27,7 +27,10 @@ export function visibleFixtureNotifications(
   groups: readonly WritingGroup[],
   reader: string | null,
   entries: readonly ModerationEntry[],
+  sampleWorld = true,
 ) {
+  // The sample notifications are about the dummy reader's posts, so a registered account has none.
+  if (!sampleWorld) return [];
   const removed = removedIds(entries).posts;
   return notificationFixtures.filter(({ href }) => {
     const post = fixturePostsByHref.get(href ?? "");

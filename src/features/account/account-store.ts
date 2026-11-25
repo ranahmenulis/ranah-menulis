@@ -39,6 +39,11 @@ export type AccountPrefs = {
 
 export type Account = {
   email: string;
+  /**
+   * True for an account made on the Daftar screen on this device. It starts with no posts,
+   * followers, or notifications; the untouched dummy reader (no stored account) does not set it.
+   */
+  registered?: boolean;
   /** ISO time the account was made; shown as "Anggota sejak". */
   memberSince: string;
   /** ISO time of the last password change; null when it was never changed here. */
@@ -49,6 +54,7 @@ export type Account = {
 
 export type AccountPatch = {
   email?: string;
+  registered?: boolean;
   memberSince?: string;
   passwordChangedAt?: string | null;
   profile?: Partial<AccountProfile>;
@@ -106,6 +112,7 @@ export function parseAccount(raw: string | null): Account {
     : d.profile.genres;
   return {
     email: text(data.email, d.email),
+    ...(data.registered === true ? { registered: true } : {}),
     memberSince: isoOr(data.memberSince, d.memberSince) ?? d.memberSince,
     passwordChangedAt: isoOr(data.passwordChangedAt, null),
     profile: {
@@ -128,6 +135,7 @@ export function parseAccount(raw: string | null): Account {
 export function mergeAccount(current: Account, patch: AccountPatch): Account {
   return {
     email: patch.email ?? current.email,
+    ...((patch.registered ?? current.registered) ? { registered: true } : {}),
     memberSince: patch.memberSince ?? current.memberSince,
     passwordChangedAt:
       patch.passwordChangedAt === undefined ? current.passwordChangedAt : patch.passwordChangedAt,

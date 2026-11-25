@@ -1,6 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useAccount } from "@/features/account/account-store";
+import { showsSampleWorld } from "@/features/account/own-identity";
 import { canRead, isFollowing } from "../feed";
 import { ME_ID } from "../fixtures/authors";
 import { groupIdOf, postMembershipId } from "../groups/group-model";
@@ -51,6 +53,7 @@ export function useCommunity(
   const decisions = useModeration();
   const reader = useGroupReader();
   const groups = writingGroups.use();
+  const sampleWorld = showsSampleWorld(useAccount());
   const [status, setStatus] = useState<CommunityData["status"]>("loading");
   const [now, setNow] = useState(0);
   const [stored, setStored] = useState<StoredPost[]>([]);
@@ -80,7 +83,9 @@ export function useCommunity(
   const posts = useMemo(() => {
     if (status !== "ready") return [];
     const mine = stored.flatMap((s) => toPost(s) ?? []);
-    const all = applyMarks([...resolveFixturePosts(now), ...mine], marks);
+    // A registered account has none of the dummy reader's sample posts.
+    const sample = resolveFixturePosts(now).filter((p) => sampleWorld || p.authorId !== ME_ID);
+    const all = applyMarks([...sample, ...mine], marks);
     if (includeRemoved) return all;
     return all
       .filter((p) => !removed.posts.has(p.id) && canRead(p, groups, reader))
@@ -94,18 +99,19 @@ export function useCommunity(
             }
           : p,
       );
-  }, [status, now, stored, marks, includeRemoved, removed, groups, reader]);
+  }, [status, now, stored, marks, includeRemoved, removed, groups, reader, sampleWorld]);
 
   const comments = useMemo(() => {
     if (status !== "ready") return [];
     const visiblePostIds = new Set(posts.map((p) => p.id));
-    return [...resolveFixtureComments(now), ...storedComments]
+    const sample = resolveFixtureComments(now).filter((c) => sampleWorld || c.authorId !== ME_ID);
+    return [...sample, ...storedComments]
       .filter((c) => !marks[mark.deleted(c.id)])
       .filter(
         (c) => includeRemoved || (visiblePostIds.has(c.postId) && !removed.comments.has(c.id)),
       )
       .sort((a, b) => a.createdAt - b.createdAt);
-  }, [status, now, storedComments, marks, includeRemoved, removed, posts]);
+  }, [status, now, storedComments, marks, includeRemoved, removed, posts, sampleWorld]);
 
   const toggle = useCallback(
     async (key: string, current: boolean) => {

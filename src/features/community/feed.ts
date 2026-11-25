@@ -1,10 +1,14 @@
+import { readAccount } from "@/features/account/account-store";
+import { showsSampleWorld } from "@/features/account/own-identity";
 import { DEFAULT_FOLLOWING, ME_ID } from "./fixtures/authors";
 import { canReadGroupPost, type WritingGroup } from "./groups/group-model";
 import { mark, type Marks } from "./storage/post-store";
 import type { Post } from "./types";
 
 export function isFollowing(marks: Marks, authorId: string): boolean {
-  return marks[mark.following(authorId)] ?? DEFAULT_FOLLOWING.includes(authorId);
+  // Only the untouched dummy reader follows anyone before touching anything; a new account follows nobody.
+  const byDefault = showsSampleWorld(readAccount()) && DEFAULT_FOLLOWING.includes(authorId);
+  return marks[mark.following(authorId)] ?? byDefault;
 }
 
 /** Group posts are readable only by members of that group. */

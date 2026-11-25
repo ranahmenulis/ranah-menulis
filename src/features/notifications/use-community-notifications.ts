@@ -1,6 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useAccount } from "@/features/account/account-store";
+import { showsSampleWorld } from "@/features/account/own-identity";
 import { editorPicks } from "@/features/community/curation/picks-store";
 import { writingGroups } from "@/features/community/groups/group-store";
 import { useGroupReader } from "@/features/community/groups/group-viewer";
@@ -21,6 +23,7 @@ import type { Notification } from "./types";
 export function useCommunityNotifications(store: PostStore, roles: readonly ManagerRole[]) {
   const reader = useGroupReader();
   const groups = writingGroups.use();
+  const sampleWorld = showsSampleWorld(useAccount());
   const entries = useModeration();
   const reports = useReports();
   const allPicks = editorPicks.use();
@@ -72,11 +75,11 @@ export function useCommunityNotifications(store: PostStore, roles: readonly Mana
   const current = result?.request === request ? result : null;
   const items = useMemo(
     () => [
-      ...visibleFixtureNotifications(groups, reader, entries),
+      ...visibleFixtureNotifications(groups, reader, entries, sampleWorld),
       ...reportNotifications(reports, entries, roles),
       ...(current?.items ?? []),
     ],
-    [current, entries, groups, reader, reports, roles],
+    [current, entries, groups, reader, reports, roles, sampleWorld],
   );
   const status = request && !current ? "loading" : current?.failed ? "error" : "ready";
   return { items, status, reload } as const;

@@ -4,7 +4,7 @@ import { User } from "@phosphor-icons/react/dist/ssr";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { Notice } from "@/components/ui/states";
 import { useToast } from "@/components/ui/toast";
-import { OWN_PROFILE_HREF } from "@/features/profile/profile-href";
+import { useOwnProfileHref } from "../../use-own-profile-href";
 import { format, useLocale, useT } from "@/lib/i18n/provider";
 import { saveAccount, type Account } from "../../account-store";
 import { useProfileForm } from "../../hooks/use-profile-form";
@@ -28,6 +28,7 @@ function memberSince(iso: string, locale: string): string {
  * PRD), and when the account was made. Starts from the saved profile; the page waits for it.
  */
 export function PersonalSection({ account }: { account: Account }) {
+  const ownProfile = useOwnProfileHref();
   const t = useT().account;
   const locale = useLocale();
   const toast = useToast();
@@ -69,8 +70,7 @@ export function PersonalSection({ account }: { account: Account }) {
           {zoneChanged && <Notice>{t.settings.zone.warning}</Notice>}
 
           <div className="flex flex-wrap items-center justify-end gap-3 border-t border-line pt-5">
-            {/* The public profile page still reads the dummy author, whatever username was saved. */}
-            <ButtonLink href={OWN_PROFILE_HREF} variant="text">
+            <ButtonLink href={ownProfile} variant="text">
               {t.settings.personal.viewProfile}
             </ButtonLink>
             <Button type="submit">{t.settings.personal.save}</Button>

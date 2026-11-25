@@ -5,6 +5,8 @@ import { Tabs } from "@/components/ui/tabs";
 import { cn } from "@/lib/cn";
 import { format, useT } from "@/lib/i18n/provider";
 import { useViewer } from "@/lib/viewer";
+import { useAccount } from "@/features/account/account-store";
+import { showsSampleWorld } from "@/features/account/own-identity";
 import { ME_ID } from "@/features/community/fixtures/authors";
 import { useCommunity } from "@/features/community/hooks/use-community";
 import { usePostActions } from "@/features/community/hooks/use-post-actions";
@@ -31,7 +33,8 @@ export function ProfileView({ handle }: { handle: string }) {
   const [tab, setTab] = useState("karya");
 
   // Usernames are lowercase, so /penulis/HafizRahman reaches the same profile.
-  const author = authorByHandle(handle.toLowerCase());
+  const account = useAccount();
+  const author = authorByHandle(handle.toLowerCase(), account);
   const works = useMemo(
     () => (author ? publicWorks(data.posts, author.id) : []),
     [author, data.posts],
@@ -43,15 +46,19 @@ export function ProfileView({ handle }: { handle: string }) {
   if (data.status === "error") return <ProfileError onRetry={data.reload} />;
 
   const own = author.id === ME_ID;
+  // A registered account has the bio it wrote and no followers yet, not the dummy reader's.
+  const fresh = own && !showsSampleWorld(account);
   const genres = genresOf(works);
-  const profile = profileOf(author.id);
+  const profile = fresh
+    ? { bio: account.profile.bio, followers: 0, following: 0 }
+    : profileOf(author.id);
 
   return (
     <div className="mx-auto grid w-full max-w-320 gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
       <ProfileHero
         author={author}
         works={works.length}
-        followers={followerCount(author.id, data.marks)}
+        followers={fresh ? 0 : followerCount(author.id, data.marks)}
         following={followingCount(author.id, data.marks)}
         streak={profile.streak}
         own={own}

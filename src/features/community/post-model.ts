@@ -1,5 +1,7 @@
 import { countWords } from "@/lib/text-stats";
-import { authors } from "./fixtures/authors";
+import { readAccount, type Account } from "@/features/account/account-store";
+import { ownAuthor } from "@/features/account/own-identity";
+import { ME_ID, authors } from "./fixtures/authors";
 import { fixtureComments } from "./fixtures/comments";
 import { postsA } from "./fixtures/posts-a";
 import { postsB } from "./fixtures/posts-b";
@@ -64,11 +66,21 @@ export function excerptOf(post: Post): string {
 
 const authorIndex = new Map(authors.map((a) => [a.id, a]));
 
-export function authorOf(id: string): Author {
+/**
+ * The author behind an id. The reader's own entry follows the saved account (name, username), so
+ * a registered account is not shown as the dummy reader. Pass `account` from `useAccount()` in
+ * components that must re-render when the account changes.
+ */
+export function authorOf(id: string, account: Account = readAccount()): Author {
+  if (id === ME_ID) return ownAuthor(account);
   return authorIndex.get(id) ?? { id, name: "Penulis", handle: id, country: "ID" };
 }
 
-export const authorByHandle = (handle: string) => authors.find((a) => a.handle === handle);
+export function authorByHandle(handle: string, account: Account = readAccount()) {
+  const me = ownAuthor(account);
+  if (me.handle === handle) return me;
+  return authors.find((a) => a.id !== ME_ID && a.handle === handle);
+}
 
 /** Fixture posts with "how long ago" turned into timestamps at the moment of `now`. */
 export function resolveFixturePosts(now: number): Post[] {

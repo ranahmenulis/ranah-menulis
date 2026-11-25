@@ -7,6 +7,7 @@ import { CheckChoice } from "@/components/ui/choice";
 import { TextLink } from "@/components/ui/text-link";
 import { format, useT } from "@/lib/i18n/provider";
 import { setViewer } from "@/lib/viewer";
+import { withoutSampleMe, writingGroups } from "@/features/community/groups/group-store";
 import { DEFAULT_ACCOUNT, resetAccount, saveAccount } from "../account-store";
 import { simulateSignUp } from "../dummy-auth";
 import { NEXT_PARAM, ONBOARDING_HREF, SIGN_IN_HREF, VERIFY_HREF, withNext } from "../redirect";
@@ -23,8 +24,11 @@ import { PasswordRules } from "./password-rules";
 function startAccount(email: string) {
   const zone = deviceTimeZone();
   resetAccount();
+  // A new account starts without the sample circle membership and invitation of the dummy reader.
+  writingGroups.write(withoutSampleMe(writingGroups.read()));
   saveAccount({
     email,
+    registered: true,
     memberSince: new Date().toISOString(),
     profile: {
       ...DEFAULT_ACCOUNT.profile,

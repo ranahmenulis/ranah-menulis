@@ -77,7 +77,7 @@ export const mainNav = [home, studio, discover, projects, saved, profile];
 export const bottomNav = [home, studio, discover, projects];
 
 /** Which nav entry the current path belongs to. */
-export function activeId(pathname: string): string | null {
+export function activeId(pathname: string, ownProfile: string = OWN_PROFILE_HREF): string | null {
   if (pathname.startsWith(STUDIO_HREF)) return "studio";
   if (pathname.startsWith("/beranda")) return "beranda";
   // Community is one module: Tulisan, posts, Event and Lingkar Menulis all light it up.
@@ -95,7 +95,7 @@ export function activeId(pathname: string): string | null {
   if (pathname.startsWith(SAVED_HREF)) return "tersimpan";
   if (pathname.startsWith(NOTIFICATIONS_HREF)) return "notifikasi";
   // Only your own profile is "Profil"; another author's page belongs to no navigation entry.
-  if (pathname === OWN_PROFILE_HREF) return "profil";
+  if (pathname === ownProfile) return "profil";
   return null;
 }
 
