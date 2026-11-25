@@ -1,6 +1,6 @@
 # Panduan Uji RanahMenulis
 
-**Untuk:** penguji dan client · **Per:** 21 November 2026
+**Untuk:** penguji dan client · **Per:** 25 November 2026
 
 Tujuan: memastikan semua layar dan alur sudah sesuai harapan **sebelum** server (login dan database) dibangun. Ikuti urutan dari atas ke bawah, klik tautan di setiap langkah, lakukan yang diminta, lalu centang ☐ jika hasilnya sesuai. Catat apa pun yang terasa membingungkan, janggal, atau kurang.
 
@@ -24,7 +24,7 @@ Alamat dasar: [ranah-menulis.vercel.app](https://ranah-menulis.vercel.app/berand
 
 | # | Buka | Lakukan | Hasil yang diharapkan |
 |---|---|---|---|
-| A1 | [Halaman awal](https://ranah-menulis.vercel.app/) | Gulir sampai bawah, ganti bahasa dan tema. | Lima bagian ekosistem, contoh editor, jalur penerbitan, FAQ, form daftar tunggu. ☐ |
+| A1 | [Halaman awal](https://ranah-menulis.vercel.app/) | Gulir sampai bawah, ganti bahasa dan tema. | Judul dua baris, contoh editor Studio, lima bagian ekosistem, jalur penerbitan, FAQ, form daftar tunggu. Tampil utuh di terang, gelap, Indonesia, dan Inggris. ☐ |
 | A2 | [Daftar](https://ranah-menulis.vercel.app/daftar) | Isi email, sandi (8 karakter lebih, ada huruf dan angka), centang ketentuan. | Lanjut ke layar verifikasi. ☐ |
 | A3 | [Verifikasi](https://ranah-menulis.vercel.app/verifikasi?status=berhasil) | Buka. | Email terverifikasi, lanjut ke pengenalan profil. ☐ |
 | A4 | [Mulai](https://ranah-menulis.vercel.app/mulai) | Isi nama, username, bio, zona waktu, genre. | Profil tersimpan. ☐ |
@@ -34,17 +34,21 @@ Alamat dasar: [ranah-menulis.vercel.app](https://ranah-menulis.vercel.app/berand
 
 | # | Buka | Lakukan | Hasil yang diharapkan |
 |---|---|---|---|
-| B1 | [Studio](https://ranah-menulis.vercel.app/studio) | Klik tombol tulisan baru. | Editor penuh layar terbuka. ☐ |
+| B1 | [Studio](https://ranah-menulis.vercel.app/studio) | Perhatikan tab **Naskah** (daftar berbentuk tabel), lalu klik **Naskah baru**. | Editor penuh layar terbuka. Judul naskah bisa diketik langsung di bilah atas editor. ☐ |
 | B2 | [Editor baru](https://ranah-menulis.vercel.app/studio/baru) | Ketik judul, lalu tempel (paste) [naskah contoh](https://ranah-menulis.vercel.app/contoh-naskah.txt) sekitar 1.100 kata (dibutuhkan agar bisa dikirim ke lomba dan antologi). Pakai tebal, miring, judul, kutipan, daftar. | Format berlaku, jumlah kata bertambah, tersimpan otomatis. ☐ |
 | B3 | [Studio](https://ranah-menulis.vercel.app/studio) (buka dokumen dari B2) | Klik "N kata". | Kata, karakter, paragraf, waktu baca. ☐ |
 | B4 | [Studio](https://ranah-menulis.vercel.app/studio) (buka dokumen dari B2) | Nyalakan mode fokus, lalu keluar. | Tampilan bersih. ☐ |
 | B5 | [Studio](https://ranah-menulis.vercel.app/studio) (buka dokumen dari B2) | Jalankan timer sprint 1 menit sambil menulis. | Hasil "N kata dalam M menit" di akhir. ☐ |
 | B6 | [Studio](https://ranah-menulis.vercel.app/studio) (editor, menu ⋯) | Atur Target dokumen, lihat Riwayat versi, Ekspor PDF. | Target tampil di jumlah kata, riwayat bisa dibuka, PDF terunduh. ☐ |
-| B7 | [Studio](https://ranah-menulis.vercel.app/studio) (panah kembali dari editor) | Kembali ke daftar. | Dokumen ada di daftar. Beri jenis dan tag lewat menu ⋯. ☐ |
+| B7 | [Studio](https://ranah-menulis.vercel.app/studio) (panah kembali dari editor) | Kembali ke daftar. | Naskah ada di tabel (Judul, Kata, Jenis, Tag, Diubah, Dibuat). Klik judul kolom untuk mengurutkan. Beri jenis dan tag lewat menu ⋯. ☐ |
 | B8 | [Studio](https://ranah-menulis.vercel.app/studio) | Buat folder, duplikat dokumen, tekan Ctrl+K dan cari satu kata dari tulisan. | Pencarian menemukan dokumen. ☐ |
 | B9 | [Streak](https://ranah-menulis.vercel.app/studio/streak) | Atur target harian. | Kalender, streak, dan progres hari ini tampil. ☐ |
 | B10 | [Statistik](https://ranah-menulis.vercel.app/studio/statistik) | Ganti Harian, Mingguan, Bulanan. | Grafik terisi. ☐ |
 | B11 | [Beranda](https://ranah-menulis.vercel.app/beranda) | Kembali. | Kata hari ini, ringkasan minggu, dan tombol Lanjutkan menulis terisi. ☐ |
+| B12 | [Studio](https://ranah-menulis.vercel.app/studio) (buka naskah dari B2) | Di editor, ganti font, ukuran, rata teks, dan gaya paragraf lewat bilah format. Buka menu ⋯ → **Tata letak halaman**, ubah margin dan jarak baris. | Perubahan berlaku seketika pada naskah itu saja. ☐ |
+| B13 | [Studio](https://ranah-menulis.vercel.app/studio) (editor) | Pindah dari **Writing** ke **Pages** (Page Preview). | Teks terbagi per halaman A5 dengan label "perkiraan". Kembali ke Writing tanpa ada teks yang hilang. ☐ |
+| B14 | [Studio](https://ranah-menulis.vercel.app/studio) | Klik judul sebuah naskah di tabel. | Halaman naskah dengan tab **Ringkasan** (sampul, sinopsis, target, bab terakhir dikerjakan) dan **Isi**. ☐ |
+| B15 | [Studio](https://ranah-menulis.vercel.app/studio) | Klik **Buku baru**, beri judul dan unggah sampul (opsional). Tambahkan dua bab, lalu ubah urutannya dengan tombol Naikkan dan Turunkan. | Total kata buku bertambah, urutan bab tersimpan, fokus tidak hilang setelah memindah bab. ☐ |
 
 ## 1.C Community
 
@@ -56,13 +60,16 @@ Alamat dasar: [ranah-menulis.vercel.app](https://ranah-menulis.vercel.app/berand
 | C4 | [Tersimpan](https://ranah-menulis.vercel.app/tersimpan) | Buka. | Tulisan dari C2 ada di sini. ☐ |
 | C5 | [Tulis postingan](https://ranah-menulis.vercel.app/tulis) | Pilih dokumen dari B2, centang bagian yang dibagikan, isi judul dan genre, pilih siapa yang boleh membaca, terbitkan. | Hanya teks yang dipilih menjadi publik. Tulisan muncul di Community dan profil Anda. ☐ |
 
-## 1.D Grup dan Event
+## 1.D Lingkar Menulis dan Event
 
 | # | Buka | Lakukan | Hasil yang diharapkan |
 |---|---|---|---|
-| D1 | [Grup](https://ranah-menulis.vercel.app/grup) | Buat grup baru. | Anda menjadi Admin Grup. ☐ |
-| D2 | [Grup contoh](https://ranah-menulis.vercel.app/grup/penulis-pesisir) | Lihat anggota, bagikan progres menulis. | Progres tampil setelah persetujuan. ☐ |
-| D3 | [Event](https://ranah-menulis.vercel.app/event/cerita-selama-sepekan) | Gabung dengan satu dokumen, menulis di Studio, kembali. | Progres event bertambah. Event contoh aktif sampai **25 November 2026**. ☐ |
+| D1 | [Lingkar Menulis](https://ranah-menulis.vercel.app/grup) | Klik **Buat lingkar**. Coba jenis **Tantangan 45 Hari** dan isi tanggal mulai. | Anda menjadi Admin Lingkar. Tanggal berakhir otomatis hari ke-45. Jenis dan tanggal tidak bisa diubah setelah dibuat. ☐ |
+| D2 | [Lingkar contoh](https://ranah-menulis.vercel.app/grup/penulis-pesisir) | Lihat anggota, bagikan progres menulis. | Progres tampil setelah persetujuan. Halaman selebar halaman Community lain dengan dua kolom. ☐ |
+| D3 | [Lingkar contoh](https://ranah-menulis.vercel.app/grup/penulis-pesisir) | Di ringkasan, nyalakan **Ikut leaderboard**, lalu tulis beberapa kata di Studio dan buka halaman ini lagi. | Anda masuk peringkat. Baris anggota lain berlabel "Contoh". Peringkat hanya terlihat anggota lingkar. ☐ |
+| D4 | [Lingkar](https://ranah-menulis.vercel.app/grup) | Klik **Masukkan kode** dan masukkan kode lingkar privat dari Admin Lingkar (contoh: `PESISIR26`, hanya bila Anda belum anggota). | Muncul "Permintaan bergabung dikirim". Anda belum menjadi anggota sampai dijawab. Jawab di [Admin → Lingkar](https://ranah-menulis.vercel.app/kelola/admin/grup?sebagai=administrator) dengan **Terima**. ☐ |
+| D5 | [Event](https://ranah-menulis.vercel.app/event/cerita-selama-sepekan) | Buka. | Event contoh **sudah selesai** (berakhir 25 November 2026), jadi tombol Gabung nonaktif dan alasannya tampil. Halaman selebar Community lain dengan dua kolom. ☐ |
+| D6 | [Buat event](https://ranah-menulis.vercel.app/kelola/organizer/event/baru?sebagai=organizer) | Buat event baru yang sedang berjalan, lalu buka dari [daftar Event](https://ranah-menulis.vercel.app/event), gabung dengan satu dokumen, tulis di Studio, kembali. | Progres event bertambah. ☐ |
 
 ## 1.E Projects: dari daftar sampai hasil
 
@@ -85,7 +92,8 @@ Alamat dasar: [ranah-menulis.vercel.app](https://ranah-menulis.vercel.app/berand
 |---|---|---|---|
 | F1 | [Notifikasi](https://ranah-menulis.vercel.app/notifikasi) | Buka. | Pemberitahuan pendaftaran dan kiriman dari bagian E. ☐ |
 | F2 | [Pengaturan](https://ranah-menulis.vercel.app/pengaturan) | Ubah tampilan, menulis, dan pilihan notifikasi. Simpan. | Perubahan berlaku. ☐ |
-| F3 | Ponsel | Ulangi beberapa langkah di ponsel dan mode gelap. | Bilah bawah punya lima tab, dialog muncul dari bawah, tidak ada halaman yang bergeser ke samping. ☐ |
+| F3 | Ponsel | Ulangi beberapa langkah di ponsel dan mode gelap. | Bilah bawah punya empat tab dan tombol Tulis, dialog muncul dari bawah, tidak ada halaman yang bergeser ke samping. ☐ |
+| F4 | [Beranda](https://ranah-menulis.vercel.app/beranda) | Klik avatar, pilih **Laporkan masalah**. Kirim kosong dulu, lalu isi jenis dan penjelasan dan kirim. | Pesan kesalahan muncul untuk isian kosong. Setelah terkirim muncul "Laporan diterima". Info teknis ditampilkan penuh dan tidak memuat isi tulisan. ☐ |
 
 ---
 
@@ -151,8 +159,9 @@ Alamat dasar: [ranah-menulis.vercel.app](https://ranah-menulis.vercel.app/berand
 | F2 | [Moderasi](https://ranah-menulis.vercel.app/kelola/admin/moderasi?sebagai=administrator) | Buka satu laporan contoh, pilih Sembunyikan dan isi alasan. | Konten hilang dari layar pembaca. Identitas pelapor tidak tampil. ☐ |
 | F3 | [Kurasi](https://ranah-menulis.vercel.app/kelola/admin/kurasi?sebagai=administrator) | Klik Tambah pada satu tulisan (Editor's Picks) dan satu proyek unggulan. | Tampil di Community dan katalog. ☐ |
 | F4 | [Pengaturan](https://ranah-menulis.vercel.app/kelola/admin/pengaturan?sebagai=administrator) | Isi tautan komunitas luar (`https://...`), Simpan. | Tautan tampil di sidebar dan Beranda. ☐ |
-| F5 | [Grup](https://ranah-menulis.vercel.app/kelola/admin/grup?sebagai=administrator) | Buka satu grup, tunjuk Admin Grup. | Admin Grup berubah. ☐ |
+| F5 | [Lingkar](https://ranah-menulis.vercel.app/kelola/admin/grup?sebagai=administrator) | Buka satu lingkar, tunjuk Admin Lingkar, jawab permintaan bergabung bila ada. | Admin Lingkar berubah dan permintaan terjawab. ☐ |
 | F6 | [Audit log](https://ranah-menulis.vercel.app/kelola/admin/audit?sebagai=administrator) | Buka. | Tindakan F1 sampai F5 tercatat, terbaru dulu, hanya bisa dibaca. Konfirmasi pembayaran dan keputusan submission belum dicatat di sini. ☐ |
+| F7 | [Laporan masalah](https://ranah-menulis.vercel.app/kelola/admin/laporan?sebagai=administrator) | Buka laporan dari 1.F4, ubah status ke Diproses lalu Selesai (catatan opsional). | Status hanya maju, nama pelapor terlihat, tindakan tercatat di audit. ☐ |
 
 ---
 
