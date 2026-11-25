@@ -2,12 +2,11 @@
 
 import type { CSSProperties } from "react";
 import { Campfire } from "@/components/illustrations/community-art";
-import { heroCardClass } from "@/components/ui/card";
+import { heroCardClass, heroSceneClass } from "@/components/ui/card";
 import { CountUp } from "@/components/ui/count-up";
 import { slugHash, titleInitial } from "@/features/projects/cover-model";
 import { cn } from "@/lib/cn";
 import { useT } from "@/lib/i18n/provider";
-import { HeroBanner } from "@/components/ui/page-hero";
 import { kindOf } from "../board-model";
 import type { WritingGroup } from "../group-model";
 
@@ -80,9 +79,14 @@ export function GroupHero({ group }: { group: WritingGroup }) {
   const t = useT().groups.hero;
   return (
     <header
-      className={cn(heroCardClass, "grid items-center gap-6 sm:grid-cols-[auto_minmax(0,1fr)]")}
+      className={cn(
+        heroCardClass,
+        "grid items-center gap-6 sm:grid-cols-[auto_minmax(0,1fr)] md:min-h-72",
+      )}
     >
-      <HeroBanner art={Campfire} className="sm:col-span-2" />
+      <div aria-hidden className={cn(heroSceneClass, "max-md:opacity-30")}>
+        <Campfire className="size-full" />
+      </div>
       <GroupSeal group={group} size="lg" className="rm-cover-enter" />
       <div className="grid min-w-0 content-start gap-3">
         <span className="flex flex-wrap gap-2">

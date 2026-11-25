@@ -1,13 +1,12 @@
 "use client";
 
 import { Bunting } from "@/components/illustrations/event-art";
-import { heroCardClass } from "@/components/ui/card";
+import { heroCardClass, heroSceneClass } from "@/components/ui/card";
 import { CountUp } from "@/components/ui/count-up";
 import { cn } from "@/lib/cn";
 import { format, useLocale, useT } from "@/lib/i18n/provider";
 import { countdownLabel } from "../event-face";
 import { formatEventTime, type EventStateName, type WritingEvent } from "../event-model";
-import { HeroBanner } from "@/components/ui/page-hero";
 import { DateLeaf } from "./date-leaf";
 import { EventStatePill, EventTimeline } from "./event-pill";
 
@@ -29,8 +28,12 @@ export function EventHero({
   const t = useT().events;
   const locale = useLocale();
   return (
-    <header className={cn(heroCardClass, "grid gap-6 sm:grid-cols-[auto_minmax(0,1fr)]")}>
-      <HeroBanner art={Bunting} className="sm:col-span-2" />
+    <header
+      className={cn(heroCardClass, "grid gap-6 sm:grid-cols-[auto_minmax(0,1fr)] md:min-h-72")}
+    >
+      <div aria-hidden className={cn(heroSceneClass, "max-md:opacity-30")}>
+        <Bunting className="size-full" />
+      </div>
       <DateLeaf at={event.startsAt} zone={event.zone} size="lg" className="rm-cover-enter" />
       <div className="grid min-w-0 content-start gap-3">
         <p className="flex flex-wrap items-center gap-2 text-sm text-ink-muted">

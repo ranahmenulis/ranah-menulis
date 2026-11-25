@@ -182,28 +182,32 @@ function GroupDetail({
       )}
       {!admin &&
         (member && reader ? (
-          <>
-            <CircleStats group={group} reader={reader} onResult={onResult} />
-            <CircleBoard group={group} reader={reader} />
-            <MemberList group={group} />
-            <GroupPosts groupId={group.id} manager={manager} store={posts} onResult={onResult} />
-            <GroupProgressSection
-              group={group}
-              reader={reader}
-              store={documents}
-              onResult={onResult}
-            />
-            {manager && (
-              <GroupManagement
+          <div className="grid items-start gap-5 md:gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
+            <div className="grid min-w-0 gap-5 md:gap-6">
+              <CircleBoard group={group} reader={reader} />
+              <GroupPosts groupId={group.id} manager={manager} store={posts} onResult={onResult} />
+              <GroupProgressSection
                 group={group}
                 reader={reader}
-                platform={platform}
-                admin={false}
+                store={documents}
                 onResult={onResult}
               />
-            )}
-            <LeaveGroup id={group.id} reader={reader} onResult={onResult} />
-          </>
+            </div>
+            <div className="grid min-w-0 gap-5 md:gap-6">
+              <CircleStats group={group} reader={reader} onResult={onResult} />
+              <MemberList group={group} />
+              {manager && (
+                <GroupManagement
+                  group={group}
+                  reader={reader}
+                  platform={platform}
+                  admin={false}
+                  onResult={onResult}
+                />
+              )}
+              <LeaveGroup id={group.id} reader={reader} onResult={onResult} />
+            </div>
+          </div>
         ) : (
           <JoinPublicGroup id={group.id} reader={reader} onResult={onResult} />
         ))}
@@ -242,6 +246,7 @@ export function GroupView({
 
   return (
     <BackShell
+      full
       back={
         admin
           ? { href: ADMIN_GROUPS_HREF, label: t.view.allGroups }

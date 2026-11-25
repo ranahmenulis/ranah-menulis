@@ -97,60 +97,66 @@ function EventDetail({
   return (
     <>
       <EventHero event={event} now={now} state={state} />
-      <p className="text-base wrap-anywhere whitespace-pre-line text-ink-soft md:text-lg">
-        {event.description}
-      </p>
-      <p role="status" tabIndex={-1} ref={statusRef} className="empty:hidden">
-        {message}
-      </p>
-      {entry ? (
-        <EventParticipation
-          key={entry.id}
-          event={event}
-          entry={entry}
-          now={now}
-          store={store}
-          show={setMessage}
-        />
-      ) : (
-        <JoinArea state={state} actor={actor} guest={guest} onJoin={() => setJoin(true)} />
-      )}
-      <Section title={t.detail.rulesTitle} icon={ListChecks} className="gap-2">
-        <p className="text-sm font-medium">
-          {format(t.detail.target, {
-            words: event.target.toLocaleString(locale === "en" ? "en-US" : "id-ID"),
-          })}
-        </p>
-        <p className="wrap-anywhere whitespace-pre-line">{event.rules}</p>
-      </Section>
-      {sprint && (
-        <Section title={t.detail.sprintTitle} icon={Timer} className="gap-2">
-          <p className="text-sm">
-            {formatEventTime(sprint.startsAt, zone, locale)} –{" "}
-            {formatEventTime(sprint.endsAt, zone, locale)}
+      <div className="grid items-start gap-5 md:gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
+        <div className="grid min-w-0 gap-5 md:gap-6">
+          <p className="text-base wrap-anywhere whitespace-pre-line text-ink-soft md:text-lg">
+            {event.description}
           </p>
-          <p className="text-sm text-ink-muted">
-            {now < sprint.startsAt
-              ? t.detail.sprintScheduled
-              : now < sprint.endsAt
-                ? t.detail.sprintRunning
-                : t.detail.sprintOver}
+          <p role="status" tabIndex={-1} ref={statusRef} className="empty:hidden">
+            {message}
           </p>
-        </Section>
-      )}
-      {participants.length > 0 && (
-        <Section title={t.detail.peersTitle} icon={UsersThree} className="gap-2">
-          <ul className="divide-y divide-line">
-            {participants.map((id) => (
-              <li key={id} className="flex items-center gap-3 py-2.5">
-                <AuthorAvatar author={authorOf(id)} size={32} />
-                {authorOf(id).name}
-              </li>
-            ))}
-          </ul>
-        </Section>
-      )}
-      <CommunityLink variant="row" />
+          {entry ? (
+            <EventParticipation
+              key={entry.id}
+              event={event}
+              entry={entry}
+              now={now}
+              store={store}
+              show={setMessage}
+            />
+          ) : (
+            <JoinArea state={state} actor={actor} guest={guest} onJoin={() => setJoin(true)} />
+          )}
+          <Section title={t.detail.rulesTitle} icon={ListChecks} className="gap-2">
+            <p className="text-sm font-medium">
+              {format(t.detail.target, {
+                words: event.target.toLocaleString(locale === "en" ? "en-US" : "id-ID"),
+              })}
+            </p>
+            <p className="wrap-anywhere whitespace-pre-line">{event.rules}</p>
+          </Section>
+          {sprint && (
+            <Section title={t.detail.sprintTitle} icon={Timer} className="gap-2">
+              <p className="text-sm">
+                {formatEventTime(sprint.startsAt, zone, locale)} –{" "}
+                {formatEventTime(sprint.endsAt, zone, locale)}
+              </p>
+              <p className="text-sm text-ink-muted">
+                {now < sprint.startsAt
+                  ? t.detail.sprintScheduled
+                  : now < sprint.endsAt
+                    ? t.detail.sprintRunning
+                    : t.detail.sprintOver}
+              </p>
+            </Section>
+          )}
+        </div>
+        <div className="grid min-w-0 gap-5 md:gap-6">
+          {participants.length > 0 && (
+            <Section title={t.detail.peersTitle} icon={UsersThree} className="gap-2">
+              <ul className="divide-y divide-line">
+                {participants.map((id) => (
+                  <li key={id} className="flex items-center gap-3 py-2.5">
+                    <AuthorAvatar author={authorOf(id)} size={32} />
+                    {authorOf(id).name}
+                  </li>
+                ))}
+              </ul>
+            </Section>
+          )}
+          <CommunityLink variant="row" />
+        </div>
+      </div>
       {join && actor && !entry && (
         <EventJoin
           eventId={event.id}
@@ -169,7 +175,7 @@ export function EventView({ id, store = studioStore }: { id: string; store?: Doc
   const now = useEventClock(1000);
   const event = data.status === "ready" ? data.events.find((item) => item.id === id) : undefined;
   return (
-    <BackShell back={{ href: EVENTS_HREF, label: t.allEvents }}>
+    <BackShell full back={{ href: EVENTS_HREF, label: t.allEvents }}>
       {data.status === "error" ? (
         <EventsError />
       ) : data.status === "loading" || now === null ? (
