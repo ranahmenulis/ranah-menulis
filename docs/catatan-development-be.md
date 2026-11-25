@@ -7,7 +7,7 @@ Terakhir diperbarui: **25 November 2026**.
 ## 1. Posisi sekarang
 
 - **Fase 0 (fondasi) selesai.** Supabase CLI 3.2.0 terpasang sebagai devDependency (jalankan lewat `npx supabase ...`). Project `hejuhznagqeayrmautqh` (akun ranahmenulis@gmail.com, region ap-southeast-2) tertaut lewat `supabase link`; berkas `supabase/config.toml` dari `supabase init`. Migrasi 0001 (`profiles`, `platform_roles`, `audit_log`, fungsi role, RLS) dan 0002 (`waitlist_signups`) sudah ada di database dan tercatat di riwayat migrasi. Tes RLS (20 tes, 3 berkas) lulus.
-- **Fase 1 (Auth dan profil): 1a selesai (migrasi 0003 dan tes RLS).** Berikutnya 1b (gateway, sesi, `AuthProvider`). Checklist di bagian 3.
+- **Fase 1 (Auth dan profil): 1a (migrasi 0003) dan 1b (sesi, `AuthProvider`, akun dari profil) selesai.** Berikutnya 1c (Masuk, Daftar, Keluar, Verifikasi, Lupa sandi, `/auth/callback`). Checklist di bagian 3.
 - **Branch:** semua pekerjaan backend di branch `be/supabase` (dibuat 25 November 2026 dari `main` `5d2d5c1`). `main` tetap versi front-end dengan data dummy sampai backend matang; perbaikan tampilan dari tester masuk ke `main`, lalu `main` digabung ke `be/supabase` secara berkala. Branch ini belum di-push dan belum di-commit apa pun.
 - Frontend masih memakai bypass login, `dummy-auth`, dan data lokal (localStorage, IndexedDB). Belum ada akun nyata.
 
@@ -40,12 +40,13 @@ Keputusan: foto profil ikut Fase 1 (bucket `avatars`); email verifikasi memakai 
   - [x] Bucket `avatars` (publik, 256 KB, webp/jpeg/png) dengan policy baca publik dan tulis hanya di folder sendiri
   - [x] Diterapkan ke database dengan persetujuan user dan tercatat di riwayat
   - [x] Tes RLS: `prefs`, `onboarded_at`, `avatar_path`, bucket (32 tes lulus, 4 berkas)
-- [ ] **1b. Sesi dan gateway (tanpa perubahan layar)**
-  - [ ] `AuthGateway` dan `AccountGateway` (Supabase dan memori)
-  - [ ] Layout root membaca sesi di server (`getClaims`) dan mengoper akun awal ke `AuthProvider`
-  - [ ] `useViewer` diturunkan dari sesi
-  - [ ] `useAccount`/`readAccount` bersumber dari profil; `saveAccount` async, pemanggil disesuaikan
-  - [ ] Tes gateway memori dan penyedia
+- [x] **1b. Sesi dan gateway (tanpa perubahan layar)** (selesai 25 November 2026)
+  - [x] `AccountGateway` (tulis profil; Supabase di produksi, tiruan di tes). `AuthGateway` (masuk, keluar, daftar) menyusul di 1c bersama layarnya
+  - [x] Layout root: `AuthRoot` (server) membaca sesi lewat `getClaims`, profil, dan `platform_roles` dengan sesi pengguna (RLS berlaku), lalu `AuthProvider` (klien) memegang akunnya
+  - [x] `useViewer` dan `readViewerNow` mengikuti sesi bila ada provider; `?sebagai=` tidak bisa memasukkan atau mengeluarkan siapa pun. Tanpa provider (tes) perilaku lama
+  - [x] `useAccount`/`readAccount` bersumber dari akun sesi; `saveAccount` tetap sinkron (optimistis, tulis di belakang, kembali bila ditolak) dan ada `saveAccountAsync` yang menunggu hasil. Layar yang perlu menampilkan kegagalan pindah ke versi async di 1d
+  - [x] Peran platform dari database digabung ke `useEffectiveRoles` (`administrator`, `super-admin`)
+  - [x] Tes: pemetaan profil, `readSession` (dengan tiruan), `AuthProvider`, peran. Uji end-to-end terhadap `next start` dengan akun uji dan cookie sesi: nama, email, dan peran terbaca di server, tamu tidak melihatnya
 - [ ] **1c. Masuk, Daftar, Keluar, Verifikasi, Lupa dan Atur ulang sandi**
   - [ ] Route handler `/auth/callback` (PKCE)
   - [ ] Masuk, Daftar (dua langkah), Keluar ke gateway; galat dipetakan ke kode
@@ -100,6 +101,13 @@ Keputusan: foto profil ikut Fase 1 (bucket `avatars`); email verifikasi memakai 
 - 25 November 2026: branch baru `be/supabase` untuk semua backend, `main` dibiarkan dummy FE sampai backend matang; pakai project Supabase cloud (bukan Docker lokal); login email dan sandi dulu, Google menyusul; akun dummy disiapkan untuk pengujian (bukan impor data lokal); feedback front-end berjalan paralel (user meminta tester menguji lagi dan akan memberi tahu hasilnya); gate setiap fase = tes RLS dan tes terarah, `npm run check` dan `build` sekali di akhir fase.
 
 ## 5. Log sesi
+
+### 25 November 2026 (1b)
+- Dikerjakan: `src/lib/auth/{session-info,session-context}`, `src/features/account/{account-model,account-session,account-gateway,supabase-account-gateway,profile-mapping,session,session-types,auth-root,live-account-context}`; `account-store` memakai akun sesi bila ada; `viewer.ts`, `use-effective-roles.ts`, `app/layout.tsx` disesuaikan. Gate: `tsc`, ESLint, Prettier, 24 tes baru, regresi 101 berkas (641 tes) dan 44 berkas (287 tes), `npm run build` (tetap Partial Prerender).
+- **Pelajaran penting (bug yang lolos dari tes unit):** modul bertanda `"use client"` yang diimpor kode server hanya menjadi referensi buram: `parseAccount()` dari `account-store` melempar galat di server dan `GUEST_SESSION` dari `session-context` menjadi referensi, sehingga `readSession` selalu jatuh ke tamu. Vitest tidak menegakkan batas ini. Perbaikan: bagian murni dipisah ke modul tanpa direktif (`account-model.ts`, `session-info.ts`) dan `account-store`/`session-context` mengekspor ulangnya. **Aturan: kode yang dipakai server tidak boleh mengimpor nilai dari modul `"use client"`.** Verifikasi pembacaan di server harus lewat `next start` dengan cookie sesi nyata, bukan hanya tes unit.
+- Cara uji end-to-end yang dipakai (skrip sementara, sudah dihapus): buat akun `rls-test-*` dengan klien admin, masuk lewat `@supabase/ssr` dengan penampung cookie sendiri, kirim cookie `sb-<ref>-auth-token` ke `next start -p 3055`, cari nama dan email di HTML. Data uji dihapus di `finally`.
+- Pengguna uji email (`AUTH_TEST_EMAIL`) dihapus lewat `--cleanup`; ternyata sudah terkonfirmasi (tautan diklik).
+- Di layar saat ini pengguna tanpa sesi terlihat sebagai tamu (Masuk dan Daftar belum berfungsi sampai 1c). Branch `be/supabase` jangan dipakai sebagai preview untuk tester sebelum 1c.
 
 ### 25 November 2026 (uji email Auth)
 - `scripts/auth-email-check.mjs` (alamat dari `AUTH_TEST_EMAIL` di `.env`, tidak pernah dicetak; `--cleanup` menghapus pengguna uji). `signUp` diterima, konfirmasi email menyala, dan email konfirmasi masuk ke Kotak Masuk dalam kurang dari satu menit (pengirim `noreply@mail.app.supabase.io`, templat bawaan Supabase berbahasa Inggris, tombol "Confirm email address").

@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono, Merriweather, Tinos } from "next/font/google";
 import { Suspense } from "react";
 import { ToastProvider } from "@/components/ui/toast";
+import { AuthRoot } from "@/features/account/auth-root";
 import { I18nRoot } from "@/lib/i18n/i18n-root";
 import { themeScript } from "@/lib/theme/theme";
 import "./globals.css";
@@ -62,10 +63,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body className="flex min-h-full flex-col">
-        {/* The language comes from a cookie (runtime data), so pages render inside this boundary. */}
+        {/* The language and the session come from cookies (runtime data), so pages render inside this boundary. */}
         <Suspense fallback={null}>
           <I18nRoot>
-            <ToastProvider>{children}</ToastProvider>
+            <AuthRoot>
+              <ToastProvider>{children}</ToastProvider>
+            </AuthRoot>
           </I18nRoot>
         </Suspense>
       </body>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useSyncExternalStore } from "react";
+import { readSessionNow, useSession } from "./auth/session-context";
 import { isDemoRolesEnabled } from "./env";
 import { NO_ROLES, parseRoles, type ManagerRole } from "./roles";
 
@@ -40,8 +41,13 @@ function subscribe(onChange: () => void) {
   return () => window.removeEventListener(EVENT, onChange);
 }
 
+const fromSession = (status: "guest" | "user"): Viewer => (status === "user" ? "masuk" : "tamu");
+
 export function useViewer(): Viewer {
-  return useSyncExternalStore(subscribe, read, () => "masuk");
+  const session = useSession();
+  const local = useSyncExternalStore(subscribe, read, () => "masuk" as Viewer);
+  // With a real session the server's answer wins; `?sebagai=` cannot sign anyone in or out.
+  return session ? fromSession(session.status) : local;
 }
 
 /** Management roles of the dummy user; always empty in production and for the signed-out view. */
@@ -53,7 +59,8 @@ export function useRoles(): readonly ManagerRole[] {
 
 /** The viewer and the roles chosen with `?sebagai=` right now, for button handlers. */
 export function readViewerNow(): { viewer: Viewer; roles: readonly ManagerRole[] } {
-  const viewer = read();
+  const session = readSessionNow();
+  const viewer = session ? fromSession(session.status) : read();
   return { viewer, roles: viewer === "tamu" ? NO_ROLES : parseRoles(readRoles()) };
 }
 
