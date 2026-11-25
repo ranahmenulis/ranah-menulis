@@ -3,7 +3,7 @@
 import { ArrowRight } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import type { ReactNode, Ref } from "react";
-import { heroCardClass, heroSceneClass } from "@/components/ui/card";
+import { heroCardClass, heroStripClass } from "@/components/ui/card";
 import { CountUp } from "@/components/ui/count-up";
 import { cn } from "@/lib/cn";
 
@@ -12,7 +12,8 @@ type Art = (props: { className?: string }) => ReactNode;
 /**
  * The illustration as a band across the top of a hero card, fading out at the bottom: used on
  * phones (where a landscape behind the text would cover the figures) and on detail heroes, whose
- * text runs the full width of the card.
+ * text runs the full width of the card. The drawing keeps its own 400:220 frame, anchored right,
+ * so it is shown whole instead of cropped to the band.
  */
 export function HeroBanner({ art: Art, className }: { art: Art; className?: string }) {
   return (
@@ -23,7 +24,9 @@ export function HeroBanner({ art: Art, className }: { art: Art; className?: stri
         className,
       )}
     >
-      <Art className="size-full" />
+      <div className="ml-auto aspect-[400/220] h-full [mask-image:linear-gradient(to_right,transparent,#000_40%)]">
+        <Art className="size-full" />
+      </div>
     </div>
   );
 }
@@ -92,8 +95,7 @@ export function PageHero({
       aria-labelledby={titleId}
       className={cn(heroCardClass, "grid gap-3 md:gap-4 md:px-8 md:py-6")}
     >
-      <Art className={cn(heroSceneClass, "max-md:hidden")} />
-      <HeroBanner art={Art} className="h-16 md:hidden" />
+      <Art className={cn(heroStripClass, "max-md:opacity-60")} />
       <div className="grid max-w-xl gap-1">
         <h1
           id={titleId}
