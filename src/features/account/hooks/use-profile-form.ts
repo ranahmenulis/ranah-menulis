@@ -22,12 +22,22 @@ export function useProfileForm(initial: AccountProfile, ownUsername?: string) {
   const [touched, setTouched] = useState<ReadonlySet<ProfileField>>(new Set());
   const [submitted, setSubmitted] = useState(false);
   const [photoError, setPhotoError] = useState<Issue | null>(null);
+  // A username the server refused as taken; it counts as a mistake until the reader changes it.
+  const [refused, setRefused] = useState<string | null>(null);
 
   const taken = useCallback((name: string) => usernameTaken(name, ownUsername), [ownUsername]);
   const issues = useMemo(() => profileIssues(values, taken), [values, taken]);
 
-  const issueOf = (field: ProfileField): Issue | null =>
-    submitted || touched.has(field) ? (issues[field] ?? null) : null;
+  const issueOf = (field: ProfileField): Issue | null => {
+    if (
+      field === "username" &&
+      refused !== null &&
+      refused === values.username.trim().toLowerCase()
+    ) {
+      return "usernameTaken";
+    }
+    return submitted || touched.has(field) ? (issues[field] ?? null) : null;
+  };
 
   const set = (patch: Partial<AccountProfile>) => setValues((v) => ({ ...v, ...patch }));
   const touch = (field: ProfileField) => setTouched((prev) => new Set(prev).add(field));
@@ -38,6 +48,12 @@ export function useProfileForm(initial: AccountProfile, ownUsername?: string) {
     const first = ORDER.find((field) => issues[field]);
     if (first) document.getElementById(profileFieldId(first))?.focus();
     return !first;
+  }
+
+  /** The server found the username taken (someone else saved it first): show it on the field. */
+  function refuseUsername() {
+    setRefused(values.username.trim().toLowerCase());
+    document.getElementById(profileFieldId("username"))?.focus();
   }
 
   async function choosePhoto(file: File) {
@@ -56,7 +72,17 @@ export function useProfileForm(initial: AccountProfile, ownUsername?: string) {
     setPhotoError(null);
   }
 
-  return { values, set, touch, issueOf, validate, photoError, choosePhoto, removePhoto };
+  return {
+    values,
+    set,
+    touch,
+    issueOf,
+    validate,
+    refuseUsername,
+    photoError,
+    choosePhoto,
+    removePhoto,
+  };
 }
 
 export type ProfileForm = ReturnType<typeof useProfileForm>;

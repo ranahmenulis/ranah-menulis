@@ -1,13 +1,13 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ToastProvider } from "@/components/ui/toast";
 import { parseAccount, resetAccount, saveAccount } from "@/features/account/account-store";
 import { OnboardingView } from "@/features/account/components/onboarding-view";
 
-const nav = vi.hoisted(() => ({ push: vi.fn(), search: "" }));
+const nav = vi.hoisted(() => ({ push: vi.fn(), refresh: vi.fn(), search: "" }));
 vi.mock("next/navigation", () => ({
-  useRouter: () => ({ push: nav.push }),
+  useRouter: () => ({ push: nav.push, refresh: nav.refresh }),
   useSearchParams: () => new URLSearchParams(nav.search),
 }));
 
@@ -31,12 +31,16 @@ afterEach(() => {
 
 const type = (label: string, value: string) =>
   fireEvent.change(screen.getByLabelText(label), { target: { value } });
-const submit = () => fireEvent.click(screen.getByRole("button", { name: "Mulai menulis" }));
+/** Press the button and let the save finish. */
+const submit = () =>
+  act(async () => {
+    fireEvent.click(screen.getByRole("button", { name: "Mulai menulis" }));
+  });
 
 describe("OnboardingView", () => {
-  it("needs a name and a username, and focuses the first one missing", () => {
+  it("needs a name and a username, and focuses the first one missing", async () => {
     wrap(<OnboardingView />);
-    submit();
+    await submit();
     expect(screen.getAllByText("Wajib diisi.")).toHaveLength(2);
     expect(document.activeElement).toBe(screen.getByLabelText("Nama"));
     expect(nav.push).not.toHaveBeenCalled();
@@ -65,7 +69,7 @@ describe("OnboardingView", () => {
     expect(screen.getByText("Bio maksimal 160 karakter.")).toBeTruthy();
   });
 
-  it("saves the profile and moves on to the destination", () => {
+  it("saves the profile and moves on to the destination", async () => {
     nav.search = "lanjut=%2Fprojects";
     wrap(<OnboardingView />);
     type("Nama", "  Laras Ayu ");
@@ -73,7 +77,7 @@ describe("OnboardingView", () => {
     fireEvent.click(screen.getByRole("button", { name: "Puisi" }));
     fireEvent.click(screen.getByRole("button", { name: "Cerpen" }));
     fireEvent.click(screen.getByRole("radio", { name: "Malaysia" }));
-    submit();
+    await submit();
     expect(nav.push).toHaveBeenCalledWith("/projects");
     const { profile } = saved();
     expect(profile.name).toBe("Laras Ayu");
@@ -82,11 +86,11 @@ describe("OnboardingView", () => {
     expect(profile.country).toBe("MY");
   });
 
-  it("goes to the home screen when no destination was given", () => {
+  it("goes to the home screen when no destination was given", async () => {
     wrap(<OnboardingView />);
     type("Nama", "Laras");
     type("Username", "laras_ayu");
-    submit();
+    await submit();
     expect(nav.push).toHaveBeenCalledWith("/beranda");
   });
 

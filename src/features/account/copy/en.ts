@@ -188,6 +188,8 @@ export const account: typeof source = {
       save: "Save changes",
       saved: "Changes saved.",
       failed: "Changes were not saved. Storage on this device is full or refused.",
+      failedRemote: "Changes were not saved. Check your connection and try again.",
+      photoFailed: "Your photo could not be saved. Try again, or choose another photo.",
     },
     language: {
       title: "Language",
@@ -266,6 +268,7 @@ export const account: typeof source = {
       cancel: "Cancel",
       submit: "Save password",
       wrongCurrent: "The current password is wrong.",
+      failed: "The password could not be changed. Check your connection and try again.",
       done: "Password updated.",
     },
     danger: {
@@ -281,6 +284,7 @@ export const account: typeof source = {
       label: "Confirmation",
       cancel: "Cancel",
       confirm: "Delete account",
+      failed: "The account could not be deleted. Try again in a moment.",
       done: "Account deleted.",
     },
     signOut: "Sign out",

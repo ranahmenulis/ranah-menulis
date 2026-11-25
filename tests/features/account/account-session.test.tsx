@@ -13,6 +13,9 @@ import type { SessionSnapshot } from "@/features/account/session-types";
 import { GUEST_SESSION } from "@/lib/auth/session-context";
 import { useViewer } from "@/lib/viewer";
 
+// The real gateway reaches a Server Action that imports server-only code.
+vi.mock("@/features/account/delete-account", () => ({ deleteOwnAccount: vi.fn() }));
+
 afterEach(cleanup);
 
 function userSnapshot(name: string): SessionSnapshot {
@@ -33,14 +36,28 @@ function Probe() {
   );
 }
 
-function gateway(result: boolean): AccountGateway & { updateProfile: ReturnType<typeof vi.fn> } {
-  return { updateProfile: vi.fn(async () => result) };
+type Result = "ok" | "username-taken" | "failed";
+
+function gateway(result: Result): AccountGateway & {
+  updateProfile: ReturnType<typeof vi.fn>;
+  uploadPhoto: ReturnType<typeof vi.fn>;
+  removePhoto: ReturnType<typeof vi.fn>;
+} {
+  return {
+    updateProfile: vi.fn(async () => result),
+    uploadPhoto: vi.fn(async (userId: string) => ({
+      ok: true as const,
+      path: `${userId}/avatar.webp`,
+      url: `https://x.supabase.co/storage/v1/object/public/avatars/${userId}/avatar.webp`,
+    })),
+    removePhoto: vi.fn(async () => {}),
+  };
 }
 
 describe("AuthProvider", () => {
   it("shows the signed-in account and the signed-in view from the server snapshot", () => {
     render(
-      <AuthProvider snapshot={userSnapshot("Laras")} gateway={gateway(true)}>
+      <AuthProvider snapshot={userSnapshot("Laras")} gateway={gateway("ok")}>
         <Probe />
       </AuthProvider>,
     );
@@ -49,7 +66,7 @@ describe("AuthProvider", () => {
 
   it("shows the signed-out view for a visitor", () => {
     render(
-      <AuthProvider snapshot={{ session: GUEST_SESSION, account: null }} gateway={gateway(true)}>
+      <AuthProvider snapshot={{ session: GUEST_SESSION, account: null }} gateway={gateway("ok")}>
         <Probe />
       </AuthProvider>,
     );
@@ -57,7 +74,7 @@ describe("AuthProvider", () => {
   });
 
   it("updates the screen at once and writes the profile row", async () => {
-    const api = gateway(true);
+    const api = gateway("ok");
     render(
       <AuthProvider snapshot={userSnapshot("Laras")} gateway={api}>
         <Probe />
@@ -77,7 +94,7 @@ describe("AuthProvider", () => {
 
   it("puts the old values back when the write is refused", async () => {
     render(
-      <AuthProvider snapshot={userSnapshot("Laras")} gateway={gateway(false)}>
+      <AuthProvider snapshot={userSnapshot("Laras")} gateway={gateway("failed")}>
         <Probe />
       </AuthProvider>,
     );
@@ -91,7 +108,7 @@ describe("AuthProvider", () => {
   });
 
   it("does not write the profile for changes that are not in it", async () => {
-    const api = gateway(true);
+    const api = gateway("ok");
     render(
       <AuthProvider snapshot={userSnapshot("Laras")} gateway={api}>
         <Probe />
@@ -105,7 +122,7 @@ describe("AuthProvider", () => {
   });
 
   it("lets the synchronous save start the same write", async () => {
-    const api = gateway(true);
+    const api = gateway("ok");
     render(
       <AuthProvider snapshot={userSnapshot("Laras")} gateway={api}>
         <Probe />
@@ -119,7 +136,7 @@ describe("AuthProvider", () => {
   });
 
   it("takes a fresh server read in place of what it held", () => {
-    const api = gateway(true);
+    const api = gateway("ok");
     const { rerender } = render(
       <AuthProvider snapshot={userSnapshot("Laras")} gateway={api}>
         <Probe />
@@ -135,7 +152,7 @@ describe("AuthProvider", () => {
 
   it("goes back to the device account once it unmounts", () => {
     const { unmount } = render(
-      <AuthProvider snapshot={userSnapshot("Laras")} gateway={gateway(true)}>
+      <AuthProvider snapshot={userSnapshot("Laras")} gateway={gateway("ok")}>
         <Probe />
       </AuthProvider>,
     );

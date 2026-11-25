@@ -11,7 +11,10 @@ const auth = vi.hoisted(() => ({
   resetPasswordForEmail: vi.fn(),
   updateUser: vi.fn(),
   signOut: vi.fn(),
+  getUser: vi.fn(),
 }));
+const deleteAction = vi.hoisted(() => vi.fn());
+vi.mock("@/features/account/delete-account", () => ({ deleteOwnAccount: deleteAction }));
 const profile = vi.hoisted(() => ({
   data: { onboarded_at: null } as { onboarded_at: string | null } | null,
 }));
@@ -31,6 +34,7 @@ const reply = (result: AuthResult) => Promise.resolve({ data: {}, error: null, .
 
 beforeEach(() => {
   Object.values(auth).forEach((fn) => fn.mockReset());
+  deleteAction.mockReset();
   profile.data = { onboarded_at: null };
 });
 
@@ -122,5 +126,70 @@ describe("supabaseAuthGateway, the rest", () => {
   it("signs out, and does not fail when it cannot reach the server", async () => {
     auth.signOut.mockRejectedValue(new Error("offline"));
     await expect(gateway.signOut()).resolves.toBeUndefined();
+  });
+});
+
+describe("supabaseAuthGateway.changePassword", () => {
+  const signedIn = () =>
+    auth.getUser.mockReturnValue(reply({ data: { user: { email: "a@b.id" } } }));
+
+  it("proves the current password first, then sets the new one", async () => {
+    signedIn();
+    auth.signInWithPassword.mockReturnValue(reply({ data: { user: { id: "u1" } } }));
+    auth.updateUser.mockReturnValue(reply({}));
+    expect(await gateway.changePassword("lama123", "baru12345")).toEqual({ ok: true });
+    expect(auth.signInWithPassword).toHaveBeenCalledWith({ email: "a@b.id", password: "lama123" });
+    expect(auth.updateUser).toHaveBeenCalledWith({ password: "baru12345" });
+  });
+
+  it("does not change anything when the current password is wrong", async () => {
+    signedIn();
+    auth.signInWithPassword.mockReturnValue(
+      reply({ error: { code: "invalid_credentials", name: "AuthApiError" } }),
+    );
+    expect(await gateway.changePassword("salah", "baru12345")).toEqual({
+      ok: false,
+      reason: "credentials",
+    });
+    expect(auth.updateUser).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    [{ code: "same_password", name: "AuthApiError" }, "same"],
+    [{ code: "weak_password", name: "AuthWeakPasswordError" }, "password"],
+    [{ name: "AuthSessionMissingError" }, "network"],
+  ] as const)("maps a new-password error %j to %s", async (error, reason) => {
+    signedIn();
+    auth.signInWithPassword.mockReturnValue(reply({ data: { user: { id: "u1" } } }));
+    auth.updateUser.mockReturnValue(reply({ error }));
+    expect(await gateway.changePassword("lama123", "baru12345")).toEqual({ ok: false, reason });
+  });
+
+  it("fails as a network problem when nobody is signed in", async () => {
+    auth.getUser.mockReturnValue(reply({ data: { user: null } }));
+    expect(await gateway.changePassword("lama123", "baru12345")).toEqual({
+      ok: false,
+      reason: "network",
+    });
+  });
+});
+
+describe("supabaseAuthGateway.deleteAccount", () => {
+  it("deletes through the server and then ends the browser session", async () => {
+    deleteAction.mockResolvedValue({ ok: true });
+    auth.signOut.mockReturnValue(reply({}));
+    expect(await gateway.deleteAccount()).toEqual({ ok: true });
+    expect(auth.signOut).toHaveBeenCalled();
+  });
+
+  it("keeps the session when the server could not delete", async () => {
+    deleteAction.mockResolvedValue({ ok: false, reason: "failed" });
+    expect(await gateway.deleteAccount()).toEqual({ ok: false, reason: "failed" });
+    expect(auth.signOut).not.toHaveBeenCalled();
+  });
+
+  it("reports failure when the call itself throws", async () => {
+    deleteAction.mockRejectedValue(new Error("offline"));
+    expect(await gateway.deleteAccount()).toEqual({ ok: false, reason: "failed" });
   });
 });

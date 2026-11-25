@@ -33,6 +33,8 @@ function gateway(overrides: Partial<AuthGateway> = {}): AuthGateway {
     resendVerification: vi.fn(async () => ({ ok: true as const })),
     requestPasswordReset: vi.fn(async () => ({ ok: true as const })),
     updatePassword: vi.fn(async () => ({ ok: true as const })),
+    changePassword: vi.fn(async () => ({ ok: true as const })),
+    deleteAccount: vi.fn(async () => ({ ok: true as const })),
     signOut: vi.fn(async () => {}),
     ...overrides,
   };

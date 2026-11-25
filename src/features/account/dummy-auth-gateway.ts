@@ -54,6 +54,14 @@ export const dummyAuthGateway: AuthGateway = {
   async updatePassword() {
     return { ok: true };
   },
+  async changePassword() {
+    return { ok: true };
+  },
+  async deleteAccount() {
+    resetAccount();
+    setViewer("tamu");
+    return { ok: true };
+  },
   async signOut() {
     setViewer("tamu");
   },

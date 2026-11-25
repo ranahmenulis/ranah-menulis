@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import { Popover } from "@/components/ui/popover";
-import { saveAccount, useAccount } from "@/features/account/account-store";
+import { saveAccountAsync, useAccount } from "@/features/account/account-store";
 import { useHydrated } from "@/features/account/hooks/use-hydrated";
 import { WORD_COUNT_PINS, type WordCountPin } from "@/features/account/writing-preferences";
 import { cn } from "@/lib/cn";
@@ -99,11 +99,11 @@ export function WordCount({ words, stats, selection, sprint, target, className }
     locale,
   );
 
-  const choose = (pin: WordCountPin | null) => {
-    setSaveFailed(!saveAccount({ prefs: { writing: { wordCountPin: pin } } }));
+  const choose = async (pin: WordCountPin | null) => {
+    setSaveFailed(!(await saveAccountAsync({ prefs: { writing: { wordCountPin: pin } } })));
   };
-  const retry = () => {
-    if (!saveAccount({})) return;
+  const retry = async () => {
+    if (!(await saveAccountAsync({}))) return;
     activeOption.current?.focus();
     setSaveFailed(false);
   };

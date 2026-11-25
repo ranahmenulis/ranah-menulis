@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/field";
 import { ErrorBanner } from "@/components/ui/states";
 import { useT } from "@/lib/i18n/provider";
-import { saveAccount } from "../../account-store";
+import { saveAccountAsync } from "../../account-store";
 import {
   TYPEWRITER_POSITIONS,
   WRITING_MODES,
@@ -21,12 +21,12 @@ export function WritingSection({ prefs }: { prefs: WritingPreferences }) {
   const [failed, setFailed] = useState(false);
   const modeField = useRef<HTMLSelectElement>(null);
 
-  function save(patch: Partial<WritingPreferences>) {
-    setFailed(!saveAccount({ prefs: { writing: patch } }));
+  async function save(patch: Partial<WritingPreferences>) {
+    setFailed(!(await saveAccountAsync({ prefs: { writing: patch } })));
   }
 
-  function retry() {
-    if (!saveAccount({})) return;
+  async function retry() {
+    if (!(await saveAccountAsync({}))) return;
     setFailed(false);
     modeField.current?.focus();
   }

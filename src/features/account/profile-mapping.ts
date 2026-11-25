@@ -16,7 +16,7 @@ export type ProfileRow = {
   updated_at: string;
 };
 
-/** The columns the account screens write. The photo has its own path (storage upload). */
+/** The columns the account screens write (the photo and onboarding have their own steps). */
 export type ProfileUpdate = {
   display_name: string | null;
   username: string | null;
@@ -25,6 +25,10 @@ export type ProfileUpdate = {
   timezone: string;
   genres: string[];
   prefs: Record<string, unknown>;
+  /** Set when the profile is finished (Mulai); a stored time, never cleared. */
+  onboarded_at: string;
+  /** The photo's path in the avatars bucket, or null once it is removed. */
+  avatar_path: string | null;
 };
 
 /** Public address of a stored photo; the version changes whenever the profile does (cache busting). */
@@ -88,7 +92,9 @@ export function emptyAccount(email: string): Account {
 }
 
 /** What to write to the profile row for the given account (empty text is stored as null). */
-export function accountToUpdate(account: Account): ProfileUpdate {
+export function accountToUpdate(
+  account: Account,
+): Omit<ProfileUpdate, "onboarded_at" | "avatar_path"> {
   const { profile, prefs } = account;
   return {
     display_name: profile.name.trim() || null,

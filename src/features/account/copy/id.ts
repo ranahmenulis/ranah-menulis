@@ -188,6 +188,8 @@ export const account = {
       save: "Simpan perubahan",
       saved: "Perubahan disimpan.",
       failed: "Perubahan belum tersimpan. Penyimpanan di perangkat penuh atau ditolak.",
+      failedRemote: "Perubahan belum tersimpan. Periksa koneksimu, lalu coba lagi.",
+      photoFailed: "Fotomu belum bisa disimpan. Coba lagi, atau pilih foto lain.",
     },
     language: {
       title: "Bahasa",
@@ -266,6 +268,7 @@ export const account = {
       cancel: "Batal",
       submit: "Simpan kata sandi",
       wrongCurrent: "Kata sandi saat ini salah.",
+      failed: "Kata sandi belum bisa diubah. Periksa koneksimu, lalu coba lagi.",
       done: "Kata sandi diperbarui.",
     },
     danger: {
@@ -281,6 +284,7 @@ export const account = {
       label: "Konfirmasi",
       cancel: "Batal",
       confirm: "Hapus akun",
+      failed: "Akun belum bisa dihapus. Coba lagi sebentar lagi.",
       done: "Akun dihapus.",
     },
     signOut: "Keluar",

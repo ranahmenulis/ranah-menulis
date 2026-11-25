@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import type { ComponentProps } from "react";
 import { renderToString } from "react-dom/server";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -140,21 +140,25 @@ describe("WordCount", () => {
     ).toBeNull();
   });
 
-  it("keeps a refused choice for this tab and restores focus after a successful retry", () => {
+  it("keeps a refused choice for this tab and restores focus after a successful retry", async () => {
     renderCounter();
     open();
     const block = vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
       throw new DOMException("full", "QuotaExceededError");
     });
     try {
-      fireEvent.click(option("Sprint"));
+      await act(async () => {
+        fireEvent.click(option("Sprint"));
+      });
       expect(option("Sprint").getAttribute("aria-pressed")).toBe("true");
       expect(within(dialog()).getByRole("alert").textContent).toMatch(/hanya berlaku di tab ini/);
     } finally {
       block.mockRestore();
     }
 
-    fireEvent.click(option("Coba lagi"));
+    await act(async () => {
+      fireEvent.click(option("Coba lagi"));
+    });
     expect(within(dialog()).queryByRole("alert")).toBeNull();
     expect(document.activeElement).toBe(option("Sprint"));
     expect(parseAccount(localStorage.getItem("ranah.account")).prefs.writing.wordCountPin).toBe(

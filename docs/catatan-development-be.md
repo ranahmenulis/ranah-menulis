@@ -7,7 +7,7 @@ Terakhir diperbarui: **25 November 2026**.
 ## 1. Posisi sekarang
 
 - **Fase 0 (fondasi) selesai.** Supabase CLI 3.2.0 terpasang sebagai devDependency (jalankan lewat `npx supabase ...`). Project `hejuhznagqeayrmautqh` (akun ranahmenulis@gmail.com, region ap-southeast-2) tertaut lewat `supabase link`; berkas `supabase/config.toml` dari `supabase init`. Migrasi 0001 (`profiles`, `platform_roles`, `audit_log`, fungsi role, RLS) dan 0002 (`waitlist_signups`) sudah ada di database dan tercatat di riwayat migrasi. Tes RLS (20 tes, 3 berkas) lulus.
-- **Fase 1 (Auth dan profil): 1a, 1b, dan 1c selesai di kode.** 1c menunggu pengaturan Auth hosted dari user untuk menguji tautan email dari awal sampai akhir. Berikutnya 1d (Mulai dan Pengaturan: profil, username, foto, ganti sandi, hapus akun). Checklist di bagian 3.
+- **Fase 1 (Auth dan profil): 1a sampai 1d selesai di kode.** 1c masih menunggu pengaturan Auth hosted dari user untuk menguji tautan email dari awal sampai akhir. Berikutnya 1e (bersih-bersih dan akun dummy) dan 1f (verifikasi dan serah). Checklist di bagian 3.
 - **Branch:** semua pekerjaan backend di branch `be/supabase` (dibuat 25 November 2026 dari `main` `5d2d5c1`). `main` tetap versi front-end dengan data dummy sampai backend matang; perbaikan tampilan dari tester masuk ke `main`, lalu `main` digabung ke `be/supabase` secara berkala. Branch ini belum di-push dan belum di-commit apa pun.
 - Frontend masih memakai bypass login, `dummy-auth`, dan data lokal (localStorage, IndexedDB). Belum ada akun nyata.
 
@@ -57,13 +57,16 @@ Keputusan: foto profil ikut Fase 1 (bucket `avatars`); email verifikasi memakai 
   - [x] Tes: tes form lama diperbarui menjadi async, `real-auth.test.tsx` (gateway nyata di semua form), `supabase-auth-gateway.test.ts` (pemetaan galat), `tests/app/auth/callback.test.ts`, `internalPath`
   - [x] Uji Chrome nyata terhadap Supabase (8 dari 8): sandi salah, masuk ke Mulai dengan tujuan terjaga, Pengaturan menampilkan email akun, Keluar, setelah Keluar akun tidak tampil, Daftar ke Verifikasi (email asli terkirim ke `AUTH_TEST_EMAIL`), tanpa tautan contoh, tanpa tombol Google
   - [ ] Pengaturan Auth hosted oleh user (daftar di bagian "Pengaturan Auth hosted" di bawah); setelahnya uji tautan email dari awal sampai akhir (klik tautan di kotak masuk)
-- [ ] **1d. Mulai dan Pengaturan**
-  - [ ] Profil dibaca dan ditulis ke database
-  - [ ] Cek username ke database; galat 23505 ditangani; handle penulis fixture tetap dicadangkan
-  - [ ] Preferensi (notifikasi, streak, menulis) di `prefs`
-  - [ ] Foto profil ke bucket `avatars` (pangkas 256 px WebP di klien, simpan `<id>/avatar.webp`, `avatar_path` di profil)
-  - [ ] Ganti sandi dengan verifikasi ulang sandi lama
-  - [ ] Hapus akun (Server Action, klien admin, kata HAPUS/DELETE)
+- [x] **1d. Mulai dan Pengaturan** (selesai 25 November 2026)
+  - [x] Profil dibaca dan ditulis ke database lewat `AuthProvider`/`live-account.ts`: tampil seketika, ditulis di belakang, dikembalikan bila ditolak; hasil simpan rinci (`ok`, `username-taken`, `photo-failed`, `failed`)
+  - [x] Username unik: galat 23505 dari database (`username-taken`) kembali ke kolomnya di Mulai dan Pengaturan dan hilang saat username diubah; handle penulis fixture tetap dicadangkan (`useProfileForm`)
+  - [x] Mulai menandai profil selesai (`profiles.onboarded_at`); pengunjung tanpa akun di Mulai diarahkan ke Masuk dengan tujuan terjaga
+  - [x] Preferensi (notifikasi, streak, menulis, sematan kata) ikut `prefs`; Pengaturan Menulis dan sematan kata di Editor menunggu hasil sungguhan (`saveAccountAsync`) sehingga kegagalan terlihat
+  - [x] Foto profil: dikecilkan 256 px WebP di klien, diunggah ke `avatars/<id>/avatar.webp` (ganti = timpa), lalu `avatar_path` ditulis; hapus foto menghapus berkas dan path. Foto diunggah lebih dulu agar baris tidak menunjuk berkas yang tidak ada
+  - [x] Ganti sandi: sandi lama dibuktikan dulu (`signInWithPassword`), baru `updateUser`; salah, sama dengan yang lama, lemah, dan gangguan koneksi punya pesan sendiri
+  - [x] Hapus akun: Server Action `deleteOwnAccount` (identitas dari sesi terverifikasi, tanpa argumen), klien admin menghapus berkas foto, menulis satu baris audit `account.delete` (hanya id), menghapus pengguna (profil dan peran ikut lewat cascade), lalu mengakhiri sesi
+  - [x] Tes: `live-account`, `supabase-account-gateway`, `supabase-auth-gateway` (ganti sandi, hapus), `delete-account`, `photo-blob`, `profile-real` (Mulai, ganti sandi, hapus dengan gateway nyata), tes Mulai dan Pengaturan lama dijadikan async
+  - [x] Uji Chrome nyata terhadap Supabase (21 dari 21): masuk ke Mulai, foto dipilih lewat input berkas, username terpakai ditolak di kolomnya tanpa menyimpan apa pun, username sendiri tersimpan, baris profil berisi nama dan `onboarded_at` dan `avatar_path`, berkas foto ada di Storage dan terbaca publik, Pengaturan menyimpan dan nama bertahan setelah muat ulang, sandi lama salah ditolak lalu yang benar mengubah (sandi baru berfungsi, lama tidak), hapus akun (akun, profil, foto hilang, satu baris audit, tampilan masuk hilang)
 - [ ] **1e. Bersih-bersih dan akun dummy**
   - [ ] Hapus `dummy-auth`, bypass login, tombol "simulasi" di Verifikasi dan Lupa sandi, identitas di `ViewerSync`
   - [ ] Saklar `NEXT_PUBLIC_DEMO_ROLES` hanya untuk peran Kelola nonplatform (?)
@@ -118,6 +121,12 @@ Opsional: Authentication, Email Templates, terjemahkan templat ke bahasa Indones
 - 25 November 2026: branch baru `be/supabase` untuk semua backend, `main` dibiarkan dummy FE sampai backend matang; pakai project Supabase cloud (bukan Docker lokal); login email dan sandi dulu, Google menyusul; akun dummy disiapkan untuk pengujian (bukan impor data lokal); feedback front-end berjalan paralel (user meminta tester menguji lagi dan akan memberi tahu hasilnya); gate setiap fase = tes RLS dan tes terarah, `npm run check` dan `build` sekali di akhir fase.
 
 ## 5. Log sesi
+
+### 25 November 2026 (1d)
+- Dikerjakan: `account-gateway` (hasil simpan rinci, foto), `live-account.ts` (simpan profil dan foto di belakang layar), `photo-blob.ts`, `use-save-profile.ts`, `delete-account.ts` (Server Action), `AuthGateway.changePassword` dan `deleteAccount`, Mulai, Pengaturan, dialog ganti sandi dan hapus akun, teks baru (`personal.failedRemote`, `personal.photoFailed`, `changePassword.failed`, `deleteDialog.failed`; id dan en).
+- Gate: `tsc`, ESLint, Prettier, tes akun, lib, app, app-shell, word-count (392 tes lulus; satu tes word-count dijadikan async), `npm run build`, uji Chrome nyata 21 dari 21. Data uji (dua akun `rls-test-*`, foto, baris audit) dibersihkan; database kembali kosong.
+- Catatan: `passwordChangedAt` ("Terakhir diubah") hanya hidup di memori sesi, belum disimpan (tidak ada kolomnya). Hasil sandi lama yang dibuktikan lewat `signInWithPassword` membuat sesi baru di peramban yang sama (aman, sesi lama diganti). Hapus akun tidak menyentuh data di perangkat (dokumen, Community): itu menunggu Fase 2 dan 3. Aturan `server-only`: tes yang memuat `AuthProvider` atau gateway Supabase harus me-mock `@/features/account/delete-account` karena Server Action itu mengimpor kode server.
+- Pelajaran: bukti mengunggah berkas lewat CDP: `DOM.setFileInputFiles` memicu `change`; PNG yang disusun tangan harus punya CRC yang benar (peramban menolak yang salah dan form hanya menampilkan galat foto), jadi susun dengan `zlib` dan CRC32 di skrip uji.
 
 ### 25 November 2026 (1c)
 - Dikerjakan: `auth-gateway*`, `dummy-auth-gateway`, `supabase-auth-gateway`, `pending-email`, `app/auth/callback/route.ts`, form Masuk, Daftar, Verifikasi, Lupa sandi, Atur ulang sandi, Keluar di Pengaturan; teks baru `errors.network`, `errors.limit`, `reset.same`, `verify.sent*`, `verify.resentReal` (id dan en). `AuthProvider` menyediakan gateway nyata; tanpa provider forms memakai gateway simulasi sehingga 153 tes akun lama tetap berlaku setelah dijadikan async.

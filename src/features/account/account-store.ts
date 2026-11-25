@@ -1,7 +1,14 @@
 "use client";
 
 import { useContext, useMemo, useSyncExternalStore } from "react";
-import { mergeAccount, parseAccount, type Account, type AccountPatch } from "./account-model";
+import {
+  mergeAccount,
+  parseAccount,
+  type Account,
+  type AccountPatch,
+  type AccountProfile,
+} from "./account-model";
+import type { SaveResult } from "./account-gateway";
 import { LiveAccountContext } from "./live-account-context";
 
 // The shape and the pure helpers live in `account-model.ts`; they are re-exported so the screens
@@ -47,8 +54,13 @@ function subscribe(listener: () => void) {
  */
 export type LiveAccount = {
   get(): Account;
-  /** Updates the screen at once and writes the profile; false when the write was refused. */
-  update(patch: AccountPatch): Promise<boolean>;
+  /** Updates the screen at once and writes the profile; what the write came to. */
+  update(patch: AccountPatch): Promise<SaveResult>;
+  /**
+   * Saves the whole profile form: a changed photo goes to storage first, then the fields. With
+   * `finish` the profile is also marked finished (Mulai).
+   */
+  saveProfile(profile: AccountProfile, options?: { finish?: boolean }): Promise<SaveResult>;
 };
 
 let live: LiveAccount | null = null;
@@ -92,9 +104,27 @@ export function saveAccount(patch: AccountPatch): boolean {
   return kept;
 }
 
+/** Like `saveAccount`, but resolves with what the save came to (also by the server). */
+export function saveAccountDetailed(patch: AccountPatch): Promise<SaveResult> {
+  return live
+    ? live.update(patch)
+    : Promise.resolve<SaveResult>(saveAccount(patch) ? "ok" : "failed");
+}
+
 /** Like `saveAccount`, but resolves with whether the change really was kept (also by the server). */
-export function saveAccountAsync(patch: AccountPatch): Promise<boolean> {
-  return live ? live.update(patch) : Promise.resolve(saveAccount(patch));
+export async function saveAccountAsync(patch: AccountPatch): Promise<boolean> {
+  return (await saveAccountDetailed(patch)) === "ok";
+}
+
+/**
+ * Saves the profile form of Mulai or Pengaturan. A signed-in account stores the photo and the
+ * fields; on this device it is the same as saving the profile.
+ */
+export function saveProfileDetailed(
+  profile: AccountProfile,
+  options?: { finish?: boolean },
+): Promise<SaveResult> {
+  return live ? live.saveProfile(profile, options) : saveAccountDetailed({ profile });
 }
 
 /** Back to the dummy reader (sign-up starts a fresh account, deleting one ends it). */

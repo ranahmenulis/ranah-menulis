@@ -6,9 +6,8 @@ import type { AccountGateway } from "./account-gateway";
 import type { AuthGateway } from "./auth-gateway";
 import { AuthGatewayProvider } from "./auth-gateway-context";
 import { connectLiveAccount } from "./account-store";
-import { mergeAccount, type Account, type AccountPatch } from "./account-model";
+import { createLiveAccount } from "./live-account";
 import { LiveAccountContext } from "./live-account-context";
-import { accountToUpdate } from "./profile-mapping";
 import type { SessionSnapshot } from "./session-types";
 import { supabaseAccountGateway } from "./supabase-account-gateway";
 import { supabaseAuthGateway } from "./supabase-auth-gateway";
@@ -47,25 +46,17 @@ export function AuthProvider({
 
   useEffect(() => {
     if (!userId) return;
-    connectLiveAccount({
-      get: () => latest.current as Account,
-      async update(patch: AccountPatch) {
-        const before = latest.current;
-        if (!before) return false;
-        const after = mergeAccount(before, patch);
-        const write = JSON.stringify(accountToUpdate(after));
-        const changed = write !== JSON.stringify(accountToUpdate(before));
-        latest.current = after;
-        setAccount(after);
-        if (!changed) return true; // email, password time: nothing in the profile row to write
-        const kept = await gateway.updateProfile(userId, accountToUpdate(after));
-        if (!kept && latest.current === after) {
-          latest.current = before;
-          setAccount(before);
-        }
-        return kept;
-      },
-    });
+    connectLiveAccount(
+      createLiveAccount({
+        userId,
+        gateway,
+        read: () => latest.current,
+        write: (next) => {
+          latest.current = next;
+          setAccount(next);
+        },
+      }),
+    );
     return () => connectLiveAccount(null);
   }, [userId, gateway]);
 

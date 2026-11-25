@@ -1,5 +1,6 @@
 import type { AuthError } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
+import { deleteOwnAccount } from "./delete-account";
 import type { AuthFailure, AuthGateway } from "./auth-gateway";
 import { RESET_HREF, VERIFY_HREF, withNext } from "./redirect";
 
@@ -24,6 +25,16 @@ function failureOf(error: AuthError): AuthFailure {
   const text = `${error.code ?? ""} ${error.name}`;
   if (error.status === 429 || /rate_limit/.test(text)) return "limit";
   return "network";
+}
+
+/** What setting a new password can come back with, for the reset link and for Pengaturan. */
+function passwordFailure(error: AuthError): "same" | "password" | "expired" | AuthFailure {
+  if (error.code === "same_password") return "same";
+  if (error.code === "weak_password") return "password";
+  if (error.name === "AuthSessionMissingError" || error.code === "session_not_found") {
+    return "expired";
+  }
+  return failureOf(error);
 }
 
 /** Supabase Auth through the browser client (the session lives in cookies the server reads). */
@@ -93,15 +104,40 @@ export const supabaseAuthGateway: AuthGateway = {
   async updatePassword(password) {
     try {
       const { error } = await createClient().auth.updateUser({ password });
-      if (!error) return { ok: true };
-      if (error.code === "same_password") return { ok: false, reason: "same" };
-      if (error.code === "weak_password") return { ok: false, reason: "password" };
-      if (error.name === "AuthSessionMissingError" || error.code === "session_not_found") {
-        return { ok: false, reason: "expired" };
-      }
-      return { ok: false, reason: failureOf(error) };
+      return error ? { ok: false, reason: passwordFailure(error) } : { ok: true };
     } catch {
       return { ok: false, reason: "network" };
+    }
+  },
+  async changePassword(current, next) {
+    try {
+      const supabase = createClient();
+      const { data } = await supabase.auth.getUser();
+      const email = data.user?.email;
+      if (!email) return { ok: false, reason: "network" };
+      // Prove the current password first: a left-open tab must not be enough to change it.
+      const proof = await supabase.auth.signInWithPassword({ email, password: current });
+      if (proof.error) {
+        return proof.error.code === "invalid_credentials"
+          ? { ok: false, reason: "credentials" }
+          : { ok: false, reason: failureOf(proof.error) };
+      }
+      const { error } = await supabase.auth.updateUser({ password: next });
+      if (!error) return { ok: true };
+      const reason = passwordFailure(error);
+      return { ok: false, reason: reason === "expired" ? "network" : reason };
+    } catch {
+      return { ok: false, reason: "network" };
+    }
+  },
+  async deleteAccount() {
+    try {
+      const result = await deleteOwnAccount();
+      if (!result.ok) return { ok: false, reason: "failed" };
+      await createClient().auth.signOut();
+      return { ok: true };
+    } catch {
+      return { ok: false, reason: "failed" };
     }
   },
   async signOut() {

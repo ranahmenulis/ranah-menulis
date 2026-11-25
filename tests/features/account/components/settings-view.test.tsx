@@ -59,11 +59,13 @@ describe("SettingsView", () => {
     expect(screen.queryByText("Username ini sudah dipakai.")).toBeNull();
   });
 
-  it("saves changes to the profile", () => {
+  it("saves changes to the profile", async () => {
     wrap(<SettingsView />);
     type("Nama", "Rinjani P.");
     type("Bio (opsional)", "Cerita baru.");
-    fireEvent.click(screen.getByRole("button", { name: "Simpan perubahan" }));
+    await act(async () => {
+      fireEvent.click(screen.getByRole("button", { name: "Simpan perubahan" }));
+    });
     expect(saved().profile.name).toBe("Rinjani P.");
     expect(saved().profile.bio).toBe("Cerita baru.");
     expect(screen.getByText("Perubahan disimpan.")).toBeTruthy();
@@ -151,20 +153,22 @@ describe("SettingsView", () => {
     });
   });
 
-  it("keeps an unsaved writing choice visible and retries without losing it", () => {
+  it("keeps an unsaved writing choice visible and retries without losing it", async () => {
     wrap(<SettingsView />);
     const blocked = vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
       throw new DOMException("full", "QuotaExceededError");
     });
     try {
-      type("Mode tulis", "typewriter");
+      await act(async () => type("Mode tulis", "typewriter"));
       expect(screen.getByLabelText<HTMLSelectElement>("Mode tulis").value).toBe("typewriter");
       expect(saved().prefs.writing.mode).toBe("standard");
       expect(screen.getByRole("alert").textContent).toContain("Preferensi menulis belum tersimpan");
     } finally {
       blocked.mockRestore();
     }
-    fireEvent.click(screen.getByRole("button", { name: "Coba lagi" }));
+    await act(async () => {
+      fireEvent.click(screen.getByRole("button", { name: "Coba lagi" }));
+    });
     expect(screen.queryByRole("alert")).toBeNull();
     expect(saved().prefs.writing.mode).toBe("typewriter");
     expect(document.activeElement).toBe(screen.getByLabelText("Mode tulis"));
@@ -172,7 +176,7 @@ describe("SettingsView", () => {
 });
 
 describe("SettingsView, password", () => {
-  it("says the password was never changed, then changes it", () => {
+  it("says the password was never changed, then changes it", async () => {
     wrap(<SettingsView />);
     expect(screen.getByText("Belum pernah diubah di sini")).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "Ubah kata sandi" }));
@@ -189,7 +193,9 @@ describe("SettingsView, password", () => {
     fireEvent.change(within(dialog).getByLabelText("Ulangi kata sandi baru"), {
       target: { value: "baru123456" },
     });
-    fireEvent.click(within(dialog).getByRole("button", { name: "Simpan kata sandi" }));
+    await act(async () => {
+      fireEvent.click(within(dialog).getByRole("button", { name: "Simpan kata sandi" }));
+    });
     expect(saved().passwordChangedAt).not.toBeNull();
     expect(screen.queryByRole("dialog")).toBeNull();
     expect(screen.getByText(/Terakhir diubah:/)).toBeTruthy();
@@ -213,13 +219,17 @@ describe("SettingsView, danger zone", () => {
     expect(confirm.disabled).toBe(false);
   });
 
-  it("clears the account and leaves for the landing page", () => {
+  it("clears the account and leaves for the landing page", async () => {
     wrap(<SettingsView />);
     fireEvent.change(screen.getByLabelText("Nama"), { target: { value: "Diubah" } });
-    fireEvent.click(screen.getByRole("button", { name: "Simpan perubahan" }));
+    await act(async () => {
+      fireEvent.click(screen.getByRole("button", { name: "Simpan perubahan" }));
+    });
     const dialog = open();
     fireEvent.change(within(dialog).getByLabelText("Konfirmasi"), { target: { value: "HAPUS" } });
-    fireEvent.click(within(dialog).getByRole("button", { name: "Hapus akun" }));
+    await act(async () => {
+      fireEvent.click(within(dialog).getByRole("button", { name: "Hapus akun" }));
+    });
     expect(localStorage.getItem("ranah.account")).toBeNull();
     expect(nav.push).toHaveBeenCalledWith("/");
   });

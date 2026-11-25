@@ -18,6 +18,11 @@ export type SendResult = { ok: true } | { ok: false; reason: AuthFailure };
 export type UpdatePasswordResult =
   { ok: true } | { ok: false; reason: "expired" | "same" | "password" | AuthFailure };
 
+export type ChangePasswordResult =
+  { ok: true } | { ok: false; reason: "credentials" | "same" | "password" | AuthFailure };
+
+export type DeleteAccountResult = { ok: true } | { ok: false; reason: "failed" };
+
 export type AuthGateway = {
   /** True while sign-in is only simulated: the screens then show their stand-in buttons. */
   simulated: boolean;
@@ -28,6 +33,10 @@ export type AuthGateway = {
   requestPasswordReset(email: string): Promise<SendResult>;
   /** Needs the recovery session that the email link opens. */
   updatePassword(password: string): Promise<UpdatePasswordResult>;
+  /** From Pengaturan: checks the current password first, then sets the new one. */
+  changePassword(current: string, next: string): Promise<ChangePasswordResult>;
+  /** Deletes the signed-in account for good (profile, roles, photo) and ends the session. */
+  deleteAccount(): Promise<DeleteAccountResult>;
   signOut(): Promise<void>;
   /**
    * Only the stand-in can know that an address is taken. A real system must not tell (it would
