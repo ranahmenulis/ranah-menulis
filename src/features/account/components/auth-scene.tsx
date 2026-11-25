@@ -94,7 +94,7 @@ export function AuthAside({ children }: { children: ReactNode }) {
 
 /**
  * From lg: the right half, fixed while the form scrolls. Painting, the display controls in a pill
- * at the top, the cut-out crossing the seam, and the screen's card at the bottom.
+ * at the top, and the screen's card at the bottom (the banana cut-out was removed 25 Nov 2026).
  */
 export function AuthScenePanel({
   art,
@@ -110,11 +110,6 @@ export function AuthScenePanel({
       <div className="absolute top-[calc(1.25rem+var(--safe-top))] right-5 z-10 flex rounded-full border border-line bg-surface/90 px-1 shadow-card backdrop-blur">
         <DisplayControls />
       </div>
-      <Engraving
-        art={art}
-        className="rm-rise-in absolute top-[7%] left-0 z-10 w-[clamp(7.5rem,11vw,11rem)] -translate-x-1/2"
-        style={step(0)}
-      />
       <div
         ref={onSlot}
         aria-hidden

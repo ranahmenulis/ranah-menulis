@@ -39,10 +39,8 @@ describe("AuthFrame", () => {
       "/auth/saleh-forest-house.webp",
     ]);
     container.querySelectorAll("img").forEach((img) => expect(img.getAttribute("alt")).toBe(""));
-    // One engraving, beside the painting from lg only (none on a phone).
-    const cutouts = container.querySelectorAll("[data-auth-cutout]");
-    expect(cutouts).toHaveLength(1);
-    expect(cutouts[0].getAttribute("aria-hidden")).toBe("true");
+    // The banana cut-out across the seam was removed (user, 25 Nov 2026).
+    expect(container.querySelectorAll("[data-auth-cutout]")).toHaveLength(0);
     expect(screen.getByText("formulir")).toBeTruthy();
   });
 
