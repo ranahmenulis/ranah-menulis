@@ -6,50 +6,28 @@ import { EnterTitle } from "./enter-title";
 import { HeroBand } from "./hero-band";
 import { Wrap } from "./layout";
 
-// Per line: the middle one is the serif italic in the accent ink.
-const LINE_CLASSES = ["", "lp-hero-serif text-accent-ink", ""];
-
 /**
- * Hero (tahap H, 24 Nov 2026): centred and quiet, after the Novlr reference the user sent. One
- * pill (the eyebrow and the two countries), the client's three-line title, one sentence, one
- * filled button and one text link. Then the stage (`HeroBand`): the Studio editor on a tinted
- * engraving, the only place the landing shows Studio. A soft accent sky sits behind the top and
- * reaches up under the top bar, which stays clear until the page scrolls.
+ * Hero (25 Nov 2026, Fahmi and Wafiy: the tahap H hero read as a template). Plain, after the Notion
+ * and Novlr references: no pill, no tinted sky, no serif accent line. The client's title in two
+ * lines of one face and one ink, one short sentence, a filled button and a grey pill. Then the
+ * stage (`HeroBand`): the Studio editor, the only place the landing shows Studio.
  */
 export function Hero({ copy, studio }: { copy: Dictionary["landing"]["hero"]; studio: Studio }) {
   return (
     <section aria-labelledby="hero-h" data-enter className="relative isolate">
-      <div
-        aria-hidden
-        className="absolute inset-x-0 -top-24 -z-10 h-[min(880px,100vh)] bg-linear-to-b from-accent-subtle to-transparent"
-      />
-      <Wrap className="grid justify-items-center pt-14 text-center md:pt-24">
-        <p className="inline-flex h-8 items-center gap-2 rounded-full border border-line bg-surface/80 px-3.5 text-xs font-medium text-ink-muted shadow-card backdrop-blur">
-          <span className="size-1.5 rounded-full bg-accent" aria-hidden />
-          {copy.eyebrow}
-          {/* Phones show the platform name alone: both together wrap into four cramped lines. */}
-          <span aria-hidden className="max-sm:hidden">
-            ·
-          </span>
-          <span className="max-sm:hidden">{copy.colophon}</span>
-        </p>
-        <EnterTitle
-          id="hero-h"
-          lines={copy.titleLines}
-          lineClasses={LINE_CLASSES}
-          className="lp-hero-title mt-8 md:mt-10"
-        />
+      <Wrap className="grid justify-items-center pt-16 text-center md:pt-28">
+        <EnterTitle id="hero-h" lines={copy.titleLines} className="lp-hero-title text-ink" />
         <p
           data-enter-item
           style={{ "--i": 0 } as CSSProperties}
-          className="mt-8 max-w-[40ch] text-[17px] leading-[1.6] text-pretty text-ink-muted md:mt-10 md:text-xl md:leading-[1.55]"
+          className="mt-6 max-w-3xl text-[17px] leading-[1.6] text-pretty text-ink-muted md:mt-7 md:text-xl md:leading-[1.5]"
         >
           {copy.lead}
         </p>
         <div
           data-enter-item
           style={{ "--i": 1 } as CSSProperties}
-          className="mt-9 flex w-full flex-col items-center gap-4 sm:w-auto sm:flex-row sm:gap-7 md:mt-11"
+          className="mt-8 flex w-full flex-col items-center gap-3 sm:w-auto sm:flex-row md:mt-9"
         >
           <ButtonLink id="hero-cta" href="#daftar" size="hero" className="lp-btn w-full sm:w-auto">
             {copy.cta}
@@ -59,7 +37,7 @@ export function Hero({ copy, studio }: { copy: Dictionary["landing"]["hero"]; st
             href="#ekosistem"
             variant="text"
             size="hero"
-            className="text-ink! underline underline-offset-6"
+            className="w-full bg-subtle px-7! text-ink! hover:bg-line active:no-underline sm:w-auto"
           >
             {copy.secondary}
           </ButtonLink>

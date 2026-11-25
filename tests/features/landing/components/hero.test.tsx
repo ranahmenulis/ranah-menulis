@@ -14,18 +14,18 @@ function renderHero() {
 }
 
 describe("hero", () => {
-  it("reads as one sentence in three lines", () => {
+  it("reads as one sentence in two lines of one face", () => {
     renderHero();
     const title = screen.getByRole("heading", { level: 1 });
     expect(title.textContent).toBe("Dari Penulis Pemula, Menjadi Penulis yang Berkarya.");
-    expect(title.querySelectorAll(":scope > span")).toHaveLength(3);
-    expect(title.children[1].className).toContain("lp-hero-serif");
+    expect(title.querySelectorAll(":scope > span")).toHaveLength(2);
+    expect(title.innerHTML).not.toContain("lp-hero-serif");
   });
 
-  it("has one pill, one filled button and one text link", () => {
+  it("has no pill or countries, one filled button and one grey pill", () => {
     renderHero();
-    const pill = screen.getByText(/Writer Development Platform/);
-    expect(pill.textContent).toContain("Indonesia · Malaysia");
+    expect(screen.queryByText(/Writer Development Platform/)).toBeNull();
+    expect(screen.queryByText(/Indonesia · Malaysia/)).toBeNull();
     expect(
       screen.getByRole("link", { name: "Mulai Perjalanan Menulis" }).getAttribute("href"),
     ).toBe("#daftar");

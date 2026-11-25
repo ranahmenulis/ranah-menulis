@@ -26,11 +26,10 @@ export const landing = {
   },
   // Hero words from the client (Wafiy, 24 Nov 2026), replacing the brief v3 headline.
   hero: {
-    eyebrow: "Writer Development Platform",
-    // Three lines: the middle one is set in the serif italic (DESIGN.md 4.6, hero C2).
-    titleLines: ["Dari Penulis Pemula,", "Menjadi Penulis", "yang Berkarya."],
-    colophon: "Indonesia · Malaysia",
-    lead: "Kembangkan kemampuan menulismu, bangun kebiasaan berkarya, temukan komunitas, dan wujudkan tulisanmu menjadi karya nyata bersama RanahMenulis.",
+    // Two lines in one face (25 Nov 2026, Fahmi and Wafiy: simpler hero, no pill, no countries).
+    titleLines: ["Dari Penulis Pemula,", "Menjadi Penulis yang Berkarya."],
+    // The client's sentence with the middle items deleted, not rewritten.
+    lead: "Kembangkan kemampuan menulismu dan wujudkan tulisanmu menjadi karya nyata.",
     cta: "Mulai Perjalanan Menulis",
     secondary: "Jelajahi RanahMenulis",
   },

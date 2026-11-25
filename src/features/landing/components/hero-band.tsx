@@ -28,7 +28,7 @@ export function HeroBand({ studio }: { studio: Dictionary["landing"]["studio"] }
   }, []);
 
   return (
-    <Wrap className="mt-16 md:mt-24">
+    <Wrap className="mt-14 md:mt-20">
       <div
         ref={ref}
         id="studio"

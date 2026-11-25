@@ -19,10 +19,8 @@ export const landing: typeof source = {
   },
   // Translation of the client's 24 Nov 2026 hero words; awaiting the user's review.
   hero: {
-    eyebrow: "Writer Development Platform",
-    titleLines: ["From Beginning Writer,", "to a Writer", "Who Creates."],
-    colophon: "Indonesia · Malaysia",
-    lead: "Grow your writing skills, build a habit of creating, find a community, and turn your writing into real work with RanahMenulis.",
+    titleLines: ["From Beginning Writer,", "to a Writer Who Creates."],
+    lead: "Grow your writing skills and turn your writing into real work.",
     cta: "Start Your Writing Journey",
     secondary: "Explore RanahMenulis",
   },

@@ -709,25 +709,18 @@ html.lp-motion .lp-link:is(:hover, :focus-visible) {
    stands at rest.
    ------------------------------------------------------------------------------------------ */
 
-/* Hero (tahap H): Inter 700 in three centred lines, the middle one in the Merriweather italic. */
+/* Hero (25 Nov 2026): Inter 700 in one ink, two centred lines, Notion-plain. */
 .lp-hero-title {
   font-family: var(--font-sans);
   font-weight: 700;
-  font-size: min(10vw, 3rem);
-  line-height: 1.02;
-  letter-spacing: -0.05em;
+  font-size: min(9.5vw, 2.75rem);
+  line-height: 1.06;
+  letter-spacing: -0.04em;
   text-wrap: balance;
   @media (width >= 48rem) {
-    font-size: clamp(3rem, 7vw, 6.25rem);
-    line-height: 0.95;
+    font-size: clamp(2.75rem, 5.6vw, 4.75rem);
+    line-height: 1.02;
   }
-}
-.lp-hero-serif {
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-weight: 300;
-  font-size: 0.9em;
-  letter-spacing: -0.035em;
 }
 
 /* The hero's editor lifts as the stage scrolls into place (`--lift`, motion/scroll-drift.ts). */
