@@ -59,11 +59,25 @@ export function passwordPresent(value: string): Issue | null {
   return value ? null : "required";
 }
 
+/**
+ * Same rule as the Supabase Auth setting "lowercase, uppercase, digits and symbols": the server
+ * rejects anything else, so the screens must ask for exactly this before sending.
+ */
+export const PASSWORD_PARTS = {
+  lower: /\p{Ll}/u,
+  upper: /\p{Lu}/u,
+  number: /\d/,
+  symbol: /[!-/:-@[-`{-~]/,
+} as const;
+
+const meetsComplexity = (value: string) =>
+  Object.values(PASSWORD_PARTS).every((part) => part.test(value));
+
 export function passwordIssue(value: string): Issue | null {
   if (!value) return "required";
   if (value.length < PASSWORD_MIN) return "passwordShort";
   if (new TextEncoder().encode(value).length > PASSWORD_MAX) return "passwordLong";
-  if (!/\p{L}/u.test(value) || !/\d/.test(value)) return "passwordWeak";
+  if (!meetsComplexity(value)) return "passwordWeak";
   return null;
 }
 

@@ -39,7 +39,6 @@ function passwordFailure(error: AuthError): "same" | "password" | "expired" | Au
 
 /** Supabase Auth through the browser client (the session lives in cookies the server reads). */
 export const supabaseAuthGateway: AuthGateway = {
-  simulated: false,
   async signIn(email, password) {
     try {
       const supabase = createClient();

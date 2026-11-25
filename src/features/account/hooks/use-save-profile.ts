@@ -3,7 +3,6 @@
 import { useT } from "@/lib/i18n/provider";
 import { saveProfileDetailed } from "../account-store";
 import type { SaveResult } from "../account-gateway";
-import { useAuthGateway } from "../auth-gateway-context";
 import { cleanProfile } from "../profile-validation";
 import { normalizeUsername } from "../validation";
 import type { ProfileForm } from "./use-profile-form";
@@ -15,7 +14,6 @@ import type { ProfileForm } from "./use-profile-form";
  */
 export function useSaveProfile(form: ProfileForm) {
   const t = useT().account;
-  const gateway = useAuthGateway();
 
   async function save(options?: { finish?: boolean }): Promise<{
     result: SaveResult;
@@ -27,9 +25,7 @@ export function useSaveProfile(form: ProfileForm) {
       result === "photo-failed"
         ? t.settings.personal.photoFailed
         : result === "failed"
-          ? gateway.simulated
-            ? t.settings.personal.failed
-            : t.settings.personal.failedRemote
+          ? t.settings.personal.failedRemote
           : null;
     return { result, problem };
   }

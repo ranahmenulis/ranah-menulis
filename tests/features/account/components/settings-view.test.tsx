@@ -185,13 +185,13 @@ describe("SettingsView, password", () => {
     expect(within(dialog).getAllByText(/Wajib diisi|Kata sandi minimal/).length).toBeGreaterThan(0);
 
     fireEvent.change(within(dialog).getByLabelText("Kata sandi saat ini"), {
-      target: { value: "lama12345" },
+      target: { value: "Lama12345!" },
     });
     fireEvent.change(within(dialog).getByLabelText("Kata sandi baru"), {
-      target: { value: "baru123456" },
+      target: { value: "Baru123456!" },
     });
     fireEvent.change(within(dialog).getByLabelText("Ulangi kata sandi baru"), {
-      target: { value: "baru123456" },
+      target: { value: "Baru123456!" },
     });
     await act(async () => {
       fireEvent.click(within(dialog).getByRole("button", { name: "Simpan kata sandi" }));

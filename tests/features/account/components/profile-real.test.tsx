@@ -41,7 +41,6 @@ function accounts(result: Saved = "ok") {
 
 function auth(overrides: Partial<AuthGateway> = {}): AuthGateway {
   return {
-    simulated: false,
     signIn: vi.fn(async () => ({ ok: true as const, onboarded: true })),
     signUp: vi.fn(async () => ({ ok: true as const, verified: false })),
     resendVerification: vi.fn(async () => ({ ok: true as const })),
@@ -146,9 +145,9 @@ describe("Ubah kata sandi with a real sign-in system", () => {
     const dialog = screen.getByRole("dialog");
     const set = (label: string, value: string) =>
       fireEvent.change(within(dialog).getByLabelText(label), { target: { value } });
-    set("Kata sandi saat ini", "lama12345");
-    set("Kata sandi baru", "baru123456");
-    set("Ulangi kata sandi baru", "baru123456");
+    set("Kata sandi saat ini", "Lama12345!");
+    set("Kata sandi baru", "Baru123456!");
+    set("Ulangi kata sandi baru", "Baru123456!");
     return { dialog, onClose };
   };
 
@@ -156,7 +155,7 @@ describe("Ubah kata sandi with a real sign-in system", () => {
     const gate = auth();
     const { dialog, onClose } = open(gate);
     await press("Simpan kata sandi", dialog);
-    expect(gate.changePassword).toHaveBeenCalledWith("lama12345", "baru123456");
+    expect(gate.changePassword).toHaveBeenCalledWith("Lama12345!", "Baru123456!");
     expect(onClose).toHaveBeenCalled();
   });
 

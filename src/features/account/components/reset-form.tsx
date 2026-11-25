@@ -15,7 +15,7 @@ import { PasswordField } from "./password-field";
 /**
  * Atur ulang sandi (PLT-01), opened from the link in the email. The link signs the reader in for
  * this one purpose, so without a session (an old link, another browser) the expired state shows;
- * `?status=kedaluwarsa` shows it too, which is how it is reached while sign-in is simulated.
+ * `?status=kedaluwarsa` shows it too.
  */
 export function ResetForm() {
   const t = useT().account;
@@ -34,7 +34,7 @@ export function ResetForm() {
 
   const passwordError = submitted ? passwordIssue(password) : null;
   const confirmError = submitted ? confirmIssue(password, confirmation) : null;
-  const noLink = !gateway.simulated && session?.status !== "user";
+  const noLink = session?.status !== "user";
   const expired = params.get("status") === "kedaluwarsa" || noLink || expiredNow;
 
   async function save() {
@@ -48,10 +48,8 @@ export function ResetForm() {
     }
     // The done screen is shown first, so the sign-out below cannot swap it for the expired one.
     setDone(true);
-    if (!gateway.simulated) {
-      await gateway.signOut();
-      router.refresh();
-    }
+    await gateway.signOut();
+    router.refresh();
   }
 
   if (done) {

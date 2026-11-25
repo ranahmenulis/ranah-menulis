@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { getSupabasePublicEnv, isDemoRolesEnabled, readSupabasePublicEnv } from "@/lib/env";
+import { getSupabasePublicEnv, readSupabasePublicEnv } from "@/lib/env";
 
 // The real module imports "server-only", which throws outside a React Server environment.
 vi.mock("server-only", () => ({}));
@@ -45,16 +45,5 @@ describe("getSupabaseSecretKey", () => {
 
     vi.stubEnv("SUPABASE_SECRET_KEY", "");
     expect(() => getSupabaseSecretKey()).toThrow(/SUPABASE_SECRET_KEY/);
-  });
-});
-
-describe("isDemoRolesEnabled", () => {
-  it("is on only when the switch is exactly 1", () => {
-    vi.stubEnv("NEXT_PUBLIC_DEMO_ROLES", "1");
-    expect(isDemoRolesEnabled()).toBe(true);
-    vi.stubEnv("NEXT_PUBLIC_DEMO_ROLES", "true");
-    expect(isDemoRolesEnabled()).toBe(false);
-    vi.stubEnv("NEXT_PUBLIC_DEMO_ROLES", "");
-    expect(isDemoRolesEnabled()).toBe(false);
   });
 });

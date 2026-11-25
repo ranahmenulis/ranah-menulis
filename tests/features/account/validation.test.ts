@@ -32,17 +32,17 @@ describe("passwordIssue", () => {
     expect(passwordIssue("abc12")).toBe("passwordShort");
     expect(passwordIssue("sembilanhuruf")).toBe("passwordWeak");
     expect(passwordIssue("12345678")).toBe("passwordWeak");
-    expect(passwordIssue("a1".repeat(40))).toBe("passwordLong");
-    expect(passwordIssue("rahasia123")).toBeNull();
+    expect(passwordIssue("rahasia123!")).toBe("passwordWeak");
+    expect(passwordIssue("RAHASIA123!")).toBe("passwordWeak");
+    expect(passwordIssue("Rahasia1234")).toBe("passwordWeak");
+    expect(passwordIssue("Rahasia!!!!")).toBe("passwordWeak");
+    expect(passwordIssue("aA1!".repeat(20))).toBe("passwordLong");
+    expect(passwordIssue("Rahasia123!")).toBeNull();
   });
 
   it("counts bytes for the upper limit, since bcrypt does", () => {
     // 40 two-byte letters + a digit is 41 characters but 81 bytes.
-    expect(passwordIssue(`${"é".repeat(40)}1`)).toBe("passwordLong");
-  });
-
-  it("accepts letters outside Latin", () => {
-    expect(passwordIssue("ꦲꦤꦕꦫꦏ1234")).toBeNull();
+    expect(passwordIssue(`${"é".repeat(40)}A1!`)).toBe("passwordLong");
   });
 
   it("sign-in only needs something typed", () => {
@@ -53,9 +53,9 @@ describe("passwordIssue", () => {
 
 describe("confirmIssue", () => {
   it("needs the same password twice", () => {
-    expect(confirmIssue("rahasia123", "")).toBe("required");
-    expect(confirmIssue("rahasia123", "rahasia124")).toBe("passwordMismatch");
-    expect(confirmIssue("rahasia123", "rahasia123")).toBeNull();
+    expect(confirmIssue("Rahasia123!", "")).toBe("required");
+    expect(confirmIssue("Rahasia123!", "Rahasia124!")).toBe("passwordMismatch");
+    expect(confirmIssue("Rahasia123!", "Rahasia123!")).toBeNull();
   });
 });
 

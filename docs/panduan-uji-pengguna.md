@@ -25,7 +25,7 @@ Alamat dasar: [ranah-menulis.vercel.app](https://ranah-menulis.vercel.app/berand
 | # | Buka | Lakukan | Hasil yang diharapkan |
 |---|---|---|---|
 | A1 | [Halaman awal](https://ranah-menulis.vercel.app/) | Gulir sampai bawah, ganti bahasa dan tema. | Judul dua baris, contoh editor Studio, lima bagian ekosistem, jalur penerbitan, FAQ, form daftar tunggu. Tampil utuh di terang, gelap, Indonesia, dan Inggris. ☐ |
-| A2 | [Daftar](https://ranah-menulis.vercel.app/daftar) | Isi email, sandi (8 karakter lebih, ada huruf dan angka), centang ketentuan. | Lanjut ke layar verifikasi. ☐ |
+| A2 | [Daftar](https://ranah-menulis.vercel.app/daftar) | Isi email, sandi (8 karakter lebih, ada huruf kecil, huruf besar, angka, dan simbol, mis. Rahasia123!), centang ketentuan. | Lanjut ke layar verifikasi. ☐ |
 | A3 | [Verifikasi](https://ranah-menulis.vercel.app/verifikasi?status=berhasil) | Buka. | Email terverifikasi, lanjut ke pengenalan profil. ☐ |
 | A4 | [Mulai](https://ranah-menulis.vercel.app/mulai) | Isi nama, username, bio, zona waktu, genre. | Profil tersimpan. ☐ |
 | A5 | [Beranda](https://ranah-menulis.vercel.app/beranda) | Perhatikan susunan, lalu tutup panduan awal. | Satu kartu "Hari ini" dengan satu tombol utama. Jelas harus mulai dari mana? ☐ |

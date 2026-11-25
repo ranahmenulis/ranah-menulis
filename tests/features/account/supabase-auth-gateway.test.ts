@@ -65,7 +65,7 @@ describe("supabaseAuthGateway.signIn", () => {
 describe("supabaseAuthGateway.signUp", () => {
   it("sends the email link to the callback, ending on the verified screen", async () => {
     auth.signUp.mockReturnValue(reply({ data: { user: { identities: [{}] }, session: null } }));
-    await gateway.signUp("a@b.id", "rahasia123", "/projects");
+    await gateway.signUp("a@b.id", "Rahasia123!", "/projects");
     const redirect = new URL(auth.signUp.mock.calls[0][0].options.emailRedirectTo);
     expect(redirect.pathname).toBe("/auth/callback");
     expect(redirect.searchParams.get("next")).toBe(
@@ -78,14 +78,14 @@ describe("supabaseAuthGateway.signUp", () => {
 
   it("says whether the user is already signed in", async () => {
     auth.signUp.mockReturnValue(reply({ data: { user: { identities: [{}] }, session: null } }));
-    expect(await gateway.signUp("a@b.id", "rahasia123")).toEqual({ ok: true, verified: false });
+    expect(await gateway.signUp("a@b.id", "Rahasia123!")).toEqual({ ok: true, verified: false });
     auth.signUp.mockReturnValue(reply({ data: { user: { identities: [{}] }, session: {} } }));
-    expect(await gateway.signUp("a@b.id", "rahasia123")).toEqual({ ok: true, verified: true });
+    expect(await gateway.signUp("a@b.id", "Rahasia123!")).toEqual({ ok: true, verified: true });
   });
 
   it("reads an answer without identities as an address that is already registered", async () => {
     auth.signUp.mockReturnValue(reply({ data: { user: { identities: [] }, session: null } }));
-    expect(await gateway.signUp("a@b.id", "rahasia123")).toEqual({ ok: false, reason: "exists" });
+    expect(await gateway.signUp("a@b.id", "Rahasia123!")).toEqual({ ok: false, reason: "exists" });
   });
 
   it.each([
@@ -120,7 +120,7 @@ describe("supabaseAuthGateway, the rest", () => {
     [{ code: "over_request_rate_limit", name: "AuthApiError", status: 429 }, "limit"],
   ] as const)("maps a password change error %j to %s", async (error, reason) => {
     auth.updateUser.mockReturnValue(reply({ error }));
-    expect(await gateway.updatePassword("rahasia123")).toEqual({ ok: false, reason });
+    expect(await gateway.updatePassword("Rahasia123!")).toEqual({ ok: false, reason });
   });
 
   it("signs out, and does not fail when it cannot reach the server", async () => {

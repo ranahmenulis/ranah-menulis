@@ -24,10 +24,9 @@ vi.mock("next/navigation", () => ({
   useSearchParams: () => new URLSearchParams(nav.search),
 }));
 
-/** A sign-in system that is not simulated: what the app mounts with Supabase. */
+/** A sign-in system as the app mounts it with Supabase (everything succeeds unless overridden). */
 function gateway(overrides: Partial<AuthGateway> = {}): AuthGateway {
   return {
-    simulated: false,
     signIn: vi.fn(async () => ({ ok: true as const, onboarded: true })),
     signUp: vi.fn(async () => ({ ok: true as const, verified: false })),
     resendVerification: vi.fn(async () => ({ ok: true as const })),
@@ -83,9 +82,9 @@ describe("Masuk with a real sign-in system", () => {
     const auth = gateway();
     mount(<SignInForm />, auth);
     type("Email", " laras@contoh.id ");
-    type("Kata sandi", "rahasia123");
+    type("Kata sandi", "Rahasia123!");
     await press("Masuk");
-    expect(auth.signIn).toHaveBeenCalledWith("laras@contoh.id", "rahasia123");
+    expect(auth.signIn).toHaveBeenCalledWith("laras@contoh.id", "Rahasia123!");
     expect(nav.refresh).toHaveBeenCalled();
     expect(nav.push).toHaveBeenCalledWith("/studio");
   });
@@ -97,7 +96,7 @@ describe("Masuk with a real sign-in system", () => {
       gateway({ signIn: vi.fn(async () => ({ ok: true as const, onboarded: false })) }),
     );
     type("Email", "laras@contoh.id");
-    type("Kata sandi", "rahasia123");
+    type("Kata sandi", "Rahasia123!");
     await press("Masuk");
     expect(nav.push).toHaveBeenCalledWith("/mulai?lanjut=%2Fstudio");
   });
@@ -108,7 +107,7 @@ describe("Masuk with a real sign-in system", () => {
   ] as const)("says so when the system answers %s", async (reason, text) => {
     mount(<SignInForm />, gateway({ signIn: vi.fn(async () => ({ ok: false as const, reason })) }));
     type("Email", "laras@contoh.id");
-    type("Kata sandi", "rahasia123");
+    type("Kata sandi", "Rahasia123!");
     await press("Masuk");
     expect(screen.getByRole("alert").textContent).toMatch(text);
     expect(nav.push).not.toHaveBeenCalled();
@@ -120,7 +119,7 @@ describe("Masuk with a real sign-in system", () => {
     });
     mount(<SignInForm />, auth);
     type("Email", "laras@contoh.id");
-    type("Kata sandi", "rahasia123");
+    type("Kata sandi", "Rahasia123!");
     await press("Masuk");
     await press("Kirim ulang email");
     expect(auth.resendVerification).toHaveBeenCalledWith("laras@contoh.id", null);
@@ -135,7 +134,7 @@ describe("Daftar with a real sign-in system", () => {
     fireEvent.click(screen.getByRole("button", { name: "Lanjutkan" }));
   };
   const finish = async () => {
-    type("Kata sandi", "rahasia123");
+    type("Kata sandi", "Rahasia123!");
     fireEvent.click(screen.getByRole("checkbox"));
     await press("Daftar");
   };
@@ -164,7 +163,7 @@ describe("Daftar with a real sign-in system", () => {
     mount(<SignUpForm />, auth);
     toPassword();
     await finish();
-    expect(auth.signUp).toHaveBeenCalledWith("baru@contoh.id", "rahasia123", "/projects");
+    expect(auth.signUp).toHaveBeenCalledWith("baru@contoh.id", "Rahasia123!", "/projects");
     expect(readPendingEmail()).toBe("baru@contoh.id");
     expect(nav.push).toHaveBeenCalledWith("/verifikasi?lanjut=%2Fprojects");
   });
@@ -251,8 +250,8 @@ describe("Lupa sandi with a real sign-in system", () => {
 
 describe("Atur ulang sandi with a real sign-in system", () => {
   const fill = () => {
-    type("Kata sandi baru", "rahasia123");
-    type("Ulangi kata sandi baru", "rahasia123");
+    type("Kata sandi baru", "Rahasia123!");
+    type("Ulangi kata sandi baru", "Rahasia123!");
   };
 
   it("shows the expired state when the link did not sign the reader in", () => {
@@ -265,7 +264,7 @@ describe("Atur ulang sandi with a real sign-in system", () => {
     mount(<ResetForm />, auth, true);
     fill();
     await press("Simpan kata sandi");
-    expect(auth.updatePassword).toHaveBeenCalledWith("rahasia123");
+    expect(auth.updatePassword).toHaveBeenCalledWith("Rahasia123!");
     expect(screen.getByText("Kata sandi diperbarui")).toBeTruthy();
     expect(auth.signOut).toHaveBeenCalled();
     expect(nav.refresh).toHaveBeenCalled();

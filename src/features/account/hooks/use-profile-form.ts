@@ -3,7 +3,7 @@
 import { useCallback, useMemo, useState } from "react";
 import type { AccountProfile } from "../account-store";
 import { fileToAvatar } from "../avatar-image";
-import { usernameTaken } from "../dummy-auth";
+import { usernameTaken } from "../reserved-usernames";
 import { profileIssues, type ProfileField } from "../profile-validation";
 import { photoIssue, type Issue } from "../validation";
 

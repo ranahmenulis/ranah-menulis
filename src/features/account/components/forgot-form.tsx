@@ -2,13 +2,13 @@
 
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
-import { Button, ButtonLink } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { TextLink } from "@/components/ui/text-link";
 import { useToast } from "@/components/ui/toast";
 import { format, useT } from "@/lib/i18n/provider";
 import { useAuthGateway } from "../auth-gateway-context";
 import { useCountdown } from "../hooks/use-countdown";
-import { NEXT_PARAM, RESET_HREF, SIGN_IN_HREF, withNext } from "../redirect";
+import { NEXT_PARAM, SIGN_IN_HREF, withNext } from "../redirect";
 import { emailIssue } from "../validation";
 import { AuthPage } from "./auth-frame";
 import { EmailField, focusFirst } from "./email-field";
@@ -66,21 +66,6 @@ export function ForgotForm() {
               ? format(t.forgot.resendIn, { seconds: String(wait.seconds) })
               : t.forgot.resend}
           </Button>
-          {/* Stand-ins for opening the link from the email; only while sign-in is simulated. */}
-          {gateway.simulated && (
-            <>
-              <ButtonLink href={withNext(RESET_HREF, next)} variant="text" size="sm">
-                {t.forgot.simulate}
-              </ButtonLink>
-              <ButtonLink
-                href={withNext(RESET_HREF, next, { status: "kedaluwarsa" })}
-                variant="text"
-                size="sm"
-              >
-                {t.forgot.simulateExpired}
-              </ButtonLink>
-            </>
-          )}
           <TextLink href={withNext(SIGN_IN_HREF, next)} className="text-sm text-ink-muted">
             {t.forgot.back}
           </TextLink>

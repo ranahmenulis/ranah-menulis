@@ -28,7 +28,7 @@ async function press(name: string) {
   });
 }
 
-async function signIn(email: string, password = "rahasia123") {
+async function signIn(email: string, password = "Rahasia123!") {
   fireEvent.change(screen.getByLabelText("Email"), { target: { value: email } });
   fireEvent.change(screen.getByLabelText("Kata sandi"), { target: { value: password } });
   await press("Masuk");

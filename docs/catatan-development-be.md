@@ -2,12 +2,12 @@
 
 Sumber status terkini untuk pekerjaan backend (Supabase). Pekerjaan UI dan data dummy ada di [catatan-development-fe.md](catatan-development-fe.md). **Wajib dibaca di awal setiap permintaan yang menyentuh backend.** Perbarui di akhir setiap sesi yang mengubah status.
 
-Terakhir diperbarui: **25 November 2026**.
+Terakhir diperbarui: **25 November 2026** (1f).
 
 ## 1. Posisi sekarang
 
 - **Fase 0 (fondasi) selesai.** Supabase CLI 3.2.0 terpasang sebagai devDependency (jalankan lewat `npx supabase ...`). Project `hejuhznagqeayrmautqh` (akun ranahmenulis@gmail.com, region ap-southeast-2) tertaut lewat `supabase link`; berkas `supabase/config.toml` dari `supabase init`. Migrasi 0001 (`profiles`, `platform_roles`, `audit_log`, fungsi role, RLS) dan 0002 (`waitlist_signups`) sudah ada di database dan tercatat di riwayat migrasi. Tes RLS (20 tes, 3 berkas) lulus.
-- **Fase 1 (Auth dan profil): 1a sampai 1d selesai di kode.** 1c masih menunggu pengaturan Auth hosted dari user untuk menguji tautan email dari awal sampai akhir. Berikutnya 1e (bersih-bersih dan akun dummy) dan 1f (verifikasi dan serah). Checklist di bagian 3.
+- **Fase 1 (Auth dan profil) selesai di kode dan diuji (1a sampai 1f).** Pengaturan Auth hosted (Site URL, Redirect URLs, panjang sandi 8, syarat huruf kecil+besar+angka+simbol) sudah diisi user. Tersisa: uji tautan email dengan alamat tim dan uji di preview Vercel. Berikutnya Fase 2 (Studio), rencana dulu. Checklist di bagian 3.
 - **Branch:** semua pekerjaan backend di branch `be/supabase` (dibuat 25 November 2026 dari `main` `5d2d5c1`). `main` tetap versi front-end dengan data dummy sampai backend matang; perbaikan tampilan dari tester masuk ke `main`, lalu `main` digabung ke `be/supabase` secara berkala. Branch ini belum di-push dan belum di-commit apa pun.
 - Frontend masih memakai bypass login, `dummy-auth`, dan data lokal (localStorage, IndexedDB). Belum ada akun nyata.
 
@@ -67,16 +67,17 @@ Keputusan: foto profil ikut Fase 1 (bucket `avatars`); email verifikasi memakai 
   - [x] Hapus akun: Server Action `deleteOwnAccount` (identitas dari sesi terverifikasi, tanpa argumen), klien admin menghapus berkas foto, menulis satu baris audit `account.delete` (hanya id), menghapus pengguna (profil dan peran ikut lewat cascade), lalu mengakhiri sesi
   - [x] Tes: `live-account`, `supabase-account-gateway`, `supabase-auth-gateway` (ganti sandi, hapus), `delete-account`, `photo-blob`, `profile-real` (Mulai, ganti sandi, hapus dengan gateway nyata), tes Mulai dan Pengaturan lama dijadikan async
   - [x] Uji Chrome nyata terhadap Supabase (21 dari 21): masuk ke Mulai, foto dipilih lewat input berkas, username terpakai ditolak di kolomnya tanpa menyimpan apa pun, username sendiri tersimpan, baris profil berisi nama dan `onboarded_at` dan `avatar_path`, berkas foto ada di Storage dan terbaca publik, Pengaturan menyimpan dan nama bertahan setelah muat ulang, sandi lama salah ditolak lalu yang benar mengubah (sandi baru berfungsi, lama tidak), hapus akun (akun, profil, foto hilang, satu baris audit, tampilan masuk hilang)
-- [ ] **1e. Bersih-bersih dan akun dummy**
-  - [ ] Hapus `dummy-auth`, bypass login, tombol "simulasi" di Verifikasi dan Lupa sandi, identitas di `ViewerSync`
-  - [ ] Saklar `NEXT_PUBLIC_DEMO_ROLES` hanya untuk peran Kelola nonplatform (?)
-  - [ ] Skrip seed akun dummy untuk pengujian
-  - [ ] Tulis ulang tes akun (±14 berkas) dengan gateway memori
-- [ ] **1f. Verifikasi dan serah**
-  - [ ] `npm run check`, `npm run build`, `npm run test:rls`
-  - [ ] Uji Chrome klik dan keyboard: daftar, masuk, keluar, lupa sandi, hapus akun
-  - [ ] Perbarui `CLAUDE.md`, panduan uji, catatan FE dan BE
-  - [ ] Uji di preview Vercel (branch `be/supabase`) setelah push dengan persetujuan user
+- [x] **1e. Bersih-bersih dan akun dummy** (selesai 25 November 2026)
+  - [x] Hapus `dummy-auth`, bypass login, tombol "simulasi" di Verifikasi dan Lupa sandi, `ViewerSync`, flag `simulated`. `usernameTaken` pindah ke `reserved-usernames.ts`
+  - [x] Saklar `NEXT_PUBLIC_DEMO_ROLES` dan `?sebagai=` dicabut seluruhnya di branch ini (keputusan user; `main` tetap sampai akun dummy berperan siap). Peran Kelola nonplatform kelak dari akun dummy berperan (Fase 4)
+  - [x] `scripts/seed-test-accounts.mjs` (penulis, Administrator, Super Admin; `--cleanup`; sandi acak ke `.env.seed`). Sudah dijalankan: tiga akun `seed-*@seed.ranahmenulis.test` ada di database
+  - [x] Gateway memori `src/test/memory-auth-gateway.ts` dipasang lewat `tests/setup.ts` (`setFallbackAuthGateway`); tes recovery-flow ditulis ulang, tes lain tetap
+  - [x] Aturan sandi aplikasi disamakan dengan pengaturan Supabase (huruf kecil, huruf besar, angka, simbol; `PASSWORD_PARTS` di `validation.ts`, ceklis lima aturan di Daftar)
+- [x] **1f. Verifikasi dan serah** (selesai 25 November 2026; tautan email dari awal sampai akhir belum diuji)
+  - [x] `format:check`, `lint` (satu peringatan lama), `typecheck`, tes penuh (297 berkas, 2.341 tes; tujuh yang gagal karena contoh sandi lama sudah diperbaiki dan diulang: tes akun 240 lulus), `npm run build`, `npm run test:rls` (32 lulus)
+  - [x] Uji Chrome nyata terhadap Supabase, 19 dari 19: sandi salah, masuk lewat Enter ke tujuan tersimpan, nama dan email dari database, sesi bertahan setelah muat ulang, Keluar dengan klik mouse, ceklis aturan sandi, validasi Lupa sandi, Atur ulang tanpa tautan (kedaluwarsa), hapus akun sementara lewat UI (akun dan profil hilang), nol error JS
+  - [ ] Perbarui panduan uji PDF dan uji di preview Vercel `be/supabase` setelah push (butuh persetujuan user)
+  - [ ] Uji tautan email (Daftar dan Lupa sandi) dengan alamat tim
 
 ### Fase 2, Studio (dokumen)
 - [ ] Migrasi: `documents`, `folders`, `document_versions`, `daily_log`, target (RLS pemilik saja) dan tes RLS
@@ -153,3 +154,12 @@ Opsional: Authentication, Email Templates, terjemahkan templat ke bahasa Indones
 - `db push` pertama gagal: `relation "profiles" already exists`. Pemeriksaan baca-saja menunjukkan 0001 sudah terpasang lengkap (tiga tabel, enam fungsi, empat policy, RLS aktif, trigger), tanpa pengguna, profil, atau role; satu baris `audit_log` lama (14 November) dibiarkan. 0001 dicatat `applied`, 0002 didorong. `migration list --remote` cocok.
 - Tes RLS ditulis dan lulus (20 tes). Satu tes salah asumsi (Administrator memang boleh melihat semua role) dibetulkan. Berkas: `tests/rls/{helpers,profiles,roles-and-audit,waitlist}`, `vitest.rls.config.mts`, script `test:rls`, `tests/rls/**` dikecualikan di `vitest.config.mts`.
 - Pelajaran: perintah `db push`, `db query`, dan `migration repair` di agent mode butuh `--yes` (dan `--read-only` untuk query baca); koneksi langsung ke database gagal tanpa IPv6, pooler IPv4 baru tersimpan setelah project aktif penuh. `catatan-development.md` diganti nama menjadi `catatan-development-fe.md`; `CLAUDE.md` mengimpor FE dan BE.
+
+### 25 November 2026 (1e)
+- Dikerjakan: gateway tiruan pindah ke `src/test`, `useAuthGateway` melempar galat tanpa provider (kecuali seam tes), layar Verifikasi, Lupa sandi, Atur ulang, Mulai berperilaku seperti produksi (Verifikasi butuh email tertunda dari tab, Atur ulang butuh sesi), kunci teks simulasi dihapus (id dan en), `vitest.config.mts` mendapat `setupFiles`.
+- Gate: `tsc`, ESLint dan Prettier bersih; tes `tests/features/account`, `tests/lib`, `tests/features/app-shell` lulus (49 berkas, setelah recovery-flow diperbaiki 14 tes). Belum: tes penuh dan `build` (di 1f), seed dijalankan, uji Chrome.
+- Pelajaran: modul tes yang dipasang global lewat `setupFiles` cukup untuk mempertahankan ±150 tes lama tanpa provider di tiap berkas; layar yang dulu bercabang `simulated` kini hanya punya jalur nyata, jadi tes yang bergantung pada tombol simulasi harus ditulis ulang, bukan disesuaikan.
+
+### 25 November 2026 (1f)
+- Gate dijalankan penuh; ringkasan di checklist 1f. Seed dijalankan (tiga akun). Aturan sandi aplikasi diubah mengikuti pengaturan server yang ketat atas keputusan user.
+- Pelajaran: huruf tanpa huruf besar dan kecil (aksara Jawa) tidak lolos aturan Supabase, jadi tes sandi non-Latin dihapus. Skrip uji Chrome (CDP, hanya fitur bawaan Node 24: `WebSocket`, `fetch`) menemukan dua kesalahan skrip, bukan aplikasi: label kolom konfirmasi hapus akun adalah "Konfirmasi", dan galat sandi salah dicari lewat `[role=alert]` lebih stabil daripada mencocokkan teks halaman. Akun sementara untuk uji hapus dibuat lewat klien admin dan dihapus lewat UI.

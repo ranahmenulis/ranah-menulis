@@ -10,7 +10,7 @@ import { studioStore } from "@/features/studio/storage/store";
 import { cn } from "@/lib/cn";
 import { useT } from "@/lib/i18n/provider";
 import { areasFor } from "@/features/kelola/access";
-import { ViewerSync, useViewer } from "@/lib/viewer";
+import { useViewer } from "@/lib/viewer";
 import { useEffectiveRoles } from "@/features/kelola/use-effective-roles";
 import { GuestFrame } from "./guest-frame";
 import { NavLink } from "./nav-link";
@@ -50,17 +50,11 @@ export function AppShell({ children }: { children: ReactNode }) {
   const lastDocument = useLastDocument(studioStore, pathname);
 
   if (viewer === "tamu") {
-    return (
-      <>
-        <ViewerSync pathname={pathname} />
-        <GuestFrame back={onPost}>{children}</GuestFrame>
-      </>
-    );
+    return <GuestFrame back={onPost}>{children}</GuestFrame>;
   }
 
   return (
     <div className="flex min-h-dvh flex-col max-md:[--toast-offset:calc(5rem+env(safe-area-inset-bottom))]">
-      <ViewerSync pathname={pathname} />
       <TopBar
         title={mobileTitle(pathname)}
         discoverActive={active === "jelajahi"}

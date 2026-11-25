@@ -85,11 +85,15 @@ describe("SignUpForm", () => {
     const rule = (name: string) => screen.getByText(name).closest("[data-met]");
     expect(rule("8 karakter")).toBeNull();
     fireEvent.change(screen.getByLabelText("Kata sandi"), { target: { value: "abc" } });
-    expect(rule("Ada huruf")).toBeTruthy();
-    expect(rule("Ada angka")).toBeNull();
-    fireEvent.change(screen.getByLabelText("Kata sandi"), { target: { value: "rahasia123" } });
+    expect(rule("Huruf kecil")).toBeTruthy();
+    expect(rule("Huruf besar")).toBeNull();
+    expect(rule("Angka")).toBeNull();
+    expect(rule("Simbol")).toBeNull();
+    fireEvent.change(screen.getByLabelText("Kata sandi"), { target: { value: "Rahasia123!" } });
     expect(rule("8 karakter")).toBeTruthy();
-    expect(rule("Ada angka")).toBeTruthy();
+    expect(rule("Huruf besar")).toBeTruthy();
+    expect(rule("Angka")).toBeTruthy();
+    expect(rule("Simbol")).toBeTruthy();
   });
 
   it("rejects a weak password and a missing agreement, together", async () => {
@@ -101,11 +105,11 @@ describe("SignUpForm", () => {
     expect(nav.push).not.toHaveBeenCalled();
   });
 
-  it("asks for a letter and a number", async () => {
+  it("asks for lowercase, uppercase, a number and a symbol", async () => {
     render(<SignUpForm />);
     enterEmail("baru@contoh.id");
     await finish("sembilanhuruf");
-    expect(screen.getByText("Pakai minimal satu huruf dan satu angka.")).toBeTruthy();
+    expect(screen.getByText("Pakai huruf kecil, huruf besar, angka, dan simbol.")).toBeTruthy();
   });
 
   it("goes back to change the email, keeping what was typed", async () => {
@@ -121,7 +125,7 @@ describe("SignUpForm", () => {
   it("starts an empty account and goes to email verification", async () => {
     render(<SignUpForm />);
     enterEmail("  baru@contoh.id ");
-    await finish("rahasia123");
+    await finish("Rahasia123!");
     expect(nav.push).toHaveBeenCalledWith("/verifikasi");
     const account = parseAccount(localStorage.getItem("ranah.account"));
     expect(account.email).toBe("baru@contoh.id");
@@ -135,7 +139,7 @@ describe("SignUpForm", () => {
     nav.search = "lanjut=%2Fprojects";
     render(<SignUpForm />);
     enterEmail("baru@contoh.id");
-    await finish("rahasia123");
+    await finish("Rahasia123!");
     expect(nav.push).toHaveBeenCalledWith("/verifikasi?lanjut=%2Fprojects");
   });
 

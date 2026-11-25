@@ -11,6 +11,7 @@ export default defineConfig({
     // jsdom dipakai untuk semua tes; cukup untuk logika murni dan komponen.
     environment: "jsdom",
     include: ["tests/**/*.test.{ts,tsx}"],
+    setupFiles: ["tests/setup.ts"],
     // The first jsdom test in a cold run can take several seconds (transform + environment).
     testTimeout: 15_000,
     // tests/rls talks to a real Supabase project; it has its own config (npm run test:rls).

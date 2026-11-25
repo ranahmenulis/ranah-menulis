@@ -8,7 +8,6 @@ import { useToast } from "@/components/ui/toast";
 import { useSession } from "@/lib/auth/session-context";
 import { useT } from "@/lib/i18n/provider";
 import { useAccount, type AccountProfile } from "../account-store";
-import { useAuthGateway } from "../auth-gateway-context";
 import { useHydrated } from "../hooks/use-hydrated";
 import { useProfileForm } from "../hooks/use-profile-form";
 import { useSaveProfile } from "../hooks/use-save-profile";
@@ -62,11 +61,10 @@ export function OnboardingView() {
   const t = useT().account;
   const router = useRouter();
   const next = useSearchParams().get(NEXT_PARAM);
-  const gateway = useAuthGateway();
   const session = useSession();
   const hydrated = useHydrated();
   const { profile } = useAccount();
-  const visitor = !gateway.simulated && session?.status === "guest";
+  const visitor = session?.status === "guest";
 
   // The profile belongs to an account: a visitor (an old link, a signed-out tab) signs in first.
   useEffect(() => {

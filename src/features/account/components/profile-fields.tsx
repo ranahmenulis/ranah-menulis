@@ -6,7 +6,7 @@ import { describedBy, Field, Input, Select, Textarea } from "@/components/ui/fie
 import { GENRES, type Genre } from "@/features/community/types";
 import { cn } from "@/lib/cn";
 import { format, useT } from "@/lib/i18n/provider";
-import { usernameTaken } from "../dummy-auth";
+import { usernameTaken } from "../reserved-usernames";
 import { profileFieldId, type ProfileForm } from "../hooks/use-profile-form";
 import { useDeviceTimeZone } from "../hooks/use-device-time-zone";
 import { COUNTRIES, zoneOptions } from "../timezones";

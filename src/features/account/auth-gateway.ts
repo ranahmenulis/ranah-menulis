@@ -1,7 +1,7 @@
 /**
  * What the account screens ask of the sign-in system. Supabase Auth in the app
- * (`supabase-auth-gateway.ts`); a stand-in that only simulates (`dummy-auth-gateway.ts`) when no
- * provider is mounted, which is what the component tests use. Screens never call Supabase directly.
+ * (`supabase-auth-gateway.ts`); component tests install an in-memory one (`src/test`). Screens never
+ * call Supabase directly.
  */
 export type AuthFailure = "limit" | "network";
 
@@ -24,8 +24,6 @@ export type ChangePasswordResult =
 export type DeleteAccountResult = { ok: true } | { ok: false; reason: "failed" };
 
 export type AuthGateway = {
-  /** True while sign-in is only simulated: the screens then show their stand-in buttons. */
-  simulated: boolean;
   signIn(email: string, password: string): Promise<SignInResult>;
   /** `next` is where the reader was heading; it is kept through the email link. */
   signUp(email: string, password: string, next?: string | null): Promise<SignUpResult>;
@@ -39,7 +37,7 @@ export type AuthGateway = {
   deleteAccount(): Promise<DeleteAccountResult>;
   signOut(): Promise<void>;
   /**
-   * Only the stand-in can know that an address is taken. A real system must not tell (it would
+   * Only a test stand-in can know that an address is taken. A real system must not tell (it would
    * let anyone find who has an account), so this is absent there and Daftar learns it on submit.
    */
   emailTaken?(email: string): boolean;

@@ -2,13 +2,21 @@
 
 import { createContext, useContext } from "react";
 import type { AuthGateway } from "./auth-gateway";
-import { dummyAuthGateway } from "./dummy-auth-gateway";
 
-const AuthGatewayContext = createContext<AuthGateway>(dummyAuthGateway);
+const AuthGatewayContext = createContext<AuthGateway | null>(null);
 
 export const AuthGatewayProvider = AuthGatewayContext.Provider;
 
-/** The sign-in system for this page; the simulated one when no provider is mounted (tests). */
+let fallback: AuthGateway | null = null;
+
+/** Test seam: the gateway used when no provider is mounted. Never set by app code. */
+export function setFallbackAuthGateway(gateway: AuthGateway | null) {
+  fallback = gateway;
+}
+
+/** The sign-in system for this page. The app always mounts one (`AuthProvider`). */
 export function useAuthGateway(): AuthGateway {
-  return useContext(AuthGatewayContext);
+  const gateway = useContext(AuthGatewayContext) ?? fallback;
+  if (!gateway) throw new Error("useAuthGateway needs an AuthGatewayProvider above it.");
+  return gateway;
 }
