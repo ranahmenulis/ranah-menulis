@@ -15,6 +15,9 @@ const DAY = 24 * HOUR;
 
 /** 24 November 2026, 08.00 WIB. */
 export const SAMPLE_NOW = Date.UTC(2026, 10, 24, 1, 0);
+
+/** The zone sample dates are shown in, so the server and every browser render the same text. */
+export const SAMPLE_ZONE = "Asia/Jakarta";
 export const SAMPLE_TODAY = "2026-11-24";
 export const SAMPLE_TARGET = 500;
 export const SAMPLE_TODAY_WORDS = 320;

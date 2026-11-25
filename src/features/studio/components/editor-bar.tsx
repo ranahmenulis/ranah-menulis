@@ -101,7 +101,7 @@ export function EditorBar({
           onKeyDown={(e) => {
             if (e.key === "Enter") e.currentTarget.blur();
           }}
-          placeholder={t.bar.untitled}
+          placeholder={t.bar.titlePlaceholder}
           aria-label={t.canvas.titleLabel}
           className="order-2 hidden h-9 w-64 min-w-0 truncate rounded-lg border border-transparent bg-transparent px-2 text-sm font-medium text-ink outline-none placeholder:text-ink-muted hover:border-line focus:border-line focus:bg-canvas md:block lg:w-80"
         />

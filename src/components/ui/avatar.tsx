@@ -13,20 +13,22 @@ export function initials(name: string): string {
 
 type AvatarProps = {
   name: string;
+  /** Accessible name when it should differ from `name` (e.g. while the name is still empty). */
+  label?: string;
   src?: string | null;
   size?: AvatarSize;
   className?: string;
 };
 
 /** Lingkaran penanda penulis. Selalu didampingi nama di dekatnya atau aria-label. */
-export function Avatar({ name, src, size = 32, className }: AvatarProps) {
+export function Avatar({ name, label, src, size = 32, className }: AvatarProps) {
   const style = { width: size, height: size };
   if (src) {
     return (
       // eslint-disable-next-line @next/next/no-img-element -- sumber foto (Supabase Storage) belum dikonfigurasi
       <img
         src={src}
-        alt={name}
+        alt={label ?? name}
         width={size}
         height={size}
         style={style}
@@ -37,7 +39,7 @@ export function Avatar({ name, src, size = 32, className }: AvatarProps) {
   return (
     <span
       role="img"
-      aria-label={name}
+      aria-label={label ?? name}
       style={{ ...style, fontSize: size * 0.4 }}
       className={cn(
         "inline-grid shrink-0 place-items-center rounded-full bg-subtle leading-none font-medium text-ink-muted",

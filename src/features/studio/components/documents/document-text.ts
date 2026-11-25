@@ -19,8 +19,9 @@ export function documentMeta(
   wordCount: number,
   at: number,
   now: number,
+  timeZone?: string,
 ): string {
-  const time = formatChanged(at, now, locale);
+  const time = formatChanged(at, now, locale, timeZone);
   return `${format(t.meta[verb], { time })} · ${wordsLabel(t, wordCount, locale)}`;
 }
 

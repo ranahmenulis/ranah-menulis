@@ -70,6 +70,7 @@ export const studioEditor: typeof source = {
   bar: {
     back: "Back to Studio",
     untitled: "Untitled",
+    titlePlaceholder: "Title",
     search: "Search Studio",
     menu: "Document menu",
     help: "Writing help",

@@ -10,6 +10,7 @@ import { WorksTable, type TableRow } from "@/features/studio/components/works/wo
 import { format, useLocale, useT } from "@/lib/i18n/provider";
 import {
   SAMPLE_NOW,
+  SAMPLE_ZONE,
   sampleMyProject,
   samplePosts,
   sampleStreak,
@@ -33,7 +34,15 @@ export function StudioWorksPreview() {
     type: "document",
     title: work.title,
     mark: <DocumentMark page={{ id: work.id, kind: work.kind, wordCount: work.wordCount }} />,
-    meta: documentMeta(t, locale, "changed", work.wordCount, work.updatedAt, SAMPLE_NOW),
+    meta: documentMeta(
+      t,
+      locale,
+      "changed",
+      work.wordCount,
+      work.updatedAt,
+      SAMPLE_NOW,
+      SAMPLE_ZONE,
+    ),
     sub: "",
     words: work.wordCount,
     genre: work.kind,
@@ -51,6 +60,7 @@ export function StudioWorksPreview() {
         sort={{ key: "updated", dir: "desc" }}
         onSort={noop}
         now={SAMPLE_NOW}
+        timeZone={SAMPLE_ZONE}
       />
     </div>
   );

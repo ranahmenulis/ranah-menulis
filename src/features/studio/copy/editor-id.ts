@@ -67,6 +67,7 @@ export const studioEditor = {
   bar: {
     back: "Kembali ke Studio",
     untitled: "Tanpa judul",
+    titlePlaceholder: "Judul",
     search: "Cari di Studio",
     menu: "Menu dokumen",
     help: "Bantuan menulis",

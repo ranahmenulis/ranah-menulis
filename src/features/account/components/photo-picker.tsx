@@ -16,7 +16,12 @@ export function PhotoPicker({ form }: { form: ProfileForm }) {
   const t = useT().account;
   return (
     <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
-      <Avatar name={form.values.name || t.photo.label} src={form.values.avatar} size={88} />
+      <Avatar
+        name={form.values.name}
+        label={form.values.name || t.photo.label}
+        src={form.values.avatar}
+        size={88}
+      />
       <PhotoControls form={form} />
     </div>
   );

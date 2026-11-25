@@ -156,11 +156,14 @@ export function WorksTable({
   sort,
   onSort,
   now,
+  timeZone,
 }: {
   rows: TableRow[];
   sort: WorkSort;
   onSort: (key: WorkSortKey) => void;
   now: number;
+  /** Fixed zone for sample data (landing); omit to use the device's zone. */
+  timeZone?: string;
 }) {
   const t = useT().studioDocuments;
   const locale = useLocale();
@@ -237,10 +240,15 @@ export function WorksTable({
               <Tags tags={row.tags} />
             </td>
             <td className="hidden px-3 py-4 align-top text-sm whitespace-nowrap text-ink-muted md:table-cell">
-              {formatChanged(row.updatedAt, now, locale)}
+              {formatChanged(row.updatedAt, now, locale, timeZone)}
             </td>
             <td className="hidden px-3 py-4 align-top text-sm whitespace-nowrap text-ink-muted lg:table-cell">
-              {formatDate(row.createdAt, locale)}
+              {formatDate(row.createdAt, locale, {
+                day: "numeric",
+                month: "short",
+                year: "numeric",
+                timeZone,
+              })}
             </td>
             <td className="px-3 py-3 text-right align-top">
               <Menu label={row.menuLabel} items={row.menu} />
