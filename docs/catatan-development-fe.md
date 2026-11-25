@@ -1,4 +1,4 @@
-# Catatan Development RanahMenulis
+# Catatan Development RanahMenulis (Front-end)
 
 Sumber status terkini. **Wajib dibaca di awal setiap permintaan, sebelum menyentuh apa pun.** Jangan menebak posisi proyek: kalau yang dicari tidak ada di sini, baca [Catatan Slicing](desain/Catatan%20Slicing.md) (arsip fase slicing) atau tanyakan. Perbarui berkas ini di akhir setiap sesi yang mengubah status.
 
@@ -106,6 +106,11 @@ Isi pekerjaannya (urutan belum diputuskan):
 - Hal yang "perlu dibahas" client tidak boleh dibangun (lihat CLAUDE.md, Keputusan Lembar Novlr).
 
 ## 6. Log sesi
+
+### 25 November 2026 (uji ulang Vercel dan penutup)
+- Uji ulang setelah `568420c` menemukan #418 masih ada di landing produksi: pratinjau Proyek saya memakai `sentAtText` tanpa zona ("Versi 2 · 2.105 kata · dikirim 3 Nov 2026, 08.00" di klien, jam lain di server). Diperbaiki di `5d2d5c1` (`sentAtText` dan `MyProjectGroup` menerima `timeZone`, landing memakai `SAMPLE_ZONE`; tes `submission-text-zone`). **Uji ulang setelah deploy: nol error JS di landing, `/daftar`, `/mulai`, `/studio/baru`, tanpa overflow, placeholder judul "Judul".** Avatar "?" hanya terbukti di lokal (di produksi profil kosong tampil sebagai akun contoh).
+- Keputusan user: versi ini diserahkan; feedback berikutnya paralel dengan backend. Posisi git: `origin/main` = `5d2d5c1`. Prompt sesi berikutnya ada di `docs/desain/Prompt Lanjut Slicing.md`.
+- Pelajaran: lacak galat hidrasi produksi dengan membandingkan simpul teks HTML server dan DOM hasil hidrasi (CDP); galat ini bisa tidak muncul di satu proses, ulangi beberapa kali.
 
 ### 25 November 2026 (sisa temuan uji alur: 5, 7, 8)
 - Temuan 2, 4, 6 sudah di-commit (`4ab009a`). Sisa dikerjakan (belum di-commit): (7) error hidrasi #418 di landing produksi berasal dari tabel Naskah contoh: `formatChanged` dan kolom Dibuat memakai zona perangkat, jadi server Vercel (UTC) dan peramban (WIB) berbeda. Kini `formatChanged`, `formatClock`, `documentMeta`, dan `WorksTable` menerima `timeZone` opsional dan landing memakai `SAMPLE_ZONE` ("Asia/Jakarta"); diuji dengan zona Los Angeles, tanpa error hidrasi. (5) placeholder judul di bilah Editor kini "Judul" seperti di badan (`bar.titlePlaceholder`); teks "Tanpa judul" tetap untuk daftar dan ponsel. (8) `Avatar` punya prop `label`; di Mulai avatar menampilkan "?" selama nama kosong, bukan "FP", dengan nama aksesibel "Foto profil".
