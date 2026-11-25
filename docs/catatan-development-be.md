@@ -7,7 +7,7 @@ Terakhir diperbarui: **25 November 2026**.
 ## 1. Posisi sekarang
 
 - **Fase 0 (fondasi) selesai.** Supabase CLI 3.2.0 terpasang sebagai devDependency (jalankan lewat `npx supabase ...`). Project `hejuhznagqeayrmautqh` (akun ranahmenulis@gmail.com, region ap-southeast-2) tertaut lewat `supabase link`; berkas `supabase/config.toml` dari `supabase init`. Migrasi 0001 (`profiles`, `platform_roles`, `audit_log`, fungsi role, RLS) dan 0002 (`waitlist_signups`) sudah ada di database dan tercatat di riwayat migrasi. Tes RLS (20 tes, 3 berkas) lulus.
-- **Fase 1 (Auth dan profil): rencana disusun dan diubah menjadi checklist (bagian 3); menunggu jawaban atas keputusan bertanda (?) dan persetujuan untuk mulai 1a.** Belum ada kode Fase 1.
+- **Fase 1 (Auth dan profil): 1a selesai (migrasi 0003 dan tes RLS).** Berikutnya 1b (gateway, sesi, `AuthProvider`). Checklist di bagian 3.
 - **Branch:** semua pekerjaan backend di branch `be/supabase` (dibuat 25 November 2026 dari `main` `5d2d5c1`). `main` tetap versi front-end dengan data dummy sampai backend matang; perbaikan tampilan dari tester masuk ke `main`, lalu `main` digabung ke `be/supabase` secara berkala. Branch ini belum di-push dan belum di-commit apa pun.
 - Frontend masih memakai bypass login, `dummy-auth`, dan data lokal (localStorage, IndexedDB). Belum ada akun nyata.
 
@@ -33,13 +33,13 @@ Satu daftar untuk semua fase. Centang `[x]` beserta tanggal dan commit saat sele
 - [x] Pisah catatan development menjadi FE dan BE
 
 ### Fase 1, Auth email dan sandi, profil
-Keputusan yang masih dibutuhkan (?): foto profil ikut Fase 1 atau Fase 3; email verifikasi hidup atau dimatikan sementara; saklar peran demo untuk peran Kelola nonplatform dipertahankan sampai Fase 4; pengaturan Auth hosted dilakukan user (Site URL dan Redirect URLs untuk domain Vercel dan localhost, kebijakan sandi minimal 8 dengan huruf dan angka).
+Keputusan: foto profil ikut Fase 1 (bucket `avatars`); email verifikasi memakai email bawaan Supabase dengan konfirmasi menyala (kuota kecil dan mungkin hanya ke alamat tim: perlu diuji di 1c, cadangan = matikan konfirmasi sementara). Masih (?): saklar peran demo untuk peran Kelola nonplatform dipertahankan sampai Fase 4 (dipakai sebagai bawaan); pengaturan Auth hosted dilakukan user (Site URL dan Redirect URLs untuk domain Vercel dan localhost, kebijakan sandi minimal 8 dengan huruf dan angka).
 
-- [ ] **1a. Migrasi 0003 dan tes RLS**
-  - [ ] Kolom `profiles.prefs jsonb` dan `profiles.onboarded_at`
-  - [ ] Bucket `avatars` dengan policy (baca publik, tulis hanya pemilik) (?)
-  - [ ] Terapkan ke database (minta persetujuan sebelum `--yes`) dan catat riwayat
-  - [ ] Tes RLS: pemilik menulis `prefs`, orang lain tidak; bucket
+- [x] **1a. Migrasi 0003 dan tes RLS** (selesai 25 November 2026)
+  - [x] Kolom `profiles.prefs jsonb` (objek, maks. 8 KB) dan `profiles.onboarded_at`; `avatar_path` hanya boleh di folder pemilik
+  - [x] Bucket `avatars` (publik, 256 KB, webp/jpeg/png) dengan policy baca publik dan tulis hanya di folder sendiri
+  - [x] Diterapkan ke database dengan persetujuan user dan tercatat di riwayat
+  - [x] Tes RLS: `prefs`, `onboarded_at`, `avatar_path`, bucket (32 tes lulus, 4 berkas)
 - [ ] **1b. Sesi dan gateway (tanpa perubahan layar)**
   - [ ] `AuthGateway` dan `AccountGateway` (Supabase dan memori)
   - [ ] Layout root membaca sesi di server (`getClaims`) dan mengoper akun awal ke `AuthProvider`
@@ -56,7 +56,7 @@ Keputusan yang masih dibutuhkan (?): foto profil ikut Fase 1 atau Fase 3; email 
   - [ ] Profil dibaca dan ditulis ke database
   - [ ] Cek username ke database; galat 23505 ditangani; handle penulis fixture tetap dicadangkan
   - [ ] Preferensi (notifikasi, streak, menulis) di `prefs`
-  - [ ] Foto profil ke bucket (?)
+  - [ ] Foto profil ke bucket `avatars` (pangkas 256 px WebP di klien, simpan `<id>/avatar.webp`, `avatar_path` di profil)
   - [ ] Ganti sandi dengan verifikasi ulang sandi lama
   - [ ] Hapus akun (Server Action, klien admin, kata HAPUS/DELETE)
 - [ ] **1e. Bersih-bersih dan akun dummy**
@@ -100,6 +100,13 @@ Keputusan yang masih dibutuhkan (?): foto profil ikut Fase 1 atau Fase 3; email 
 - 25 November 2026: branch baru `be/supabase` untuk semua backend, `main` dibiarkan dummy FE sampai backend matang; pakai project Supabase cloud (bukan Docker lokal); login email dan sandi dulu, Google menyusul; akun dummy disiapkan untuk pengujian (bukan impor data lokal); feedback front-end berjalan paralel (user meminta tester menguji lagi dan akan memberi tahu hasilnya); gate setiap fase = tes RLS dan tes terarah, `npm run check` dan `build` sekali di akhir fase.
 
 ## 5. Log sesi
+
+### 25 November 2026 (uji email Auth)
+- `scripts/auth-email-check.mjs` (alamat dari `AUTH_TEST_EMAIL` di `.env`, tidak pernah dicetak; `--cleanup` menghapus pengguna uji). `signUp` diterima, konfirmasi email menyala, dan email konfirmasi masuk ke Kotak Masuk dalam kurang dari satu menit (pengirim `noreply@mail.app.supabase.io`, templat bawaan Supabase berbahasa Inggris, tombol "Confirm email address").
+- Belum diketahui: apakah alamat di luar tim project ikut menerima email, kuota per jam, dan ke mana tautan konfirmasi mengarah (bergantung Site URL, diatur user di dasbor). Templat email masih bahasa Inggris dan polos; dapat diubah di dasbor (Authentication, Email Templates) bila perlu.
+
+### 25 November 2026 (1a)
+- Keputusan user: foto ikut Fase 1; email bawaan Supabase. Migrasi `0003_profil_preferensi_dan_foto.sql` ditulis, dry-run, diterapkan dengan `--yes` setelah persetujuan, lalu 32 tes RLS lulus. Branch `be/supabase`; commit awal `cbb5f36`.
 
 ### 25 November 2026 (Fase 0)
 - Docker Desktop tidak dipakai; CLI Supabase 3.2.0 dipasang (npm memilih 3.2.0 karena `min-release-age=7`, 3.4.0 terlalu baru). Project di akun yang sedang login di CLI awalnya hanya `phcumddometvumlbkjdw` (paused); project yang dimaksud user adalah `hejuhznagqeayrmautqh`, ada di akun lain; setelah user login ulang CLI, project terlihat.

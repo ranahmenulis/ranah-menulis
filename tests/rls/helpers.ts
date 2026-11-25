@@ -58,6 +58,11 @@ export async function cleanupTestUsers(): Promise<void> {
   const ids = [...created];
   created.length = 0;
   const list = ids.join(",");
+  for (const id of ids) {
+    const files = await admin.storage.from("avatars").list(id);
+    const paths = (files.data ?? []).map((file) => `${id}/${file.name}`);
+    if (paths.length > 0) await admin.storage.from("avatars").remove(paths);
+  }
   await admin.from("audit_log").delete().or(`actor_id.in.(${list}),target_id.in.(${list})`);
   for (const id of ids) await admin.auth.admin.deleteUser(id);
 }

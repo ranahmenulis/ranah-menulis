@@ -56,6 +56,55 @@ describe("RLS: profiles", () => {
     expect(still.data).toHaveLength(1);
   });
 
+  it("lets a user save their own preferences and onboarding time", async () => {
+    const prefs = { showStreak: true, writing: { mode: "standard" } };
+    const res = await a.client
+      .from("profiles")
+      .update({ prefs, onboarded_at: new Date().toISOString() })
+      .eq("id", a.id)
+      .select("prefs, onboarded_at");
+    expect(res.error).toBeNull();
+    expect(res.data?.[0]?.prefs).toEqual(prefs);
+    expect(res.data?.[0]?.onboarded_at).not.toBeNull();
+  });
+
+  it("does not let user A change user B's preferences", async () => {
+    const res = await a.client
+      .from("profiles")
+      .update({ prefs: { showStreak: true } })
+      .eq("id", b.id)
+      .select();
+    expect(res.data ?? []).toHaveLength(0);
+    const after = await admin.from("profiles").select("prefs").eq("id", b.id).single();
+    expect(after.data?.prefs).toEqual({});
+  });
+
+  it("rejects preferences that are not an object or are too large", async () => {
+    const notObject = await a.client
+      .from("profiles")
+      .update({ prefs: [1] })
+      .eq("id", a.id);
+    expect(notObject.error).not.toBeNull();
+    const huge = await a.client
+      .from("profiles")
+      .update({ prefs: { blob: "x".repeat(9000) } })
+      .eq("id", a.id);
+    expect(huge.error).not.toBeNull();
+  });
+
+  it("only lets a profile point its photo at its own folder", async () => {
+    const own = await a.client
+      .from("profiles")
+      .update({ avatar_path: `${a.id}/avatar.webp` })
+      .eq("id", a.id);
+    expect(own.error).toBeNull();
+    const other = await a.client
+      .from("profiles")
+      .update({ avatar_path: `${b.id}/avatar.webp` })
+      .eq("id", a.id);
+    expect(other.error).not.toBeNull();
+  });
+
   it("enforces the profile constraints", async () => {
     const badName = await a.client
       .from("profiles")
