@@ -24,12 +24,13 @@ function workMeta(
   project: Project,
   t: ReturnType<typeof useT>["projectsFlow"]["my"]["group"],
   locale: Locale,
+  timeZone?: string,
 ): string {
   const last = work.versions.at(-1);
   const parts = [
     work.versions.length > 1 ? fill(t.version, { n: String(work.versions.length) }) : null,
     versionSizeText(last, locale),
-    fill(t.sentAt, { at: sentAtText(work.submittedAt, locale) }),
+    fill(t.sentAt, { at: sentAtText(work.submittedAt, locale, timeZone) }),
   ];
   const due = revisionDueAt(work);
   if (due !== null) {
@@ -87,7 +88,7 @@ function EmptyLine({ row }: { row: MyProject }) {
  * One project you joined, with its works (PRD 17.5). A project with no work shows the state of the
  * registration, not a submission status, so the two are never mixed up (DESIGN.md 7.4).
  */
-export function MyProjectGroup({ row }: { row: MyProject }) {
+export function MyProjectGroup({ row, timeZone }: { row: MyProject; timeZone?: string }) {
   const g = useT().projectsFlow.my.group;
   const locale = useLocale();
   const { project, registration, works } = row;
@@ -140,7 +141,7 @@ export function MyProjectGroup({ row }: { row: MyProject }) {
                   {work.title}
                 </TextLink>
                 <p className="text-xs wrap-anywhere text-ink-muted">
-                  {workMeta(work, project, g, locale)}
+                  {workMeta(work, project, g, locale, timeZone)}
                 </p>
               </div>
               <StatusSubmission status={work.status} />

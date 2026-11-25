@@ -30,8 +30,8 @@ export function blockMessage(
 }
 
 /** "25 Nov 2026 14.05" in the reader's own zone: this is when *they* sent it. */
-export const sentAtText = (timestamp: number, locale: Locale = "id") =>
-  formatDateTime(timestamp, locale);
+export const sentAtText = (timestamp: number, locale: Locale = "id", timeZone?: string) =>
+  formatDateTime(timestamp, locale, timeZone ? { timeZone } : {});
 
 /** "1.250 kata" for a document, "PDF · 2,3 MB" for an uploaded file (its words are not counted). */
 export function versionSizeText(

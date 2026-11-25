@@ -73,7 +73,7 @@ export function StreakAppPreview() {
 
 /** Project: one anthology from "Proyek saya", with an accepted work. */
 export function ProjectAppPreview() {
-  return <MyProjectGroup row={sampleMyProject()} />;
+  return <MyProjectGroup row={sampleMyProject()} timeZone={SAMPLE_ZONE} />;
 }
 
 /** Community: two posts in the feed card, as Beranda shows them. */
