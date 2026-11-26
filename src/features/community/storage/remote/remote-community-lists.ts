@@ -207,7 +207,7 @@ export const groupsRemoteSync: RemoteListSync<WritingGroup> = {
     const session = await accountSession();
     if (!session) return;
     const uid = session.userId;
-    const resolveUser = (id: string) => (id === ME_ID || id === "me" ? uid : id);
+    const resolveUser = (id: string) => (id === ME_ID || id === ME_ID ? uid : id);
     for (const g of next) {
       if (!isUuid(g.id)) continue;
       await session.client.from("writing_groups").upsert(

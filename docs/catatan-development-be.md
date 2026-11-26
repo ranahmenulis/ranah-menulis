@@ -2,7 +2,7 @@
 
 Sumber status terkini untuk pekerjaan backend (Supabase). Pekerjaan UI dan data dummy ada di [catatan-development-fe.md](catatan-development-fe.md). **Wajib dibaca di awal setiap permintaan yang menyentuh backend.** Perbarui di akhir setiap sesi yang mengubah status.
 
-Terakhir diperbarui: **26 November 2026** (Fase 2 selesai).
+Terakhir diperbarui: **26 November 2026** (Fase 3 lulus uji browser nyata & siap/di-push; rencana Fase 4a disusun).
 
 ## 1. Posisi sekarang
 
