@@ -1,6 +1,8 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
+import { accountSession } from "@/features/studio/storage/store";
+import { isUuid } from "../storage/remote/row-mapping";
 import {
   entryOf,
   type EventEntry,
@@ -119,8 +121,93 @@ function isEvent(value: unknown): value is WritingEvent {
 }
 
 let cached: { raw: string; snapshot: Read } | undefined;
+let remoteEvents: readonly WritingEvent[] | null = null;
+let loadedRemote = false;
+
+async function syncEventsFromServer() {
+  if (loadedRemote) return;
+  loadedRemote = true;
+  try {
+    const session = await accountSession();
+    if (!session) return;
+    const uid = session.userId;
+    const [evRes, partRes] = await Promise.all([
+      session.client.from("writing_events").select("*").order("starts_at", { ascending: true }),
+      session.client.from("event_participants").select("*"),
+    ]);
+    if (evRes.error || !evRes.data) return;
+    const partByEvent = new Map<string, EventParticipant[]>();
+    for (const p of partRes.data ?? []) {
+      const list = partByEvent.get(p.event_id as string) ?? [];
+      list.push({
+        authorId: p.user_id === uid ? "me" : (p.user_id as string),
+        entry: (p.entry as EventEntry | null) ?? null,
+      });
+      partByEvent.set(p.event_id as string, list);
+    }
+    remoteEvents = evRes.data.map((e) => ({
+      id: e.id as string,
+      ownerId: e.owner_id === uid ? "me" : (e.owner_id as string),
+      revision: Number(e.revision),
+      scheduleLocked: Boolean(e.schedule_locked),
+      title: e.title as string,
+      description: (e.description as string) ?? "",
+      rules: (e.rules as string) ?? "",
+      startsAt: Date.parse(e.starts_at as string),
+      endsAt: Date.parse(e.ends_at as string),
+      zone: e.zone as WritingEvent["zone"],
+      target: Number(e.target),
+      capacity: e.capacity === null ? null : Number(e.capacity),
+      sprint: (e.sprint as EventSprint | null) ?? null,
+      participants: partByEvent.get(e.id as string) ?? [],
+    }));
+    refreshEvents();
+  } catch {
+    loadedRemote = false;
+  }
+}
+
+async function persistEvent(event: WritingEvent) {
+  const session = await accountSession();
+  if (!session || !isUuid(event.id)) return;
+  const uid = session.userId;
+  await session.client.from("writing_events").upsert(
+    {
+      id: event.id,
+      owner_id: event.ownerId === "me" ? uid : event.ownerId,
+      revision: event.revision,
+      schedule_locked: event.scheduleLocked,
+      title: event.title,
+      description: event.description,
+      rules: event.rules,
+      starts_at: new Date(event.startsAt).toISOString(),
+      ends_at: new Date(event.endsAt).toISOString(),
+      zone: event.zone,
+      target: event.target,
+      capacity: event.capacity,
+      sprint: event.sprint,
+    },
+    { onConflict: "id" },
+  );
+  const mine = event.participants.find((p) => p.authorId === "me" || p.authorId === uid);
+  if (mine) {
+    await session.client
+      .from("event_participants")
+      .upsert(
+        { event_id: event.id, user_id: uid, entry: mine.entry },
+        { onConflict: "event_id,user_id" },
+      );
+  } else {
+    await session.client
+      .from("event_participants")
+      .delete()
+      .eq("event_id", event.id)
+      .eq("user_id", uid);
+  }
+}
 
 function read(): Read {
+  if (remoteEvents !== null) return { status: "ready", events: remoteEvents };
   try {
     const raw = window.localStorage.getItem(KEY);
     if (raw === null) return seed;
@@ -138,6 +225,7 @@ function read(): Read {
 }
 
 function subscribe(listener: () => void) {
+  void syncEventsFromServer();
   function onStorage(event: StorageEvent) {
     if (event.key === KEY || event.key === null) listener();
   }
@@ -183,10 +271,21 @@ export function writeEvent(events: readonly WritingEvent[], event: WritingEvent)
   const next = events.some((item) => item.id === event.id)
     ? events.map((item) => (item.id === event.id ? event : item))
     : [...events, event];
+  if (remoteEvents !== null) {
+    remoteEvents = next;
+    refreshEvents();
+    void persistEvent(event).catch(() => undefined);
+    return;
+  }
   writeEvents(next);
 }
 
 export function writeEvents(events: readonly WritingEvent[]) {
+  if (remoteEvents !== null) {
+    remoteEvents = events;
+    refreshEvents();
+    return;
+  }
   window.localStorage.setItem(KEY, JSON.stringify(events));
   refreshEvents();
 }

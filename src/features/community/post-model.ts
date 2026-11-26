@@ -66,6 +66,11 @@ export function excerptOf(post: Post): string {
 
 const authorIndex = new Map(authors.map((a) => [a.id, a]));
 
+/** Adds real author profiles fetched from the database so `authorOf` resolves their names. */
+export function registerAuthors(list: readonly Author[]): void {
+  for (const author of list) authorIndex.set(author.id, author);
+}
+
 /**
  * The author behind an id. The reader's own entry follows the saved account (name, username), so
  * a registered account is not shown as the dummy reader. Pass `account` from `useAccount()` in

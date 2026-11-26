@@ -4,6 +4,8 @@ import type { Comment, Genre, Post, PostBlock, PostImage, PostKind, Visibility }
 /** What a post written on this device looks like in storage. Drafts may be incomplete. */
 export type StoredPost = {
   id: string;
+  /** Set when read from the account database; defaults to ME_ID on this device. */
+  authorId?: string;
   status: "draft" | "published";
   title: string;
   kind: PostKind;
@@ -23,6 +25,8 @@ export type StoredPost = {
   groupMembershipId?: string;
   updatedAt: number;
   publishedAt?: number;
+  appreciations?: number;
+  saves?: number;
 };
 
 /**
@@ -61,7 +65,7 @@ export function toPost(stored: StoredPost): Post | null {
   if (stored.status !== "published" || !stored.genre || !stored.visibility) return null;
   return {
     id: stored.id,
-    authorId: ME_ID,
+    authorId: stored.authorId ?? ME_ID,
     title: stored.title,
     kind: stored.kind,
     genre: stored.genre,
@@ -72,8 +76,8 @@ export function toPost(stored: StoredPost): Post | null {
     groupName: stored.groupName,
     groupId: stored.groupId,
     groupMembershipId: stored.groupMembershipId,
-    appreciations: 0,
-    saves: 0,
+    appreciations: stored.appreciations ?? 0,
+    saves: stored.saves ?? 0,
     publishedAt: stored.publishedAt ?? stored.updatedAt,
     local: true,
   };

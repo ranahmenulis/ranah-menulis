@@ -1,6 +1,7 @@
 "use client";
 
 import { createLocalListStore } from "@/lib/local-list-store";
+import { moderationRemoteSync, reportsRemoteSync } from "../storage/remote/remote-community-lists";
 import type { ReportReason } from "../types";
 import { REPORT_REASON_LABEL } from "./reasons";
 import { lastDecision } from "./removed";
@@ -99,8 +100,18 @@ export const SEED_REPORTS: readonly Report[] = [
   },
 ];
 
-export const reports = createLocalListStore<Report>("ranah.reports", isReport, SEED_REPORTS);
-export const moderation = createLocalListStore<ModerationEntry>("ranah.moderation", isEntry);
+export const reports = createLocalListStore<Report>(
+  "ranah.reports",
+  isReport,
+  SEED_REPORTS,
+  reportsRemoteSync,
+);
+export const moderation = createLocalListStore<ModerationEntry>(
+  "ranah.moderation",
+  isEntry,
+  [],
+  moderationRemoteSync,
+);
 
 export const useReports = reports.use;
 export const useModeration = moderation.use;

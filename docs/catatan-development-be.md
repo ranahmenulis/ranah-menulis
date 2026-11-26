@@ -95,11 +95,11 @@ Keputusan user (25 November 2026, semua rekomendasi): impor data lokal lewat tom
 - [x] Fungsi impor data lokal ke akun (`importFromDevice`, aman diulang) dan banner di tab Naskah (26 November 2026)
 - [x] **Fase 2 selesai di kode dan gate (26 November 2026):** sampul lewat bucket `studio-covers` (`src/lib/files/supabase-file-store.ts`, `src/features/studio/storage/cover-store.ts`, `useBookCover`, `FolderCover`, dan `importFromDevice` ikut mengunggah sampul lokal; kompresi otomatis WebP lewat `compressImage`), target harian (`dailyTargets`) ikut `profiles.prefs` saat masuk (`account-model.ts`, `useStreakData`, `useDailyTarget`), tes unit baru (`supabase-file-store`, `import-local`, `use-streak-data`), `npm run test:rls` 60 lulus, `format:check`, `lint` (0 error, 1 warning lama), `typecheck`, `npm run build` (71 halaman, Partial Prerender), dan tes penuh 305 berkas 2.383 tes lulus. Menunggu persetujuan user untuk commit, push `be/supabase`, uji preview Vercel, dan uji tautan email.
 
-### Fase 3, Community
-- [ ] Migrasi: postingan, komentar, marks, lingkar menulis, event, laporan; RLS menurut visibilitas dan keanggotaan; tes RLS
-- [ ] `PostStore` versi Supabase dan Storage untuk gambar (RLS Storage diuji)
-- [ ] Privasi lingkar, leaderboard, moderasi di server
-- [ ] Notifikasi Community dari server
+### Fase 3, Community (selesai di kode dan gate 26 November 2026)
+- [x] Migrasi `0005_community.sql` dan `0006_community_draft_rls_fix.sql`: postingan, komentar, marks (`community_post_counts`), lingkar menulis (grup, anggota, undangan, permintaan gabung, leaderboard, sembunyi), event, laporan, moderasi, kurasi `editor_picks`, dan bucket publik `community-images` (maks. 2 MB WebP); tes RLS `tests/rls/community.test.ts` (7 berkas, 65 tes RLS lulus). `deleteOwnAccount` ikut membersihkan `community-images`.
+- [x] `PostStore` versi Supabase (`community/storage/remote/`: `supabase-post-store`, `row-mapping`, `switching-post-store`) + unggah gambar WebP ke `community-images` di `usePostImage`.
+- [x] Privasi lingkar, leaderboard, event, kurasi, dan moderasi di server (`createLocalListStore` dengan `RemoteListSync` di `remote-community-lists.ts`, plus sinkronisasi `event-store.ts`).
+- [x] Notifikasi Community dari server (`useCommunityNotifications` tersambung ke store Supabase).
 
 ### Fase 4, Projects dan Kelola
 - [ ] Migrasi: proyek, pendaftaran, kiriman, tugas, tahap Solo, penilaian, penugasan peran, pembayaran, audit; tes RLS per peran

@@ -1,6 +1,7 @@
 "use client";
 
 import { createLocalListStore } from "@/lib/local-list-store";
+import { picksRemoteSync } from "../storage/remote/remote-community-lists";
 import { SEED_PICK_IDS } from "./seed-picks";
 
 /** One Editor's Pick. The list order is the order shown; `title` is kept so the audit log can name it. */
@@ -20,4 +21,5 @@ export const editorPicks = createLocalListStore<EditorPick>(
   "ranah.editorPicks",
   isPick,
   SEED_PICK_IDS.map((postId) => ({ postId, at: 0 })),
+  picksRemoteSync,
 );

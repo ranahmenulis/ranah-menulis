@@ -9,15 +9,24 @@ import { useSyncExternalStore } from "react";
  * shows what was saved. `initial` is what an untouched store holds; once anything is written the
  * saved list wins, even when it is empty.
  */
+export type RemoteListSync<T> = {
+  /** Returns null when no signed-in session is active (keep localStorage). */
+  load: () => Promise<readonly T[] | null>;
+  save: (next: readonly T[], prev: readonly T[]) => Promise<void>;
+};
+
 export function createLocalListStore<T>(
   key: string,
   isItem: (value: unknown) => value is T,
   initial: readonly T[] = [],
+  remote?: RemoteListSync<T>,
 ) {
   const NONE: readonly T[] = [];
   const listeners = new Set<() => void>();
   let fallback: string | null = null;
   let cached: { raw: string | null; items: readonly T[] } | null = null;
+  let remoteItems: readonly T[] | null = null;
+  let loadedRemote = false;
 
   function snapshot(): string | null {
     try {
@@ -41,13 +50,30 @@ export function createLocalListStore<T>(
   }
 
   function read(): readonly T[] {
+    if (remoteItems !== null) return remoteItems;
     const raw = snapshot();
     if (!cached || cached.raw !== raw) cached = { raw, items: parse(raw) };
     return cached.items;
   }
 
+  function ensureRemote() {
+    if (!remote || loadedRemote) return;
+    loadedRemote = true;
+    void remote
+      .load()
+      .then((items) => {
+        if (items === null) return;
+        remoteItems = items;
+        listeners.forEach((l) => l());
+      })
+      .catch(() => {
+        loadedRemote = false;
+      });
+  }
+
   function subscribe(listener: () => void) {
     listeners.add(listener);
+    ensureRemote();
     const onStorage = (e: StorageEvent) => (e.key === key || e.key === null) && listener();
     window.addEventListener("storage", onStorage);
     return () => {
@@ -57,6 +83,13 @@ export function createLocalListStore<T>(
   }
 
   function write(items: readonly T[]) {
+    if (remote && remoteItems !== null) {
+      const prev = remoteItems;
+      remoteItems = items;
+      listeners.forEach((l) => l());
+      void remote.save(items, prev).catch(() => undefined);
+      return;
+    }
     const raw = JSON.stringify(items);
     try {
       window.localStorage.setItem(key, raw);
@@ -76,6 +109,8 @@ export function createLocalListStore<T>(
     reset() {
       fallback = null;
       cached = null;
+      remoteItems = null;
+      loadedRemote = false;
       try {
         window.localStorage.removeItem(key);
       } catch {}

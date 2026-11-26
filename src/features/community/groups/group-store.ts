@@ -2,6 +2,7 @@
 
 import { createLocalListStore } from "@/lib/local-list-store";
 import { ME_ID } from "../fixtures/authors";
+import { groupsRemoteSync } from "../storage/remote/remote-community-lists";
 import {
   COASTAL_GROUP_ID,
   COASTAL_GROUP_NAME,
@@ -125,7 +126,12 @@ function isGroup(value: unknown): value is WritingGroup {
   );
 }
 
-export const writingGroups = createLocalListStore("ranah.writingGroups", isGroup, groupSeeds);
+export const writingGroups = createLocalListStore(
+  "ranah.writingGroups",
+  isGroup,
+  groupSeeds,
+  groupsRemoteSync,
+);
 
 /**
  * What an account made on the Daftar screen starts with: the sample circles without "me" as a
