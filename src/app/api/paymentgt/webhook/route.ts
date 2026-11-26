@@ -2,8 +2,6 @@ import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { qrisWebhookMatchesRegistration, verifyQrisWebhook } from "@/lib/paymentgt";
 
-export const runtime = "nodejs";
-
 type WebhookPayload = {
   order_id?: unknown;
   event?: unknown;

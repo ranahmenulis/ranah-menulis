@@ -5,6 +5,7 @@ const files = vi.hoisted(() => ({
   current: null as null | import("@/lib/files/file-store").FileStore,
 }));
 vi.mock("@/lib/files/store", () => ({ fileStore: () => files.current }));
+vi.mock("@/lib/files/project-file-store", () => ({ projectPosterStore: () => files.current }));
 
 import { ProjectCover } from "@/features/projects/components/project-cover";
 import { createMemoryFileStore } from "@/lib/files/memory-file-store";

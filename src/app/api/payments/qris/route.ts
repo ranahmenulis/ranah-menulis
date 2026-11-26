@@ -9,8 +9,6 @@ import {
 } from "@/lib/paymentgt";
 import { HOLD_MS } from "@/features/projects/payment-model";
 
-export const runtime = "nodejs";
-
 type RegRow = {
   id: string;
   slug: string;
