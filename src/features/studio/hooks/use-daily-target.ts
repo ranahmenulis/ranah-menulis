@@ -1,7 +1,8 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { useContext, useSyncExternalStore } from "react";
 import { useAccount } from "@/features/account/account-store";
+import { LiveAccountContext } from "@/features/account/live-account-context";
 import { targetFor } from "../streak";
 import { readTargets } from "../target-setting";
 import { writingTime } from "../writing-time";
@@ -13,10 +14,15 @@ const subscribe = (callback: () => void) => {
 
 /** Today's target for the editor indicator; null when the writer has not set one (like Streak). */
 export function useDailyTarget(): number | null {
-  const { timeZone } = useAccount().profile;
+  const signedIn = useContext(LiveAccountContext);
+  const account = useAccount();
+  const { timeZone } = account.profile;
   return useSyncExternalStore(
     subscribe,
-    () => targetFor(readTargets(window.localStorage), writingTime(Date.now(), timeZone).day),
+    () => {
+      const changes = signedIn ? account.prefs.dailyTargets : readTargets(window.localStorage);
+      return targetFor(changes, writingTime(Date.now(), timeZone).day);
+    },
     () => null,
   );
 }

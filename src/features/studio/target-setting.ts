@@ -8,15 +8,22 @@ export const TARGET_PRESETS = [250, 500, 1000, 2000, 5000];
 
 type Storage = Pick<globalThis.Storage, "getItem" | "setItem">;
 
+export function parseTargetChanges(raw: unknown): TargetChange[] {
+  if (!Array.isArray(raw)) return [];
+  return raw.filter(
+    (c): c is TargetChange =>
+      typeof c === "object" &&
+      c !== null &&
+      typeof (c as TargetChange).from === "string" &&
+      Number.isInteger((c as TargetChange).value) &&
+      (c as TargetChange).value > 0,
+  );
+}
+
 export function readTargets(storage: Storage | null): TargetChange[] {
   try {
     const raw = storage?.getItem(KEY);
-    const parsed = raw ? (JSON.parse(raw) as unknown) : [];
-    if (!Array.isArray(parsed)) return [];
-    return parsed.filter(
-      (c): c is TargetChange =>
-        typeof c?.from === "string" && Number.isInteger(c?.value) && c.value > 0,
-    );
+    return parseTargetChanges(raw ? JSON.parse(raw) : []);
   } catch {
     return [];
   }

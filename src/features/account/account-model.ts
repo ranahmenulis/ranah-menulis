@@ -10,6 +10,8 @@ import {
   type NotificationPrefsPatch,
 } from "@/features/notifications/preferences";
 import { GENRES, type Genre } from "@/features/community/types";
+import type { TargetChange } from "@/features/studio/streak";
+import { parseTargetChanges } from "@/features/studio/target-setting";
 import { DEFAULT_TIME_ZONE, isTimeZone, type Country } from "./timezones";
 import {
   DEFAULT_WRITING_PREFERENCES,
@@ -34,6 +36,8 @@ export type AccountPrefs = {
   /** Whether the streak shows on the public profile. Private is the default (Brief). */
   showStreak: boolean;
   writing: WritingPreferences;
+  /** Daily word target history (`from` day -> words). Empty when the writer has not set one. */
+  dailyTargets: TargetChange[];
 };
 
 export type Account = {
@@ -84,6 +88,7 @@ export const DEFAULT_ACCOUNT: Account = {
     notifications: DEFAULT_NOTIFICATION_PREFS,
     showStreak: false,
     writing: DEFAULT_WRITING_PREFERENCES,
+    dailyTargets: [],
   },
 };
 
@@ -132,6 +137,7 @@ export function parseAccount(raw: string | null): Account {
       notifications: parseNotificationPrefs(f.notifications, f),
       showStreak: flag(f.showStreak, d.prefs.showStreak),
       writing: parseWritingPreferences(f.writing),
+      dailyTargets: parseTargetChanges(f.dailyTargets),
     },
   };
 }
@@ -152,6 +158,7 @@ export function mergeAccount(current: Account, patch: AccountPatch): Account {
         current.prefs.notifications,
         patch.prefs?.notifications,
       ),
+      dailyTargets: patch.prefs?.dailyTargets ?? current.prefs.dailyTargets,
     },
   };
 }

@@ -4,6 +4,7 @@ import { BookCover } from "@/components/ui/book-cover";
 import { cn } from "@/lib/cn";
 import { useStoredFileUrl } from "@/lib/files/use-stored-file-url";
 import { coverOf } from "../../book";
+import { coverFileStore } from "../../storage/cover-store";
 import type { StudioFolder } from "../../storage/document-store";
 
 /**
@@ -21,7 +22,7 @@ export function FolderCover({
   className?: string;
 }) {
   const cover = coverOf(folder);
-  const file = useStoredFileUrl(cover?.fileId ?? "");
+  const file = useStoredFileUrl(cover?.fileId ?? "", coverFileStore);
   if (!cover || file.status === "missing") {
     return <BookCover title={folder.name} width={width} className={className} />;
   }

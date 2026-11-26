@@ -11,10 +11,11 @@ let account: { client: ReturnType<typeof createClient>; store: DocumentStore } |
 /** The documents of this device: where visitors write and where older documents still live. */
 export const deviceStore = () => (local ??= createIndexedDbStore());
 
-/** The signed-in session's client and document store, or null for visitors or when Supabase is not set up. */
+/** The signed-in session's client, user id, and document store, or null for visitors or when Supabase is not set up. */
 export async function accountSession(): Promise<{
   client: ReturnType<typeof createClient>;
   store: DocumentStore;
+  userId: string;
 } | null> {
   try {
     if (!account) {
@@ -25,7 +26,8 @@ export async function accountSession(): Promise<{
       };
     }
     const { data } = await account.client.auth.getSession();
-    return data.session ? account : null;
+    const userId = data.session?.user.id;
+    return userId ? { ...account, userId } : null;
   } catch {
     return null;
   }

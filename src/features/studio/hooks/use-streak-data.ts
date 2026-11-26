@@ -1,7 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { useAccount } from "@/features/account/account-store";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { saveAccount, useAccount } from "@/features/account/account-store";
+import { LiveAccountContext } from "@/features/account/live-account-context";
 import { totalWords, type DailyLog } from "../daily-progress";
 import { pickLastDocument } from "../documents";
 import {
@@ -41,16 +42,20 @@ const noStorage = () => (typeof window === "undefined" ? null : window.localStor
  * daily logs (steps 4a–c). Becomes server data when the backend exists.
  */
 export function useStreakData(store: DocumentStore): StreakData {
-  const { timeZone } = useAccount().profile;
+  const signedIn = useContext(LiveAccountContext) !== null;
+  const account = useAccount();
+  const { timeZone } = account.profile;
+  const accountTargets = account.prefs.dailyTargets;
   const [status, setStatus] = useState<StreakData["status"]>("loading");
   const [history, setHistory] = useState<DailyLog[]>([]);
   const [lastDocument, setLastDocument] = useState<DocumentSummary | null>(null);
-  const [changes, setChanges] = useState<TargetChange[]>([]);
+  const [deviceChanges, setDeviceChanges] = useState<TargetChange[]>([]);
   const [attempt, setAttempt] = useState(0);
   // Read in the effect, not during render: Next prerenders client components, and the date must
   // be the visitor's, not the build's.
   const [nowMs, setNowMs] = useState(0);
   const today = nowMs ? writingTime(nowMs, timeZone).day : "";
+  const changes = signedIn ? accountTargets : deviceChanges;
 
   useEffect(() => {
     const controller = new AbortController();
@@ -61,12 +66,12 @@ export function useStreakData(store: DocumentStore): StreakData {
         setNowMs(Date.now());
         setHistory(logs);
         setLastDocument(pickLastDocument(list));
-        setChanges(readTargets(noStorage()));
+        if (!signedIn) setDeviceChanges(readTargets(noStorage()));
         setStatus("ready");
       })
       .catch(() => !signal.aborted && setStatus("error"));
     return () => controller.abort();
-  }, [store, attempt]);
+  }, [store, attempt, timeZone, signedIn]);
 
   useEffect(() => onDocumentListChanged(() => setAttempt((value) => value + 1)), []);
 
@@ -77,13 +82,18 @@ export function useStreakData(store: DocumentStore): StreakData {
 
   const setTarget = useCallback(
     (value: number) => {
-      setChanges((current) => {
-        const next = withTarget(current, value, writingTime(Date.now(), timeZone).day);
+      const day = writingTime(Date.now(), timeZone).day;
+      if (signedIn) {
+        saveAccount({ prefs: { dailyTargets: withTarget(accountTargets, value, day) } });
+        return;
+      }
+      setDeviceChanges((current) => {
+        const next = withTarget(current, value, day);
         saveTargets(noStorage(), next);
         return next;
       });
     },
-    [timeZone],
+    [timeZone, signedIn, accountTargets],
   );
 
   return useMemo(() => {

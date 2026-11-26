@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { problemText } from "@/lib/files/problem-text";
-import { fileStore } from "@/lib/files/store";
 import { discardImage, storeImage } from "@/lib/files/store-image";
 import { useLocale } from "@/lib/i18n/provider";
+import { coverFileStore } from "../storage/cover-store";
 import type { FolderCover } from "../storage/document-store";
 
 /**
@@ -28,22 +28,22 @@ export function useBookCover(saved: FolderCover | null) {
     async pick(file: File) {
       setBusy(true);
       setError(null);
-      const result = await storeImage(file, fileStore());
+      const result = await storeImage(file, coverFileStore);
       setBusy(false);
       if (!result.ok) return setError(problemText(result.problem, "image", locale));
-      await discardImage(picked, fileStore());
+      await discardImage(picked, coverFileStore);
       setCover({ fileId: result.id, alt: "" });
     },
     async remove() {
       setError(null);
-      await discardImage(picked, fileStore());
+      await discardImage(picked, coverFileStore);
       setCover(null);
     },
     /** Free what was picked and not kept (cancel). */
-    discardPicked: () => discardImage(picked, fileStore()),
+    discardPicked: () => discardImage(picked, coverFileStore),
     /** After a save: the cover it replaced is no longer pointed to. */
     discardReplaced: async () => {
-      if (saved && saved.fileId !== cover?.fileId) await discardImage(saved.fileId, fileStore());
+      if (saved && saved.fileId !== cover?.fileId) await discardImage(saved.fileId, coverFileStore);
     },
   };
 }

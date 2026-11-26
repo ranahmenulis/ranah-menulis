@@ -1,4 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import type { FileStore } from "@/lib/files/file-store";
+import { fileStore } from "@/lib/files/store";
+import { createSupabaseFileStore } from "@/lib/files/supabase-file-store";
 import type { DailyLog } from "../../daily-progress";
 import type { DocumentStore } from "../document-store";
 import { importableFolder, isUuid } from "./row-mapping";
@@ -58,6 +61,50 @@ export async function pendingImport(
   };
 }
 
+async function importCovers(
+  coverIds: Set<string>,
+  deviceFiles: FileStore,
+  client: SupabaseClient,
+): Promise<void> {
+  if (coverIds.size === 0) return;
+  const { data } = await client.auth.getSession();
+  const userId = data.session?.user.id;
+  if (!userId) return;
+  const remoteFiles = createSupabaseFileStore(client, "studio-covers", userId);
+  for (const id of coverIds) {
+    try {
+      const stored = await deviceFiles.get(id);
+      if (stored) await remoteFiles.put(stored);
+    } catch {
+      // A missing or refused cover never blocks importing the manuscript itself.
+    }
+  }
+}
+
+async function importFolders(
+  folders: Awaited<ReturnType<DocumentStore["listFolders"]>>,
+  client: SupabaseClient,
+  coverIds: Set<string>,
+): Promise<number> {
+  // Books may sit in a plain folder, so plain folders go first.
+  const usable = folders.filter((folder) => isUuid(folder.id));
+  let folderCount = 0;
+  for (const batch of [
+    usable.filter((f) => !f.collectionId),
+    usable.filter((f) => f.collectionId),
+  ]) {
+    if (batch.length === 0) continue;
+    for (const folder of batch) if (folder.cover?.fileId) coverIds.add(folder.cover.fileId);
+    const { data, error } = await client
+      .from("studio_folders")
+      .upsert(batch.map(importableFolder), { onConflict: "id", ignoreDuplicates: true })
+      .select("id");
+    if (error) throw new Error(error.message, { cause: error });
+    folderCount += data?.length ?? 0;
+  }
+  return folderCount;
+}
+
 /**
  * Copies what this device holds (folders, documents, writing history) into the signed-in account.
  * Safe to run again: a folder or document already in the account is never overwritten, and
@@ -67,6 +114,7 @@ export async function importFromDevice(
   device: DocumentStore,
   account: DocumentStore,
   client: SupabaseClient,
+  deviceFiles?: FileStore,
 ): Promise<ImportSummary> {
   const [folders, documents, deviceHistory, accountHistory] = await Promise.all([
     device.listFolders(),
@@ -75,22 +123,8 @@ export async function importFromDevice(
     account.history(),
   ]);
 
-  // Books may sit in a plain folder, so plain folders go first.
-  const usable = folders.filter((folder) => isUuid(folder.id));
-  const ordered = [
-    usable.filter((folder) => !folder.collectionId),
-    usable.filter((folder) => folder.collectionId),
-  ];
-  let folderCount = 0;
-  for (const batch of ordered) {
-    if (batch.length === 0) continue;
-    const { data, error } = await client
-      .from("studio_folders")
-      .upsert(batch.map(importableFolder), { onConflict: "id", ignoreDuplicates: true })
-      .select("id");
-    if (error) throw new Error(error.message, { cause: error });
-    folderCount += data?.length ?? 0;
-  }
+  const coverIds = new Set<string>();
+  const folderCount = await importFolders(folders, client, coverIds);
 
   let imported = 0;
   let skipped = 0;
@@ -101,9 +135,13 @@ export async function importFromDevice(
     }
     const { data, error } = await client.rpc("studio_import_document", { p_doc: doc });
     if (error) skipped += 1;
-    else if (data === true) imported += 1;
+    else {
+      if (data === true) imported += 1;
+      if (doc.cover?.fileId) coverIds.add(doc.cover.fileId);
+    }
   }
 
+  await importCovers(coverIds, deviceFiles ?? fileStore(), client);
   const days = mergeLogs(accountHistory, deviceHistory);
   await account.importHistory(days);
   return { folders: folderCount, documents: imported, skipped, days: days.length };
