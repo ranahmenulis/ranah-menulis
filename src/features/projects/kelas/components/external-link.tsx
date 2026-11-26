@@ -3,12 +3,23 @@
 import type { ReactNode } from "react";
 import { useT } from "@/lib/i18n/provider";
 
+function isSafeHttps(href: string): boolean {
+  try {
+    return new URL(href).protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
 /**
  * A link to a service outside RanahMenulis (a meeting, a recording; Q-26: the platform hosts
  * neither). Opens in a new tab and says so to a screen reader.
  */
 export function ExternalLink({ href, children }: { href: string; children: ReactNode }) {
   const t = useT().projectsClass;
+  if (!isSafeHttps(href)) {
+    return <span className="text-sm text-ink-muted">{children}</span>;
+  }
   return (
     <a
       href={href}

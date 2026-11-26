@@ -23,6 +23,7 @@ export async function deleteOwnAccount(): Promise<DeleteOwnAccountResult> {
 
     const admin = createAdminClient();
     // Every bucket keeps a person's files in a folder named after them.
+    const PAGE_SIZE = 1000;
     for (const bucket of [
       "avatars",
       "studio-covers",
@@ -30,9 +31,13 @@ export async function deleteOwnAccount(): Promise<DeleteOwnAccountResult> {
       "project-posters",
       "project-files",
     ]) {
-      const files = await admin.storage.from(bucket).list(userId);
-      const paths = (files.data ?? []).map((file) => `${userId}/${file.name}`);
-      if (paths.length > 0) await admin.storage.from(bucket).remove(paths);
+      for (;;) {
+        const files = await admin.storage.from(bucket).list(userId, { limit: PAGE_SIZE });
+        const paths = (files.data ?? []).map((file) => `${userId}/${file.name}`);
+        if (paths.length === 0) break;
+        await admin.storage.from(bucket).remove(paths);
+        if (paths.length < PAGE_SIZE) break;
+      }
     }
 
     // Written before the delete: `actor_id` turns to null afterwards, `target_id` stays.

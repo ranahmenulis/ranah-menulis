@@ -12,20 +12,56 @@ export function paymentgtEnabled(): boolean {
   return getPaymentgtEnv() !== null;
 }
 
-const PRIVATE_HOST =
-  /^(localhost|127\.0\.0\.1|0\.0\.0\.0|::1|10\.|172\.(1[6-9]|2\d|3[01])\.|192\.168\.)/;
+const PRIVATE_IPV4 =
+  /^(localhost|127\.\d+\.\d+\.\d+|0\.\d+\.\d+\.\d+|10\.\d+\.\d+\.\d+|172\.(1[6-9]|2\d|3[01])\.\d+\.\d+|192\.168\.\d+\.\d+|169\.254\.\d+\.\d+|100\.(6[4-9]|[7-9]\d|1[01]\d|12[0-7])\.\d+\.\d+)$/;
+
+function isPrivateOrLocalHost(rawHost: string): boolean {
+  const host = rawHost.toLowerCase().replace(/^\[|\]$/g, "");
+  if (PRIVATE_IPV4.test(host) || host.endsWith(".local") || host.endsWith(".internal")) {
+    return true;
+  }
+  if (
+    host === "::1" ||
+    host === "::" ||
+    host.startsWith("fe80:") ||
+    host.startsWith("fc") ||
+    host.startsWith("fd") ||
+    host.startsWith("::ffff:")
+  ) {
+    return true;
+  }
+  return false;
+}
+
+function isAllowedGatewayUrl(raw: string, allowLocalInDev = false): boolean {
+  try {
+    const u = new URL(raw);
+    const allowedScheme =
+      u.protocol === "https:" || (u.protocol === "http:" && process.env.NODE_ENV !== "production");
+    if (!allowedScheme) return false;
+    if (!allowLocalInDev && isPrivateOrLocalHost(u.hostname)) return false;
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 /** Resolves the server-to-server webhook URL; omits loopback/private origins (anti-SSRF). */
 export function resolvePaymentgtCallbackUrl(origin?: string): string | undefined {
   const env = getPaymentgtEnv();
-  if (env?.callbackUrl) return env.callbackUrl;
+  if (env?.callbackUrl) {
+    return isAllowedGatewayUrl(env.callbackUrl) ? env.callbackUrl : undefined;
+  }
   if (!origin) return undefined;
   try {
     const u = new URL(origin);
-    const host = u.hostname.toLowerCase();
-    if (PRIVATE_HOST.test(host) || host.endsWith(".local") || host.endsWith(".internal")) {
+    if (
+      u.protocol !== "https:" &&
+      (u.protocol !== "http:" || process.env.NODE_ENV === "production")
+    ) {
       return undefined;
     }
+    if (isPrivateOrLocalHost(u.hostname)) return undefined;
     return `${origin.replace(/\/+$/, "")}/api/paymentgt/webhook`;
   } catch {
     return undefined;
@@ -50,8 +86,12 @@ export type CreateQrisResult = {
 export async function createQrisPayment(input: CreateQrisInput): Promise<CreateQrisResult> {
   const env = getPaymentgtEnv();
   if (!env) throw new Error("PaymentGT is not configured.");
+  if (!isAllowedGatewayUrl(env.baseUrl, true)) {
+    throw new Error("PaymentGT base URL is invalid.");
+  }
   const res = await fetch(`${env.baseUrl}/api/payments`, {
     method: "POST",
+    redirect: "error",
     headers: {
       Authorization: `Bearer ${env.apiToken}`,
       "Content-Type": "application/json",
@@ -94,9 +134,10 @@ export async function fetchQrisStatus(
   paymentgtId: string,
 ): Promise<{ status: QrisGatewayStatus } | null> {
   const env = getPaymentgtEnv();
-  if (!env) return null;
+  if (!env || !isAllowedGatewayUrl(env.baseUrl, true)) return null;
   try {
     const res = await fetch(`${env.baseUrl}/api/payments/${encodeURIComponent(paymentgtId)}`, {
+      redirect: "error",
       headers: { Authorization: `Bearer ${env.apiToken}` },
       signal: AbortSignal.timeout(8_000),
       cache: "no-store",

@@ -201,11 +201,12 @@ export const testimonialDecisionsRemoteSync: RemoteListSync<TestimonialDecision>
     if (!session) return null;
     const { data, error } = await session.client
       .from("testimonial_decisions")
-      .select("testimonial_id,state,decided_by,reason,created_at")
+      .select("testimonial_id,slug,state,decided_by,reason,created_at")
       .order("created_at", { ascending: true });
     if (error || !data) return [];
     return data.map((r) => ({
       testimonialId: r.testimonial_id as string,
+      ...(typeof r.slug === "string" && r.slug ? { slug: r.slug } : {}),
       state: r.state as TestimonialDecision["state"],
       by: r.decided_by === session.userId ? ME_ID : (r.decided_by as string),
       at: Date.parse(r.created_at as string),
@@ -216,10 +217,10 @@ export const testimonialDecisionsRemoteSync: RemoteListSync<TestimonialDecision>
     const session = await accountSession();
     if (!session) return;
     for (const d of next.slice(prev.length)) {
-      if (!isUuid(d.testimonialId)) continue;
+      if (!isUuid(d.testimonialId) || !d.slug) continue;
       await session.client.from("testimonial_decisions").insert({
         testimonial_id: d.testimonialId,
-        slug: "",
+        slug: d.slug,
         state: d.state,
         decided_by: session.userId,
         reason: d.reason ?? null,

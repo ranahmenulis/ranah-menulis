@@ -1,6 +1,12 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { FileStore, StoredFile } from "./file-store";
 
+const SAFE_FILE_ID = /^[a-zA-Z0-9._-]{1,120}$/;
+
+function assertSafeFileId(id: string): boolean {
+  return SAFE_FILE_ID.test(id) && !id.includes("..");
+}
+
 /**
  * A `FileStore` backed by a private Supabase Storage bucket, with each user's files kept in a
  * folder named after their id (`<ownerId>/<fileId>`). Downloaded blobs are cached in memory for
@@ -16,6 +22,7 @@ export function createSupabaseFileStore(
 
   return {
     async put(file) {
+      if (!assertSafeFileId(file.id)) throw new Error("Invalid file id");
       const { error } = await client.storage.from(bucket).upload(pathOf(file.id), file.blob, {
         contentType: file.type,
         upsert: true,
@@ -25,7 +32,7 @@ export function createSupabaseFileStore(
     },
 
     async get(id) {
-      if (!id) return null;
+      if (!id || !assertSafeFileId(id)) return null;
       const cached = cache.get(id);
       if (cached) return cached;
       const { data, error } = await client.storage.from(bucket).download(pathOf(id));
@@ -43,7 +50,7 @@ export function createSupabaseFileStore(
     },
 
     async delete(id) {
-      if (!id) return;
+      if (!id || !assertSafeFileId(id)) return;
       cache.delete(id);
       const { error } = await client.storage.from(bucket).remove([pathOf(id)]);
       if (error) throw new Error(error.message, { cause: error });

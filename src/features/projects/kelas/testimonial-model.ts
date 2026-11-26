@@ -28,6 +28,7 @@ export type Testimonial = {
 /** A curator's decision. Append-only: the last one for a testimonial says where it stands. */
 export type TestimonialDecision = {
   testimonialId: string;
+  slug?: string;
   state: "disembunyikan" | "dipulihkan";
   at: number;
   by: string;

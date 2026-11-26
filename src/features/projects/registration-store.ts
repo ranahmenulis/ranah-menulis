@@ -133,7 +133,8 @@ export function settlePayment(
   if (remoteMap !== null) {
     remoteMap = next;
     listeners.forEach((l) => l());
-    void saveRemoteRegistration(paid).catch(() => undefined);
+    // "sistem" settlements are persisted server-side (webhook/polling); client RLS blocks self-settling.
+    if (by !== "sistem") void saveRemoteRegistration(paid).catch(() => undefined);
     return true;
   }
   write(next);

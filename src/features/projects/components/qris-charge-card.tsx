@@ -13,6 +13,17 @@ type LiveQris = {
   qrisImageBase64?: string;
 };
 
+const SAFE_QRIS_DATA_URL = /^data:image\/(png|webp|jpeg);base64,[A-Za-z0-9+/=\s]+$/i;
+const SAFE_BASE64 = /^[A-Za-z0-9+/=\s]+$/;
+
+function qrisImageSrc(raw: string | undefined): string | null {
+  if (!raw) return null;
+  const trimmed = raw.trim();
+  if (SAFE_QRIS_DATA_URL.test(trimmed)) return trimmed;
+  if (SAFE_BASE64.test(trimmed)) return `data:image/png;base64,${trimmed}`;
+  return null;
+}
+
 /**
  * Displays the live PaymentGT QRIS charge when configured on the server, polling every 5s so
  * payment settles even on localhost without a public webhook. Falls back to the sample card when
@@ -79,18 +90,15 @@ export function QrisChargeCard({ slug, amount }: { slug: string; amount: number 
   }, [slug, amount]);
 
   const shownAmount = live?.uniqueAmount ?? amount;
+  const qrSrc = qrisImageSrc(live?.qrisImageBase64);
 
   return (
     <figure className={cn(cardClass, "grid justify-items-center gap-3")}>
-      {live?.qrisImageBase64 ? (
+      {qrSrc ? (
         // Dynamic base64 QRIS image returned by PaymentGT.
         // eslint-disable-next-line @next/next/no-img-element
         <img
-          src={
-            live.qrisImageBase64.startsWith("data:")
-              ? live.qrisImageBase64
-              : `data:image/png;base64,${live.qrisImageBase64}`
-          }
+          src={qrSrc}
           alt={t.qrisAlt}
           className="size-48 rounded-xl border border-line bg-white object-contain p-2"
         />

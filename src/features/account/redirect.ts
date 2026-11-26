@@ -17,7 +17,9 @@ export const NEXT_PARAM = "lanjut";
  */
 export function safeNext(raw: string | null | undefined, fallback = AFTER_AUTH_HREF): string {
   if (!raw || !raw.startsWith("/") || raw.startsWith("//") || raw.includes("\\")) return fallback;
-  if (Array.from(raw).some((char) => char.charCodeAt(0) < 32)) return fallback;
+  if (Array.from(raw).some((char) => char.charCodeAt(0) < 32 || char.charCodeAt(0) === 127)) {
+    return fallback;
+  }
   const path = raw.split(/[?#]/)[0].replace(/\/+$/, "");
   const accountRoutes = [
     SIGN_IN_HREF,
@@ -36,7 +38,9 @@ export function safeNext(raw: string | null | undefined, fallback = AFTER_AUTH_H
  */
 export function internalPath(raw: string | null | undefined, fallback: string): string {
   if (!raw || !raw.startsWith("/") || raw.startsWith("//") || raw.includes("\\")) return fallback;
-  if (Array.from(raw).some((char) => char.charCodeAt(0) < 32)) return fallback;
+  if (Array.from(raw).some((char) => char.charCodeAt(0) < 32 || char.charCodeAt(0) === 127)) {
+    return fallback;
+  }
   return raw;
 }
 

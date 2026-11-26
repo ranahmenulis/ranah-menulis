@@ -99,4 +99,30 @@ describe("RLS: platform roles and audit log", () => {
     });
     expect(res.error?.code).toBe("23514");
   });
+
+  it("revokes active admin privileges while suspended and blocks cross-user RPC probing", async () => {
+    const grantB = await boss.client.rpc("grant_platform_role", {
+      target: b.id,
+      r: "administrator",
+    });
+    expect(grantB.error).toBeNull();
+
+    const suspB = await boss.client.rpc("suspend_account", {
+      p_target: b.id,
+      p_reason: "Uji suspend",
+    });
+    expect(suspB.error).toBeNull();
+
+    // Suspended admin loses is_admin() and cannot read audit_log or call RPCs
+    const readAudit = await b.client.from("audit_log").select("id");
+    expect(readAudit.data).toEqual([]);
+
+    // Non-admin A cannot probe B's suspension status via is_suspended(p_user)
+    const probe = await a.client.rpc("is_suspended", { p_user: b.id });
+    expect(probe.data).toBe(false);
+
+    const restB = await boss.client.rpc("restore_account", { p_target: b.id, p_reason: "Selesai" });
+    expect(restB.error).toBeNull();
+    await boss.client.rpc("revoke_platform_role", { target: b.id, r: "administrator" });
+  });
 });

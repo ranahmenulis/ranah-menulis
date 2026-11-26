@@ -31,13 +31,15 @@ export type ProfileUpdate = {
   avatar_path: string | null;
 };
 
+const SAFE_AVATAR_PATH = /^[0-9a-f-]{36}\/[a-zA-Z0-9._-]{1,120}$/;
+
 /** Public address of a stored photo; the version changes whenever the profile does (cache busting). */
 export function avatarUrl(
   base: string | null,
   path: string | null,
   updatedAt: string,
 ): string | null {
-  if (!base || !path) return null;
+  if (!base || !path || path.includes("..") || !SAFE_AVATAR_PATH.test(path)) return null;
   return `${base}/storage/v1/object/public/avatars/${path}?v=${Date.parse(updatedAt) || 0}`;
 }
 

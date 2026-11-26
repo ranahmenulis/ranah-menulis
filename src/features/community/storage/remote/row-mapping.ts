@@ -57,6 +57,22 @@ export type PostCountsRow = {
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 export const isUuid = (value: string) => UUID.test(value);
 
+const SAFE_DATA_IMAGE = /^data:image\/(webp|png|jpeg);base64,[A-Za-z0-9+/=]+$/i;
+const SAFE_STORAGE_IMAGE = /^https:\/\/[^/]+\/storage\/v1\/object\/public\/community-images\//;
+
+export function safePostImage(raw: PostImage | null): PostImage | null {
+  if (!raw || typeof raw.src !== "string") return null;
+  const { src } = raw;
+  if (
+    src.startsWith("/community/photos/") ||
+    SAFE_STORAGE_IMAGE.test(src) ||
+    SAFE_DATA_IMAGE.test(src)
+  ) {
+    return raw;
+  }
+  return null;
+}
+
 export function authorFromProfile(row: ProfileSummaryRow): Author {
   const name = row.display_name?.trim() || row.username?.trim() || "Penulis";
   const handle = row.username?.trim() || row.id.slice(0, 8);
@@ -75,6 +91,7 @@ export function postFromRow(
   meId = ME_ID,
 ): StoredPost {
   const isOwn = row.author_id === currentUserId;
+  const image = safePostImage(row.image);
   return {
     id: row.id,
     authorId: isOwn ? meId : row.author_id,
@@ -86,7 +103,7 @@ export function postFromRow(
     sourceTitle: row.source_title,
     sourceDocId: row.source_doc_id,
     visibility: row.visibility,
-    ...(row.image ? { image: row.image } : {}),
+    ...(image ? { image } : {}),
     ...(row.group_id ? { groupId: row.group_id } : {}),
     ...(row.group_membership_id ? { groupMembershipId: row.group_membership_id } : {}),
     updatedAt: Date.parse(row.updated_at),

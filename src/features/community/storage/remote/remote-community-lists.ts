@@ -4,6 +4,7 @@ import { ME_ID } from "../../fixtures/authors";
 import type { EditorPick } from "../../curation/picks-store";
 import type { WritingGroup } from "../../groups/group-model";
 import type { ModerationEntry, Report } from "../../moderation/report-store";
+import { syncGroupMembers, syncGroupRow } from "./group-sync-helpers";
 import { isUuid } from "./row-mapping";
 
 export const picksRemoteSync: RemoteListSync<EditorPick> = {
@@ -203,43 +204,17 @@ export const groupsRemoteSync: RemoteListSync<WritingGroup> = {
       words: wordsByGroup.get(g.id as string) ?? [],
     }));
   },
-  async save(next) {
+  async save(next, prev) {
     const session = await accountSession();
     if (!session) return;
     const uid = session.userId;
-    const resolveUser = (id: string) => (id === ME_ID || id === ME_ID ? uid : id);
+    const resolveUser = (id: string) => (id === ME_ID ? uid : id);
+    const prevById = new Map(prev.map((g) => [g.id, g]));
     for (const g of next) {
       if (!isUuid(g.id)) continue;
-      await session.client.from("writing_groups").upsert(
-        {
-          id: g.id,
-          name: g.name,
-          description: g.description,
-          visibility: g.visibility,
-          code: g.code,
-          kind: g.kind ?? null,
-          starts_on: g.startsOn ?? null,
-          ends_on: g.endsOn ?? null,
-          final_board: g.finalBoard ?? null,
-          created_by: uid,
-        },
-        { onConflict: "id" },
-      );
-      for (const m of g.members) {
-        const memberUid = resolveUser(m.authorId);
-        if (!isUuid(memberUid)) continue;
-        await session.client.from("group_members").upsert(
-          {
-            group_id: g.id,
-            user_id: memberUid,
-            membership_id: m.membershipId,
-            is_admin: m.admin,
-            board: Boolean(m.board),
-            board_since: m.boardSince ?? null,
-          },
-          { onConflict: "group_id,user_id" },
-        );
-      }
+      const old = prevById.get(g.id);
+      await syncGroupRow(session, g, old, uid);
+      await syncGroupMembers(session, g, old, resolveUser);
       for (const w of g.words ?? []) {
         const wUid = resolveUser(w.authorId);
         if (wUid !== uid) continue;

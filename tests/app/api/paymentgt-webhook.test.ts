@@ -103,6 +103,27 @@ describe("POST /api/paymentgt/webhook", () => {
       }),
     );
     expect(badAmount.status).toBe(400);
+
+    const nanAmount = await POST(
+      signedRequest({
+        order_id: "reg-1",
+        event: "payment.success",
+        payment_id: "pg-100",
+        amount: "not-a-number",
+      }),
+    );
+    expect(nanAmount.status).toBe(400);
+
+    db.reg = { ...db.reg!, unique_amount: null, amount_idr: null };
+    const nullExpected = await POST(
+      signedRequest({
+        order_id: "reg-1",
+        event: "payment.success",
+        payment_id: "pg-100",
+        amount: 50000,
+      }),
+    );
+    expect(nullExpected.status).toBe(400);
   });
 
   it("marks a waiting registration as paid and logs the raw event", async () => {

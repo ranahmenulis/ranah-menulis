@@ -2,7 +2,7 @@
 
 Sumber status terkini untuk pekerjaan backend (Supabase). Pekerjaan UI dan data dummy ada di [catatan-development-fe.md](catatan-development-fe.md). **Wajib dibaca di awal setiap permintaan yang menyentuh backend.** Perbarui di akhir setiap sesi yang mengubah status.
 
-Terakhir diperbarui: **26 November 2026** (Fase 4 selesai di kode, DB, build 73 rute, RLS 75 tes, & 104 berkas tes Projects/Kelola; sudah di-push ke `be/supabase`).
+Terakhir diperbarui: **26 November 2026** (Fase 5 audit keamanan penuh selesai lewat migrasi `0009`–`0010` & hardening API/klien; seluruh 6 gate lulus: format, lint, typecheck, 310 berkas / 2.406 tes, build 73 rute, & RLS 9 berkas / 77 tes).
 
 ## 1. Posisi sekarang
 
@@ -112,7 +112,9 @@ Keputusan user (26 November 2026): pembayaran QRIS sementara memakai gateway sel
 ### Fase 5, penutup
 - [x] Login Google (selesai di kode 26 November 2026: `continueWithGoogle` di `supabase-auth-gateway.ts` memakai `signInWithOAuth({ provider: "google" })`, `/auth/callback` memeriksa `onboarding=1` untuk mengarahkan pengguna baru ke `/mulai` dengan `lanjut` terjaga; tes unit 26 berkas 255 tes lulus)
 - [ ] Email lewat Resend (env `.env.example` & panduan disiapkan; ditunda sampai domain dibeli)
-- [ ] Gate penuh, audit keamanan, uji menyeluruh, merge `be/supabase` ke `main`
+- [x] Audit keamanan penuh & hardening (`0009_security_hardening.sql`, `0010_fix_rls_helpers.sql`, verifikasi harga QRIS di server, proteksi CSRF/SSRF/path-traversal/XSS/RLS, header `next.config.ts`)
+- [x] Gate penuh lulus (26 November 2026): `format:check`, `lint` (0 error), `typecheck`, `npm test` (310 berkas, 2.406 tes), `npm run build` (73 rute), dan `npm run test:rls` (9 berkas, 77 tes)
+- [ ] Push `be/supabase` dan merge `be/supabase` ke `main` (menunggu persetujuan eksplisit user)
 
 ### Pengaturan Auth hosted (dilakukan user di dasbor Supabase)
 
@@ -132,6 +134,10 @@ Opsional: Authentication, Email Templates, terjemahkan templat ke bahasa Indones
 - 25 November 2026: branch baru `be/supabase` untuk semua backend, `main` dibiarkan dummy FE sampai backend matang; pakai project Supabase cloud (bukan Docker lokal); login email dan sandi dulu, Google menyusul; akun dummy disiapkan untuk pengujian (bukan impor data lokal); feedback front-end berjalan paralel (user meminta tester menguji lagi dan akan memberi tahu hasilnya); gate setiap fase = tes RLS dan tes terarah, `npm run check` dan `build` sekali di akhir fase.
 
 ## 5. Log sesi
+
+### 26 November 2026 (Fase 5, Audit Keamanan Penuh & Gate)
+- **Temuan audit yang ditutup:** (1) *Amount tampering* di `POST /api/payments/qris` (nominal kini dihitung di server dari `public.projects` / `projectFixtures`, ditambah cek CSRF `Origin` + `Content-Type`); (2) *Payment bypass* di RLS `project_registrations` & `QrisChargeCard` (`0009` membatasi `terdaftar` hanya untuk proyek gratis / `can_manage_project` / `service_role`); (3) Intrusi grup privat & elevasi `is_admin` pada `group_members` (`0009` + `group-sync-helpers.ts`); (4) *Self-approval* status pada `project_submissions` & `class_assignments`, serta `writing_events` dibatasi untuk `organizer`/`admin`; (5) Akun Admin yang ditangguhkan kini kehilangan hak `is_admin()`/`has_platform_role()`, celah AC-SA3 pada `revoke_platform_role` diperbaiki, dan parameter `p_user` fungsi bantu dikunci dari pengintaian lintas-akun (`0010` memulihkan `EXECUTE` bagi `anon` agar policy `SELECT` publik tetap berjalan aman); (6) *Cross-slug spoofing* pada `jury_scores`, `solo_progress`, `testimonial_decisions` (lewat `submission_matches_slug`/`testimonial_matches_slug` di `0010`, serta `slug` diteruskan dari `decideTestimonial`), dan pembatasan bucket `project-files`; (7) Anti-SSRF IPv4/IPv6 + `redirect: "error"` di `paymentgt.ts`, validasi positif nominal & batas ukuran body di `/api/paymentgt/webhook`, deduplikasi `payment_events`; (8) Anti-path-traversal di `createSupabaseFileStore`, `avatarUrl`, & constraint DB; validasi `https:` di `ExternalLink`, sanitasi HTML pratinjau `FlowContent`, sumber gambar `community_posts`, paginasi hapus berkas di `deleteOwnAccount`, serta header `Cross-Origin-Opener-Policy` & CSP statis non-nonce di `next.config.ts`.
+- **Gate penuh (26 November 2026):** `npm audit --omit=dev --audit-level=high` (0 vulnerabilities), `npm run format:check` (bersih), `npm run lint` (0 error, 1 warning lama di `pending-dialogs.tsx`), `npm run typecheck` (bersih), `npm test -- --maxWorkers=2 --reporter=dot` (310 berkas, 2.406 tes lulus), `npm run build` (73 rute, Partial Prerender), dan `npm run test:rls` (9 berkas, 77 tes lulus). Siap push dan merge ke `main` setelah persetujuan eksplisit user.
 
 ### 25 November 2026 (Fase 2, adaptor Supabase)
 - Dikerjakan: `src/features/studio/storage/remote/` (adaptor, pemetaan baris, rencana simpan, store pemilih, impor), `store.ts` memakai store pemilih (sesi dibaca asinkron lewat `client.auth.getSession()`, bukan React, supaya efek anak tidak mendahului provider), `deleteOwnAccount` ikut menghapus berkas `studio-covers`, `vitest.rls.config.mts` mendapat alias `@`.

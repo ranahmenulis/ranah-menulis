@@ -6,11 +6,9 @@ Tujuan: memastikan semua layar dan alur sudah sesuai harapan **sebelum** server 
 
 ## Baca dulu (1 menit)
 
-- **Data masih contoh.** Semua yang Anda buat hanya tersimpan **di peramban Anda sendiri**. Tidak terlihat orang lain.
-- **Anda otomatis "masuk"** sebagai pengguna contoh **Rinjani Putri**. Halaman Masuk dan Daftar baru tampilan, belum ada login sungguhan.
-- **Bagian 1 (penulis dan peserta)** dibuka lewat alamat publik `ranah-menulis.vercel.app`. Tidak perlu memasang apa pun.
-- **Bagian 2 (semua role pengelola)** juga dibuka di alamat yang sama. Peran dipilih lewat `?sebagai=` pada tautan (sudah disediakan di tiap langkah), tanpa memasang apa pun. Semua dikerjakan di **satu peramban dan satu perangkat**, karena data tersimpan di peramban itu.
-- Pindah role: buka tautan dengan `?sebagai=` di tab yang sama (sudah disediakan di tiap langkah). Satu orang memainkan semua role.
+- **Akun & masuk nyata (per `be/supabase`):** Pengujian menggunakan akun Supabase nyata: daftar dengan email + sandi, atau klik **Lanjutkan dengan Google** di `/masuk` atau `/daftar` (pengguna baru otomatis diarahkan ke `/mulai`).
+- **Peran pengelola:** Diberikan lewat database (`platform_roles` / `staff_roles`) oleh Super Admin/Administrator; parameter `?sebagai=` tidak lagi digunakan.
+- **Pembayaran QRIS:** Proyek berbayar menampilkan QRIS dinamis PaymentGT di `/projects/[slug]/bayar` dan otomatis terkonfirmasi **Lunas** lewat webhook maupun polling 5 detik.
 - Coba juga di ponsel dan mode gelap (tombol tema di bilah atas).
 - **Cara mencatat temuan:** tulis nomor langkah (misal *1.C3*) dan apa yang terasa kurang sesuai.
 

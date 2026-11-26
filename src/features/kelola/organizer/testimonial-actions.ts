@@ -83,6 +83,7 @@ export function decideTestimonial(
     ...decisions,
     {
       testimonialId: id,
+      slug,
       state: hide ? "disembunyikan" : "dipulihkan",
       at: now,
       by: ME_ID,

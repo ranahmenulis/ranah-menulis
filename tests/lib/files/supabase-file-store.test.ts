@@ -75,4 +75,16 @@ describe("createSupabaseFileStore", () => {
     expect(await store.get("c1")).toBeNull();
     expect(download).toHaveBeenCalledWith("user-1/c1");
   });
+
+  it("rejects path traversal file ids", async () => {
+    const { client, upload, download, remove } = makeClient();
+    const store = createSupabaseFileStore(client, "studio-covers", "user-1");
+
+    await expect(store.put(sampleFile("../other/evil"))).rejects.toThrow("Invalid file id");
+    expect(await store.get("../other/evil")).toBeNull();
+    await store.delete("../other/evil");
+    expect(upload).not.toHaveBeenCalled();
+    expect(download).not.toHaveBeenCalled();
+    expect(remove).not.toHaveBeenCalled();
+  });
 });

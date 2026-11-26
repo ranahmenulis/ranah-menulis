@@ -110,6 +110,15 @@ describe("RLS: Community", () => {
       blocks: [],
     });
     expect(spoof.error).not.toBeNull();
+
+    // Non-member B cannot force-join a private group without an invite or approved request.
+    const intrude = await b.client.from("group_members").insert({
+      group_id: gId,
+      user_id: b.id,
+      membership_id: `m-${b.id}`,
+      is_admin: true,
+    });
+    expect(intrude.error).not.toBeNull();
   });
 
   it("keeps marks private per user while exposing aggregate post counts", async () => {

@@ -180,24 +180,27 @@ async function persistEvent(event: WritingEvent) {
   const session = await accountSession();
   if (!session || !isUuid(event.id)) return;
   const uid = session.userId;
-  await session.client.from("writing_events").upsert(
-    {
-      id: event.id,
-      owner_id: event.ownerId === ME_ID || event.ownerId === "me" ? uid : event.ownerId,
-      revision: event.revision,
-      schedule_locked: event.scheduleLocked,
-      title: event.title,
-      description: event.description,
-      rules: event.rules,
-      starts_at: new Date(event.startsAt).toISOString(),
-      ends_at: new Date(event.endsAt).toISOString(),
-      zone: event.zone,
-      target: event.target,
-      capacity: event.capacity,
-      sprint: event.sprint,
-    },
-    { onConflict: "id" },
-  );
+  const isOwner = event.ownerId === ME_ID || event.ownerId === "me" || event.ownerId === uid;
+  if (isOwner) {
+    await session.client.from("writing_events").upsert(
+      {
+        id: event.id,
+        owner_id: uid,
+        revision: event.revision,
+        schedule_locked: event.scheduleLocked,
+        title: event.title,
+        description: event.description,
+        rules: event.rules,
+        starts_at: new Date(event.startsAt).toISOString(),
+        ends_at: new Date(event.endsAt).toISOString(),
+        zone: event.zone,
+        target: event.target,
+        capacity: event.capacity,
+        sprint: event.sprint,
+      },
+      { onConflict: "id" },
+    );
+  }
   const mine = event.participants.find(
     (p) => p.authorId === ME_ID || p.authorId === "me" || p.authorId === uid,
   );

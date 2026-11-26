@@ -33,6 +33,10 @@ describe("paymentgt", () => {
   it("omits loopback and private origins from callback_url (anti-SSRF)", () => {
     expect(resolvePaymentgtCallbackUrl("http://localhost:3000")).toBeUndefined();
     expect(resolvePaymentgtCallbackUrl("http://127.0.0.1:3000")).toBeUndefined();
+    expect(resolvePaymentgtCallbackUrl("http://127.0.0.99:3000")).toBeUndefined();
+    expect(resolvePaymentgtCallbackUrl("http://169.254.169.254")).toBeUndefined();
+    expect(resolvePaymentgtCallbackUrl("http://[::1]:3000")).toBeUndefined();
+    expect(resolvePaymentgtCallbackUrl("http://[fe80::1]:3000")).toBeUndefined();
     expect(resolvePaymentgtCallbackUrl("http://192.168.1.5:3000")).toBeUndefined();
     expect(resolvePaymentgtCallbackUrl("https://ranah-menulis.vercel.app")).toBe(
       "https://ranah-menulis.vercel.app/api/paymentgt/webhook",

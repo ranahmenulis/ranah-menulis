@@ -251,5 +251,34 @@ describe("RLS: Kelola & Contest Judging", () => {
     expect(
       (await adm.client.from("featured_projects").insert({ slug: featuredSlug })).error,
     ).toBeNull();
+
+    // Cross-slug spoofing: judgeA cannot score entryId under another slug
+    const otherSlug = `rls-other-${suffix}`;
+    await organizer.client.from("projects").insert({
+      slug: otherSlug,
+      category: "lomba",
+      publication: "terbit",
+      title: "Lomba Lain",
+      block: {
+        kind: "lomba",
+        criteria: [{ name: "Gaya", weight: 100 }],
+        prizes: [],
+        anonymous: false,
+      },
+    });
+    await organizer.client.from("staff_assignments").insert({
+      project_slug: otherSlug,
+      role: "juri",
+      staff_id: judgeA.id,
+      assigned_by: organizer.id,
+    });
+    const crossScore = await judgeA.client.from("jury_scores").insert({
+      submission_id: entryId,
+      slug: otherSlug,
+      scores: { Gaya: 10 },
+    });
+    expect(crossScore.error).not.toBeNull();
+    await admin.from("projects").delete().eq("slug", otherSlug);
+    await admin.from("staff_assignments").delete().eq("project_slug", otherSlug);
   });
 });

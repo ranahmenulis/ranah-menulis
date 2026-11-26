@@ -33,6 +33,7 @@ function isDecision(value: unknown): value is TestimonialDecision {
   const v = value as Record<string, unknown>;
   return (
     isText(v.testimonialId) &&
+    (v.slug === undefined || isText(v.slug)) &&
     (v.state === "disembunyikan" || v.state === "dipulihkan") &&
     isNumber(v.at) &&
     isText(v.by) &&

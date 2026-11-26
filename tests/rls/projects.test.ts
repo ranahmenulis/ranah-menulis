@@ -298,5 +298,53 @@ describe("RLS: Projects", () => {
       .from("project-files")
       .download(`${writerA.id}/manuscript.png`);
     expect(edDownload.error).toBeNull();
+
+    const unassignedEdDownload = await otherEditor.client.storage
+      .from("project-files")
+      .download(`${writerA.id}/manuscript.png`);
+    expect(unassignedEdDownload.error).not.toBeNull();
+  });
+
+  it("blocks paid registration bypass and submission/assignment self-approval", async () => {
+    const paidSlug = `rls-paid-${suffix}`;
+    await organizer.client.from("projects").insert({
+      slug: paidSlug,
+      category: "antologi",
+      publication: "terbit",
+      title: "Antologi Berbayar",
+      fee: { idr: 75000 },
+      block: { kind: "antologi", theme: "Uji", stages: [] },
+    });
+
+    const bypass = await writerB.client.from("project_registrations").insert({
+      slug: paidSlug,
+      status: "terdaftar",
+      terms_version: "v1",
+    });
+    expect(bypass.error).not.toBeNull();
+
+    const pending = await writerB.client.from("project_registrations").insert({
+      slug: paidSlug,
+      status: "menunggu-pembayaran",
+      terms_version: "v1",
+    });
+    expect(pending.error).toBeNull();
+
+    const selfApproveSub = await writerA.client
+      .from("project_submissions")
+      .update({ status: "diterima" })
+      .eq("id", soloSubmissionId);
+    expect(selfApproveSub.error).not.toBeNull();
+
+    const handInB = await writerB.client.from("class_assignments").insert({
+      id: randomUUID(),
+      slug: classSlug,
+      assignment_id: `task-${suffix}`,
+      source: "teks",
+      status: "selesai",
+    });
+    expect(handInB.error).not.toBeNull();
+
+    await admin.from("projects").delete().eq("slug", paidSlug);
   });
 });

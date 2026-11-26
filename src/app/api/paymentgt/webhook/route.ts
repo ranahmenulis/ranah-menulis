@@ -33,9 +33,17 @@ async function logPaymentEvent(
     );
 }
 
-function amountMismatches(reg: { unique_amount: unknown; amount_idr: unknown }, amount: number) {
+const MAX_WEBHOOK_BYTES = 65_536;
+
+function amountMatches(reg: { unique_amount: unknown; amount_idr: unknown }, amount: number) {
   const expected = (reg.unique_amount ?? reg.amount_idr) as number | null;
-  return expected !== null && Number.isFinite(amount) && Math.round(amount) !== expected;
+  return (
+    typeof expected === "number" &&
+    expected > 0 &&
+    Number.isFinite(amount) &&
+    amount > 0 &&
+    Math.round(amount) === expected
+  );
 }
 
 /**
@@ -45,6 +53,9 @@ function amountMismatches(reg: { unique_amount: unknown; amount_idr: unknown }, 
  */
 export async function POST(req: Request) {
   const raw = await req.text();
+  if (Buffer.byteLength(raw, "utf8") > MAX_WEBHOOK_BYTES) {
+    return NextResponse.json({ error: "payload too large" }, { status: 413 });
+  }
   if (!verifyQrisWebhook(req.headers, raw)) {
     return NextResponse.json({ error: "invalid signature" }, { status: 401 });
   }
@@ -76,7 +87,7 @@ export async function POST(req: Request) {
   if (!qrisWebhookMatchesRegistration(reg.paymentgt_id as string | null, body.payment_id)) {
     return NextResponse.json({ error: "order mismatch" }, { status: 400 });
   }
-  if (amountMismatches(reg, amount)) {
+  if (!amountMatches(reg, amount)) {
     return NextResponse.json({ error: "amount mismatch" }, { status: 400 });
   }
 
