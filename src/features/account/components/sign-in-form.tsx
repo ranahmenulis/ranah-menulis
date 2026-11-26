@@ -75,7 +75,7 @@ export function SignInForm() {
   }
 
   async function google() {
-    const result = await gateway.continueWithGoogle?.("signIn");
+    const result = await gateway.continueWithGoogle?.("signIn", next);
     if (result) enter(result.onboarded);
   }
 

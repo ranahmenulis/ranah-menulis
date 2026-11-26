@@ -100,7 +100,7 @@ export function SignUpForm() {
 
   /** Google has verified the address, so the profile comes next. */
   async function google() {
-    const result = await gateway.continueWithGoogle?.("signUp");
+    const result = await gateway.continueWithGoogle?.("signUp", next);
     if (!result) return;
     router.refresh();
     router.push(withNext(ONBOARDING_HREF, next));

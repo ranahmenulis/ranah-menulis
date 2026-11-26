@@ -6,6 +6,7 @@ type AuthResult = {
 };
 const auth = vi.hoisted(() => ({
   signInWithPassword: vi.fn(),
+  signInWithOAuth: vi.fn(),
   signUp: vi.fn(),
   resend: vi.fn(),
   resetPasswordForEmail: vi.fn(),
@@ -59,6 +60,28 @@ describe("supabaseAuthGateway.signIn", () => {
   it("reads a thrown error as a network problem", async () => {
     auth.signInWithPassword.mockRejectedValue(new Error("offline"));
     expect(await gateway.signIn("a@b.id", "x")).toEqual({ ok: false, reason: "network" });
+  });
+});
+
+describe("supabaseAuthGateway.continueWithGoogle", () => {
+  it("starts Google OAuth with /auth/callback and onboarding check", async () => {
+    auth.signInWithOAuth.mockResolvedValue({
+      data: { provider: "google", url: "https://g.test" },
+      error: null,
+    });
+    const result = await gateway.continueWithGoogle?.("signIn", "/studio");
+    expect(result).toBeNull();
+    expect(auth.signInWithOAuth).toHaveBeenCalledWith({
+      provider: "google",
+      options: {
+        redirectTo: expect.stringContaining("/auth/callback?"),
+      },
+    });
+    const redirect = new URL(auth.signInWithOAuth.mock.calls[0][0].options.redirectTo);
+    expect(redirect.pathname).toBe("/auth/callback");
+    expect(redirect.searchParams.get("next")).toBe("/studio");
+    expect(redirect.searchParams.get("fail")).toBe("/masuk?lanjut=%2Fstudio");
+    expect(redirect.searchParams.get("onboarding")).toBe("1");
   });
 });
 

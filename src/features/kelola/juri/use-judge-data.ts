@@ -1,16 +1,18 @@
 "use client";
 
-import { useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLocale } from "@/lib/i18n/provider";
 import { fill } from "@/features/studio/copy/fill";
 import { contestStage } from "@/features/projects/lomba/contest-model";
 import { useContestOverrides } from "@/features/projects/lomba/stage-store";
+import { onSubmissionsChanged } from "@/features/projects/storage/submission-events";
+import { submissionStore } from "@/features/projects/storage/store";
 import type { SubmissionStore } from "@/features/projects/storage/submission-store";
 import type { Submission } from "@/features/projects/submission-types";
 import type { ContestStage } from "@/features/projects/lomba/types";
 import type { Project } from "@/features/projects/types";
 import { useProjects } from "@/features/projects/use-projects";
-import { useSubmissions } from "@/features/projects/use-submissions";
+import type { SubmissionsData } from "@/features/projects/use-submissions";
 import { useEffectiveRoles } from "@/features/kelola/use-effective-roles";
 import { useStaffAssignments } from "../staff-assignments";
 import { juriCopy } from "./copy/juri-copy";
@@ -44,10 +46,63 @@ const criteriaOf = (project: Project): Criterion[] =>
 const anonymousOf = (project: Project): boolean =>
   project.block.kind === "lomba" && project.block.anonymous;
 
+/** Reads judgeable contest submissions via `listForJudge` when available (anonymous RPC on Supabase). */
+function useJudgeSubmissions(
+  slugs: readonly string[],
+  store: SubmissionStore = submissionStore,
+): SubmissionsData {
+  const slugKey = slugs.join("\0");
+  const [state, setState] = useState<Pick<SubmissionsData, "status" | "submissions">>({
+    status: "loading",
+    submissions: [],
+  });
+  const [attempt, setAttempt] = useState(0);
+
+  useEffect(() => {
+    let cancelled = false;
+    let latestRead = 0;
+    const load = () => {
+      const read = ++latestRead;
+      const listPromise = store.listForJudge
+        ? slugKey === ""
+          ? Promise.resolve([])
+          : Promise.all(slugKey.split("\0").map((s) => store.listForJudge!(s))).then((g) =>
+              g.flat(),
+            )
+        : store.list();
+      listPromise.then(
+        (list) => {
+          if (cancelled || read !== latestRead) return;
+          setState({
+            status: "ready",
+            submissions: [...list].sort((a, b) => b.submittedAt - a.submittedAt),
+          });
+        },
+        () => {
+          if (!cancelled && read === latestRead) setState((prev) => ({ ...prev, status: "error" }));
+        },
+      );
+    };
+    load();
+    const stop = onSubmissionsChanged(load);
+    return () => {
+      cancelled = true;
+      stop();
+    };
+  }, [store, slugKey, attempt]);
+
+  const reload = useCallback(() => {
+    setState((prev) => ({ ...prev, status: "loading" }));
+    setAttempt((n) => n + 1);
+  }, []);
+
+  return { ...state, reload };
+}
+
 /** Everything the three Judge screens read, once. */
-function useJudging(sources: Sources) {
+function useJudging(sources: Sources, slugs: readonly string[]) {
   const catalog = useProjects();
-  const submissions = useSubmissions(sources.store);
+  const submissions = useJudgeSubmissions(slugs, sources.store);
   const roles = useEffectiveRoles();
   const assigned = useStaffAssignments();
   const scores = useJuryScores();
@@ -62,7 +117,22 @@ function stageOf(project: Project, now: number, override: ContestStage | undefin
 
 /** The contests this viewer may judge, with how far along they are. */
 export function useJudgeContests(sources: Sources = {}): JudgeContestsData {
-  const { catalog, submissions, roles, assigned, scores, log, overrides } = useJudging(sources);
+  const catalog = useProjects();
+  const roles = useEffectiveRoles();
+  const assigned = useStaffAssignments();
+  const contestSlugs = useMemo(
+    () =>
+      catalog.status === "ready"
+        ? catalog.projects
+            .filter((p) => judgeAccess(roles, p.slug, catalog.projects, assigned) === "ok")
+            .map((p) => p.slug)
+        : [],
+    [catalog, roles, assigned],
+  );
+  const submissions = useJudgeSubmissions(contestSlugs, sources.store);
+  const scores = useJuryScores();
+  const log = useJudgingLog();
+  const overrides = useContestOverrides();
   return useMemo<JudgeContestsData>(() => {
     if (submissions.status === "error") return { status: "error", reload: submissions.reload };
     if (catalog.status === "loading" || submissions.status === "loading") {
@@ -104,7 +174,9 @@ export type JudgeContestData =
 
 /** One contest the viewer may judge: its works as rows, without any author. */
 export function useJudgeContest(slug: string, sources: Sources = {}): JudgeContestData {
-  const { catalog, submissions, roles, assigned, scores, log, overrides } = useJudging(sources);
+  const { catalog, submissions, roles, assigned, scores, log, overrides } = useJudging(sources, [
+    slug,
+  ]);
   const locale = useLocale();
   return useMemo<JudgeContestData>(() => {
     if (submissions.status === "error") return { status: "error", reload: submissions.reload };
@@ -145,7 +217,7 @@ export type JudgeWorkData =
 /** One work to score. Another contest's id, a draft or a withdrawn work is "gone". */
 export function useJudgeWork(slug: string, id: string, sources: Sources = {}): JudgeWorkData {
   const contest = useJudgeContest(slug, sources);
-  const { submissions } = useJudging(sources);
+  const submissions = useJudgeSubmissions([slug], sources.store);
   const locale = useLocale();
   return useMemo<JudgeWorkData>(() => {
     if (contest.status !== "ready") return contest;

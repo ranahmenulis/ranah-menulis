@@ -166,6 +166,12 @@ describe("RLS: Projects", () => {
       .eq("id", soloSubmissionId);
     expect(unassignedSees.data).toEqual([]);
 
+    const edReview = await editor.client
+      .from("project_submissions")
+      .update({ status: "peninjauan" })
+      .eq("id", soloSubmissionId);
+    expect(edReview.error).toBeNull();
+
     const edUpdate = await editor.client
       .from("project_submissions")
       .update({ status: "diterima" })

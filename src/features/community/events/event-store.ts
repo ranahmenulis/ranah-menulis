@@ -123,7 +123,13 @@ function isEvent(value: unknown): value is WritingEvent {
 
 let cached: { raw: string; snapshot: Read } | undefined;
 let remoteEvents: readonly WritingEvent[] | null = null;
+let remoteSnapshot: Ready | null = null;
 let loadedRemote = false;
+
+function setRemoteEvents(events: readonly WritingEvent[]) {
+  remoteEvents = events;
+  remoteSnapshot = { status: "ready", events };
+}
 
 async function syncEventsFromServer() {
   if (loadedRemote) return;
@@ -146,22 +152,24 @@ async function syncEventsFromServer() {
       });
       partByEvent.set(p.event_id as string, list);
     }
-    remoteEvents = evRes.data.map((e) => ({
-      id: e.id as string,
-      ownerId: e.owner_id === uid ? ME_ID : (e.owner_id as string),
-      revision: Number(e.revision),
-      scheduleLocked: Boolean(e.schedule_locked),
-      title: e.title as string,
-      description: (e.description as string) ?? "",
-      rules: (e.rules as string) ?? "",
-      startsAt: Date.parse(e.starts_at as string),
-      endsAt: Date.parse(e.ends_at as string),
-      zone: e.zone as WritingEvent["zone"],
-      target: Number(e.target),
-      capacity: e.capacity === null ? null : Number(e.capacity),
-      sprint: (e.sprint as EventSprint | null) ?? null,
-      participants: partByEvent.get(e.id as string) ?? [],
-    }));
+    setRemoteEvents(
+      evRes.data.map((e) => ({
+        id: e.id as string,
+        ownerId: e.owner_id === uid ? ME_ID : (e.owner_id as string),
+        revision: Number(e.revision),
+        scheduleLocked: Boolean(e.schedule_locked),
+        title: e.title as string,
+        description: (e.description as string) ?? "",
+        rules: (e.rules as string) ?? "",
+        startsAt: Date.parse(e.starts_at as string),
+        endsAt: Date.parse(e.ends_at as string),
+        zone: e.zone as WritingEvent["zone"],
+        target: Number(e.target),
+        capacity: e.capacity === null ? null : Number(e.capacity),
+        sprint: (e.sprint as EventSprint | null) ?? null,
+        participants: partByEvent.get(e.id as string) ?? [],
+      })),
+    );
     refreshEvents();
   } catch {
     loadedRemote = false;
@@ -210,7 +218,7 @@ async function persistEvent(event: WritingEvent) {
 }
 
 function read(): Read {
-  if (remoteEvents !== null) return { status: "ready", events: remoteEvents };
+  if (remoteSnapshot !== null) return remoteSnapshot;
   try {
     const raw = window.localStorage.getItem(KEY);
     if (raw === null) return seed;
@@ -275,7 +283,7 @@ export function writeEvent(events: readonly WritingEvent[], event: WritingEvent)
     ? events.map((item) => (item.id === event.id ? event : item))
     : [...events, event];
   if (remoteEvents !== null) {
-    remoteEvents = next;
+    setRemoteEvents(next);
     refreshEvents();
     void persistEvent(event).catch(() => undefined);
     return;
@@ -285,7 +293,7 @@ export function writeEvent(events: readonly WritingEvent[], event: WritingEvent)
 
 export function writeEvents(events: readonly WritingEvent[]) {
   if (remoteEvents !== null) {
-    remoteEvents = events;
+    setRemoteEvents(events);
     refreshEvents();
     return;
   }

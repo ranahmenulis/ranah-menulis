@@ -72,9 +72,17 @@ beforeEach(() => {
 afterEach(cleanup);
 
 describe("Masuk with a real sign-in system", () => {
-  it("hides the Google button until real Google sign-in exists", () => {
+  it("hides the Google button when continueWithGoogle is absent", () => {
     mount(<SignInForm />, gateway());
     expect(screen.queryByRole("button", { name: "Masuk dengan Google" })).toBeNull();
+  });
+
+  it("shows the Google button and passes the destination when continueWithGoogle exists", async () => {
+    nav.search = "lanjut=%2Fstudio";
+    const continueWithGoogle = vi.fn(async () => null);
+    mount(<SignInForm />, gateway({ continueWithGoogle }));
+    await press("Masuk dengan Google");
+    expect(continueWithGoogle).toHaveBeenCalledWith("signIn", "/studio");
   });
 
   it("refreshes the session and goes on to the destination", async () => {

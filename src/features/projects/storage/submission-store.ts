@@ -15,6 +15,8 @@ export type Change = (current: Submission, all: Submission[]) => Submission | nu
  */
 export interface SubmissionStore {
   list(): Promise<Submission[]>;
+  /** Anonymous-safe contest submissions for Judges (omits author_id and participant notes). */
+  listForJudge?(slug: string): Promise<Submission[]>;
   /**
    * Stores a new submission unless it breaks a rule that two tabs could race on: the same document
    * sent twice to one project, or more works than the project allows. Checked and written together.

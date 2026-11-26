@@ -2,7 +2,14 @@ import type { AuthError } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
 import { deleteOwnAccount } from "./delete-account";
 import type { AuthFailure, AuthGateway } from "./auth-gateway";
-import { RESET_HREF, VERIFY_HREF, withNext } from "./redirect";
+import {
+  RESET_HREF,
+  SIGN_IN_HREF,
+  SIGN_UP_HREF,
+  VERIFY_HREF,
+  safeNext,
+  withNext,
+} from "./redirect";
 
 /**
  * Where an email link lands: `/auth/callback` swaps the code for a session, then goes to `next`
@@ -144,6 +151,21 @@ export const supabaseAuthGateway: AuthGateway = {
       await createClient().auth.signOut();
     } catch {
       // Nothing to undo: the server stops trusting the session when its cookie is gone.
+    }
+  },
+  async continueWithGoogle(mode, next) {
+    try {
+      const url = new URL(
+        callback(safeNext(next), withNext(mode === "signUp" ? SIGN_UP_HREF : SIGN_IN_HREF, next)),
+      );
+      url.searchParams.set("onboarding", "1");
+      await createClient().auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: url.toString() },
+      });
+      return null;
+    } catch {
+      return null;
     }
   },
 };

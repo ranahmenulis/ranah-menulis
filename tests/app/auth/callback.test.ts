@@ -3,12 +3,18 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const supabase = vi.hoisted(() => ({
   exchangeCodeForSession: vi.fn(),
+  profile: { onboarded_at: "2026-11-26T00:00:00Z" } as { onboarded_at: string | null } | null,
   fail: false,
 }));
 vi.mock("@/lib/supabase/server", () => ({
   createClient: async () => {
     if (supabase.fail) throw new Error("boom");
-    return { auth: { exchangeCodeForSession: supabase.exchangeCodeForSession } };
+    return {
+      auth: { exchangeCodeForSession: supabase.exchangeCodeForSession },
+      from: () => ({
+        select: () => ({ eq: () => ({ maybeSingle: async () => ({ data: supabase.profile }) }) }),
+      }),
+    };
   },
 }));
 
@@ -19,7 +25,8 @@ const where = (response: Response) => response.headers.get("location");
 
 beforeEach(() => {
   supabase.exchangeCodeForSession.mockReset();
-  supabase.exchangeCodeForSession.mockResolvedValue({ error: null });
+  supabase.exchangeCodeForSession.mockResolvedValue({ data: { user: { id: "u1" } }, error: null });
+  supabase.profile = { onboarded_at: "2026-11-26T00:00:00Z" };
   supabase.fail = false;
 });
 
@@ -63,4 +70,19 @@ describe("GET /auth/callback", () => {
       expect(where(refused)).toBe("https://ranah.test/masuk");
     },
   );
+
+  it("sends first-time OAuth users to Mulai while keeping their destination", async () => {
+    supabase.profile = { onboarded_at: null };
+    expect(where(await call("?code=abc&next=/studio&onboarding=1"))).toBe(
+      "https://ranah.test/mulai?lanjut=%2Fstudio",
+    );
+    expect(where(await call("?code=abc&onboarding=1"))).toBe("https://ranah.test/mulai");
+  });
+
+  it("sends already onboarded OAuth users straight to next", async () => {
+    supabase.profile = { onboarded_at: "2026-11-26T00:00:00Z" };
+    expect(where(await call("?code=abc&next=/studio&onboarding=1"))).toBe(
+      "https://ranah.test/studio",
+    );
+  });
 });

@@ -41,6 +41,9 @@ export type AuthGateway = {
    * let anyone find who has an account), so this is absent there and Daftar learns it on submit.
    */
   emailTaken?(email: string): boolean;
-  /** "With Google". Absent until real Google sign-in exists (Fase 5): the button is then hidden. */
-  continueWithGoogle?(mode: "signIn" | "signUp"): Promise<{ onboarded: boolean }>;
+  /** "With Google". Returns `null` when the browser redirects to the provider. */
+  continueWithGoogle?(
+    mode: "signIn" | "signUp",
+    next?: string | null,
+  ): Promise<{ onboarded: boolean } | null>;
 };

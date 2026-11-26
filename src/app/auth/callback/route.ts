@@ -1,11 +1,11 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { internalPath } from "@/features/account/redirect";
+import { internalPath, ONBOARDING_HREF, withNext } from "@/features/account/redirect";
 import { createClient } from "@/lib/supabase/server";
 
 /**
- * The page an email link (verify the address, reset the password) opens. It swaps the one-time
- * code for a session, then sends the reader on to `next`. An expired link, one opened in another
- * browser than the one that asked for it, or a missing code goes to `fail` instead.
+ * The page an email link or OAuth flow opens. It swaps the one-time code for a session, then
+ * sends the reader on to `next` (or to `/mulai` when `onboarding=1` and the profile is not yet
+ * finished). An expired link, one opened in another browser, or a missing code goes to `fail`.
  */
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
@@ -15,8 +15,20 @@ export async function GET(request: NextRequest) {
   if (!code) return NextResponse.redirect(`${origin}${fail}`);
   try {
     const supabase = await createClient();
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
-    return NextResponse.redirect(`${origin}${error ? fail : next}`);
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+    if (error) return NextResponse.redirect(`${origin}${fail}`);
+    if (searchParams.get("onboarding") === "1" && data.user?.id) {
+      const profile = await supabase
+        .from("profiles")
+        .select("onboarded_at")
+        .eq("id", data.user.id)
+        .maybeSingle();
+      if (!profile.data?.onboarded_at) {
+        const dest = withNext(ONBOARDING_HREF, next === "/beranda" ? null : next);
+        return NextResponse.redirect(`${origin}${dest}`);
+      }
+    }
+    return NextResponse.redirect(`${origin}${next}`);
   } catch {
     return NextResponse.redirect(`${origin}${fail}`);
   }

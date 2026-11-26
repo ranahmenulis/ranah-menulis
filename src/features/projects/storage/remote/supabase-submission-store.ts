@@ -77,6 +77,35 @@ export function createSupabaseSubmissionStore(
   return {
     list: listAll,
 
+    async listForJudge(slug) {
+      const { data, error } = await client.rpc("jury_submissions", { p_slug: slug });
+      if (error) throw new Error(error.message, { cause: error });
+      return (
+        (data ?? []) as Array<{
+          id: string;
+          slug: string;
+          title: string;
+          genre: string;
+          status: SubmissionStatus;
+          versions: SubmissionVersion[];
+          submitted_at: string;
+        }>
+      ).map((row) => ({
+        id: row.id,
+        slug: row.slug,
+        title: row.title,
+        genre: row.genre,
+        note: "",
+        originalityAgreedAt: 0,
+        docId: "",
+        docTitle: "",
+        status: row.status,
+        statusLog: [],
+        versions: Array.isArray(row.versions) ? row.versions : [],
+        submittedAt: Date.parse(row.submitted_at),
+      }));
+    },
+
     async add(submission, maxWorks) {
       const existing = await listAll();
       const verdict = canAdd(existing, submission, maxWorks);
@@ -112,6 +141,12 @@ export function createSwitchingSubmissionStore(
   const active = async () => (await account()) ?? device();
   return {
     list: async () => (await active()).list(),
+    listForJudge: async (slug) => {
+      const store = await active();
+      return store.listForJudge
+        ? store.listForJudge(slug)
+        : (await store.list()).filter((s) => s.slug === slug);
+    },
     add: async (submission, maxWorks) => (await active()).add(submission, maxWorks),
     update: async (id, change) => (await active()).update(id, change),
   };
