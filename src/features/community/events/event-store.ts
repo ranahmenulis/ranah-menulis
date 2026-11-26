@@ -2,6 +2,7 @@
 
 import { useSyncExternalStore } from "react";
 import { accountSession } from "@/features/studio/storage/store";
+import { ME_ID } from "../fixtures/authors";
 import { isUuid } from "../storage/remote/row-mapping";
 import {
   entryOf,
@@ -140,14 +141,14 @@ async function syncEventsFromServer() {
     for (const p of partRes.data ?? []) {
       const list = partByEvent.get(p.event_id as string) ?? [];
       list.push({
-        authorId: p.user_id === uid ? "me" : (p.user_id as string),
+        authorId: p.user_id === uid ? ME_ID : (p.user_id as string),
         entry: (p.entry as EventEntry | null) ?? null,
       });
       partByEvent.set(p.event_id as string, list);
     }
     remoteEvents = evRes.data.map((e) => ({
       id: e.id as string,
-      ownerId: e.owner_id === uid ? "me" : (e.owner_id as string),
+      ownerId: e.owner_id === uid ? ME_ID : (e.owner_id as string),
       revision: Number(e.revision),
       scheduleLocked: Boolean(e.schedule_locked),
       title: e.title as string,
@@ -174,7 +175,7 @@ async function persistEvent(event: WritingEvent) {
   await session.client.from("writing_events").upsert(
     {
       id: event.id,
-      owner_id: event.ownerId === "me" ? uid : event.ownerId,
+      owner_id: event.ownerId === ME_ID || event.ownerId === "me" ? uid : event.ownerId,
       revision: event.revision,
       schedule_locked: event.scheduleLocked,
       title: event.title,
@@ -189,7 +190,9 @@ async function persistEvent(event: WritingEvent) {
     },
     { onConflict: "id" },
   );
-  const mine = event.participants.find((p) => p.authorId === "me" || p.authorId === uid);
+  const mine = event.participants.find(
+    (p) => p.authorId === ME_ID || p.authorId === "me" || p.authorId === uid,
+  );
   if (mine) {
     await session.client
       .from("event_participants")

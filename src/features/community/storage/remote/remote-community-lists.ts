@@ -1,5 +1,6 @@
 import { accountSession } from "@/features/studio/storage/store";
 import type { RemoteListSync } from "@/lib/local-list-store";
+import { ME_ID } from "../../fixtures/authors";
 import type { EditorPick } from "../../curation/picks-store";
 import type { WritingGroup } from "../../groups/group-model";
 import type { ModerationEntry, Report } from "../../moderation/report-store";
@@ -55,7 +56,7 @@ export const reportsRemoteSync: RemoteListSync<Report> = {
     return data.map((r) => ({
       kind: r.kind as Report["kind"],
       targetId: r.target_id as string,
-      reporterId: r.reporter_id === session.userId ? "me" : (r.reporter_id as string),
+      reporterId: r.reporter_id === session.userId ? ME_ID : (r.reporter_id as string),
       reason: r.reason as Report["reason"],
       at: Date.parse(r.created_at as string),
     }));
@@ -131,7 +132,7 @@ export const groupsRemoteSync: RemoteListSync<WritingGroup> = {
     const session = await accountSession();
     if (!session) return null;
     const uid = session.userId;
-    const asAuthor = (id: string) => (id === uid ? "me" : id);
+    const asAuthor = (id: string) => (id === uid ? ME_ID : id);
     const [groupsRes, membersRes, invitesRes, reqRes, wordsRes, hiddenRes] = await Promise.all([
       session.client.from("writing_groups").select("*").order("created_at", { ascending: true }),
       session.client.from("group_members").select("*"),
@@ -206,7 +207,7 @@ export const groupsRemoteSync: RemoteListSync<WritingGroup> = {
     const session = await accountSession();
     if (!session) return;
     const uid = session.userId;
-    const resolveUser = (id: string) => (id === "me" ? uid : id);
+    const resolveUser = (id: string) => (id === ME_ID || id === "me" ? uid : id);
     for (const g of next) {
       if (!isUuid(g.id)) continue;
       await session.client.from("writing_groups").upsert(

@@ -95,18 +95,19 @@ Keputusan user (25 November 2026, semua rekomendasi): impor data lokal lewat tom
 - [x] Fungsi impor data lokal ke akun (`importFromDevice`, aman diulang) dan banner di tab Naskah (26 November 2026)
 - [x] **Fase 2 selesai di kode dan gate (26 November 2026):** sampul lewat bucket `studio-covers` (`src/lib/files/supabase-file-store.ts`, `src/features/studio/storage/cover-store.ts`, `useBookCover`, `FolderCover`, dan `importFromDevice` ikut mengunggah sampul lokal; kompresi otomatis WebP lewat `compressImage`), target harian (`dailyTargets`) ikut `profiles.prefs` saat masuk (`account-model.ts`, `useStreakData`, `useDailyTarget`), tes unit baru (`supabase-file-store`, `import-local`, `use-streak-data`), `npm run test:rls` 60 lulus, `format:check`, `lint` (0 error, 1 warning lama), `typecheck`, `npm run build` (71 halaman, Partial Prerender), dan tes penuh 305 berkas 2.383 tes lulus. Menunggu persetujuan user untuk commit, push `be/supabase`, uji preview Vercel, dan uji tautan email.
 
-### Fase 3, Community (selesai di kode dan gate 26 November 2026)
+### Fase 3, Community (selesai di kode, gate, dan uji browser nyata 26 November 2026)
 - [x] Migrasi `0005_community.sql` dan `0006_community_draft_rls_fix.sql`: postingan, komentar, marks (`community_post_counts`), lingkar menulis (grup, anggota, undangan, permintaan gabung, leaderboard, sembunyi), event, laporan, moderasi, kurasi `editor_picks`, dan bucket publik `community-images` (maks. 2 MB WebP); tes RLS `tests/rls/community.test.ts` (7 berkas, 65 tes RLS lulus). `deleteOwnAccount` ikut membersihkan `community-images`.
 - [x] `PostStore` versi Supabase (`community/storage/remote/`: `supabase-post-store`, `row-mapping`, `switching-post-store`) + unggah gambar WebP ke `community-images` di `usePostImage`.
 - [x] Privasi lingkar, leaderboard, event, kurasi, dan moderasi di server (`createLocalListStore` dengan `RemoteListSync` di `remote-community-lists.ts`, plus sinkronisasi `event-store.ts`).
 - [x] Notifikasi Community dari server (`useCommunityNotifications` tersambung ke store Supabase).
+- [x] Uji browser nyata 3 akun (Chrome CDP terhadap Supabase cloud, 18 dari 18 lulus, nol error JS): buat lingkar privat, unggah gambar WebP ke `community-images`, terbit tulisan publik & grup privat, isolasi grup privat dari Akun B (Jelajahi & URL langsung), komentar/apresiasi/simpan/lapor Akun B, moderasi Admin (`/kelola/admin/moderasi` sembunyikan → tulisan hilang dari Akun B), `/notifikasi` Admin, dan bersih total. Temuan & perbaikan: `row-mapping.ts`, `remote-community-lists.ts`, dan `event-store.ts` sebelumnya memetakan pengguna saat ini ke `"me"` alih-alih `ME_ID` (`"rinjani-putri"`), sehingga keanggotaan grup tidak tersimpan/terbaca di `/tulis`; sudah diperbaiki.
 
 ### Fase 4, Projects dan Kelola
-- [ ] Migrasi: proyek, pendaftaran, kiriman, tugas, tahap Solo, penilaian, penugasan peran, pembayaran, audit; tes RLS per peran
-- [ ] Penggantian store: `SubmissionStore`, `AssignmentStore`, `SoloStore`, `FileStore`, `local-list-store`
-- [ ] Pembayaran QRIS sungguhan (penyedia belum diputuskan)
-- [ ] Notifikasi dan email transaksional dari server
-- [ ] Hapus saklar demo peran
+Keputusan user (26 November 2026): pembayaran QRIS sementara memakai gateway self-hosted **PaymentGT** (pola sama dengan `beyond-studio`: `PAYMENTGT_BASE_URL`, `PAYMENTGT_API_TOKEN`, `PAYMENTGT_WEBHOOK_SECRET`, webhook HMAC-SHA256 `X-PaymentGT-Signature` + polling cadangan); pembagian sub-langkah 4a → 4b → 4c → 4d disetujui.
+- [ ] **4a.** Migrasi `0007_projects_dan_kelola.sql`: proyek, pendaftaran, kiriman, tugas, tahap Solo, penilaian, penugasan peran, pembayaran, audit, bucket `project-posters` & `project-files`; tes RLS per peran
+- [ ] **4b.** Penggantian store: `SubmissionStore`, `AssignmentStore`, `SoloStore`, `FileStore`, `registration-store`, `material-progress`, `stage-store`, dan store Kelola
+- [ ] **4c.** Pembayaran QRIS via PaymentGT, notifikasi server, dan pembersihan peran / seed akun berperan (`editor`, `mentor`, `organizer`, `juri`)
+- [ ] **4d.** Gate penuh Fase 4 dan uji Chrome nyata lintas peran
 
 ### Fase 5, penutup
 - [ ] Login Google (butuh OAuth client Google Cloud)

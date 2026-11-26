@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { describe, expect, it, vi } from "vitest";
+import { ME_ID } from "@/features/community/fixtures/authors";
 import { authorOf } from "@/features/community/post-model";
 import { createSupabasePostStore } from "@/features/community/storage/remote/supabase-post-store";
 import { postFromRow, postToRow } from "@/features/community/storage/remote/row-mapping";
@@ -26,7 +27,7 @@ describe("community row mapping", () => {
     };
 
     const mine = postFromRow(row, "user-1", { appreciations: 3, saves: 2 });
-    expect(mine.authorId).toBe("me");
+    expect(mine.authorId).toBe(ME_ID);
     expect(mine.appreciations).toBe(3);
     expect(mine.saves).toBe(2);
 

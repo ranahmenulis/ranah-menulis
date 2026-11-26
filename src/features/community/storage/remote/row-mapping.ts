@@ -1,3 +1,4 @@
+import { ME_ID } from "../../fixtures/authors";
 import type {
   Author,
   Comment,
@@ -71,7 +72,7 @@ export function postFromRow(
   row: PostRow,
   currentUserId: string,
   counts?: { appreciations: number; saves: number },
-  meId = "me",
+  meId = ME_ID,
 ): StoredPost {
   const isOwn = row.author_id === currentUserId;
   return {
@@ -114,7 +115,7 @@ export function postToRow(post: StoredPost, userId: string): Omit<PostRow, "crea
   };
 }
 
-export function commentFromRow(row: CommentRow, currentUserId: string, meId = "me"): Comment {
+export function commentFromRow(row: CommentRow, currentUserId: string, meId = ME_ID): Comment {
   return {
     id: row.id,
     postId: row.post_id,
