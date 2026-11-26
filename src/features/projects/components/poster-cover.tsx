@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import { cn } from "@/lib/cn";
+import { projectPosterStore } from "@/lib/files/project-file-store";
 import { useStoredFileUrl } from "@/lib/files/use-stored-file-url";
 import type { ProjectPoster } from "../types";
 
@@ -20,7 +21,7 @@ type Props = {
  * first. The poster is a printed object like the generated cover: it keeps its own colours.
  */
 export function PosterCover({ poster, describe = false, className, fallback }: Props) {
-  const file = useStoredFileUrl(poster.fileId);
+  const file = useStoredFileUrl(poster.fileId, projectPosterStore());
   if (file.status === "missing") return fallback;
   return (
     <span

@@ -5,7 +5,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { FilePickButton } from "@/components/ui/file-pick-button";
 import { problemText } from "@/lib/files/problem-text";
-import { fileStore } from "@/lib/files/store";
+import { projectPosterStore } from "@/lib/files/project-file-store";
 import { useLocale, useT } from "@/lib/i18n/provider";
 import { PosterCover } from "@/features/projects/components/poster-cover";
 import { discardImage, storeImage } from "@/lib/files/store-image";
@@ -33,10 +33,10 @@ export function PosterField({ api, savedId }: Props) {
   async function pick(file: File) {
     setBusy(true);
     setError(null);
-    const result = await storeImage(file, fileStore());
+    const result = await storeImage(file, projectPosterStore());
     setBusy(false);
     if (!result.ok) return setError(problemText(result.problem, "image", locale));
-    if (posterId !== savedId) await discardImage(posterId, fileStore());
+    if (posterId !== savedId) await discardImage(posterId, projectPosterStore());
     api.set("posterId", result.id);
     // The old description no longer fits a new image.
     api.set("posterAlt", "");
@@ -44,7 +44,7 @@ export function PosterField({ api, savedId }: Props) {
 
   async function remove() {
     setError(null);
-    if (posterId !== savedId) await discardImage(posterId, fileStore());
+    if (posterId !== savedId) await discardImage(posterId, projectPosterStore());
     api.set("posterId", "");
     api.set("posterAlt", "");
   }

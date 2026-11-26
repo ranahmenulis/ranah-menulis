@@ -1,6 +1,10 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
+import {
+  loadRemoteMaterialMarks,
+  saveRemoteMaterialMark,
+} from "../storage/remote/remote-project-maps";
 
 const KEY = "ranah.classProgress";
 
@@ -8,6 +12,22 @@ const listeners = new Set<() => void>();
 
 /** Only set when localStorage refused a write; it wins, so the screen shows what was just marked. */
 let fallback: string | null = null;
+let remoteMarks: Marks | null = null;
+let loadedRemote = false;
+
+function ensureRemote() {
+  if (loadedRemote) return;
+  loadedRemote = true;
+  void loadRemoteMaterialMarks()
+    .then((marks) => {
+      if (marks === null) return;
+      remoteMarks = marks;
+      listeners.forEach((l) => l());
+    })
+    .catch(() => {
+      loadedRemote = false;
+    });
+}
 
 export type Marks = Record<string, string[]>;
 
@@ -21,6 +41,7 @@ function snapshot(): string | null {
 
 function subscribe(listener: () => void) {
   listeners.add(listener);
+  ensureRemote();
   // Another tab marked a material. A null key means the whole storage was cleared.
   const onStorage = (e: StorageEvent) => (e.key === KEY || e.key === null) && listener();
   window.addEventListener("storage", onStorage);
@@ -49,6 +70,7 @@ export function parseMarks(raw: string | null): Marks {
 /** Parsed once per stored value, so every screen on the page shares one map. */
 let cache: { raw: string | null; marks: Marks } | null = null;
 function marksFor(raw: string | null): Marks {
+  if (remoteMarks !== null) return remoteMarks;
   if (cache?.raw !== raw) cache = { raw, marks: parseMarks(raw) };
   return cache.marks;
 }
@@ -78,12 +100,19 @@ export function useDoneMarks(): Marks {
 
 /** Marks or unmarks one material. Reads the stored value again, so two tabs do not overwrite. */
 export function setMaterialDone(slug: string, materialId: string, done: boolean) {
-  const marks = parseMarks(snapshot());
+  const marks = remoteMarks ?? parseMarks(snapshot());
   const current = new Set(marks[slug] ?? []);
   if (done === current.has(materialId)) return;
   if (done) current.add(materialId);
   else current.delete(materialId);
-  write({ ...marks, [slug]: [...current] });
+  const next = { ...marks, [slug]: [...current] };
+  if (remoteMarks !== null) {
+    remoteMarks = next;
+    listeners.forEach((l) => l());
+    void saveRemoteMaterialMark(slug, materialId, done).catch(() => undefined);
+    return;
+  }
+  write(next);
 }
 
 function write(marks: Marks) {

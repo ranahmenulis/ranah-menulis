@@ -70,11 +70,14 @@ describe("deleteOwnAccount", () => {
     expect(server.signOut).toHaveBeenCalled();
   });
 
-  it("also removes the person's Studio cover files", async () => {
+  it("also removes the person's Studio cover, Community, and Project files", async () => {
     await deleteOwnAccount();
     expect(admin.buckets.filter((b, i, all) => all.indexOf(b) === i)).toEqual([
       "avatars",
       "studio-covers",
+      "community-images",
+      "project-posters",
+      "project-files",
     ]);
   });
 

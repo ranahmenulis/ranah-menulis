@@ -2,6 +2,10 @@
 
 import { createLocalListStore } from "@/lib/local-list-store";
 import {
+  bugReportLogRemoteSync,
+  bugReportsRemoteSync,
+} from "@/features/kelola/storage/remote-support-lists";
+import {
   isBugCategory,
   type BugContext,
   type BugLogEntry,
@@ -53,8 +57,18 @@ const isLogEntry = (value: unknown): value is BugLogEntry => {
   );
 };
 
-export const bugReports = createLocalListStore<BugReport>("ranah.bugReports", isReport);
-export const bugReportLog = createLocalListStore<BugLogEntry>("ranah.bugReportLog", isLogEntry);
+export const bugReports = createLocalListStore<BugReport>(
+  "ranah.bugReports",
+  isReport,
+  [],
+  bugReportsRemoteSync,
+);
+export const bugReportLog = createLocalListStore<BugLogEntry>(
+  "ranah.bugReportLog",
+  isLogEntry,
+  [],
+  bugReportLogRemoteSync,
+);
 
 export const useBugReports = bugReports.use;
 export const useBugReportLog = bugReportLog.use;

@@ -2,6 +2,7 @@
 
 import { createLocalListStore } from "@/lib/local-list-store";
 import { SETUP_ID } from "../identity";
+import { roleGrantsRemoteSync, suspensionsRemoteSync } from "../storage/remote-kelola-lists";
 import { MANAGER_ROLES, type ManagerRole } from "@/lib/roles";
 
 /** A management role given to a person (PRD 15.3). Who gave it and when are kept for the audit. */
@@ -52,8 +53,18 @@ const isSuspension = (value: unknown): value is Suspension => {
 };
 
 /** localStorage `ranah.roleGrants`; becomes tables with RLS (only the platform roles write). */
-export const roleGrants = createLocalListStore<RoleGrant>("ranah.roleGrants", isGrant, SEED_GRANTS);
-export const suspensions = createLocalListStore<Suspension>("ranah.suspensions", isSuspension);
+export const roleGrants = createLocalListStore<RoleGrant>(
+  "ranah.roleGrants",
+  isGrant,
+  SEED_GRANTS,
+  roleGrantsRemoteSync,
+);
+export const suspensions = createLocalListStore<Suspension>(
+  "ranah.suspensions",
+  isSuspension,
+  [],
+  suspensionsRemoteSync,
+);
 
 export const useRoleGrants = roleGrants.use;
 export const useSuspensions = suspensions.use;

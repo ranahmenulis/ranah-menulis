@@ -4,6 +4,7 @@ import { createLocalListStore } from "@/lib/local-list-store";
 import { roleLabel } from "@/lib/roles";
 import { appendAudit } from "./audit/audit-log";
 import { ME_ID, canonicalId, isSelf } from "./identity";
+import { staffAssignmentsRemoteSync } from "./storage/remote-kelola-lists";
 
 /**
  * Who is assigned to a project (PRJ-03, Q-04): the Organizer of the project, or an Administrator,
@@ -44,6 +45,7 @@ export const staffAssignments = createLocalListStore<StaffAssignment>(
   "ranah.staffAssignments",
   isAssignment,
   SEED_ASSIGNMENTS,
+  staffAssignmentsRemoteSync,
 );
 
 /** Whether the signed-in dummy account holds this role on the project. */

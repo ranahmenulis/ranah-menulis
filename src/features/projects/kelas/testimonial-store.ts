@@ -2,6 +2,10 @@
 
 import { useMemo } from "react";
 import { createLocalListStore } from "@/lib/local-list-store";
+import {
+  testimonialDecisionsRemoteSync,
+  testimonialsRemoteSync,
+} from "../storage/remote/remote-project-lists";
 import { sampleTestimonials } from "./fixtures/testimonials";
 import type { Testimonial, TestimonialDecision } from "./testimonial-model";
 
@@ -37,12 +41,19 @@ function isDecision(value: unknown): value is TestimonialDecision {
 }
 
 /** Written by participants, kept on this device until the backend exists. */
-export const testimonials = createLocalListStore<Testimonial>("ranah.testimonials", isTestimonial);
+export const testimonials = createLocalListStore<Testimonial>(
+  "ranah.testimonials",
+  isTestimonial,
+  [],
+  testimonialsRemoteSync,
+);
 
 /** Append-only: nothing edits or removes a decision. */
 export const testimonialDecisions = createLocalListStore<TestimonialDecision>(
   "ranah.testimonialDecisions",
   isDecision,
+  [],
+  testimonialDecisionsRemoteSync,
 );
 
 /** The made-up examples and what participants wrote. A written one never carries `sample`. */

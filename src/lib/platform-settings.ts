@@ -1,6 +1,7 @@
 "use client";
 
 import { createLocalListStore } from "./local-list-store";
+import { platformSettingsRemoteSync } from "@/features/kelola/storage/remote-support-lists";
 
 export const COMMUNITY_LINK_LIMIT = 200;
 
@@ -26,6 +27,8 @@ const isSettings = (value: unknown): value is PlatformSettings =>
 export const platformSettings = createLocalListStore<PlatformSettings>(
   "ranah.platformSettings",
   isSettings,
+  [],
+  platformSettingsRemoteSync,
 );
 
 /** The official outside community link, or null while none is set (the section is then not shown). */

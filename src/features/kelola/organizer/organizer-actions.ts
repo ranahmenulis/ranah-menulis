@@ -1,5 +1,5 @@
 import { readRegistrations, settlePayment } from "@/features/projects/registration-store";
-import { fileStore } from "@/lib/files/store";
+import { projectPosterStore } from "@/lib/files/project-file-store";
 import { mergeCatalog } from "@/features/projects/use-catalog";
 import { storedProjects } from "@/features/projects/stored-projects";
 import { liveRegistration } from "@/features/projects/payment-model";
@@ -66,7 +66,7 @@ export function applyAction(
     // A new project may reuse this slug; it must not inherit who worked on this one.
     staffAssignments.write(staffAssignments.read().filter((a) => a.slug !== slug));
     // The poster belonged to this draft alone; free its file (a failure only leaves it behind).
-    if (project.poster) void discardImage(project.poster.fileId, fileStore());
+    if (project.poster) void discardImage(project.poster.fileId, projectPosterStore());
     return "ok";
   }
   if (project.publication === "arsip") return "sudah-berubah";

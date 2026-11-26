@@ -1,6 +1,7 @@
 "use client";
 
 import { createLocalListStore } from "@/lib/local-list-store";
+import { projectsRemoteSync } from "./storage/remote/remote-project-lists";
 import type { ProjectCategory, ProjectFixture, Publication } from "./types";
 
 export const projectCategories: readonly ProjectCategory[] = ["antologi", "solo", "kelas", "lomba"];
@@ -54,4 +55,6 @@ export const isStoredProject = (value: unknown): value is ProjectFixture => {
 export const storedProjects = createLocalListStore<ProjectFixture>(
   "ranah.organizerProjects",
   isStoredProject,
+  [],
+  projectsRemoteSync,
 );

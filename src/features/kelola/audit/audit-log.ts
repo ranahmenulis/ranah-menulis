@@ -1,6 +1,7 @@
 "use client";
 
 import { createLocalListStore } from "@/lib/local-list-store";
+import { auditLogRemoteSync } from "../storage/remote-kelola-lists";
 
 /**
  * The log of sensitive actions (PLT-05: who, what, when). Append-only: there is no function that
@@ -89,7 +90,12 @@ const isEntry = (value: unknown): value is AuditEntry => {
   );
 };
 
-export const auditLog = createLocalListStore<AuditEntry>("ranah.auditLog", isEntry);
+export const auditLog = createLocalListStore<AuditEntry>(
+  "ranah.auditLog",
+  isEntry,
+  [],
+  auditLogRemoteSync,
+);
 
 export type NewAuditEntry = Omit<AuditEntry, "id" | "at">;
 

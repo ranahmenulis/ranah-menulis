@@ -23,7 +23,13 @@ export async function deleteOwnAccount(): Promise<DeleteOwnAccountResult> {
 
     const admin = createAdminClient();
     // Every bucket keeps a person's files in a folder named after them.
-    for (const bucket of ["avatars", "studio-covers", "community-images"]) {
+    for (const bucket of [
+      "avatars",
+      "studio-covers",
+      "community-images",
+      "project-posters",
+      "project-files",
+    ]) {
       const files = await admin.storage.from(bucket).list(userId);
       const paths = (files.data ?? []).map((file) => `${userId}/${file.name}`);
       if (paths.length > 0) await admin.storage.from(bucket).remove(paths);

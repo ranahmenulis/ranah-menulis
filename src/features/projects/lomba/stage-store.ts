@@ -1,6 +1,10 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
+import {
+  loadRemoteContestStages,
+  saveRemoteContestStage,
+} from "../storage/remote/remote-project-maps";
 import { stageRank } from "./contest-model";
 import type { ContestOverride, ContestOverrides, ContestStage } from "./types";
 
@@ -11,6 +15,22 @@ const listeners = new Set<() => void>();
 
 /** Only set when localStorage refused a write; it wins, so the screen shows what was just done. */
 let fallback: string | null = null;
+let remoteOverrides: ContestOverrides | null = null;
+let loadedRemote = false;
+
+function ensureRemote() {
+  if (loadedRemote) return;
+  loadedRemote = true;
+  void loadRemoteContestStages()
+    .then((map) => {
+      if (map === null) return;
+      remoteOverrides = map;
+      listeners.forEach((l) => l());
+    })
+    .catch(() => {
+      loadedRemote = false;
+    });
+}
 
 function snapshot(): string | null {
   try {
@@ -22,6 +42,7 @@ function snapshot(): string | null {
 
 function subscribe(listener: () => void) {
   listeners.add(listener);
+  ensureRemote();
   // Another tab moved a contest on. A null key means the whole storage was cleared.
   const onStorage = (e: StorageEvent) => (e.key === KEY || e.key === null) && listener();
   window.addEventListener("storage", onStorage);
@@ -63,6 +84,7 @@ export function parseOverrides(raw: string | null): ContestOverrides {
 /** Parsed once per stored value, so every screen on the page shares one map. */
 let cache: { raw: string | null; map: ContestOverrides } | null = null;
 function overridesFor(raw: string | null): ContestOverrides {
+  if (remoteOverrides !== null) return remoteOverrides;
   if (cache?.raw !== raw) cache = { raw, map: parseOverrides(raw) };
   return cache.map;
 }
@@ -108,7 +130,7 @@ export const readOverrides = (): ContestOverrides => overridesFor(snapshot());
  * is not later than the one already pushed changes nothing. The clock is read here, when pressed.
  */
 export function advanceContest(slug: string, stage: ContestStage) {
-  const current = parseOverrides(snapshot());
+  const current = remoteOverrides ?? parseOverrides(snapshot());
   const existing = current[slug];
   if (existing && stageRank(stage) <= stageRank(existing.stage)) return;
   // Every announcement passed on the way gets the moment it was pushed, once.
@@ -117,7 +139,14 @@ export function advanceContest(slug: string, stage: ContestStage) {
   for (const step of ["finalis", "pemenang"] as const) {
     if (stageRank(step) <= stageRank(stage) && times[step] === undefined) times[step] = now;
   }
-  write({ ...current, [slug]: { stage, times, mine: existing?.mine === true } });
+  const nextOverride = { stage, times, mine: existing?.mine === true };
+  if (remoteOverrides !== null) {
+    remoteOverrides = { ...current, [slug]: nextOverride };
+    listeners.forEach((l) => l());
+    void saveRemoteContestStage(slug, nextOverride).catch(() => undefined);
+    return;
+  }
+  write({ ...current, [slug]: nextOverride });
 }
 
 /** Makes the reader's own work a finalist of this contest. No screen calls it until Juri exists (6g-4). */

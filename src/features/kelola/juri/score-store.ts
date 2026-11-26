@@ -2,6 +2,7 @@
 
 import { createLocalListStore } from "@/lib/local-list-store";
 import { ME_ID } from "../identity";
+import { judgingLogRemoteSync, juryScoresRemoteSync } from "../storage/remote-kelola-lists";
 
 /** The signed-in dummy account, as a Judge. Real accounts replace it. */
 export const JUDGE_ID = ME_ID;
@@ -33,7 +34,12 @@ const isScore = (value: unknown): value is JuryScore => {
 };
 
 /** localStorage `ranah.juryScores`; becomes a table with RLS (a Judge reads only their own). */
-export const juryScores = createLocalListStore<JuryScore>("ranah.juryScores", isScore);
+export const juryScores = createLocalListStore<JuryScore>(
+  "ranah.juryScores",
+  isScore,
+  [],
+  juryScoresRemoteSync,
+);
 
 /**
  * The history of closing a contest's judging (BR-PRJ-09): append-only, so reopening leaves a trace
@@ -62,7 +68,12 @@ const isEntry = (value: unknown): value is JudgingEntry => {
   );
 };
 
-export const judgingLog = createLocalListStore<JudgingEntry>("ranah.judgingLog", isEntry);
+export const judgingLog = createLocalListStore<JudgingEntry>(
+  "ranah.judgingLog",
+  isEntry,
+  [],
+  judgingLogRemoteSync,
+);
 
 export const useJuryScores = juryScores.use;
 export const useJudgingLog = judgingLog.use;

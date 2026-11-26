@@ -1,4 +1,5 @@
 import { createLocalListStore } from "@/lib/local-list-store";
+import { cancellationsRemoteSync } from "./storage/remote/remote-project-lists";
 
 /** One cancelled registration, kept so the status is recorded (PRJ-06). Append-only. */
 export type Cancellation = {
@@ -22,4 +23,6 @@ function isCancellation(value: unknown): value is Cancellation {
 export const cancellationLog = createLocalListStore<Cancellation>(
   "ranah.registrationCancellations",
   isCancellation,
+  [],
+  cancellationsRemoteSync,
 );

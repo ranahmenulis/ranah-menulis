@@ -59,7 +59,13 @@ export async function cleanupTestUsers(): Promise<void> {
   created.length = 0;
   const list = ids.join(",");
   for (const id of ids) {
-    for (const bucket of ["avatars", "studio-covers", "community-images"]) {
+    for (const bucket of [
+      "avatars",
+      "studio-covers",
+      "community-images",
+      "project-posters",
+      "project-files",
+    ]) {
       const files = await admin.storage.from(bucket).list(id);
       const paths = (files.data ?? []).map((file) => `${id}/${file.name}`);
       if (paths.length > 0) await admin.storage.from(bucket).remove(paths);

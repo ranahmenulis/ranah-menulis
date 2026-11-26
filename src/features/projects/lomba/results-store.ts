@@ -1,6 +1,7 @@
 "use client";
 
 import { createLocalListStore } from "@/lib/local-list-store";
+import { contestResultsRemoteSync } from "../storage/remote/remote-project-lists";
 import { contestResults } from "./fixtures";
 import type { ContestResults } from "./types";
 
@@ -35,6 +36,8 @@ const isResults = (value: unknown): value is ContestResults => {
 export const storedResults = createLocalListStore<ContestResults>(
   "ranah.contestResults",
   isResults,
+  [],
+  contestResultsRemoteSync,
 );
 
 /** Sample results with the Organizer's on top: a contest with its own record uses only that. */

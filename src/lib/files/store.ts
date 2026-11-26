@@ -1,10 +1,7 @@
 import type { FileStore } from "./file-store";
-import { createIndexedDbFileStore } from "./indexeddb-file-store";
+import { projectFileStore } from "./project-file-store";
 
-let store: FileStore | null = null;
-
-/** The files of this device; created on first use in the browser. */
+/** Uses the private `project-files` bucket when signed in, IndexedDB for visitors and tests. */
 export function fileStore(): FileStore {
-  store ??= createIndexedDbFileStore();
-  return store;
+  return projectFileStore();
 }

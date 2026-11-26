@@ -1,6 +1,11 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
+import {
+  deleteRemoteMentorTask,
+  loadRemoteMentorTasks,
+  upsertRemoteMentorTask,
+} from "../storage/remote/remote-project-maps";
 import { noonOf, type MentorTask } from "./mentor-tasks";
 
 const KEY = "ranah.mentorTasks";
@@ -10,6 +15,22 @@ const listeners = new Set<() => void>();
 
 /** Only set when localStorage refused a write, so the screen still reflects what was saved. */
 let fallback: string | null = null;
+let remoteTasks: readonly MentorTask[] | null = null;
+let loadedRemote = false;
+
+function ensureRemote() {
+  if (loadedRemote) return;
+  loadedRemote = true;
+  void loadRemoteMentorTasks()
+    .then((tasks) => {
+      if (tasks === null) return;
+      remoteTasks = tasks;
+      listeners.forEach((l) => l());
+    })
+    .catch(() => {
+      loadedRemote = false;
+    });
+}
 
 function snapshot(): string | null {
   try {
@@ -21,6 +42,7 @@ function snapshot(): string | null {
 
 function subscribe(listener: () => void) {
   listeners.add(listener);
+  ensureRemote();
   const onStorage = (e: StorageEvent) => (e.key === KEY || e.key === null) && listener();
   window.addEventListener("storage", onStorage);
   return () => {
@@ -58,6 +80,7 @@ export function parseTasks(raw: string | null): readonly MentorTask[] {
 let cached: { raw: string | null; tasks: readonly MentorTask[] } = { raw: null, tasks: NONE };
 
 export function readMentorTasks(): readonly MentorTask[] {
+  if (remoteTasks !== null) return remoteTasks;
   const raw = snapshot();
   if (raw !== cached.raw) cached = { raw, tasks: parseTasks(raw) };
   return cached.tasks;
@@ -69,6 +92,11 @@ export function useMentorTasks(): readonly MentorTask[] {
 }
 
 function write(tasks: readonly MentorTask[]) {
+  if (remoteTasks !== null) {
+    remoteTasks = tasks;
+    listeners.forEach((l) => l());
+    return;
+  }
   const raw = JSON.stringify(tasks);
   try {
     window.localStorage.setItem(KEY, raw);
@@ -79,9 +107,24 @@ function write(tasks: readonly MentorTask[]) {
   listeners.forEach((l) => l());
 }
 
-export const addTask = (task: MentorTask) => write([...readMentorTasks(), task]);
+export const addTask = (task: MentorTask) => {
+  write([...readMentorTasks(), task]);
+  if (remoteTasks !== null) void upsertRemoteMentorTask(task).catch(() => undefined);
+};
 
-export const updateTask = (id: string, change: (task: MentorTask) => MentorTask) =>
-  write(readMentorTasks().map((t) => (t.id === id ? change(t) : t)));
+export const updateTask = (id: string, change: (task: MentorTask) => MentorTask) => {
+  let updated: MentorTask | null = null;
+  write(
+    readMentorTasks().map((t) => {
+      if (t.id !== id) return t;
+      updated = change(t);
+      return updated;
+    }),
+  );
+  if (remoteTasks !== null && updated) void upsertRemoteMentorTask(updated).catch(() => undefined);
+};
 
-export const removeTask = (id: string) => write(readMentorTasks().filter((t) => t.id !== id));
+export const removeTask = (id: string) => {
+  write(readMentorTasks().filter((t) => t.id !== id));
+  if (remoteTasks !== null) void deleteRemoteMentorTask(id).catch(() => undefined);
+};
