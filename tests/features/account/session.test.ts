@@ -14,6 +14,8 @@ const db = vi.hoisted(() => ({
   claims: { data: { claims: { sub: "u1", email: "u1@contoh.id" } } } as { data: unknown },
   profile: { data: null } as Result,
   roles: { data: [] } as Result,
+  staff: { data: [] } as Result,
+  suspended: { data: [] } as Result,
   fail: false,
 }));
 vi.mock("@/lib/supabase/server", () => ({
@@ -23,10 +25,12 @@ vi.mock("@/lib/supabase/server", () => ({
       auth: { getClaims: async () => db.claims },
       from: (table: string) => ({
         select: () => ({
-          eq: () =>
-            table === "profiles"
-              ? { maybeSingle: async () => db.profile }
-              : Promise.resolve(db.roles),
+          eq: () => {
+            if (table === "profiles") return { maybeSingle: async () => db.profile };
+            if (table === "staff_roles") return Promise.resolve(db.staff);
+            if (table === "account_suspensions") return Promise.resolve(db.suspended);
+            return Promise.resolve(db.roles);
+          },
         }),
       }),
     };
@@ -55,6 +59,8 @@ beforeEach(() => {
   db.claims = { data: { claims: { sub: "u1", email: "u1@contoh.id" } } };
   db.profile = { data: PROFILE };
   db.roles = { data: [] };
+  db.staff = { data: [] };
+  db.suspended = { data: [] };
   db.fail = false;
 });
 
@@ -80,9 +86,17 @@ describe("readSession", () => {
     });
   });
 
-  it("names the platform roles the way the screens do", async () => {
+  it("names the platform and staff roles the way the screens do and clears roles when suspended", async () => {
     db.roles = { data: [{ role: "super_admin" }, { role: "administrator" }, { role: "other" }] };
-    expect((await readSession()).session.platformRoles).toEqual(["super-admin", "administrator"]);
+    db.staff = { data: [{ role: "organizer" }, { role: "editor" }] };
+    expect((await readSession()).session.platformRoles).toEqual([
+      "super-admin",
+      "administrator",
+      "organizer",
+      "editor",
+    ]);
+    db.suspended = { data: [{ user_id: "u1" }] };
+    expect((await readSession()).session.platformRoles).toEqual([]);
   });
 
   it("still signs the user in with an empty account when the profile row is missing", async () => {

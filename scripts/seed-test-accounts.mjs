@@ -29,18 +29,30 @@ const admin = createClient(url, secretKey, {
 
 const DOMAIN = "seed.ranahmenulis.test";
 const ACCOUNTS = [
-  { kind: "penulis", name: "Seed Penulis", username: "seed_penulis", roles: [] },
+  { kind: "penulis", name: "Seed Penulis", username: "seed_penulis", platform: [], staff: [] },
+  {
+    kind: "organizer",
+    name: "Seed Organizer",
+    username: "seed_organizer",
+    platform: [],
+    staff: ["organizer"],
+  },
+  { kind: "editor", name: "Seed Editor", username: "seed_editor", platform: [], staff: ["editor"] },
+  { kind: "mentor", name: "Seed Mentor", username: "seed_mentor", platform: [], staff: ["mentor"] },
+  { kind: "juri", name: "Seed Juri", username: "seed_juri", platform: [], staff: ["juri"] },
   {
     kind: "administrator",
     name: "Seed Administrator",
     username: "seed_admin",
-    roles: ["administrator"],
+    platform: ["administrator"],
+    staff: [],
   },
   {
     kind: "superadmin",
     name: "Seed Super Admin",
     username: "seed_superadmin",
-    roles: ["super_admin"],
+    platform: ["super_admin"],
+    staff: [],
   },
 ];
 const emailOf = (kind) => `seed-${kind}@${DOMAIN}`;
@@ -90,8 +102,12 @@ for (const account of ACCOUNTS) {
     })
     .eq("id", id);
   if (profile.error) throw profile.error;
-  for (const role of account.roles) {
+  for (const role of account.platform) {
     const grant = await admin.from("platform_roles").insert({ user_id: id, role });
+    if (grant.error) throw grant.error;
+  }
+  for (const role of account.staff) {
+    const grant = await admin.from("staff_roles").insert({ user_id: id, role });
     if (grant.error) throw grant.error;
   }
   const key = account.kind.toUpperCase();

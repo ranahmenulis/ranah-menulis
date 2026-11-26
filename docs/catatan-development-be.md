@@ -2,7 +2,7 @@
 
 Sumber status terkini untuk pekerjaan backend (Supabase). Pekerjaan UI dan data dummy ada di [catatan-development-fe.md](catatan-development-fe.md). **Wajib dibaca di awal setiap permintaan yang menyentuh backend.** Perbarui di akhir setiap sesi yang mengubah status.
 
-Terakhir diperbarui: **26 November 2026** (Fase 4a & 4b selesai; lanjut Fase 4c PaymentGT & notifikasi server).
+Terakhir diperbarui: **26 November 2026** (Fase 4a, 4b, 4c selesai; tersisa 4d gate penuh & uji Chrome nyata lintas peran).
 
 ## 1. Posisi sekarang
 
@@ -106,7 +106,7 @@ Keputusan user (25 November 2026, semua rekomendasi): impor data lokal lewat tom
 Keputusan user (26 November 2026): pembayaran QRIS sementara memakai gateway self-hosted **PaymentGT** (pola sama dengan `beyond-studio`: `PAYMENTGT_BASE_URL`, `PAYMENTGT_API_TOKEN`, `PAYMENTGT_WEBHOOK_SECRET`, webhook HMAC-SHA256 `X-PaymentGT-Signature` + polling cadangan); pembagian sub-langkah 4a → 4b → 4c → 4d disetujui.
 - [x] **4a.** Migrasi `0007_projects_dan_kelola.sql`: proyek, pendaftaran, kiriman, tugas, tahap Solo, penilaian, penugasan peran, pembayaran, audit, bucket `project-posters` & `project-files`; tes RLS per peran (`projects.test.ts` 6 + `kelola.test.ts` 4; total `npm run test:rls` 9 berkas, 75 tes lulus, 26 November 2026)
 - [x] **4b.** Penggantian store: `SubmissionStore` (`supabase-submission-store`), `AssignmentStore` (`supabase-assignment-store`), `SoloStore` (`supabase-solo-store`), `FileStore` (`project-posters` & `project-files` + bersih di `deleteOwnAccount`), serta sinkronisasi `registration-store`, `material-progress`, `mentor-task-store`, `stage-store`, dan store Kelola/Support (`remote-project-lists`, `remote-project-maps`, `remote-kelola-lists`, `remote-support-lists`) (26 November 2026)
-- [ ] **4c.** Pembayaran QRIS via PaymentGT, notifikasi server, dan pembersihan peran / seed akun berperan (`editor`, `mentor`, `organizer`, `juri`)
+- [x] **4c.** Pembayaran QRIS via PaymentGT (`src/lib/paymentgt.ts`, `POST/GET /api/payments/qris`, `POST /api/paymentgt/webhook` dengan HMAC-SHA256 & polling cadangan, `QrisChargeCard` di `PayWaiting`, `.env.example` & `env.server.ts`), pembacaan `staff_roles` & `account_suspensions` di `readSession` (`session.ts`), perluasan `scripts/seed-test-accounts.mjs` untuk peran `organizer`, `editor`, `mentor`, `juri`, dan tes unit PaymentGT/webhook/session (26 November 2026)
 - [ ] **4d.** Gate penuh Fase 4 dan uji Chrome nyata lintas peran
 
 ### Fase 5, penutup

@@ -8,16 +8,20 @@ import type { SessionSnapshot } from "./session-types";
 
 const GUEST: SessionSnapshot = { session: GUEST_SESSION, account: null };
 
-/** Platform roles in the database, named the way the screens name them. */
+/** Platform and staff roles in the database, named the way the screens name them. */
 const ROLE_NAMES: Record<string, ManagerRole> = {
   administrator: "administrator",
   super_admin: "super-admin",
+  organizer: "organizer",
+  editor: "editor",
+  mentor: "mentor",
+  juri: "juri",
 };
 
 /**
  * Reads who is signed in for this request (server only; reads the session cookie). The claims are
- * verified, then the profile and the platform roles are read with the user's own session, so Row
- * Level Security applies. Any problem reads as a visitor: the page must still render.
+ * verified, then the profile, platform roles, staff roles, and suspension status are read with the
+ * user's own session, so Row Level Security applies. Any problem reads as a visitor.
  */
 export async function readSession(): Promise<SessionSnapshot> {
   const env = readSupabasePublicEnv();
@@ -30,9 +34,11 @@ export async function readSession(): Promise<SessionSnapshot> {
     const { data } = await supabase.auth.getClaims();
     const claims = data?.claims;
     if (!claims?.sub) return GUEST;
-    const [profile, roles] = await Promise.all([
+    const [profile, roles, staff, suspended] = await Promise.all([
       supabase.from("profiles").select("*").eq("id", claims.sub).maybeSingle(),
       supabase.from("platform_roles").select("role").eq("user_id", claims.sub),
+      supabase.from("staff_roles").select("role").eq("user_id", claims.sub),
+      supabase.from("account_suspensions").select("user_id").eq("user_id", claims.sub),
     ]);
     const email = typeof claims.email === "string" ? claims.email : "";
     const account = profile.data
@@ -41,9 +47,17 @@ export async function readSession(): Promise<SessionSnapshot> {
           supabaseUrl: env.url.replace(/\/$/, ""),
         })
       : emptyAccount(email);
-    const platformRoles = (roles.data ?? [])
-      .map((row) => ROLE_NAMES[String(row.role)])
-      .filter((role): role is ManagerRole => role !== undefined);
+    const isSuspended = Array.isArray(suspended.data) && suspended.data.length > 0;
+    const rawRoles = [...(roles.data ?? []), ...(staff.data ?? [])];
+    const platformRoles = isSuspended
+      ? []
+      : [
+          ...new Set(
+            rawRoles
+              .map((row) => ROLE_NAMES[String(row.role)])
+              .filter((role): role is ManagerRole => role !== undefined),
+          ),
+        ];
     return { session: { status: "user", userId: claims.sub, platformRoles }, account };
   } catch {
     return GUEST;

@@ -1,38 +1,17 @@
 "use client";
 
 import { ButtonLink } from "@/components/ui/button";
-import { cardClass } from "@/components/ui/card";
-import { cn } from "@/lib/cn";
 import { fill } from "@/features/studio/copy/fill";
 import { useLocale, useT } from "@/lib/i18n/provider";
 import { formatProjectDateTime, moneyLabel, projectHref } from "../project-model";
-import { idrLabel, paymentDueAt, remainingLabel } from "../payment-model";
+import { paymentDueAt, remainingLabel } from "../payment-model";
 import { registerHref, registrationFee } from "../registration-model";
 import { kirimHref } from "../submission-model";
 import type { Project, Registration } from "../types";
 import { RegisterShell } from "./register-states";
 import { MilestoneHero } from "./milestone-hero";
 import { ProjectStrip } from "./project-strip";
-
-/** Placeholder for the QRIS code: the real one comes with the payment service [konfirmasi Q-19]. */
-function QrisSample({ amount }: { amount: number }) {
-  const t = useT().projectsFlow.payment.waiting;
-  const locale = useLocale();
-  return (
-    <figure className={cn(cardClass, "grid justify-items-center gap-3")}>
-      <div
-        role="img"
-        aria-label={t.qrisAlt}
-        className="grid size-48 place-items-center rounded-xl border-2 border-dashed border-accent/40 bg-accent-subtle/50 p-4 text-center text-sm text-ink-muted"
-      >
-        {t.qrisSample}
-      </div>
-      <figcaption className="text-center text-sm text-ink-muted">
-        {t.amount} <span className="font-semibold text-ink">{idrLabel(amount, locale)}</span>
-      </figcaption>
-    </figure>
-  );
-}
+import { QrisChargeCard } from "./qris-charge-card";
 
 /** The registration waits for payment: how much, until when, and what happens next. */
 export function PayWaiting({
@@ -66,7 +45,7 @@ export function PayWaiting({
           })}
         </p>
       </div>
-      <QrisSample amount={amount} />
+      <QrisChargeCard slug={project.slug} amount={amount} />
       <p className="text-sm text-ink-muted">{t.payment.waiting.auto}</p>
       <ButtonLink href={projectHref(project.slug)} className="justify-self-start">
         {t.common.viewProject}
