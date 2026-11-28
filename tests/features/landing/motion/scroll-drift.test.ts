@@ -30,8 +30,8 @@ describe("heroDrift", () => {
   it("rests at progress 0 and settles at 1", () => {
     expect(heroProgress(800, 800)).toBe(0);
     expect(heroProgress(0, 800)).toBe(1);
-    expect(heroDrift(0)).toEqual({ "--lift": "0.0px" });
-    expect(heroDrift(1)).toEqual({ "--lift": "-36.0px" });
+    expect(heroDrift(0)).toEqual({ "--lift": "0.0px", "--par": "0.0px" });
+    expect(heroDrift(1)).toEqual({ "--lift": "-36.0px", "--par": "24.0px" });
   });
 });
 

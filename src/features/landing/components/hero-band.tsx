@@ -2,18 +2,20 @@
 
 import { useEffect, useRef } from "react";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
+import { HERO_PLATE } from "../assets";
 import { heroDrift, heroProgress, registerDrift, setVars } from "../motion/scroll-drift";
 import { Wrap } from "./layout";
 import { StudioFeatures } from "./studio-features";
 import { StudioStage } from "./studio-stage";
 
 /**
- * The hero's stage: from md one wide card with the app's hero-card ground (surface into
- * accent-subtle), the real Studio editor lifted on it; on a phone no card, the editor alone from edge to
- * edge, square and nearly a screen tall, like the editor itself (user, 24 Nov 2026) (client, 24 Nov 2026: the landing shows the app itself), one
- * caption under it, then the Studio feature names. As the stage scrolls into place the editor
- * lifts a little (`--lift`, globals.css "Landing plates"); without landing motion it stands at
- * rest. `#studio` is the top bar's Studio link and the Studio card's way in.
+ * The hero's stage: from md one wide card with the London Institution engraving filling it
+ * (assets.ts; slate-tinted in light mode, as printed in dark mode; user, 28 Nov 2026) and the
+ * real Studio editor lifted on it; on a phone no card and no engraving, the editor alone from
+ * edge to edge, nearly a screen tall (user, 24 Nov 2026). One caption under it, then the Studio
+ * feature names. As the stage scrolls into place the editor lifts and the engraving drifts the
+ * other way (`--lift`, `--par`, globals.css "Landing stage"); without landing motion both stand
+ * at rest. `#studio` is the top bar's Studio link and the Studio card's way in.
  */
 export function HeroBand({ studio }: { studio: Dictionary["landing"]["studio"] }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -36,6 +38,20 @@ export function HeroBand({ studio }: { studio: Dictionary["landing"]["studio"] }
         role="region"
         className="lp-band relative isolate md:overflow-hidden md:rounded-2xl md:border md:border-line md:bg-surface md:bg-linear-to-b md:from-accent-subtle md:to-surface md:px-6 md:pt-16 md:pb-12 md:shadow-card lg:px-10"
       >
+        <div
+          aria-hidden
+          className="lp-plate absolute inset-0 -z-10 hidden overflow-hidden md:block"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element -- a resized WebP styled with CSS blends; the optimizer adds nothing */}
+          <img
+            src={HERO_PLATE.src}
+            width={HERO_PLATE.width}
+            height={HERO_PLATE.height}
+            alt=""
+            decoding="async"
+            className="size-full object-cover object-[50%_30%]"
+          />
+        </div>
         <figure
           role="img"
           aria-label={studio.mockup}

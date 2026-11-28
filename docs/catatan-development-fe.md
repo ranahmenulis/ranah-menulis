@@ -107,6 +107,11 @@ Isi pekerjaannya (urutan belum diputuskan):
 
 ## 6. Log sesi
 
+### 28 November 2026 (gravir di panggung hero landing; belum di-commit)
+- Permintaan user: kotak panggung Studio di hero tidak polos lagi ("standard AI" dari Fahmi dan Wafiy soal teks, bukan latar). Gravir London Institution dikembalikan dari riwayat (`732c209^`), **dipotong ke bidang ukiran** (tepi kertas putih mengganggu), 1200 px grayscale WebP 273 KB di `public/landing/london-library.webp`. Keputusan user: ponsel tanpa gravir, mode gelap tanpa filter. Terang tetap diwarnai slate.
+- Lulus: Prettier, ESLint folder landing, `tsc`, tes `tests/features/landing` (8 berkas, 47 tes; `heroDrift` kini juga `--par`), potret CDP 1280 dan 390 terang dan gelap (gravir tampil di desktop, `display:none` di ponsel, tanpa overflow). **Belum:** klik dan keyboard sungguhan, tes penuh, tinjauan Wafiy.
+- Sesi yang sama: pratinjau palet gelap A dan B (scratchpad, belum dipilih; tidak ada token yang diubah).
+
 ### 28 November 2026 (masukan Wafiy: catatan atau buku, bug iPhone; branch be/supabase, belum di-commit)
 - Masukan dari uji di iPhone: (1) lembar menu Tampilan & bahasa tertutup separuh oleh bilah bawah dan labelnya tak terlihat; (2) catatan yang ditulis lalu diketuk lagi membuka halaman Ringkasan (terasa "jadi buku"), padahal seharusnya langsung ke editor; harus ada pilihan catatan biasa atau buku (misalnya mencatat kajian); (3) buku baru langsung meminta judul, sampul, sinopsis, dan jenis. User: ikuti rekomendasi, kerjakan di `be/supabase`, push nanti sekalian.
 - Dikerjakan: baris dokumen lepas membuka editor, halaman naskahnya lewat menu ⋯ "Detail catatan"; tombol Tulis ponsel dan "Naskah baru" membuka `NewWritingDialog` (Catatan atau Buku; `NewWorkDialog` dan tombol Buku baru dihapus); `BookDialog` baru meminta jenis dan sinopsis (`IntroFields`, hanya saat membuat). `Menu` di ponsel merender scrim dan lembar ke `body` (`useNarrowScreen`, `useDismiss` banyak ref). Penanda halaman tidak lagi bergantung pada `aspect-ratio` + SVG tinggi 100% (dugaan penyebab kotak tinggi sempit di Safari).

@@ -20,9 +20,12 @@ export function heroProgress(top: number, viewport: number): number {
   return clamp01(1 - top / viewport);
 }
 
-/** Variable for the hero band: the editor lifts as the stage scrolls into place. */
+/** Variables for the hero band: the editor lifts and the engraving behind it settles downward. */
 export function heroDrift(progress: number) {
-  return { "--lift": `${(progress * -36).toFixed(1)}px` };
+  return {
+    "--lift": `${(progress * -36).toFixed(1)}px`,
+    "--par": `${(progress * 24).toFixed(1)}px`,
+  };
 }
 
 /** The covers' shared offset: -0.5 as the stack enters, 0 mid-screen, 0.5 as it leaves. */
