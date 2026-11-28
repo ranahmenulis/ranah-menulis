@@ -1,11 +1,11 @@
 "use client";
 
 import { PencilSimpleLine } from "@phosphor-icons/react/dist/ssr";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
 import { useOwnProfileHref } from "@/features/account/use-own-profile-href";
 import { useLastDocument } from "@/features/studio/hooks/use-last-document";
+import { NewWritingDialog } from "@/features/studio/components/documents/new-writing-dialog";
 import { studioStore } from "@/features/studio/storage/store";
 import { cn } from "@/lib/cn";
 import { useT } from "@/lib/i18n/provider";
@@ -15,7 +15,6 @@ import { useEffectiveRoles } from "@/features/kelola/use-effective-roles";
 import { GuestFrame } from "./guest-frame";
 import { NavLink } from "./nav-link";
 import {
-  NEW_DOCUMENT_HREF,
   activeId,
   bottomNav,
   isPostPage,
@@ -38,6 +37,8 @@ export function AppShell({ children }: { children: ReactNode }) {
   const ownProfile = useOwnProfileHref();
   const active = activeId(pathname, ownProfile);
   const [sidebar, setSidebar] = useState(true);
+  // The write button asks for a note or a book first (client Wafiy, 28 November 2026).
+  const [choosing, setChoosing] = useState(false);
   const viewer = useViewer();
   const roles = useEffectiveRoles();
   // Only a convenience: the screens refuse the wrong role themselves, and the database decides.
@@ -110,18 +111,21 @@ export function AppShell({ children }: { children: ReactNode }) {
       </div>
 
       {showsWriteButton(pathname) && (
-        <Link
-          href={NEW_DOCUMENT_HREF}
+        <button
+          type="button"
           aria-label={topBar.writeNew}
+          aria-haspopup="dialog"
+          onClick={() => setChoosing(true)}
           className={cn(
             "fixed right-4 bottom-[calc(4.5rem+env(safe-area-inset-bottom))] z-30 md:hidden",
-            "grid size-14 place-items-center rounded-2xl bg-accent text-on-accent shadow-float",
+            "grid size-14 cursor-pointer place-items-center rounded-2xl bg-accent text-on-accent shadow-float",
             "transition-opacity duration-120 hover:opacity-(--opacity-hover) active:opacity-press",
           )}
         >
           <PencilSimpleLine size={24} aria-hidden />
-        </Link>
+        </button>
       )}
+      {choosing && <NewWritingDialog onClose={() => setChoosing(false)} />}
 
       {!onPost && (
         <nav

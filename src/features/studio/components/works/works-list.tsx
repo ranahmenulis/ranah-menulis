@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { useToast } from "@/components/ui/toast";
 import { useAccount } from "@/features/account/account-store";
@@ -14,6 +15,7 @@ import { writingTime } from "../../writing-time";
 import {
   DEFAULT_WORK_SORT,
   buildWorks,
+  chapterHref,
   collectionsOf,
   listWorks,
   nextSort,
@@ -70,6 +72,7 @@ export function WorksList({
   onClearSearch,
 }: Props) {
   const toast = useToast();
+  const router = useRouter();
   const t = useT().studioDocuments;
   const book = useT().studioBook;
   const locale = useLocale();
@@ -91,7 +94,7 @@ export function WorksList({
       key: `${work.type}:${work.id}`,
       type: work.type,
       title: untitled(work.title),
-      href: workHref(work),
+      href: work.type === "book" ? workHref(work) : chapterHref(work.id),
       words: work.words,
       genre: work.genre,
       tags: work.tags,
@@ -133,7 +136,16 @@ export function WorksList({
         ...(submittedIds.has(doc.id) ? [t.rowTags.sent] : []),
       ],
       menuLabel: format(t.menu.documentLabel, { name: untitled(doc.title) }),
-      menu: documentMenu({ doc, t, list, toast, archiveBusy, onPending, onArchiveAction }),
+      menu: documentMenu({
+        doc,
+        t,
+        list,
+        toast,
+        archiveBusy,
+        onPending,
+        onArchiveAction,
+        onDetails: () => router.push(workHref(work)),
+      }),
     };
   };
 

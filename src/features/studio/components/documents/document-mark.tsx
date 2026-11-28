@@ -26,12 +26,14 @@ export function DocumentMark({
       aria-hidden
       data-page={mark.pattern}
       className={cn(
-        "rm-page block aspect-[4/5] w-full bg-canvas text-ink outline -outline-offset-1 outline-line-strong",
+        "rm-page block w-full bg-canvas text-ink outline -outline-offset-1 outline-line-strong",
         faded && "opacity-55",
         className,
       )}
     >
-      <svg viewBox="0 0 40 50" className="block size-full" fill="none">
+      {/* Height comes from the svg's own 4:5 ratio (width/height attributes), not from
+          aspect-ratio on the span: Safari gave a 100%-high svg there its default 150px height. */}
+      <svg viewBox="0 0 40 50" width={40} height={50} className="block h-auto w-full" fill="none">
         {mark.pattern === "novel" && (
           <line x1={3.5} x2={3.5} y1={4} y2={46} stroke="currentColor" strokeWidth={0.8} />
         )}

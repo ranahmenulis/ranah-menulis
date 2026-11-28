@@ -72,6 +72,7 @@ export const studioDocuments: typeof source = {
   menu: {
     folderLabel: "Folder menu {name}",
     documentLabel: "Document menu {name}",
+    details: "Note details",
     rename: "Rename",
     classification: "Type and tags",
     move: "Move to folder",
@@ -112,7 +113,14 @@ export const studioDocuments: typeof source = {
   },
   dialogs: {
     cancel: "Cancel",
-    newWork: { title: "New work", label: "Title", submit: "Create work" },
+    newWriting: {
+      title: "What do you want to write?",
+      note: "Note",
+      noteHint:
+        "A single piece that opens straight in the editor. Good for ideas or lecture notes.",
+      book: "Book",
+      bookHint: "A manuscript in chapters, with a title and a cover.",
+    },
     newFolder: { title: "New folder", label: "Folder name", submit: "Create folder" },
     renameFolder: { title: "Rename folder", label: "Folder name", submit: "Save" },
     renameDocument: { title: "Rename document", label: "Title", submit: "Save" },

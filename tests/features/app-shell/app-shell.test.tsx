@@ -96,10 +96,16 @@ describe("AppShell", () => {
 
   it("shows the round write button on Beranda and the list, but not on Streak", () => {
     renderAt("/beranda");
-    expect(screen.queryByRole("link", { name: "Tulis dokumen baru" })).not.toBeNull();
+    expect(screen.queryByRole("button", { name: "Tulis catatan atau buku baru" })).not.toBeNull();
     cleanup();
     renderAt("/studio/streak");
-    expect(screen.queryByRole("link", { name: "Tulis dokumen baru" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Tulis catatan atau buku baru" })).toBeNull();
+  });
+
+  it("asks for a note or a book before writing", () => {
+    renderAt("/beranda");
+    fireEvent.click(screen.getByRole("button", { name: "Tulis catatan atau buku baru" }));
+    expect(screen.getByRole("heading", { name: "Mau menulis apa?" })).toBeTruthy();
   });
 
   it("links Projects to its catalog and marks it current there", () => {

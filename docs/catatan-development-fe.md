@@ -107,6 +107,12 @@ Isi pekerjaannya (urutan belum diputuskan):
 
 ## 6. Log sesi
 
+### 28 November 2026 (masukan Wafiy: catatan atau buku, bug iPhone; branch be/supabase, belum di-commit)
+- Masukan dari uji di iPhone: (1) lembar menu Tampilan & bahasa tertutup separuh oleh bilah bawah dan labelnya tak terlihat; (2) catatan yang ditulis lalu diketuk lagi membuka halaman Ringkasan (terasa "jadi buku"), padahal seharusnya langsung ke editor; harus ada pilihan catatan biasa atau buku (misalnya mencatat kajian); (3) buku baru langsung meminta judul, sampul, sinopsis, dan jenis. User: ikuti rekomendasi, kerjakan di `be/supabase`, push nanti sekalian.
+- Dikerjakan: baris dokumen lepas membuka editor, halaman naskahnya lewat menu ⋯ "Detail catatan"; tombol Tulis ponsel dan "Naskah baru" membuka `NewWritingDialog` (Catatan atau Buku; `NewWorkDialog` dan tombol Buku baru dihapus); `BookDialog` baru meminta jenis dan sinopsis (`IntroFields`, hanya saat membuat). `Menu` di ponsel merender scrim dan lembar ke `body` (`useNarrowScreen`, `useDismiss` banyak ref). Penanda halaman tidak lagi bergantung pada `aspect-ratio` + SVG tinggi 100% (dugaan penyebab kotak tinggi sempit di Safari).
+- Uji: `tsc`, ESLint dan Prettier berkas yang disentuh, tes terarah (Studio components, home, landing, app-shell, components, lib: 81 berkas, 491 tes; `vitest related` 143 berkas, satu gagal = `my-projects-view` yang rapuh, lulus saat diulang), Chrome CDP klik mouse dan keyboard 13 dari 13 (penanda 32x40, baris catatan ke editor, lembar ponsel di `body`, Detail catatan, pilihan Catatan/Buku, Escape mengembalikan fokus, formulir buku berisi jenis dan sinopsis, buku terbuka di tab Isi, sinopsis dan jenis tampil di Ringkasan), nol error JS.
+- **Belum terbukti di iPhone**: label menu yang hilang dan bentuk penanda adalah perilaku Safari; Playwright WebKit macet saat diunduh (dihentikan, dibersihkan). Dugaan penyebab label: lapisan `fixed` di dalam bilah `sticky` (dicabut oleh portal). Perlu dilihat di iPhone setelah push. Bilah bawah dan tombol Tulis hanya tampil untuk akun masuk, jadi alur tombol Tulis hanya diuji lewat tes unit.
+
 ### 26 November 2026 (banner impor dari perangkat, branch be/supabase)
 - Tab Naskah mendapat banner "Ada naskah di perangkat ini" untuk orang yang masuk dan punya naskah tamu di IndexedDB: Salin ke akun, Nanti saja (jadi tautan kecil yang membuka banner lagi), hasil dan galat berfokus. Dua bahasa (`studioImport`). Rincian dan hasil uji di `catatan-development-be.md`. Belum di-commit; `main` tidak terpengaruh.
 

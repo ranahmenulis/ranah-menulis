@@ -1,4 +1,4 @@
-import { cleanup, render, screen, within } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { ToastProvider } from "@/components/ui/toast";
 import { WorksList } from "@/features/studio/components/works/works-list";
@@ -6,7 +6,8 @@ import type { DocumentList } from "@/features/studio/hooks/use-document-list";
 import type { StudioDocument, StudioFolder } from "@/features/studio/storage/document-store";
 import { installDialogShim } from "@/test/dialog-shim";
 
-vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn(), back: vi.fn() }) }));
+const push = vi.hoisted(() => vi.fn());
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push, back: vi.fn() }) }));
 vi.mock("@/lib/files/use-stored-file-url", () => ({
   useStoredFileUrl: () => ({ status: "missing", url: null }),
 }));
@@ -14,7 +15,12 @@ vi.mock("@/lib/files/use-stored-file-url", () => ({
 beforeAll(installDialogShim);
 afterEach(cleanup);
 
-const doc = (id: string, title: string, createdAt: number, folderId = "b"): StudioDocument => ({
+const doc = (
+  id: string,
+  title: string,
+  createdAt: number,
+  folderId: string | null = "b",
+): StudioDocument => ({
   id,
   title,
   content: { type: "doc", content: [] },
@@ -105,5 +111,22 @@ describe("a plain folder in the Naskah table", () => {
     expect(screen.getByRole("link", { name: "Pulang" })).toBeTruthy();
     expect(screen.getByText("Lepas")).toBeTruthy();
     expect(screen.queryByText("Rak")).toBeNull();
+  });
+});
+
+describe("a note in the Naskah table", () => {
+  it("opens straight in the editor, not on its summary page", () => {
+    renderList(listOf([], [doc("n", "Catatan kajian", 1, null)]));
+    expect(screen.getByRole("link", { name: "Catatan kajian" }).getAttribute("href")).toBe(
+      "/studio/n",
+    );
+  });
+
+  it("still reaches its summary page from the row menu", () => {
+    push.mockReset();
+    renderList(listOf([], [doc("n", "Catatan kajian", 1, null)]));
+    fireEvent.click(screen.getByRole("button", { name: "Menu dokumen Catatan kajian" }));
+    fireEvent.click(screen.getByRole("menuitem", { name: "Detail catatan" }));
+    expect(push).toHaveBeenCalledWith("/studio/naskah/n");
   });
 });

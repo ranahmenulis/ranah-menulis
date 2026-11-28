@@ -70,6 +70,7 @@ export const studioDocuments = {
   menu: {
     folderLabel: "Menu folder {name}",
     documentLabel: "Menu dokumen {name}",
+    details: "Detail catatan",
     rename: "Ganti nama",
     classification: "Jenis dan tag",
     move: "Pindah ke folder",
@@ -110,7 +111,14 @@ export const studioDocuments = {
   },
   dialogs: {
     cancel: "Batal",
-    newWork: { title: "Naskah baru", label: "Judul naskah", submit: "Buat naskah" },
+    newWriting: {
+      title: "Mau menulis apa?",
+      note: "Catatan",
+      noteHint:
+        "Tulisan lepas yang langsung dibuka di halaman tulis. Cocok untuk ide atau catatan kajian.",
+      book: "Buku",
+      bookHint: "Naskah berbab, dengan judul dan sampul.",
+    },
     newFolder: { title: "Folder baru", label: "Nama folder", submit: "Buat folder" },
     renameFolder: { title: "Ganti nama folder", label: "Nama folder", submit: "Simpan" },
     renameDocument: { title: "Ganti nama dokumen", label: "Judul", submit: "Simpan" },

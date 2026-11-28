@@ -4,18 +4,28 @@ import { ImageSquare } from "@phosphor-icons/react/dist/ssr";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
-import { Field, Input } from "@/components/ui/field";
+import { Field, Input, Select, Textarea } from "@/components/ui/field";
 import { FilePickButton } from "@/components/ui/file-pick-button";
 import { useT } from "@/lib/i18n/provider";
 import { useBookCover } from "../../hooks/use-book-cover";
 import { coverOf, validateBook } from "../../book";
+import { parseKind, type DocumentKind } from "../../document-classification";
+import { SYNOPSIS_LIMIT } from "../work/synopsis-field";
 import type { FolderCover, FolderPatch, StudioFolder } from "../../storage/document-store";
 import { FolderCover as CoverView } from "./folder-cover";
 
 const FORM_ID = "book-form";
 
-/** What the dialog hands back: the title and the cover (null = none). */
-export type BookValues = { name: string; cover: FolderCover | null };
+/**
+ * What the dialog hands back: the title and the cover (null = none). A new book also brings its
+ * type and synopsis (client Wafiy, 28 November 2026); settings leave those to the book page.
+ */
+export type BookValues = {
+  name: string;
+  cover: FolderCover | null;
+  genre?: DocumentKind;
+  synopsis?: string;
+};
 
 type Props = {
   /** The folder being set up as a book; null creates a new book. */
@@ -29,6 +39,60 @@ export function bookPatch(values: BookValues): FolderPatch {
   return { name: values.name, kind: "book", cover: values.cover };
 }
 
+/** A new book's type and synopsis: both optional, both editable later on the book page. */
+function IntroFields({
+  show,
+  genre,
+  synopsis,
+  onGenre,
+  onSynopsis,
+}: {
+  /** Only a new book asks; book settings leave these to the book page. */
+  show: boolean;
+  genre: DocumentKind | undefined;
+  synopsis: string;
+  onGenre: (genre: DocumentKind | undefined) => void;
+  onSynopsis: (synopsis: string) => void;
+}) {
+  const t = useT().studioBook.dialog;
+  const docs = useT().studioDocuments;
+  if (!show) return null;
+  return (
+    <>
+      <Field id="book-genre" label={t.genreLabel} optional>
+        <Select
+          id="book-genre"
+          value={genre ?? ""}
+          onChange={(e) => onGenre(parseKind(e.target.value) ?? undefined)}
+        >
+          <option value="">{docs.classification.noKind}</option>
+          {Object.entries(docs.kinds).map(([key, label]) => (
+            <option key={key} value={key}>
+              {label}
+            </option>
+          ))}
+        </Select>
+      </Field>
+      <Field id="book-synopsis" label={t.synopsisLabel} hint={t.synopsisHint} optional>
+        <Textarea
+          id="book-synopsis"
+          rows={3}
+          maxLength={SYNOPSIS_LIMIT}
+          value={synopsis}
+          onChange={(e) => onSynopsis(e.target.value)}
+        />
+      </Field>
+    </>
+  );
+}
+
+/** The type and synopsis a new book hands back; nothing when absent or when editing. */
+function introValues(creating: boolean, genre: DocumentKind | undefined, synopsis: string) {
+  if (!creating) return {};
+  const text = synopsis.trim();
+  return { ...(genre ? { genre } : {}), ...(text ? { synopsis: text } : {}) };
+}
+
 /**
  * Create a book or set up an existing folder as one: a title and an optional cover, offered from
  * the start. A cover needs a description (it is a picture of the book). An image picked here but
@@ -37,6 +101,9 @@ export function bookPatch(values: BookValues): FolderPatch {
  */
 export function BookDialog({ folder, onSubmit, onClose }: Props) {
   const t = useT().studioBook.dialog;
+  const creating = folder === null;
+  const [genre, setGenre] = useState<DocumentKind | undefined>();
+  const [synopsis, setSynopsis] = useState("");
   const saved = folder ? coverOf(folder) : null;
   const [name, setName] = useState(folder?.name ?? "");
   const c = useBookCover(saved);
@@ -55,6 +122,7 @@ export function BookDialog({ folder, onSubmit, onClose }: Props) {
       await onSubmit({
         name: name.trim(),
         cover: cover && { fileId: cover.fileId, alt: cover.alt.trim() },
+        ...introValues(creating, genre, synopsis),
       });
       await c.discardReplaced();
     } catch {
@@ -92,6 +160,13 @@ export function BookDialog({ folder, onSubmit, onClose }: Props) {
         <Field id="book-title" label={t.titleLabel}>
           <Input id="book-title" value={name} autoFocus onChange={(e) => setName(e.target.value)} />
         </Field>
+        <IntroFields
+          show={creating}
+          genre={genre}
+          synopsis={synopsis}
+          onGenre={setGenre}
+          onSynopsis={setSynopsis}
+        />
         <div className="grid gap-3">
           <p className="text-sm font-medium">{t.coverLabel}</p>
           <div className="flex items-start gap-4">

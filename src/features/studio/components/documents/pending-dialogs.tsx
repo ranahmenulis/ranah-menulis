@@ -11,7 +11,7 @@ import type { DocumentList } from "../../hooks/use-document-list";
 import type { StudioDocument } from "../../storage/document-store";
 import { BookDialog, bookPatch } from "../book/book-dialog";
 import { DocumentClassificationDialog } from "./document-classification-dialog";
-import { NewWorkDialog } from "./new-work-dialog";
+import { NewWritingDialog } from "./new-writing-dialog";
 import { DeleteDialog, MoveDialog, NameDialog } from "./document-dialogs";
 import { collectionsOf } from "../../works";
 import type { Pending } from "./pending";
@@ -76,7 +76,7 @@ export function PendingDialogs({
         />
       );
     case "newWork":
-      return <NewWorkDialog collectionId={pending.collectionId} onClose={onClose} />;
+      return <NewWritingDialog collectionId={pending.collectionId} onClose={onClose} />;
     case "sendBook":
       return (
         <SendFromList docId={bookDocId(pending.folder.id)} only={["solo"]} onClose={onClose} />
@@ -86,9 +86,11 @@ export function PendingDialogs({
         <BookDialog
           folder={null}
           onClose={onClose}
-          onSubmit={async ({ name, cover }) => {
+          onSubmit={async ({ name, cover, genre, synopsis }) => {
             await list.createFolder(name, {
               kind: "book",
+              ...(genre ? { genre } : {}),
+              ...(synopsis ? { synopsis } : {}),
               ...(cover ? { cover } : {}),
               ...(pending.collectionId ? { collectionId: pending.collectionId } : {}),
             });

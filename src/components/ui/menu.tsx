@@ -2,8 +2,10 @@
 
 import { DotsThree } from "@phosphor-icons/react/dist/ssr";
 import { useCallback, useId, useRef, useState, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 import { cn } from "@/lib/cn";
 import { useDismiss } from "@/lib/use-dismiss";
+import { useNarrowScreen } from "@/lib/use-narrow-screen";
 import { useT } from "@/lib/i18n/provider";
 import { Button } from "./button";
 import { IconButton } from "./icon-button";
@@ -44,14 +46,18 @@ export function Menu({ items, label, icon, className }: MenuProps) {
   const triggerRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const id = useId();
+  const sheetRef = useRef<HTMLDivElement>(null);
   const { close: closeLabel } = useT().common;
+  // On a phone the scrim and sheet live in <body>: inside a sticky bar (z-30) they would share its
+  // layer and the bottom navigation would paint over the lower half of the sheet (seen on iPhone).
+  const narrow = useNarrowScreen();
 
   const close = useCallback((returnFocus: boolean) => {
     setOpen(false);
     if (returnFocus) triggerRef.current?.focus();
   }, []);
 
-  useDismiss(open, (reason) => close(reason === "escape"), wrapRef);
+  useDismiss(open, (reason) => close(reason === "escape"), [wrapRef, sheetRef]);
 
   function visibleItems() {
     const nodes = panelRef.current?.querySelectorAll<HTMLElement>('[role="menuitem"]:enabled');
@@ -85,19 +91,8 @@ export function Menu({ items, label, icon, className }: MenuProps) {
     target.focus();
   }
 
-  return (
-    <div ref={wrapRef} className={cn("relative", className)}>
-      <IconButton
-        ref={triggerRef}
-        label={label}
-        aria-haspopup="menu"
-        aria-expanded={open}
-        aria-controls={open ? id : undefined}
-        onClick={toggle}
-      >
-        {icon ?? <DotsThree size={20} weight="bold" aria-hidden />}
-      </IconButton>
-
+  const layer = (
+    <>
       <div
         aria-hidden={!open}
         onClick={() => close(false)}
@@ -162,6 +157,22 @@ export function Menu({ items, label, icon, className }: MenuProps) {
           {closeLabel}
         </Button>
       </div>
+    </>
+  );
+
+  return (
+    <div ref={wrapRef} className={cn("relative", className)}>
+      <IconButton
+        ref={triggerRef}
+        label={label}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        aria-controls={open ? id : undefined}
+        onClick={toggle}
+      >
+        {icon ?? <DotsThree size={20} weight="bold" aria-hidden />}
+      </IconButton>
+      {narrow ? createPortal(<div ref={sheetRef}>{layer}</div>, document.body) : layer}
     </div>
   );
 }

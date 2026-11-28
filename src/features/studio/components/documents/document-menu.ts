@@ -13,6 +13,8 @@ type Options = {
   archiveBusy: boolean;
   onPending: (pending: Pending) => void;
   onArchiveAction: (action: "archive" | "duplicate", id: string) => void;
+  /** Opens the note's own page (summary, cover, chapters); the row itself opens the editor. */
+  onDetails?: () => void;
 };
 
 /** The ⋯ menu of an active document row. */
@@ -24,9 +26,11 @@ export function documentMenu({
   archiveBusy,
   onPending,
   onArchiveAction,
+  onDetails,
 }: Options): MenuEntry[] {
   const m = t.menu;
   return [
+    ...(onDetails ? [{ id: "details", label: m.details, onSelect: onDetails }] : []),
     { id: "rename", label: m.rename, onSelect: () => onPending({ kind: "rename", doc }) },
     {
       id: "classification",
